@@ -1,3 +1,7 @@
+[B]Version 1.1.182[/B]
+- xhamster - restore playback with updated decryptor and additional manifest fallbacks
+
+
 [B]Version 1.1.160[/B]
 - settings: add StripChat option to always force highest quality
 
