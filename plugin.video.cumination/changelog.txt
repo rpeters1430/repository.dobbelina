@@ -2,6 +2,7 @@
 - xhamster - restore playback with updated decryptor and additional manifest fallbacks
 - terebon - fix playback when iframe embeds are missing
 - hanime - fix thumbnails and poster requests
+- hanime - fix playback when inline manifests change format
 
 
 [B]Version 1.1.160[/B]
