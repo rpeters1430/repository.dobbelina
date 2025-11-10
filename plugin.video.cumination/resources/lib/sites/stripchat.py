@@ -290,15 +290,47 @@ def List2(url):
 
     headers = {'X-Requested-With': 'XMLHttpRequest'}
     data = utils._getHtml(url, site.url, headers=headers)
-    match = re.compile('class="top_ranks(.+?)class="title_h3', re.I | re.M | re.S).findall(data)
-    if not match:
-        match = re.compile('class="top_others(.+?)class="title_h3', re.I | re.M | re.S).findall(data)
-    match = re.compile('class="top_thumb".+?href="([^"]+)".+?src="([^"]+)".+?class="mn_lc">(.+?)</span>', re.I | re.M | re.S).findall(match[0])
-    for url, img, name in match:
-        if 'profile' in url:
-            name = '[COLOR hotpink][Offline][/COLOR] ' + name
-            url = "  "
-        site.add_download_link(name, url[1:], 'Playvid', 'https:' + img, '')
+
+    # BeautifulSoup migration
+    soup = utils.parse_html(data)
+    if not soup:
+        utils.eod()
+        return
+
+    # Find the top_ranks or top_others section
+    section = soup.find(class_='top_ranks') or soup.find(class_='top_others')
+    if not section:
+        utils.eod()
+        return
+
+    # Find all model entries with top_thumb class
+    models = section.find_all(class_='top_thumb')
+    for model in models:
+        try:
+            link = model.find('a', href=True)
+            if not link:
+                continue
+            model_url = utils.safe_get_attr(link, 'href', default='')
+
+            img_tag = model.find('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'], '')
+            if img and not img.startswith('http'):
+                img = 'https:' + img
+
+            name_tag = model.find(class_='mn_lc')
+            name = utils.safe_get_text(name_tag, default='Unknown')
+
+            if 'profile' in model_url:
+                name = '[COLOR hotpink][Offline][/COLOR] ' + name
+                model_url = "  "
+            elif model_url.startswith('/'):
+                model_url = model_url[1:]
+
+            site.add_download_link(name, model_url, 'Playvid', img, '')
+        except Exception as e:
+            utils.kodilog("Stripchat List2: Error parsing model entry: {}".format(str(e)))
+            continue
+
     utils.eod()
 
 
@@ -316,13 +348,47 @@ def List3(url):
 
     headers = {'X-Requested-With': 'XMLHttpRequest'}
     data = utils._getHtml(url, site.url, headers=headers)
-    match = re.compile('class="top_ranks(.+?)trs_actions', re.I | re.M | re.S).findall(data)
-    match = re.compile('class="top_thumb".+?href="([^"]+)".+?src="([^"]+)".+?class="mn_lc">(.+?)</span>', re.I | re.M | re.S).findall(match[0])
-    for url, img, name in match:
-        if 'profile' in url:
-            name = '[COLOR hotpink][Offline][/COLOR] ' + name
-            url = "  "
-        site.add_download_link(name, url[1:], 'Playvid', 'https:' + img, '')
+
+    # BeautifulSoup migration
+    soup = utils.parse_html(data)
+    if not soup:
+        utils.eod()
+        return
+
+    # Find the top_ranks section
+    section = soup.find(class_='top_ranks')
+    if not section:
+        utils.eod()
+        return
+
+    # Find all model entries with top_thumb class
+    models = section.find_all(class_='top_thumb')
+    for model in models:
+        try:
+            link = model.find('a', href=True)
+            if not link:
+                continue
+            model_url = utils.safe_get_attr(link, 'href', default='')
+
+            img_tag = model.find('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'], '')
+            if img and not img.startswith('http'):
+                img = 'https:' + img
+
+            name_tag = model.find(class_='mn_lc')
+            name = utils.safe_get_text(name_tag, default='Unknown')
+
+            if 'profile' in model_url:
+                name = '[COLOR hotpink][Offline][/COLOR] ' + name
+                model_url = "  "
+            elif model_url.startswith('/'):
+                model_url = model_url[1:]
+
+            site.add_download_link(name, model_url, 'Playvid', img, '')
+        except Exception as e:
+            utils.kodilog("Stripchat List3: Error parsing model entry: {}".format(str(e)))
+            continue
+
     utils.eod()
 
 

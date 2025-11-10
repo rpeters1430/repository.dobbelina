@@ -36,6 +36,23 @@ VIDEO_HEADER_SUFFIX = '|Referer={0}&Origin={1}&User-Agent={2}'.format(
     REFERER_HEADER, ORIGIN_HEADER, UA_HEADER
 )
 
+AUTH_COOKIE_NAMES = ('kt_member', 'kt_login_key')
+
+
+def _thothub_cookie_names():
+    names = []
+    for cookie in utils.cj:
+        domain = cookie.domain or ''
+        if domain.endswith('thothub.org'):
+            names.append(cookie.name)
+    return names
+
+
+def _log_thothub_cookies(context):
+    names = _thothub_cookie_names()
+    label = ', '.join(sorted(set(names))) if names else 'none'
+    utils.kodilog("ThotHub [{}] cookies: {}".format(context, label), xbmc.LOGDEBUG)
+
 
 def _clean_media_url(media_url):
     """Normalize ThotHub media URL strings."""
@@ -109,11 +126,10 @@ def _parse_flashvars(html):
 
 
 def _is_logged_in():
-    """Check if we have valid login cookies."""
-    domain = ".thothub.org"
-    for cookie in utils.cj:
-        if cookie.domain == domain and cookie.name in ('PHPSESSID', 'kt_member', 'kt_login_key'):
-            utils.kodilog("ThotHub: Found auth cookie: {}".format(cookie.name), xbmc.LOGDEBUG)
+    """Return True only when real ThotHub auth cookies are present."""
+    for name in _thothub_cookie_names():
+        if name in AUTH_COOKIE_NAMES:
+            utils.kodilog("ThotHub: Found auth cookie {}".format(name), xbmc.LOGDEBUG)
             return True
     return False
 
@@ -141,7 +157,7 @@ def _login(force=False):
     except Exception as e:
         utils.kodilog("ThotHub: Failed to fetch login page: {}".format(str(e)))
         utils.notify('ThotHub Login', 'Failed to load login page')
-        return False
+        return None
 
     # Try to find CSRF token or similar
     csrf_token = None
@@ -153,9 +169,7 @@ def _login(force=False):
     # Prepare login POST data
     login_data = {
         'username': username,
-        'password': password,  # legacy fallback
         'pass': password,
-        'remember': '1',
         'remember_me': '1',
         'action': 'login',
         'email_link': site.url + 'email/'
@@ -176,6 +190,7 @@ def _login(force=False):
 
     try:
         response = utils._postHtml(login_url, headers=headers, form_data=login_data)
+        _log_thothub_cookies('after-login-post')
         lowered = (response or '').lower()
         if 'invalid_login' in lowered or 'incorrect' in lowered:
             utils.kodilog("ThotHub: Login failed - credentials rejected", xbmc.LOGDEBUG)
@@ -192,14 +207,14 @@ def _login(force=False):
             utils.notify('ThotHub Login', 'Login failed - site returned an error')
             return False
 
-        utils.kodilog("ThotHub: Login response inconclusive, assuming failure", xbmc.LOGDEBUG)
-        utils.notify('ThotHub Login', 'Login failed - no auth cookies returned')
+        utils.kodilog("ThotHub: Login response inconclusive, no auth cookies detected", xbmc.LOGDEBUG)
+        utils.kodilog("ThotHub: Last response snippet: {}".format((response or '')[:200]), xbmc.LOGDEBUG)
         return False
 
     except Exception as e:
         utils.kodilog("ThotHub: Login request failed: {}".format(str(e)))
         utils.notify('ThotHub Login', 'Login request failed')
-        return False
+        return None
 
 
 @site.register(default_mode=True)
@@ -378,26 +393,31 @@ def Playvid(url, name, download=None):
         blocked_messages.append('This video requires login.')
         requires_login = True
 
-    # If no flashvars found and video appears to require login, try auto-login
+    # If no flashvars and access seems restricted, log in (or refresh login) automatically
     if not flashvars and requires_login:
-        if not _is_logged_in():
-            utils.kodilog("ThotHub: Video requires login, attempting auto-login", xbmc.LOGDEBUG)
-            if _login():
-                # Retry fetching the page after login
-                utils.kodilog("ThotHub: Retrying video page after login", xbmc.LOGDEBUG)
-                try:
-                    html = utils.getHtml(url, site.url, headers=headers)
-                    flashvars = _parse_flashvars(html)
-                    if flashvars and not license_code:
-                        license_code = flashvars.get('license_code')
-                    # Clear blocked messages if we got flashvars
-                    if flashvars:
-                        blocked_messages = []
-                        requires_login = False
-                except Exception as e:
-                    utils.kodilog("ThotHub: Retry after login failed: {}".format(str(e)))
+        if _is_logged_in():
+            utils.kodilog("ThotHub: Session looks stale, forcing re-login", xbmc.LOGDEBUG)
+            login_result = _login(force=True)
         else:
-            utils.kodilog("ThotHub: Already logged in but video still blocked", xbmc.LOGDEBUG)
+            utils.kodilog("ThotHub: Video requires login, attempting login", xbmc.LOGDEBUG)
+            login_result = _login()
+
+        if login_result is not None:
+            if login_result is False:
+                utils.kodilog("ThotHub: Login attempt completed but no auth cookies detected", xbmc.LOGDEBUG)
+            utils.kodilog("ThotHub: Retrying video page after login attempt", xbmc.LOGDEBUG)
+            try:
+                html = utils.getHtml(url, site.url, headers=headers)
+                flashvars = _parse_flashvars(html)
+                if flashvars and not license_code:
+                    license_code = flashvars.get('license_code')
+                if flashvars:
+                    blocked_messages = []
+                    requires_login = False
+            except Exception as e:
+                utils.kodilog("ThotHub: Retry after login failed: {}".format(str(e)))
+        else:
+            utils.kodilog("ThotHub: Login could not be attempted (missing credentials or request failure)", xbmc.LOGDEBUG)
 
     # Extract video URL from JavaScript flashvars
     # Pattern: 'video_url': 'function/0/https://thothub.org/get_file/.../ID.mp4/'

@@ -29,7 +29,8 @@ cookiehdr = {'Cookie': 'accessAgeDisclaimerPH=1; accessAgeDisclaimerUK=1'}
 @site.register(default_mode=True)
 def Main():
     site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'video/search?search=', 'Search', site.img_search)
-    site.add_dir('[COLOR hotpink]Categories[/COLOR]', site.url[:-1] + 'categories', 'Categories', site.img_cat)
+    categories_url = site.url.rstrip('/') + '/categories'
+    site.add_dir('[COLOR hotpink]Categories[/COLOR]', categories_url, 'Categories', site.img_cat)
     List(site.url + 'video?o=cm')
     utils.eod()
 
@@ -144,53 +145,42 @@ def Search(url, keyword=None):
 def Categories(url):
     cathtml = utils.getHtml(url, site.url, cookiehdr)
 
-    # Parse HTML with BeautifulSoup
     soup = utils.parse_html(cathtml)
-
-    # Find all category wrappers
     categories = soup.select('.category-wrapper, div[class*="category"]')
 
+    entries = []
     for category in categories:
         try:
-            # Extract category link
             link = category.select_one('a')
             if not link:
                 continue
-
             catpage = utils.safe_get_attr(link, 'href')
             if not catpage:
                 continue
-
-            # Make absolute URL if needed
             if catpage.startswith('/'):
                 catpage = site.url[:-1] + catpage
-
-            # Extract category name from alt attribute or link text
             name = utils.safe_get_attr(link, 'alt')
             if not name:
                 name = utils.safe_get_attr(link, 'title')
             if not name:
                 name_tag = category.select_one('.title, .categoryName')
                 name = utils.safe_get_text(name_tag) if name_tag else 'Category'
-
-            # Extract thumbnail image
             img_tag = category.select_one('img')
             img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
-
-            # Extract video count
             count_tag = category.select_one('var, .videoCount')
             video_count = utils.safe_get_text(count_tag)
-
-            # Add category to list
             if video_count:
-                name = name + ' [COLOR orange]({} videos)[/COLOR]'.format(video_count)
-
-            site.add_dir(name, catpage, 'List', img, '')
-
+                display_name = name + ' [COLOR orange]({} videos)[/COLOR]'.format(video_count)
+            else:
+                display_name = name
+            entries.append((display_name, catpage, img, name.lower()))
         except Exception as e:
-            # Log error but continue processing other categories
             utils.kodilog("Error parsing category: " + str(e))
             continue
+
+    entries.sort(key=lambda item: item[3])
+    for display_name, catpage, img, _ in entries:
+        site.add_dir(display_name, catpage, 'List', img, '')
 
     utils.eod()
 

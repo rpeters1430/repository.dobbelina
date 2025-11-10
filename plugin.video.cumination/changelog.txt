@@ -3,6 +3,9 @@
 - terebon - fix playback when iframe embeds are missing
 - hanime - fix thumbnails and poster requests
 - hanime - fix playback when inline manifests change format
+- pornhub - fix Categories screen URL and sort the list alphabetically
+- thothub - ensure private videos trigger a real login instead of stopping at the PHP session cookie
+- chaturbate - begin BeautifulSoup migration (room data & CSRF token parsing)
 
 
 [B]Version 1.1.160[/B]

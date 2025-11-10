@@ -162,10 +162,28 @@ def Search(url):
     except:
         utils.notify('Model not found - try again')
         return None
-    match = re.compile("p_signupargs: 'smid%3D([^']+)'", re.DOTALL | re.IGNORECASE).findall(response)
-    if match:
+
+    # BeautifulSoup migration
+    soup = utils.parse_html(response)
+    if not soup:
+        utils.notify('Model not found - try again')
+        return None
+
+    # First try to find performer ID in scripts
+    performerID = None
+    scripts = soup.find_all('script')
+    for script in scripts:
+        script_text = script.string or script.get_text() or ''
+        # Look for p_signupargs pattern
+        match = re.search(r"p_signupargs:\s*'smid%3D([^']+)'", script_text)
+        if match:
+            performerID = match.group(1)
+            break
+
+    if performerID:
         utils.notify('Found ' + keyword + ' adding to favorites now')
-        img = "http://m1.nsimg.net/media/snap/" + match[0] + ".jpg"
-        performerID = match[0]
+        img = "http://m1.nsimg.net/media/snap/" + performerID + ".jpg"
         name = keyword
         favorites.Favorites('add', 'Playvid', name, performerID, img)
+    else:
+        utils.notify('Model not found - try again')

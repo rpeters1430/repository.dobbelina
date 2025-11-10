@@ -252,15 +252,24 @@ def Playvid(url, name):
     def _parse_room_data(page_html):
         if not page_html:
             return None
-        match = re.search(r'initialRoomDossier\s*=\s*"([^"]+)', page_html)
-        if not match:
+        soup = utils.parse_html(page_html)
+        if not soup:
             return None
-        data_blob = six.b(match.group(1)).decode('unicode-escape')
-        data_blob = data_blob if six.PY3 else data_blob.encode('utf8')
-        try:
-            return json.loads(data_blob)
-        except ValueError:
-            return None
+        scripts = soup.find_all('script')
+        for script in scripts:
+            script_text = script.string or script.get_text() or ''
+            if 'initialRoomDossier' not in script_text:
+                continue
+            match = re.search(r'initialRoomDossier\s*=\s*"([^"]+)', script_text)
+            if not match:
+                continue
+            data_blob = six.b(match.group(1)).decode('unicode-escape')
+            data_blob = data_blob if six.PY3 else data_blob.encode('utf8')
+            try:
+                return json.loads(data_blob)
+            except ValueError:
+                continue
+        return None
 
     data = _parse_room_data(listhtml)
 
@@ -400,11 +409,13 @@ def login():
     username = utils._get_keyboard(default='', heading='Input your Chaturbate username')
     password = utils._get_keyboard(default='', heading='Input your Chaturbate password', hidden=True)
 
-    match = re.compile(r'"csrfmiddlewaretoken"\s+value="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(loginhtml)
-    if not match:
+    soup = utils.parse_html(loginhtml)
+    token_input = soup.find('input', attrs={'name': 'csrfmiddlewaretoken'})
+    if not token_input:
         return
-
-    csrfmiddlewaretoken = match[0]
+    csrfmiddlewaretoken = token_input.get('value')
+    if not csrfmiddlewaretoken:
+        return
     hdr = utils.base_hdrs
     hdr.update({'Referer': 'https://chaturbate.com/auth/login/?next=/followed-cams/'})
     postRequest = {"next": "/followed-cams/",
@@ -424,10 +435,13 @@ def Unfollow(id):
     if '<h1>Chaturbate Login</h1>' in html:
         login()
         html = utils._getHtml(url, site.url)
-    match = re.compile(r'"csrfmiddlewaretoken"\s+value="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(html)
-    if not match:
+    soup = utils.parse_html(html)
+    token_input = soup.find('input', attrs={'name': 'csrfmiddlewaretoken'})
+    if not token_input:
         return
-    csrfmiddlewaretoken = match[0]
+    csrfmiddlewaretoken = token_input.get('value')
+    if not csrfmiddlewaretoken:
+        return
     hdr = utils.base_hdrs
     hdr.update({'Referer': 'https://chaturbate.com/'})
     postRequest = {"csrfmiddlewaretoken": csrfmiddlewaretoken}
@@ -444,10 +458,13 @@ def Follow(id):
     if '<h1>Chaturbate Login</h1>' in html:
         login()
         html = utils._getHtml(url, site.url)
-    match = re.compile(r'"csrfmiddlewaretoken"\s+value="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(html)
-    if not match:
+    soup = utils.parse_html(html)
+    token_input = soup.find('input', attrs={'name': 'csrfmiddlewaretoken'})
+    if not token_input:
         return
-    csrfmiddlewaretoken = match[0]
+    csrfmiddlewaretoken = token_input.get('value')
+    if not csrfmiddlewaretoken:
+        return
     hdr = utils.base_hdrs
     hdr.update({'Referer': 'https://chaturbate.com/'})
     postRequest = {"csrfmiddlewaretoken": csrfmiddlewaretoken}

@@ -4,7 +4,7 @@
 
 **Started**: 2025-11-01
 **Current Version**: v1.1.181
-**Progress**: 24/137 sites (17.5%) migrated
+**Progress**: 27/137 sites (19.7%) migrated
 
 ---
 
@@ -62,9 +62,30 @@ These are the highest-traffic mainstream sites that break most often.
 
 ---
 
-### 🎯 Phase 2: Medium Priority Sites (12/20 completed - 60%)
+### ✅ Phase 2: Live Cam Sites (8/8 completed - 100%)
 
-Secondary mainstream sites with good traffic.
+All Phase 2 cam sites have been reviewed and migrated where applicable.
+
+| Site | Status | Platform | Notes |
+|------|--------|----------|-------|
+| chaturbate | ✅ **COMPLETED** | Live Cams | BeautifulSoup for room data/login CSRF parsing |
+| stripchat | ✅ **COMPLETED** | Live Cams | BeautifulSoup migration for List2/List3 contest pages |
+| streamate | ✅ **COMPLETED** | Live Cams | BeautifulSoup migration for Search function |
+| naked | ✅ **COMPLETED** | Live Cams | BeautifulSoup migration for inline JSON payload |
+| bongacams | ℹ️ API-based | Live Cams | JSON API already used; no BeautifulSoup migration required |
+| camsoda | ℹ️ API-based | Live Cams | JSON API already used; no BeautifulSoup migration required |
+| cam4 | ℹ️ API-based | Live Cams | JSON API already used; no BeautifulSoup migration required |
+| amateurtv | ℹ️ API-based | Live Cams | JSON API already used; no BeautifulSoup migration required |
+
+**Status**: 4/8 required BeautifulSoup migrations complete; remaining 4 sites are API-based.
+
+> ℹ️ **Note**: `bongacams`, `camsoda`, `cam4`, and `amateurtv` already rely on JSON APIs without regex parsing. They are monitored for regressions but are not counted toward the BeautifulSoup conversion totals.
+
+---
+
+### 📺 Phase 3: Medium Priority Sites (10/20 completed - 50%)
+
+Secondary mainstream sites with good traffic (previously Phase 2).
 
 | Site | Status | Category | Notes |
 |------|--------|----------|-------|
@@ -89,26 +110,7 @@ Secondary mainstream sites with good traffic.
 | longvideos | ⏳ Pending | Long content | |
 | luxuretv | ⏳ Pending | Mainstream | |
 
-**Target**: Complete by end of Phase 2
-
----
-
-### 📺 Phase 3: Live Cam Sites (1/8 completed)
-
-**Note**: These sites had SQL injection fixes in v1.1.165. May need additional attention.
-
-| Site | Status | Platform | Notes |
-|------|--------|----------|-------|
-| chaturbate | ⏳ Pending | Live Cams | SQL fixed in v1.1.165 |
-| bongacams | ⏳ Pending | Live Cams | SQL fixed in v1.1.165 |
-| stripchat | ⏳ Pending | Live Cams | SQL fixed in v1.1.165 |
-| camsoda | ⏳ Pending | Live Cams | SQL fixed in v1.1.165 |
-| cam4 | ⏳ Pending | Live Cams | SQL fixed in v1.1.165 |
-| streamate | ⏳ Pending | Live Cams | SQL fixed in v1.1.165 |
-| naked | ✅ **COMPLETED** | Live Cams | BeautifulSoup migration for inline JSON payload |
-| amateurtv | ⏳ Pending | Live Cams | SQL fixed in v1.1.165 |
-
-**Target**: Complete by end of Phase 3
+**Target**: Resume after Phase 2 cams ship
 
 ---
 
@@ -346,9 +348,9 @@ Part of BeautifulSoup migration roadmap (site X/137)
 ### Overall Progress
 
 - **Total Sites**: 137
-- **Completed**: 24 (17.5%)
+- **Completed**: 27 (19.7%)
 - **In Progress**: 0
-- **Remaining**: 113 (82.5%)
+- **Remaining**: 110 (80.3%)
 
 ### Phase Progress
 
@@ -356,8 +358,8 @@ Part of BeautifulSoup migration roadmap (site X/137)
 |-------|-------|-----------|------------|
 | Phase 0: Infrastructure | 3 items | 3 | 100% ✅ |
 | Phase 1: High Priority | 10 | 8 | 80% 🚧 |
-| Phase 2: Medium Priority | 20 | 12 | 60% 🚀 |
-| Phase 3: Live Cams | 8 | 1 | 12.5% |
+| Phase 2: Live Cams | 8 | 4 | 50% ✅ |
+| Phase 3: Medium Priority | 20 | 12 | 60% 🚀 |
 | Phase 4: JAV Sites | 20 | 0 | 0% |
 | Phase 5: Hentai/Anime | 10 | 0 | 0% |
 | Phase 6: International | 15 | 0 | 0% |
@@ -376,17 +378,21 @@ Part of BeautifulSoup migration roadmap (site X/137)
 | 2025-11-05 | 1 (xhamster) | 18/137 | Local dev: migrated xHamster categories/channels/pornstars/celebrities to BeautifulSoup |
 | 2025-11-07 | 1 (whoreshub) | 19/137 | Migrated WhoresHub to BeautifulSoup for List, Categories, Playlist, ListPL |
 | 2025-11-07 | 1 (yespornplease) | 20/137 | Migrated YesPornPlease to BeautifulSoup for List, Categories with error handling |
-| 2025-11-08 | Maintenance (whoreshub pagination, xvideos titles) | 20/137 | Kodi regression fixes; queued **porngo** migration next |
+| 2025-11-08 | 1 (porngo) | 21/137 | Migrated PornGo to BeautifulSoup for listings, categories, pagination, and playback |
+| 2025-11-09 | 2 (watchporn, justporn) | 23/137 | Remote: migrated WatchPorn & JustPorn to BeautifulSoup |
+| 2025-11-09 | 3 (chaturbate, stripchat, streamate) | 27/137 | Phase 2 cam sites: completed chaturbate CSRF/room data, stripchat List2/List3, streamate Search |
 
 **Estimated Timeline** (at 1 site/week, focusing on remaining backlog):
-- Phase 1 (3 remaining sites): ~3 weeks
-- Phase 2 (11 remaining sites): ~11 weeks
-- Full migration (117 remaining sites): ~117 weeks (≈2.2 years)
+- Phase 1 (2 remaining sites): ~2 weeks
+- Phase 2: ✅ **COMPLETED**
+- Phase 3 (8 remaining medium-priority sites): ~8 weeks
+- Full migration (110 remaining sites): ~110 weeks (≈2.1 years)
 
 **Optimistic Timeline** (at 3 sites/week):
-- Phase 1 (3 remaining sites): ~1 week
-- Phase 2 (11 remaining sites): ~4 weeks
-- Full migration (117 remaining sites): ~39 weeks (≈9 months)
+- Phase 1 (2 remaining sites): <1 week
+- Phase 2: ✅ **COMPLETED**
+- Phase 3 (8 remaining medium-priority sites): ~3 weeks
+- Full migration (110 remaining sites): ~37 weeks (≈8.5 months)
 
 ---
 
@@ -433,5 +439,5 @@ grep -c "✅ \*\*COMPLETED\*\*" ROADMAP.md
 
 ---
 
-**Last Updated**: 2025-11-08 (justporn migration)
-**Next Review**: After each Phase 2 site completion
+**Last Updated**: 2025-11-09 (Phase 2 complete: chaturbate, stripchat, streamate)
+**Next Review**: After each Phase 3 site completion
