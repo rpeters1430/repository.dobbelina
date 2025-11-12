@@ -18,16 +18,18 @@
 
 import json
 import re
+
 import xbmc
 import xbmcaddon
 from six.moves import urllib_parse
+
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.decrypters.kvsplayer import kvs_decode
 
 
 addon = xbmcaddon.Addon()
-site = AdultSite('thothub', '[COLOR hotpink]ThotHub[/COLOR]', 'https://thothub.org/', 'thothub.png', 'thothub')
+site = AdultSite('thothub', '[COLOR hotpink]ThotHub[/COLOR]', 'https://thothub.lol/', 'thothub.png', 'thothub')
 REFERER_HEADER = site.url
 ORIGIN_HEADER = site.url.rstrip('/')
 UA_HEADER = urllib_parse.quote(utils.USER_AGENT, safe='')
@@ -35,15 +37,40 @@ IMG_HEADER_SUFFIX = '|Referer={0}&User-Agent={1}'.format(REFERER_HEADER, UA_HEAD
 VIDEO_HEADER_SUFFIX = '|Referer={0}&Origin={1}&User-Agent={2}'.format(
     REFERER_HEADER, ORIGIN_HEADER, UA_HEADER
 )
+SITE_DOMAIN = urllib_parse.urlsplit(site.url).hostname or 'thothub.lol'
+VIDEO_FILTER_MODE = 'public_only'
+_VIDEO_PAGE_CACHE = {}
 
 AUTH_COOKIE_NAMES = ('kt_member', 'kt_login_key')
+PRIVATE_MESSAGE_MAP = {
+    'private video': 'ThotHub marks this video as private (login may be required).',
+    'only active members can watch private videos': 'Only active members can watch private videos.',
+    'you are not allowed to watch this video': 'ThotHub denied access to this video.',
+    'login-required': 'This video requires login.',
+    'login required': 'This video requires login.',
+    'login to view': 'Login is required to view this video.',
+    'please login': 'Please login at ThotHub to view this video.',
+    'you must be logged in': 'You must be logged in to view this video.',
+    'members only': 'This video is available to logged-in members only.',
+    'registered members only': 'This video is available to registered members only.',
+    'subscribers only': 'This video is available to subscribers only.',
+    'followers only': 'This video is limited to circle/follower members.',
+    'join our circle': 'Join the poster circle on ThotHub to view this video.',
+    'join this circle': 'Join the poster circle on ThotHub to view this video.'
+}
+
+
+def _has_credentials():
+    username = addon.getSetting('thothub_username') or ''
+    password = addon.getSetting('thothub_password') or ''
+    return bool(username.strip() and password.strip())
 
 
 def _thothub_cookie_names():
     names = []
     for cookie in utils.cj:
-        domain = cookie.domain or ''
-        if domain.endswith('thothub.org'):
+        domain = (cookie.domain or '').lstrip('.')
+        if domain.endswith(SITE_DOMAIN):
             names.append(cookie.name)
     return names
 
@@ -172,7 +199,9 @@ def _login(force=False):
         'pass': password,
         'remember_me': '1',
         'action': 'login',
-        'email_link': site.url + 'email/'
+        'email_link': site.url + 'email/',
+        'format': 'json',
+        'mode': 'async'
     }
 
     if csrf_token:
@@ -185,7 +214,8 @@ def _login(force=False):
         'Referer': login_page_url,
         'Origin': ORIGIN_HEADER,
         'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Accept': 'application/json, text/javascript, */*; q=0.01'
     })
 
     try:
@@ -236,23 +266,27 @@ def _extract_list_items(html):
         r'<a[^>]+href="([^"]+/videos/(\d+)/[^"]+)"[^>]*(?:title="([^"]*)")?[^>]*>',
         re.IGNORECASE
     )
-    video_matches = video_pattern.findall(html)
+    video_matches = list(video_pattern.finditer(html))
     utils.kodilog("ThotHub found {} video links".format(len(video_matches)), xbmc.LOGDEBUG)
 
     # For each video, try to find its screenshot
-    for url, video_id, title in video_matches:
+    for match in video_matches:
+        url, video_id, title = match.group(1, 2, 3)
+        anchor_html = match.group(0)
         # Clean title
         if not title:
-            slug = url.split('/')[-2] if url.endswith('/') else url.split('/')[-1]
-            title = slug.replace('-', ' ').title()
+            title = re.sub(r'<[^>]+>', '', anchor_html or '')
+            if not title.strip():
+                slug = url.split('/')[-2] if url.endswith('/') else url.split('/')[-1]
+                title = slug.replace('-', ' ').title()
         name = utils.cleantext(title)
 
         # ThotHub screenshot pattern: /contents/videos_screenshots/ID000/ID/preview.jpg
         # Example: /contents/videos_screenshots/1416000/1416571/preview.jpg
         video_id_int = int(video_id)
         base_id = (video_id_int // 1000) * 1000  # Round down to nearest 1000
-        screenshot = 'https://thothub.org/contents/videos_screenshots/{}/{}/preview.jpg'.format(
-            base_id, video_id
+        screenshot = urllib_parse.urljoin(
+            site.url, 'contents/videos_screenshots/{}/{}/preview.jpg'.format(base_id, video_id)
         )
 
         items.append((url, name, screenshot))
@@ -320,13 +354,22 @@ def List(url):
         utils.notify('ThotHub', 'No videos found on this page')
 
     # Add video links
+    added_items = 0
     for videopage, name, img in items:
         # Make URLs absolute
         if videopage.startswith('/'):
             videopage = urllib_parse.urljoin(site.url, videopage)
 
+        if VIDEO_FILTER_MODE == 'public_only' and _is_private_video(videopage):
+            utils.kodilog("ThotHub: Skipping private video {}".format(videopage), xbmc.LOGDEBUG)
+            continue
+
         thumb = img + IMG_HEADER_SUFFIX if '|' not in img else img
         site.add_download_link(name, videopage, 'Playvid', thumb, name)
+        added_items += 1
+
+    if added_items == 0:
+        utils.notify('ThotHub', 'No public videos found on this page')
 
     # Add pagination
     nurl = _find_next_page(listhtml, url)
@@ -347,27 +390,17 @@ def Playvid(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
     # Add comprehensive browser-like headers to bypass bot detection
-    headers = {
-        'User-Agent': utils.USER_AGENT,
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'DNT': '1',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'same-origin',
-        'Sec-Fetch-User': '?1',
-        'Cache-Control': 'max-age=0'
-    }
+    headers = _build_browser_headers()
 
-    try:
-        html = utils.getHtml(url, site.url, headers=headers)
-    except Exception as e:
-        utils.kodilog("ThotHub Playvid error fetching page: {}".format(str(e)))
-        utils.notify('Error', 'Could not load video page')
-        return
+    html = _get_cached_video_page(url)
+    if not html:
+        try:
+            html = utils.getHtml(url, site.url, headers=headers)
+            _VIDEO_PAGE_CACHE[url] = html
+        except Exception as e:
+            utils.kodilog("ThotHub Playvid error fetching page: {}".format(str(e)))
+            utils.notify('Error', 'Could not load video page')
+            return
 
     license_code = None
     lmatch = re.search(r"license_code:\s*'([^']+)", html, re.IGNORECASE)
@@ -379,28 +412,35 @@ def Playvid(url, name, download=None):
         license_code = flashvars.get('license_code')
 
     # Check for private/restricted videos
-    blocked_messages = []
-    lowered = html.lower()
-    requires_login = False
-
-    if 'private video' in lowered or 'only active members can watch private videos' in lowered:
-        blocked_messages.append('ThotHub marks this video as private (login may be required).')
-        requires_login = True
-    if 'you are not allowed to watch this video' in lowered:
-        blocked_messages.append('ThotHub denied access to this video.')
-        requires_login = True
-    if 'login-required' in lowered or 'loginurl' in lowered:
-        blocked_messages.append('This video requires login.')
-        requires_login = True
+    blocked_messages, requires_login = _detect_access_messages(html)
 
     # If no flashvars and access seems restricted, log in (or refresh login) automatically
-    if not flashvars and requires_login:
-        if _is_logged_in():
+    login_attempted = False
+    have_credentials = _has_credentials()
+    if have_credentials and not flashvars and not _is_logged_in():
+        utils.kodilog("ThotHub: No auth cookies before playback, attempting login", xbmc.LOGDEBUG)
+        login_result = _login()
+        login_attempted = True
+        if login_result:
+            _log_thothub_cookies('after-initial-login')
+            try:
+                html = utils.getHtml(url, site.url, headers=headers)
+                flashvars = _parse_flashvars(html)
+                if flashvars and not license_code:
+                    license_code = flashvars.get('license_code')
+                blocked_messages, requires_login = _detect_access_messages(html)
+            except Exception as e:
+                utils.kodilog("ThotHub: Retry after initial login failed: {}".format(str(e)))
+
+    if not flashvars and requires_login and have_credentials:
+        if _is_logged_in() and not login_attempted:
             utils.kodilog("ThotHub: Session looks stale, forcing re-login", xbmc.LOGDEBUG)
             login_result = _login(force=True)
-        else:
+        elif not login_attempted:
             utils.kodilog("ThotHub: Video requires login, attempting login", xbmc.LOGDEBUG)
             login_result = _login()
+        else:
+            login_result = None
 
         if login_result is not None:
             if login_result is False:
@@ -440,6 +480,33 @@ def Playvid(url, name, download=None):
         utils.kodilog("ThotHub extracted video URL: {}".format(video_url), xbmc.LOGDEBUG)
 
     # Fallback: try to find direct .mp4 URL
+    if not video_url and not flashvars and have_credentials and not login_attempted:
+        utils.kodilog("ThotHub: Missing flashvars without private marker, attempting login just in case", xbmc.LOGDEBUG)
+        login_result = _login(force=not _is_logged_in())
+        login_attempted = True
+        if login_result:
+            try:
+                html = utils.getHtml(url, site.url, headers=headers)
+            except Exception as e:
+                utils.kodilog("ThotHub: Second retry after login failed: {}".format(str(e)))
+            else:
+                flashvars = _parse_flashvars(html)
+                if flashvars and not license_code:
+                    license_code = flashvars.get('license_code')
+                flashvars_match = re.search(r"['\"]video_url['\"]:\s*['\"]([^'\"]+)['\"]", html, re.IGNORECASE)
+                if flashvars_match:
+                    video_url = flashvars_match.group(1)
+                    if video_url.startswith('function/') and license_code:
+                        try:
+                            video_url = kvs_decode(video_url, license_code)
+                        except Exception as err:
+                            utils.kodilog("ThotHub kvs_decode second try failed: {}".format(err), xbmc.LOGDEBUG)
+                            video_url = re.sub(r'^function/\d+/', '', video_url)
+                    else:
+                        video_url = re.sub(r'^function/\d+/', '', video_url)
+                    video_url = _clean_media_url(video_url)
+                blocked_messages, requires_login = _detect_access_messages(html)
+
     if not video_url:
         mp4_match = re.search(r'(https?://[^"\'<>\s]+\.mp4/?)', html, re.IGNORECASE)
         if mp4_match:
@@ -493,7 +560,7 @@ def Playvid(url, name, download=None):
         video_id_match = re.search(r'/videos/(\d+)/', url)
         if video_id_match:
             video_id = video_id_match.group(1)
-            embed_url = 'https://thothub.org/embed/{}'.format(video_id)
+            embed_url = urllib_parse.urljoin(site.url, 'embed/{}'.format(video_id))
             utils.kodilog("ThotHub trying embed URL: {}".format(embed_url), xbmc.LOGDEBUG)
             embed_html = None
             try:
@@ -565,3 +632,74 @@ def Search(url, keyword=None):
         else:
             search_url = urllib_parse.urljoin(site.url, '?s=' + title)
         List(search_url)
+
+
+def _get_cached_video_page(url):
+    return _VIDEO_PAGE_CACHE.get(url)
+
+
+def _build_browser_headers():
+    return {
+        'User-Agent': utils.USER_AGENT,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'DNT': '1',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-User': '?1',
+        'Cache-Control': 'max-age=0'
+    }
+
+
+def _fetch_video_page(url, headers=None):
+    try:
+        html = utils.getHtml(url, site.url, headers=headers or _build_browser_headers())
+    except Exception as e:
+        utils.kodilog("ThotHub: Failed to fetch {} while checking privacy: {}".format(url, e), xbmc.LOGDEBUG)
+        return ''
+    _VIDEO_PAGE_CACHE[url] = html
+    return html
+
+
+def _is_private_video(url):
+    if VIDEO_FILTER_MODE != 'public_only':
+        return False
+
+    html = _get_cached_video_page(url)
+    if not html:
+        html = _fetch_video_page(url)
+    if not html:
+        return False
+
+    _, requires_login = _detect_access_messages(html)
+    return requires_login
+
+
+def _detect_access_messages(html):
+    """Return (messages, requires_login) inferred from HTML blocks."""
+    messages = []
+    lowered = (html or '').lower()
+    requires_login = False
+
+    for marker, user_message in PRIVATE_MESSAGE_MAP.items():
+        if marker in lowered:
+            messages.append(user_message)
+            requires_login = True
+
+    attribute_patterns = [
+        r'data-(?:private|logged-in|need-login)[="\'](?:true|1)[\'"]',
+        r'class=["\'][^"\']*private-video[^"\']*["\']',
+        r'id=["\']private-video-notice["\']',
+    ]
+
+    for pattern in attribute_patterns:
+        if re.search(pattern, lowered):
+            messages.append('ThotHub flagged this entry as private.')
+            requires_login = True
+            break
+
+    return messages, requires_login

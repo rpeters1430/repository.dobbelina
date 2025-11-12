@@ -12,7 +12,8 @@
       "Bash(python /tmp/test_whoreshub_regex.py:*)",
       "Bash(/tmp/whoreshub.html)",
       "Bash(/tmp/whoreshub_main.html)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

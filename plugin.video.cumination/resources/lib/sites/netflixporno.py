@@ -46,20 +46,36 @@ def List(url):
     except urllib_error.URLError as e:
         utils.notify(e)
         return
-    if len(listhtml) == 0:
-        listhtml = 'Empty'
+    if not listhtml:
+        utils.eod()
+        return
 
-    match = re.compile(r'<article class.+?href="([^"]+)".+?(?:data-lazy-src=|\ssrc=)"([^"]+\.jpg[^"]*)".+?Title">([^"]+)</div', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for videopage, img, name in match:
-        name = utils.cleantext(name)
-        site.add_download_link(name, videopage, 'Playvid', img, '')
+    soup = utils.parse_html(listhtml)
+    video_items = soup.select('article')
 
-    nextp = re.compile(r'<a\s*class="next page-numbers"\s*href="([^"]+)', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if nextp:
-        nextp = nextp.group(1).replace("&#038;", "&")
-        currpg = re.compile(r'class="page-numbers\s*current">([^<]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
-        lastpg = re.compile(r'>([^<]+)</a>\s*<a\s*class="next\s*page', re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
-        site.add_dir('Next Page... (Currently in Page {0} of {1})'.format(currpg, lastpg), nextp, 'List', site.img_next)
+    for item in video_items:
+        link = item.select_one('a[href]')
+        if not link:
+            continue
+
+        videopage = utils.safe_get_attr(link, 'href')
+        videopage = utils.fix_url(videopage, site.url)
+        if not videopage:
+            continue
+
+        title_tag = item.select_one('.Title, .title, .entry-title, h2, h3')
+        title = utils.safe_get_text(title_tag) or utils.safe_get_attr(link, 'title') or utils.safe_get_text(link)
+        title = utils.cleantext(title)
+        if not title:
+            continue
+
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'data-lazy-src', ['data-src', 'data-original', 'src'])
+        img = utils.fix_url(img, site.url)
+
+        site.add_download_link(title, videopage, 'Playvid', img, '')
+
+    _add_next_page(soup)
 
     utils.eod()
 
@@ -82,8 +98,24 @@ def Categories(url):
     except urllib_error.URLError as e:
         utils.notify(e)
         return
-    match = re.compile(r'cat-item-\d+"><a href="([^"]+)">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name in match:
+    if not cathtml:
+        utils.eod()
+        return
+
+    soup = utils.parse_html(cathtml)
+    seen = set()
+    for link in soup.select('li[class*="cat-item"] a[href]'):
+        catpage = utils.safe_get_attr(link, 'href')
+        catpage = utils.fix_url(catpage, site.url)
+        name = utils.cleantext(utils.safe_get_text(link))
+        if not catpage or not name:
+            continue
+
+        key = (catpage, name.lower())
+        if key in seen:
+            continue
+        seen.add(key)
+
         site.add_dir(name, catpage, 'List', site.img_cat)
     utils.eod()
 
@@ -95,8 +127,25 @@ def Studios(url):
     except urllib_error.URLError as e:
         utils.notify(e)
         return
-    match = re.compile(r'director\s*menu-item.+?href="([^"]+)">([^<]+)', re.DOTALL | re.IGNORECASE).findall(studhtml)
-    for studpage, name in match:
+    if not studhtml:
+        utils.eod()
+        return
+
+    soup = utils.parse_html(studhtml)
+    seen = set()
+
+    for link in soup.select('li[class*="director"] a[href]'):
+        studpage = utils.safe_get_attr(link, 'href')
+        studpage = utils.fix_url(studpage, site.url)
+        name = utils.cleantext(utils.safe_get_text(link) or utils.safe_get_attr(link, 'title'))
+        if not studpage or not name:
+            continue
+
+        key = (studpage, name.lower())
+        if key in seen:
+            continue
+        seen.add(key)
+
         site.add_dir(name, studpage, 'List', site.img_cat)
     utils.eod()
 
@@ -158,3 +207,34 @@ def Playvid(url, name, download=None):
         vp.play_from_direct_link(videourl)
     else:
         vp.play_from_link_to_resolve(videourl)
+
+
+def _add_next_page(soup):
+    next_link = soup.select_one('a.next.page-numbers[href]')
+    if not next_link:
+        return
+
+    next_url = utils.safe_get_attr(next_link, 'href')
+    next_url = utils.fix_url(next_url.replace("&#038;", "&"), site.url)
+    if not next_url:
+        return
+
+    current_page = ''
+    last_page = ''
+
+    for pager in soup.select('.page-numbers'):
+        text = utils.safe_get_text(pager)
+        classes = pager.get('class', [])
+        if 'current' in classes and text:
+            current_page = text
+        if pager.name == 'a' and text and text.isdigit():
+            last_page = text
+
+    if not last_page:
+        last_page = current_page
+
+    label = 'Next Page...'
+    if current_page or last_page:
+        label = 'Next Page... (Currently in Page {0} of {1})'.format(current_page or '?', last_page or '?')
+
+    site.add_dir(label, next_url, 'List', site.img_next)

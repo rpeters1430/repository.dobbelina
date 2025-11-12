@@ -4,7 +4,7 @@
 
 **Started**: 2025-11-01
 **Current Version**: v1.1.181
-**Progress**: 27/137 sites (19.7%) migrated
+**Progress**: 28/137 sites (20.4%) migrated
 
 ---
 
@@ -83,7 +83,7 @@ All Phase 2 cam sites have been reviewed and migrated where applicable.
 
 ---
 
-### 📺 Phase 3: Medium Priority Sites (10/20 completed - 50%)
+### 📺 Phase 3: Medium Priority Sites (11/20 completed - 55%)
 
 Secondary mainstream sites with good traffic (previously Phase 2).
 
@@ -101,7 +101,7 @@ Secondary mainstream sites with good traffic (previously Phase 2).
 | porngo | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings, categories, pagination, and playback |
 | watchporn | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings, categories & pagination |
 | justporn | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings & categories |
-| netflixporno | ⏳ Pending | Mainstream | |
+| netflixporno | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings, categories, and studios (2025-11-11) |
 | peekvids | ⏳ Pending | Mainstream | |
 | playvids | ⏳ Pending | Mainstream | |
 | porndig | ⏳ Pending | Mainstream | |
@@ -233,7 +233,7 @@ Specialized content sites.
 
 ---
 
-### 🔧 Phase 8: Remaining Sites (0/44 completed)
+### 🔧 Phase 8: Remaining Sites (1/44 completed - 2%)
 
 All other sites not in previous phases.
 
@@ -250,7 +250,7 @@ All other sites not in previous phases.
 | fullxcinema | ⏳ Pending | |
 | hqporner | ⏳ Pending | |
 | justfullporn | ⏳ Pending | |
-| netflixporno | ⏳ Pending | |
+| netflixporno | ✅ **COMPLETED** | Covered in Phase 3 migration (2025-11-11) |
 | porn4k | ⏳ Pending | |
 | porndish | ⏳ Pending | |
 | pornez | ⏳ Pending | |
@@ -348,9 +348,9 @@ Part of BeautifulSoup migration roadmap (site X/137)
 ### Overall Progress
 
 - **Total Sites**: 137
-- **Completed**: 27 (19.7%)
+- **Completed**: 28 (20.4%)
 - **In Progress**: 0
-- **Remaining**: 110 (80.3%)
+- **Remaining**: 109 (79.6%)
 
 ### Phase Progress
 
@@ -359,12 +359,12 @@ Part of BeautifulSoup migration roadmap (site X/137)
 | Phase 0: Infrastructure | 3 items | 3 | 100% ✅ |
 | Phase 1: High Priority | 10 | 8 | 80% 🚧 |
 | Phase 2: Live Cams | 8 | 4 | 50% ✅ |
-| Phase 3: Medium Priority | 20 | 12 | 60% 🚀 |
+| Phase 3: Medium Priority | 20 | 11 | 55% 🚀 |
 | Phase 4: JAV Sites | 20 | 0 | 0% |
 | Phase 5: Hentai/Anime | 10 | 0 | 0% |
 | Phase 6: International | 15 | 0 | 0% |
 | Phase 7: Niche/Specialty | 30 | 3 | 10% 🚀 |
-| Phase 8: Remaining | 44 | 0 | 0% |
+| Phase 8: Remaining | 44 | 1 | 2% |
 
 ### Velocity Tracking
 
@@ -381,6 +381,7 @@ Part of BeautifulSoup migration roadmap (site X/137)
 | 2025-11-08 | 1 (porngo) | 21/137 | Migrated PornGo to BeautifulSoup for listings, categories, pagination, and playback |
 | 2025-11-09 | 2 (watchporn, justporn) | 23/137 | Remote: migrated WatchPorn & JustPorn to BeautifulSoup |
 | 2025-11-09 | 3 (chaturbate, stripchat, streamate) | 27/137 | Phase 2 cam sites: completed chaturbate CSRF/room data, stripchat List2/List3, streamate Search |
+| 2025-11-11 | 1 (netflixporno) | 28/137 | Migrated NetflixPorno to BeautifulSoup for listings, categories, studios |
 
 **Estimated Timeline** (at 1 site/week, focusing on remaining backlog):
 - Phase 1 (2 remaining sites): ~2 weeks
