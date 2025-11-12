@@ -4,7 +4,7 @@
 
 **Started**: 2025-11-01
 **Current Version**: v1.1.181
-**Progress**: 28/137 sites (20.4%) migrated
+**Progress**: 29/137 sites (21.2%) migrated
 
 ---
 
@@ -83,7 +83,7 @@ All Phase 2 cam sites have been reviewed and migrated where applicable.
 
 ---
 
-### 📺 Phase 3: Medium Priority Sites (11/20 completed - 55%)
+### 📺 Phase 3: Medium Priority Sites (12/20 completed - 60%)
 
 Secondary mainstream sites with good traffic (previously Phase 2).
 
@@ -102,7 +102,7 @@ Secondary mainstream sites with good traffic (previously Phase 2).
 | watchporn | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings, categories & pagination |
 | justporn | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings & categories |
 | netflixporno | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings, categories, and studios (2025-11-11) |
-| peekvids | ⏳ Pending | Mainstream | |
+| peekvids | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings, categories & channels |
 | playvids | ⏳ Pending | Mainstream | |
 | porndig | ⏳ Pending | Mainstream | |
 | pornhoarder | ⏳ Pending | Aggregator | |
