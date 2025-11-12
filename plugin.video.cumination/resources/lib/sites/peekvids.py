@@ -23,6 +23,30 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite('peekvids', '[COLOR hotpink]PeekVids[/COLOR]', 'https://www.peekvids.com/', 'https://www.peekvids.com/img/logo.png', 'peekvids')
 
 
+def _add_pagination(soup, mode):
+    next_link = None
+    for selector in ('.pagination a.next', '.pagination .next a', 'a[rel="next"]'):
+        next_link = soup.select_one(selector)
+        if next_link:
+            break
+
+    if not next_link:
+        return
+
+    next_url = utils.safe_get_attr(next_link, 'href')
+    if not next_url:
+        return
+
+    next_url = urllib_parse.urljoin(site.url, next_url)
+    label = ''
+    if '=' in next_url:
+        label = next_url.split('=')[-1]
+    elif '/' in next_url.rstrip('/'):
+        label = next_url.rstrip('/').split('/')[-1]
+
+    site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(label), next_url, mode, site.img_next)
+
+
 @site.register(default_mode=True)
 def Main():
     site.add_dir('[COLOR hotpink]Categories[/COLOR]', site.url + 'categories', 'Cat', site.img_cat)
@@ -73,22 +97,7 @@ def List(url):
 
         site.add_download_link(name, videopage, 'Play', img, name, duration=duration, quality=hd)
 
-    next_link = None
-    for selector in ('.pagination a.next', '.pagination .next a', 'a[rel="next"]'):
-        next_link = soup.select_one(selector)
-        if next_link:
-            break
-
-    if next_link:
-        next_url = utils.safe_get_attr(next_link, 'href')
-        if next_url:
-            next_url = urllib_parse.urljoin(site.url, next_url)
-            label = ''
-            if '=' in next_url:
-                label = next_url.split('=')[-1]
-            elif '/' in next_url.rstrip('/'):
-                label = next_url.rstrip('/').split('/')[-1]
-            site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(label), next_url, 'List', site.img_next)
+    _add_pagination(soup, 'List')
 
     utils.eod()
 
@@ -112,7 +121,7 @@ def Cat(url):
             continue
         catpage = urllib_parse.urljoin(site.url, catpage)
 
-        name = utils.cleantext(utils.safe_get_text(link))
+        name = utils.cleantext(utils.safe_get_attr(link, 'title') or utils.safe_get_text(link))
         if not name:
             continue
 
@@ -146,7 +155,7 @@ def Channels(url):
             continue
         chpage = urllib_parse.urljoin(site.url, chpage)
 
-        name = utils.cleantext(utils.safe_get_text(link))
+        name = utils.cleantext(utils.safe_get_attr(link, 'title') or utils.safe_get_text(link))
         if not name:
             continue
 
@@ -163,22 +172,7 @@ def Channels(url):
 
         site.add_dir(name, chpage, 'List', img)
 
-    next_link = None
-    for selector in ('.pagination a.next', '.pagination .next a', 'a[rel="next"]'):
-        next_link = soup.select_one(selector)
-        if next_link:
-            break
-
-    if next_link:
-        next_url = utils.safe_get_attr(next_link, 'href')
-        if next_url:
-            next_url = urllib_parse.urljoin(site.url, next_url)
-            label = ''
-            if '=' in next_url:
-                label = next_url.split('=')[-1]
-            elif '/' in next_url.rstrip('/'):
-                label = next_url.rstrip('/').split('/')[-1]
-            site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(label), next_url, 'Channels', site.img_next)
+    _add_pagination(soup, 'Channels')
 
     utils.eod()
 
@@ -197,8 +191,11 @@ def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     videopage = utils.getHtml(url, site.url)
     soup = utils.parse_html(videopage)
-    sources = [utils.safe_get_attr(source, 'src') for source in soup.select('source[src]')]
-    sources = [src for src in sources if src]
+    sources = []
+    for source in soup.select('source[src]'):
+        src = utils.safe_get_attr(source, 'src')
+        if src:
+            sources.append(src)
     if sources:
         videourl = utils.prefquality(sources, reverse=True)
         if videourl:

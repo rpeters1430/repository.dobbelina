@@ -83,7 +83,7 @@ All Phase 2 cam sites have been reviewed and migrated where applicable.
 
 ---
 
-### 📺 Phase 3: Medium Priority Sites (12/20 completed - 60%)
+### 📺 Phase 3: Medium Priority Sites (14/20 completed - 70%)
 
 Secondary mainstream sites with good traffic (previously Phase 2).
 
