@@ -16,11 +16,35 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import re
+from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
 site = AdultSite('peekvids', '[COLOR hotpink]PeekVids[/COLOR]', 'https://www.peekvids.com/', 'https://www.peekvids.com/img/logo.png', 'peekvids')
+
+
+def _add_pagination(soup, mode):
+    next_link = None
+    for selector in ('.pagination a.next', '.pagination .next a', 'a[rel="next"]'):
+        next_link = soup.select_one(selector)
+        if next_link:
+            break
+
+    if not next_link:
+        return
+
+    next_url = utils.safe_get_attr(next_link, 'href')
+    if not next_url:
+        return
+
+    next_url = urllib_parse.urljoin(site.url, next_url)
+    label = ''
+    if '=' in next_url:
+        label = next_url.split('=')[-1]
+    elif '/' in next_url.rstrip('/'):
+        label = next_url.rstrip('/').split('/')[-1]
+
+    site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(label), next_url, mode, site.img_next)
 
 
 @site.register(default_mode=True)
@@ -34,16 +58,46 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(r'''class="card\s*(?:video|not_show).+?src="([^"]+).+?>(.+?)info">([^<]+).+?href="([^"]+)">([^<]+)''', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for img, hd, duration, video, name in match:
-        name = utils.cleantext(name)
-        hd = 'HD' if '>HD<' in hd else ''
-        site.add_download_link(name, site.url[:-1] + video, 'Play', img, name, duration=duration, quality=hd)
+    soup = utils.parse_html(listhtml)
 
-    np = re.compile(r'''class="pagination">.+?class="next"\s*href="([^"]+)''', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        np = site.url[:-1] + np.group(1)
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(np.split('=')[-1]), np, 'List', site.img_next)
+    cards = soup.select('.card.video, .card.not_show, article.card.video, article.card.not_show')
+    if not cards:
+        cards = soup.select('.card')
+
+    for card in cards:
+        link = card.select_one('a[href]')
+        if not link:
+            continue
+
+        videopage = utils.safe_get_attr(link, 'href')
+        if not videopage:
+            continue
+        videopage = urllib_parse.urljoin(site.url, videopage)
+
+        name = utils.safe_get_attr(link, 'title') or utils.safe_get_text(link)
+        name = utils.cleantext(name)
+        if not name:
+            continue
+
+        img_tag = card.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'data-src', ['data-original', 'data-thumbnail', 'src'])
+        if img and img.startswith('//'):
+            img = 'https:' + img
+
+        duration_tag = card.select_one('.info, .meta__duration, .duration, .card__duration, .video-duration, .time')
+        duration = utils.safe_get_text(duration_tag)
+
+        hd = ''
+        quality_tag = card.select_one('.quality, .hd, .label-hd, .badge, .video-quality, .is_hd, .tag')
+        if quality_tag:
+            quality_text = utils.safe_get_text(quality_tag).upper()
+            quality_classes = ' '.join(quality_tag.get('class', []))
+            if 'HD' in quality_text or 'HD' in quality_classes.upper():
+                hd = 'HD'
+
+        site.add_download_link(name, videopage, 'Play', img, name, duration=duration, quality=hd)
+
+    _add_pagination(soup, 'List')
 
     utils.eod()
 
@@ -51,29 +105,74 @@ def List(url):
 @site.register()
 def Cat(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(r'''li>\s*<a\s*href="([^"]+)">([^<]+)</a>\s*<span>([^<]+)''', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for catpage, name, vids in match:
-        name += ' [COLOR hotpink]{0} Videos[/COLOR]'.format(vids)
-        site.add_dir(name, site.url[:-1] + catpage, 'List', '')
+    soup = utils.parse_html(listhtml)
+
+    category_items = soup.select('.categories-list li, .categories li, ul.categories li')
+    if not category_items:
+        category_items = soup.select('ul li')
+    for item in category_items:
+        link = item.select_one('a[href]')
+        count = item.select_one('span')
+        if not link or not count:
+            continue
+
+        catpage = utils.safe_get_attr(link, 'href')
+        if not catpage:
+            continue
+        catpage = urllib_parse.urljoin(site.url, catpage)
+
+        name = utils.cleantext(utils.safe_get_attr(link, 'title') or utils.safe_get_text(link))
+        if not name:
+            continue
+
+        vids_text = utils.safe_get_text(count)
+        vids = ''.join(ch for ch in vids_text if ch.isdigit() or ch == ',')
+        display_count = vids if vids else vids_text
+        if not display_count:
+            continue
+        name = '{0} [COLOR hotpink]{1} Videos[/COLOR]'.format(name, display_count)
+
+        site.add_dir(name, catpage, 'List', '')
+
     utils.eod()
 
 
 @site.register()
 def Channels(url):
     listhtml = utils.getHtml(url, site.url)
-    listhtml = re.compile(r'''popular_channels">(.+?)</main>''', re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
-    match = re.compile(r'''class="card".+?channel">(.+?)href="([^"]+)">([^<]+).+?videos">[^\d]+([\d,]+)''', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for imgs, chpage, name, vids in match:
-        name += ' [COLOR hotpink]{0} Videos[/COLOR]'.format(vids)
-        img = ''
-        if "img-responsive" in imgs:
-            img = re.findall(r'<img.+?src="([^"]+)', imgs)[0]
-        site.add_dir(name, site.url[:-1] + chpage, 'List', img)
+    soup = utils.parse_html(listhtml)
 
-    np = re.compile(r'''class="pagination".+?class="next"\s*href="([^=]+=(\d+))''', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        nextpg = site.url[:-1] + np.group(1)
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(np.group(2)), nextpg, 'Channels', site.img_next)
+    channels_container = soup.select_one('.popular_channels') or soup
+    channel_cards = channels_container.select('.card')
+
+    for card in channel_cards:
+        link = card.select_one('a[href]')
+        if not link:
+            continue
+
+        chpage = utils.safe_get_attr(link, 'href')
+        if not chpage:
+            continue
+        chpage = urllib_parse.urljoin(site.url, chpage)
+
+        name = utils.cleantext(utils.safe_get_attr(link, 'title') or utils.safe_get_text(link))
+        if not name:
+            continue
+
+        vids_tag = card.select_one('.videos, .video-count, .channel-videos, [class*="videos"]')
+        vids_text = utils.safe_get_text(vids_tag)
+        vids = ''.join(ch for ch in vids_text if ch.isdigit() or ch == ',')
+        if vids:
+            name = '{0} [COLOR hotpink]{1} Videos[/COLOR]'.format(name, vids)
+
+        img_tag = card.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'data-src', ['data-original', 'src'])
+        if img and img.startswith('//'):
+            img = 'https:' + img
+
+        site.add_dir(name, chpage, 'List', img)
+
+    _add_pagination(soup, 'Channels')
 
     utils.eod()
 
@@ -91,8 +190,13 @@ def Search(url, keyword=None):
 def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     videopage = utils.getHtml(url, site.url)
-    sources = re.compile(r'<source src="([^"]+)', re.DOTALL | re.IGNORECASE).findall(videopage)
+    soup = utils.parse_html(videopage)
+    sources = []
+    for source in soup.select('source[src]'):
+        src = utils.safe_get_attr(source, 'src')
+        if src:
+            sources.append(src)
     if sources:
-        # sources = {key: value for key, value in sources}
         videourl = utils.prefquality(sources, reverse=True)
-        vp.play_from_direct_link(videourl.replace('&amp;', '&'))
+        if videourl:
+            vp.play_from_direct_link(videourl.replace('&amp;', '&'))
