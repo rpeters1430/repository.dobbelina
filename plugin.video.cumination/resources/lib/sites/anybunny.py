@@ -21,26 +21,12 @@ from six.moves import urllib_parse
 
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
+from resources.lib.sites.soup_spec import SoupSiteSpec
 
 site = AdultSite("anybunny", "[COLOR hotpink]Anybunny[/COLOR]", "http://anybunny.org/", "anybunny.png", "anybunny")
 
-
-@site.register(default_mode=True)
-def Main():
-    site.add_dir('[COLOR hotpink]Top videos[/COLOR]', site.url + 'top/', 'List', '', '')
-    site.add_dir('[COLOR hotpink]Categories - images[/COLOR]', site.url, 'Categories', site.img_cat)
-    site.add_dir('[COLOR hotpink]Categories - all[/COLOR]', site.url, 'Categories2', site.img_cat)
-    site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'new/', 'Search', site.img_search)
-    List(site.url + 'new/?p=1')
-    utils.eod()
-
-
-@site.register()
-def List(url):
-    listhtml = utils.getHtml(url, '')
-    soup = utils.parse_html(listhtml)
-
-    selectors = {
+VIDEO_LIST_SPEC = SoupSiteSpec(
+    selectors={
         'items': ['a.nuyrfe', 'a[href*="/videos/"]'],
         'url': {'attr': 'href'},
         'title': {
@@ -65,9 +51,27 @@ def List(url):
             'label': 'Next Page',
             'mode': 'List'
         }
-    }
+    },
+    description=''  # Site rarely exposes meaningful descriptions
+)
 
-    utils.soup_videos_list(site, soup, selectors, play_mode='Playvid', description='')
+
+@site.register(default_mode=True)
+def Main():
+    site.add_dir('[COLOR hotpink]Top videos[/COLOR]', site.url + 'top/', 'List', '', '')
+    site.add_dir('[COLOR hotpink]Categories - images[/COLOR]', site.url, 'Categories', site.img_cat)
+    site.add_dir('[COLOR hotpink]Categories - all[/COLOR]', site.url, 'Categories2', site.img_cat)
+    site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'new/', 'Search', site.img_search)
+    List(site.url + 'new/?p=1')
+    utils.eod()
+
+
+@site.register()
+def List(url):
+    listhtml = utils.getHtml(url, '')
+    soup = utils.parse_html(listhtml)
+
+    VIDEO_LIST_SPEC.run(site, soup)
 
     utils.eod()
 

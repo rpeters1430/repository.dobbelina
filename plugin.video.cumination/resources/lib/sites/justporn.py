@@ -23,6 +23,7 @@ import xbmcgui
 
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
+from resources.lib.sites.soup_spec import SoupSiteSpec
 from six.moves import urllib_parse
 
 site = AdultSite('justporn', "[COLOR hotpink]JustPorn[/COLOR]", 'https://justporn.com/', 'justporn.png', 'justporn')
@@ -144,28 +145,8 @@ def _is_video_item(item):
     return bool(href)
 
 
-@site.register(default_mode=True)
-def Main():
-    site.add_dir('[COLOR hotpink]Categories[/COLOR]', site.url, 'Categories', site.img_search)
-    # site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'search/', 'Search', site.img_search)
-    List(site.url + 'video-list?lang=en&page=1')
-    utils.eod()
-
-
-@site.register()
-def List(url):
-    url = site.url[:-1] + url if url.startswith('/') else url
-    url = url if 'page=' in url else url + '?page=1'
-
-    listhtml = utils.getHtml(url, site.url)
-    soup = utils.parse_html(listhtml)
-
-    cm = []
-    cm_lookupinfo = (utils.addon_sys + "?mode=" + str('justporn.Lookupinfo') + "&url=")
-    cm.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + cm_lookupinfo + ')'))
-    cm_related = (utils.addon_sys + "?mode=" + str('justporn.Related') + "&url=")
-    cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')'))
-    selectors = {
+VIDEO_LIST_SPEC = SoupSiteSpec(
+    selectors={
         'base_url': site.url,
         'items': [
             'div.content',
@@ -191,8 +172,33 @@ def List(url):
         'quality': {
             'transform': _quality_transform
         }
-    }
-    utils.soup_videos_list(site, soup, selectors, play_mode='justporn.Playvid', contextm=cm)
+    },
+    play_mode='justporn.Playvid'
+)
+
+
+@site.register(default_mode=True)
+def Main():
+    site.add_dir('[COLOR hotpink]Categories[/COLOR]', site.url, 'Categories', site.img_search)
+    # site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'search/', 'Search', site.img_search)
+    List(site.url + 'video-list?lang=en&page=1')
+    utils.eod()
+
+
+@site.register()
+def List(url):
+    url = site.url[:-1] + url if url.startswith('/') else url
+    url = url if 'page=' in url else url + '?page=1'
+
+    listhtml = utils.getHtml(url, site.url)
+    soup = utils.parse_html(listhtml)
+
+    cm = []
+    cm_lookupinfo = (utils.addon_sys + "?mode=" + str('justporn.Lookupinfo') + "&url=")
+    cm.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + cm_lookupinfo + ')'))
+    cm_related = (utils.addon_sys + "?mode=" + str('justporn.Related') + "&url=")
+    cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')'))
+    VIDEO_LIST_SPEC.run(site, soup, contextm=cm)
 
     match = re.search(r'page=(\d+)', url, re.IGNORECASE)
     if match:
