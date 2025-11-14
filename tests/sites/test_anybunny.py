@@ -37,13 +37,13 @@ def test_list_populates_download_links(monkeypatch):
             'name': 'First Video Title',
             'url': 'http://anybunny.org/videos/first-video',
             'mode': 'anybunny.Playvid',
-            'icon': '//cdn.anybunny.org/thumb-first.jpg',
+            'icon': 'http://cdn.anybunny.org/thumb-first.jpg',
         },
         {
             'name': 'Second Video Title',
             'url': 'http://anybunny.org/videos/second-video',
             'mode': 'anybunny.Playvid',
-            'icon': '//cdn.anybunny.org/thumb-second.jpg',
+            'icon': 'http://cdn.anybunny.org/thumb-second.jpg',
         },
     ]
 
