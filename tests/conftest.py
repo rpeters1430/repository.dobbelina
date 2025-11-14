@@ -11,8 +11,7 @@ if str(PLUGIN_PATH) not in sys.path:
     sys.path.insert(0, str(PLUGIN_PATH))
 
 # Kodi-style scripts rely on positional argv entries provided by Kodi.
-if len(sys.argv) < 3:
-    sys.argv = ['plugin.video.cumination', '1', '']
+sys.argv = ['plugin.video.cumination', '1', '']
 
 
 def _ensure_kodi_stubs():
