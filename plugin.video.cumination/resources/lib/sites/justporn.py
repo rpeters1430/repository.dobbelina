@@ -194,9 +194,9 @@ def List(url):
     soup = utils.parse_html(listhtml)
 
     cm = []
-    cm_lookupinfo = (utils.addon_sys + "?mode=" + str('justporn.Lookupinfo') + "&url=")
+    cm_lookupinfo = utils.addon_sys + "?mode=justporn.Lookupinfo&url="
     cm.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + cm_lookupinfo + ')'))
-    cm_related = (utils.addon_sys + "?mode=" + str('justporn.Related') + "&url=")
+    cm_related = utils.addon_sys + "?mode=justporn.Related&url="
     cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')'))
     VIDEO_LIST_SPEC.run(site, soup, contextm=cm)
 

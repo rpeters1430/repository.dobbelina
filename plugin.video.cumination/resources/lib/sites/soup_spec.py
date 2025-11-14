@@ -7,7 +7,7 @@ selectors instead of re-implementing boilerplate glue code.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from typing import Any, Dict, Mapping, Optional
 
 from resources.lib import utils
@@ -41,15 +41,14 @@ class SoupSiteSpec:
         re-defining an entirely new spec per scenario.
         """
 
-        selectors = overrides.pop('selectors', self.selectors)
+        selectors = overrides.get('selectors', self.selectors)
         options = {
-            'play_mode': self.play_mode,
-            'contextm': self.contextm,
-            'base_url': self.base_url,
-            'fanart': self.fanart,
-            'description': self.description,
+            field.name: getattr(self, field.name)
+            for field in fields(self)
+            if field.name != 'selectors'
         }
-        options.update(overrides)
+        filtered_overrides = {k: v for k, v in overrides.items() if k != 'selectors'}
+        options.update(filtered_overrides)
         return utils.soup_videos_list(site, soup, selectors, **options)
 
 
