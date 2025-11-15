@@ -90,7 +90,7 @@ def List(url):
             continue
 
     # Handle pagination
-    next_link = soup.select_one('a[href]:has-text("Next"), a.next, li.next a')
+    next_link = soup.select_one('a.next, li.next a')
     if not next_link:
         # Try alternate pagination patterns
         pagination = soup.select('div.pagination a, ul.pagination a')
