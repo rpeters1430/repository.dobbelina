@@ -48,12 +48,22 @@ def List(url):
     parsed = urllib_parse.urlparse(url)
     params = urllib_parse.parse_qs(parsed.query)
 
-    # Only add/override filters if not already in URL (preserve search/tag params)
-    if 'o' not in params:
+    # Only apply filters to main listing and tag pages, NOT search pages
+    # Search pages use different parameter structure
+    is_search_page = '/s/' in parsed.path
+    is_tag_page = '/tag/' in parsed.path or '/category/' in parsed.path
+    is_main_listing = '/new_videos/' in parsed.path or '/trending/' in parsed.path
+
+    # Only add 'o=new' parameter for main listing (not tags or search)
+    if is_main_listing and 'o' not in params:
         params['o'] = ['new']
-    if 'q' not in params and filtersQ[filterQ]:
+
+    # Apply quality filter to all non-search pages
+    if not is_search_page and 'q' not in params and filtersQ[filterQ]:
         params['q'] = [filtersQ[filterQ]]
-    if 'd' not in params and filtersL[filterL]:
+
+    # Apply length filter to all non-search pages
+    if not is_search_page and 'd' not in params and filtersL[filterL]:
         params['d'] = [str(filtersL[filterL])]
 
     # Rebuild URL with parameters
@@ -192,10 +202,16 @@ def Playvid(url, name, download=None):
     for quality, videourl in srcs:
         if videourl:
             sources[quality] = videourl
+
     videourl = utils.prefquality(sources, sort_by=lambda x: 1081 if x == '4k' else int(x[:-1]), reverse=True)
     if not videourl:
+        utils.kodilog("spankbang: No video sources found")
         return
-    vp.play_from_direct_link(videourl.replace(r'\u0026', '&'))
+
+    # Clean up escaped characters in URL
+    videourl = videourl.replace(r'\u0026', '&').replace('\\/', '/')
+    vp.progress.update(75, "[CR]Playing video[CR]")
+    vp.play_from_direct_link(videourl)
 
 
 @site.register()

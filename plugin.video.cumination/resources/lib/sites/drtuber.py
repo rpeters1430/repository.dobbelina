@@ -42,17 +42,13 @@ def List(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
 
-    # Find all video items
-    video_items = soup.select('div.video-item, div.thumb, div.video')
+    # Find all video items (they use <a> tags with class "th ch-video")
+    video_items = soup.select('a.th[href*="/video"]')
 
     for item in video_items:
         try:
-            # Get the video link
-            link = item.select_one('a[href*="/video"]')
-            if not link:
-                continue
-
-            videopage = utils.safe_get_attr(link, 'href')
+            # item IS the <a> tag, so get href directly
+            videopage = utils.safe_get_attr(item, 'href')
             if not videopage:
                 continue
 
@@ -66,20 +62,19 @@ def List(url):
             img_tag = item.select_one('img')
             img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
 
-            # Get title from alt attribute or other sources
+            # Get title from alt attribute or span > em
             name = utils.safe_get_attr(img_tag, 'alt')
             if not name:
-                name_tag = item.select_one('h3, .title, a[title]')
-                name = utils.safe_get_text(name_tag) if name_tag else utils.safe_get_attr(link, 'title', default='Video')
+                name_tag = item.select_one('span em')
+                name = utils.safe_get_text(name_tag) if name_tag else 'Video'
             name = utils.cleantext(name)
 
-            # Get duration
-            duration_tag = item.select_one('.time_thumb em, .duration, .video-duration, [class*="time"]')
+            # Get duration from .time_thumb em
+            duration_tag = item.select_one('.time_thumb > em')
             duration = utils.safe_get_text(duration_tag)
 
-            # Get quality
-            quality_tag = item.select_one('[class*="quality"], .hd-icon, .video-quality')
-            quality = utils.safe_get_text(quality_tag)
+            # Get quality (HD icon)
+            quality = 'HD' if item.select_one('.ico_hd') else ''
 
             # Add video to list
             site.add_download_link(name, videopage, 'Play', img, name, duration=duration, quality=quality)
