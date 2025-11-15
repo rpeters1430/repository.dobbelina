@@ -38,8 +38,11 @@ def HQMAIN():
 def HQLIST(url):
     try:
         link = utils.getHtml(url, '')
-    except:
-        return None
+    except Exception as e:
+        utils.notify(msg='Error loading page: {}'.format(str(e)))
+        utils.kodilog('hqporner HQLIST error: {}'.format(str(e)))
+        utils.eod()
+        return
     soup = utils.parse_html(link)
     cards = soup.select('section.box.feature')
     for card in cards:
@@ -84,12 +87,17 @@ def HQCAT(url):
     link = utils.getHtml(url, '')
     soup = utils.parse_html(link)
     entries = []
-    for heading in soup.select('h3 a[href]'):
+    for heading in soup.select('h3 a[href], h2 a[href], .content a[href]'):
         caturl = utils.safe_get_attr(heading, 'href')
-        if not caturl or not caturl.startswith('/category'):
+        if not caturl:
             continue
-        name = utils.safe_get_text(heading)
-        entries.append((name, site.url + caturl.lstrip('/')))
+        # Accept category, actress, studio URLs
+        if not any(x in caturl for x in ['/category/', '/actress/', '/studio/']):
+            continue
+        name = utils.safe_get_text(heading).strip()
+        if name:
+            full_url = site.url + caturl.lstrip('/') if not caturl.startswith('http') else caturl
+            entries.append((name, full_url))
 
     for name, caturl in sorted(entries, key=lambda x: x[0].lower()):
         site.add_dir(name.title(), caturl, 'HQLIST', site.img_cat)
@@ -113,11 +121,20 @@ def HQPLAY(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
     videopage = utils.getHtml(url, url)
-    iframeurl = re.compile(r"nativeplayer\.php\?i=([^']+)", re.DOTALL | re.IGNORECASE).findall(videopage)[0]
+    iframe_match = re.compile(r"nativeplayer\.php\?i=([^']+)", re.DOTALL | re.IGNORECASE).findall(videopage)
+
+    if not iframe_match:
+        utils.kodilog('hqporner HQPLAY: Could not find nativeplayer iframe')
+        vp.progress.close()
+        utils.notify(msg='Video source not found')
+        return
+
+    iframeurl = iframe_match[0]
 
     if iframeurl.startswith('//'):
         iframeurl = 'https:' + iframeurl
 
+    videourl = None
     if 'bemywife' in iframeurl:
         videourl = getBMW(iframeurl)
     elif '5.79' in iframeurl:
@@ -130,6 +147,13 @@ def HQPLAY(url, name, download=None):
         videourl = iframeurl
         vp.play_from_link_to_resolve(videourl)
         return
+
+    if not videourl:
+        utils.kodilog('hqporner HQPLAY: Could not extract video URL')
+        vp.progress.close()
+        utils.notify(msg='Video URL extraction failed')
+        return
+
     vp.play_from_direct_link(videourl)
 
 

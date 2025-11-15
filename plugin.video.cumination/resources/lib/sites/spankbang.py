@@ -40,11 +40,26 @@ def Main():
 
 @site.register()
 def List(url):
+    from six.moves import urllib_parse
     filtersQ = {'All': '', '4k': 'uhd', '1080p': 'fhd', '720p': 'hd'}
     filtersL = {'All': '', '10+min': 10, '20+min': 20, '40+min': 40}
-    if '?' in url:
-        url = url.split('?')[0]
-    url += '?o=new&q={}&d={}'.format(filtersQ[filterQ], filtersL[filterL])
+
+    # Parse URL to preserve existing parameters
+    parsed = urllib_parse.urlparse(url)
+    params = urllib_parse.parse_qs(parsed.query)
+
+    # Only add/override filters if not already in URL (preserve search/tag params)
+    if 'o' not in params:
+        params['o'] = ['new']
+    if 'q' not in params and filtersQ[filterQ]:
+        params['q'] = [filtersQ[filterQ]]
+    if 'd' not in params and filtersL[filterL]:
+        params['d'] = [str(filtersL[filterL])]
+
+    # Rebuild URL with parameters
+    query_string = urllib_parse.urlencode(params, doseq=True)
+    url = urllib_parse.urlunparse((parsed.scheme, parsed.netloc, parsed.path, '', query_string, ''))
+
     listhtml = utils.getHtml(url, '')
 
     soup = utils.parse_html(listhtml)
@@ -107,7 +122,8 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, 'Search')
     else:
-        title = keyword.replace(' ', '+')
+        from six.moves import urllib_parse
+        title = urllib_parse.quote_plus(keyword)
         searchUrl = searchUrl + title + '/'
         List(searchUrl)
 
@@ -115,10 +131,33 @@ def Search(url, keyword=None):
 @site.register()
 def Tags(url):
     cathtml = utils.getHtml(url, '')
-    matchmain = re.compile('<div class="search_holder">(.*?)</html', re.IGNORECASE | re.DOTALL).findall(cathtml)[0]
-    match = re.compile('<li><a href="([^"]+)" class="keyword">([^<]+)<', re.DOTALL).findall(matchmain)
-    for catpage, name in sorted(match, key=lambda x: x[1]):
-        site.add_dir(name, site.url[:-1] + catpage, 'List')
+    soup = utils.parse_html(cathtml)
+
+    # Find the search holder or main container
+    search_holder = soup.select_one('.search_holder, div[class*="search"]')
+    if not search_holder:
+        search_holder = soup  # Use whole page if specific container not found
+
+    # Find all tag links
+    tag_links = search_holder.select('li a.keyword, a[class*="keyword"]')
+    tags = []
+    for link in tag_links:
+        try:
+            catpage = utils.safe_get_attr(link, 'href')
+            if not catpage:
+                continue
+            name = utils.safe_get_text(link).strip()
+            if name and catpage:
+                tags.append((catpage, name))
+        except Exception as exc:
+            utils.log('spankbang Tags: Failed to parse tag - {}'.format(exc))
+            continue
+
+    # Sort by name and add to directory
+    for catpage, name in sorted(tags, key=lambda x: x[1]):
+        full_url = site.url[:-1] + catpage if not catpage.startswith('http') else catpage
+        site.add_dir(name, full_url, 'List')
+
     utils.eod()
 
 

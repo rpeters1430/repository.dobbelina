@@ -37,26 +37,70 @@ def Main():
 
 @site.register()
 def List(url):
-    html = utils.getHtml(url, site.url)
+    listhtml = utils.getHtml(url, site.url)
+    soup = utils.parse_html(listhtml)
 
-    delimiter = '<div class="thumb '
-    re_videopage = 'href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = 'data-original="([^"]+)"'
-    re_duration = 'time">([^<]+)<'
-    re_quality = 'qualtiy">(HD)<'
-    utils.videos_list(site, 'kissjav.Playvid', html, delimiter, re_videopage, re_name, re_img, re_quality, re_duration)
+    video_cards = soup.select('.thumb.item, div.thumb')
+    for card in video_cards:
+        try:
+            link = card.select_one('a[href]')
+            if not link:
+                continue
+            videopage = utils.safe_get_attr(link, 'href')
+            if not videopage:
+                continue
 
-    match = re.search(r'''<a\s*class='next'\s*href="([^"]+)''', html, re.DOTALL | re.IGNORECASE)
-    if match:
-        nurl = urllib_parse.urljoin(site.url, match.group(1))
-        currpg = re.findall(r'<a\s*class="active item-pagination[^>]+>(\d+)', html)[0]
-        lastpg = re.findall(r'<a\s*href=".*?"\s*data-container-id="list_videos[^"]+?_pagination"[^>]+>(\d+)', html)[-1]
+            img_tag = card.select_one('img[data-original], img[src]')
+            if not img_tag:
+                continue
+            img = utils.safe_get_attr(img_tag, 'data-original', ['data-src', 'src'])
 
-        # cm_page = (utils.addon_sys + "?mode=kissjav.GotoPage" + "&url=" + urllib_parse.quote_plus(nurl) + "&np=" + str(npage) + "&lp=" + str(lpnr))
-        # cm = [('[COLOR violet]Goto Page #[/COLOR]', 'RunPlugin(' + cm_page + ')')]
+            title_elem = card.select_one('a[title], .title, img[alt]')
+            name = ''
+            if title_elem:
+                if title_elem.name == 'a':
+                    name = utils.safe_get_attr(title_elem, 'title', default='')
+                elif title_elem.name == 'img':
+                    name = utils.safe_get_attr(title_elem, 'alt', default='')
+                else:
+                    name = utils.safe_get_text(title_elem, '')
+            if not name:
+                name = utils.safe_get_text(link, '')
+            name = utils.cleantext(name)
+            if not name:
+                continue
 
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (Currently in {} of {})'.format(currpg, lastpg), nurl, 'List', site.img_next)  # , contextm=cm)
+            duration_elem = card.select_one('.time, .duration')
+            duration = utils.safe_get_text(duration_elem, '').strip() if duration_elem else ''
+
+            quality_elem = card.select_one('.qualtiy, .quality')
+            quality = ''
+            if quality_elem:
+                qtext = utils.safe_get_text(quality_elem, '').upper()
+                if 'HD' in qtext:
+                    quality = 'HD'
+
+            site.add_download_link(name, videopage, 'Playvid', img, name, duration=duration, quality=quality)
+        except Exception as exc:
+            utils.log('kissjav List: Failed to parse video card - {}'.format(exc))
+            continue
+
+    next_link = soup.select_one("a.next[href], a.pagination-next[href]")
+    if next_link:
+        nurl = utils.safe_get_attr(next_link, 'href')
+        nurl = urllib_parse.urljoin(site.url, nurl) if nurl else ''
+        if nurl:
+            current = soup.select_one('a.active.item-pagination, a.item-pagination.is-active, .pagination-link.is-current')
+            last_candidates = soup.select('a[data-container-id*="_pagination"], .pagination-link')
+            currpg = utils.safe_get_text(current, '').strip() if current else ''
+            lastpg = utils.safe_get_text(last_candidates[-1], '').strip() if last_candidates else ''
+            if lastpg and not lastpg.isdigit():
+                lastpg = ''.join(ch for ch in lastpg if ch.isdigit())
+            info = ''
+            if currpg and lastpg:
+                info = ' (Currently in {} of {})'.format(currpg, lastpg)
+            site.add_dir('[COLOR hotpink]Next Page...[/COLOR]{}'.format(info), nurl, 'List', site.img_next)
+
     utils.eod()
 
 
@@ -77,9 +121,41 @@ def GotoPage(list_mode, url, np, lp):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(r'<div\s*class="thumb\s*item">\s*<a\s*href="([^"]+).+?img\s*src="([^"]+).+?"title">([^<]+)', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for caturl, img, name in match:
-        site.add_dir(name, caturl, 'List', img)
+    soup = utils.parse_html(cathtml)
+
+    category_cards = soup.select('div.thumb.item, div.thumb.category, div.item')
+    for card in category_cards:
+        try:
+            link = card.select_one('a[href]')
+            if not link:
+                continue
+            caturl = utils.safe_get_attr(link, 'href')
+            if not caturl:
+                continue
+
+            img_tag = card.select_one('img[data-original], img[src]')
+            img = utils.safe_get_attr(img_tag, 'data-original', ['data-src', 'src']) if img_tag else ''
+
+            title_elem = card.select_one('.title, a[title], img[alt]')
+            name = ''
+            if title_elem:
+                if title_elem.name == 'a':
+                    name = utils.safe_get_attr(title_elem, 'title', default='')
+                elif title_elem.name == 'img':
+                    name = utils.safe_get_attr(title_elem, 'alt', default='')
+                else:
+                    name = utils.safe_get_text(title_elem, '')
+            if not name:
+                name = utils.safe_get_text(card, '').strip()
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            site.add_dir(name, caturl, 'List', img)
+        except Exception as exc:
+            utils.log('kissjav Categories: Failed to parse card - {}'.format(exc))
+            continue
+
     xbmcplugin.addSortMethod(utils.addon_handle, xbmcplugin.SORT_METHOD_TITLE)
     utils.eod()
 
@@ -87,21 +163,60 @@ def Categories(url):
 @site.register()
 def Playlists(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(r'<div\s*id="playlist-\d+.+?data-src="([^"]+).+?href="([^"]+)[^>]+>([^<]+).+?video"[^\d]+(\d+)', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for img, caturl, name, count in match:
-        name = utils.cleantext(name) + ' [COLOR hotpink]({0} videos)[/COLOR]'.format(count)
-        if caturl.startswith('/'):
-            caturl = site.url[:-1] + caturl
-        site.add_dir(name, caturl, 'List', site.url[:-1] + img)
+    soup = utils.parse_html(cathtml)
 
-    nextp = re.compile(r'<a href="([^"]+)"\s*class="pagination-next">', re.DOTALL | re.IGNORECASE).search(cathtml)
-    if nextp:
-        np = nextp.group(1)
-        if np.startswith('/'):
-            np = site.url[:-1] + np
-        curr_pg = re.findall(r'class="pagination-link\s*is-current[^>]+>([^<]+)', cathtml)[0]
-        last_pg = re.findall(r'class="pagination-link[^>]+>([^<]+)', cathtml)[-1]
-        site.add_dir('[COLOR hotpink]Next Page[/COLOR] (Currently in Page {0} of {1})'.format(curr_pg, last_pg), np, 'Playlists', site.img_next)
+    playlist_cards = soup.select('div[id*="playlist-"]')
+    for card in playlist_cards:
+        try:
+            link = card.select_one('a[href]')
+            if not link:
+                continue
+            caturl = utils.safe_get_attr(link, 'href')
+            if not caturl:
+                continue
+            if caturl.startswith('/'):
+                caturl = site.url[:-1] + caturl
+
+            img_tag = card.select_one('img[data-src], img[src]')
+            img = ''
+            if img_tag:
+                img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
+                if img and img.startswith('/'):
+                    img = site.url[:-1] + img
+
+            name = utils.safe_get_text(link, '').strip()
+            name = utils.cleantext(name)
+
+            count_elem = card.select_one('[class*="video"], [class*="count"]')
+            count = ''
+            if count_elem:
+                count_text = utils.safe_get_text(count_elem, '')
+                count_match = re.search(r'(\d+)', count_text)
+                if count_match:
+                    count = count_match.group(1)
+
+            if name:
+                if count:
+                    name = name + ' [COLOR hotpink]({0} videos)[/COLOR]'.format(count)
+                site.add_dir(name, caturl, 'List', img)
+        except Exception as exc:
+            utils.log('kissjav Playlists: Failed to parse card - {}'.format(exc))
+            continue
+
+    next_link = soup.select_one('a.pagination-next[href]')
+    if next_link:
+        np = utils.safe_get_attr(next_link, 'href')
+        if np:
+            if np.startswith('/'):
+                np = site.url[:-1] + np
+            current = soup.select_one('a.pagination-link.is-current')
+            last_candidates = soup.select('a.pagination-link')
+            currpg = utils.safe_get_text(current, '').strip() if current else ''
+            lastpg = utils.safe_get_text(last_candidates[-1], '').strip() if last_candidates else ''
+            if currpg and lastpg:
+                site.add_dir('[COLOR hotpink]Next Page[/COLOR] (Currently in Page {0} of {1})'.format(currpg, lastpg), np, 'Playlists', site.img_next)
+            else:
+                site.add_dir('[COLOR hotpink]Next Page[/COLOR]', np, 'Playlists', site.img_next)
     utils.eod()
 
 

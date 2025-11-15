@@ -37,43 +37,172 @@ def Main():
 @site.register()
 def List(url):
     html = utils.getHtml(url, site.url)
+    soup = utils.parse_html(html)
 
-    match = re.compile(r'<div\s*@mouseenter.+?img.+?data-src="([^"]+).+?alt="([^"]+).+?href="([^"]+)"\s*alt="([^""]+).+?<span.+?>\s*([\d:]+)', re.DOTALL | re.IGNORECASE).findall(html)
-    for img, info, videopage, name, duration in match:
-        info = utils.cleantext(info)
-        duration = utils.cleantext(duration)
-        site.add_download_link(name, videopage, 'Playvid', img, info, duration=duration, noDownload=True, fanart=img)
-    match = re.compile(r'aria-label="Go to page \d+">\s*(\d+)\s*</a>\s*<a href="([^"]+page=(\d+))"\s+rel="next"', re.DOTALL | re.IGNORECASE).findall(html)
-    if match:
-        lp, npurl, np = match[0]
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] {0}/{1}'.format(np, lp), npurl, 'List', site.img_next)
+    # Find all video items with @mouseenter attribute
+    items = soup.select('div[\\@mouseenter], div[x-on\\:mouseenter]')
+    for item in items:
+        try:
+            # Get image
+            img_tag = item.select_one('img[data-src]')
+            if not img_tag:
+                continue
+            img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
+
+            # Get info from img alt
+            info = utils.safe_get_attr(img_tag, 'alt', default='')
+            info = utils.cleantext(info)
+
+            # Get video link
+            link = item.select_one('a[href][alt]')
+            if not link:
+                continue
+            videopage = utils.safe_get_attr(link, 'href')
+            if not videopage:
+                continue
+
+            # Get name from link alt
+            name = utils.safe_get_attr(link, 'alt', default='')
+            if not name:
+                name = utils.safe_get_text(link, '').strip()
+
+            # Get duration from span
+            duration_tag = item.select_one('span')
+            duration = ''
+            if duration_tag:
+                duration_text = utils.safe_get_text(duration_tag, '').strip()
+                # Extract time format (e.g., "01:23:45")
+                duration = utils.cleantext(duration_text) if ':' in duration_text else ''
+
+            site.add_download_link(name, videopage, 'Playvid', img, info, duration=duration, noDownload=True, fanart=img)
+        except Exception as e:
+            utils.log('missav List: Error processing video - {}'.format(e))
+            continue
+
+    # Pagination - find "next" link and last page number
+    next_link = soup.select_one('a[rel="next"][href]')
+    if next_link:
+        npurl = utils.safe_get_attr(next_link, 'href')
+        # Extract current page from next URL
+        np_match = re.search(r'page=(\d+)', npurl) if npurl else None
+        np = np_match.group(1) if np_match else ''
+
+        # Find last page number - look for page links before "next"
+        page_links = soup.select('a[aria-label*="Go to page"]')
+        lp = ''
+        for page_link in page_links:
+            page_text = utils.safe_get_text(page_link, '').strip()
+            if page_text.isdigit():
+                lp = page_text
+
+        if npurl:
+            site.add_dir('[COLOR hotpink]Next Page...[/COLOR] {0}/{1}'.format(np, lp) if lp else 'Next Page ({0})'.format(np),
+                        npurl, 'List', site.img_next)
+
     utils.eod()
 
 
 @site.register()
 def Models(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(r'<li>\s*<div.+?img\s*src="([^"]+).+?href="([^"]+).+?truncate">([^<]+).+?nord10">([^<]+)', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for img, caturl, name, count in match:
-        name = utils.cleantext(name) + ' [COLOR hotpink]({0})[/COLOR]'.format(count)
-        site.add_dir(name, caturl, 'List', img)
+    soup = utils.parse_html(cathtml)
 
-    match = re.compile(r'aria-label="Go to page \d+">\s*(\d+)\s*</a>\s*<a href="([^"]+page=(\d+))"\s+rel="next"', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    if match:
-        lp, npurl, np = match[0]
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] {0}/{1}'.format(np, lp), npurl, 'Models', site.img_next)
+    # Find all list items with model info
+    list_items = soup.select('li')
+    for item in list_items:
+        try:
+            # Get image
+            img_tag = item.select_one('img[src]')
+            if not img_tag:
+                continue
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+
+            # Get model link
+            link = item.select_one('a[href]')
+            if not link:
+                continue
+            caturl = utils.safe_get_attr(link, 'href')
+            if not caturl:
+                continue
+
+            # Get model name from truncate element
+            name_tag = item.select_one('.truncate')
+            if not name_tag:
+                continue
+            name = utils.safe_get_text(name_tag, '').strip()
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            # Get video count from nord10 element
+            count_tag = item.select_one('.nord10')
+            count = utils.safe_get_text(count_tag, '').strip() if count_tag else ''
+
+            if count:
+                name = name + ' [COLOR hotpink]({0})[/COLOR]'.format(count)
+
+            site.add_dir(name, caturl, 'List', img)
+        except Exception as e:
+            utils.log('missav Models: Error processing model - {}'.format(e))
+            continue
+
+    # Pagination - find "next" link and last page number
+    next_link = soup.select_one('a[rel="next"][href]')
+    if next_link:
+        npurl = utils.safe_get_attr(next_link, 'href')
+        # Extract current page from next URL
+        np_match = re.search(r'page=(\d+)', npurl) if npurl else None
+        np = np_match.group(1) if np_match else ''
+
+        # Find last page number - look for page links before "next"
+        page_links = soup.select('a[aria-label*="Go to page"]')
+        lp = ''
+        for page_link in page_links:
+            page_text = utils.safe_get_text(page_link, '').strip()
+            if page_text.isdigit():
+                lp = page_text
+
+        if npurl:
+            site.add_dir('[COLOR hotpink]Next Page...[/COLOR] {0}/{1}'.format(np, lp), npurl, 'Models', site.img_next)
+
     utils.eod()
 
 
 @site.register()
 def Categories(url):
     html = utils.getHtml(site.url + 'en/')
-    section = re.compile(r'''(<span\s+x-cloak[="\s]+x-show="showCollapse === '{0}'.+?</span>)'''.format(url.lower()), re.IGNORECASE | re.DOTALL).findall(html)[0]
+    soup = utils.parse_html(html)
 
-    match = re.compile(r'href="([^"]+)[^>]+>([^<]+)', re.IGNORECASE | re.DOTALL).findall(section)
-    for caturl, name in match:
-        name = utils.cleantext(name)
-        site.add_dir(name, caturl, 'List', '')
+    # Find the span section with x-show attribute matching the category
+    section = soup.find('span', attrs={'x-show': lambda x: x and url.lower() in x.lower() if x else False})
+    if not section:
+        # Try finding by x-cloak attribute with x-show
+        sections = soup.select('span[x-cloak][x-show]')
+        for sec in sections:
+            x_show = utils.safe_get_attr(sec, 'x-show', default='')
+            if url.lower() in x_show.lower():
+                section = sec
+                break
+
+    if section:
+        # Find all links within this section
+        links = section.select('a[href]')
+        for link in links:
+            try:
+                caturl = utils.safe_get_attr(link, 'href')
+                if not caturl:
+                    continue
+
+                name = utils.safe_get_text(link, '').strip()
+                name = utils.cleantext(name)
+                if not name:
+                    continue
+
+                site.add_dir(name, caturl, 'List', '')
+            except Exception as e:
+                utils.log('missav Categories: Error processing category - {}'.format(e))
+                continue
+
     utils.eod()
 
 

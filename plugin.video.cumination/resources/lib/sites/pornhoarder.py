@@ -48,49 +48,105 @@ def List(url, page=1, section=None):
 
     data = Createdata(page, search)
     listhtml = utils.postHtml(siteurl + 'ajax_search.php', headers=ph_headers, form_data=data)
-    match = re.compile('href="([^"]+)".*?data-src="([^"]+)"(.*?)h1>([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    if not match:
-        return
-    for videopage, img, length, name in match:
-        name = utils.cleantext(name)
-        videopage = siteurl[:-1] + videopage
+    soup = utils.parse_html(listhtml)
 
-        if 'length' in length:
-            length = re.search('length">([^<]+)<', length, re.IGNORECASE | re.DOTALL).group(1)
-        else:
-            length = ''
+    # Find all article/video links
+    links = soup.select('a[href]')
+    for link in links:
+        try:
+            videopage = utils.safe_get_attr(link, 'href')
+            if not videopage:
+                continue
 
-        site.add_download_link(name, videopage, 'Playvid', img, name, duration=length)
+            # Get image
+            img_tag = link.select_one('img[data-src]')
+            if not img_tag:
+                continue
+            img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
 
-    np = re.compile('next"><span class="pagination-button" data-page="([^"]+)"', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        page_number = np.group(1)
-        site.add_dir('Next Page (' + page_number + ')', url, 'List', site.img_next, page=int(page_number), section=siteurl)
+            # Get video title from h1
+            h1_tag = link.select_one('h1')
+            if not h1_tag:
+                continue
+            name = utils.safe_get_text(h1_tag, '').strip()
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            # Get duration/length
+            length_tag = link.select_one('.length')
+            length = utils.safe_get_text(length_tag, '').strip() if length_tag else ''
+
+            if videopage.startswith('/'):
+                videopage = siteurl[:-1] + videopage
+
+            site.add_download_link(name, videopage, 'Playvid', img, name, duration=length)
+        except Exception as e:
+            utils.log('pornhoarder List: Error processing video - {}'.format(e))
+            continue
+
+    # Pagination
+    next_button = soup.select_one('.next .pagination-button[data-page]')
+    if next_button:
+        page_number = utils.safe_get_attr(next_button, 'data-page')
+        if page_number:
+            site.add_dir('Next Page (' + page_number + ')', url, 'List', site.img_next, page=int(page_number), section=siteurl)
     utils.eod()
 
 
 @site.register()
 def List2(url, page=1):
     listhtml = utils.getHtml(url)
-    match = re.compile(r'article>\s+<a href="([^"]+)".*?data-src="([^"]+)"(.*?)h1>([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    if not match:
-        return
-    for videopage, img, length, name in match:
-        name = utils.cleantext(name)
-        videopage = site.url[:-1] + videopage
+    soup = utils.parse_html(listhtml)
 
-        if 'length' in length:
-            length = re.search('length">([^<]+)<', length, re.IGNORECASE | re.DOTALL).group(1)
-        else:
-            length = ''
+    # Find all articles with links
+    articles = soup.select('article')
+    for article in articles:
+        try:
+            link = article.select_one('a[href]')
+            if not link:
+                continue
 
-        site.add_download_link(name, videopage, 'Playvid', img, name, duration=length)
+            videopage = utils.safe_get_attr(link, 'href')
+            if not videopage:
+                continue
 
-    np = re.compile('next"><a href="([^"]+)".*?data-page="([^"]+)"', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        page_number = np.group(2)
-        nextpage = np.group(1)
-        site.add_dir('Next Page (' + page_number + ')', site.url + nextpage, 'List2', site.img_next, page=int(page_number))
+            # Get image
+            img_tag = link.select_one('img[data-src]')
+            if not img_tag:
+                img_tag = link.select_one('img[src]')
+            img = utils.safe_get_attr(img_tag, 'data-src', ['src']) if img_tag else ''
+
+            # Get video title from h1
+            h1_tag = link.select_one('h1')
+            if not h1_tag:
+                continue
+            name = utils.safe_get_text(h1_tag, '').strip()
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            # Get duration/length
+            length_tag = link.select_one('.length')
+            length = utils.safe_get_text(length_tag, '').strip() if length_tag else ''
+
+            if videopage.startswith('/'):
+                videopage = site.url[:-1] + videopage
+
+            site.add_download_link(name, videopage, 'Playvid', img, name, duration=length)
+        except Exception as e:
+            utils.log('pornhoarder List2: Error processing video - {}'.format(e))
+            continue
+
+    # Pagination
+    next_link = soup.select_one('.next a[href][data-page]')
+    if next_link:
+        nextpage = utils.safe_get_attr(next_link, 'href')
+        page_number = utils.safe_get_attr(next_link, 'data-page')
+        if nextpage and page_number:
+            if nextpage.startswith('/'):
+                nextpage = site.url + nextpage
+            site.add_dir('Next Page (' + page_number + ')', nextpage, 'List2', site.img_next, page=int(page_number))
     utils.eod()
 
 
@@ -121,22 +177,54 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download, regex=r'''<iframe.+?src\s*=\s*["']([^'"]+)''')
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videohtml = utils.getHtml(url, site.url)
+    soup = utils.parse_html(videohtml)
 
-    defaulthost = re.compile('iframe src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(videohtml)[0]
-    host = re.compile('''title=['"]hosted on ([^'"]+)['"]>''', re.DOTALL | re.IGNORECASE).findall(videohtml)[0]
+    # Get default iframe source
+    default_iframe = soup.select_one('iframe[src]')
+    if not default_iframe:
+        vp.progress.close()
+        return
+    defaulthost = utils.safe_get_attr(default_iframe, 'src')
 
-    match = re.compile('''<a href=['"]([^'"]+)['"] title=['"]Watch this video on ([^'"]+)['"]>''', re.DOTALL | re.IGNORECASE).findall(videohtml)
-    if match:
-        sources = {x[1]: site.url[:-1] + x[0] for x in match}
+    # Get default host name from title attribute
+    host_link = soup.select_one('[title*="hosted on"]')
+    if host_link:
+        title = utils.safe_get_attr(host_link, 'title')
+        # Extract host name from "hosted on XXX" title
+        host_match = re.search(r'hosted on ([^"\']+)', title, re.IGNORECASE)
+        host = host_match.group(1) if host_match else 'Default'
     else:
-        sources = {}
+        host = 'Default'
+
+    # Get alternative video sources
+    sources = {}
+    alt_links = soup.select('a[href][title*="Watch this video on"]')
+    for link in alt_links:
+        try:
+            href = utils.safe_get_attr(link, 'href')
+            title = utils.safe_get_attr(link, 'title')
+            # Extract source name from "Watch this video on XXX" title
+            source_match = re.search(r'Watch this video on ([^"\']+)', title, re.IGNORECASE)
+            if source_match and href:
+                source_name = source_match.group(1)
+                full_url = site.url[:-1] + href if href.startswith('/') else href
+                sources[source_name] = full_url
+        except Exception as e:
+            utils.log('pornhoarder Playvid: Error processing alternative source - {}'.format(e))
+            continue
 
     sources[host] = defaulthost
     videolink = utils.selector('Select video source', sources)
     if videolink:
         if 'player.php' not in videolink:
             html = utils.getHtml(videolink)
-            videolink = re.compile('iframe src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(html)[0]
+            # Use regex for iframe extraction from the alternate page
+            iframe_match = re.compile('iframe src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(html)
+            if iframe_match:
+                videolink = iframe_match[0]
+            else:
+                vp.progress.close()
+                return
 
         vidhtml = utils.postHtml(videolink, headers=ph_headers, form_data={'play': ''})
         match = re.compile(r'''<iframe.+?src\s*=\s*["']([^'"]+)''', re.DOTALL | re.IGNORECASE).findall(vidhtml)
@@ -157,46 +245,174 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(r'article>\s*<a href="/search/\?search=([^"]+)".*?data-src="/??([^"]+)".*?h2>([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for catpage, img, name in match:
-        name = utils.cleantext(name.strip())
-        img = site.url + img if img.startswith('/') else img
-        site.add_dir(name, catpage, 'List', img)
+    soup = utils.parse_html(listhtml)
 
-    nextp = re.compile('class="next"><a href="/([^"]+)"', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    if nextp:
-        page_link = nextp[0]
-        page_nr = re.findall(r'\d+', page_link)[-1]
-        site.add_dir('Next Page ({})'.format(page_nr), site.url + page_link, 'Categories', site.img_next)
+    # Find all articles with category links
+    articles = soup.select('article')
+    for article in articles:
+        try:
+            # Find search links (categories use search URLs)
+            link = article.select_one('a[href*="/search/"]')
+            if not link:
+                continue
+
+            href = utils.safe_get_attr(link, 'href')
+            if not href or '?search=' not in href:
+                continue
+
+            # Extract search term from URL
+            catpage = href.split('?search=')[-1] if '?search=' in href else ''
+            if not catpage:
+                continue
+
+            # Get image
+            img_tag = article.select_one('img[data-src]')
+            if img_tag:
+                img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
+                if img.startswith('/'):
+                    img = site.url + img
+            else:
+                img = ''
+
+            # Get category name from h2
+            h2_tag = article.select_one('h2')
+            if not h2_tag:
+                continue
+            name = utils.safe_get_text(h2_tag, '').strip()
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            site.add_dir(name, catpage, 'List', img)
+        except Exception as e:
+            utils.log('pornhoarder Categories: Error processing category - {}'.format(e))
+            continue
+
+    # Pagination
+    next_link = soup.select_one('.next a[href]')
+    if next_link:
+        page_link = utils.safe_get_attr(next_link, 'href')
+        if page_link:
+            # Extract page number from URL
+            page_nr_match = re.findall(r'\d+', page_link)
+            page_nr = page_nr_match[-1] if page_nr_match else ''
+            if page_link.startswith('/'):
+                page_link = site.url + page_link
+            site.add_dir('Next Page ({})'.format(page_nr), page_link, 'Categories', site.img_next)
     utils.eod()
 
 
 @site.register()
 def Pornstars(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(r'article>\s*<a href="([^"]+)".*?data-src="/??([^"]+)".*?h2>([^<]+)<.*?meta">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for catpage, img, name, videos in match:
-        name = utils.cleantext(name.strip())
-        img = site.url + img if img.startswith('/') else img
-        name = '{} [COLOR deeppink]{}[/COLOR]'.format(name, videos.strip())
-        catpage = site.url + catpage + 'videos/'
-        site.add_dir(name, catpage, 'List2', img)
+    soup = utils.parse_html(listhtml)
 
-    nextp = re.compile('class="next"><a href="/([^"]+)"', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    if nextp:
-        page_link = nextp[0]
-        page_nr = re.findall(r'\d+', page_link)[-1]
-        site.add_dir('Next Page ({})'.format(page_nr), site.url + page_link, 'Pornstars', site.img_next)
+    # Find all articles with pornstar links
+    articles = soup.select('article')
+    for article in articles:
+        try:
+            link = article.select_one('a[href]')
+            if not link:
+                continue
+
+            catpage = utils.safe_get_attr(link, 'href')
+            if not catpage:
+                continue
+
+            # Get image
+            img_tag = article.select_one('img[data-src]')
+            if img_tag:
+                img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
+                if img.startswith('/'):
+                    img = site.url + img
+            else:
+                img = ''
+
+            # Get pornstar name from h2
+            h2_tag = article.select_one('h2')
+            if not h2_tag:
+                continue
+            name = utils.safe_get_text(h2_tag, '').strip()
+            name = utils.cleantext(name)
+
+            # Get video count from meta
+            meta_tag = article.select_one('.meta')
+            videos = utils.safe_get_text(meta_tag, '').strip() if meta_tag else ''
+
+            if not name:
+                continue
+
+            if videos:
+                name = '{} [COLOR deeppink]{}[/COLOR]'.format(name, videos)
+
+            # Build full URL
+            if catpage.startswith('/'):
+                catpage = site.url + catpage
+            if not catpage.endswith('videos/'):
+                catpage = catpage + 'videos/'
+
+            site.add_dir(name, catpage, 'List2', img)
+        except Exception as e:
+            utils.log('pornhoarder Pornstars: Error processing pornstar - {}'.format(e))
+            continue
+
+    # Pagination
+    next_link = soup.select_one('.next a[href]')
+    if next_link:
+        page_link = utils.safe_get_attr(next_link, 'href')
+        if page_link:
+            # Extract page number from URL
+            page_nr_match = re.findall(r'\d+', page_link)
+            page_nr = page_nr_match[-1] if page_nr_match else ''
+            if page_link.startswith('/'):
+                page_link = site.url + page_link
+            site.add_dir('Next Page ({})'.format(page_nr), page_link, 'Pornstars', site.img_next)
     utils.eod()
 
 
 @site.register()
 def Studios(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(r'article>\s*<a href="([^"]+)".*?<h2>([^<]+)<.*?conunt">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for catpage, name, videos in match:
-        name = utils.cleantext(name.strip())
-        name = '{} [COLOR deeppink]{}[/COLOR]'.format(name, videos.strip())
-        catpage = site.url + catpage + 'videos/'
-        site.add_dir(name, catpage, 'List2', '')
+    soup = utils.parse_html(listhtml)
+
+    # Find all articles with studio links
+    articles = soup.select('article')
+    for article in articles:
+        try:
+            link = article.select_one('a[href]')
+            if not link:
+                continue
+
+            catpage = utils.safe_get_attr(link, 'href')
+            if not catpage:
+                continue
+
+            # Get studio name from h2
+            h2_tag = article.select_one('h2')
+            if not h2_tag:
+                continue
+            name = utils.safe_get_text(h2_tag, '').strip()
+            name = utils.cleantext(name)
+
+            # Get video count from conunt/count tag
+            count_tag = article.select_one('.conunt, .count')
+            videos = utils.safe_get_text(count_tag, '').strip() if count_tag else ''
+
+            if not name:
+                continue
+
+            if videos:
+                name = '{} [COLOR deeppink]{}[/COLOR]'.format(name, videos)
+
+            # Build full URL
+            if catpage.startswith('/'):
+                catpage = site.url + catpage
+            if not catpage.endswith('videos/'):
+                catpage = catpage + 'videos/'
+
+            site.add_dir(name, catpage, 'List2', '')
+        except Exception as e:
+            utils.log('pornhoarder Studios: Error processing studio - {}'.format(e))
+            continue
+
     utils.eod()

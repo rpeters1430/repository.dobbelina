@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
@@ -38,18 +37,59 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    listhtml = re.sub(r'(?is)<!-- item-carousel -->.+?<!-- /item-carousel -->', '', listhtml)
-    items = re.compile(r'class="card\s.+?<img.+?src="([^"]+).+?info">(.+?)"duration">([^<]+).+?title">([^<]+).+?href="([^"]+)">([^<]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for img, info, duration, n1, videopage, n2 in items:
-        name = utils.cleantext(n1) or utils.cleantext(n2)
-        hd = 'HD' if '>HD<' in info else ''
-        videopage = site.url[:-1] + videopage
-        site.add_download_link(name, videopage, 'Playvid', img, name, noDownload=True, duration=duration, quality=hd)
+    soup = utils.parse_html(listhtml)
 
-    nextp = re.search(r'''<li><a\s*class="next"\s*href="([^"]+)">Next''', listhtml, re.DOTALL)
-    if nextp:
-        nextp = site.url[:-1] + nextp.group(1)
-        site.add_dir('Next Page... ({0})'.format(nextp.split("=")[-1]), nextp, 'List', site.img_next)
+    # Remove carousel sections
+    for carousel in soup.select('.item-carousel'):
+        carousel.decompose()
+
+    items = soup.select('.card.thumbs, .card')
+    for item in items:
+        try:
+            img_tag = item.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+
+            info_section = item.select_one('.info')
+            if not info_section:
+                continue
+
+            duration_tag = info_section.select_one('.duration')
+            duration = utils.safe_get_text(duration_tag, '')
+
+            title_tag = info_section.select_one('.title')
+            link = title_tag.select_one('a') if title_tag else None
+            if not link:
+                continue
+
+            videopage = utils.safe_get_attr(link, 'href')
+            if not videopage:
+                continue
+
+            name = utils.safe_get_text(link, '').strip()
+            if not name:
+                name = utils.safe_get_attr(link, 'title')
+            name = utils.cleantext(name)
+
+            # Check for HD badge
+            hd = 'HD' if info_section.select_one('.badge:contains("HD")') or '>HD<' in str(info_section) else ''
+
+            if videopage.startswith('/'):
+                videopage = site.url[:-1] + videopage
+
+            site.add_download_link(name, videopage, 'Playvid', img, name, noDownload=True, duration=duration, quality=hd)
+        except Exception as e:
+            utils.log('playvids List: Error processing item - {}'.format(e))
+            continue
+
+    # Pagination
+    next_link = soup.select_one('li a.next[href]')
+    if next_link:
+        nextp = utils.safe_get_attr(next_link, 'href')
+        if nextp:
+            if nextp.startswith('/'):
+                nextp = site.url[:-1] + nextp
+            page_num = nextp.split("=")[-1] if "=" in nextp else ''
+            site.add_dir('Next Page... ({0})'.format(page_num), nextp, 'List', site.img_next)
 
     utils.eod()
 
@@ -57,18 +97,59 @@ def List(url):
 @site.register()
 def PList(url):
     listhtml = utils.getHtml(url, site.url)
-    listhtml = re.sub(r'(?is)<!-- item-carousel -->.+?<!-- /item-carousel -->', '', listhtml)
-    items = re.compile(r'class="card\sthumbs.+?<img.+?src="([^"]+).+?info">(.+?)"duration">([^<]+).+?title">([^<]+).+?href="([^"]+)">([^<]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for img, info, duration, n1, videopage, n2 in items:
-        name = utils.cleantext(n1) or utils.cleantext(n2)
-        hd = 'HD' if '>HD<' in info else ''
-        videopage = site.url[:-1] + videopage
-        site.add_download_link(name, videopage, 'Playvid', img, name, noDownload=True, duration=duration, quality=hd)
+    soup = utils.parse_html(listhtml)
 
-    nextp = re.search(r'''<li><a\s*class="next"\s*href="([^"]+)">Next''', listhtml, re.DOTALL)
-    if nextp:
-        nextp = site.url[:-1] + nextp.group(1)
-        site.add_dir('Next Page... ({0})'.format(nextp.split("=")[-1]), nextp, 'PList', site.img_next)
+    # Remove carousel sections
+    for carousel in soup.select('.item-carousel'):
+        carousel.decompose()
+
+    items = soup.select('.card.thumbs, .card')
+    for item in items:
+        try:
+            img_tag = item.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+
+            info_section = item.select_one('.info')
+            if not info_section:
+                continue
+
+            duration_tag = info_section.select_one('.duration')
+            duration = utils.safe_get_text(duration_tag, '')
+
+            title_tag = info_section.select_one('.title')
+            link = title_tag.select_one('a') if title_tag else None
+            if not link:
+                continue
+
+            videopage = utils.safe_get_attr(link, 'href')
+            if not videopage:
+                continue
+
+            name = utils.safe_get_text(link, '').strip()
+            if not name:
+                name = utils.safe_get_attr(link, 'title')
+            name = utils.cleantext(name)
+
+            # Check for HD badge
+            hd = 'HD' if info_section.select_one('.badge:contains("HD")') or '>HD<' in str(info_section) else ''
+
+            if videopage.startswith('/'):
+                videopage = site.url[:-1] + videopage
+
+            site.add_download_link(name, videopage, 'Playvid', img, name, noDownload=True, duration=duration, quality=hd)
+        except Exception as e:
+            utils.log('playvids PList: Error processing item - {}'.format(e))
+            continue
+
+    # Pagination
+    next_link = soup.select_one('li a.next[href]')
+    if next_link:
+        nextp = utils.safe_get_attr(next_link, 'href')
+        if nextp:
+            if nextp.startswith('/'):
+                nextp = site.url[:-1] + nextp
+            page_num = nextp.split("=")[-1] if "=" in nextp else ''
+            site.add_dir('Next Page... ({0})'.format(page_num), nextp, 'PList', site.img_next)
 
     utils.eod()
 
@@ -76,15 +157,49 @@ def PList(url):
 @site.register()
 def CList(url, page=1):
     listhtml = utils.getHtml(url + '?page={0}'.format(page), site.url)
-    items = re.compile(r'id="row_item.+?src="([^"]+).+?info">(.+?)"duration">([^<]+).+?title">([^<]+).+?href="([^"]+)">([^<]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for img, info, duration, n1, videopage, n2 in items:
-        name = utils.cleantext(n1) or utils.cleantext(n2)
-        hd = 'HD' if '>HD<' in info else ''
-        videopage = site.url[:-1] + videopage
-        site.add_download_link(name, videopage, 'Playvid', img, name, noDownload=True, duration=duration, quality=hd)
+    soup = utils.parse_html(listhtml)
 
-    nextp = re.search(r'''id="channel_show_more".+?</div''', listhtml, re.DOTALL)
-    if nextp:
+    items = soup.select('[id^="row_item"]')
+    for item in items:
+        try:
+            img_tag = item.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+
+            info_section = item.select_one('.info')
+            if not info_section:
+                continue
+
+            duration_tag = info_section.select_one('.duration')
+            duration = utils.safe_get_text(duration_tag, '')
+
+            title_tag = info_section.select_one('.title')
+            link = title_tag.select_one('a') if title_tag else None
+            if not link:
+                continue
+
+            videopage = utils.safe_get_attr(link, 'href')
+            if not videopage:
+                continue
+
+            name = utils.safe_get_text(link, '').strip()
+            if not name:
+                name = utils.safe_get_attr(link, 'title')
+            name = utils.cleantext(name)
+
+            # Check for HD badge
+            hd = 'HD' if info_section.select_one('.badge:contains("HD")') or '>HD<' in str(info_section) else ''
+
+            if videopage.startswith('/'):
+                videopage = site.url[:-1] + videopage
+
+            site.add_download_link(name, videopage, 'Playvid', img, name, noDownload=True, duration=duration, quality=hd)
+        except Exception as e:
+            utils.log('playvids CList: Error processing item - {}'.format(e))
+            continue
+
+    # Check for "show more" button
+    show_more = soup.select_one('#channel_show_more')
+    if show_more:
         page = page + 1
         site.add_dir('Next Page... ({0})'.format(page), url, 'CList', site.img_next, page=page)
 
@@ -94,25 +209,85 @@ def CList(url, page=1):
 @site.register()
 def Cat(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(r'''<li>\s*<a\s*href="([^"]+)">\s*(.+?)\s*<''', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for catpage, name in match:
-        site.add_dir(name, site.url[:-1] + catpage, 'List', '')
+    soup = utils.parse_html(listhtml)
+
+    # Find category links within list items
+    cat_items = soup.select('li a[href]')
+    for link in cat_items:
+        try:
+            catpage = utils.safe_get_attr(link, 'href')
+            if not catpage:
+                continue
+
+            name = utils.safe_get_text(link, '').strip()
+            if not name:
+                continue
+
+            if catpage.startswith('/'):
+                catpage = site.url[:-1] + catpage
+
+            site.add_dir(name, catpage, 'List', '')
+        except Exception as e:
+            utils.log('playvids Cat: Error processing category - {}'.format(e))
+            continue
+
     utils.eod()
 
 
 @site.register()
 def Channels(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(r'class="card">.+?channel">.+?src="([^"]+).+?title">.+?href="([^"]+)">([^<]+).+?videos">([^<]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for img, chpage, name, vids in match:
-        name = utils.cleantext(name)
-        name += ' [COLOR hotpink]{0}[/COLOR]'.format(vids)
-        site.add_dir(name, site.url[:-1] + chpage, 'CList', img, page=1)
+    soup = utils.parse_html(listhtml)
 
-    nextp = re.search(r'''<li><a\s*class="next"\s*href="([^"]+)">Next''', listhtml, re.DOTALL)
-    if nextp:
-        nextp = site.url[:-1] + nextp.group(1)
-        site.add_dir('Next Page... ({0})'.format(nextp.split("=")[-1]), nextp, 'Channels', site.img_next)
+    items = soup.select('.card')
+    for item in items:
+        try:
+            # Look for channel-specific content
+            channel_section = item.select_one('.channel')
+            if not channel_section:
+                continue
+
+            img_tag = item.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+
+            title_section = item.select_one('.title')
+            if not title_section:
+                continue
+
+            link = title_section.select_one('a[href]')
+            if not link:
+                continue
+
+            chpage = utils.safe_get_attr(link, 'href')
+            if not chpage:
+                continue
+
+            name = utils.safe_get_text(link, '').strip()
+            name = utils.cleantext(name)
+
+            # Get video count
+            videos_tag = item.select_one('.videos')
+            vids = utils.safe_get_text(videos_tag, '').strip()
+            if vids:
+                name += ' [COLOR hotpink]{0}[/COLOR]'.format(vids)
+
+            if chpage.startswith('/'):
+                chpage = site.url[:-1] + chpage
+
+            site.add_dir(name, chpage, 'CList', img, page=1)
+        except Exception as e:
+            utils.log('playvids Channels: Error processing channel - {}'.format(e))
+            continue
+
+    # Pagination
+    next_link = soup.select_one('li a.next[href]')
+    if next_link:
+        nextp = utils.safe_get_attr(next_link, 'href')
+        if nextp:
+            if nextp.startswith('/'):
+                nextp = site.url[:-1] + nextp
+            page_num = nextp.split("=")[-1] if "=" in nextp else ''
+            site.add_dir('Next Page... ({0})'.format(page_num), nextp, 'Channels', site.img_next)
 
     utils.eod()
 
@@ -120,20 +295,45 @@ def Channels(url):
 @site.register()
 def Pornstars(url):
     listhtml = utils.getHtml(url, site.url)
-    items = re.compile(r'class="overflow(.+?)</li', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for item in items:
-        if '<img' in item:
-            chpage, img, name = re.compile(r'''href="([^"]+).+?src=['"]([^'"]+)'>"\s*>?\s*(.+?)\s*</a''', re.DOTALL | re.IGNORECASE).findall(item)[0]
-        else:
-            img = ''
-            chpage, name = re.compile(r'''href="([^"]+)"\s*>\s*(.+?)\s*</a''', re.DOTALL | re.IGNORECASE).findall(item)[0]
-        name = utils.cleantext(name)
-        site.add_dir(name, site.url[:-1] + chpage, 'PList', img)
+    soup = utils.parse_html(listhtml)
 
-    nextp = re.search(r'''<li><a\s*class="next"\s*href="([^"]+)">Next''', listhtml, re.DOTALL)
-    if nextp:
-        nextp = site.url[:-1] + nextp.group(1)
-        site.add_dir('Next Page... ({0})'.format(nextp.split("=")[-1]), nextp, 'Pornstars', site.img_next)
+    items = soup.select('li.overflow')
+    for item in items:
+        try:
+            link = item.select_one('a[href]')
+            if not link:
+                continue
+
+            chpage = utils.safe_get_attr(link, 'href')
+            if not chpage:
+                continue
+
+            # Try to get image (some pornstars may not have one)
+            img_tag = item.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src']) if img_tag else ''
+
+            name = utils.safe_get_text(link, '').strip()
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            if chpage.startswith('/'):
+                chpage = site.url[:-1] + chpage
+
+            site.add_dir(name, chpage, 'PList', img)
+        except Exception as e:
+            utils.log('playvids Pornstars: Error processing pornstar - {}'.format(e))
+            continue
+
+    # Pagination
+    next_link = soup.select_one('li a.next[href]')
+    if next_link:
+        nextp = utils.safe_get_attr(next_link, 'href')
+        if nextp:
+            if nextp.startswith('/'):
+                nextp = site.url[:-1] + nextp
+            page_num = nextp.split("=")[-1] if "=" in nextp else ''
+            site.add_dir('Next Page... ({0})'.format(page_num), nextp, 'Pornstars', site.img_next)
 
     utils.eod()
 
@@ -152,9 +352,17 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videopage = utils.getHtml(url, site.url)
-    sources = re.compile(r'<source src="([^"]+)', re.DOTALL | re.IGNORECASE).findall(videopage)
+    soup = utils.parse_html(videopage)
+
+    # Find video source tags
+    source_tags = soup.select('source[src]')
+    sources = []
+    for source in source_tags:
+        src = utils.safe_get_attr(source, 'src')
+        if src:
+            sources.append(src)
+
     if sources:
-        # sources = {key: value for key, value in sources}
         vidurl = utils.prefquality(sources, reverse=True)
         vp.play_from_direct_link(vidurl.replace('&amp;', '&'))
     else:

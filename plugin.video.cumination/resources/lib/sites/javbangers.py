@@ -67,36 +67,82 @@ def List(url):
         else:
             return None
 
-    match = re.compile(r'class="video-item([^"]+)".+?href="([^"]+)".+?title="([^"]+).+?(?:original|"cover"\s*src)="([^"]+)(.+?)clock\D+([\d:]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for private, videopage, name, img, hd, name2 in match:
-        hd = 'HD' if '>HD<' in hd else ''
-        name = utils.cleantext(name)
-        if 'private' in private.lower():
-            if not jblogged:
+    soup = utils.parse_html(listhtml)
+
+    # Find all video items
+    video_items = soup.select('[class*="video-item"]')
+    for item in video_items:
+        try:
+            # Get class to check for private
+            item_class = utils.safe_get_attr(item, 'class')
+            if isinstance(item_class, list):
+                item_class = ' '.join(item_class)
+            else:
+                item_class = str(item_class) if item_class else ''
+
+            # Check for private video
+            if 'private' in item_class.lower():
+                if not jblogged:
+                    continue
+                private = "[COLOR blue] [PV][/COLOR] "
+            else:
+                private = ""
+
+            # Get video link
+            link = item.select_one('a[href][title]')
+            if not link:
                 continue
-            private = "[COLOR blue] [PV][/COLOR] "
-        else:
-            private = ""
-        name = private + name
+            videopage = utils.safe_get_attr(link, 'href')
+            if not videopage:
+                continue
 
-        contextmenu = []
-        contexturl = (utils.addon_sys
-                      + "?mode=" + str('javbangers.Lookupinfo')
-                      + "&url=" + urllib_parse.quote_plus(videopage))
-        contextmenu.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')'))
-        if jblogged:
-            contextadd = (utils.addon_sys
-                          + "?mode=" + str('javbangers.ContextMenu')
-                          + "&url=" + urllib_parse.quote_plus(videopage)
-                          + "&fav=add")
-            contextdel = (utils.addon_sys
-                          + "?mode=" + str('javbangers.ContextMenu')
-                          + "&url=" + urllib_parse.quote_plus(videopage)
-                          + "&fav=del")
-            contextmenu.append(('[COLOR violet]Add to JB favorites[/COLOR]', 'RunPlugin(' + contextadd + ')'))
-            contextmenu.append(('[COLOR violet]Delete from JB favorites[/COLOR]', 'RunPlugin(' + contextdel + ')'))
+            name = utils.safe_get_attr(link, 'title', default='')
+            name = utils.cleantext(name)
+            name = private + name
 
-        site.add_download_link(name, videopage, 'Playvid', img, name, contextm=contextmenu, duration=name2, quality=hd)
+            # Get image - try both original and cover src
+            img = ''
+            img_tag = item.select_one('img[original]')
+            if img_tag:
+                img = utils.safe_get_attr(img_tag, 'original')
+            if not img:
+                img_tag = item.select_one('img.cover[src]')
+                if img_tag:
+                    img = utils.safe_get_attr(img_tag, 'src')
+
+            # Check for HD badge
+            hd = 'HD' if item.find(string=lambda text: text and '>HD<' in text if text else False) or item.select_one('.hd, [class*="hd"]') else ''
+
+            # Get duration from clock icon/text
+            duration_elem = item.select_one('[class*="clock"]')
+            name2 = ''
+            if duration_elem:
+                duration_text = utils.safe_get_text(duration_elem, '').strip()
+                # Extract time pattern (digits and colons)
+                time_match = re.search(r'[\d:]+', duration_text)
+                name2 = time_match.group(0) if time_match else ''
+
+            contextmenu = []
+            contexturl = (utils.addon_sys
+                          + "?mode=" + str('javbangers.Lookupinfo')
+                          + "&url=" + urllib_parse.quote_plus(videopage))
+            contextmenu.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+            if jblogged:
+                contextadd = (utils.addon_sys
+                              + "?mode=" + str('javbangers.ContextMenu')
+                              + "&url=" + urllib_parse.quote_plus(videopage)
+                              + "&fav=add")
+                contextdel = (utils.addon_sys
+                              + "?mode=" + str('javbangers.ContextMenu')
+                              + "&url=" + urllib_parse.quote_plus(videopage)
+                              + "&fav=del")
+                contextmenu.append(('[COLOR violet]Add to JB favorites[/COLOR]', 'RunPlugin(' + contextadd + ')'))
+                contextmenu.append(('[COLOR violet]Delete from JB favorites[/COLOR]', 'RunPlugin(' + contextdel + ')'))
+
+            site.add_download_link(name, videopage, 'Playvid', img, name, contextm=contextmenu, duration=name2, quality=hd)
+        except Exception as e:
+            utils.log('javbangers List: Error processing video - {}'.format(e))
+            continue
 
     match = re.search(r'class="page-current"><span>(\d+)<.+?class="next">.+?data-block-id="([^"]+)"\s+data-parameters="([^"]+)">Next', listhtml, re.DOTALL | re.IGNORECASE)
     if match:
@@ -165,10 +211,37 @@ def Playvid(url, name, download=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url, '')
-    match = re.compile(r'"item"\s*href="([^"]+)"\s*title="([^"]+)">\n\s*<div.+?src="([^"]+).+?videos">([^<]+)', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name, img, name2 in match:
-        name = utils.cleantext(name) + ' [COLOR cyan][{}][/COLOR]'.format(name2)
-        site.add_dir(name, catpage, 'List', img, 1)
+    soup = utils.parse_html(cathtml)
+
+    # Find all item links with title attribute
+    items = soup.select('.item[href][title]')
+    for link in items:
+        try:
+            catpage = utils.safe_get_attr(link, 'href')
+            if not catpage:
+                continue
+
+            name = utils.safe_get_attr(link, 'title', default='')
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            # Get image
+            img_tag = link.select_one('img[src]')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src']) if img_tag else ''
+
+            # Get video count
+            videos_elem = link.select_one('[class*="videos"]')
+            name2 = utils.safe_get_text(videos_elem, '').strip() if videos_elem else ''
+
+            if name2:
+                name = name + ' [COLOR cyan][{}][/COLOR]'.format(name2)
+
+            site.add_dir(name, catpage, 'List', img, 1)
+        except Exception as e:
+            utils.log('javbangers Categories: Error processing category - {}'.format(e))
+            continue
+
     xbmcplugin.addSortMethod(utils.addon_handle, xbmcplugin.SORT_METHOD_TITLE)
     utils.eod()
 
@@ -176,14 +249,56 @@ def Categories(url):
 @site.register()
 def Playlists(url, page=1):
     cathtml = utils.getHtml(url, site.url)
-    img = str(randint(1, 4))
-    match = re.compile(r'class="item\s*".+?href="([^"]+)"\s*title="([^"]+)".+?class="thumb video' + img + '.+?data-original="([^"]+)".+?class="totalplaylist">([^<]+)', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name, img, name2 in match:
-        name = utils.cleantext(name) + ' [COLOR cyan][{}][/COLOR]'.format(name2)
-        site.add_dir(name, catpage, 'List', img)
-    if re.search(r'<li\s*class="next"><a', cathtml, re.DOTALL | re.IGNORECASE):
-        lastp = re.compile(r':(\d+)">Last', re.DOTALL | re.IGNORECASE).findall(cathtml)
-        lastp = '/{}'.format(lastp[0]) if lastp else ''
+    soup = utils.parse_html(cathtml)
+
+    # Find all playlist items
+    items = soup.select('.item[href][title]')
+    for link in items:
+        try:
+            catpage = utils.safe_get_attr(link, 'href')
+            if not catpage:
+                continue
+
+            name = utils.safe_get_attr(link, 'title', default='')
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            # Get image from thumb video class with data-original
+            img = ''
+            for i in range(1, 5):
+                img_tag = link.select_one('.thumb.video{0}[data-original]'.format(i))
+                if img_tag:
+                    img = utils.safe_get_attr(img_tag, 'data-original')
+                    break
+            if not img:
+                img_tag = link.select_one('img[data-original]')
+                if img_tag:
+                    img = utils.safe_get_attr(img_tag, 'data-original')
+
+            # Get total playlist count
+            total_elem = link.select_one('.totalplaylist')
+            name2 = utils.safe_get_text(total_elem, '').strip() if total_elem else ''
+
+            if name2:
+                name = name + ' [COLOR cyan][{}][/COLOR]'.format(name2)
+
+            site.add_dir(name, catpage, 'List', img)
+        except Exception as e:
+            utils.log('javbangers Playlists: Error processing playlist - {}'.format(e))
+            continue
+
+    # Pagination
+    next_li = soup.select_one('li.next')
+    if next_li and next_li.select_one('a'):
+        # Find last page number
+        last_link = soup.find('a', string=lambda text: text and ':' in text if text else False)
+        lastp = ''
+        if last_link:
+            link_text = utils.safe_get_text(last_link, '').strip()
+            last_match = re.search(r':(\d+)', link_text)
+            lastp = '/{}'.format(last_match.group(1)) if last_match else ''
+
         if not page:
             page = 1
         npage = page + 1
@@ -193,6 +308,7 @@ def Playlists(url, page=1):
             utils.kodilog(' Playlists pagination error')
             nurl = url
         site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + lastp + ')', nurl, 'Playlists', site.img_next, npage)
+
     utils.eod()
 
 

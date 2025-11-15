@@ -40,24 +40,65 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(r"""class=['"]inside-article['"].+?href=['"]([^"']+)['"]>\s*<img\s+src=['"]([^"']+)['"].+?title=['"]([^"']+)['"]""", re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for video, img, name in match:
-        name = utils.cleantext(name)
+    soup = utils.parse_html(listhtml)
 
-        contextmenu = []
-        contexturl = (utils.addon_sys
-                      + "?mode=" + str('javguru.Lookupinfo')
-                      + "&url=" + urllib_parse.quote_plus(video))
-        contextmenu.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+    # Find all inside-article items
+    articles = soup.select('.inside-article')
+    for article in articles:
+        try:
+            # Get link and image
+            link = article.select_one('a[href]')
+            if not link:
+                continue
+            video = utils.safe_get_attr(link, 'href')
+            if not video:
+                continue
 
-        site.add_download_link(name, video, 'Play', img, name, contextm=contextmenu)
+            img_tag = link.select_one('img[src]')
+            if not img_tag:
+                continue
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
 
-    match = re.compile(r"""class=["']current["'].+?href=["']([^"']+)["']>(\d+)<""", re.DOTALL | re.IGNORECASE).findall(listhtml)
-    if match:
-        npage, np = match[0]
-        lp = re.compile(r"""href=["'][^"']+page/(\d+)/[^"']*["']>Last""", re.DOTALL | re.IGNORECASE).findall(listhtml)
-        lp = '/' + lp[0] if lp else ''
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0}{1})'.format(np, lp), site.url + npage, 'List', site.img_next)
+            # Get title
+            name = utils.safe_get_attr(link, 'title', default='')
+            if not name:
+                name = utils.safe_get_attr(img_tag, 'alt', default='')
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            contextmenu = []
+            contexturl = (utils.addon_sys
+                          + "?mode=" + str('javguru.Lookupinfo')
+                          + "&url=" + urllib_parse.quote_plus(video))
+            contextmenu.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+
+            site.add_download_link(name, video, 'Play', img, name, contextm=contextmenu)
+        except Exception as e:
+            utils.log('javguru List: Error processing video - {}'.format(e))
+            continue
+
+    # Pagination - find current page and next link
+    current = soup.select_one('.current')
+    if current:
+        # Find next link after current
+        next_sibling = current.find_next_sibling('a')
+        if next_sibling:
+            npage = utils.safe_get_attr(next_sibling, 'href')
+            np = utils.safe_get_text(next_sibling, '').strip()
+
+            # Find last page link
+            last_link = soup.find('a', string=lambda text: text and 'Last' in text if text else False)
+            lp = ''
+            if last_link:
+                last_href = utils.safe_get_attr(last_link, 'href')
+                lp_match = re.search(r'page/(\d+)/', last_href) if last_href else None
+                lp = '/' + lp_match.group(1) if lp_match else ''
+
+            if npage:
+                full_url = site.url + npage if npage.startswith('/') else npage
+                site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0}{1})'.format(np, lp), full_url, 'List', site.img_next)
+
     utils.eod()
 
 
@@ -74,13 +115,61 @@ def Catjson(url):
 @site.register()
 def Cat(url):
     cathtml = utils.getHtml(url)
-    patterns = [r'class="cat-item.+?href="([^"]+)">([^<]+)</a>\s*\((\d+)\)',
-                r'href="([^"]+)"\s+?rel="tag">([^<]+)<span>\s*\((\d+)\)']
-    for pattern in patterns:
-        match = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(cathtml)
-        for caturl, name, count in match:
-            name = '{0} ({1})'.format(utils.cleantext(name), count)
-            site.add_dir(name, caturl, 'List', '')
+    soup = utils.parse_html(cathtml)
+
+    # Try different selectors for category items
+    # Pattern 1: cat-item with link and count in parentheses
+    cat_items = soup.select('.cat-item')
+    for item in cat_items:
+        try:
+            link = item.select_one('a[href]')
+            if not link:
+                continue
+
+            caturl = utils.safe_get_attr(link, 'href')
+            if not caturl:
+                continue
+
+            # Get text and extract name and count
+            text = utils.safe_get_text(item, '').strip()
+            # Count is in parentheses at end
+            count_match = re.search(r'\((\d+)\)$', text)
+            count = count_match.group(1) if count_match else ''
+            name = re.sub(r'\s*\(\d+\)$', '', text).strip()
+            name = utils.cleantext(name)
+
+            if name:
+                display_name = '{0} ({1})'.format(name, count) if count else name
+                site.add_dir(display_name, caturl, 'List', '')
+        except Exception as e:
+            utils.log('javguru Cat: Error processing cat-item - {}'.format(e))
+            continue
+
+    # Pattern 2: tag links with span counts
+    tag_links = soup.select('a[rel="tag"][href]')
+    for link in tag_links:
+        try:
+            caturl = utils.safe_get_attr(link, 'href')
+            if not caturl:
+                continue
+
+            name = utils.safe_get_text(link, '').strip()
+            # Look for count in sibling span
+            span = link.find_next_sibling('span')
+            count = ''
+            if span:
+                span_text = utils.safe_get_text(span, '').strip()
+                count_match = re.search(r'\((\d+)\)', span_text)
+                count = count_match.group(1) if count_match else ''
+
+            name = utils.cleantext(name)
+            if name:
+                display_name = '{0} ({1})'.format(name, count) if count else name
+                site.add_dir(display_name, caturl, 'List', '')
+        except Exception as e:
+            utils.log('javguru Cat: Error processing tag link - {}'.format(e))
+            continue
+
     utils.eod()
 
 
@@ -88,24 +177,123 @@ def Cat(url):
 def Toplist(url):
     site.add_dir('[COLOR hotpink]Full list, by number of videos[/COLOR]', url, 'Cat', site.img_cat)
     cathtml = utils.getHtml(url)
-    match = re.compile(r'<a href="([^"]+)">\s+?<div[^<]+<img src="([^"]+)".*?tagname">([^<]+)<[^>]+>[^>]+>([^<]+).*?</i>([^<]+)<', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for caturl, img, name, plot, count in sorted(match, key=lambda x: x[2]):
-        name = '{0} ({1})'.format(utils.cleantext(name), count)
-        site.add_dir(name, caturl, 'List', img)
+    soup = utils.parse_html(cathtml)
+
+    # Find tag items with images
+    tag_items = []
+    links = soup.select('a[href]')
+    for link in links:
+        try:
+            # Check if link contains an image and tagname
+            img_tag = link.select_one('img[src]')
+            if not img_tag:
+                continue
+
+            caturl = utils.safe_get_attr(link, 'href')
+            if not caturl:
+                continue
+
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+
+            # Find tagname
+            tagname_elem = link.select_one('.tagname')
+            if not tagname_elem:
+                continue
+
+            name = utils.safe_get_text(tagname_elem, '').strip()
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            # Find plot (description text)
+            # Usually after tagname, look for next text element
+            plot = ''  # Optional, not critical
+
+            # Find count (usually with an <i> tag)
+            count_elem = link.select_one('i')
+            if count_elem:
+                # Get next text after <i>
+                count_text = count_elem.find_next_sibling(string=True)
+                count = count_text.strip() if count_text else ''
+            else:
+                count = ''
+
+            tag_items.append((caturl, img, name, plot, count))
+        except Exception as e:
+            utils.log('javguru Toplist: Error processing tag item - {}'.format(e))
+            continue
+
+    # Sort by name
+    for caturl, img, name, plot, count in sorted(tag_items, key=lambda x: x[2]):
+        display_name = '{0} ({1})'.format(name, count) if count else name
+        site.add_dir(display_name, caturl, 'List', img)
+
     utils.eod()
 
 
 @site.register()
 def Actress(url):
     actresshtml = utils.getHtml(url)
-    match = re.compile(r'/(actress/[^"]+)".*?src="([^"]+)"\s+?alt="([^"]+)".*?</i>([^<]+)<', re.DOTALL | re.IGNORECASE).findall(actresshtml)
-    for actressurl, img, name, videos in match:
-        name = '{0} ({1})'.format(utils.cleantext(name), videos.strip())
-        site.add_dir(name, site.url + actressurl, 'List', img)
-    match = re.compile(r'current".+?href="([^"]+)">(\d+)<', re.DOTALL | re.IGNORECASE).findall(actresshtml)
-    if match:
-        npage, np = match[0]
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(np), site.url + npage, 'Actress', site.img_next)
+    soup = utils.parse_html(actresshtml)
+
+    # Find actress links with /actress/ in href
+    actress_links = soup.select('a[href*="/actress/"]')
+    for link in actress_links:
+        try:
+            href = utils.safe_get_attr(link, 'href')
+            if not href or '/actress/' not in href:
+                continue
+
+            # Extract actress path from URL
+            if href.startswith('http'):
+                actressurl = '/' + '/'.join(href.split('/')[3:]) if len(href.split('/')) > 3 else href
+            else:
+                actressurl = href
+
+            # Get image
+            img_tag = link.select_one('img[src]')
+            if not img_tag:
+                continue
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+
+            # Get name from img alt
+            name = utils.safe_get_attr(img_tag, 'alt', default='')
+            if not name:
+                name = utils.safe_get_text(link, '').strip()
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            # Find video count (usually after </i> tag)
+            count_elem = link.select_one('i')
+            videos = ''
+            if count_elem:
+                # Get next text after <i>
+                count_text = count_elem.find_next_sibling(string=True)
+                videos = count_text.strip() if count_text else ''
+
+            if videos:
+                name = '{0} ({1})'.format(name, videos)
+
+            full_url = site.url + actressurl if actressurl.startswith('/') else site.url + '/' + actressurl
+            site.add_dir(name, full_url, 'List', img)
+        except Exception as e:
+            utils.log('javguru Actress: Error processing actress - {}'.format(e))
+            continue
+
+    # Pagination - find current page and next link
+    current = soup.select_one('.current')
+    if current:
+        # Find next link after current
+        next_sibling = current.find_next_sibling('a')
+        if next_sibling:
+            npage = utils.safe_get_attr(next_sibling, 'href')
+            np = utils.safe_get_text(next_sibling, '').strip()
+
+            if npage:
+                full_url = site.url + npage if npage.startswith('/') else npage
+                site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(np), full_url, 'Actress', site.img_next)
+
     utils.eod()
 
 

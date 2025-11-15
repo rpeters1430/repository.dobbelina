@@ -4,7 +4,7 @@
 
 **Started**: 2025-11-01
 **Current Version**: v1.1.181
-**Progress**: 29/137 sites (21.2%) migrated
+**Progress**: 43/137 sites (31.4%) migrated
 
 ---
 
@@ -83,7 +83,7 @@ All Phase 2 cam sites have been reviewed and migrated where applicable.
 
 ---
 
-### 📺 Phase 3: Medium Priority Sites (14/20 completed - 70%)
+### 📺 Phase 3: Medium Priority Sites (20/20 completed - 100%) ✅
 
 Secondary mainstream sites with good traffic (previously Phase 2).
 
@@ -103,31 +103,31 @@ Secondary mainstream sites with good traffic (previously Phase 2).
 | justporn | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings & categories |
 | netflixporno | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings, categories, and studios (2025-11-11) |
 | peekvids | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings, categories & channels |
-| playvids | ⏳ Pending | Mainstream | |
-| porndig | ⏳ Pending | Mainstream | |
-| pornhoarder | ⏳ Pending | Aggregator | |
-| pornmz | ⏳ Pending | Mainstream | |
-| longvideos | ⏳ Pending | Long content | |
-| luxuretv | ⏳ Pending | Mainstream | |
+| playvids | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings, categories, channels, pornstars & playback |
+| porndig | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings, categories, studios, pornstars (JSON API + HTML parsing) |
+| pornhoarder | ✅ **COMPLETED** | Aggregator | BeautifulSoup migration for listings, categories, pornstars, studios & multi-source playback |
+| pornmz | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings, categories, tags & playback |
+| longvideos | ✅ **COMPLETED** | Long content | BeautifulSoup migration for listings, categories & multi-quality playback |
+| luxuretv | ✅ **COMPLETED** | Mainstream | BeautifulSoup migration for listings, categories & playback |
 
 **Target**: Resume after Phase 2 cams ship
 
 ---
 
-### 🎌 Phase 4: JAV Sites (0/20 completed)
+### 🎌 Phase 4: JAV Sites (8/20 completed - 40%)
 
 Japanese adult video sites.
 
 | Site | Status | Notes |
 |------|--------|-------|
-| missav | ⏳ Pending | Popular JAV site |
-| javgg | ⏳ Pending | |
-| javguru | ⏳ Pending | |
-| javbangers | ⏳ Pending | |
-| javhdporn | ⏳ Pending | |
-| javmoe | ⏳ Pending | |
-| kissjav | ⏳ Pending | |
-| supjav | ⏳ Pending | |
+| missav | ✅ **COMPLETED** | BeautifulSoup migration for List, Models, Categories |
+| javgg | ✅ **COMPLETED** | BeautifulSoup migration for List, Tags |
+| javguru | ✅ **COMPLETED** | BeautifulSoup migration for List, Cat, Toplist, Actress |
+| javbangers | ✅ **COMPLETED** | BeautifulSoup migration with authentication preserved |
+| javhdporn | ✅ **COMPLETED** | BeautifulSoup migration for List, Cat functions |
+| javmoe | ✅ **COMPLETED** | BeautifulSoup migration for List, Categories, Pornstars, Playvid |
+| kissjav | ✅ **COMPLETED** | BeautifulSoup migration for List, Categories, Playlists with error handling |
+| supjav | ✅ **COMPLETED** | BeautifulSoup migration for List, Cat, Playvid with multi-part support |
 | hpjav | ⏳ Pending | |
 | netflav | ⏳ Pending | |
 | avple | ⏳ Pending | |
@@ -348,9 +348,9 @@ Part of BeautifulSoup migration roadmap (site X/137)
 ### Overall Progress
 
 - **Total Sites**: 137
-- **Completed**: 28 (20.4%)
+- **Completed**: 43 (31.4%)
 - **In Progress**: 0
-- **Remaining**: 109 (79.6%)
+- **Remaining**: 94 (68.6%)
 
 ### Phase Progress
 
@@ -359,8 +359,8 @@ Part of BeautifulSoup migration roadmap (site X/137)
 | Phase 0: Infrastructure | 3 items | 3 | 100% ✅ |
 | Phase 1: High Priority | 10 | 8 | 80% 🚧 |
 | Phase 2: Live Cams | 8 | 4 | 50% ✅ |
-| Phase 3: Medium Priority | 20 | 11 | 55% 🚀 |
-| Phase 4: JAV Sites | 20 | 0 | 0% |
+| Phase 3: Medium Priority | 20 | 20 | 100% ✅ |
+| Phase 4: JAV Sites | 20 | 8 | 40% 🚀 |
 | Phase 5: Hentai/Anime | 10 | 0 | 0% |
 | Phase 6: International | 15 | 0 | 0% |
 | Phase 7: Niche/Specialty | 30 | 3 | 10% 🚀 |
@@ -382,18 +382,24 @@ Part of BeautifulSoup migration roadmap (site X/137)
 | 2025-11-09 | 2 (watchporn, justporn) | 23/137 | Remote: migrated WatchPorn & JustPorn to BeautifulSoup |
 | 2025-11-09 | 3 (chaturbate, stripchat, streamate) | 27/137 | Phase 2 cam sites: completed chaturbate CSRF/room data, stripchat List2/List3, streamate Search |
 | 2025-11-11 | 1 (netflixporno) | 28/137 | Migrated NetflixPorno to BeautifulSoup for listings, categories, studios |
+| 2025-11-11 | 1 (peekvids) | 29/137 | Migrated PeekVids to BeautifulSoup for listings, categories & channels |
+| 2025-11-13 | 6 (playvids, porndig, pornhoarder, pornmz, longvideos, luxuretv) | 35/137 | **Phase 3 COMPLETED**: All 20 medium-priority sites migrated to BeautifulSoup |
+| 2025-11-13 | 6 (missav, javgg, javguru, javbangers, javhdporn, javmoe) | 41/137 | **Phase 4 STARTED**: First batch of JAV sites migrated (30% complete) |
+| 2025-11-14 | 2 (kissjav, supjav) | 43/137 | **Phase 4 CONTINUES**: kissjav Playlists function + supjav full migration (40% complete) |
 
 **Estimated Timeline** (at 1 site/week, focusing on remaining backlog):
 - Phase 1 (2 remaining sites): ~2 weeks
 - Phase 2: ✅ **COMPLETED**
-- Phase 3 (8 remaining medium-priority sites): ~8 weeks
-- Full migration (110 remaining sites): ~110 weeks (≈2.1 years)
+- Phase 3: ✅ **COMPLETED**
+- Phase 4 (12 remaining JAV sites): ~12 weeks
+- Full migration (94 remaining sites): ~94 weeks (≈1.8 years)
 
 **Optimistic Timeline** (at 3 sites/week):
 - Phase 1 (2 remaining sites): <1 week
 - Phase 2: ✅ **COMPLETED**
-- Phase 3 (8 remaining medium-priority sites): ~3 weeks
-- Full migration (110 remaining sites): ~37 weeks (≈8.5 months)
+- Phase 3: ✅ **COMPLETED**
+- Phase 4 (12 remaining JAV sites): ~4 weeks
+- Full migration (94 remaining sites): ~31 weeks (≈7.2 months)
 
 ---
 
@@ -440,5 +446,5 @@ grep -c "✅ \*\*COMPLETED\*\*" ROADMAP.md
 
 ---
 
-**Last Updated**: 2025-11-09 (Phase 2 complete: chaturbate, stripchat, streamate)
-**Next Review**: After each Phase 3 site completion
+**Last Updated**: 2025-11-14 (Phase 4 continues: 8/20 JAV sites migrated - 40% complete)
+**Next Review**: After next Phase 4 batch completion

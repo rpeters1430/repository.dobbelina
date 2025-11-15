@@ -41,13 +41,7 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url)
-
-    delimiter = '<article data-video-id="'
-    re_videopage = 'href="([^"]+)"'
-    re_name = ' title="([^"]+)"'
-    re_img = '(?:img src|img data-src|poster)="([^"]+)"'
-    re_duration = 'duration">([^<]+)<'
-    re_quality = '>HD<'
+    soup = utils.parse_html(listhtml)
 
     cm = []
     cm_lookupinfo = (utils.addon_sys + "?mode=pornmz.Lookupinfo&url=")
@@ -55,10 +49,63 @@ def List(url):
     cm_related = (utils.addon_sys + "?mode=pornmz.Related&url=")
     cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')'))
 
-    utils.videos_list(site, 'pornmz.Play', listhtml, delimiter, re_videopage, re_name, re_img, re_duration=re_duration, re_quality=re_quality, contextm=cm)
-    np = re.compile(r'class="current">\d+<[^h]+href="([^"]+)"\s*class="inactive">(\d+)<', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        site.add_dir('Next Page... ({0})'.format(np.group(2)), np.group(1), 'List', site.img_next)
+    # Find all video articles
+    articles = soup.select('article[data-video-id]')
+    for article in articles:
+        try:
+            # Get video link
+            link = article.select_one('a[href][title]')
+            if not link:
+                continue
+
+            videopage = utils.safe_get_attr(link, 'href')
+            if not videopage:
+                continue
+
+            name = utils.safe_get_attr(link, 'title')
+            if not name:
+                name = utils.safe_get_text(link, '').strip()
+            name = utils.cleantext(name)
+
+            # Get image - check img src, img data-src, or poster attribute
+            img = ''
+            img_tag = article.select_one('img')
+            if img_tag:
+                img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+            if not img:
+                # Check for poster attribute on video tag
+                video_tag = article.select_one('video[poster]')
+                if video_tag:
+                    img = utils.safe_get_attr(video_tag, 'poster')
+
+            # Get duration
+            duration_tag = article.select_one('.duration')
+            duration = utils.safe_get_text(duration_tag, '').strip() if duration_tag else ''
+
+            # Check for HD quality
+            hd = 'HD' if '>HD<' in str(article) else ''
+
+            site.add_download_link(name, videopage, 'Play', img, name, duration=duration, quality=hd, contextm=cm)
+        except Exception as e:
+            utils.log('pornmz List: Error processing video - {}'.format(e))
+            continue
+
+    # Pagination - find current page and next inactive link
+    pagination = soup.select('.pagination a, .pagination li')
+    current_found = False
+    for item in pagination:
+        if 'current' in utils.safe_get_attr(item, 'class', default=''):
+            current_found = True
+        elif current_found:
+            # Next item after current should be the next page
+            next_link = item if item.name == 'a' else item.select_one('a')
+            if next_link and 'inactive' in utils.safe_get_attr(next_link, 'class', default=''):
+                next_url = utils.safe_get_attr(next_link, 'href')
+                next_page = utils.safe_get_text(next_link, '').strip()
+                if next_url and next_page:
+                    site.add_dir('Next Page... ({0})'.format(next_page), next_url, 'List', site.img_next)
+            break
+
     utils.eod()
 
 
@@ -66,27 +113,81 @@ def List(url):
 def Categories(url):
     while True:
         cathtml = utils.getHtml(url, site.url)
-        match = re.compile(r'<article [^<]+<a\s+href="([^"]+)"\s+title="([^"]+)".*?src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(cathtml)
-        for sitepage, name, img in match:
-            name = utils.cleantext(name)
-            siteurl = sitepage + '/page/1?filter=latest'
-            site.add_dir(name, siteurl, 'List', img)
-        np = re.search(r'current">\d</a></li><li><a\s+href="([^"]+)"', cathtml, re.IGNORECASE | re.DOTALL)
-        if np:
-            url = np.group(1)
+        soup = utils.parse_html(cathtml)
+
+        # Find all category articles
+        articles = soup.select('article')
+        for article in articles:
+            try:
+                link = article.select_one('a[href][title]')
+                if not link:
+                    continue
+
+                sitepage = utils.safe_get_attr(link, 'href')
+                if not sitepage:
+                    continue
+
+                name = utils.safe_get_attr(link, 'title')
+                name = utils.cleantext(name)
+                if not name:
+                    continue
+
+                # Get image
+                img_tag = article.select_one('img[src]')
+                img = utils.safe_get_attr(img_tag, 'src', ['data-src']) if img_tag else ''
+
+                siteurl = sitepage + '/page/1?filter=latest'
+                site.add_dir(name, siteurl, 'List', img)
+            except Exception as e:
+                utils.log('pornmz Categories: Error processing category - {}'.format(e))
+                continue
+
+        # Check for next page - find current page, then next link
+        pagination = soup.select('.pagination a, .pagination li')
+        next_url = None
+        current_found = False
+        for item in pagination:
+            if 'current' in utils.safe_get_attr(item, 'class', default=''):
+                current_found = True
+            elif current_found:
+                # Next item after current should be the next page
+                next_link = item if item.name == 'a' else item.select_one('a')
+                if next_link:
+                    next_url = utils.safe_get_attr(next_link, 'href')
+                break
+
+        if next_url:
+            url = next_url
         else:
             break
+
     utils.eod()
 
 
 @site.register()
 def Tags(url):
     taghtml = utils.getHtml(url, site.url)
-    match = re.compile(r'tag-item"><a\s+href="([^"]+)"[^>]+>([^<]+)<', re.DOTALL | re.IGNORECASE).findall(taghtml)
-    for tagpage, name in match:
-        name = utils.cleantext(name)
-        tagpage = tagpage + '/page/1?filter=latest'
-        site.add_dir(name, tagpage, 'List', '')
+    soup = utils.parse_html(taghtml)
+
+    # Find all tag items
+    tag_items = soup.select('.tag-item a[href]')
+    for link in tag_items:
+        try:
+            tagpage = utils.safe_get_attr(link, 'href')
+            if not tagpage:
+                continue
+
+            name = utils.safe_get_text(link, '').strip()
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            tagpage = tagpage + '/page/1?filter=latest'
+            site.add_dir(name, tagpage, 'List', '')
+        except Exception as e:
+            utils.log('pornmz Tags: Error processing tag - {}'.format(e))
+            continue
+
     utils.eod()
 
 
@@ -103,15 +204,25 @@ def Search(url, keyword=None):
 def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     html = utils.getHtml(url)
-    iframematch = re.compile(r'iframe\s+src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(html)
-    if iframematch:
-        iframe = iframematch[0]
-        html = utils.getHtml(iframe, site.url)
-        videomatch = re.compile(r'source src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(html)
-        if videomatch:
-            videourl = videomatch[0] + '|Referer={}'.format(site.url)
-            vp.play_from_direct_link(videourl)
-            return
+    soup = utils.parse_html(html)
+
+    # Find iframe
+    iframe_tag = soup.select_one('iframe[src]')
+    if iframe_tag:
+        iframe = utils.safe_get_attr(iframe_tag, 'src')
+        if iframe:
+            html = utils.getHtml(iframe, site.url)
+            iframe_soup = utils.parse_html(html)
+
+            # Find video source
+            source_tag = iframe_soup.select_one('source[src]')
+            if source_tag:
+                videourl = utils.safe_get_attr(source_tag, 'src')
+                if videourl:
+                    videourl = videourl + '|Referer={}'.format(site.url)
+                    vp.play_from_direct_link(videourl)
+                    return
+
     utils.notify('Oh oh', 'No video found')
 
 

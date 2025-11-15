@@ -13,7 +13,8 @@
       "Bash(/tmp/whoreshub.html)",
       "Bash(/tmp/whoreshub_main.html)",
       "Bash(git pull:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(python -m py_compile:*)"
     ],
     "deny": [],
     "ask": []

@@ -41,14 +41,8 @@ def List(url):
     if 'There is no data in this list.' in listhtml:
         utils.notify(msg='No videos found!')
         return
-    listhtml = listhtml.replace('<div class="k4">', '<div class="FHD">')
 
-    delimiter = '<div class="item"'
-    re_videopage = '<a href="({}[^"]+)"'.format(site.url + 'videos/')
-    re_name = 'title="([^"]+)"'
-    re_img = 'src="([^"]+jpg)"'
-    re_duration = r'"duration">\D*([^<]+)\D*<'
-    re_quality = '<div class="(FHD)">'
+    soup = utils.parse_html(listhtml)
 
     cm = []
     cm_lookupinfo = (utils.addon_sys + "?mode=" + str('longvideos.Lookupinfo') + "&url=")
@@ -56,12 +50,83 @@ def List(url):
     cm_related = (utils.addon_sys + "?mode=" + str('longvideos.Related') + "&url=")
     cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')'))
 
-    utils.videos_list(site, 'longvideos.Playvid', listhtml, delimiter, re_videopage, re_name, re_img, re_duration=re_duration, re_quality=re_quality, contextm=cm)
+    # Find all video items
+    items = soup.select('.item')
+    for item in items:
+        try:
+            # Get video link
+            link = item.select_one('a[href*="/videos/"][title]')
+            if not link:
+                continue
 
-    re_npurl = 'aria-label="Next" href="([^"]+)"'
-    re_npnr = r'aria-label="Next" href="[^"]+/(\d+)/"'
-    re_lpnr = r'/(\d+)/">[^<]+</a></li>\s*<li class="next"'
-    utils.next_page(site, 'longvideos.List', listhtml, re_npurl, re_npnr, re_lpnr=re_lpnr, contextm='longvideos.GotoPage')
+            videopage = utils.safe_get_attr(link, 'href')
+            if not videopage or site.url + 'videos/' not in videopage:
+                continue
+
+            name = utils.safe_get_attr(link, 'title')
+            if not name:
+                name = utils.safe_get_text(link, '').strip()
+            name = utils.cleantext(name)
+
+            # Get image (must be jpg)
+            img_tag = item.select_one('img[src]')
+            img = ''
+            if img_tag:
+                img_src = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+                if img_src and img_src.endswith('jpg'):
+                    img = img_src
+
+            # Get duration
+            duration_tag = item.select_one('.duration')
+            duration = ''
+            if duration_tag:
+                duration_text = utils.safe_get_text(duration_tag, '').strip()
+                # Extract just the time digits/colons
+                duration = re.sub(r'[^\d:]', '', duration_text) if duration_text else ''
+
+            # Check for quality (k4 or FHD class)
+            quality = ''
+            if item.select_one('.k4, .FHD'):
+                quality = 'FHD'
+
+            site.add_download_link(name, videopage, 'Playvid', img, name, duration=duration, quality=quality, contextm=cm)
+        except Exception as e:
+            utils.log('longvideos List: Error processing video - {}'.format(e))
+            continue
+
+    # Pagination
+    next_link = soup.select_one('a[aria-label="Next"][href]')
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, 'href')
+        if next_url:
+            # Extract page number from URL
+            next_page_match = re.search(r'/(\d+)/', next_url)
+            next_page = next_page_match.group(1) if next_page_match else ''
+
+            # Find last page number
+            last_page = ''
+            pagination_items = soup.select('.pagination li')
+            for item in reversed(pagination_items):
+                if 'next' in utils.safe_get_attr(item, 'class', default=''):
+                    # Get previous sibling for last page number
+                    prev_item = item.find_previous_sibling('li')
+                    if prev_item:
+                        last_link = prev_item.select_one('a[href]')
+                        if last_link:
+                            last_page_match = re.search(r'/(\d+)/', utils.safe_get_attr(last_link, 'href'))
+                            last_page = last_page_match.group(1) if last_page_match else ''
+                    break
+
+            # Add next page directory with goto page context menu
+            cm_goto = []
+            if next_page and last_page:
+                cm_goto_url = (utils.addon_sys + "?mode=longvideos.GotoPage&url=" + urllib_parse.quote_plus(next_url) +
+                               "&np=" + next_page + "&lp=" + last_page)
+                cm_goto.append(('[COLOR hotpink]Goto Page[/COLOR]', 'RunPlugin(' + cm_goto_url + ')'))
+
+            site.add_dir('Next Page ({})'.format(next_page) if next_page else 'Next Page',
+                        next_url, 'List', site.img_next, contextm=cm_goto if cm_goto else None)
+
     utils.eod()
 
 
@@ -89,10 +154,28 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(r'<a\s+class="item"\shref="([^"]+)"\stitle="([^"]+)">', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name in match:
-        name = utils.cleantext(name)
-        site.add_dir(name, catpage, 'List', '')
+    soup = utils.parse_html(cathtml)
+
+    # Find all category links
+    cat_links = soup.select('a.item[href][title]')
+    for link in cat_links:
+        try:
+            catpage = utils.safe_get_attr(link, 'href')
+            if not catpage:
+                continue
+
+            name = utils.safe_get_attr(link, 'title')
+            if not name:
+                name = utils.safe_get_text(link, '').strip()
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            site.add_dir(name, catpage, 'List', '')
+        except Exception as e:
+            utils.log('longvideos Categories: Error processing category - {}'.format(e))
+            continue
+
     utils.eod()
 
 
@@ -101,9 +184,24 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videohtml = utils.getHtml(url, site.url)
-    match = re.compile(r'<source\s+src=[\'"]([^\'"]+)[\'"][^>]*type=[\'"]video/mp4[\'"][^>]*label=[\'"]([^\'"]+)[\'"]', re.DOTALL | re.IGNORECASE).findall(videohtml)
-    if match:
-        sources = {v[1].replace('2160p', '1080p'): v[0] for v in match}
+    soup = utils.parse_html(videohtml)
+
+    # Find all video source tags with type="video/mp4" and label attributes
+    source_tags = soup.select('source[src][type="video/mp4"][label]')
+    sources = {}
+    for source in source_tags:
+        try:
+            src = utils.safe_get_attr(source, 'src')
+            label = utils.safe_get_attr(source, 'label')
+            if src and label:
+                # Replace 2160p with 1080p in label
+                label = label.replace('2160p', '1080p')
+                sources[label] = src
+        except Exception as e:
+            utils.log('longvideos Playvid: Error processing source - {}'.format(e))
+            continue
+
+    if sources:
         vp.progress.update(50, "[CR]Loading video[CR]")
         videourl = utils.prefquality(sources, sort_by=lambda x: int(x[:-1]), reverse=True)
         if videourl:

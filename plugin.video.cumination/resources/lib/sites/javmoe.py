@@ -53,20 +53,51 @@ def List(url):
             listhtml = utils.getHtml(url, site.url)
         except:
             return None
-        divs = re.compile(r'<div\s*class="epshen">(.+?</h2>)', re.DOTALL | re.IGNORECASE).findall(listhtml)
+
+        soup = utils.parse_html(listhtml)
+
+        # Find all divs with class "epshen"
+        divs = soup.select('.epshen, div[class*="epshen"]')
         for div in divs:
-            match = re.compile(r'href="([^"]+).+?src="([^"]+).+?title">([^<]+)', re.DOTALL | re.IGNORECASE).search(div)
-            if match:
-                videopage, img, name = match.groups()
+            try:
+                # Get link
+                link = div.select_one('a[href]')
+                if not link:
+                    continue
+                videopage = utils.safe_get_attr(link, 'href')
+                if not videopage:
+                    continue
+
+                # Get image
+                img_tag = div.select_one('img[src]')
+                if not img_tag:
+                    continue
+                img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+
+                # Get name from title element
+                title_elem = div.select_one('.title, [class*="title"]')
+                if not title_elem:
+                    continue
+                name = utils.safe_get_text(title_elem, '').strip()
                 name = utils.cleantext(name)
+                if not name:
+                    continue
+
                 img = urllib_parse.quote(img, safe=':/')
                 videopage = urllib_parse.quote(videopage, safe=':/')
                 site.add_download_link(name, videopage, 'Playvid', img, name)
                 items += 1
-        try:
-            url = re.compile(r'class="next\s*page-numbers"\s*href="([^"]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
-        except:
+            except Exception as e:
+                utils.log('javmoe List: Error processing video - {}'.format(e))
+                continue
+
+        # Find next page link
+        next_link = soup.select_one('.next.page-numbers[href], a.next[href]')
+        if next_link:
+            url = utils.safe_get_attr(next_link, 'href')
+        else:
             url = None
+
     if url:
         site.add_dir('Next Page', url, 'List', site.img_next)
     utils.eod()
@@ -86,9 +117,29 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url, '')
-    match = re.compile(r'<li><a\s*href="([^"]+)"\s*>([^<]+)', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name in match:
-        site.add_dir(name, catpage, 'List', site.img_cat)
+    soup = utils.parse_html(cathtml)
+
+    # Find all list items with links
+    list_items = soup.select('li')
+    for item in list_items:
+        try:
+            link = item.select_one('a[href]')
+            if not link:
+                continue
+
+            catpage = utils.safe_get_attr(link, 'href')
+            if not catpage:
+                continue
+
+            name = utils.safe_get_text(link, '').strip()
+            if not name:
+                continue
+
+            site.add_dir(name, catpage, 'List', site.img_cat)
+        except Exception as e:
+            utils.log('javmoe Categories: Error processing category - {}'.format(e))
+            continue
+
     utils.eod()
 
 
@@ -104,9 +155,40 @@ def Letters(url):
 def Pornstars(url):
     caturl = site.url + 'pornstars/'
     cathtml = utils.getHtml(caturl, '')
-    match = re.compile(r'<li><a\s*href="([^"]+)"\s*>({}[^<]+)'.format(url), re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name in match:
-        site.add_dir(name, catpage.strip(), 'List')
+    soup = utils.parse_html(cathtml)
+
+    # Find all list items with links matching the letter pattern
+    list_items = soup.select('li')
+    for item in list_items:
+        try:
+            link = item.select_one('a[href]')
+            if not link:
+                continue
+
+            catpage = utils.safe_get_attr(link, 'href')
+            if not catpage:
+                continue
+
+            name = utils.safe_get_text(link, '').strip()
+            if not name:
+                continue
+
+            # Check if name matches the letter pattern
+            # url is either a letter or '\d' for numbers
+            if url == r'\d':
+                # Check if name starts with a digit
+                if not name[0].isdigit():
+                    continue
+            else:
+                # Check if name starts with the specified letter (case insensitive)
+                if not name.upper().startswith(url.upper()):
+                    continue
+
+            site.add_dir(name, catpage.strip(), 'List')
+        except Exception as e:
+            utils.log('javmoe Pornstars: Error processing pornstar - {}'.format(e))
+            continue
+
     utils.eod()
 
 
@@ -116,7 +198,22 @@ def Playvid(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videopage = utils.getHtml(url, site.url)
 
-    eurls = re.compile(r'<li><a\s*href="([^"]+)"\s*>\s*([^<]+)', re.DOTALL | re.IGNORECASE).findall(videopage)
+    # Parse embed URLs from list items
+    soup = utils.parse_html(videopage)
+    eurls = []
+    list_items = soup.select('li')
+    for item in list_items:
+        try:
+            link = item.select_one('a[href]')
+            if not link:
+                continue
+            eurl = utils.safe_get_attr(link, 'href')
+            ename = utils.safe_get_text(link, '').strip()
+            if eurl and ename:
+                eurls.append((eurl, ename))
+        except:
+            continue
+
     sources = {enames.get(ename): eurl for eurl, ename in eurls if ename in list(enames.keys())}
     eurl = utils.selector('Select Hoster', sources)
     if not eurl:

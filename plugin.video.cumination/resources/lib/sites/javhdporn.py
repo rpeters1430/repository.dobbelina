@@ -37,34 +37,138 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(r'''<article.+?href="([^"]+)"\s*title="([^"]+).+?(?:data-lazy-src|\ssrc)="(http[^"]+).+?/div>(.+?)duration"[^\d]+([\d:]+)''', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for video, name, img, hd, duration in match:
-        name = utils.cleantext(name)
-        hd = 'HD' if '>HD<' in hd else ''
-        site.add_download_link(name, video, 'Play', img, name, duration=duration, quality=hd)
+    soup = utils.parse_html(listhtml)
 
-    match = re.compile(r'''class="pagination".+?href="([^"]+)">Next''', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if match:
-        npage = match.group(1)
-        currpg = re.compile(r'''class="pagination".+?current">([^<]+)''', re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
-        lastpg = re.compile(r'''class="pagination".+?href=['"].+?/([\d]+)/[^/'"]*['"]>Last''', re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (Currently in Page {0} of {1})'.format(currpg, lastpg), npage, 'List', site.img_next)
+    # Find all article elements with video items
+    articles = soup.select('article')
+    for article in articles:
+        try:
+            # Get video link and title
+            link = article.select_one('a[href][title]')
+            if not link:
+                continue
+            video = utils.safe_get_attr(link, 'href')
+            if not video:
+                continue
+
+            name = utils.safe_get_attr(link, 'title', default='')
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            # Get image - try data-lazy-src first, then src
+            img_tag = article.select_one('img')
+            if not img_tag:
+                continue
+            img = utils.safe_get_attr(img_tag, 'data-lazy-src', ['src'])
+
+            # Check for HD badge
+            hd = 'HD' if article.find(string=lambda text: text and '>HD<' in text if text else False) or article.select_one('.hd, [class*="hd"]') else ''
+
+            # Get duration
+            duration_elem = article.select_one('.duration, [class*="duration"]')
+            duration = ''
+            if duration_elem:
+                duration_text = utils.safe_get_text(duration_elem, '').strip()
+                # Extract time pattern (digits and colons)
+                time_match = re.search(r'[\d:]+', duration_text)
+                duration = time_match.group(0) if time_match else ''
+
+            site.add_download_link(name, video, 'Play', img, name, duration=duration, quality=hd)
+        except Exception as e:
+            utils.log('javhdporn List: Error processing video - {}'.format(e))
+            continue
+
+    # Pagination
+    pagination = soup.select_one('.pagination, [class*="pagination"]')
+    if pagination:
+        # Find next link
+        next_link = pagination.find('a', string=lambda text: text and 'Next' in text if text else False)
+        if next_link:
+            npage = utils.safe_get_attr(next_link, 'href')
+
+            # Find current page
+            current = pagination.select_one('.current')
+            currpg = utils.safe_get_text(current, '').strip() if current else ''
+
+            # Find last page link
+            last_link = pagination.find('a', string=lambda text: text and 'Last' in text if text else False)
+            lastpg = ''
+            if last_link:
+                last_href = utils.safe_get_attr(last_link, 'href')
+                # Extract last page number from URL
+                last_match = re.search(r'/(\\d+)/[^/]*$', last_href) if last_href else None
+                lastpg = last_match.group(1) if last_match else ''
+
+            if npage:
+                page_info = ' (Currently in Page {0} of {1})'.format(currpg, lastpg) if currpg and lastpg else ''
+                site.add_dir('[COLOR hotpink]Next Page...[/COLOR]' + page_info, npage, 'List', site.img_next)
+
     utils.eod()
 
 
 @site.register()
 def Cat(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(r'<article.+?href="([^"]+).+?lazy-src="([^"]+).+?title">([^<]+)', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for caturl, img, name in match:
-        name = utils.cleantext(name)
-        site.add_dir(name, caturl, 'List', img)
-    match = re.compile(r'''class="pagination".+?href="([^"]+)">Next''', re.DOTALL | re.IGNORECASE).search(cathtml)
-    if match:
-        npage = match.group(1)
-        currpg = re.compile(r'''class="pagination".+?current">([^<]+)''', re.DOTALL | re.IGNORECASE).findall(cathtml)[0]
-        lastpg = re.compile(r'''class="pagination".+?href=['"].+?([\d]+)/['"]>Last''', re.DOTALL | re.IGNORECASE).findall(cathtml)[0]
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (Currently in Page {0} of {1})'.format(currpg, lastpg), npage, 'Cat', site.img_next)
+    soup = utils.parse_html(cathtml)
+
+    # Find all article elements with category items
+    articles = soup.select('article')
+    for article in articles:
+        try:
+            # Get category link
+            link = article.select_one('a[href]')
+            if not link:
+                continue
+            caturl = utils.safe_get_attr(link, 'href')
+            if not caturl:
+                continue
+
+            # Get image with lazy-src
+            img_tag = article.select_one('img[data-lazy-src], img[src]')
+            if not img_tag:
+                continue
+            img = utils.safe_get_attr(img_tag, 'data-lazy-src', ['src'])
+
+            # Get name from title element
+            title_elem = article.select_one('.title, [class*="title"]')
+            if not title_elem:
+                continue
+            name = utils.safe_get_text(title_elem, '').strip()
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            site.add_dir(name, caturl, 'List', img)
+        except Exception as e:
+            utils.log('javhdporn Cat: Error processing category - {}'.format(e))
+            continue
+
+    # Pagination
+    pagination = soup.select_one('.pagination, [class*="pagination"]')
+    if pagination:
+        # Find next link
+        next_link = pagination.find('a', string=lambda text: text and 'Next' in text if text else False)
+        if next_link:
+            npage = utils.safe_get_attr(next_link, 'href')
+
+            # Find current page
+            current = pagination.select_one('.current')
+            currpg = utils.safe_get_text(current, '').strip() if current else ''
+
+            # Find last page link
+            last_link = pagination.find('a', string=lambda text: text and 'Last' in text if text else False)
+            lastpg = ''
+            if last_link:
+                last_href = utils.safe_get_attr(last_link, 'href')
+                # Extract last page number from URL
+                last_match = re.search(r'/(\\d+)/', last_href) if last_href else None
+                lastpg = last_match.group(1) if last_match else ''
+
+            if npage:
+                page_info = ' (Currently in Page {0} of {1})'.format(currpg, lastpg) if currpg and lastpg else ''
+                site.add_dir('[COLOR hotpink]Next Page...[/COLOR]' + page_info, npage, 'Cat', site.img_next)
+
     utils.eod()
 
 

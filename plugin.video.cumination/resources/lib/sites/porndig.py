@@ -51,9 +51,30 @@ def Categories(url):
     if addon.getSetting("pdsection") == '1':
         url = site.url + 'amateur/videos/'
     urldata = utils.getHtml(url, site.url)
-    reobj = re.compile(r'category_slug.+?value="([^"]+).+?>([^<]+)', re.DOTALL | re.IGNORECASE).findall(urldata)
-    for catchannel, catname in reobj:
-        site.add_dir(utils.cleantext(catname), '', 'List', '', 0, catchannel, 3)
+    soup = utils.parse_html(urldata)
+
+    # Find category options with category_slug
+    category_options = soup.select('option[value]')
+    for option in category_options:
+        try:
+            # Check if this is a category_slug option (parent select should have category_slug in name/id)
+            parent_select = option.find_parent('select')
+            if not parent_select or 'category_slug' not in str(parent_select.get('name', '')) + str(parent_select.get('id', '')):
+                continue
+
+            catchannel = utils.safe_get_attr(option, 'value')
+            if not catchannel:
+                continue
+
+            catname = utils.safe_get_text(option, '').strip()
+            if not catname:
+                continue
+
+            site.add_dir(utils.cleantext(catname), '', 'List', '', 0, catchannel, 3)
+        except Exception as e:
+            utils.log('porndig Categories: Error processing category - {}'.format(e))
+            continue
+
     utils.eod()
 
 
@@ -145,13 +166,45 @@ def Pornstars(url, page=1):
     data = PornstarListData(page)
     urldata = utils.getHtml(url, site.url, headers, data=data)
     urldata = ParseJson(urldata)
+    soup = utils.parse_html(urldata)
+
     i = 0
-    match = re.compile(r'id="_([\d]+).+?src="([^"?]+).+?alt="([^"]+).+?videos".+?p>([^<]+)',
-                       re.DOTALL | re.IGNORECASE).findall(urldata)
-    for ID, img, studio, videos in match:
-        title = "{0} [COLOR deeppink][I]{1} videos[/I][/COLOR]".format(studio, videos)
-        site.add_dir(title, '', 'List', img, 0, ID, 2)
-        i += 1
+    # Find items with IDs starting with underscore and digit
+    items = soup.select('[id^="_"]')
+    for item in items:
+        try:
+            # Extract ID from element id (format: _12345)
+            item_id = utils.safe_get_attr(item, 'id')
+            if not item_id or not item_id[1:].isdigit():
+                continue
+            ID = item_id[1:]  # Remove leading underscore
+
+            img_tag = item.select_one('img')
+            if not img_tag:
+                continue
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+            # Remove query parameters from image URL
+            if '?' in img:
+                img = img.split('?')[0]
+
+            studio = utils.safe_get_attr(img_tag, 'alt', default='').strip()
+
+            # Find videos count (look for "videos" text followed by count)
+            videos_tag = item.select_one('p:-soup-contains("videos")')
+            if not videos_tag:
+                videos_tag = item.find('p', string=lambda text: text and 'videos' in text.lower() if text else False)
+            videos = utils.safe_get_text(videos_tag, '').strip()
+
+            if not studio:
+                continue
+
+            title = "{0} [COLOR deeppink][I]{1} videos[/I][/COLOR]".format(studio, videos)
+            site.add_dir(title, '', 'List', img, 0, ID, 2)
+            i += 1
+        except Exception as e:
+            utils.log('porndig Pornstars: Error processing pornstar - {}'.format(e))
+            continue
+
     if i >= 30:
         page += 1
         name = 'Next Page... ({0})'.format(page + 1)
@@ -164,13 +217,45 @@ def Studios(url, page=1):
     data = StudioListData(page)
     urldata = utils.getHtml(url, site.url, headers, data=data)
     urldata = ParseJson(urldata)
+    soup = utils.parse_html(urldata)
+
     i = 0
-    match = re.compile(r'id="_([\d]+).+?src="([^"?]+).+?alt="([^"]+).+?videos".+?p>([^<]+)',
-                       re.DOTALL | re.IGNORECASE).findall(urldata)
-    for ID, img, studio, videos in match:
-        title = "{0} [COLOR deeppink][I]{1} videos[/I][/COLOR]".format(studio, videos)
-        site.add_dir(title, '', 'List', img, 0, ID, 1)
-        i += 1
+    # Find items with IDs starting with underscore and digit
+    items = soup.select('[id^="_"]')
+    for item in items:
+        try:
+            # Extract ID from element id (format: _12345)
+            item_id = utils.safe_get_attr(item, 'id')
+            if not item_id or not item_id[1:].isdigit():
+                continue
+            ID = item_id[1:]  # Remove leading underscore
+
+            img_tag = item.select_one('img')
+            if not img_tag:
+                continue
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+            # Remove query parameters from image URL
+            if '?' in img:
+                img = img.split('?')[0]
+
+            studio = utils.safe_get_attr(img_tag, 'alt', default='').strip()
+
+            # Find videos count (look for "videos" text followed by count)
+            videos_tag = item.select_one('p:-soup-contains("videos")')
+            if not videos_tag:
+                videos_tag = item.find('p', string=lambda text: text and 'videos' in text.lower() if text else False)
+            videos = utils.safe_get_text(videos_tag, '').strip()
+
+            if not studio:
+                continue
+
+            title = "{0} [COLOR deeppink][I]{1} videos[/I][/COLOR]".format(studio, videos)
+            site.add_dir(title, '', 'List', img, 0, ID, 1)
+            i += 1
+        except Exception as e:
+            utils.log('porndig Studios: Error processing studio - {}'.format(e))
+            continue
+
     if i >= 30:
         page += 1
         name = 'Next Page... ({0})'.format(page + 1)
@@ -195,22 +280,66 @@ def List(channel, section, page=0):
 
     urldata = utils.getHtml(site.url + "posts/load_more_posts", site.url, headers, data=data)
     urldata = ParseJson(urldata)
+    soup = utils.parse_html(urldata)
+
     i = 0
-    match = re.compile(r'<section.+?href="([^"]+)">([^<]+).+?class="([^"]+).+?<img.+?src="([^"]+).+?tion">(?:<span>)?([^<]+)',
-                       re.DOTALL | re.IGNORECASE).findall(urldata)
-    for url, name, hd, img, duration in match:
-        if 'full' in hd:
-            hd = "[COLOR yellow]FULLHD[/COLOR]"
-        elif '4k' in hd:
-            hd = "[COLOR red]4K[/COLOR]"
-        elif 'hd' in hd:
-            hd = "[COLOR orange]HD[/COLOR]"
-        else:
+    # Find all section elements (video items)
+    sections = soup.select('section')
+    for section_item in sections:
+        try:
+            # Get video URL and name from link
+            link = section_item.select_one('a[href]')
+            if not link:
+                continue
+
+            url = utils.safe_get_attr(link, 'href')
+            if not url:
+                continue
+
+            name = utils.safe_get_text(link, '').strip()
+            if not name:
+                continue
+            name = name.replace(u'\u2019', "'")
+
+            # Get quality badge class
+            quality_badge = section_item.select_one('[class*="quality"], [class*="hd"], [class*="4k"], [class*="full"]')
             hd = ""
-        url = site.url[:-1] + url
-        name = name.replace(u'\u2019', "'")
-        site.add_download_link(name, url, 'Playvid', img, name, duration=duration, quality=hd)
-        i += 1
+            if quality_badge:
+                badge_class = utils.safe_get_attr(quality_badge, 'class')
+                if isinstance(badge_class, list):
+                    badge_class = ' '.join(badge_class).lower()
+                else:
+                    badge_class = str(badge_class).lower()
+
+                if 'full' in badge_class:
+                    hd = "[COLOR yellow]FULLHD[/COLOR]"
+                elif '4k' in badge_class:
+                    hd = "[COLOR red]4K[/COLOR]"
+                elif 'hd' in badge_class:
+                    hd = "[COLOR orange]HD[/COLOR]"
+
+            # Get image
+            img_tag = section_item.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+
+            # Get duration
+            duration_tag = section_item.select_one('[class*="tion"], .duration')
+            if duration_tag:
+                # Check for span inside duration tag
+                span = duration_tag.select_one('span')
+                duration = utils.safe_get_text(span if span else duration_tag, '').strip()
+            else:
+                duration = ''
+
+            if url.startswith('/'):
+                url = site.url[:-1] + url
+
+            site.add_download_link(name, url, 'Playvid', img, name, duration=duration, quality=hd)
+            i += 1
+        except Exception as e:
+            utils.log('porndig List: Error processing video - {}'.format(e))
+            continue
+
     if i >= maxresult and channel:
         page += 1
         name = 'Next Page... ({0})'.format(page + 1)
@@ -223,15 +352,33 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videopage = utils.getHtml(url, site.url)
-    player = re.compile(r'<iframe.+?data-url.+?class.+?src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(videopage)
-    if player:
-        playerpage = utils.getHtml(player[0], url)
+    soup = utils.parse_html(videopage)
+
+    # Find iframe with data-url and class attributes
+    iframe = soup.select_one('iframe[data-url][src]')
+    if not iframe:
+        # Try alternative selector
+        iframe = soup.select_one('iframe[src]')
+
+    if iframe:
+        player_url = utils.safe_get_attr(iframe, 'src')
+        if player_url:
+            playerpage = utils.getHtml(player_url, url)
+        else:
+            vp.progress.close()
+            return
     else:
         vp.progress.close()
         return
 
+    # Extract JSON from player page
     match = re.compile(r'window.player_args.push\((.+?)\);', re.DOTALL | re.IGNORECASE).findall(playerpage)
+    if not match:
+        vp.progress.close()
+        return
+
     videopagejson = json.loads(match[0])
+    videourl = None
 
     for data in videopagejson['src']:
         if data["codec"] == "h264":
@@ -241,6 +388,7 @@ def Playvid(url, name, download=None):
                 videourl = utils.selector('Choose your video', links, setting_valid='qualityask', sort_by=lambda x: int(x[:-1]), reverse=True)
             else:
                 videourl = data['src']
+
     if not videourl:
         vp.progress.close()
         return

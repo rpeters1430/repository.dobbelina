@@ -17,6 +17,7 @@
 '''
 
 import re
+from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
@@ -45,21 +46,65 @@ def List(url):
         listhtml = utils.getHtml(url)
     except:
         return None
+
+    soup = utils.parse_html(listhtml)
     cookiestring = get_cookies()
-    match = re.compile(r'class="post">.+?data-original="([^"]+).+?href="([^"]+).+?>([^<]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for img, videopage, name in match:
-        name = utils.cleantext(name)
-        img = img + '|Referer=' + url + '&Cookie=' + cookiestring + '&User-Agent=' + utils.USER_AGENT
-        site.add_download_link(name, videopage, 'Playvid', img, name)
-    p = re.compile(r'active"><span>\d+</span></li>(.*?)</ul>').search(listhtml)
-    if p:
-        li = re.compile(r'(<li>.+?</li>)').findall(p.group(1))
-        next_page = ''
-        if 'href' in li[0]:
-            next_page, np = re.findall(r"""href=["']([^"']+(\d+)[^"']*)""", li[0])[0]
-        if next_page:
-            lp = re.findall(r"""href=["'][^'"]+["']>(\d+)""", li[-1])[0]
-            site.add_dir('Next Page ({0}/{1})'.format(np, lp), next_page, 'List', site.img_next)
+
+    posts = soup.select('.post, [class*="post"]')
+    for post in posts:
+        try:
+            link = post.select_one('a[href]')
+            if not link:
+                continue
+            videopage = utils.safe_get_attr(link, 'href')
+            if not videopage:
+                continue
+
+            name = utils.safe_get_text(link, '').strip()
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            img_tag = post.select_one('img[data-original], img[src]')
+            img = ''
+            if img_tag:
+                img = utils.safe_get_attr(img_tag, 'data-original', ['src'])
+                if img:
+                    img = img + '|Referer=' + url + '&Cookie=' + cookiestring + '&User-Agent=' + utils.USER_AGENT
+
+            site.add_download_link(name, videopage, 'Playvid', img, name)
+        except Exception as exc:
+            utils.log('supjav List: Failed to parse post - {}'.format(exc))
+            continue
+
+    # Find pagination
+    active_page = soup.select_one('li.active span')
+    if active_page:
+        pagination_ul = active_page.find_parent('ul')
+        if pagination_ul:
+            active_li = active_page.find_parent('li')
+            next_li = active_li.find_next_sibling('li') if active_li else None
+
+            if next_li:
+                next_link = next_li.select_one('a[href]')
+                if next_link:
+                    next_page = utils.safe_get_attr(next_link, 'href')
+                    np = utils.safe_get_text(next_link, '').strip()
+
+                    # Find last page number
+                    all_page_links = pagination_ul.select('li a')
+                    lp = ''
+                    if all_page_links:
+                        last_text = utils.safe_get_text(all_page_links[-1], '').strip()
+                        if last_text.isdigit():
+                            lp = last_text
+
+                    if next_page:
+                        if np and lp:
+                            site.add_dir('Next Page ({0}/{1})'.format(np, lp), next_page, 'List', site.img_next)
+                        else:
+                            site.add_dir('Next Page', next_page, 'List', site.img_next)
+
     utils.eod()
 
 
@@ -77,31 +122,72 @@ def Search(url, keyword=None):
 @site.register()
 def Cat(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(r'menu-item-object-category.+?href="([^"]+)">([^<]+)', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name in match:
-        site.add_dir(name, catpage, 'List', '')
+    soup = utils.parse_html(cathtml)
+
+    menu_items = soup.select('.menu-item-object-category a, li[class*="menu-item-object-category"] a')
+    for link in menu_items:
+        try:
+            catpage = utils.safe_get_attr(link, 'href')
+            if not catpage:
+                continue
+            name = utils.safe_get_text(link, '').strip()
+            if name:
+                site.add_dir(name, catpage, 'List', '')
+        except Exception as exc:
+            utils.log('supjav Cat: Failed to parse menu item - {}'.format(exc))
+            continue
+
     utils.eod()
 
 
 @site.register()
 def Playvid(url, name, download=None):
     videopage = utils.getHtml(url, site.url)
+    soup = utils.parse_html(videopage)
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videourl = ''
 
-    ediv = re.compile(r'<div\s*class="btns(?:\sactive)?">(.+?)(?:<div\s*class="downs">|<script)', re.DOTALL | re.IGNORECASE).findall(videopage)[0]
-    if 'cd-server' in ediv:
-        parts = re.compile(r'class="cd-server.+?(<a.+?)</div', re.DOTALL | re.IGNORECASE).findall(ediv)
+    # Find the buttons div
+    btns_div = soup.select_one('div.btns, div[class*="btns"]')
+    if not btns_div:
+        vp.progress.close()
+        return
+
+    sources = {}
+
+    # Check if there are multiple parts (cd-server)
+    cd_servers = btns_div.select('.cd-server, [class*="cd-server"]')
+    if cd_servers:
         pno = 1
-        sources = {}
-        for part in parts:
-            embeds = re.compile(r'class="btn-server.+?data-link="([^"]+)">([^<]+)', re.DOTALL | re.IGNORECASE).findall(part)
-            sources.update({'{0} [COLOR hotpink]Part {1}[/COLOR]'.format(enames[hoster] if hoster in enames.keys() else hoster, pno): embed for embed, hoster in embeds})
-            pno += 1
+        for server_div in cd_servers:
+            try:
+                buttons = server_div.select('a.btn-server[data-link], a[class*="btn-server"][data-link]')
+                for btn in buttons:
+                    embed = utils.safe_get_attr(btn, 'data-link')
+                    hoster = utils.safe_get_text(btn, '').strip()
+                    if embed and hoster:
+                        display_name = '{0} [COLOR hotpink]Part {1}[/COLOR]'.format(
+                            enames[hoster] if hoster in enames.keys() else hoster, pno
+                        )
+                        sources[display_name] = embed
+                pno += 1
+            except Exception as exc:
+                utils.log('supjav Playvid: Failed to parse cd-server - {}'.format(exc))
+                continue
     else:
-        embeds = re.compile(r'class="btn-server.+?data-link="([^"]+)">([^<]+)', re.DOTALL | re.IGNORECASE).findall(ediv)
-        sources = {enames[hoster] if hoster in enames.keys() else hoster: embed for embed, hoster in embeds}
+        # Single part video
+        buttons = btns_div.select('a.btn-server[data-link], a[class*="btn-server"][data-link]')
+        for btn in buttons:
+            try:
+                embed = utils.safe_get_attr(btn, 'data-link')
+                hoster = utils.safe_get_text(btn, '').strip()
+                if embed and hoster:
+                    display_name = enames[hoster] if hoster in enames.keys() else hoster
+                    sources[display_name] = embed
+            except Exception as exc:
+                utils.log('supjav Playvid: Failed to parse button - {}'.format(exc))
+                continue
 
     olid = utils.selector('Select Hoster', sources)
     if olid:

@@ -36,22 +36,53 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, '')
-
-    delimiter = '<article'
-    re_videopage = 'href="([^"]+)"'
-    re_name = 'alt="([^"]+)"'
-    re_img = 'img src="([^"]+)"'
+    soup = utils.parse_html(listhtml)
 
     contextmenu = []
     contexturl = (utils.addon_sys + "?mode=javgg.Lookupinfo&url=")
     contextmenu.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')'))
-    utils.videos_list(site, 'javgg.Playvid', listhtml, delimiter, re_videopage, re_name, re_img, contextm=contextmenu)
 
-    np = re.compile(r'''class="pagination".+?href=["']([^"']+)["']><i\s*id=['"]next''').search(listhtml)
-    if np:
-        p = re.compile(r'''class="pagination"><span>([^<]+)''').search(listhtml)
-        pgtxt = p.group(1) if p else ''
-        site.add_dir('Next Page...  ({0})'.format(pgtxt), np.group(1), 'List', site.img_next)
+    # Find all article elements
+    articles = soup.select('article')
+    for article in articles:
+        try:
+            # Get video link
+            link = article.select_one('a[href]')
+            if not link:
+                continue
+            videopage = utils.safe_get_attr(link, 'href')
+            if not videopage:
+                continue
+
+            # Get name from img alt
+            img_tag = article.select_one('img')
+            if not img_tag:
+                continue
+            name = utils.safe_get_attr(img_tag, 'alt', default='')
+            if not name:
+                name = utils.safe_get_text(link, '').strip()
+
+            # Get image src
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+
+            site.add_download_link(name, videopage, 'Playvid', img, name, contextm=contextmenu)
+        except Exception as e:
+            utils.log('javgg List: Error processing video - {}'.format(e))
+            continue
+
+    # Pagination - find next link with id="next"
+    next_link = soup.select_one('.pagination a[href] i#next')
+    if next_link:
+        # Get parent <a> tag
+        next_a = next_link.find_parent('a')
+        if next_a:
+            next_url = utils.safe_get_attr(next_a, 'href')
+            if next_url:
+                # Get page text from span
+                page_span = soup.select_one('.pagination span')
+                pgtxt = utils.safe_get_text(page_span, '').strip() if page_span else ''
+                site.add_dir('Next Page...  ({0})'.format(pgtxt), next_url, 'List', site.img_next)
+
     utils.eod()
 
 
@@ -98,10 +129,35 @@ def Cats(url):
 @site.register()
 def Tags(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile('/(genre/[^"]+)"[^>]+>([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for tagpage, name in match:
-        name = utils.cleantext(name)
-        site.add_dir(name, site.url + tagpage, 'List', '')
+    soup = utils.parse_html(listhtml)
+
+    # Find all genre links
+    genre_links = soup.select('a[href*="/genre/"]')
+    for link in genre_links:
+        try:
+            href = utils.safe_get_attr(link, 'href')
+            if not href or '/genre/' not in href:
+                continue
+
+            # Extract genre path from full URL or relative path
+            if href.startswith('http'):
+                # Full URL - extract path after domain
+                tagpage = '/' + '/'.join(href.split('/')[3:]) if len(href.split('/')) > 3 else href
+            else:
+                tagpage = href
+
+            name = utils.safe_get_text(link, '').strip()
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            # Build full URL
+            full_url = site.url + tagpage if tagpage.startswith('/') else site.url + '/' + tagpage
+            site.add_dir(name, full_url, 'List', '')
+        except Exception as e:
+            utils.log('javgg Tags: Error processing tag - {}'.format(e))
+            continue
+
     utils.eod()
 
 
