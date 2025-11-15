@@ -38,7 +38,7 @@ def Main():
 def List(url):
     try:
         html = utils.getHtml(url, site.url)
-    except:
+    except Exception:
         html = utils._getHtml(str(url) + '?label_W9dmamG9w9zZg45g93FnLAVbSyd0bBDv=1', site.url)
     if 'There are no videos in the list' in html:
         utils.notify(msg='Nothing found')
@@ -105,7 +105,7 @@ def Playvid(url, name, download=None):
 
     try:
         videohtml = utils.getHtml(url, site.url)
-    except:
+    except Exception:
         videohtml = utils._getHtml(url + '?label_W9dmamG9w9zZg45g93FnLAVbSyd0bBDv=1', site.url)
 
     match = re.compile(r'div data-c="([^"]+)">\D+(\d+p)<', re.IGNORECASE | re.DOTALL).findall(videohtml)

@@ -23,7 +23,6 @@ from six.moves import urllib_parse
 import xbmc
 import xbmcgui
 from random import randint
-from bs4 import BeautifulSoup
 
 
 site = AdultSite('whoreshub', '[COLOR hotpink]WhoresHub[/COLOR]', 'https://www.whoreshub.com/', 'whoreshub.png', 'whoreshub')
@@ -455,7 +454,7 @@ def Playvid(url, name, download=None):
                 if match:
                     return int(match.group(1))
                 return 0
-            except:
+            except Exception:
                 return 0
 
         videourl = utils.prefquality(sources, sort_by=quality_sort, reverse=True)

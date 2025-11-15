@@ -51,7 +51,7 @@ def List(url):
     while items < 36 and url:
         try:
             listhtml = utils.getHtml(url, site.url)
-        except:
+        except Exception:
             return None
 
         soup = utils.parse_html(listhtml)
@@ -211,7 +211,7 @@ def Playvid(url, name, download=None):
             ename = utils.safe_get_text(link, '').strip()
             if eurl and ename:
                 eurls.append((eurl, ename))
-        except:
+        except Exception:
             continue
 
     sources = {enames.get(ename): eurl for eurl, ename in eurls if ename in list(enames.keys())}

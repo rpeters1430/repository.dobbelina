@@ -46,7 +46,7 @@ def List(url, page=1):
                    "smvid": "ffffffff-ffff-ffff-ffff-ffffffffffffG0000000000000",
                    "User-Agent": utils.USER_AGENT}
         data = utils._getHtml(url, headers=headers)
-    except:
+    except Exception:
         return None
     model_list = json.loads(data)
     total_models = model_list.get('totalResultCount')
@@ -73,12 +73,12 @@ def clean_database(showdialog=True):
                 conn.execute("DELETE FROM sizes WHERE idtexture = ?;", (row[0],))
                 try:
                     os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
-                except:
+                except Exception:
                     pass
             conn.execute("DELETE FROM texture WHERE url LIKE ?;", ('%' + "m1.nsimg.net" + '%',))
             if showdialog:
                 utils.notify('Finished', 'streamate.com images cleared')
-    except:
+    except Exception:
         pass
 
 
@@ -133,7 +133,7 @@ def Playvid(url, name):
     try:
         response = utils._getHtml("https://manifest-server.naiadsystems.com/live/s:{0}.json?last=load&format=mp4-hls".format(url))
         data = json.loads(response).get('formats')
-    except:
+    except Exception:
         utils.notify('Oh oh', 'Couldn\'t find a playable webcam link')
         return
 
@@ -159,7 +159,7 @@ def Search(url):
         return False, 0
     try:
         response = utils.getHtml(url + keyword)
-    except:
+    except Exception:
         utils.notify('Model not found - try again')
         return None
 

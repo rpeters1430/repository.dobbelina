@@ -105,7 +105,7 @@ def parse_html(html):
         from bs4 import BeautifulSoup
         try:
             return BeautifulSoup(html, 'lxml')
-        except:
+        except Exception:
             # Fallback to built-in parser if lxml not available
             return BeautifulSoup(html, 'html.parser')
     except ImportError:
@@ -507,11 +507,11 @@ if cj is not None:
     if os.path.isfile(TRANSLATEPATH(cookiePath)):
         try:
             cj.load(ignore_discard=True)
-        except:
+        except Exception:
             try:
                 xbmcvfs.delete(TRANSLATEPATH(cookiePath))
                 pass
-            except:
+            except Exception:
                 dialog.ok(i18n('oh_oh'), i18n('cookie_lock'))
                 pass
     cookie_handler = urllib_request.HTTPCookieProcessor(cj)
@@ -551,7 +551,7 @@ def downloadVideo(url, name):
             e = 'Speed: %.02f Kb/s ' % kbps_speed
             e += 'ETA: %02d:%02d' % divmod(eta, 60)
             dp.update(percent, '{0}[CR]{1}[CR]{2}'.format(name[:50], mbs, e))
-        except:
+        except Exception:
             percent = 100
             dp.update(percent)
         if dp.iscanceled():
@@ -568,7 +568,7 @@ def downloadVideo(url, name):
 
             resp = urlopen(req, timeout=30)
             return resp
-        except:
+        except Exception:
             return None
 
     def doDownload(url, dest, dp, name):
@@ -587,11 +587,11 @@ def downloadVideo(url, name):
             return False
         try:
             content = int(resp.headers['Content-Length'])
-        except:
+        except Exception:
             content = 0
         try:
             resumable = 'bytes' in resp.headers['Accept-Ranges'].lower()
-        except:
+        except Exception:
             resumable = False
         if resumable:
             six.print_("Download is resumable")
@@ -706,7 +706,7 @@ def downloadVideo(url, name):
             addon.setSetting(id='download_path', value=download_path)
             if not xbmcvfs.exists(download_path):
                 xbmcvfs.mkdir(download_path)
-        except:
+        except Exception:
             pass
     if download_path != '':
         dp = xbmcgui.DialogProgress()
@@ -725,16 +725,16 @@ def downloadVideo(url, name):
                 try:
                     xbmcvfs.rename(tmp_file, vidfile)
                     return vidfile
-                except:
+                except Exception:
                     return tmp_file
             else:
                 raise StopDownloading(i18n('stop_dnld'))
-        except:
+        except Exception:
             while xbmcvfs.exists(tmp_file):
                 try:
                     xbmcvfs.delete(tmp_file)
                     break
-                except:
+                except Exception:
                     pass
 
 
@@ -912,7 +912,7 @@ def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='ret
                             opener = urllib_request.build_opener(*handle)
                             try:
                                 response = opener.open(req, timeout=30)
-                            except:
+                            except Exception:
                                 notify(i18n('oh_oh'), i18n('site_down'))
                                 if 'return' in error:
                                     # Give up
@@ -1004,7 +1004,7 @@ def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='ret
         # Cope with problematic timestamp values on RPi on OpenElec 4.2.1
         try:
             cj.save(cookiePath, ignore_discard=True)
-        except:
+        except Exception:
             pass
     response.close()
 
@@ -1036,7 +1036,7 @@ def flaresolve(url, referer):
         try:
             import requests
             requests.get("http://localhost:8191", timeout=2)
-        except:
+        except Exception:
             raise RuntimeError(
                 "FlareSolverr is not configured or not running. "
                 "Please install and configure FlareSolverr in addon settings. "
@@ -1284,7 +1284,7 @@ def _postHtml(url, form_data=None, headers=None, json_data=None, compression=Tru
                     opener = urllib_request.build_opener(*handle)
                     try:
                         response = opener.open(req, timeout=30)
-                    except:
+                    except Exception:
                         notify(i18n('oh_oh'), i18n('site_down'))
                         raise
         elif 400 < e.code < 500:
@@ -1402,7 +1402,7 @@ def parse_query(query):
             if key in toint:
                 try:
                     q[key] = int(queries[key][0])
-                except:
+                except Exception:
                     q[key] = queries[key][0]
             else:
                 q[key] = queries[key][0]
@@ -1756,7 +1756,7 @@ def restore_keywords():
         except (ValueError, IOError):
             notify(i18n('error'), i18n('invalid_bkup'))
             return
-        if not backup_content["meta"]["type"] in ("cumination-keywords", "uwc-keywords"):
+        if backup_content["meta"]["type"] not in ("cumination-keywords", "uwc-keywords"):
             notify(i18n('error'), i18n('invalid_bkup'))
             return
     else:
@@ -1771,7 +1771,7 @@ def restore_keywords():
         except (ValueError, IOError):
             notify(i18n('error'), i18n('invalid_bkup'))
             return
-        if not backup_content["meta"]["type"] in ("cumination-keywords", "uwc-keywords"):
+        if backup_content["meta"]["type"] not in ("cumination-keywords", "uwc-keywords"):
             notify(i18n('error'), i18n('invalid_bkup'))
             return
     keywords = backup_content["data"]
@@ -1812,7 +1812,7 @@ def textBox(heading, announce):
             try:
                 f = open(announce)
                 text = f.read()
-            except:
+            except Exception:
                 text = announce
             self.win.getControl(self.CONTROL_TEXTBOX).setText(str(text))
             return
@@ -2087,7 +2087,7 @@ class VideoPlayer():
                     try:
                         fcurl2 = getVideoLink(fclink2.group(1), fcpage)
                         sites.add(fcurl2)
-                    except:
+                    except Exception:
                         pass
         return sites
 

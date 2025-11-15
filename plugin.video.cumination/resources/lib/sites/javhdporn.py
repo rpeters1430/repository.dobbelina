@@ -202,7 +202,7 @@ def Play(url, name, download=None):
         vp.progress.update(75, "[CR]Loading embed page[CR]")
         try:
             r = utils.getHtml(eurl, headers=hdr)
-        except:
+        except Exception:
             vp.progress.close()
             return
         match = re.compile(r'data-fb5c9="([^"]+)', re.DOTALL | re.IGNORECASE).search(r)

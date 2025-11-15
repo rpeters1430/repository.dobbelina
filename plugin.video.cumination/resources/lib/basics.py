@@ -129,7 +129,7 @@ def addDownLink(name, url, mode, iconimage, desc='', stream=None, fav='add', noD
                     secs = int(duration)
                 if secs is None and len(duration) > 0:
                     xbmc.log("@@@@Cumination: Duration format error: " + str(duration), xbmc.LOGERROR)
-            except:
+            except Exception:
                 xbmc.log("@@@@Cumination: Duration format error: " + str(duration), xbmc.LOGERROR)
     width = None
     if quality:
@@ -263,7 +263,7 @@ def get_resolution(quality):
             resolution = resolutions[quality]
         if len(quality) > 0 and resolution == (None, None):
             xbmc.log("@@@@Cumination: Quality format error: " + str(quality), xbmc.LOGERROR)
-    except:
+    except Exception:
         xbmc.log("@@@@Cumination: Quality format error: " + str(quality), xbmc.LOGERROR)
     return resolution
 
@@ -412,7 +412,7 @@ def searchDir(url, mode, page=None, alphabet=None):
             keyword = urllib_parse.unquote_plus(keyword)
             name = '[COLOR deeppink]' + keyword + '[/COLOR]'
             addDir(name, url, mode, cum_image('cum-search.png'), page=page, keyword=keyword)
-    except:
+    except Exception:
         pass
     conn.close()
     eod()
@@ -428,7 +428,7 @@ def keys():
                      ORDER BY keyword""")
         for (letter, count) in c.fetchall():
             ret[letter] = count
-    except:
+    except Exception:
         pass
     conn.close()
     return ret

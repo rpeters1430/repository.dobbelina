@@ -87,7 +87,7 @@ def BGList(url, page=1):
                     parts = ''
 
         if len(fc_facts) == 1 and "fc_start" in fc_facts[0] and "fc_end" in fc_facts[0]:
-            if not fc_facts[0]["fc_start"] is None and not fc_facts[0]["fc_end"] is None:
+            if fc_facts[0]["fc_start"] is not None and fc_facts[0]["fc_end"] is not None:
                 min_start, sec_start = divmod(fc_facts[0]["fc_start"], 60)
                 min_end, sec_end = divmod(fc_facts[0]["fc_end"], 60)
                 parts = '[COLOR blue] ({:d}:{:02d} - {:d}:{:02d})[/COLOR]'.format(min_start, sec_start, min_end, sec_end)

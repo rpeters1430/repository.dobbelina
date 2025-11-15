@@ -321,7 +321,7 @@ def PTSubscribe_pornstar(url, id=None, what='subscribe'):
         url2 = url.split('?')[0]
         try:
             modelhtml = utils.getHtml(url2)
-        except:
+        except Exception:
             return None
         id = re.findall(r'data-subscribe-to="model"\s*data-id="(\d+)"', modelhtml, re.DOTALL)[0]
 

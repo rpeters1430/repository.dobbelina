@@ -52,7 +52,7 @@ def List(url):
     hdr['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'
     try:
         listhtml = utils.getHtml(url, headers=hdr)
-    except:
+    except Exception:
         return None
 
     cm_sortby = (utils.addon_sys + "?mode=" + str('xvideos.ContextSortbyFilter'))
@@ -198,7 +198,7 @@ def PSList(url):
     hdr['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'
     try:
         listhtml = utils.getHtml(url, headers=hdr)
-    except:
+    except Exception:
         return None
     jdata = json.loads(listhtml)
     for video in jdata["videos"]:
@@ -239,7 +239,7 @@ def PSList(url):
 def Pornstars(url):
     try:
         cathtml = utils.getHtml(url)
-    except:
+    except Exception:
         return None
     match = re.compile(r'div id="profile.+?src="([^"]+)".+?href="([^"]+)">([^<]+)<\/a><\/p>.+?(\d+ videos)', re.DOTALL | re.IGNORECASE).findall(cathtml)
     for img, catpage, name, videos in match:
@@ -260,7 +260,7 @@ def Tags(url):
     category = get_setting('category')
     try:
         cathtml = utils.getHtml(url)
-    except:
+    except Exception:
         return None
     match = re.compile(r'href="([^"]+)"><b>([^<]+)</b>.+?>([^<]+)<', re.DOTALL | re.IGNORECASE).findall(cathtml)
     for catpage, name, count in match:

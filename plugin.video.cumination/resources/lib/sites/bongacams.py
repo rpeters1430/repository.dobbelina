@@ -111,12 +111,12 @@ def clean_database(showdialog=True):
                 conn.execute("DELETE FROM sizes WHERE idtexture = ?;", (row[0],))
                 try:
                     os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
-                except:
+                except Exception:
                     pass
             conn.execute("DELETE FROM texture WHERE url LIKE ?;", ('%' + "bongacams.com" + '%',))
             if showdialog:
                 utils.notify('Finished', 'bongacams.com images cleared')
-    except:
+    except Exception:
         pass
 
 
@@ -134,7 +134,7 @@ def Playvid(url, name):
         hdr = utils.base_hdrs
         hdr.update({'X-Requested-With': 'XMLHttpRequest'})
         response = utils._postHtml('{0}tools/amf.php'.format(site.url), form_data=postRequest, headers=hdr, compression=False)
-    except:
+    except Exception:
         utils.notify('Oh oh', 'Couldn\'t find a playable webcam link', icon='thumb')
         return None
 

@@ -14,7 +14,11 @@
       "Bash(/tmp/whoreshub_main.html)",
       "Bash(git pull:*)",
       "Bash(git add:*)",
-      "Bash(python -m py_compile:*)"
+      "Bash(python -m py_compile:*)",
+      "Bash(pytest:*)",
+      "Bash(pip3 install:*)",
+      "Bash(find:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

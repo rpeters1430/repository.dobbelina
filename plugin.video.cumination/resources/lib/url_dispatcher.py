@@ -141,5 +141,5 @@ class URL_Dispatcher(object):
             elif temp == 'none':
                 return None
             return arg
-        except:
+        except Exception:
             return arg

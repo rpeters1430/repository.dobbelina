@@ -88,12 +88,12 @@ def clean_database(showdialog=True):
                 conn.execute("DELETE FROM sizes WHERE idtexture = ?;", (row[0],))
                 try:
                     os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
-                except:
+                except Exception:
                     pass
             conn.execute("DELETE FROM texture WHERE url LIKE ?;", ('%' + ".camsoda.com" + '%',))
             if showdialog:
                 utils.notify('Finished', 'Camsoda images cleared')
-    except:
+    except Exception:
         pass
 
 

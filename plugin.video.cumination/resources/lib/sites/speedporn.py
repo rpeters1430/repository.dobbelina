@@ -41,7 +41,7 @@ def Main():
 def List(url):
     try:
         listhtml = utils.getHtml(url)
-    except:
+    except Exception:
         return None
     # utils.kodilog(listhtml)
     if 'span class="duration">' in listhtml:
@@ -97,7 +97,7 @@ def List_all(url):
                     url = next_page[0]
             else:
                 nextpg = False
-        except:
+        except Exception:
             nextpg = False
     utils.eod()
 
@@ -142,7 +142,7 @@ def Categories_all(url):
                     url = next_page[0]
             else:
                 nextpg = False
-        except:
+        except Exception:
             nextpg = False
     utils.eod()
 

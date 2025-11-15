@@ -37,7 +37,7 @@ def Main():
 def List(url):
     try:
         listhtml = utils.getHtml(url, '')
-    except:
+    except Exception:
         return None
     match = re.compile(r'<a href="([^"]+)" class="item.+?vthumb=.+?thumb="([^"]+)".+?"duration">([^<]+)</div>.+?class="title">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
     for videopage, img, duration, name in match:
@@ -73,7 +73,7 @@ def List(url):
 def Categories(url):
     try:
         cathtml = utils.getHtml(url, '')
-    except:
+    except Exception:
         return None
     match = re.compile('a href="([^"]+)">([^<]+)<span class="rating">', re.DOTALL | re.IGNORECASE).findall(cathtml)
     for catpage, name in sorted(match, key=lambda x: x[1]):
@@ -85,7 +85,7 @@ def Categories(url):
 def CategoriesTR(url):
     try:
         cathtml = utils.getHtml(url, '')
-    except:
+    except Exception:
         return None
     match = re.compile('"item" href="([^"]+)" title="([^"]+)".+?src="([^"]+)".+?i>([^<]+)videos<', re.DOTALL | re.IGNORECASE).findall(cathtml)
     for catpage, name, img, count in sorted(match, key=lambda x: x[1]):
@@ -98,7 +98,7 @@ def CategoriesTR(url):
 def Channels(url):
     try:
         cathtml = utils.getHtml(url, '')
-    except:
+    except Exception:
         return None
     match = re.compile('"item" href="([^"]+)" title="([^"]+)".+?src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(cathtml)
     for catpage, name, img in sorted(match, key=lambda x: x[1]):

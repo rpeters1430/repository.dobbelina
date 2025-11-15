@@ -41,7 +41,7 @@ def Main():
 def List(url):
     try:
         listhtml = utils.getHtml(url)
-    except:
+    except Exception:
         return None
     match = re.compile(r'<a\shref="([^"]+)"><div\s*class="post-list-image"><img\s*src="([^"]+).+?duration">([^<.]+).+?span>([^<]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)
     for videopage, img, duration, name in match:

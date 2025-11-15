@@ -39,7 +39,7 @@ def Main():
 def List(url):
     try:
         listhtml = utils.getHtml(url, '')
-    except:
+    except Exception:
         return None
     soup = utils.parse_html(listhtml)
     video_items = soup.select('div.mb[data-vp]')
@@ -81,7 +81,7 @@ def Playvid(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
     try:
         listhtml = utils.getHtml(url, '')
-    except:
+    except Exception:
         return None
     embed = re.compile("vid = '(.+?)'.+?hash = '(.+?)'", re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
     vid = embed[0]
@@ -103,7 +103,7 @@ def Playvid(url, name, download=None):
 def Categories(url):
     try:
         cathtml = utils.getHtml(url, '')
-    except:
+    except Exception:
         return None
     soup = utils.parse_html(cathtml)
     categories = []
@@ -128,7 +128,7 @@ def Categories(url):
 def Pornstars(url):
     try:
         cathtml = utils.getHtml(url, '')
-    except:
+    except Exception:
         return None
     soup = utils.parse_html(cathtml)
     profiles = soup.select('.mbprofile')

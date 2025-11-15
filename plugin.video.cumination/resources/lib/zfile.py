@@ -701,7 +701,7 @@ class ZipFile(object):
                     self._didModify = True
             else:
                 raise RuntimeError('Mode must be "r", "w" or "a"')
-        except:
+        except Exception:
             fp = self.fp
             self.fp = None
             if not self._filePassed:
@@ -884,7 +884,7 @@ class ZipFile(object):
                     raise RuntimeError("Bad password for file", name)
             return ZipExtFile(zef_file, mode, zinfo, zd, close_fileobj=should_close)
             ################################################
-        except:
+        except Exception:
             if should_close:
                 zef_file.close()
             raise
@@ -941,7 +941,7 @@ class ZipFile(object):
             if not os.path.isdir(targetpath):
                 os.mkdir(targetpath)
             return targetpath
-        with self.open(member, pwd=pwd) as source, file(targetpath, "wb") as target:
+        with self.open(member, pwd=pwd) as source, open(targetpath, "wb") as target:
             shutil.copyfileobj(source, target)
         return targetpath
 

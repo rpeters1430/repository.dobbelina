@@ -38,7 +38,7 @@ def Main(url):
 def List(url, page=1):
     try:
         listhtml = utils.getHtml(url, '')
-    except:
+    except Exception:
         return None
 
     match = re.compile(r'class="item item-\d+\s*?">\s*<a href="https://www\.tabootube\.xxx/([^"]+)" title="([^"]+)".*?data-original="([^"]+)".*?duration">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
@@ -88,7 +88,7 @@ def Playvid(url, name, download=None):
 def Categories(url):
     try:
         cathtml = utils.getHtml(url, '')
-    except:
+    except Exception:
         return None
     match = re.compile('<a class="item" href="([^"]+)" title="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(cathtml)
     for catpage, name in match:
@@ -102,7 +102,7 @@ def Categories(url):
 def Tags(url):
     try:
         taghtml = utils.getHtml(url, '')
-    except:
+    except Exception:
         return None
     match = re.compile('/(tags/[^"]+)">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(taghtml)
     for tagpage, name in match:

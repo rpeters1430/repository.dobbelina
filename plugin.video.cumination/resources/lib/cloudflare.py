@@ -64,7 +64,7 @@ def solve(url, cj, user_agent=None, wait=True):
     if cj is not None:
         try:
             cj.load(ignore_discard=True)
-        except:
+        except Exception:
             pass
         opener = urllib_request.build_opener(urllib_request.HTTPCookieProcessor(cj))
         urllib_request.install_opener(opener)
@@ -167,10 +167,10 @@ def solve(url, cj, user_agent=None, wait=True):
                 html = final
             else:
                 break
-        except urllib_error.HTTPError as e:
+        except urllib_error.HTTPError:
             # log_utils.log('CloudFlare HTTP Error: %s on url: %s' % (e.code, url), log_utils.LOGWARNING, COMPONENT)
             return False
-        except urllib_error.URLError as e:
+        except urllib_error.URLError:
             # log_utils.log('CloudFlare URLError Error: %s on url: %s' % (e, url), log_utils.LOGWARNING, COMPONENT)
             return False
 

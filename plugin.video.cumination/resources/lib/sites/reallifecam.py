@@ -203,7 +203,7 @@ def Playvid(url, name, download=None):
             videourl = re.compile(r'>(eval.+?)<\/script>', re.DOTALL | re.IGNORECASE).findall(refpage)[0]
             videourl = unpack(videourl)
             videolink = re.compile('(?:src|file):"([^"]+)"', re.DOTALL | re.IGNORECASE).findall(videourl)
-            if match:
+            if videolink:
                 videolink = videolink[0] + '|Referer=' + refurl + '&verifypeer=false'
                 if videolink.startswith('/') and 'vidello' in refurl:
                     videolink = 'https://oracle.vidello.net' + videolink

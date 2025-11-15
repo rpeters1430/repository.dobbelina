@@ -50,7 +50,7 @@ try:
         c.execute(addColumn)
         addColumn = "ALTER TABLE favorites ADD COLUMN quality"
         c.execute(addColumn)
-except:
+except Exception:
     pass
 conn.close()
 
@@ -72,10 +72,10 @@ def Refresh_images():
                     conn.execute("DELETE FROM sizes WHERE idtexture = ?;", (row[0],))
                     try:
                         os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
-                    except:
+                    except Exception:
                         pass
                 conn.execute("DELETE FROM texture WHERE url LIKE ?;", ('%' + ".highwebmedia.com" + '%',))
-        except:
+        except Exception:
             pass
     xbmc.executebuiltin('Container.Refresh')
 
@@ -169,7 +169,7 @@ ELSE mode END domain FROM favorites ORDER BY rowid;"""
 
         conn.close()
         utils.eod(utils.addon_handle)
-    except:
+    except Exception:
         conn.close()
         utils.notify('No Favorites', 'No Favorites found')
         return
@@ -222,7 +222,7 @@ def FavListSite(url, page=1):
 
         conn.close()
         utils.eod(utils.addon_handle)
-    except:
+    except Exception:
         conn.close()
         utils.notify('No Favorites', 'No Favorites found')
         return
@@ -616,7 +616,7 @@ def process_custom_site_zip(path):
     try:
         with zip.open('meta.json') as metafile:
             meta_data = json.load(metafile)
-    except:
+    except Exception:
         zip.close()
         utils.kodilog('Invalid file')
         return False

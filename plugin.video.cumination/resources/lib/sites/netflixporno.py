@@ -156,7 +156,7 @@ def url_decode(str):
     else:
         try:
             result = url_decode(base64.b64decode(re.search('/goto/(.+)', str).group(1)))
-        except:
+        except Exception:
             result = str
     return result
 

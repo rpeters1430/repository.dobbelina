@@ -114,7 +114,7 @@ def fc_decode_json(m):
     try:
         m = m.replace('\r', '\\r').replace('\n', '\\n')
         return json.loads(m[m.find("{"):].decode("utf-8", "ignore") if utils.PY2 else m[m.find("{"):])
-    except:
+    except Exception:
         return {'lv': 0}
 
 
@@ -132,7 +132,7 @@ def read_model_data(m, MFC_SERVERS):
     # try:
     #     sid = msg['sid']
     #     level = msg['lv']
-    # except:
+    # except Exception:
     #     return
 
     vs = msg['vs']
