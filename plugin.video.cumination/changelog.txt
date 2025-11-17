@@ -4,6 +4,7 @@
 - hanime - fix thumbnails and poster requests
 - hanime - fix playback when inline manifests change format
 - pornhub - fix Categories screen URL and sort the list alphabetically
+- recu.me - add site with categories, search, and playback via the WordPress API
 - thothub - ensure private videos trigger a real login instead of stopping at the PHP session cookie
 - chaturbate - begin BeautifulSoup migration (room data & CSRF token parsing)
 
