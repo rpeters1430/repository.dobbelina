@@ -18,7 +18,15 @@
       "Bash(pytest:*)",
       "Bash(pip3 install:*)",
       "Bash(find:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git log:*)",
+      "WebFetch(domain:hqporner.com)",
+      "Bash(/tmp/hqporner_categories.html)",
+      "Bash(/tmp/hqporner_category.html)",
+      "Bash(cat:*)",
+      "WebFetch(domain:www.naked.com)",
+      "WebFetch(domain:hpjav.in)",
+      "WebFetch(domain:www.incestflix.com)"
     ],
     "deny": [],
     "ask": []
