@@ -37,14 +37,17 @@ def HQMAIN():
 @site.register()
 def HQLIST(url):
     try:
-        link = utils.getHtml(url, '')
+        link = utils.getHtml(url, '', timeout=30)
     except Exception as e:
         utils.notify(msg='Error loading page: {}'.format(str(e)))
         utils.kodilog('hqporner HQLIST error: {}'.format(str(e)))
         utils.eod()
         return
     soup = utils.parse_html(link)
-    cards = soup.select('section.box.feature')
+    # Filter to only video cards (excludes header/search sections)
+    cards = soup.select('section.box.feature:has(.meta-data-title)')
+    utils.kodilog('hqporner HQLIST: Found {} video cards'.format(len(cards)))
+
     for card in cards:
         anchor = card.select_one('a.image.featured[href]')
         if not anchor:
@@ -52,7 +55,7 @@ def HQLIST(url):
         videopage = utils.safe_get_attr(anchor, 'href')
         if not videopage:
             continue
-        videourl = site.url + videopage.lstrip('/')
+        videourl = site.url + '/' + videopage.lstrip('/')
 
         img_tag = anchor.select_one('img')
         img = utils.safe_get_attr(img_tag, 'src')
@@ -77,14 +80,21 @@ def HQLIST(url):
         if next_link:
             next_href = utils.safe_get_attr(next_link, 'href')
             if next_href:
-                next_url = site.url + next_href.lstrip('/')
+                next_url = site.url + '/' + next_href.lstrip('/')
                 site.add_dir('Next Page', next_url, 'HQLIST', site.img_next)
     utils.eod()
 
 
 @site.register()
 def HQCAT(url):
-    link = utils.getHtml(url, '')
+    try:
+        link = utils.getHtml(url, '', timeout=30)
+    except Exception as e:
+        utils.notify(msg='Error loading categories: {}'.format(str(e)))
+        utils.kodilog('hqporner HQCAT error: {}'.format(str(e)))
+        utils.eod()
+        return
+
     soup = utils.parse_html(link)
     entries = []
     for heading in soup.select('h3 a[href], h2 a[href], .content a[href]'):
@@ -96,9 +106,10 @@ def HQCAT(url):
             continue
         name = utils.safe_get_text(heading).strip()
         if name:
-            full_url = site.url + caturl.lstrip('/') if not caturl.startswith('http') else caturl
+            full_url = site.url + '/' + caturl.lstrip('/') if not caturl.startswith('http') else caturl
             entries.append((name, full_url))
 
+    utils.kodilog('hqporner HQCAT: Found {} categories'.format(len(entries)))
     for name, caturl in sorted(entries, key=lambda x: x[0].lower()):
         site.add_dir(name.title(), caturl, 'HQLIST', site.img_cat)
     utils.eod()
@@ -120,19 +131,29 @@ def HQPLAY(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
-    videopage = utils.getHtml(url, url)
-    iframe_match = re.compile(r"nativeplayer\.php\?i=([^']+)", re.DOTALL | re.IGNORECASE).findall(videopage)
+    try:
+        videopage = utils.getHtml(url, url, timeout=30)
+    except Exception as e:
+        utils.kodilog('hqporner HQPLAY: Error loading video page: {}'.format(str(e)))
+        vp.progress.close()
+        utils.notify(msg='Error loading video page')
+        return
+
+    iframe_match = re.compile(r"nativeplayer\.php\?i=([^'\"]+)", re.DOTALL | re.IGNORECASE).findall(videopage)
 
     if not iframe_match:
-        utils.kodilog('hqporner HQPLAY: Could not find nativeplayer iframe')
+        utils.kodilog('hqporner HQPLAY: Could not find nativeplayer iframe in video page')
         vp.progress.close()
         utils.notify(msg='Video source not found')
         return
 
     iframeurl = iframe_match[0]
+    utils.kodilog('hqporner HQPLAY: Found iframe URL: {}'.format(iframeurl[:100]))
 
     if iframeurl.startswith('//'):
         iframeurl = 'https:' + iframeurl
+    elif not iframeurl.startswith('http'):
+        iframeurl = 'https://hqporner.com/' + iframeurl.lstrip('/')
 
     videourl = None
     if 'bemywife' in iframeurl:
@@ -144,16 +165,18 @@ def HQPLAY(url, name, download=None):
     elif 'hqwo' in iframeurl:
         videourl = getHQWO(iframeurl)
     else:
+        utils.kodilog('hqporner HQPLAY: Unknown video host, trying resolveurl')
         videourl = iframeurl
         vp.play_from_link_to_resolve(videourl)
         return
 
     if not videourl:
-        utils.kodilog('hqporner HQPLAY: Could not extract video URL')
+        utils.kodilog('hqporner HQPLAY: Could not extract video URL from iframe')
         vp.progress.close()
         utils.notify(msg='Video URL extraction failed')
         return
 
+    utils.kodilog('hqporner HQPLAY: Playing video from: {}'.format(videourl[:100]))
     vp.play_from_direct_link(videourl)
 
 

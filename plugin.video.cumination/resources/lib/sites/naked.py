@@ -79,7 +79,14 @@ def List(url):
                             return payload
         return None
 
-    listhtml = utils._getHtml(url, site.url)
+    try:
+        listhtml = utils._getHtml(url, site.url, timeout=30)
+    except Exception as e:
+        utils.kodilog('Naked: Error fetching page: {}'.format(str(e)))
+        utils.notify('Error', 'Unable to load naked.com page')
+        utils.eod()
+        return
+
     payload = _extract_models_payload(listhtml)
 
     if not payload:
@@ -88,15 +95,22 @@ def List(url):
         payload = match.group(1).strip() if match else None
 
     if not payload:
-        utils.notify('Error', 'Unable to load naked.com models')
+        utils.kodilog('Naked: Unable to find models payload in page')
+        utils.notify('Error', 'Unable to load naked.com models (site may have changed)')
         utils.eod()
         return
 
     try:
         models = json.loads(payload)
-    except ValueError:
-        utils.kodilog('Naked: Failed to decode models JSON')
+    except ValueError as e:
+        utils.kodilog('Naked: Failed to decode models JSON: {}'.format(str(e)))
         utils.notify('Error', 'Unable to parse naked.com models')
+        utils.eod()
+        return
+
+    if not models or len(models) == 0:
+        utils.kodilog('Naked: Models array is empty - site may be loading data dynamically')
+        utils.notify('No Models Online', 'No models currently broadcasting')
         utils.eod()
         return
 
