@@ -38,25 +38,69 @@ def Main():
 @site.register()
 def List(url):
     utils.kodilog(url)
-    listhtml = utils.getHtml(url, '')
-    match = re.compile(r"<a id='videolink' href='([^']+)'><[^>]+>([^<]+)<.*?url\(([^\)]+)\);", re.DOTALL | re.IGNORECASE).findall(listhtml)
-    if not match:
+    try:
+        listhtml = utils.getHtml(url, '', timeout=30)
+    except Exception as e:
+        utils.kodilog('iflix List error: {}'.format(str(e)))
+        utils.eod()
         return
-    for videopage, name, img in match:
-        name = utils.cleantext(name)
+
+    soup = utils.parse_html(listhtml)
+
+    # Find all video links
+    video_links = soup.select('a[id="videolink"]')
+    if not video_links:
+        utils.kodilog('iflix: No video links found')
+        utils.eod()
+        return
+
+    for link in video_links:
+        videopage = utils.safe_get_attr(link, 'href', default='')
+        if not videopage:
+            continue
+
         videopage = 'http:' + videopage if videopage.startswith('//') else videopage
-        img = 'http:' + img if img.startswith('//') else img
+
+        # Get title from text-heading div or text-overlay span
+        title_div = link.select_one('.text-heading')
+        if not title_div:
+            title_span = link.select_one('.text-overlay span')
+            name = utils.safe_get_text(title_span, '')
+        else:
+            name = utils.safe_get_text(title_div, '')
+
+        name = utils.cleantext(name)
+        if not name:
+            continue
+
+        # Extract thumbnail from background-image style
+        img_div = link.select_one('.img-overflow')
+        img = ''
+        if img_div:
+            style = utils.safe_get_attr(img_div, 'style', default='')
+            # Extract URL from "background: url(...)" style
+            match = re.search(r'url\(([^\)]+)\)', style)
+            if match:
+                img = match.group(1).strip()
+                img = 'http:' + img if img.startswith('//') else img
+
         contextmenu = []
         contexturl = (utils.addon_sys + "?mode=iflix.Lookupinfo&url=" + urllib_parse.quote_plus(videopage))
         contextmenu.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')'))
 
         site.add_download_link(name, videopage, 'Playvid', img, name, contextm=contextmenu)
 
+    # Handle pagination
     page = int(url.split('/')[-1])
     npage = page + 1
-    if 'page/{0}'.format(npage) in listhtml:
-        npage_url = url.replace('page/{0}'.format(page), 'page/{0}'.format(npage))
-        site.add_dir('Next Page ({0})'.format(npage), npage_url, 'List', site.img_next)
+    # Check if next page link exists in the pager
+    pager = soup.select_one('#incflix-pager')
+    if pager:
+        next_page_link = pager.select_one('a[href*="/page/{0}"]'.format(npage))
+        if next_page_link:
+            npage_url = url.replace('page/{0}'.format(page), 'page/{0}'.format(npage))
+            site.add_dir('Next Page ({0})'.format(npage), npage_url, 'List', site.img_next)
+
     utils.eod()
 
 
@@ -64,39 +108,90 @@ def List(url):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    video_page = utils.getHtml(url, site.url)
 
-    source = re.compile("""<source.*?src=(?:"|')([^"']+)[^>]+>""", re.DOTALL | re.IGNORECASE).search(video_page)
-    if source:
-        videourl = source.group(1)
-        videourl = 'http:' + videourl if videourl.startswith('//') else videourl
-        vp.play_from_direct_link(videourl)
+    try:
+        video_page = utils.getHtml(url, site.url, timeout=30)
+    except Exception as e:
+        utils.kodilog('iflix Playvid error: {}'.format(str(e)))
+        vp.progress.close()
+        utils.notify('Error', 'Unable to load video page')
+        return
+
+    soup = utils.parse_html(video_page)
+
+    # Find the source tag
+    source_tag = soup.select_one('source[src]')
+    if source_tag:
+        videourl = utils.safe_get_attr(source_tag, 'src', default='')
+        if videourl:
+            videourl = 'http:' + videourl if videourl.startswith('//') else videourl
+            vp.play_from_direct_link(videourl)
+        else:
+            vp.progress.close()
+            utils.notify('Oh Oh', 'No video source found')
     else:
         vp.progress.close()
         utils.notify('Oh Oh', 'No Videos found')
-        return
 
 
 @site.register()
 def tags(url):
     what = url.split('/')[-1]
     url = '/'.join(url.split('/')[:-1])
-    listhtml = utils.getHtml(url)
 
+    try:
+        listhtml = utils.getHtml(url, '', timeout=30)
+    except Exception as e:
+        utils.kodilog('iflix tags error: {}'.format(str(e)))
+        utils.eod()
+        return
+
+    soup = utils.parse_html(listhtml)
+
+    # Find the appropriate section based on the 'what' parameter
+    section_content = None
     if what == 'sub':
-        listhtml = re.compile("Themes</h1>(.*?)<h1>", re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
+        # Find content between "Themes</h1>" and next "<h1>"
+        themes_h1 = soup.find('h1', string=re.compile('Themes', re.IGNORECASE))
+        if themes_h1:
+            section_content = themes_h1.find_next_sibling()
     elif what == 'relations':
-        listhtml = re.compile("<h1>Relations</h1>(.*?)<h1>", re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
+        relations_h1 = soup.find('h1', string=re.compile('Relations', re.IGNORECASE))
+        if relations_h1:
+            section_content = relations_h1.find_next_sibling()
     elif what == 'ethn':
-        listhtml = re.compile("Religious Groups</h1>(.*?)<h1>", re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
+        religious_h1 = soup.find('h1', string=re.compile('Religious Groups', re.IGNORECASE))
+        if religious_h1:
+            section_content = religious_h1.find_next_sibling()
     elif what == 'general':
-        listhtml = re.compile("Not Categorized</h1>(.*?)<h1>", re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
+        not_cat_h1 = soup.find('h1', string=re.compile('Not Categorized', re.IGNORECASE))
+        if not_cat_h1:
+            section_content = not_cat_h1.find_next_sibling()
     elif what == 'actresses':
-        listhtml = re.compile("Performers</h1>(.*?)</div>", re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
+        performers_h1 = soup.find('h1', string=re.compile('Performers', re.IGNORECASE))
+        if performers_h1:
+            # For actresses, get the parent div content
+            section_content = performers_h1.find_parent()
 
-    match = re.compile("href='([^']+)'><span id='studiolink[^>]+>(.*?)</span", re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for tagpage, name in match:
-        name = utils.cleantext(name.strip()).replace('<b>', '[COLOR red][B]').replace('</b>', '[/B][/COLOR]')
+    if not section_content:
+        # Fallback: search in entire page
+        section_content = soup
+
+    # Find all tag links with studiolink id
+    tag_links = section_content.select('span[id^="studiolink"]')
+
+    for span in tag_links:
+        link = span.find_parent('a')
+        if not link:
+            continue
+
+        tagpage = utils.safe_get_attr(link, 'href', default='')
+        if not tagpage:
+            continue
+
+        name_html = span.decode_contents() if hasattr(span, 'decode_contents') else str(span)
+        name = utils.cleantext(name_html.strip()).replace('<b>', '[COLOR red][B]').replace('</b>', '[/B][/COLOR]')
+
         tagpage = 'http:' + tagpage if tagpage.startswith('//') else tagpage
         site.add_dir(name, tagpage + '/page/1', 'List', '')
 
