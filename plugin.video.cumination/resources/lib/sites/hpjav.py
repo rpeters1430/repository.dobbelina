@@ -40,21 +40,52 @@ def Main():
 @site.register()
 def List(url):
     try:
-        listhtml = utils.getHtml(url)
-    except Exception:
-        return None
-    match = re.compile(r'<a\shref="([^"]+)"><div\s*class="post-list-image"><img\s*src="([^"]+).+?duration">([^<.]+).+?span>([^<]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for videopage, img, duration, name in match:
-        name = utils.cleantext(name)
-        site.add_download_link(name, videopage, 'Playvid', img, name, duration=duration)
+        listhtml = utils.getHtml(url, '', timeout=30)
+    except Exception as e:
+        utils.kodilog('hpjav List error: {}'.format(str(e)))
+        utils.eod()
+        return
 
-    pagination = re.search(r"(<div\s*class='wp-pagenavi'.+?</div>)", listhtml, re.DOTALL)
-    if pagination:
-        pagination = pagination.group(1)
-        if "Next Page" in pagination:
-            pgurl = re.findall(r'"Next\s*Page"\s*href="([^"]+)', pagination)[0]
-            pgtxt = re.findall(r"'pages'>([^<]+)", pagination)[0]
-            site.add_dir('Next Page.. (Currently in Page {0})'.format(pgtxt), pgurl, 'List', site.img_next)
+    soup = utils.parse_html(listhtml)
+
+    # Find all video links
+    video_links = soup.select('a[href*="/censored/"], a[href*="/uncensored/"], a[href*="/amature/"], a[href*="/fc2ppv/"], a[href*="/vr/"]')
+
+    for link in video_links:
+        videopage = utils.safe_get_attr(link, 'href')
+        if not videopage:
+            continue
+
+        # Get image
+        img_tag = link.select_one('.post-list-image img')
+        img = utils.safe_get_attr(img_tag, 'src')
+
+        # Get duration
+        duration_tag = link.select_one('.post-list-duration')
+        duration = utils.safe_get_text(duration_tag, '')
+        # Clean duration (remove "min." suffix)
+        if duration and duration.endswith('min.'):
+            duration = duration[:-4].strip()
+
+        # Get title from span
+        title_tag = link.select_one('span')
+        name = utils.safe_get_text(title_tag, '')
+        name = utils.cleantext(name)
+
+        if name and videopage:
+            site.add_download_link(name, videopage, 'Playvid', img, name, duration=duration)
+
+    # Handle pagination
+    pagenavi = soup.select_one('div.wp-pagenavi')
+    if pagenavi:
+        next_link = pagenavi.select_one('a[title="Next Page"]')
+        if next_link:
+            pgurl = utils.safe_get_attr(next_link, 'href')
+            # Get current page text
+            pages_span = pagenavi.select_one('span.pages')
+            pgtxt = utils.safe_get_text(pages_span, '')
+            if pgurl:
+                site.add_dir('Next Page.. (Currently in Page {0})'.format(pgtxt), pgurl, 'List', site.img_next)
 
     utils.eod()
 

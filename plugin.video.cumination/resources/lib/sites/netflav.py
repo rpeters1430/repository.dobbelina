@@ -49,57 +49,120 @@ def Main():
 @site.register()
 def List(url, section='all'):
     try:
-        listhtml = utils.getHtml(url, headers=make_netflav_headers())
-    except Exception:
-        return None
-    if section == 'search':
-        jdata = json.loads(listhtml).get("result")
-    else:
-        jdata = re.compile('<script id="__NEXT_DATA__" type="application/json">([^<]+)</script', re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
-        jdata = json.loads(jdata).get("props").get("initialState").get(section)
-    page = jdata.get("page")
-    pages = jdata.get("pages")
-    videos = jdata.get("docs")
-    for video in videos:
-        name = video["title_en"] if utils.PY3 else video["title_en"].encode('utf-8')
-        name = utils.cleantext(name)
-        img = video.get("preview", "")
-        date_added = video.get("sourceDate", "").split('T')[0]
-        if not date_added:
-            date_added = video.get("createdAt", "").split('T')[0]
-        plot = "{0}\n{1}".format(name, date_added)
-        videopage = '{0}video?id={1}'.format(site.url, video.get("videoId"))
+        listhtml = utils.getHtml(url, headers=make_netflav_headers(), timeout=30)
+    except Exception as e:
+        utils.kodilog('netflav List error: {}'.format(str(e)))
+        utils.eod()
+        return
 
-        contextmenu = []
-        contexturl = (utils.addon_sys
-                      + "?mode=netflav.Lookupinfo"
-                      + "&url=" + urllib_parse.quote_plus(videopage))
-        contextmenu.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')'))
-
-        site.add_download_link(name, videopage, 'Playvid', img, plot, contextm=contextmenu)
-    if page < pages:
-        if 'page=' in url:
-            npurl = url.replace('page={}'.format(page), 'page={}'.format(page + 1))
+    try:
+        if section == 'search':
+            jdata = json.loads(listhtml).get("result")
         else:
-            npurl = url
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0}/{1})'.format(page + 1, pages), npurl, 'List', site.img_next, section=section)
+            # Extract JSON from Next.js data script tag
+            soup = utils.parse_html(listhtml)
+            script_tag = soup.select_one('script#__NEXT_DATA__[type="application/json"]')
+            if not script_tag:
+                utils.kodilog('netflav: Could not find __NEXT_DATA__ script tag')
+                utils.notify('Error', 'Unable to parse page data')
+                utils.eod()
+                return
+
+            jdata_text = script_tag.string
+            if not jdata_text:
+                utils.kodilog('netflav: __NEXT_DATA__ script tag is empty')
+                utils.notify('Error', 'Unable to parse page data')
+                utils.eod()
+                return
+
+            jdata = json.loads(jdata_text).get("props").get("initialState").get(section)
+
+        page = jdata.get("page")
+        pages = jdata.get("pages")
+        videos = jdata.get("docs")
+
+        for video in videos:
+            name = video["title_en"] if utils.PY3 else video["title_en"].encode('utf-8')
+            name = utils.cleantext(name)
+            img = video.get("preview", "")
+            date_added = video.get("sourceDate", "").split('T')[0]
+            if not date_added:
+                date_added = video.get("createdAt", "").split('T')[0]
+            plot = "{0}\n{1}".format(name, date_added)
+            videopage = '{0}video?id={1}'.format(site.url, video.get("videoId"))
+
+            contextmenu = []
+            contexturl = (utils.addon_sys
+                          + "?mode=netflav.Lookupinfo"
+                          + "&url=" + urllib_parse.quote_plus(videopage))
+            contextmenu.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+
+            site.add_download_link(name, videopage, 'Playvid', img, plot, contextm=contextmenu)
+
+        if page < pages:
+            if 'page=' in url:
+                npurl = url.replace('page={}'.format(page), 'page={}'.format(page + 1))
+            else:
+                npurl = url
+            site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0}/{1})'.format(page + 1, pages), npurl, 'List', site.img_next, section=section)
+
+    except Exception as e:
+        utils.kodilog('netflav List parsing error: {}'.format(str(e)))
+        utils.notify('Error', 'Unable to parse videos')
+
     utils.eod()
 
 
 @site.register()
 def Genres(url):
     try:
-        genrehtml = utils.getHtml(url, headers=make_netflav_headers())
-    except Exception:
-        return None
-    sections = re.compile('container_header_title_large"[^>]+>([^<]+)<(.*?)<iframe', re.DOTALL | re.IGNORECASE).findall(genrehtml)
-    for header, genres in sections:
-        header = utils.cleantext(header)
-        genresmatch = re.compile(r'/(all\?genre[^"]+)"><div>([^<]+)<', re.DOTALL | re.IGNORECASE).findall(genres)
-        for genreurl, genre in sorted(genresmatch, key=lambda x: x[1]):
+        genrehtml = utils.getHtml(url, headers=make_netflav_headers(), timeout=30)
+    except Exception as e:
+        utils.kodilog('netflav Genres error: {}'.format(str(e)))
+        utils.eod()
+        return
+
+    soup = utils.parse_html(genrehtml)
+
+    # Find all genre sections with headers
+    sections = soup.select('[class*="container_header_title_large"]')
+
+    for section_header in sections:
+        header = utils.safe_get_text(section_header, '').strip()
+        if not header:
+            continue
+
+        # Find the container following this header (look for genre links)
+        # Navigate to parent and find genre links
+        parent = section_header.find_parent()
+        if not parent:
+            continue
+
+        # Find all genre links in this section
+        genre_links = parent.select('a[href*="/all?genre"]')
+
+        genre_list = []
+        for link in genre_links:
+            genreurl = utils.safe_get_attr(link, 'href', default='')
+            if not genreurl:
+                continue
+
+            # Get genre name from the link text or div inside
+            genre_div = link.select_one('div')
+            genre = utils.safe_get_text(genre_div if genre_div else link, '').strip()
+
+            if genre and genreurl:
+                genre_list.append((genreurl, genre))
+
+        # Add genres sorted alphabetically
+        for genreurl, genre in sorted(genre_list, key=lambda x: x[1]):
             name = '{0} - {1}'.format(header, utils.cleantext(genre))
-            genreurl = site.url + genreurl + '&page=1'
+            if not genreurl.startswith('http'):
+                genreurl = site.url + genreurl.lstrip('/')
+            if '&page=' not in genreurl and '?page=' not in genreurl:
+                genreurl += '&page=1'
             site.add_dir(name, genreurl, 'List', '', page=1, section='all')
+
     utils.eod()
 
 
@@ -117,33 +180,55 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
-    html = utils.getHtml(url, site.url)
-    jdata = re.compile('<script id="__NEXT_DATA__" type="application/json">([^<]+)</script', re.DOTALL | re.IGNORECASE).findall(html)[0]
-    jdata = json.loads(jdata).get("props").get("initialState").get("video").get("data")
-    links = {}
-
-    if jdata.get("isMissav"):
-        links['MISSAV'] = 'https://missav.com/en/{}'.format(jdata.get("code"))
-
-    for link in jdata.get("srcs"):
-        if vp.bypass_hosters_single(link):
-            continue
-        if vp.resolveurl.HostedMediaFile(link).valid_url():
-            links[utils.get_vidhost(link)] = link
-
-    videourl = utils.selector('Select link', links)
-    if not videourl:
+    try:
+        html = utils.getHtml(url, site.url, timeout=30)
+    except Exception as e:
+        utils.kodilog('netflav Playvid error loading page: {}'.format(str(e)))
         vp.progress.close()
+        utils.notify('Error', 'Unable to load video page')
         return
 
-    if 'missav.com' in videourl:
-        contexturl = (utils.addon_sys
-                      + "?mode=missav.Playvid"
-                      + "&name=name"
-                      + "&url=" + urllib_parse.quote_plus(videourl))
-        xbmc.executebuiltin('RunPlugin(' + contexturl + ')')
-        return
-    vp.play_from_link_to_resolve(videourl)
+    try:
+        # Extract JSON from Next.js data script tag using BeautifulSoup
+        soup = utils.parse_html(html)
+        script_tag = soup.select_one('script#__NEXT_DATA__[type="application/json"]')
+        if not script_tag or not script_tag.string:
+            utils.kodilog('netflav Playvid: Could not find __NEXT_DATA__ script tag')
+            vp.progress.close()
+            utils.notify('Error', 'Unable to find video data')
+            return
+
+        jdata = json.loads(script_tag.string).get("props").get("initialState").get("video").get("data")
+        links = {}
+
+        if jdata.get("isMissav"):
+            links['MISSAV'] = 'https://missav.com/en/{}'.format(jdata.get("code"))
+
+        for link in jdata.get("srcs", []):
+            if vp.bypass_hosters_single(link):
+                continue
+            if vp.resolveurl.HostedMediaFile(link).valid_url():
+                links[utils.get_vidhost(link)] = link
+
+        videourl = utils.selector('Select link', links)
+        if not videourl:
+            vp.progress.close()
+            return
+
+        if 'missav.com' in videourl:
+            contexturl = (utils.addon_sys
+                          + "?mode=missav.Playvid"
+                          + "&name=name"
+                          + "&url=" + urllib_parse.quote_plus(videourl))
+            xbmc.executebuiltin('RunPlugin(' + contexturl + ')')
+            return
+
+        vp.play_from_link_to_resolve(videourl)
+
+    except Exception as e:
+        utils.kodilog('netflav Playvid parsing error: {}'.format(str(e)))
+        vp.progress.close()
+        utils.notify('Error', 'Unable to extract video link')
 
 
 @site.register()

@@ -44,41 +44,62 @@ def Main():
 
 @site.register()
 def List(url):
-    html = utils.getHtml(url, '')
+    try:
+        html = utils.getHtml(url, '', timeout=30)
+    except Exception as e:
+        utils.kodilog('avple List error: {}'.format(str(e)))
+        utils.eod()
+        return
+
     if '>404<' in html:
         utils.notify(msg='Nothing found')
         utils.eod()
         return
 
-    jdata = re.compile(r'application/json">([^<]+)', re.DOTALL | re.IGNORECASE).findall(html)[0]
-    jdata = json.loads(jdata).get("props").get("pageProps")
-    page = jdata.get("page")
-    pages = jdata.get("totalPage")
+    try:
+        # Extract JSON from Next.js data script tag using BeautifulSoup
+        soup = utils.parse_html(html)
+        script_tag = soup.select_one('script[type="application/json"]')
+        if not script_tag or not script_tag.string:
+            utils.kodilog('avple: Could not find JSON script tag')
+            utils.notify('Error', 'Unable to parse page data')
+            utils.eod()
+            return
 
-    if "indexListObj" in jdata.keys():
-        indexListObj = jdata.get("indexListObj")
-    else:
-        indexListObj = {'obj': jdata["data"]}
+        jdata = json.loads(script_tag.string).get("props").get("pageProps")
+        page = jdata.get("page")
+        pages = jdata.get("totalPage")
 
-    for obj in indexListObj.keys():
-        videos = indexListObj[obj]
-        for video in videos:
-            name = video["title"] if utils.PY3 else video["title"].encode('utf-8')
-            name = utils.cleantext(name)
-            img = video.get("img_preview", "")
-            duration = "" if video.get("timeLengh") is None else video.get("timeLengh")
-            videopage = '{0}video/{1}'.format(site.url, video.get("_id"))
-            site.add_download_link(name, str(videopage), 'Playvid', img, name, duration=duration)
-    if page < pages:
-        if 'page=' in url:
-            npurl = url.replace('page={}'.format(page), 'page={}'.format(page + 1))
-        elif '/{}/date'.format(page) in url:
-            npurl = url.replace('/{}/date'.format(page), '/{}/date'.format(page + 1))
+        if "indexListObj" in jdata.keys():
+            indexListObj = jdata.get("indexListObj")
         else:
-            npurl = url
-        cm_page = (utils.addon_sys + "?mode=avple.GotoPage&list_mode=avple.List&url=" + urllib_parse.quote_plus(npurl) + "&np=" + str(page + 1) + "&lp=" + str(pages))
-        cm = [('[COLOR violet]Goto Page #[/COLOR]', 'RunPlugin(' + cm_page + ')')]
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0}/{1})'.format(page + 1, pages), npurl, 'List', site.img_next, contextm=cm)
+            indexListObj = {'obj': jdata["data"]}
+
+        for obj in indexListObj.keys():
+            videos = indexListObj[obj]
+            for video in videos:
+                name = video["title"] if utils.PY3 else video["title"].encode('utf-8')
+                name = utils.cleantext(name)
+                img = video.get("img_preview", "")
+                duration = "" if video.get("timeLengh") is None else video.get("timeLengh")
+                videopage = '{0}video/{1}'.format(site.url, video.get("_id"))
+                site.add_download_link(name, str(videopage), 'Playvid', img, name, duration=duration)
+
+        if page < pages:
+            if 'page=' in url:
+                npurl = url.replace('page={}'.format(page), 'page={}'.format(page + 1))
+            elif '/{}/date'.format(page) in url:
+                npurl = url.replace('/{}/date'.format(page), '/{}/date'.format(page + 1))
+            else:
+                npurl = url
+            cm_page = (utils.addon_sys + "?mode=avple.GotoPage&list_mode=avple.List&url=" + urllib_parse.quote_plus(npurl) + "&np=" + str(page + 1) + "&lp=" + str(pages))
+            cm = [('[COLOR violet]Goto Page #[/COLOR]', 'RunPlugin(' + cm_page + ')')]
+            site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0}/{1})'.format(page + 1, pages), npurl, 'List', site.img_next, contextm=cm)
+
+    except Exception as e:
+        utils.kodilog('avple List parsing error: {}'.format(str(e)))
+        utils.notify('Error', 'Unable to parse videos')
+
     utils.eod()
 
 
@@ -161,10 +182,40 @@ def Search(url, keyword=None):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    html = utils.getHtml(url, site.url)
-    # jdata = re.compile(r'application/json">([^<]+)', re.DOTALL | re.IGNORECASE).findall(html)[0]
-    # jdata = json.loads(jdata).get("props").get("pageProps")
-    # vidurl = 'https://{0}/file/avple-images/{1}'.format(random.choice(CDN), jdata.get('instance').get('play'))
-    vidurl = re.compile(r"source\s*=\s*'([^']+)", re.DOTALL | re.IGNORECASE).findall(html)[0]
-    vidurl += '|Referer={0}&Origin={1}&verifypeer=false'.format(site.url, site.url[:-1])
-    vp.play_from_direct_link(vidurl)
+
+    try:
+        html = utils.getHtml(url, site.url, timeout=30)
+    except Exception as e:
+        utils.kodilog('avple Playvid error loading page: {}'.format(str(e)))
+        vp.progress.close()
+        utils.notify('Error', 'Unable to load video page')
+        return
+
+    try:
+        # Extract video source URL using BeautifulSoup
+        soup = utils.parse_html(html)
+
+        # Find the script tag containing "source = '...'"
+        vidurl = None
+        for script in soup.find_all('script'):
+            script_text = script.string
+            if script_text and 'source' in script_text:
+                # Extract source URL using regex on the script content
+                match = re.search(r"source\s*=\s*'([^']+)", script_text)
+                if match:
+                    vidurl = match.group(1)
+                    break
+
+        if not vidurl:
+            utils.kodilog('avple Playvid: Could not find video source URL')
+            vp.progress.close()
+            utils.notify('Error', 'Unable to find video source')
+            return
+
+        vidurl += '|Referer={0}&Origin={1}&verifypeer=false'.format(site.url, site.url[:-1])
+        vp.play_from_direct_link(vidurl)
+
+    except Exception as e:
+        utils.kodilog('avple Playvid parsing error: {}'.format(str(e)))
+        vp.progress.close()
+        utils.notify('Error', 'Unable to extract video link')
