@@ -100,30 +100,30 @@ For each site, test the following and mark results:
 ## Phase 2: Live Cam Sites (4/8 completed)
 
 ### chaturbate
-- [ ] Main listing loads with thumbnails: ___
-- [ ] Categories load: ___
-- [ ] Search works: ___
-- [ ] Room data displays: ___
-- [ ] Login/Authentication works: ___
-- [ ] Stream playback: ___
-- [ ] Thumbnails/images display: ___
-- **Notes**: _______________________________________________
+- [ ] Main listing loads with thumbnails: ✅
+- [ ] Categories load: ✅
+- [ ] Search works: ✅
+- [ ] Room data displays: ✅
+- [ ] Login/Authentication works: Did not test
+- [ ] Stream playback: ✅
+- [ ] Thumbnails/images display: ✅
+- **Notes**: Just didn't test login
 
 ### stripchat
-- [ ] Main listing loads with thumbnails: ___
-- [ ] Contest pages (List2/List3) load: ___
-- [ ] Categories load: ___
-- [ ] Search works: ___
-- [ ] Stream playback: ___
-- [ ] Thumbnails/images display: ___
+- [ ] Main listing loads with thumbnails: ✅
+- [ ] Contest pages (List2/List3) load: ✅
+- [ ] Categories load: "Categories work"
+- [ ] Search works: N/A - no option
+- [ ] Stream playback: ✅
+- [ ] Thumbnails/images display: ✅
 - **Notes**: _______________________________________________
 
 ### streamate
-- [ ] Main listing loads with thumbnails: ___
-- [ ] Categories load: ___
-- [ ] Search works: ___
-- [ ] Stream playback: ___
-- [ ] Thumbnails/images display: ___
+- [ ] Main listing loads with thumbnails: ✅
+- [ ] Categories load: Only option is "Search + Fav add"
+- [ ] Search works: ✅
+- [ ] Stream playback: ✅
+- [ ] Thumbnails/images display: ✅
 - **Notes**: _______________________________________________
 
 ### naked
@@ -132,7 +132,7 @@ For each site, test the following and mark results:
 - [ ] JSON payload parsing works: ___
 - [ ] Stream playback: ___
 - [ ] Thumbnails/images display: ___
-- **Notes**: _______________________________________________
+- **Notes**: Opens with Categories (Females, Males or Transexual) but when clicking on a Category nothing loads
 
 ---
 
@@ -145,7 +145,7 @@ For each site, test the following and mark results:
 - [ ] Pagination (Next Page): ___
 - [ ] Video playback: ___
 - [ ] Thumbnails/images display: ___
-- **Notes**: _______________________________________________
+- **Notes**: When loading the site no videos show just "Categories, Search, HD, 4k and Next Page (2/13)" and when clicking on Categories like HD or 4k no videos load
 
 ### tnaflix
 - [ ] Main listing loads with thumbnails: ___
@@ -476,6 +476,44 @@ For each site, test the following and mark results:
 _______________________________________________
 _______________________________________________
 _______________________________________________
+
+---
+
+## Fixes Applied (2025-11-16)
+
+Based on testing results, the following sites have been fixed:
+
+### ✅ spankbang (Fixed - Commit 3be839b)
+- **Issue**: Tags/search showing only latest videos, pagination broken
+- **Fix**: Fixed filter parameters, pagination logic
+- **Status**: Tags, search, and pagination now working
+- **Note**: Kodi freeze on video stop may still need investigation
+
+### ✅ drtuber (Fixed - Commit 3be839b)
+- **Issue**: No videos showing on main page, categories broken
+- **Fix**: Updated CSS selector from `div.video-item` to `a.th[href*="/video"]`
+- **Status**: Main listing and categories now working
+
+### ✅ hqporner (Fixed - Commit 43352c3)
+- **Issue**: "Website too slow" errors, categories/pagination broken, video playback issues
+- **Fix**:
+  - Filter to only video cards using `:has(.meta-data-title)` selector
+  - Added timeout=30 to all network requests
+  - Better error handling and logging
+  - Improved iframe URL normalization in HQPLAY
+- **Status**: Should be working now - needs retesting
+
+### ⚠️ naked (Partially Fixed - Commit 43352c3)
+- **Issue**: Categories load but selecting one shows nothing
+- **Root Cause**: Site changed to load models dynamically (embedded models array is now empty)
+- **Fix**: Added better error handling and user-friendly error messages
+- **Status**: Will now show "No models currently broadcasting" instead of silent failure
+- **Note**: Full fix requires reverse engineering their new API endpoint
+
+### ⚠️ pornhub (Likely Fixed - Commit 0909f7f)
+- **Issue**: Search doesn't pull correct results
+- **Fix**: Improved URL encoding in Search function (`urllib_parse.quote_plus`)
+- **Status**: Needs retesting to confirm fix works
 
 ---
 
