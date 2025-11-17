@@ -248,9 +248,7 @@ All other sites not in previous phases.
 | freshporno | ⏳ Pending | |
 | fullporner | ⏳ Pending | |
 | fullxcinema | ⏳ Pending | |
-| hqporner | ⏳ Pending | |
 | justfullporn | ⏳ Pending | |
-| netflixporno | ✅ **COMPLETED** | Covered in Phase 3 migration (2025-11-11) |
 | porn4k | ⏳ Pending | |
 | porndish | ⏳ Pending | |
 | pornez | ⏳ Pending | |
@@ -265,6 +263,8 @@ All other sites not in previous phases.
 | xsharings | ⏳ Pending | |
 | xtheatre | ⏳ Pending | |
 | youcrazyx | ⏳ Pending | |
+
+> ℹ️ **Note**: Completed migrations (e.g., **hqporner** in Phase 1, **netflixporno** in Phase 3) are documented within their respective phases; Phase 8 only lists sites still awaiting work.
 
 **Target**: Complete by end of Phase 8
 
