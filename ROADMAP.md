@@ -348,9 +348,9 @@ Part of BeautifulSoup migration roadmap (site X/137)
 ### Overall Progress
 
 - **Total Sites**: 137
-- **Completed**: 43 (31.4%)
+- **Completed**: 46 (33.6%)
 - **In Progress**: 0
-- **Remaining**: 94 (68.6%)
+- **Remaining**: 91 (66.4%)
 
 ### Phase Progress
 
