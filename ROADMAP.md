@@ -4,7 +4,7 @@
 
 **Started**: 2025-11-01
 **Current Version**: v1.1.181
-**Progress**: 43/137 sites (31.4%) migrated
+**Progress**: 47/137 sites (34.3%) migrated
 
 ---
 
@@ -141,7 +141,7 @@ Japanese adult video sites.
 | foxnxx | ⏳ Pending | |
 | sextb | ⏳ Pending | |
 
-**Target**: Complete by end of Phase 4
+**Status**: 12/20 BeautifulSoup migrations complete; 8 remaining sites targeted by end of Phase 4
 
 ---
 
@@ -360,7 +360,7 @@ Part of BeautifulSoup migration roadmap (site X/137)
 | Phase 1: High Priority | 10 | 8 | 80% 🚧 |
 | Phase 2: Live Cams | 8 | 4 | 50% ✅ |
 | Phase 3: Medium Priority | 20 | 20 | 100% ✅ |
-| Phase 4: JAV Sites | 20 | 8 | 40% 🚀 |
+| Phase 4: JAV Sites | 20 | 12 | 60% 🚀 |
 | Phase 5: Hentai/Anime | 10 | 0 | 0% |
 | Phase 6: International | 15 | 0 | 0% |
 | Phase 7: Niche/Specialty | 30 | 3 | 10% 🚀 |
@@ -386,19 +386,20 @@ Part of BeautifulSoup migration roadmap (site X/137)
 | 2025-11-13 | 6 (playvids, porndig, pornhoarder, pornmz, longvideos, luxuretv) | 35/137 | **Phase 3 COMPLETED**: All 20 medium-priority sites migrated to BeautifulSoup |
 | 2025-11-13 | 6 (missav, javgg, javguru, javbangers, javhdporn, javmoe) | 41/137 | **Phase 4 STARTED**: First batch of JAV sites migrated (30% complete) |
 | 2025-11-14 | 2 (kissjav, supjav) | 43/137 | **Phase 4 CONTINUES**: kissjav Playlists function + supjav full migration (40% complete) |
+| 2025-11-16 | 4 (hpjav, netflav, avple, iflix) | 47/137 | **Phase 4 MOMENTUM**: hpjav pagination, netflav JSON extraction, avple playback, iflix CSS image parsing |
 
 **Estimated Timeline** (at 1 site/week, focusing on remaining backlog):
 - Phase 1 (2 remaining sites): ~2 weeks
 - Phase 2: ✅ **COMPLETED**
 - Phase 3: ✅ **COMPLETED**
-- Phase 4 (12 remaining JAV sites): ~12 weeks
+- Phase 4 (8 remaining JAV sites): ~8 weeks
 - Full migration (94 remaining sites): ~94 weeks (≈1.8 years)
 
 **Optimistic Timeline** (at 3 sites/week):
 - Phase 1 (2 remaining sites): <1 week
 - Phase 2: ✅ **COMPLETED**
 - Phase 3: ✅ **COMPLETED**
-- Phase 4 (12 remaining JAV sites): ~4 weeks
+- Phase 4 (8 remaining JAV sites): ~3 weeks
 - Full migration (94 remaining sites): ~31 weeks (≈7.2 months)
 
 ---
@@ -446,5 +447,5 @@ grep -c "✅ \*\*COMPLETED\*\*" ROADMAP.md
 
 ---
 
-**Last Updated**: 2025-11-14 (Phase 4 continues: 8/20 JAV sites migrated - 40% complete)
+**Last Updated**: 2025-11-16 (Phase 4 momentum: 12/20 JAV sites migrated - 60% complete)
 **Next Review**: After next Phase 4 batch completion
