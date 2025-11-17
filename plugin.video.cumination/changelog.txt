@@ -1,4 +1,5 @@
 [B]Version 1.1.182[/B]
+- archivebate - add new site with JSON listing, categories, search, and direct playback support
 - xhamster - restore playback with updated decryptor and additional manifest fallbacks
 - terebon - fix playback when iframe embeds are missing
 - hanime - fix thumbnails and poster requests
