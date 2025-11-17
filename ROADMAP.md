@@ -114,7 +114,7 @@ Secondary mainstream sites with good traffic (previously Phase 2).
 
 ---
 
-### 🎌 Phase 4: JAV Sites (11/20 completed - 55%)
+### 🎌 Phase 4: JAV Sites (12/20 completed - 60%)
 
 Japanese adult video sites.
 
@@ -131,7 +131,7 @@ Japanese adult video sites.
 | hpjav | ✅ **COMPLETED** | BeautifulSoup migration for List, pagination with timeout support |
 | netflav | ✅ **COMPLETED** | BeautifulSoup migration for JSON extraction, Genres parsing |
 | avple | ✅ **COMPLETED** | BeautifulSoup migration for List, Playvid with enhanced error handling |
-| iflix | ⏳ Pending | |
+| iflix | ✅ **COMPLETED** | BeautifulSoup migration for List, tags, Playvid with CSS background-image parsing |
 | japteenx | ⏳ Pending | |
 | terebon | ⏳ Pending | |
 | 85po | ⏳ Pending | Chinese site |
@@ -348,9 +348,9 @@ Part of BeautifulSoup migration roadmap (site X/137)
 ### Overall Progress
 
 - **Total Sites**: 137
-- **Completed**: 46 (33.6%)
+- **Completed**: 47 (34.3%)
 - **In Progress**: 0
-- **Remaining**: 91 (66.4%)
+- **Remaining**: 90 (65.7%)
 
 ### Phase Progress
 
