@@ -363,7 +363,12 @@ def Playvid(url, name, download=None):
     sources = _gather_video_sources(html, videopage)
     if not sources:
         vp.progress.close()
-        utils.notify('PeachUrNet', 'No playable sources found')
+        # Check if page requires authentication
+        if '/login' in html or 'href="https://peachurnet.com/en/login"' in html:
+            utils.notify('PeachUrNet', 'This video may require login or is unavailable', time=5000)
+        else:
+            utils.notify('PeachUrNet', 'No playable sources found')
+        utils.kodilog('PeachUrNet: No video sources found for {}'.format(videopage))
         return
 
     videourl = utils.selector('Select source', sources)

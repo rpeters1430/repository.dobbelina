@@ -953,7 +953,7 @@ def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='ret
             notify(i18n('oh_oh'), i18n('slow_site'))
             xbmc.log(str(e), xbmc.LOGDEBUG)
             return ''
-        elif 'raise' in error:
+        else:
             raise
     except Exception as e:
         if 'SSL23_GET_SERVER_HELLO' in str(e):

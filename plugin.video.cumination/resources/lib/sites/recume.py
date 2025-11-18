@@ -31,7 +31,9 @@ site = AdultSite('recume', '[COLOR hotpink]Recu.me[/COLOR]', 'https://recu.me/',
 API_PAGE_SIZE = 36
 API_HEADERS = {
     'Accept': 'application/json, text/plain, */*',
-    'User-Agent': utils.base_hdrs.get('User-Agent', '')
+    'User-Agent': utils.base_hdrs.get('User-Agent', ''),
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-Requested-By': 'Cumination'
 }
 
 
@@ -56,13 +58,33 @@ def _build_categories_url():
 
 
 def _fetch_json(url):
-    response = utils.getHtml(url, headers=API_HEADERS)
+    headers = API_HEADERS.copy()
+    if not headers.get('User-Agent'):
+        headers['User-Agent'] = utils.base_hdrs.get('User-Agent', '')
+
+    response = None
+    try:
+        response = utils._getHtml(  # pylint: disable=protected-access
+            url, referer=site.url, headers=headers
+        )
+    except Exception as exc:  # pragma: no cover - surfaced in Kodi log
+        utils.kodilog('Recu.me request failed: {}'.format(exc))
+
+    if not response or utils.is_cloudflare_challenge_page(response):
+        try:
+            response = utils.flaresolve(url, site.url)
+        except Exception as exc:  # pragma: no cover
+            utils.kodilog('Recu.me FlareSolverr error: {}'.format(exc))
+            return []
+
     if not response:
         return []
+
     try:
         data = json.loads(response)
     except ValueError:
-        utils.kodilog('Recu.me: failed to parse JSON for {}'.format(url))
+        preview = response[:800] + '...' if len(response) > 800 else response
+        utils.kodilog('Recu.me: failed to parse JSON for {} (snippet: {})'.format(url, preview))
         return []
     if isinstance(data, dict) and data.get('code'):
         utils.kodilog('Recu.me API error {}: {}'.format(data.get('code'), data.get('message', 'Unknown error')))
