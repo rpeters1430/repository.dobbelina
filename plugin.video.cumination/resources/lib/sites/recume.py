@@ -18,7 +18,6 @@
 
 import json
 import re
-from datetime import datetime
 
 from bs4 import BeautifulSoup
 from six.moves import urllib_parse
@@ -38,15 +37,22 @@ API_HEADERS = {
 
 
 def _build_posts_url(page=1, search=None, category=None):
+    try:
+        page = int(page)
+    except (TypeError, ValueError):
+        page = 1
+
     if search:
-        return urllib_parse.urljoin(site.url, '?s={}'.format(search))
+        if page == 1:
+            return urllib_parse.urljoin(site.url, '?s={}'.format(search))
+        return urllib_parse.urljoin(site.url, 'page/{}/?s={}'.format(page, search))
 
     if category:
-        if str(page) == '1':
+        if page == 1:
             return category
         return '{}/page/{}/'.format(category.rstrip('/'), page)
 
-    if str(page) == '1':
+    if page == 1:
         return site.url
     return urllib_parse.urljoin(site.url, 'page/{}/'.format(page))
 
@@ -91,30 +97,6 @@ def _fetch_json(url):
     return data
 
 
-def _strip_html(text):
-    if not text:
-        return ''
-    text = re.sub(r'<[^>]+>', ' ', text)
-    return utils.cleantext(text)
-
-
-def _extract_image(post):
-    embedded = post.get('_embedded') or {}
-    media = embedded.get('wp:featuredmedia') or []
-    if isinstance(media, list):
-        for item in media:
-            source = item.get('source_url') if isinstance(item, dict) else None
-            if source:
-                return source
-    jetpack = post.get('jetpack_featured_media_url')
-    if jetpack:
-        return jetpack
-    featured = post.get('better_featured_image')
-    if isinstance(featured, dict):
-        return featured.get('source_url')
-    return ''
-
-
 def _extract_duration(text):
     if not text:
         return ''
@@ -139,32 +121,59 @@ def _extract_quality(text):
     return ''
 
 
-def _format_description(post):
-    excerpt = _strip_html(post.get('excerpt', {}).get('rendered', ''))
-    content = post.get('content', {}).get('rendered', '')
-    published = post.get('date') or ''
-    date_str = ''
-    if published:
-        try:
-            date_part = published.split('T')[0]
-            dt = datetime.strptime(date_part, '%Y-%m-%d')
-            date_str = dt.strftime('%Y-%m-%d')
-        except ValueError:
-            date_str = published.split('T')[0]
-    parts = []
-    if date_str:
-        parts.append('Published: {}'.format(date_str))
-    if excerpt:
-        parts.append(excerpt)
-    elif content:
-        parts.append(_strip_html(content)[:220])
-    return '[CR]'.join(parts)
 @site.register(default_mode=True)
 def Main(url=None):
     site.add_dir('[COLOR hotpink]Categories[/COLOR]', _build_categories_url(), 'Categories', site.img_cat)
     site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url, 'Search', site.img_search)
     List(_build_posts_url())
     utils.eod()
+
+
+def _extract_article_title(post, link_tag):
+    title = None
+    for heading_tag in ['h2', 'h3', 'h4']:
+        heading = post.find(heading_tag)
+        if heading and heading.get_text(strip=True):
+            title = heading.get_text(strip=True)
+            break
+    if not title and link_tag:
+        title = link_tag.get_text(strip=True)
+    if not title and link_tag:
+        title = link_tag.get('title')
+    return title or ''
+
+
+def _extract_article_thumb(post):
+    img_tag = post.find('img')
+    if not img_tag:
+        return ''
+    return (
+        img_tag.get('data-src')
+        or img_tag.get('data-lazy-src')
+        or img_tag.get('data-original')
+        or img_tag.get('src')
+        or ''
+    )
+
+
+def _extract_article_description(post):
+    candidates = []
+    for cls in ['excerpt', 'entry-summary', 'summary', 'entry-content', 'post-excerpt']:
+        candidates.append(post.find(class_=cls))
+    candidates.append(post.find('p'))
+
+    for candidate in candidates:
+        if not candidate:
+            continue
+        text = candidate.get_text(' ', strip=True)
+        if text:
+            return text
+    return 'Found on Recu.me'
+
+
+def _extract_article_metadata(post):
+    text = post.get_text(' ', strip=True)
+    return _extract_duration(text), _extract_quality(text)
 
 
 @site.register()
@@ -178,8 +187,13 @@ def List(url):
         utils.eod()
         return
 
-    soup = BeautifulSoup(html_response, 'html.parser')
-    posts = soup.find_all('article')
+    try:
+        soup = BeautifulSoup(html_response, 'html.parser')
+        posts = soup.find_all('article')
+    except Exception as exc:  # pragma: no cover - parsing errors logged
+        utils.kodilog('Recu.me parse error: {}'.format(exc))
+        utils.eod()
+        return
 
     for post in posts:
         link_tag = post.find('a')
@@ -187,30 +201,25 @@ def List(url):
             continue
 
         link = link_tag.get('href')
-        title = link_tag.get('title') or link_tag.get_text(strip=True)
+        title = _extract_article_title(post, link_tag)
         if not link or not title:
             continue
 
-        img_tag = post.find('img')
-        thumb = img_tag.get('src') if img_tag else ''
-        description = 'Found on Recu.me'
+        thumb = _extract_article_thumb(post)
+        description = _extract_article_description(post)
+        duration, quality = _extract_article_metadata(post)
 
-        site.add_download_link(title, link, 'Playvid', thumb, description)
+        site.add_download_link(title, link, 'Playvid', thumb, description,
+                               duration=duration, quality=quality)
 
-    if posts:
-        current_page = 1
-        match = re.search(r'page/(\d+)', url)
+    next_page_link = soup.select_one('a.next.page-numbers, a.next, a.pagination__next')
+    if posts and next_page_link and next_page_link.get('href'):
+        next_url = next_page_link['href']
+        match = re.search(r'page/(\d+)', next_url)
+        label = 'Next Page'
         if match:
-            current_page = int(match.group(1))
-
-        next_page = current_page + 1
-
-        if 's=' not in url:
-            base_url = re.sub(r'page/\d+/?', '', url).rstrip('/')
-            if not base_url:
-                base_url = site.url.rstrip('/')
-            next_url = '{}/page/{}/'.format(base_url, next_page)
-            site.add_dir('Next Page ({})'.format(next_page), next_url, 'List', site.img_next)
+            label = 'Next Page ({})'.format(match.group(1))
+        site.add_dir(label, next_url, 'List', site.img_next)
 
     utils.eod()
 
