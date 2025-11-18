@@ -126,7 +126,8 @@ def _format_description(post):
     date_str = ''
     if published:
         try:
-            dt = datetime.strptime(published.split('+')[0], '%Y-%m-%dT%H:%M:%S')
+            date_part = published.split('T')[0]
+            dt = datetime.strptime(date_part, '%Y-%m-%d')
             date_str = dt.strftime('%Y-%m-%d')
         except ValueError:
             date_str = published.split('T')[0]
@@ -164,6 +165,7 @@ def Main(url=None):
     site.add_dir('[COLOR hotpink]Categories[/COLOR]', _build_categories_url(), 'Categories', site.img_cat)
     site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url, 'Search', site.img_search)
     List(_build_posts_url())
+    utils.eod()
 
 
 @site.register()
@@ -200,11 +202,33 @@ def List(url):
 
 @site.register()
 def Categories(url):
-    categories = _fetch_json(url or _build_categories_url())
-    if not categories:
+    base_url = url or _build_categories_url()
+    parsed_url = urllib_parse.urlparse(base_url)
+    params = dict(urllib_parse.parse_qsl(parsed_url.query))
+    try:
+        per_page = int(params.get('per_page', 100))
+    except ValueError:
+        per_page = 100
+
+    all_categories = []
+    page = 1
+    while True:
+        params['page'] = page
+        paged_query = urllib_parse.urlencode(params)
+        paged_url = urllib_parse.urlunparse(parsed_url._replace(query=paged_query))
+        categories = _fetch_json(paged_url)
+        if not categories:
+            break
+        all_categories.extend(categories)
+        if len(categories) < per_page:
+            break
+        page += 1
+
+    if not all_categories:
         utils.eod()
         return
-    for cat in sorted(categories, key=lambda x: x.get('name', '').lower() if isinstance(x, dict) else ''):
+
+    for cat in sorted(all_categories, key=lambda x: x.get('name', '').lower() if isinstance(x, dict) else ''):
         if not isinstance(cat, dict):
             continue
         cat_id = cat.get('id')
