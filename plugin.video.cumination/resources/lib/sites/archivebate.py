@@ -147,10 +147,9 @@ def Categories(url):
 @site.register()
 def Search(url, keyword=None):
     base = url or POSTS_API
-    if not keyword:
-        site.search_dir(base, 'Search')
-        return
-    keyword = keyword.strip()
+    if keyword:
+        keyword = keyword.strip()
+
     if not keyword:
         site.search_dir(base, 'Search')
         return
@@ -214,36 +213,36 @@ def _get_page_number(url):
 
 
 def _get_post_image(post):
-    jetpack_img = post.get('jetpack_featured_media_url')
-    if jetpack_img:
-        return jetpack_img
-
-    better = post.get('better_featured_image')
-    if isinstance(better, dict):
-        source = better.get('source_url')
+    def _extract_from_media(media_obj):
+        if not isinstance(media_obj, dict):
+            return None
+        source = media_obj.get('source_url')
         if source:
             return source
-        media_details = better.get('media_details', {})
-        sizes = media_details.get('sizes', {}) if isinstance(media_details, dict) else {}
+        media_details = media_obj.get('media_details', {})
+        sizes = media_details.get('sizes', {})
         for key in ('medium_large', 'large', 'full', 'medium'):
             size_data = sizes.get(key)
             if isinstance(size_data, dict) and size_data.get('source_url'):
                 return size_data.get('source_url')
+        return None
+
+    jetpack_img = post.get('jetpack_featured_media_url')
+    if jetpack_img:
+        return jetpack_img
+
+    image = _extract_from_media(post.get('better_featured_image'))
+    if image:
+        return image
 
     embedded = post.get('_embedded') or {}
     media = embedded.get('wp:featuredmedia')
     if isinstance(media, list) and media:
         media = media[0]
-    if isinstance(media, dict):
-        source = media.get('source_url')
-        if source:
-            return source
-        media_details = media.get('media_details', {})
-        sizes = media_details.get('sizes', {}) if isinstance(media_details, dict) else {}
-        for key in ('medium_large', 'large', 'full', 'medium'):
-            size_data = sizes.get(key)
-            if isinstance(size_data, dict) and size_data.get('source_url'):
-                return size_data.get('source_url')
+
+    image = _extract_from_media(media)
+    if image:
+        return image
 
     content = post.get('content', {}).get('rendered', '')
     match = IMG_RE.search(content)
@@ -259,7 +258,7 @@ def _get_excerpt(post):
         return ''
     text = TAG_RE.sub(' ', excerpt)
     text = re.sub(r'\s+', ' ', text).strip()
-    return utils.cleantext(text) if text else ''
+    return utils.cleantext(text)
 
 
 def _get_duration(post):
