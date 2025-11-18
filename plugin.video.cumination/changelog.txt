@@ -4,6 +4,7 @@
 - terebon - fix playback when iframe embeds are missing
 - hanime - fix thumbnails and poster requests
 - hanime - fix playback when inline manifests change format
+- peachurnet - add new JAV provider with navigation-aware listings, search integration, and direct playback fallbacks
 - pornhub - fix Categories screen URL and sort the list alphabetically
 - thothub - ensure private videos trigger a real login instead of stopping at the PHP session cookie
 - chaturbate - begin BeautifulSoup migration (room data & CSRF token parsing)

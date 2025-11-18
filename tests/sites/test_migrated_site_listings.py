@@ -20,6 +20,7 @@ from resources.lib.sites import (
     watchporn,
     pornone,
     pornhat,
+    peachurnet,
 )
 
 
@@ -175,6 +176,15 @@ SITE_FIXTURES = [
         ("https://www.pornhat.com/",),
         {},
         "sites/pornhat/listing.html",
+        True,
+    ),
+    (
+        "peachurnet",
+        peachurnet,
+        "List",
+        ("https://peachurnet.com/en",),
+        {},
+        "sites/peachurnet/listing.html",
         True,
     ),
 ]
