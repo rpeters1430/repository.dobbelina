@@ -20,6 +20,7 @@ import json
 import re
 from datetime import datetime
 
+from bs4 import BeautifulSoup
 from six.moves import urllib_parse
 
 from resources.lib import utils
@@ -28,7 +29,6 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite('recume', '[COLOR hotpink]Recu.me[/COLOR]', 'https://recu.me/',
                  'https://recu.me/favicon.ico', 'recume')
 
-API_PAGE_SIZE = 36
 API_HEADERS = {
     'Accept': 'application/json, text/plain, */*',
     'User-Agent': utils.base_hdrs.get('User-Agent', ''),
@@ -38,19 +38,17 @@ API_HEADERS = {
 
 
 def _build_posts_url(page=1, search=None, category=None):
-    params = {
-        'page': page,
-        'per_page': API_PAGE_SIZE,
-        '_embed': '1',
-        'orderby': 'date',
-        'order': 'desc'
-    }
     if search:
-        params['search'] = search
+        return urllib_parse.urljoin(site.url, '?s={}'.format(search))
+
     if category:
-        params['categories'] = category
-    query = urllib_parse.urlencode(params)
-    return urllib_parse.urljoin(site.url, 'wp-json/wp/v2/posts?{}'.format(query))
+        if str(page) == '1':
+            return category
+        return '{}/page/{}/'.format(category.rstrip('/'), page)
+
+    if str(page) == '1':
+        return site.url
+    return urllib_parse.urljoin(site.url, 'page/{}/'.format(page))
 
 
 def _build_categories_url():
@@ -161,27 +159,6 @@ def _format_description(post):
     elif content:
         parts.append(_strip_html(content)[:220])
     return '[CR]'.join(parts)
-
-
-def _get_next_page_url(url, current_len):
-    parsed = urllib_parse.urlparse(url)
-    params = dict(urllib_parse.parse_qsl(parsed.query, keep_blank_values=True))
-    try:
-        per_page = int(params.get('per_page', API_PAGE_SIZE))
-    except ValueError:
-        per_page = API_PAGE_SIZE
-    if current_len < per_page:
-        return None
-    try:
-        page = int(params.get('page', 1)) + 1
-    except ValueError:
-        page = 2
-    params['page'] = str(page)
-    new_query = urllib_parse.urlencode(params)
-    parsed = parsed._replace(query=new_query)
-    return urllib_parse.urlunparse(parsed), page
-
-
 @site.register(default_mode=True)
 def Main(url=None):
     site.add_dir('[COLOR hotpink]Categories[/COLOR]', _build_categories_url(), 'Categories', site.img_cat)
@@ -192,33 +169,49 @@ def Main(url=None):
 
 @site.register()
 def List(url):
-    posts = _fetch_json(url)
-    if not posts:
+    html_response = utils._getHtml(url, referer=site.url, headers=API_HEADERS)
+
+    if not html_response or utils.is_cloudflare_challenge_page(html_response):
+        html_response = utils.flaresolve(url, site.url)
+
+    if not html_response:
         utils.eod()
         return
-    seen = set()
+
+    soup = BeautifulSoup(html_response, 'html.parser')
+    posts = soup.find_all('article')
+
     for post in posts:
-        if not isinstance(post, dict):
+        link_tag = post.find('a')
+        if not link_tag:
             continue
-        link = post.get('link') or ''
-        if not link:
-            slug = post.get('slug')
-            if slug:
-                link = urllib_parse.urljoin(site.url, slug + '/')
-        if not link or link in seen:
+
+        link = link_tag.get('href')
+        title = link_tag.get('title') or link_tag.get_text(strip=True)
+        if not link or not title:
             continue
-        seen.add(link)
-        title = _strip_html(post.get('title', {}).get('rendered', '')) or 'Video'
-        thumb = _extract_image(post)
-        content_html = post.get('content', {}).get('rendered', '')
-        duration = _extract_duration(content_html)
-        quality = _extract_quality(content_html)
-        description = _format_description(post)
-        site.add_download_link(title, link, 'Playvid', thumb, description, duration=duration, quality=quality)
-    next_info = _get_next_page_url(url, len(posts))
-    if next_info:
-        next_url, page_no = next_info
-        site.add_dir('Next Page ({})'.format(page_no), next_url, 'List', site.img_next)
+
+        img_tag = post.find('img')
+        thumb = img_tag.get('src') if img_tag else ''
+        description = 'Found on Recu.me'
+
+        site.add_download_link(title, link, 'Playvid', thumb, description)
+
+    if posts:
+        current_page = 1
+        match = re.search(r'page/(\d+)', url)
+        if match:
+            current_page = int(match.group(1))
+
+        next_page = current_page + 1
+
+        if 's=' not in url:
+            base_url = re.sub(r'page/\d+/?', '', url).rstrip('/')
+            if not base_url:
+                base_url = site.url.rstrip('/')
+            next_url = '{}/page/{}/'.format(base_url, next_page)
+            site.add_dir('Next Page ({})'.format(next_page), next_url, 'List', site.img_next)
+
     utils.eod()
 
 
@@ -253,14 +246,20 @@ def Categories(url):
     for cat in sorted(all_categories, key=lambda x: x.get('name', '').lower() if isinstance(x, dict) else ''):
         if not isinstance(cat, dict):
             continue
-        cat_id = cat.get('id')
-        if not cat_id:
-            continue
         name = utils.cleantext(cat.get('name', 'Category'))
+        if not name:
+            continue
         count = cat.get('count', 0)
         if count:
             name = '{} [COLOR deeppink]({})[/COLOR]'.format(name, count)
-        cat_url = _build_posts_url(category=cat_id)
+        cat_link = cat.get('link') or ''
+        if not cat_link:
+            slug = cat.get('slug')
+            if slug:
+                cat_link = urllib_parse.urljoin(site.url, 'category/{}/'.format(slug.strip('/')))
+        if not cat_link:
+            continue
+        cat_url = _build_posts_url(category=cat_link)
         site.add_dir(name, cat_url, 'List', site.img_cat)
     utils.eod()
 
