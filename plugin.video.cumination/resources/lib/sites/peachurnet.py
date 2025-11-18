@@ -94,7 +94,7 @@ def _cache_homepage_metadata(force: bool = False) -> None:
         return
 
     try:
-        html = utils.getHtml(_home_url(), headers=_ensure_headers(), timeout=30)
+        html = utils.getHtml(_home_url(), headers=_ensure_headers())
     except Exception as exc:  # pragma: no cover - network/runtime issues surfaced to Kodi UI
         utils.kodilog('peachurnet Main load error: {}'.format(exc))
         HOME_CACHE['sections'] = []
@@ -131,20 +131,18 @@ def _cache_homepage_metadata(force: bool = False) -> None:
 def _discover_search_endpoint(soup) -> str:
     fallback = urllib_parse.urljoin(site.url, 'en/search?q=')
     for form in soup.find_all('form'):
-        method = utils.safe_get_attr(form, 'method').lower() if utils.safe_get_attr(form, 'method') else 'get'
+        method_attr = utils.safe_get_attr(form, 'method')
+        method = method_attr.lower() if method_attr else 'get'
         if method != 'get':
             continue
         input_tag = form.find('input', attrs={'name': re.compile('q|keyword|search', re.IGNORECASE)})
         if not input_tag:
             continue
-        action = utils.safe_get_attr(form, 'action', default='')
-        if not action:
-            action = form.get('action', '')
-        action = action or '/en/search'
+        action = utils.safe_get_attr(form, 'action', default='') or '/en/search'
         base = _absolute_url(action)
         query_name = input_tag.get('name', 'q')
         separator = '&' if '?' in base else '?'
-        return '{0}{1}{2}='.format(base, separator, query_name)
+        return f'{base}{separator}{query_name}='
     return fallback
 
 
@@ -237,10 +235,10 @@ def _parse_video_cards(soup) -> List[Dict[str, str]]:
         meta = _extract_metadata(link)
         plot_parts = [title]
         if duration:
-            plot_parts.append('Duration: {0}'.format(duration))
+            plot_parts.append(f'Duration: {duration}')
         if meta:
             plot_parts.append(meta)
-        plot = '\n'.join([part for part in plot_parts if part])
+        plot = '\n'.join(plot_parts)
         cards.append({
             'title': title,
             'url': _absolute_url(href),
@@ -304,7 +302,7 @@ def Main():
     site.add_dir('[COLOR hotpink]Latest Updates[/COLOR]', _home_url(), 'List', site.img_cat)
     sections = HOME_CACHE.get('sections') or []
     for label, url in sections:
-        site.add_dir('[COLOR hotpink]{0}[/COLOR]'.format(label), url, 'List', site.img_cat)
+        site.add_dir(f'[COLOR hotpink]{label}[/COLOR]', url, 'List', site.img_cat)
     search_url = HOME_CACHE.get('search') or urllib_parse.urljoin(site.url, 'en/search?q=')
     site.add_dir('[COLOR hotpink]Search[/COLOR]', search_url, 'Search', site.img_search)
     utils.eod()
@@ -314,7 +312,7 @@ def Main():
 def List(url):
     target_url = _absolute_url(url)
     try:
-        html = utils.getHtml(target_url, headers=_ensure_headers(), timeout=30)
+        html = utils.getHtml(target_url, headers=_ensure_headers())
     except Exception as exc:  # pragma: no cover - surfaced to Kodi UI
         utils.kodilog('peachurnet List load error: {}'.format(exc))
         utils.notify('PeachUrNet', 'Unable to load listing page')
@@ -344,7 +342,7 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(search_base, 'Search')
         return
-    search_url = '{0}{1}'.format(search_base, urllib_parse.quote_plus(keyword))
+    search_url = f'{search_base}{urllib_parse.quote_plus(keyword)}'
     List(search_url)
 
 
@@ -355,7 +353,7 @@ def Playvid(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
     try:
-        html = utils.getHtml(videopage, headers=_ensure_headers(), timeout=30)
+        html = utils.getHtml(videopage, headers=_ensure_headers())
     except Exception as exc:  # pragma: no cover - surfaced to Kodi UI
         utils.kodilog('peachurnet Playvid load error: {}'.format(exc))
         vp.progress.close()
