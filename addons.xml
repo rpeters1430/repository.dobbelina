@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <addons>
-<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.183">
+<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.184">
 <requires>
+<import addon="xbmc.python" version="3.0.0" />
 <import addon="script.module.six" />
 <import addon="script.module.kodi-six" />
 <import addon="script.module.resolveurl" version="5.0.00" />
@@ -27,12 +28,12 @@
 </assets>
 </extension>
 </addon>
-<addon id="plugin.video.uwc" name="Ultimate Whitecream" version="1.2.46" provider-name="Whitecream, holisticdioxide">
+<addon id="plugin.video.uwc" name="Ultimate Whitecream" version="1.2.47" provider-name="Whitecream, holisticdioxide">
 <requires>
-<import addon="xbmc.python" version="2.1.0" />
+<import addon="xbmc.python" version="3.0.0" />
 <import addon="script.module.resolveurl" version="5.0.00" />
-<import addon="script.module.resolveurl.xxx" version="2.0.01" />
-<import addon="script.video.F4mProxy" version="2.5.7" />
+<import addon="script.module.resolveurl.xxx" version="2.0.1" />
+<import addon="script.video.F4mProxy" version="2.8.9" />
 <import addon="script.module.requests" />
 </requires>
 <extension point="xbmc.python.pluginsource" library="default.py">
@@ -48,15 +49,12 @@
 <icon>icon.png</icon>
 <fanart>fanart.jpg</fanart>
 </assets>
-<news>[B]Version 1.2.46[/B]
-Chaturbate fixed
-Myfreecams fixed
-Desixnxx fixed
-FINALE RELEASE, CUMINATION FROM HERE ON
+<news>[B]Version 1.2.47[/B]
+Metadata refreshed for Matrix/Nexus/Omega compatibility
 </news>
 </extension>
 </addon>
-<addon id="repository.dobbelina" name="[COLOR pink]Dobbelina Repository[/COLOR]" version="1.0.4" provider-name="dobbelina">
+<addon id="repository.dobbelina" name="[COLOR pink]Dobbelina Repository[/COLOR]" version="1.0.5" provider-name="dobbelina">
 <extension point="xbmc.addon.repository" name="[COLOR pink]Dobbelina Repository[/COLOR]">
 <dir>
 <info compressed="false">https://raw.githubusercontent.com/Gujal00/smrzips/master/addons.xml</info>
@@ -82,9 +80,9 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
 <platform>all</platform>
 </extension>
 </addon>
-<addon id="script.video.F4mProxy" name="F4mProxy" version="2.8.8" provider-name="Shani">
+<addon id="script.video.F4mProxy" name="F4mProxy" version="2.8.9" provider-name="Shani">
 <requires>
-<import addon="xbmc.python" version="2.1.0" />
+<import addon="xbmc.python" version="3.0.0" />
 <import addon="script.module.requests" />
 </requires>
 <extension point="xbmc.python.module" library="lib" />

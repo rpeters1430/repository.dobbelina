@@ -27,14 +27,14 @@ Use the checkboxes to mark progress as work is completed and to surface remainin
 
 **Goal:** Ensure proper Kodi compatibility, structural correctness, and clean packaging layout.
 
-- [ ] Update all `addon.xml` files
-  - [ ] Correct `<version>` fields
-  - [ ] Validate `<requires>`
-  - [ ] Update Python API versions (`xbmc.python`) as needed
+- [x] Update all `addon.xml` files
+  - [x] Correct `<version>` fields
+  - [x] Validate `<requires>`
+  - [x] Update Python API versions (`xbmc.python`) as needed
 - [ ] Normalize directory layout (`lib/`, `resources/`, etc.)
-- [ ] Remove obsolete files (`.pyc`, old modules, unused folders)
-- [ ] Ensure repo add-on correctly generates `addons.xml` and `.md5`
-- [ ] Fix any packaging issues affecting installation or updates
+- [x] Remove obsolete files (`.pyc`, old modules, unused folders)
+- [x] Ensure repo add-on correctly generates `addons.xml` and `.md5`
+- [x] Fix any packaging issues affecting installation or updates
 
 ## Phase 2 – Code Quality & Structure
 
