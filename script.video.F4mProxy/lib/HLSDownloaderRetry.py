@@ -54,7 +54,7 @@ callbackDRM=None
 try:
     from Crypto.Cipher import AES
     USEDec=1 ## 1==crypto 2==local, local pycrypto
-except:
+except Exception:
     print 'pycrypt not available using slow decryption'
     USEDec=3 ## 1==crypto 2==local, local pycrypto
 
@@ -122,7 +122,7 @@ class HLSDownloaderRetry():
             self.status='init done'
             self.url=url
             return True# disabled downloadInternal(self.url,None,self.maxbitrate,self.g_stopEvent , self.callbackpath,  self.callbackparam, testing=True)
-        except: 
+        except Exception: 
             traceback.print_exc()
             self.status='finished'
         return False
@@ -133,7 +133,7 @@ class HLSDownloaderRetry():
             self.status='download Starting'
 
             downloadInternal(self.url,dest_stream,self.maxbitrate,self.g_stopEvent , self.callbackpath,  self.callbackparam)
-        except: 
+        except Exception: 
             traceback.print_exc()
         print 'setting finished'
         self.status='finished'
@@ -176,7 +176,7 @@ def getUrl(url,timeout=15,returnres=False,stream =False):
         else:
             return req.text
 
-    except:
+    except Exception:
         print 'Error in getUrl'
         traceback.print_exc()
         raise 
@@ -223,7 +223,7 @@ def getUrlold(url,timeout=20, returnres=False):
 
         return data
 
-    except:
+    except Exception:
         print 'Error in getUrl'
         traceback.print_exc()
         return None
@@ -385,7 +385,7 @@ def handle_basic_m3u(url):
                                         callbackfilename= codeurlpath.split(os.path.sep)[-1].split('.')[0]
                                         callbackDRM = importlib.import_module(callbackfilename)
                                         print 'LSDRMCallBack imported'
-                                    except:
+                                    except Exception:
                                         traceback.print_exc()
                             
                         elif not codeurl.startswith('http'):
@@ -491,7 +491,7 @@ def downloadInternal(url,file,maxbitrate=0,stopEvent=None , callbackpath="",call
         utltext=res.text
         res.close()
         if testing: return True
-    except: traceback.print_exc()
+    except Exception: traceback.print_exc()
     print 'redirurl',redirurl
     if 'EXT-X-STREAM-INF' in utltext:
         try:
@@ -538,7 +538,7 @@ def downloadInternal(url,file,maxbitrate=0,stopEvent=None , callbackpath="",call
                 #choice = int(raw_input("Selection? "))
                 print 'choose %d'%choice
                 url = urlparse.urljoin(redirurl, variants[choice][0])
-        except: 
+        except Exception: 
             
             raise
 
@@ -590,7 +590,7 @@ def downloadInternal(url,file,maxbitrate=0,stopEvent=None , callbackpath="",call
                         callbackfilename= callbackpath.split(os.path.sep)[-1].split('.')[0]
                         callbackmodule = importlib.import_module(callbackfilename)
                         urlnew,cjnew=callbackmodule.f4mcallback(callbackparam, 1, inst, cookieJar , url, clientHeader)
-                    except: traceback.print_exc()
+                    except Exception: traceback.print_exc()
                     if urlnew and len(urlnew)>0 and urlnew.startswith('http'):
                         print 'got new url',url
                         url=urlnew
@@ -705,7 +705,7 @@ def downloadInternal(url,file,maxbitrate=0,stopEvent=None , callbackpath="",call
                             reconnect=True
                             fails+=1
                             break
-                    except: pass
+                    except Exception: pass
             
             if vod: return True
             if playedSomething == 1:
@@ -734,7 +734,7 @@ def downloadInternal(url,file,maxbitrate=0,stopEvent=None , callbackpath="",call
             if not playedSomething:
                 xbmc.sleep(3000+ (3000 if addsomewait else 0))
             
-    except:
+    except Exception:
         
         raise
 

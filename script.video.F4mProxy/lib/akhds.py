@@ -41,7 +41,7 @@ try:
 
     USEDec=1 ## 1==crypto 2==local, local pycrypto
     print 'using pycrypt wooot woot'
-except:
+except Exception:
     print 'pycrypt not available trying other options'
     print traceback.print_exc()
     USEDec=3 ## 1==crypto 2==local, local pycrypto
@@ -52,7 +52,7 @@ except:
             AES=androidsslPy._load_crypto_libcrypto()
             USEDec=2 ## android
             print 'using android ssllib woot woot'
-        except: 
+        except Exception: 
             print traceback.print_exc()
             print 'android copy not available'    
             from f4mUtils import python_aes
@@ -223,7 +223,7 @@ def cleanup():
             print 'doing android cleanup'
             #AndroidCrypto.teardown()
             #print 'android cleanup'
-    except:
+    except Exception:
         pass
 
 

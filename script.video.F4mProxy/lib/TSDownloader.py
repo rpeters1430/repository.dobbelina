@@ -80,7 +80,7 @@ def getLastPTS(data,rpid,type="video"):
                     scramblecontrol = packet.read(2).uint
                     adapt = packet.read(2).uint
                     concounter = packet.read(4).uint
-                except:
+                except Exception:
                     #print 'error'
                     return None##print 'errpor'#adapt=-1
                 decodedpts=None
@@ -244,7 +244,7 @@ def getFirstPTSFrom(data,rpid, initpts,type="video" ):
                     scramblecontrol = packet.read(2).uint
                     adapt = packet.read(2).uint
                     concounter = packet.read(4).uint
-                except:
+                except Exception:
                     #print 'error'
                     return None##print 'errpor'#adapt=-1
                 decodedpts=None
@@ -399,7 +399,7 @@ class TSDownloader():
             response = openner.open(req)
 
             return response
-        except:
+        except Exception:
             #print 'Error in getUrl'
             traceback.print_exc()
         return None
@@ -431,7 +431,7 @@ class TSDownloader():
 
             return data
 
-        except:
+        except Exception:
             #print 'Error in getUrl'
             traceback.print_exc()
         return None
@@ -462,7 +462,7 @@ class TSDownloader():
             #return self.downloadInternal(testurl=True)
             
             #os.remove(self.outputfile)
-        except: 
+        except Exception: 
             traceback.print_exc()
         self.status='finished'
         return False
@@ -472,7 +472,7 @@ class TSDownloader():
         try:
             self.status='download Starting'
             self.downloadInternal(dest_stream=dest_stream)
-        except: 
+        except Exception: 
             traceback.print_exc()
         self.status='finished'
             
@@ -532,7 +532,7 @@ class TSDownloader():
                                 print 'test complete true'
                                 response.close()
                                 return True
-                        except:
+                        except Exception:
                             traceback.print_exc(file=sys.stdout)
                             print 'testurl',testurl,lost
                             if testurl and lost>10: 
@@ -565,7 +565,7 @@ class TSDownloader():
                                         
                                         try:
                                             firstpts,pos= getFirstPTSFrom(buf,fixpid,lastpts,defualtype)#
-                                        except:                                            
+                                        except Exception:                                            
                                             traceback.print_exc(file=sys.stdout)
                                             print 'getFirstPTSFrom error, using, last -1',# buf.encode("hex"), lastpts,
                                             firstpts,pos= getFirstPTSFrom(buf,fixpid,lastpts-1,defualtype)#
@@ -677,7 +677,7 @@ class TSDownloader():
                                 #    currentduration=0
                                 #if currentduration>10: currentduration=2
                                 ##print 'sleeping for',currentduration
-                            except: pass
+                            except Exception: pass
 
                     try:
                     
@@ -687,7 +687,7 @@ class TSDownloader():
                         response.close()
                         
                         print 'response closed'
-                    except:
+                    except Exception:
                         print 'close error'
                         traceback.print_exc(file=sys.stdout)
                     if wrotesomething==False  :
@@ -727,6 +727,6 @@ class TSDownloader():
                     return False
                 
 
-        except:
+        except Exception:
             traceback.print_exc()
             return

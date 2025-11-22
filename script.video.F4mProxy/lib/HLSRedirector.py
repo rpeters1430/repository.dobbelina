@@ -54,7 +54,7 @@ callbackDRM=None
 try:
     from Crypto.Cipher import AES
     USEDec=1 ## 1==crypto 2==local, local pycrypto
-except:
+except Exception:
     print 'pycrypt not available using slow decryption'
     USEDec=3 ## 1==crypto 2==local, local pycrypto
 
@@ -128,7 +128,7 @@ class HLSRedirector():
             self.status='init done'
             self.url=url
             return True# disabled downloadInternal(self.url,None,self.maxbitrate,self.g_stopEvent , self.callbackpath,  self.callbackparam, testing=True)
-        except: 
+        except Exception: 
             traceback.print_exc()
             self.status='finished'
         return False
@@ -139,7 +139,7 @@ class HLSRedirector():
             self.status='download Starting'
 
             downloadInternal(self.url,dest_stream,self.maxbitrate,self.g_stopEvent , self.callbackpath,  self.callbackparam)
-        except: 
+        except Exception: 
             traceback.print_exc()
         print 'setting finished'
         self.status='finished'
@@ -182,7 +182,7 @@ def getUrl(url,timeout=15,returnres=False,stream =False):
         else:
             return req.text
 
-    except:
+    except Exception:
         print 'Error in getUrl'
         traceback.print_exc()
         raise 
@@ -345,7 +345,7 @@ def downloadInternal(url,file,maxbitrate=0,stopEvent=None , callbackpath="",call
         utltext=res.text
         res.close()
         if testing: return True
-    except: traceback.print_exc()
+    except Exception: traceback.print_exc()
     print 'redirurl',redirurl
     if 'EXT-X-STREAM-INF' in utltext:
         try:
@@ -392,7 +392,7 @@ def downloadInternal(url,file,maxbitrate=0,stopEvent=None , callbackpath="",call
                 #choice = int(raw_input("Selection? "))
                 print 'choose %d'%choice
                 url = urlparse.urljoin(redirurl, variants[choice][0])
-        except: 
+        except Exception: 
             
             raise
 

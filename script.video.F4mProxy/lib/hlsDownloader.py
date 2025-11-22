@@ -53,7 +53,7 @@ callbackDRM=None
 try:
     from Crypto.Cipher import AES
     USEDec=1 ## 1==crypto 2==local, local pycrypto
-except:
+except Exception:
     print 'pycrypt not available using slow decryption'
     USEDec=3 ## 1==crypto 2==local, local pycrypto
 
@@ -119,7 +119,7 @@ class HLSDownloader():
             self.status='init done'
             self.url=url
             return True# disabled for time being#downloadInternal(self.url,None,self.maxbitrate,self.g_stopEvent, testing=True)
-        except: 
+        except Exception: 
             traceback.print_exc()
         self.status='finished'
         return False
@@ -128,7 +128,7 @@ class HLSDownloader():
         try:
             self.status='download Starting'
             downloadInternal(self.url,dest_stream,self.maxbitrate,self.g_stopEvent)
-        except: 
+        except Exception: 
             traceback.print_exc()
         self.status='finished'
 
@@ -163,7 +163,7 @@ def getUrl(url,timeout=15,returnres=False,stream=False):
         else:
             return req.text
 
-    except:
+    except Exception:
         print 'Error in getUrl'
         traceback.print_exc()
         return None
@@ -209,7 +209,7 @@ def getUrlold(url,timeout=20, returnres=False):
 
         return data
 
-    except:
+    except Exception:
         print 'Error in getUrl'
         traceback.print_exc()
         return None
@@ -413,7 +413,7 @@ def handle_basic_m3u(url):
                                         callbackfilename= codeurlpath.split(os.path.sep)[-1].split('.')[0]
                                         callbackDRM = importlib.import_module(callbackfilename)
                                         print 'LSDRMCallBack imported'
-                                    except:
+                                    except Exception:
                                         traceback.print_exc()
                             
                         
@@ -509,7 +509,7 @@ def downloadInternal(url,file,maxbitrate=0,stopEvent=None, testing=False):
             redirurl=res.url
         res.close()
         if testing: return True
-    except: traceback.print_exc()
+    except Exception: traceback.print_exc()
     print 'redirurl',redirurl
     
     
@@ -568,7 +568,7 @@ def downloadInternal(url,file,maxbitrate=0,stopEvent=None, testing=False):
     #if ':7777' in url:
     #    try:
     #        glsession=re.compile(':7777\/.*?m3u8.*?session=(.*?)&').findall(url)[0]
-    #    except: 
+    #    except Exception: 
     #        pass
 
     try:
@@ -650,7 +650,7 @@ def downloadInternal(url,file,maxbitrate=0,stopEvent=None, testing=False):
                         last_seq = seq
                         changed = 1
                         playedSomething=True
-                    except: pass
+                    except Exception: pass
             
             '''if changed == 1:
                 # initial minimum reload delay
@@ -670,7 +670,7 @@ def downloadInternal(url,file,maxbitrate=0,stopEvent=None, testing=False):
             return
             if not playedSomething:
                 xbmc.sleep(2000+ (3000 if addsomewait else 0))
-    except:
+    except Exception:
         control[0] = 'stop'
         raise
 
