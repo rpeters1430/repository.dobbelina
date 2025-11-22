@@ -20,6 +20,8 @@ import re
 from six.moves import urllib_parse
 import xbmcplugin
 import xbmc
+import xbmcgui
+import time
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.decrypters.kvsplayer import kvs_decode
@@ -127,28 +129,66 @@ def List(url, page=1):
 
         site.add_download_link(name, videopage, 'Playvid', img, name, contextm=contextmenu, duration=duration, quality=hd)
 
-    pagination = soup.select_one('.pagination')
-    if pagination:
-        next_link = pagination.select_one('li.next a, a.next, a[rel="next"]')
-        if next_link:
-            next_href = utils.safe_get_attr(next_link, 'href')
-            if next_href:
-                nurl = urllib_parse.urljoin(url, next_href)
-                last_link = pagination.select_one('li.last a, a.last')
-                lastp = ''
-                if last_link:
-                    last_href = utils.safe_get_attr(last_link, 'href')
-                    if last_href:
-                        lm = re.search(r'(\d+)(?:/)?$', last_href.rstrip('/'))
-                        if lm:
-                            lastp = '/{}'.format(lm.group(1))
+    # New async pagination uses data-block-id/data-parameters attributes
+    match = re.search(r'class="page-current"><span>(\d+)<.+?class="next">.+?data-block-id="([^"]+)"\s+data-parameters="([^"]+)">Next', listhtml, re.DOTALL | re.IGNORECASE)
+    if match:
+        current_page = int(match.group(1))
+        block_id = match.group(2)
+        params = match.group(3).replace(';', '&').replace(':', '=')
+        ts = int(time.time() * 1000)
+        npage = current_page + 1
 
-                if not page:
-                    page = 1
-                npage = page + 1
+        nurl = url.split('?')[0] + '?mode=async&function=get_block&block_id={0}&{1}&_={2}'.format(block_id, params, ts)
+        nurl = nurl.replace('+from_albums', '')
+        nurl = re.sub(r'&from([^=]*)=\d+', r'&from\1={}'.format(npage), nurl)
 
-                site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + lastp + ')', nurl, 'List', site.img_next, npage)
+        lastp = ''
+        lpnr = None
+        match_last = re.search(r':(\d+)">Last', listhtml, re.DOTALL | re.IGNORECASE)
+        if match_last:
+            lpnr = match_last.group(1)
+            lastp = '/{}'.format(lpnr)
+
+        cm_page = (utils.addon_sys + "?mode=camwhoresbay.GotoPage" + "&url=" + urllib_parse.quote_plus(nurl) + "&np=" + str(npage) + "&lp=" + str(lpnr if lpnr else ''))
+        cm = [('[COLOR violet]Goto Page #[/COLOR]', 'RunPlugin(' + cm_page + ')')]
+
+        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + lastp + ')', nurl, 'List', site.img_next, contextm=cm)
+    else:
+        pagination = soup.select_one('.pagination')
+        if pagination:
+            next_link = pagination.select_one('li.next a, a.next, a[rel="next"]')
+            if next_link:
+                next_href = utils.safe_get_attr(next_link, 'href')
+                if next_href:
+                    nurl = urllib_parse.urljoin(url, next_href)
+                    last_link = pagination.select_one('li.last a, a.last')
+                    lastp = ''
+                    if last_link:
+                        last_href = utils.safe_get_attr(last_link, 'href')
+                        if last_href:
+                            lm = re.search(r'(\d+)(?:/)?$', last_href.rstrip('/'))
+                            if lm:
+                                lastp = '/{}'.format(lm.group(1))
+
+                    if not page:
+                        page = 1
+                    npage = page + 1
+
+                    site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + lastp + ')', nurl, 'List', site.img_next, npage)
     utils.eod()
+
+
+@site.register()
+def GotoPage(url, np, lp=None):
+    dialog = xbmcgui.Dialog()
+    pg = dialog.numeric(0, 'Enter Page number')
+    if pg:
+        if lp and lp.isdigit() and int(pg) > int(lp):
+            utils.notify(msg='Out of range!')
+            return
+        new_url = re.sub(r'&from([^=]*)=\d+', r'&from\1={}'.format(pg), url, flags=re.IGNORECASE)
+        contexturl = (utils.addon_sys + "?mode=" + "camwhoresbay.List&url=" + urllib_parse.quote_plus(new_url))
+        xbmc.executebuiltin('Container.Update(' + contexturl + ')')
 
 
 @site.register()

@@ -200,7 +200,6 @@ Specialized content sites.
 |------|--------|----------|-------|
 | theyarehuge | ⏳ Pending | BBW | |
 | bubbaporn | ⏳ Pending | BBW | |
-| vintagetube | ⏳ Pending | Vintage | |
 | tabootube | ⏳ Pending | Taboo | |
 | celebsroulette | ⏳ Pending | Celebrity | |
 | reallifecam | ✅ **COMPLETED** | Voyeur | BeautifulSoup migration committed in 80964d1 (2025-11-03) |
