@@ -187,6 +187,42 @@ SITE_FIXTURES = [
         "sites/peachurnet/listing.html",
         True,
     ),
+    (
+        "watchporn",
+        watchporn,
+        "List",
+        ("https://watchporn.to/latest-updates/",),
+        {},
+        "sites/watchporn/listing.html",
+        True,
+    ),
+    (
+        "tnaflix",
+        tnaflix,
+        "List",
+        ("https://www.tnaflix.com/new/1",),
+        {},
+        "sites/tnaflix/listing.html",
+        True,
+    ),
+    (
+        "hqporner",
+        hqporner,
+        "HQLIST",
+        ("https://hqporner.com/hdporn/1",),
+        {},
+        "sites/hqporner/listing.html",
+        True,
+    ),
+    (
+        "eporner",
+        eporner,
+        "List",
+        ("https://www.eporner.com/recent/",),
+        {},
+        "sites/eporner/listing.html",
+        True,
+    ),
 ]
 
 
