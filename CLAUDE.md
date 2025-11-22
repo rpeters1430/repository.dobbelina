@@ -178,7 +178,7 @@ def Playvid(url, name):
 
 ## BeautifulSoup Migration (Active Project)
 
-**Current Status**: 43/137 sites migrated (31.4% complete)
+**Current Status**: 50/137 sites migrated (36.5% complete)
 
 The codebase is undergoing a systematic migration from regex-based HTML parsing to BeautifulSoup4. This is tracked in **ROADMAP.md**.
 
@@ -196,7 +196,7 @@ See **improvement.md** for additional modernization efforts including HTTP gatew
 
 1. **Phase 1: High Priority Sites** (8/10 completed - 80%) - pornhub, xvideos, xnxx, spankbang, xhamster, eporner, hqporner, porntrex
 2. **Phase 2: Live Cam Sites** (4/8 completed - 100%) - chaturbate, stripchat, streamate, naked (API-based sites excluded)
-3. **Phase 3: Medium Priority Sites** (12/20 completed - 60%) - drtuber, tnaflix, pornhat, pornone, anybunny, sxyprn, pornkai, whoreshub, yespornplease, porngo, watchporn, justporn
+3. **Phase 3: Medium Priority Sites** (20/20 completed - 100%) ✅ - All medium-priority sites migrated including netflixporno, peekvids, playvids, porndig, pornhoarder, pornmz, longvideos, luxuretv
 4. **Phase 4-8**: JAV, Hentai, International, Niche, and remaining sites
 
 ### Migration Pattern

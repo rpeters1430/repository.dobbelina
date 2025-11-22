@@ -4,7 +4,7 @@
 
 **Started**: 2025-11-01
 **Current Version**: v1.1.181
-**Progress**: 47/137 sites (34.3%) migrated
+**Progress**: 50/137 sites (36.5%) migrated
 
 ---
 
@@ -132,16 +132,16 @@ Japanese adult video sites.
 | netflav | ✅ **COMPLETED** | BeautifulSoup migration for JSON extraction, Genres parsing |
 | avple | ✅ **COMPLETED** | BeautifulSoup migration for List, Playvid with enhanced error handling |
 | iflix | ✅ **COMPLETED** | BeautifulSoup migration for List, tags, Playvid with CSS background-image parsing |
-| japteenx | ⏳ Pending | |
+| japteenx | ✅ **COMPLETED** | BeautifulSoup migration for List, Pornstars, Tags with pagination |
 | terebon | ⏳ Pending | |
 | 85po | ⏳ Pending | Chinese site |
 | aagmaal | ⏳ Pending | Indian content |
 | aagmaalpro | ⏳ Pending | Indian content |
 | awmnet | ⏳ Pending | Asian content |
-| foxnxx | ⏳ Pending | |
-| sextb | ⏳ Pending | |
+| foxnxx | ✅ **COMPLETED** | BeautifulSoup migration for List, Lookupinfo with context menus |
+| sextb | ✅ **COMPLETED** | BeautifulSoup migration for List, Categories, Studios, Actress with pagination |
 
-**Status**: 12/20 BeautifulSoup migrations complete; 8 remaining sites targeted by end of Phase 4
+**Status**: 15/20 BeautifulSoup migrations complete (75%); 5 remaining sites targeted by end of Phase 4
 
 ---
 
@@ -347,9 +347,9 @@ Part of BeautifulSoup migration roadmap (site X/137)
 ### Overall Progress
 
 - **Total Sites**: 137
-- **Completed**: 47 (34.3%)
+- **Completed**: 50 (36.5%)
 - **In Progress**: 0
-- **Remaining**: 90 (65.7%)
+- **Remaining**: 87 (63.5%)
 
 ### Phase Progress
 
@@ -359,7 +359,7 @@ Part of BeautifulSoup migration roadmap (site X/137)
 | Phase 1: High Priority | 10 | 8 | 80% 🚧 |
 | Phase 2: Live Cams | 8 | 4 | 50% ✅ |
 | Phase 3: Medium Priority | 20 | 20 | 100% ✅ |
-| Phase 4: JAV Sites | 20 | 12 | 60% 🚀 |
+| Phase 4: JAV Sites | 20 | 15 | 75% 🚀 |
 | Phase 5: Hentai/Anime | 10 | 0 | 0% |
 | Phase 6: International | 15 | 0 | 0% |
 | Phase 7: Niche/Specialty | 30 | 3 | 10% 🚀 |
@@ -386,20 +386,21 @@ Part of BeautifulSoup migration roadmap (site X/137)
 | 2025-11-13 | 6 (missav, javgg, javguru, javbangers, javhdporn, javmoe) | 41/137 | **Phase 4 STARTED**: First batch of JAV sites migrated (30% complete) |
 | 2025-11-14 | 2 (kissjav, supjav) | 43/137 | **Phase 4 CONTINUES**: kissjav Playlists function + supjav full migration (40% complete) |
 | 2025-11-16 | 4 (hpjav, netflav, avple, iflix) | 47/137 | **Phase 4 MOMENTUM**: hpjav pagination, netflav JSON extraction, avple playback, iflix CSS image parsing |
+| 2025-11-21 | 3 (japteenx, sextb, foxnxx) | 50/137 | **Phase 4 ACCELERATING**: japteenx full migration, sextb categories/studios/actress, foxnxx context menus (75% Phase 4 complete) |
 
 **Estimated Timeline** (at 1 site/week, focusing on remaining backlog):
 - Phase 1 (2 remaining sites): ~2 weeks
 - Phase 2: ✅ **COMPLETED**
 - Phase 3: ✅ **COMPLETED**
-- Phase 4 (8 remaining JAV sites): ~8 weeks
-- Full migration (94 remaining sites): ~94 weeks (≈1.8 years)
+- Phase 4 (5 remaining JAV sites): ~5 weeks
+- Full migration (87 remaining sites): ~87 weeks (≈1.7 years)
 
 **Optimistic Timeline** (at 3 sites/week):
 - Phase 1 (2 remaining sites): <1 week
 - Phase 2: ✅ **COMPLETED**
 - Phase 3: ✅ **COMPLETED**
-- Phase 4 (8 remaining JAV sites): ~3 weeks
-- Full migration (94 remaining sites): ~31 weeks (≈7.2 months)
+- Phase 4 (5 remaining JAV sites): ~2 weeks
+- Full migration (87 remaining sites): ~29 weeks (≈6.7 months)
 
 ---
 
@@ -446,5 +447,5 @@ grep -c "✅ \*\*COMPLETED\*\*" ROADMAP.md
 
 ---
 
-**Last Updated**: 2025-11-16 (Phase 4 momentum: 12/20 JAV sites migrated - 60% complete)
-**Next Review**: After next Phase 4 batch completion
+**Last Updated**: 2025-11-21 (Phase 4 accelerating: 15/20 JAV sites migrated - 75% complete)
+**Next Review**: After Phase 4 completion (5 sites remaining)

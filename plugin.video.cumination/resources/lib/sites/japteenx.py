@@ -36,20 +36,43 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, '')
-    match = re.compile(r'well well-sm[^"]*?">\s*<a href="/([^"]+)".*?src="([^"]+)"\s*title="([^"]+)"(.*?)duration">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    if not match:
+    soup = utils.parse_html(listhtml)
+
+    items = soup.select('.well.well-sm')
+    if not items:
         return
-    for videopage, img, name, hd, duration in match:
-        name = utils.cleantext(name)
-        duration = utils.cleantext(duration)
-        hd = 'HD' if 'HD' in hd else ''
-        videopage = site.url + videopage
+
+    for item in items:
+        link = item.select_one('a')
+        if not link:
+            continue
+
+        videopage = utils.safe_get_attr(link, 'href')
+        if not videopage:
+            continue
+
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'src')
+        name = utils.safe_get_attr(img_tag, 'title')
+
+        # Check for HD marker
+        hd = 'HD' if item.find(class_='hd') or 'HD' in item.get_text() else ''
+
+        # Get duration
+        duration_tag = item.select_one('.duration')
+        duration = utils.safe_get_text(duration_tag, '').strip()
+
+        if not videopage.startswith('http'):
+            videopage = site.url + videopage.lstrip('/')
 
         site.add_download_link(name, videopage, 'Playvid', img, name, duration=duration, quality=hd)
 
-    np = re.compile('<li><a href="([^"]+)" class="prevnext', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        site.add_dir('Next Page...', np.group(1), 'List', site.img_next)
+    # Pagination
+    next_link = soup.select_one('li a.prevnext')
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, 'href')
+        if next_url:
+            site.add_dir('Next Page...', next_url, 'List', site.img_next)
     utils.eod()
 
 
@@ -92,15 +115,37 @@ def Cats(url):
 @site.register()
 def Pornstars(url):
     listhtml = utils.getHtml(url)
-    match = re.compile('class="model-sh" href="/([^"]+)">.*?src="([^"]+)".*?title-small">([^<]+)<.*?fa-film"></i>([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for catpage, img, name, videos in match:
-        name = '{} - [COLOR hotpink]{}[/COLOR]'.format(utils.cleantext(name), videos)
-        videos = utils.cleantext(videos)
-        site.add_dir(name, site.url + catpage, 'List', img)
+    soup = utils.parse_html(listhtml)
 
-    np = re.compile('<li><a href="([^"]+)" class="prevnext', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        site.add_dir('Next Page...', np.group(1), 'Pornstars', site.img_next)
+    items = soup.select('a.model-sh')
+    for item in items:
+        catpage = utils.safe_get_attr(item, 'href')
+        if not catpage:
+            continue
+
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'src')
+
+        name_tag = item.select_one('.title-small')
+        name = utils.safe_get_text(name_tag, '')
+
+        # Get video count from fa-film icon
+        videos_tag = item.find('i', class_='fa-film')
+        videos = ''
+        if videos_tag and videos_tag.next_sibling:
+            videos = utils.safe_get_text(videos_tag.next_sibling, '').strip()
+
+        if name:
+            display_name = '{} - [COLOR hotpink]{}[/COLOR]'.format(name, videos) if videos else name
+            full_url = site.url + catpage.lstrip('/') if not catpage.startswith('http') else catpage
+            site.add_dir(display_name, full_url, 'List', img)
+
+    # Pagination
+    next_link = soup.select_one('li a.prevnext')
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, 'href')
+        if next_url:
+            site.add_dir('Next Page...', next_url, 'Pornstars', site.img_next)
 
     utils.eod()
 
@@ -108,9 +153,27 @@ def Pornstars(url):
 @site.register()
 def Tags(url):
     listhtml = utils.getHtml(url, site.url, error=True)
-    match = re.compile('/(tags/[^"]+)">([^<]+)</a><span>([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for tagpage, name, videos in match:
-        name = '{} - [COLOR hotpink]{}[/COLOR]'.format(utils.cleantext(name), videos)
-        site.add_dir(name, site.url + tagpage + '?type=public&o=mr', 'List', '')
+    soup = utils.parse_html(listhtml)
+
+    # Find all tag links
+    tag_links = soup.find_all('a', href=re.compile(r'/tags/'))
+    for link in tag_links:
+        tagpage = utils.safe_get_attr(link, 'href')
+        if not tagpage or 'tags/' not in tagpage:
+            continue
+
+        name = utils.safe_get_text(link, '').strip()
+        if not name:
+            continue
+
+        # Get video count from span following the link
+        videos = ''
+        next_span = link.find_next_sibling('span')
+        if next_span:
+            videos = utils.safe_get_text(next_span, '').strip()
+
+        display_name = '{} - [COLOR hotpink]{}[/COLOR]'.format(name, videos) if videos else name
+        full_url = site.url + tagpage.lstrip('/') + '?type=public&o=mr'
+        site.add_dir(display_name, full_url, 'List', '')
 
     utils.eod()

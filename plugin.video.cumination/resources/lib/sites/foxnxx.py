@@ -41,24 +41,68 @@ def List(url):
         utils.eod()
         return
 
-    delimiter = '<div class="thumb"> '
-    re_videopage = '<a href="([^"]+)"'
-    re_name = 'title="[^"]+">([^<]+)<'
-    re_img = 'data-src="([^"]+)"'
-    re_duration = 'class="timer">([^<]+)<'
+    soup = utils.parse_html(html)
 
+    # Context menu
     cm = []
     cm_lookupinfo = (utils.addon_sys + "?mode=" + str('foxnxx.Lookupinfo') + "&url=")
     cm.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + cm_lookupinfo + ')'))
     cm_related = (utils.addon_sys + "?mode=" + str('foxnxx.Related') + "&url=")
     cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')'))
 
-    utils.videos_list(site, 'foxnxx.Playvid', html, delimiter, re_videopage, re_name, re_img, re_duration=re_duration, contextm=cm)
+    # Parse video items
+    items = soup.select('.thumb')
+    for item in items:
+        link = item.select_one('a')
+        if not link:
+            continue
 
-    re_npurl = r"class='active'><a>\d+</a></li><li><a href='([^']+)'>\d+<"
-    re_npnr = r"class='active'><a>\d+</a></li><li><a href='[^']+'>(\d+)<"
-    re_lpnr = r"'>(\d+)</a></li></ul>"
-    utils.next_page(site, 'foxnxx.List', html, re_npurl, re_npnr, re_lpnr, baseurl=site.url, contextm='foxnxx.GotoPage')
+        videopage = utils.safe_get_attr(link, 'href')
+        if not videopage:
+            continue
+
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
+
+        # Get name from link title or img alt
+        name = utils.safe_get_attr(link, 'title')
+        if not name:
+            name = utils.safe_get_text(link, '').strip()
+
+        timer_tag = item.select_one('.timer')
+        duration = utils.safe_get_text(timer_tag, '')
+
+        if name:
+            site.add_download_link(name, videopage, 'Playvid', img, name, duration=duration, contextm=cm)
+
+    # Pagination - find active page and next page
+    active_page = soup.find('li', class_='active')
+    if active_page:
+        next_li = active_page.find_next_sibling('li')
+        if next_li:
+            next_link = next_li.select_one('a')
+            if next_link:
+                next_url = utils.safe_get_attr(next_link, 'href')
+                next_page_num = utils.safe_get_text(next_link, '')
+
+                # Get last page number
+                last_page_num = ''
+                pagination_ul = active_page.find_parent('ul')
+                if pagination_ul:
+                    last_li = pagination_ul.find_all('li')[-1]
+                    if last_li:
+                        last_link = last_li.select_one('a')
+                        if last_link:
+                            last_page_num = utils.safe_get_text(last_link, '')
+
+                if next_url:
+                    cm_gotopage = []
+                    if last_page_num:
+                        cm_gotopage_url = (utils.addon_sys + "?mode=foxnxx.GotoPage&list_mode=foxnxx.List&url=" +
+                                          urllib_parse.quote_plus(next_url) + "&np=" + next_page_num + "&lp=" + last_page_num)
+                        cm_gotopage.append(('[COLOR violet]Goto Page[/COLOR]', 'RunPlugin(' + cm_gotopage_url + ')'))
+                    site.add_dir('Next Page ({})'.format(next_page_num), next_url, 'List', site.img_next, contextm=cm_gotopage)
+
     utils.eod()
 
 
@@ -135,8 +179,26 @@ def Playvid(url, name, download=None):
 
 @site.register()
 def Lookupinfo(url):
-    lookup_list = [
-        ("Tag", r'class="tagsstyle"><a href="(/tags/[^"]+)">([^<]+)</a>', '')
-    ]
-    lookupinfo = utils.LookupInfo(site.url, url, 'foxnxx.List', lookup_list)
-    lookupinfo.getinfo()
+    # Fetch page and parse with BeautifulSoup
+    html = utils.getHtml(url, site.url)
+    soup = utils.parse_html(html)
+
+    # Find all tags
+    tag_links = soup.select('.tagsstyle a[href*="/tags/"]')
+
+    tags_info = []
+    for link in tag_links:
+        tag_url = utils.safe_get_attr(link, 'href')
+        tag_name = utils.safe_get_text(link, '')
+        if tag_url and tag_name:
+            if not tag_url.startswith('http'):
+                tag_url = site.url + tag_url.lstrip('/')
+            tags_info.append(('Tag', tag_url, tag_name))
+
+    # Use the LookupInfo utility to display the tags
+    if tags_info:
+        # Create lookup_list in the format expected by LookupInfo
+        # For BeautifulSoup-based parsing, we can pass pre-parsed data
+        lookup_list = [("Tag", r'class="tagsstyle"><a href="(/tags/[^"]+)">([^<]+)</a>', '')]
+        lookupinfo = utils.LookupInfo(site.url, url, 'foxnxx.List', lookup_list)
+        lookupinfo.getinfo()

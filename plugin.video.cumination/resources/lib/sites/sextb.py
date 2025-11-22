@@ -62,63 +62,161 @@ def List(url):
     if 'No Video were found that matched your search query' in html or len(html) < 10:
         utils.eod()
         return
-    match = re.compile(r'<div class="tray-item(?:\s*tray|").+?href="([^"]+)".+?data-src="([^"]+).+?title">([^<]+).+?time">([^<]+)', re.DOTALL | re.IGNORECASE).findall(html)
 
-    for videopage, img, name, duration in match:
-        name = utils.cleantext(name)
-        site.add_download_link(name, videopage, 'Playvid', img, name, duration=duration)
+    soup = utils.parse_html(html)
+    items = soup.select('.tray-item')
 
-    nextp = re.compile(r'''href=["']([^'"]+)["']>Next''', re.DOTALL | re.IGNORECASE).search(html)
-    if nextp:
-        np = nextp.group(1)
-        if np.startswith('/'):
-            np = urllib_parse.urljoin(site.url, np)
-        pgtxt = re.compile(r'''class=['"]current['"]\s*id[^>]+>([^<]+)''', re.DOTALL | re.IGNORECASE).findall(html)[0]
-        site.add_dir('Next Page... (Currently in Page {0})'.format(pgtxt), np, 'List', site.img_next)
+    for item in items:
+        link = item.select_one('a')
+        if not link:
+            continue
+
+        videopage = utils.safe_get_attr(link, 'href')
+        if not videopage:
+            continue
+
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
+
+        title_tag = item.select_one('.title')
+        name = utils.safe_get_text(title_tag, '')
+
+        time_tag = item.select_one('.time')
+        duration = utils.safe_get_text(time_tag, '')
+
+        if name:
+            site.add_download_link(name, videopage, 'Playvid', img, name, duration=duration)
+
+    # Pagination
+    next_link = soup.find('a', string='Next')
+    if next_link:
+        np = utils.safe_get_attr(next_link, 'href')
+        if np:
+            if np.startswith('/'):
+                np = urllib_parse.urljoin(site.url, np)
+
+            # Get current page number
+            current_page = soup.select_one('.current')
+            pgtxt = utils.safe_get_text(current_page, '1')
+            site.add_dir('Next Page... (Currently in Page {0})'.format(pgtxt), np, 'List', site.img_next)
+
     utils.eod()
 
 
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(r'class="fas fa-folder".+?href="([^"]+)"\s*title="([^"]+)".+?>\((\d+)\)<', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for caturl, name, count in match:
-        name = utils.cleantext(name) + ' [COLOR hotpink](' + str(count) + ')[/COLOR]'
+    soup = utils.parse_html(cathtml)
+
+    # Find all fa-folder icons and get their parent links
+    folder_icons = soup.find_all('i', class_='fa-folder')
+    for icon in folder_icons:
+        # Find the link containing this icon
+        link = icon.find_parent('a')
+        if not link:
+            continue
+
+        caturl = utils.safe_get_attr(link, 'href')
+        name = utils.safe_get_attr(link, 'title')
+
+        if not caturl or not name:
+            continue
+
+        # Get count from the text after the link
+        count = ''
+        # Look for text like "(123)" following the link
+        next_text = link.find_next_sibling(string=re.compile(r'\(\d+\)'))
+        if next_text:
+            count_match = re.search(r'\((\d+)\)', next_text)
+            if count_match:
+                count = count_match.group(1)
+
+        # Clean up name
         name = name.replace('Genre ', '').replace('Studio ', '')
+        if count:
+            name = name + ' [COLOR hotpink](' + str(count) + ')[/COLOR]'
+
         if caturl.startswith('/'):
             caturl = urllib_parse.urljoin(site.url, caturl)
+
         site.add_dir(name, caturl, 'List', '')
+
     utils.eod()
 
 
 @site.register()
 def Studios(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(r'<div class="tray-item\s*tray.+?href="([^"]+).+?/i>\s*([^<]+).+?total">([^<]+)', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for caturl, name, count in match:
-        name = utils.cleantext(name) + ' [COLOR hotpink]' + count + '[/COLOR]'
-        if caturl.startswith('/'):
-            caturl = urllib_parse.urljoin(site.url, caturl)
-        site.add_dir(name, caturl, 'List', '')
+    soup = utils.parse_html(cathtml)
+
+    items = soup.select('.tray-item.tray')
+    for item in items:
+        link = item.select_one('a')
+        if not link:
+            continue
+
+        caturl = utils.safe_get_attr(link, 'href')
+        if not caturl:
+            continue
+
+        # Get name from text after icon
+        icon = item.select_one('i')
+        name = ''
+        if icon and icon.next_sibling:
+            name = utils.safe_get_text(icon.next_sibling, '').strip()
+
+        # Get total count
+        total_tag = item.select_one('.total')
+        count = utils.safe_get_text(total_tag, '')
+
+        if name:
+            display_name = name + ' [COLOR hotpink]' + count + '[/COLOR]' if count else name
+            if caturl.startswith('/'):
+                caturl = urllib_parse.urljoin(site.url, caturl)
+            site.add_dir(display_name, caturl, 'List', '')
+
     utils.eod()
 
 
 @site.register()
 def Actress(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(r'class="tray-item-actress".+?href="([^"]+)".+?data-src="([^"]+)".+?actress-title">([^<]+)<', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for caturl, img, name in match:
-        name = utils.cleantext(name)
-        if caturl.startswith('/'):
-            caturl = urllib_parse.urljoin(site.url, caturl)
-        site.add_dir(name, caturl, 'List', img)
-    nextp = re.compile(r'''href=["']([^'"]+)["']>Next''', re.DOTALL | re.IGNORECASE).search(cathtml)
-    if nextp:
-        np = nextp.group(1)
-        if np.startswith('/'):
-            np = urllib_parse.urljoin(site.url, np)
-        pgtxt = re.compile(r'''class=['"]current['"]\s*id[^>]+>([^<]+)''', re.DOTALL | re.IGNORECASE).findall(cathtml)[0]
-        site.add_dir('Next Page... (Currently in Page {0})'.format(pgtxt), np, 'Actress', site.img_next)
+    soup = utils.parse_html(cathtml)
+
+    items = soup.select('.tray-item-actress')
+    for item in items:
+        link = item.select_one('a')
+        if not link:
+            continue
+
+        caturl = utils.safe_get_attr(link, 'href')
+        if not caturl:
+            continue
+
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
+
+        name_tag = item.select_one('.actress-title')
+        name = utils.safe_get_text(name_tag, '')
+
+        if name:
+            if caturl.startswith('/'):
+                caturl = urllib_parse.urljoin(site.url, caturl)
+            site.add_dir(name, caturl, 'List', img)
+
+    # Pagination
+    next_link = soup.find('a', string='Next')
+    if next_link:
+        np = utils.safe_get_attr(next_link, 'href')
+        if np:
+            if np.startswith('/'):
+                np = urllib_parse.urljoin(site.url, np)
+
+            # Get current page number
+            current_page = soup.select_one('.current')
+            pgtxt = utils.safe_get_text(current_page, '1')
+            site.add_dir('Next Page... (Currently in Page {0})'.format(pgtxt), np, 'Actress', site.img_next)
+
     utils.eod()
 
 
