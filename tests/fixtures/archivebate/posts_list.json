@@ -1,0 +1,49 @@
+[
+  {
+    "id": 12345,
+    "link": "https://archivebate.com/2024/11/sample-video-one/",
+    "title": {
+      "rendered": "Sample Video One - Hot Content"
+    },
+    "excerpt": {
+      "rendered": "<p>This is the first sample video excerpt with some details about the content.</p>"
+    },
+    "content": {
+      "rendered": "<p>Full content with <strong>duration: 15:30</strong> and quality info</p>"
+    },
+    "jetpack_featured_media_url": "https://archivebate.com/wp-content/uploads/thumb1.jpg",
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "source_url": "https://archivebate.com/wp-content/uploads/featured1.jpg",
+          "media_details": {
+            "sizes": {
+              "medium_large": {
+                "source_url": "https://archivebate.com/wp-content/uploads/featured1-768x432.jpg"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": 12346,
+    "link": "https://archivebate.com/2024/11/sample-video-two/",
+    "title": {
+      "rendered": "Sample Video Two - Amazing Show"
+    },
+    "excerpt": {
+      "rendered": "<p>Second video excerpt describing the performer and show details.</p>"
+    },
+    "content": {
+      "rendered": "<p>Video content with duration info</p>"
+    },
+    "better_featured_image": {
+      "source_url": "https://archivebate.com/wp-content/uploads/thumb2.jpg"
+    },
+    "acf": {
+      "duration": "25:45"
+    }
+  }
+]

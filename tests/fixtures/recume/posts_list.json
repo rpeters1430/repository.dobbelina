@@ -1,0 +1,39 @@
+[
+  {
+    "id": 54321,
+    "slug": "hot-video-performance",
+    "link": "https://recu.me/hot-video-performance/",
+    "title": {
+      "rendered": "Hot Video Performance"
+    },
+    "excerpt": {
+      "rendered": "<p>Amazing performance captured in HD quality.</p>"
+    },
+    "content": {
+      "rendered": "<p>Duration: 18:45 - Quality: 1080p - Uploaded 2024-11-15</p><p>Full description of the video content here.</p>"
+    },
+    "date": "2024-11-15T14:30:00",
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "source_url": "https://recu.me/wp-content/uploads/2024/11/thumb1.jpg"
+        }
+      ]
+    }
+  },
+  {
+    "id": 54322,
+    "link": "https://recu.me/amazing-show-recording/",
+    "title": {
+      "rendered": "Amazing Show Recording"
+    },
+    "excerpt": {
+      "rendered": ""
+    },
+    "content": {
+      "rendered": "<p>Great content with 25:12 runtime and 720p resolution</p>"
+    },
+    "date": "2024-11-14T10:15:00",
+    "jetpack_featured_media_url": "https://recu.me/wp-content/uploads/2024/11/thumb2.jpg"
+  }
+]

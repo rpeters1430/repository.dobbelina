@@ -82,6 +82,7 @@ def _ensure_kodi_stubs():
     xbmcplugin.endOfDirectory = _noop
     xbmcplugin.setContent = _noop
     xbmcplugin.addSortMethod = _noop
+    xbmcplugin.SORT_METHOD_TITLE = 10  # Add sort method constant
 
     # xbmcgui module -------------------------------------------------------
     xbmcgui = types.ModuleType('kodi_six.xbmcgui')

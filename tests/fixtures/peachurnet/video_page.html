@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sample Video - PeachUrNet</title>
+</head>
+<body>
+    <div class="video-container">
+        <video id="main-player">
+            <source src="https://cdn.peachurnet.com/videos/sample-video-720p.mp4" type="video/mp4">
+            <source data-src="https://cdn.peachurnet.com/videos/sample-video-1080p.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="video-info">
+        <h1>Sample Video Title</h1>
+        <p>Video description goes here</p>
+    </div>
+
+    <script>
+        var videoData = {
+            sources: [
+                {file: "https://cdn.peachurnet.com/videos/sample-hls.m3u8"},
+                {file: "https://cdn.peachurnet.com/videos/sample-720p.mp4"}
+            ]
+        };
+    </script>
+</body>
+</html>
