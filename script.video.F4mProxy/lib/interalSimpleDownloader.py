@@ -67,7 +67,7 @@ class interalSimpleDownloader():
             response = openner.open(req)
 
             return response
-        except:
+        except Exception:
             print 'Error in getUrl'
             traceback.print_exc()
         return None
@@ -99,7 +99,7 @@ class interalSimpleDownloader():
 
             return data
 
-        except:
+        except Exception:
             print 'Error in getUrl'
             traceback.print_exc()
         return None
@@ -129,7 +129,7 @@ class interalSimpleDownloader():
             return True
             
             #os.remove(self.outputfile)
-        except: 
+        except Exception: 
             traceback.print_exc()
             self.status='finished'
         return False
@@ -139,7 +139,7 @@ class interalSimpleDownloader():
         try:
             self.status='download Starting'
             self.downloadInternal(self.url,dest_stream)
-        except: 
+        except Exception: 
             traceback.print_exc()
         self.status='finished'
             
@@ -171,7 +171,7 @@ class interalSimpleDownloader():
                                     print 'maxbitrate',self.maxbitRate
                                     ec=EdgeClass(buf,url,'http://www.en.beinsports.net/i/PerformConsole_BEIN/player/bin-release/PerformConsole.swf',sendToken=False)                                
                                     ec.switchStream(self.maxbitRate,"DOWN")
-                        except:
+                        except Exception:
                             traceback.print_exc()
                     response.close()
                     fileout.close()
@@ -189,7 +189,7 @@ class interalSimpleDownloader():
                     fileout.close()
                 
 
-        except:
+        except Exception:
             traceback.print_exc()
             return
 class EdgeClass():

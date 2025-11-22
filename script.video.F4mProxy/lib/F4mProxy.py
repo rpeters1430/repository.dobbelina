@@ -306,7 +306,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     erange=int(file_size)-1
                 #Build range string
                 
-            except:
+            except Exception:
                 # Failure to build range string? Create a 0- range.
                 srange=0
                 erange=int(file_size-1);
@@ -330,16 +330,16 @@ class MyHandler(BaseHTTPRequestHandler):
         try:
             proxy = params['proxy'][0]#
             use_proxy_for_chunks =  params['use_proxy_for_chunks'][0]#
-        except: pass
+        except Exception: pass
         
         maxbitrate=0
         try:
             maxbitrate = int(params['maxbitrate'][0])
-        except: pass
+        except Exception: pass
         auth=None
         try:
             auth = params['auth'][0]
-        except: pass
+        except Exception: pass
 
         if auth=='None' and auth=='':
             auth=None
@@ -356,26 +356,26 @@ class MyHandler(BaseHTTPRequestHandler):
                 simpledownloader=True
             else:
                 simpledownloader=False
-        except: pass
+        except Exception: pass
         streamtype='HDS'
         try:
             streamtype =  params['streamtype'][0]#            
-        except: pass 
+        except Exception: pass 
         if streamtype=='None' and streamtype=='': streamtype='HDS'
 
         swf=None
         try:
             swf = params['swf'][0]
-        except: pass        
+        except Exception: pass        
         callbackpath=""
         try:
             callbackpath = params['callbackpath'][0]
-        except: pass        
+        except Exception: pass        
 
         callbackparam=None
         try:
             callbackparam = params['callbackparam'][0]
-        except: pass                
+        except Exception: pass                
         
      
         return (received_url,proxy,use_proxy_for_chunks,maxbitrate,simpledownloader,auth,streamtype,swf ,callbackpath, callbackparam )   
@@ -464,7 +464,7 @@ class f4mProxyHelper():
                 elif streamtype in ['HLSREDIR']:
                     listitem.setMimeType("application/vnd.apple.mpegurl");
                     listitem.setContentLookup(False) 
-            except: print 'error while setting setMimeType, so ignoring it '
+            except Exception: print 'error while setting setMimeType, so ignoring it '
                 
 
             if setResolved:
@@ -491,7 +491,7 @@ class f4mProxyHelper():
 
             print 'Job done'
             return played
-        except: return False
+        except Exception: return False
 
         
     def start_proxy(self,url,name,proxy=None,use_proxy_for_chunks=False, maxbitrate=0,simpleDownloader=False,auth=None,streamtype='HDS',swf=None, callbackpath="",callbackparam=""):

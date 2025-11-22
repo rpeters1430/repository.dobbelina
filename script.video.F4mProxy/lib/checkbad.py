@@ -20,7 +20,7 @@ def do_block_check(uninstall=False):
         return
     except SystemExit:
         sys.exit()
-    except:
+    except Exception:
         traceback.print_exc()
         pass
       

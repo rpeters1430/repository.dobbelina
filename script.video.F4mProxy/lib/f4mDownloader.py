@@ -28,7 +28,7 @@ import akhds
 try:
     addon_id = 'plugin.video.f4mTester' # yes its a wrong one but due to settings getting reset
     selfAddon = xbmcaddon.Addon(id=addon_id)
-except:
+except Exception:
     addon_id = 'script.video.F4mProxy' # yes its a wrong one but due to settings getting reset
     selfAddon = xbmcaddon.Addon(id=addon_id)
     
@@ -354,7 +354,7 @@ class F4MDownloader():
 
             return data
 
-        except:
+        except Exception:
             print 'Error in getUrl'
             traceback.print_exc()
             return None
@@ -419,7 +419,7 @@ class F4MDownloader():
             return self.preDownoload()
             
             #os.remove(self.outputfile)
-        except: 
+        except Exception: 
             traceback.print_exc()
             self.status='finished'
         return False
@@ -438,7 +438,7 @@ class F4MDownloader():
             print len(manifest)
             try:
                 print manifest
-            except: pass
+            except Exception: pass
             self.status='manifest done'
             #self.report_destination(filename)
             #dl = ReallyQuietDownloader(self.ydl, {'continuedl': True, 'quiet': True, 'noprogress':True})
@@ -478,7 +478,7 @@ class F4MDownloader():
                     if f.attrib.get('type', '')=='video' or vtype=='' :
                         formats.append([int(f.attrib.get('bitrate', -1)),f])
                 print 'format works',formats
-            except:
+            except Exception:
                 formats=[(int(0),f) for f in doc.findall(_add_ns('media'))]
             #print 'formats',formats
             
@@ -510,7 +510,7 @@ class F4MDownloader():
 
                 #self._write_flv_header(dest_stream, metadata)
                 #dest_stream.flush()
-            except: pass
+            except Exception: pass
         
             # Modified the-one 05082014
             # START
@@ -519,7 +519,7 @@ class F4MDownloader():
             # check for href attribute
             try:
                 mediaUrl=media.attrib['url']
-            except:
+            except Exception:
                 mediaUrl=media.attrib['href']
             # END
             
@@ -537,7 +537,7 @@ class F4MDownloader():
                 print len(sub_manifest)
                 try:
                     print sub_manifest
-                except: pass
+                except Exception: pass
                 self.status='sub manifest done'
                 F4Mversion =re.findall(version_fine, sub_manifest)[0]
                 doc = etree.fromstring(sub_manifest)
@@ -549,18 +549,18 @@ class F4MDownloader():
                 try:
                     self.metadata = base64.b64decode(media.find(_add_ns('metadata')).text)
                     print 'metadata stream read done'
-                except: pass
+                except Exception: pass
                 
                 try:
                     mediaUrl=media.attrib['url']
-                except:
+                except Exception:
                     mediaUrl=media.attrib['href']
             # END
             
             
             try:
                 bootStrapID = media.attrib['bootstrapInfoId']
-            except: bootStrapID='xx'
+            except Exception: bootStrapID='xx'
             #print 'mediaUrl',mediaUrl
             base_url = join(man_url,mediaUrl)#compat_urlparse.urljoin(man_url,media.attrib['url'])
             keybase_url=join(man_url,'key_')
@@ -584,7 +584,7 @@ class F4MDownloader():
             bootstrapURL1=''
             try:
                 bootstrapURL1=bootstrap.attrib['url']
-            except: pass
+            except Exception: pass
 
             bootstrapURL=''
             bootstrapData=None
@@ -633,7 +633,7 @@ class F4MDownloader():
             self.bootstrap, self.boot_info, self.fragments_list,self.total_frags=self.readBootStrapInfo(bootstrapURL,bootstrapData)
             self.init_done=True
             return True
-        except:
+        except Exception:
             traceback.print_exc()
         return False
 
@@ -741,11 +741,11 @@ class F4MDownloader():
         try:
             self.status='download Starting'            
             self.downloadInternal(self.url,dest_stream,segmentToStart,totalSegmentToSend)
-        except: 
+        except Exception: 
             traceback.print_exc()
         try:
             akhds.cleanup()                                    
-        except:pass
+        except Exception: pass
         self.status='finished'
             
     def downloadInternal(self,url,dest_stream ,segmentToStart=None,totalSegmentToSend=0):
@@ -803,7 +803,7 @@ class F4MDownloader():
                 try:    
                     if self.g_stopEvent.isSet():
                         return
-                except: pass
+                except Exception: pass
                 seg_i, frag_i=fragments_list[self.seqNumber]
                 self.seqNumber+=1
                 frameSent+=1
@@ -944,7 +944,7 @@ class F4MDownloader():
                                                     data=akhds.tagDecrypt(data,keyData)
                                                     
 
-                                                except:
+                                                except Exception:
                                                     print 'decryption error'
                                                     errors+=1
                                                     traceback.print_exc()
@@ -965,7 +965,7 @@ class F4MDownloader():
                                             #dest_stream.flush()
                                             #dest_stream.write(self.decryptData(data,keyData))
                                             #dest_stream.flush() 
-                                except:
+                                except Exception:
                                     print traceback.print_exc()
                                     self.g_stopEvent.set()     
                                     
@@ -996,7 +996,7 @@ class F4MDownloader():
                     total_frags=None
                     try:
                         bootstrap, boot_info, fragments_list,total_frags=self.readBootStrapInfo(self.bootstrapURL,None,updateMode=True,lastSegment=seg_i, lastFragement=frag_i)
-                    except: 
+                    except Exception: 
                         traceback.print_exc()
                         pass
                     if total_frags==None:
@@ -1004,7 +1004,7 @@ class F4MDownloader():
 
             del self.downloaded_bytes
             del self.frag_counter
-        except:
+        except Exception:
             traceback.print_exc()
             return
     def getBootStrapWithId (self,BSarray, id):
@@ -1014,7 +1014,7 @@ class F4MDownloader():
                 if bs.attrib['id']==id:
                     print 'gotcha'
                     return bs
-        except: pass
+        except Exception: pass
         return None
     
     def readBootStrapInfo(self,bootstrapUrl,bootStrapData, updateMode=False, lastFragement=None,lastSegment=None):
@@ -1027,7 +1027,7 @@ class F4MDownloader():
                     if self.g_stopEvent.isSet():
                         print 'event is set. returning'
                         return
-                except: pass
+                except Exception: pass
 
                 if bootStrapData==None:
                     bootStrapData =self.getUrl(bootstrapUrl)
@@ -1055,7 +1055,7 @@ class F4MDownloader():
                     xbmc.sleep(2000)
                     continue
                 return bootstrap, boot_info, fragments_list,total_frags
-        except:
+        except Exception:
             traceback.print_exc()
     
 
