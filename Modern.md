@@ -2,202 +2,131 @@ ROADMAP.md
 Dobbelina Add-on Modernization Roadmap
 
 This document tracks the planned upgrade path for the Dobbelina repository and its Kodi add-ons.
-Each phase contains clear goals, tasks, and checkboxes to mark progress as work is completed.
+Use the checkboxes to mark progress as work is completed and to surface remaining work at a glance.
+
+## Phase 0 – Baseline & Assessment
+
+**Goal:** Record the current state of the repository and identify all issues before making changes.
+
+- [ ] Inventory all add-ons included in the repo
+- [ ] Identify supported Kodi versions (Matrix, Nexus, Omega)
+- [ ] Install and test on at least two Kodi versions
+- [ ] Document broken menus, failed scrapers, missing thumbnails, slow pages
+- [ ] Create/maintain `KNOWN_ISSUES.md` with all findings
+- [ ] Note technical debt areas (duplicate code, unused files, outdated imports)
+
+## Phase 1 – Core Compatibility & Packaging
+
+**Goal:** Ensure proper Kodi compatibility, structural correctness, and clean packaging layout.
+
+- [ ] Update all `addon.xml` files
+  - [ ] Correct `<version>` fields
+  - [ ] Validate `<requires>`
+  - [ ] Update Python API versions (`xbmc.python`) as needed
+- [ ] Normalize directory layout (`lib/`, `resources/`, etc.)
+- [ ] Remove obsolete files (`.pyc`, old modules, unused folders)
+- [ ] Ensure repo add-on correctly generates `addons.xml` and `.md5`
+- [ ] Fix any packaging issues affecting installation or updates
+
+## Phase 2 – Code Quality & Structure
+
+**Goal:** Improve maintainability by reorganizing code, cleaning modules, and modernizing Python.
+
+- [ ] Centralize configuration in `config.py` (URLs, headers, defaults)
+- [ ] Create a proper directory structure:
+  - [ ] `resources/lib/providers/`
+  - [ ] `resources/lib/core/`
+- [ ] Unify utility functions into a single shared module
+- [ ] Add docstrings to public functions
+- [ ] Add type hints where useful
+- [ ] Remove deprecated Python patterns
+- [ ] Add unified logging wrapper (`log_debug`, `log_info`, etc.)
+
+## Phase 3 – Networking, Scraping & Reliability
+
+**Goal:** Improve scraper stability, reduce failures, and unify networking behavior.
+
+- [ ] Create a unified HTTP client (`http_client.py`)
+  - [ ] Consistent User-Agent
+  - [ ] Timeouts
+  - [ ] Retry logic
+  - [ ] Gzip/deflate support
+- [ ] Migrate all scrapers to use the new HTTP client
+- [ ] Add clean error handling for network and parse failures
+- [ ] Add optional FlareSolverr integration
+  - [ ] Global toggle in settings
+  - [ ] Proper URL routing
+  - [ ] Error messages for user
+- [ ] Add fallbacks where possible (multiple source mirrors, backup endpoints)
+
+## Phase 4 – UX & Settings Improvements
+
+**Goal:** Make the add-on smoother and more intuitive for users.
+
+- [ ] Reorganize `settings.xml` with clear categories
+  - [ ] Playback
+  - [ ] Sources
+  - [ ] Networking
+  - [ ] Debug
+- [ ] Add provider enable/disable toggles
+- [ ] Improve stream selection dialogs
+- [ ] Add auto-play/quality options
+- [ ] Ensure lists display correct Kodi sort methods
+- [ ] Improve item titles, thumbnails, and metadata
+- [ ] Fix any dead-end navigation or inconsistent back behavior
+
+## Phase 5 – Performance & Caching
+
+**Goal:** Improve speed and avoid re-scraping unnecessary data.
+
+- [ ] Implement lightweight caching
+  - [ ] Home page data
+  - [ ] Category lists
+  - [ ] Search queries (optional)
+- [ ] Add pagination/“Next…” items for large providers
+- [ ] Reduce redundant requests across providers
+- [ ] Add throttling/delays for aggressive sites
+- [ ] Store cache under `addon_data` with time-based expiration
+
+## Phase 6 – Testing & CI/CD
+
+**Goal:** Catch future breakage early and automate build workflows.
+
+- [ ] Add basic unit tests for parsers
+  - [ ] HTML fixtures
+  - [ ] JSON fixtures
+  - [ ] Pagination logic tests
+- [ ] Add GitHub Actions pipeline
+  - [ ] Run tests
+  - [ ] Run linter (`ruff` or `flake8`)
+  - [ ] Build ZIP files
+  - [ ] Upload artifacts
+- [ ] Add script for local dev builds
+- [ ] Add linting config (`pyproject.toml` or `.flake8`)
 
-Phase 0 – Baseline & Assessment
+## Phase 7 – Documentation & Contributor Friendliness
 
-Goal: Record the current state of the repository and identify all issues before making changes.
+**Goal:** Make the repo clear and easy for you and others to maintain long-term.
 
- Inventory all add-ons included in the repo
+- [ ] Update README.md with:
+  - [ ] Supported Kodi versions
+  - [ ] Features
+  - [ ] Limitations
+  - [ ] Troubleshooting
+- [ ] Add `docs/DEVELOPMENT.md`
+  - [ ] Repository structure
+  - [ ] How to add a provider
+  - [ ] Coding conventions
+  - [ ] Running tests
+- [ ] Maintain a `CHANGELOG.md` with each version
+- [ ] Keep this ROADMAP.md updated with checkmarks and notes
 
- Identify supported Kodi versions (Matrix, Nexus, Omega)
+## Notes & Future Ideas
 
- Install and test on at least two Kodi versions
+Use this section as a scratchpad while working through issues.
 
- Document broken menus, failed scrapers, missing thumbnails, slow pages
+- [ ] Consider switching to async scraping (experimental)
+- [ ] Add backup mirror list for major providers
 
- Create/maintain KNOWN_ISSUES.md with all findings
-
- Note technical debt areas (duplicate code, unused files, outdated imports)
-
-Phase 1 – Core Compatibility & Packaging
-
-Goal: Ensure proper Kodi compatibility, structural correctness, and clean packaging layout.
-
- Update all addon.xml files
-
- Correct <version> fields
-
- Validate <requires>
-
- Update python API versions (xbmc.python) as needed
-
- Normalize directory layout (lib/, resources/, etc.)
-
- Remove obsolete files (.pyc, old modules, unused folders)
-
- Ensure repo add-on correctly generates addons.xml and .md5
-
- Fix any packaging issues affecting installation or updates
-
-Phase 2 – Code Quality & Structure
-
-Goal: Improve maintainability by reorganizing code, cleaning modules, and modernizing Python.
-
- Centralize configuration in config.py (URLs, headers, defaults)
-
- Create a proper directory structure:
-
- resources/lib/providers/
-
- resources/lib/core/
-
- Unify utility functions into a single shared module
-
- Add docstrings to public functions
-
- Add type hints where useful
-
- Remove deprecated Python patterns
-
- Add unified logging wrapper (log_debug, log_info, etc.)
-
-Phase 3 – Networking, Scraping & Reliability
-
-Goal: Improve scraper stability, reduce failures, and unify networking behavior.
-
- Create a unified HTTP client (http_client.py)
-
- Consistent User-Agent
-
- Timeouts
-
- Retry logic
-
- Gzip/deflate support
-
- Migrate all scrapers to use the new HTTP client
-
- Add clean error handling for network and parse failures
-
- Add optional FlareSolverr integration
-
- Global toggle in settings
-
- Proper URL routing
-
- Error messages for user
-
- Add fallbacks where possible (multiple source mirrors, backup endpoints)
-
-Phase 4 – UX & Settings Improvements
-
-Goal: Make the add-on smoother and more intuitive for users.
-
- Reorganize settings.xml with clear categories
-
- Playback
-
- Sources
-
- Networking
-
- Debug
-
- Add provider enable/disable toggles
-
- Improve stream selection dialogs
-
- Add auto-play/quality options
-
- Ensure lists display correct Kodi sort methods
-
- Improve item titles, thumbnails, and metadata
-
- Fix any dead-end navigation or inconsistent back behavior
-
-Phase 5 – Performance & Caching
-
-Goal: Improve speed and avoid re-scraping unnecessary data.
-
- Implement lightweight caching
-
- Home page data
-
- Category lists
-
- Search queries (optional)
-
- Add pagination/“Next…” items for large providers
-
- Reduce redundant requests across providers
-
- Add throttling/delays for aggressive sites
-
- Store cache under addon_data with time-based expiration
-
-Phase 6 – Testing & CI/CD
-
-Goal: Catch future breakage early and automate build workflows.
-
- Add basic unit tests for parsers
-
- HTML fixtures
-
- JSON fixtures
-
- Pagination logic tests
-
- Add GitHub Actions pipeline
-
- Run tests
-
- Run linter (ruff or flake8)
-
- Build ZIP files
-
- Upload artifacts
-
- Add script for local dev builds
-
- Add linting config (pyproject.toml or .flake8)
-
-Phase 7 – Documentation & Contributor Friendliness
-
-Goal: Make the repo clear and easy for you and others to maintain long-term.
-
- Update README.md with:
-
- Supported Kodi versions
-
- Features
-
- Limitations
-
- Troubleshooting
-
- Add docs/DEVELOPMENT.md
-
- Repository structure
-
- How to add a provider
-
- Coding conventions
-
- Running tests
-
- Maintain a CHANGELOG.md with each version
-
- Keep this ROADMAP.md updated with checkmarks and notes
-
-Notes & Future Ideas
-
-(Use this section as a scratchpad while working through issues.)
-
- Consider switching to async scraping (experimental)
-
- Add backup mirror list for major providers
-
- Investigate using ResolveURL more heavily for consistency
-
- Evaluate moving to a more modular provider architecture
+- [ ] Investigate using ResolveURL more heavily for consistency
+- [ ] Evaluate moving to a more modular provider architecture
