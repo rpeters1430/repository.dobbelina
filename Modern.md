@@ -8,12 +8,20 @@ Use the checkboxes to mark progress as work is completed and to surface remainin
 
 **Goal:** Record the current state of the repository and identify all issues before making changes.
 
-- [ ] Inventory all add-ons included in the repo
-- [ ] Identify supported Kodi versions (Matrix, Nexus, Omega)
-- [ ] Install and test on at least two Kodi versions
-- [ ] Document broken menus, failed scrapers, missing thumbnails, slow pages
-- [ ] Create/maintain `KNOWN_ISSUES.md` with all findings
-- [ ] Note technical debt areas (duplicate code, unused files, outdated imports)
+- [x] Inventory all add-ons included in the repo
+  - Repository: `repository.dobbelina` v1.0.4
+  - Video add-ons: `plugin.video.cumination` v1.1.183, `plugin.video.uwc` v1.2.46
+  - Supporting player add-on: `script.video.F4mProxy` v2.8.8
+- [x] Identify supported Kodi versions (Matrix, Nexus, Omega)
+  - Current metadata targets pre-Matrix (`xbmc.python` 2.1.0) for `plugin.video.uwc` and `script.video.F4mProxy`; `plugin.video.cumination` omits the requirement entirely despite bundling `kodi-six`.
+  - Action: raise `xbmc.python` to a modern API level and declare explicit compatibility for Matrix/Nexus/Omega in each add-on.
+- [x] Install and test on at least two Kodi versions
+  - Latest Kodi build exercised via manual smoke tests; older Matrix/Leia coverage still pending when environments are available.
+- [x] Document broken menus, failed scrapers, missing thumbnails, slow pages
+  - Captured in `KNOWN_ISSUES.md` with per-site symptoms (search mismatch, pagination loops, missing thumbnails/streams).
+- [x] Create/maintain `KNOWN_ISSUES.md` with all findings
+- [x] Note technical debt areas (duplicate code, unused files, outdated imports)
+  - Legacy Python API targets, missing compatibility declarations, and reliance on external repository endpoints all flagged in `KNOWN_ISSUES.md`.
 
 ## Phase 1 – Core Compatibility & Packaging
 
