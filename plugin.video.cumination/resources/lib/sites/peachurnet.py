@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import re
 from collections import OrderedDict
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List as TList, Optional, Tuple
 
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
@@ -102,7 +102,7 @@ def _cache_homepage_metadata(force: bool = False) -> None:
         return
 
     soup = utils.parse_html(html)
-    sections: List[Tuple[str, str]] = []
+    sections: TList[Tuple[str, str]] = []
     seen = set()
 
     for anchor in soup.select('nav a[href], header a[href]'):
@@ -196,7 +196,7 @@ def _extract_duration(element) -> str:
 
 def _extract_metadata(element) -> str:
     parent = element.find_parent()
-    meta_bits: List[str] = []
+    meta_bits: TList[str] = []
     search_target = parent if parent else element
     if not search_target:
         return ''
@@ -213,8 +213,8 @@ def _extract_metadata(element) -> str:
     return joined
 
 
-def _parse_video_cards(soup) -> List[Dict[str, str]]:
-    cards: List[Dict[str, str]] = []
+def _parse_video_cards(soup) -> TList[Dict[str, str]]:
+    cards: TList[Dict[str, str]] = []
     seen = set()
     for link in soup.select('a[href*="/video/"]'):
         href = utils.safe_get_attr(link, 'href')

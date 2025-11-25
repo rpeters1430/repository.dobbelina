@@ -21,7 +21,7 @@ from contextlib import contextmanager
 from platform import uname
 from pprint import pformat
 try:
-    from typing import Text, Callable, Generator
+    pass
 except ImportError:
     pass
 

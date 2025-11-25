@@ -51,7 +51,6 @@ def List(url):
     # Only apply filters to main listing and tag pages, NOT search pages
     # Search pages use different parameter structure
     is_search_page = '/s/' in parsed.path
-    is_tag_page = '/tag/' in parsed.path or '/category/' in parsed.path
     is_main_listing = '/new_videos/' in parsed.path or '/trending/' in parsed.path
 
     # Only add 'o=new' parameter for main listing (not tags or search)

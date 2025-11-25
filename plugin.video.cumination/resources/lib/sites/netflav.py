@@ -17,7 +17,6 @@
 '''
 
 import json
-import re
 
 import xbmc
 from resources.lib import utils
