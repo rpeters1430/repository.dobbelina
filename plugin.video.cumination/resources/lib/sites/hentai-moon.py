@@ -17,7 +17,10 @@
 """
 
 import re
+from urllib.parse import parse_qs, urlencode, urljoin, urlparse
+
 from six.moves import urllib_parse
+
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.decrypters.kvsplayer import kvs_decode
@@ -44,48 +47,68 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(r'href="([^"]+)"\s+?title="([^"]+)".*?data-original="([^"]+)"[^>]+(.*?)</div>.*?duration">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
     thumbnails = utils.Thumbnails(site.name)
-    for videopage, name, img, hd, duration in match:
-        img = thumbnails.fix_img(img)
-        name = utils.cleantext(name)
-        hd = " [COLOR orange]HD[/COLOR]" if 'is_hd' in hd else ''
-        contexturl = (utils.addon_sys
-                      + "?mode=" + str('hentai-moon.Lookupinfo')
-                      + "&url=" + urllib_parse.quote_plus(videopage))
-        contextmenu = ('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')')
-        site.add_download_link(name, videopage, 'Playvid', img, name, contextm=contextmenu, duration=duration, quality=hd)
-    np = re.compile(r':(\d+)">Next', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        np = np.group(1)
-        pagelookup = re.search(r"(from(?:_videos)?)=(\d+)", url)
-        if pagelookup:
-            page = pagelookup.group(2)
-            fromtxt = pagelookup.group(1)
-            url = url.replace("{0}={1}".format(fromtxt, page), "{0}={1}".format(fromtxt, np))
-            site.add_dir('Next Page ({0})'.format(np), url, 'List', site.img_next)
 
+    for card in _iter_video_cards(soup):
+        link = card.select_one('a[href]')
+        if not link:
+            continue
+
+        videopage = urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
+        name = utils.cleantext(utils.safe_get_attr(link, 'title', default='') or utils.safe_get_text(link, default=''))
+        if not name or not videopage:
+            continue
+
+        img = thumbnails.fix_img(
+            utils.safe_get_attr(link.select_one('img'), 'data-original', fallback_attrs=['src'], default='')
+        )
+        duration = utils.safe_get_text(link.select_one('.duration'), default='')
+        hd = ' [COLOR orange]HD[/COLOR]' if link.select_one('.is_hd') else ''
+        contextmenu = _lookup_context_menu(videopage)
+        site.add_download_link(name, videopage, 'Playvid', img, name, contextm=contextmenu, duration=duration, quality=hd)
+
+    _add_next_page(soup, url, 'List')
     utils.eod()
 
 
 @site.register()
 def Categories(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(r'item"\s+?href="([^"]+)"\s?title="([^"]+)".*?src="([^"]+)".*?videos">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for catpage, name, img, videos in match:
-        name = utils.cleantext(name) + " [COLOR deeppink]" + videos.strip() + "[/COLOR]"
-        catpage = catpage + ajaxcommon
-        site.add_dir(name, catpage, 'List', img, name)
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
+    for link in soup.select('a.item[href][title], div.item a[href][title]'):
+        catpage = urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
+        name = utils.cleantext(utils.safe_get_attr(link, 'title', default=''))
+        if not catpage or not name:
+            continue
+
+        videos = utils.safe_get_text(link.select_one('.videos'), default='').strip()
+        label = name if not videos else f"{name} [COLOR deeppink]{videos}[/COLOR]"
+        catpage = f"{catpage}{ajaxcommon}"
+        image = utils.safe_get_attr(link.select_one('img'), 'src', default='')
+        site.add_dir(label, catpage, 'List', image, name)
     utils.eod()
 
 
 @site.register()
 def Tags(url):
     listhtml = utils.getHtml(url)
-    match = re.compile('/(tags/[^"]+)">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for tagpage, name in match:
-        name = utils.cleantext(name)
-        tagpage = site.url + tagpage + ajaxcommon
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
+    for link in soup.select('a[href*="tags/"]'):
+        tagpage = utils.safe_get_attr(link, 'href', default='')
+        name = utils.cleantext(utils.safe_get_text(link, default=''))
+        if not tagpage or not name:
+            continue
+        tagpage = f"{urljoin(site.url, tagpage)}{ajaxcommon}"
         site.add_dir(name, tagpage, 'List', '')
     utils.eod()
 
@@ -93,20 +116,23 @@ def Tags(url):
 @site.register()
 def Series(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(r'href="([^"]+)"\s+?title="([^"]+)".*?data-original="([^"]+)".*?videos">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for seriepage, name, img, videos in match:
-        name = utils.cleantext(name) + " [COLOR deeppink]" + videos.strip() + "[/COLOR]"
-        seriepage = seriepage + ajaxcommon
-        site.add_dir(name, seriepage, 'List', img, name)
-    np = re.compile(r':(\d+)">Next', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        np = np.group(1)
-        pagelookup = re.search(r"(from(?:_videos)?)=(\d+)", url)
-        if pagelookup:
-            page = pagelookup.group(2)
-            fromtxt = pagelookup.group(1)
-            url = url.replace("{0}={1}".format(fromtxt, page), "{0}={1}".format(fromtxt, np))
-            site.add_dir('Next Page ({0})'.format(np), url, 'Series', site.img_next)
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
+    for link in soup.select('a.item[href][title], div.item a[href][title]'):
+        seriepage = urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
+        name = utils.cleantext(utils.safe_get_attr(link, 'title', default=''))
+        if not seriepage or not name:
+            continue
+
+        videos = utils.safe_get_text(link.select_one('.videos'), default='').strip()
+        label = name if not videos else f"{name} [COLOR deeppink]{videos}[/COLOR]"
+        seriepage = f"{seriepage}{ajaxcommon}"
+        img = utils.safe_get_attr(link.select_one('img'), 'data-original', fallback_attrs=['src'], default='')
+        site.add_dir(label, seriepage, 'List', img, name)
+
+    _add_next_page(soup, url, 'Series')
     utils.eod()
 
 
@@ -168,3 +194,53 @@ def Lookupinfo(url):
 
     lookupinfo = utils.LookupInfo(site.url, url, 'hentai-moon.List', lookup_list)
     lookupinfo.getinfo()
+
+
+def _iter_video_cards(soup):
+    if not soup:
+        return []
+    selectors = ['div.item', 'div.item-thumb', 'div.video-item']
+    for selector in selectors:
+        for card in soup.select(selector):
+            yield card
+
+
+def _lookup_context_menu(video_url):
+    contexturl = (
+        utils.addon_sys
+        + "?mode=" + str('hentai-moon.Lookupinfo')
+        + "&url=" + urllib_parse.quote_plus(video_url)
+    )
+    return ('[COLOR deeppink]Lookup info[/COLOR]', f'RunPlugin({contexturl})')
+
+
+def _add_next_page(soup, current_url, mode):
+    if not soup:
+        return
+    next_link = soup.find(lambda tag: tag.name == 'a' and tag.string and 'next' in tag.string.lower())
+    next_url = ''
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, 'href', default='')
+        if not next_url:
+            params = utils.safe_get_attr(next_link, 'data-parameters', default='')
+            match = re.search(r'(from(?:_videos)?)=(\d+)', params)
+            if match:
+                query = parse_qs(urlparse(current_url).query)
+                query[match.group(1)] = [match.group(2)]
+                base = current_url.split('?')[0]
+                next_url = f"{base}?{urlencode(query, doseq=True)}"
+    if next_url:
+        next_url = urljoin(site.url, next_url)
+        next_page = _extract_page_number(next_url)
+        label = f"Next Page ({next_page})" if next_page else 'Next Page'
+        site.add_dir(label, next_url, mode, site.img_next)
+
+
+def _extract_page_number(url):
+    query = urlparse(url).query
+    params = parse_qs(query)
+    for key in ('from', 'from_videos'):
+        if key in params and params[key]:
+            return params[key][0]
+    match = re.search(r'(\d+)', url)
+    return match.group(1) if match else ''
