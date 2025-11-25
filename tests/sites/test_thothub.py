@@ -1,0 +1,111 @@
+import sys
+from pathlib import Path
+
+import pytest
+
+
+ROOT = Path(__file__).resolve().parents[2]
+PLUGIN_ROOT = ROOT / "plugin.video.cumination"
+if str(PLUGIN_ROOT) not in sys.path:
+    sys.path.insert(0, str(PLUGIN_ROOT))
+
+from resources.lib.sites import thothub
+
+
+FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "thothub"
+
+
+def load_fixture(name):
+    return (FIXTURE_DIR / name).read_text(encoding="utf-8")
+
+
+def test_extract_list_items_parses_videos():
+    """Test that _extract_list_items correctly parses video items from HTML."""
+    html = load_fixture("public_list.html")
+    items = thothub._extract_list_items(html)
+
+    assert len(items) == 3, f"Expected 3 items, got {len(items)}"
+
+    # Check first video
+    url, name, screenshot = items[0]
+    assert "/videos/1430251/" in url
+    assert "Blowketing: Cutetati - Sextape" in name
+    assert "/contents/videos_screenshots/1430000/1430251/" in screenshot
+
+    # Check second video
+    url, name, screenshot = items[1]
+    assert "/videos/1430246/" in url
+    assert "joi for my cuck husband" in name.lower()
+    assert "/contents/videos_screenshots/1430000/1430246/" in screenshot
+
+    # Check third video
+    url, name, screenshot = items[2]
+    assert "/videos/1430245/" in url
+    assert "sensitiveasmrgirl" in name.lower()
+    assert "/contents/videos_screenshots/1430000/1430245/" in screenshot
+
+
+def test_extract_list_items_handles_empty_html():
+    """Test that _extract_list_items handles empty HTML gracefully."""
+    html = "<html><body></body></html>"
+    items = thothub._extract_list_items(html)
+
+    assert items == []
+
+
+def test_find_next_page_detects_pagination():
+    """Test that _find_next_page correctly finds next page URL."""
+    html = load_fixture("public_list.html")
+    current_url = "https://thothub.mx/public/"
+
+    next_url = thothub._find_next_page(html, current_url)
+
+    assert next_url is not None
+    assert "/public/2/" in next_url
+
+
+def test_find_next_page_handles_no_pagination():
+    """Test that _find_next_page returns None when no pagination exists."""
+    html = "<html><body><div>No pagination here</div></body></html>"
+    current_url = "https://thothub.mx/public/"
+
+    next_url = thothub._find_next_page(html, current_url)
+
+    assert next_url is None
+
+
+def test_list_integration(monkeypatch):
+    """Test the full List function with mocked dependencies."""
+    html = load_fixture("public_list.html")
+    monkeypatch.setattr(thothub.utils, "getHtml", lambda url, referer=None, headers=None: html)
+
+    downloads = []
+    dirs = []
+
+    def fake_add_download_link(name, url, mode, iconimage, desc="", stream=None, fav='add',
+                                noDownload=False, contextm=None, fanart=None, duration="", quality=""):
+        downloads.append({
+            "name": name,
+            "url": url,
+            "mode": mode,
+            "icon": iconimage,
+        })
+
+    def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
+        dirs.append({"name": name, "url": url, "mode": mode})
+
+    monkeypatch.setattr(thothub.site, "add_download_link", fake_add_download_link)
+    monkeypatch.setattr(thothub.site, "add_dir", fake_add_dir)
+    monkeypatch.setattr(thothub.utils, "eod", lambda: None)
+
+    thothub.List("https://thothub.mx/public/")
+
+    # Verify videos were added
+    assert len(downloads) == 3
+    assert "Blowketing: Cutetati - Sextape" in downloads[0]["name"]
+    assert "/videos/1430251/" in downloads[0]["url"]
+
+    # Verify pagination was added
+    next_pages = [entry for entry in dirs if "Next Page" in entry["name"]]
+    assert len(next_pages) == 1
+    assert "/public/2/" in next_pages[0]["url"]

@@ -254,28 +254,39 @@ def Main():
 
 
 def _extract_list_items(html):
-    """Extract video items from ThotHub HTML."""
+    """Extract video items from ThotHub HTML using BeautifulSoup."""
     items = []
+    soup = utils.parse_html(html)
 
-    # Extract video URLs and titles first
-    # Pattern: href="/videos/ID/slug/" with title attribute
-    video_pattern = re.compile(
-        r'<a[^>]*href="([^"]+/videos/(\d+)/[^"]+)"[^>]*title="([^"]*)"[^>]*>',
-        re.IGNORECASE
-    )
-    video_matches = list(video_pattern.finditer(html))
-    utils.kodilog("ThotHub found {} video links".format(len(video_matches)), xbmc.LOGDEBUG)
+    # Find all video links - ThotHub uses <a> tags with href="/videos/ID/slug/"
+    video_links = soup.select('a[href*="/videos/"]')
+    utils.kodilog("ThotHub found {} video links".format(len(video_links)), xbmc.LOGDEBUG)
 
-    # For each video, try to find its screenshot
-    for match in video_matches:
-        url, video_id, title = match.group(1, 2, 3)
-        anchor_html = match.group(0)
-        # Clean title
+    for link in video_links:
+        url = utils.safe_get_attr(link, 'href')
+        if not url or '/videos/' not in url:
+            continue
+
+        # Extract video ID from URL: /videos/1430251/slug/
+        try:
+            parts = url.split('/videos/')
+            if len(parts) < 2:
+                continue
+            video_id = parts[1].split('/')[0]
+            if not video_id.isdigit():
+                continue
+        except (IndexError, AttributeError):
+            continue
+
+        # Get title from title attribute or link text
+        title = utils.safe_get_attr(link, 'title')
         if not title:
-            title = re.sub(r'<[^>]+>', '', anchor_html or '')
-            if not title.strip():
-                slug = url.split('/')[-2] if url.endswith('/') else url.split('/')[-1]
-                title = slug.replace('-', ' ').title()
+            title = utils.safe_get_text(link)
+        if not title:
+            # Fallback: extract from URL slug
+            slug = url.split('/')[-2] if url.endswith('/') else url.split('/')[-1]
+            title = slug.replace('-', ' ').title()
+
         name = utils.cleantext(title)
 
         # ThotHub screenshot pattern: /contents/videos_screenshots/ID000/ID/preview.jpg
@@ -301,25 +312,41 @@ def _extract_list_items(html):
 
 
 def _find_next_page(html, current_url):
-    """Find the next page URL in pagination."""
+    """Find the next page URL in pagination using BeautifulSoup."""
+    soup = utils.parse_html(html)
+
     # Try various pagination patterns
-    patterns = [
-        r'<a[^>]+href="([^"]+)"[^>]*rel="next"',
-        r'<a[^>]+class="[^"]*next[^"]*"[^>]+href="([^"]+)"',
-        r'<link[^>]+rel="next"[^>]+href="([^"]+)"',
-    ]
+    # Pattern 1: <a rel="next" href="...">
+    next_link = soup.select_one('a[rel="next"]')
+    if next_link:
+        url = utils.safe_get_attr(next_link, 'href')
+        if url:
+            utils.kodilog("ThotHub found next page: {}".format(url), xbmc.LOGDEBUG)
+            return url
 
-    for pattern in patterns:
-        m = re.search(pattern, html, re.IGNORECASE)
-        if m:
-            utils.kodilog("ThotHub found next page: {}".format(m.group(1)), xbmc.LOGDEBUG)
-            return m.group(1)
+    # Pattern 2: <link rel="next" href="...">
+    next_link = soup.select_one('link[rel="next"]')
+    if next_link:
+        url = utils.safe_get_attr(next_link, 'href')
+        if url:
+            utils.kodilog("ThotHub found next page: {}".format(url), xbmc.LOGDEBUG)
+            return url
 
-    # Pagination where the <li> holds the "next" class
-    li_next = re.search(r'<li[^>]+class="[^"]*next[^"]*"[^>]*>\s*<a[^>]+href="([^"]+)"', html, re.IGNORECASE)
+    # Pattern 3: <a class="...next..." href="...">
+    next_links = soup.select('a[class*="next"]')
+    for next_link in next_links:
+        url = utils.safe_get_attr(next_link, 'href')
+        if url:
+            utils.kodilog("ThotHub found next page via class: {}".format(url), xbmc.LOGDEBUG)
+            return url
+
+    # Pattern 4: <li class="next"><a href="...">
+    li_next = soup.select_one('li.next a, li[class*="next"] a')
     if li_next:
-        utils.kodilog("ThotHub found next page via li.next: {}".format(li_next.group(1)), xbmc.LOGDEBUG)
-        return li_next.group(1)
+        url = utils.safe_get_attr(li_next, 'href')
+        if url:
+            utils.kodilog("ThotHub found next page via li.next: {}".format(url), xbmc.LOGDEBUG)
+            return url
 
     # Try to find numbered pagination and increment
     # URLs like /latest-updates/2/ -> /latest-updates/3/
