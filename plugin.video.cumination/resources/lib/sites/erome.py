@@ -34,20 +34,52 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(r'''<div[^<]+id="album-.+?data-src="([^"]+).+?right">(.+?)</div.+?title"\s*href="([^"]+)"\s*>([^<]+)''', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for img, content, iurl, name in match:
+    soup = utils.parse_html(listhtml)
+
+    # Find all album divs
+    albums = soup.select('.album, div[id*="album-"]')
+    for album in albums:
+        # Get thumbnail image
+        img_tag = album.select_one('img[data-src], img.album-thumbnail')
+        if not img_tag:
+            continue
+        img = utils.safe_get_attr(img_tag, 'data-src') or utils.safe_get_attr(img_tag, 'src')
+        if img:
+            img += '|Referer={0}'.format(site.url)
+
+        # Get album title and URL
+        title_link = album.select_one('a.album-title')
+        if not title_link:
+            continue
+        iurl = utils.safe_get_attr(title_link, 'href')
+        name = utils.safe_get_text(title_link)
+        if not iurl or not name:
+            continue
         name = utils.cleantext(name)
-        img += '|Referer={0}'.format(site.url)
+
+        # Check for images and videos count
         pics = False
         vids = False
-        if '"album-videos"' in content:
-            items = re.findall(r'class="album-videos"[^\d]+(\d+)', content)[0]
-            name += '[COLOR hotpink][I] {0} vids[/I][/COLOR]'.format(items)
-            vids = True
-        if '"album-images"' in content:
-            items = re.findall(r'class="album-images"[^\d]+(\d+)', content)[0]
-            name += '[COLOR orange][I] {0} pics[/I][/COLOR]'.format(items)
-            pics = True
+        album_images = album.select_one('.album-images')
+        if album_images:
+            items_text = utils.safe_get_text(album_images)
+            # Extract number from text like "54" or similar
+            items_match = re.search(r'\d+', items_text)
+            if items_match:
+                items = items_match.group(0)
+                name += '[COLOR orange][I] {0} pics[/I][/COLOR]'.format(items)
+                pics = True
+
+        album_videos = album.select_one('.album-videos')
+        if album_videos:
+            items_text = utils.safe_get_text(album_videos)
+            items_match = re.search(r'\d+', items_text)
+            if items_match:
+                items = items_match.group(0)
+                name += '[COLOR hotpink][I] {0} vids[/I][/COLOR]'.format(items)
+                vids = True
+
+        # Add directory based on content type
         if pics and vids:
             site.add_dir(name, iurl, 'List2', img, desc=name, section='both')
         elif pics:
@@ -55,12 +87,39 @@ def List(url):
         elif vids:
             site.add_dir(name, iurl, 'List2', img, desc=name, section='vids')
 
-    np = re.compile(r'class="pagination.+?href="([^"]+)"\s*rel="next">', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        nurl = urllib_parse.urljoin(url, np.group(1)).replace('&amp;', '&')
-        currpg = re.findall(r'class="pagination.+?"active"[^\d]+(\d+)', listhtml, re.DOTALL)[0]
-        lastpg = re.findall(r'class="pagination.+?(\d+)</a></li>\s*<li><a\s*href="[^"]+"\s*rel="next"', listhtml, re.DOTALL)[0]
-        site.add_dir('Next Page... (Currently in Page {0} of {1})'.format(currpg, lastpg), nurl, 'List', site.img_next)
+    # Handle pagination
+    next_link = soup.select_one('a[rel="next"]')
+    if next_link:
+        nurl = utils.safe_get_attr(next_link, 'href')
+        if nurl:
+            nurl = urllib_parse.urljoin(url, nurl).replace('&amp;', '&')
+
+            # Find current and last page numbers
+            currpg = '1'
+            lastpg = '1'
+
+            # Current page is in .active span or li.active
+            active_page = soup.select_one('.pagination .active, .pagination li.active')
+            if active_page:
+                currpg_text = utils.safe_get_text(active_page)
+                currpg_match = re.search(r'\d+', currpg_text)
+                if currpg_match:
+                    currpg = currpg_match.group(0)
+
+            # Last page is the highest number before the next link
+            pagination = soup.select_one('.pagination')
+            if pagination:
+                page_links = pagination.select('a')
+                page_numbers = []
+                for link in page_links:
+                    link_text = utils.safe_get_text(link)
+                    page_match = re.search(r'\d+', link_text)
+                    if page_match:
+                        page_numbers.append(int(page_match.group(0)))
+                if page_numbers:
+                    lastpg = str(max(page_numbers))
+
+            site.add_dir('Next Page... (Currently in Page {0} of {1})'.format(currpg, lastpg), nurl, 'List', site.img_next)
 
     utils.eod()
 
