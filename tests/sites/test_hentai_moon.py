@@ -2,8 +2,6 @@ import importlib.util
 import sys
 from pathlib import Path
 
-import pytest
-
 ROOT = Path(__file__).resolve().parents[2]
 PLUGIN_ROOT = ROOT / "plugin.video.cumination"
 if str(PLUGIN_ROOT) not in sys.path:
