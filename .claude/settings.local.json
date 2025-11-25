@@ -27,11 +27,14 @@
       "WebFetch(domain:www.naked.com)",
       "WebFetch(domain:hpjav.in)",
       "WebFetch(domain:www.incestflix.com)",
-    "WebFetch(domain:peachurnet.com)",
-    "Bash(/tmp/peachurnet_page.html)",
-    "Bash(unzip:*)",
-    "Bash(mkdir:*)",
-    "Bash(sed:*)"
+      "WebFetch(domain:peachurnet.com)",
+      "Bash(/tmp/peachurnet_page.html)",
+      "Bash(unzip:*)",
+      "Bash(mkdir:*)",
+      "Bash(sed:*)",
+      "WebFetch(domain:simpvids.com)",
+      "WebFetch(domain:thothub.mx)",
+      "Bash(/tmp/thothub_public.html)"
     ],
     "deny": [],
     "ask": []

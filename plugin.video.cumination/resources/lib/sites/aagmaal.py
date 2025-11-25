@@ -34,33 +34,93 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(r'class="recent-item".+?src="([^"]+).+?href="([^"]+)[^>]+>(.+?)</a>', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for img, videopage, name in match:
-        if '</span>' in name:
-            name = re.sub(r'\s*<span.+/span>\s*', ' ', name)
+    soup = utils.parse_html(listhtml)
+
+    # Find all recent items
+    items = soup.select('div.recent-item, article.recent-item')
+
+    for item in items:
+        link = item.select_one('a')
+        if not link:
+            continue
+
+        videopage = utils.safe_get_attr(link, 'href')
+        if not videopage:
+            continue
+
+        # Get name, removing any span tags
+        name_text = utils.safe_get_text(link)
+        # Remove span content if present
+        for span in link.find_all('span'):
+            span.decompose()
+        name = utils.safe_get_text(link)
+        if not name:
+            name = name_text
         name = utils.cleantext(name)
+
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
+
         site.add_download_link(name, videopage, 'Playvid', img, name)
 
-    url = re.compile(r'''class="pagination.+?class="current.+?href=['"]?([^\s'"]+)''', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if url:
-        pgtxt = 'Currently in {0}'.format(re.findall(r'class="pages">([^<]+)', listhtml)[0])
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] {0}'.format(pgtxt), url.group(1), 'List', site.img_next)
+    # Pagination
+    pagination = soup.select_one('div.pagination, nav.pagination')
+    if pagination:
+        current = pagination.select_one('span.current, a.current')
+        if current:
+            next_link = current.find_next_sibling('a')
+            if next_link:
+                next_url = utils.safe_get_attr(next_link, 'href')
+                if next_url:
+                    pages_tag = pagination.select_one('span.pages')
+                    pgtxt = 'Currently in {0}'.format(utils.safe_get_text(pages_tag, ''))
+                    site.add_dir('[COLOR hotpink]Next Page...[/COLOR] {0}'.format(pgtxt), next_url, 'List', site.img_next)
+
     utils.eod()
 
 
 @site.register()
 def List2(url):
     listhtml = utils.getHtml(url, site.url)
-    items = re.compile(r'<article.+?/article>', re.DOTALL | re.IGNORECASE).findall(listhtml)
+    soup = utils.parse_html(listhtml)
+
+    # Find all article items
+    items = soup.select('article')
+
     for item in items:
-        iurl, name, img = re.compile(r'title">\s*<a\s*href="([^"]+)">([^<]+).+?src="([^"]+)', re.DOTALL | re.IGNORECASE).findall(item)[0]
+        title_div = item.select_one('div.title, h2.title, div[class*="title"]')
+        if not title_div:
+            continue
+
+        link = title_div.select_one('a')
+        if not link:
+            continue
+
+        iurl = utils.safe_get_attr(link, 'href')
+        name = utils.safe_get_text(link)
+
+        if not iurl or not name:
+            continue
+
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
+
         name = utils.cleantext(name)
         site.add_download_link(name, iurl, 'Playvid', img, name)
 
-    purl = re.compile(r'''class="pagination.+?class="current.+?href="([^"]+)''', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if purl:
-        pgtxt = 'Currently in {0}'.format(re.findall(r'class="pages">([^<]+)', listhtml)[0])
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] {0}'.format(pgtxt), purl.group(1), 'List2', site.img_next)
+    # Pagination
+    pagination = soup.select_one('div.pagination, nav.pagination')
+    if pagination:
+        current = pagination.select_one('span.current, a.current')
+        if current:
+            next_link = current.find_next_sibling('a')
+            if next_link:
+                purl = utils.safe_get_attr(next_link, 'href')
+                if purl:
+                    pages_tag = pagination.select_one('span.pages')
+                    pgtxt = 'Currently in {0}'.format(utils.safe_get_text(pages_tag, ''))
+                    site.add_dir('[COLOR hotpink]Next Page...[/COLOR] {0}'.format(pgtxt), purl, 'List2', site.img_next)
+
     utils.eod()
 
 
@@ -91,10 +151,25 @@ def Playvid(url, name, download=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(r'href="([^"]+)"\s*class="tag.+?label="([^"]+)').findall(cathtml)
-    for catpage, name in match:
+    soup = utils.parse_html(cathtml)
+
+    # Find all category/tag links
+    tag_links = soup.select('a.tag, a[class*="tag"]')
+
+    for link in tag_links:
+        catpage = utils.safe_get_attr(link, 'href')
+        name = utils.safe_get_attr(link, 'aria-label', ['label', 'title'])
+
+        if not catpage or not name:
+            # Try getting name from text content
+            if catpage and not name:
+                name = utils.safe_get_text(link)
+            if not catpage or not name:
+                continue
+
         name = utils.cleantext(name)
         site.add_dir(name, catpage, 'List2')
+
     utils.eod()
 
 

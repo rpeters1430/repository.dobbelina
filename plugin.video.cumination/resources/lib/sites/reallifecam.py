@@ -27,7 +27,7 @@ site = AdultSite('rlc', '[COLOR hotpink]Reallifecam.to[/COLOR]', 'https://realli
 # site1 = AdultSite('vh', '[COLOR hotpink]Voyeur-house.to[/COLOR]', 'https://voyeur-house.to/', 'https://voyeur-house.to/images/logo/logo.png', 'vh')
 site2 = AdultSite('vhlife', '[COLOR hotpink]Voyeur-house.cc[/COLOR]', 'https://www.voyeur-house.cc/', 'https://www.voyeur-house.cc/images/logo/logo.png', 'vhlife')
 site3 = AdultSite('vhlife1', '[COLOR hotpink]Reallifecams.in[/COLOR]', 'https://www.reallifecams.in/', 'https://www.reallifecams.in/images/logo/logo.png', 'vhlife1')
-site4 = AdultSite('camcaps', '[COLOR hotpink]Camcaps.to[/COLOR]', 'https://camcaps.to/', 'https://camcaps.to/images/logo/logo.png', 'camcapsto')
+site4 = AdultSite('camcaps', '[COLOR hotpink]Camcaps.to / SimpVids[/COLOR]', 'https://simpvids.com/', 'https://simpvids.com/images/logo/logo.png', 'camcapsto')
 
 
 def getBaselink(url):
@@ -39,7 +39,7 @@ def getBaselink(url):
         siteurl = site2.url
     elif 'reallifecams.in' in url:
         siteurl = site3.url
-    elif 'camcaps.to' in url:
+    elif 'camcaps.to' in url or 'simpvids.com' in url:
         siteurl = site4.url
     return siteurl
 
@@ -52,7 +52,7 @@ def getBaselink(url):
 def Main(url):
     siteurl = getBaselink(url)
     site.add_dir('[COLOR hotpink]Categories[/COLOR]', siteurl + 'categories', 'Categories', site.img_cat)
-    if 'camcaps.to' in url:
+    if 'camcaps.to' in url or 'simpvids.com' in url:
         site.add_dir('[COLOR hotpink]Search[/COLOR]', siteurl + 'search/videos/', 'Search', site.img_search)
     else:
         site.add_dir('[COLOR hotpink]Search[/COLOR]', siteurl + 'search/videos?search_query=', 'Search', site.img_search)
@@ -85,6 +85,11 @@ def List(url):
         if not name:
             title_tag = card.select_one('.title-truncate, .title, h3, h4')
             name = utils.safe_get_text(title_tag)
+        if not name:
+            # Check image alt/title attributes (for simpvids.com/camcaps.to)
+            img_tag = card.select_one('img[alt], img[title]')
+            if img_tag:
+                name = utils.safe_get_attr(img_tag, 'alt', ['title'])
         if not name:
             name = utils.safe_get_text(link)
         name = utils.cleantext(name)
@@ -184,7 +189,16 @@ def Playvid(url, name, download=None):
     videopage = utils.getHtml(url)
 
     soup = utils.parse_html(videopage)
-    iframe = soup.select_one('.video-embedded iframe, iframe[src]')
+    # Only select iframe inside .video-embedded to avoid matching ad iframes
+    iframe = soup.select_one('.video-embedded iframe')
+    if not iframe:
+        # Fallback: look for any iframe with 'embed' in the URL
+        all_iframes = soup.select('iframe[src]')
+        for candidate in all_iframes:
+            src = utils.safe_get_attr(candidate, 'src')
+            if src and 'embed' in src.lower() and 'ad' not in src.lower():
+                iframe = candidate
+                break
     refurl = utils.safe_get_attr(iframe, 'src') if iframe else None
     if refurl:
         if '/vtplayer.net/' in refurl:
@@ -193,6 +207,21 @@ def Playvid(url, name, download=None):
             vp.play_from_link_to_resolve(refurl)
             return
         refpage = utils.getHtml(refurl)
+
+        # Check for nested iframe (e.g., simpvids.com -> vidello.net)
+        refpage_soup = utils.parse_html(refpage)
+        nested_iframe = refpage_soup.select_one('iframe[src]')
+        if nested_iframe:
+            nested_url = utils.safe_get_attr(nested_iframe, 'src')
+            if nested_url:
+                if nested_url.startswith('//'):
+                    nested_url = 'https:' + nested_url
+                elif nested_url.startswith('/'):
+                    nested_url = urllib_parse.urljoin(refurl, nested_url)
+                # Update refurl to the nested iframe URL and fetch it
+                refurl = nested_url
+                refpage = utils.getHtml(refurl)
+
         if '/playerz/' in refurl:
             videourl = re.compile(r'"src":"\.([^"]+)"', re.DOTALL | re.IGNORECASE).findall(refpage)[0]
             videourl = refurl.split('/ss.php')[0] + videourl
@@ -200,13 +229,20 @@ def Playvid(url, name, download=None):
             vp.direct_regex = '{"file":"([^"]+)"'
             vp.play_from_html(videourlpage)
         else:
-            videourl = re.compile(r'>(eval.+?)<\/script>', re.DOTALL | re.IGNORECASE).findall(refpage)[0]
-            videourl = unpack(videourl)
-            videolink = re.compile('(?:src|file):"([^"]+)"', re.DOTALL | re.IGNORECASE).findall(videourl)
-            if videolink:
-                videolink = videolink[0] + '|Referer=' + refurl + '&verifypeer=false'
-                if videolink.startswith('/') and 'vidello' in refurl:
-                    videolink = 'https://oracle.vidello.net' + videolink
-                vp.play_from_direct_link(videolink)
+            eval_match = re.compile(r'<script[^>]*>(eval.+?)</script>', re.DOTALL | re.IGNORECASE).findall(refpage)
+            if eval_match:
+                videourl = unpack(eval_match[0])
+                videolink = re.compile('(?:src|file):"([^"]+)"', re.DOTALL | re.IGNORECASE).findall(videourl)
+                if videolink:
+                    videolink = videolink[0] + '|Referer=' + refurl + '&verifypeer=false'
+                    if videolink.startswith('/') and 'vidello' in refurl:
+                        videolink = 'https://oracle.vidello.net' + videolink
+                    vp.play_from_direct_link(videolink)
+                    return
+            # If no eval() found, try resolveurl or fallback to HTML parsing
+            if vp.resolveurl.HostedMediaFile(refurl):
+                vp.play_from_link_to_resolve(refurl)
+            else:
+                vp.play_from_html(refpage)
     else:
         vp.play_from_html(videopage)

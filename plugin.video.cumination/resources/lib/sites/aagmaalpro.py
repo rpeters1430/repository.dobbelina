@@ -36,22 +36,89 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(r'<article.+?href="([^"]+).+?src="([^"]+).+?duration">(?:<i.+?/i>)?([\d:]*)<.+?header.+?span>([^<]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for videopage, img, duration, name in match:
+    soup = utils.parse_html(listhtml)
+
+    # Find all article items
+    items = soup.select('article')
+
+    for item in items:
+        link = item.select_one('a')
+        if not link:
+            continue
+
+        videopage = utils.safe_get_attr(link, 'href')
+        if not videopage:
+            continue
+
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
+
+        # Duration
+        duration_tag = item.select_one('span.duration, div.duration, time.duration')
+        duration = utils.safe_get_text(duration_tag, '')
+        # Remove icon if present
+        if duration:
+            duration = re.sub(r'<i.+?/i>', '', duration).strip()
+
+        # Name from header span
+        header = item.select_one('header, div.header, div[class*="header"]')
+        if header:
+            name_tag = header.select_one('span')
+            if name_tag:
+                name = utils.safe_get_text(name_tag)
+            else:
+                name = utils.safe_get_text(header)
+        else:
+            name = utils.safe_get_attr(link, 'title', ['aria-label'])
+
+        if not name:
+            continue
+
         name = utils.cleantext(name)
         site.add_download_link(name, videopage, 'Playvid', img, name, duration=duration)
 
-    np = re.compile(r'''class="pagination.+?class="current.+?href="([^"]+)">Next''', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        currpg = re.findall(r'class="pagination.+?class="current">([^<]+)', listhtml, re.DOTALL)[0]
-        lastpg = re.findall(r'''class="pagination.+?href=['"]([^'"]+)['"]>Last''', listhtml, re.DOTALL)[0].split('/')[-2]
-        pgtxt = 'Currently in Page {0} of {1}'.format(currpg, lastpg)
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(pgtxt), np.group(1), 'List', site.img_next)
-    else:
-        np = re.compile(r'''class="pagination".+?class="current">.+?href="([^"]+)"\s*class="inactive''', re.DOTALL | re.IGNORECASE).search(listhtml)
-        if np:
-            pgtxt = 'Currently in {0}'.format(re.findall(r'class="pagination".+?class="current">([\d+])', listhtml)[0])
-            site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(pgtxt), np.group(1), 'List', site.img_next)
+    # Pagination
+    pagination = soup.select_one('div.pagination, nav.pagination')
+    if pagination:
+        current = pagination.select_one('span.current, a.current')
+        if current:
+            # Look for Next link
+            next_link = None
+            for link in pagination.select('a'):
+                if 'Next' in utils.safe_get_text(link):
+                    next_link = link
+                    break
+
+            if next_link:
+                np_url = utils.safe_get_attr(next_link, 'href')
+                currpg = utils.safe_get_text(current)
+
+                # Find Last link
+                last_link = None
+                for link in pagination.select('a'):
+                    if 'Last' in utils.safe_get_text(link):
+                        last_link = link
+                        break
+
+                if last_link:
+                    last_url = utils.safe_get_attr(last_link, 'href')
+                    if last_url:
+                        lastpg = last_url.rstrip('/').split('/')[-1]
+                        pgtxt = 'Currently in Page {0} of {1}'.format(currpg, lastpg)
+                    else:
+                        pgtxt = 'Currently in {0}'.format(currpg)
+                else:
+                    pgtxt = 'Currently in {0}'.format(currpg)
+
+                site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(pgtxt), np_url, 'List', site.img_next)
+            else:
+                # Look for inactive next link
+                inactive_link = current.find_next_sibling('a', class_='inactive')
+                if inactive_link:
+                    np_url = utils.safe_get_attr(inactive_link, 'href')
+                    currpg = utils.safe_get_text(current)
+                    pgtxt = 'Currently in {0}'.format(currpg)
+                    site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(pgtxt), np_url, 'List', site.img_next)
 
     utils.eod()
 
@@ -59,16 +126,45 @@ def List(url):
 @site.register()
 def List2(url):
     listhtml = utils.getHtml(url, site.url)
-    items = re.compile(r'<article.+?/article>', re.DOTALL | re.IGNORECASE).findall(listhtml)
+    soup = utils.parse_html(listhtml)
+
+    # Find all article items
+    items = soup.select('article')
+
     for item in items:
-        iurl, name, img = re.compile(r'title">\s*<a\s*href="([^"]+)">([^<]+).+?src="([^"]+)', re.DOTALL | re.IGNORECASE).findall(item)[0]
+        title_div = item.select_one('div.title, h2.title, div[class*="title"]')
+        if not title_div:
+            continue
+
+        link = title_div.select_one('a')
+        if not link:
+            continue
+
+        iurl = utils.safe_get_attr(link, 'href')
+        name = utils.safe_get_text(link)
+
+        if not iurl or not name:
+            continue
+
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
+
         name = utils.cleantext(name)
         site.add_download_link(name, iurl, 'Playvid', img, name)
 
-    purl = re.compile(r'''class="pagination.+?class="current.+?href="([^"]+)''', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if purl:
-        pgtxt = 'Currently in {0}'.format(re.findall(r'class="pages">([^<]+)', listhtml)[0])
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(pgtxt), purl.group(1), 'List2', site.img_next)
+    # Pagination
+    pagination = soup.select_one('div.pagination, nav.pagination')
+    if pagination:
+        current = pagination.select_one('span.current, a.current')
+        if current:
+            next_link = current.find_next_sibling('a')
+            if next_link:
+                purl = utils.safe_get_attr(next_link, 'href')
+                if purl:
+                    pages_tag = pagination.select_one('span.pages')
+                    pgtxt = 'Currently in {0}'.format(utils.safe_get_text(pages_tag, ''))
+                    site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(pgtxt), purl, 'List2', site.img_next)
+
     utils.eod()
 
 
@@ -109,16 +205,59 @@ def Playvid(url, name, download=None):
 
 @site.register()
 def Categories(url):
-    match = []
+    categories = []
+
     while url:
         cathtml = utils.getHtml(url, site.url)
-        match += re.compile(r'<article.+?href="([^"]+).+?src="([^"]+).+?title">([^<]+)', re.DOTALL).findall(cathtml)
-        np = re.compile(r'''class="pagination".+?class="current">.+?href="([^"]+)"\s*class="inactive''', re.DOTALL | re.IGNORECASE).search(cathtml)
-        url = np.group(1) if np else False
+        soup = utils.parse_html(cathtml)
 
-    for catpage, img, name in sorted(match, key=lambda item: item[2].lower()):
+        # Find all article items
+        items = soup.select('article')
+
+        for item in items:
+            link = item.select_one('a')
+            if not link:
+                continue
+
+            catpage = utils.safe_get_attr(link, 'href')
+            if not catpage:
+                continue
+
+            img_tag = item.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
+
+            # Get title/name
+            title_tag = item.select_one('div.title, h2.title, span.title, div[class*="title"]')
+            if title_tag:
+                name = utils.safe_get_text(title_tag)
+            else:
+                name = utils.safe_get_attr(link, 'title', ['aria-label'])
+
+            if not name:
+                continue
+
+            categories.append((catpage, img, name))
+
+        # Check for next page
+        pagination = soup.select_one('div.pagination, nav.pagination')
+        if pagination:
+            current = pagination.select_one('span.current, a.current')
+            if current:
+                inactive_link = current.find_next_sibling('a', class_='inactive')
+                if inactive_link:
+                    url = utils.safe_get_attr(inactive_link, 'href')
+                else:
+                    url = False
+            else:
+                url = False
+        else:
+            url = False
+
+    # Sort and display categories
+    for catpage, img, name in sorted(categories, key=lambda item: item[2].lower()):
         name = utils.cleantext(name)
         site.add_dir(name, catpage, 'List', img)
+
     utils.eod()
 
 

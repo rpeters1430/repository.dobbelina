@@ -43,15 +43,11 @@ def List(url):
     if 'There is no data in this list.' in listhtml:
         utils.notify(msg='No videos found!')
         return
-    listhtml = listhtml.replace('<div class="k4">', '<div class="FHD">')
-    listhtml = listhtml.replace('>1K<', '>720p<').replace('>2K<', '>1080p<').replace('>4K<', '>2060p<')
 
-    delimiter = 'class="thumb thumb_rel item'
-    re_videopage = '<a href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = 'data-original="([^"]+)"'
-    re_duration = r'fa-clock"></span>\s*([^<]+)<'
-    re_quality = r'class="qualtiy \d+k">([^<]+)<'
+    soup = utils.parse_html(listhtml)
+
+    # Find all video items
+    items = soup.select('div.thumb.thumb_rel.item, div[class*="thumb"][class*="item"]')
 
     cm = []
     cm_lookupinfo = (utils.addon_sys + "?mode=" + str('85po.Lookupinfo') + "&url=")
@@ -59,27 +55,81 @@ def List(url):
     cm_related = (utils.addon_sys + "?mode=" + str('85po.Related') + "&url=")
     cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')'))
 
-    utils.videos_list(site, '85po.Playvid', listhtml, delimiter, re_videopage, re_name, re_img, re_duration=re_duration, re_quality=re_quality, contextm=cm)
+    for item in items:
+        link = item.select_one('a')
+        if not link:
+            continue
 
-    match = re.search(r'''<a class="active[^"]+">(\d+)<.+?class='next'.+?data-block-id="([^"]+)"\s+data-parameters="([^"]+)">''', listhtml, re.DOTALL | re.IGNORECASE)
-    if match:
-        npage = int(match.group(1)) + 1
-        block_id = match.group(2)
-        params = match.group(3).replace(';', '&').replace(':', '=')
-        ts = int(time.time() * 1000)
-        nurl = url.split('?')[0] + '?mode=async&function=get_block&block_id={0}&{1}&_={2}'.format(block_id, params, ts)
-        lpnr, lastp = 0, ''
-        match = re.search(r">(\d+)</a>\s*<a\s+class='next'", listhtml, re.DOTALL | re.IGNORECASE)
-        if match:
-            lpnr = match.group(1)
-            lastp = '/{}'.format(lpnr)
-        nurl = nurl.replace('+from_albums', '')
-        nurl = re.sub(r'&from([^=]*)=\d+', r'&from\1={}'.format(npage), nurl)
+        videourl = utils.safe_get_attr(link, 'href')
+        name = utils.safe_get_attr(link, 'title')
 
-        cm_page = (utils.addon_sys + "?mode=85po.GotoPage" + "&url=" + urllib_parse.quote_plus(nurl) + "&np=" + str(npage) + "&lp=" + str(lpnr))
-        cm = [('[COLOR violet]Goto Page #[/COLOR]', 'RunPlugin(' + cm_page + ')')]
+        if not videourl or not name:
+            continue
 
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + lastp + ')', nurl, 'List', site.img_next, contextm=cm)
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'data-original', ['src', 'data-src'])
+
+        # Duration
+        duration_tag = item.select_one('span.fa-clock')
+        if duration_tag and duration_tag.parent:
+            duration = utils.safe_get_text(duration_tag.parent, '').replace('\n', '').strip()
+        else:
+            duration = ''
+
+        # Quality - normalize quality labels
+        quality_tag = item.select_one('div.qualtiy, div[class*="qualtiy"]')
+        quality = utils.safe_get_text(quality_tag, '')
+        quality = quality.replace('1K', '720p').replace('2K', '1080p').replace('4K', '2160p')
+
+        # Build name with quality and duration
+        if quality:
+            name = '[COLOR yellow]' + quality + '[/COLOR] ' + name
+        if duration:
+            name = name + ' [COLOR deeppink]' + duration + '[/COLOR]'
+
+        site.add_download_link(name, videourl, 'Playvid', img, name, contextm=cm)
+
+    # Pagination
+    active_page = soup.select_one('a.active')
+    next_link = soup.select_one('a.next')
+
+    if active_page and next_link:
+        current_page = utils.safe_get_text(active_page)
+        if current_page:
+            try:
+                npage = int(current_page) + 1
+                block_id = utils.safe_get_attr(next_link, 'data-block-id')
+                params = utils.safe_get_attr(next_link, 'data-parameters')
+
+                if block_id and params:
+                    params = params.replace(';', '&').replace(':', '=')
+                    ts = int(time.time() * 1000)
+                    nurl = url.split('?')[0] + '?mode=async&function=get_block&block_id={0}&{1}&_={2}'.format(block_id, params, ts)
+
+                    lpnr, lastp = 0, ''
+                    # Find last page number
+                    page_links = soup.select('a[href]')
+                    for plink in reversed(page_links):
+                        if plink.get('class') and 'next' in plink.get('class'):
+                            # Check previous sibling for last page number
+                            prev_sibling = plink.find_previous_sibling('a')
+                            if prev_sibling:
+                                last_text = utils.safe_get_text(prev_sibling)
+                                if last_text.isdigit():
+                                    lpnr = last_text
+                                    lastp = '/{}'.format(lpnr)
+                                    break
+
+                    nurl = nurl.replace('+from_albums', '')
+                    nurl = re.sub(r'&from([^=]*)=\d+', r'&from\1={}'.format(npage), nurl)
+
+                    cm_page = (utils.addon_sys + "?mode=85po.GotoPage" + "&url=" + urllib_parse.quote_plus(nurl) + "&np=" + str(npage) + "&lp=" + str(lpnr))
+                    cm = [('[COLOR violet]Goto Page #[/COLOR]', 'RunPlugin(' + cm_page + ')')]
+
+                    site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + lastp + ')', nurl, 'List', site.img_next, contextm=cm)
+            except (ValueError, AttributeError):
+                pass
+
     utils.eod()
 
 

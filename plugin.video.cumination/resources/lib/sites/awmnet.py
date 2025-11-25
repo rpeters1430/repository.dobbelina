@@ -109,18 +109,72 @@ def SiteMain(url):
 def List(url):
     siteurl = getBaselink(url)
     listhtml = utils.getHtml(url, siteurl)
-    match = re.compile(r'class="item-link.+?href="([^"]+)".+?title="([^"]+)".+?src="([^"]+)".+?float-right"(.*?)class="item-rating.+?text-xsm"></i>([^<]+)</a>', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for videourl, name, thumb, info, provider in match:
-        name = '[COLOR yellow][{}][/COLOR] {}'.format(provider.strip(), utils.cleantext(name))
-        hd = 'HD' if ' HD' in info else ''
-        duration = re.findall(r'([\d:]+)', info)
-        duration = duration[0] if duration else ""
-        site.add_download_link(name, siteurl[:-1] + videourl.replace('&amp;', '&'), 'Playvid', thumb, name, duration=duration, quality=hd)
-    p = re.search(r'href="([^"]+)"[^>]+?label="Next\s*Page"', listhtml, re.DOTALL | re.IGNORECASE)
-    if p:
-        purl = siteurl[:-1] + p.group(1).replace('&amp;', '&')
-        curr_pg = re.findall(r'label="Current\s*Page.+?(\d+)', listhtml, re.DOTALL | re.IGNORECASE)[0]
-        site.add_dir('Next Page... [COLOR hotpink](Currently in Page {})[/COLOR]'.format(curr_pg), purl, 'List', site.img_next)
+    soup = utils.parse_html(listhtml)
+
+    # Find all video items with item-link class
+    items = soup.select('a.item-link, a[class*="item-link"]')
+
+    for item in items:
+        videourl = utils.safe_get_attr(item, 'href')
+        name = utils.safe_get_attr(item, 'title')
+
+        if not videourl or not name:
+            continue
+
+        img_tag = item.select_one('img')
+        thumb = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
+
+        # Get provider info (usually in a span or div with text-xsm class after item-rating)
+        parent = item.find_parent()
+        if parent:
+            provider_tag = parent.select_one('span.text-xsm, div.text-xsm, a.text-xsm')
+            if provider_tag:
+                # Get previous sibling that contains rating
+                rating_elem = provider_tag.find_previous_sibling(class_='item-rating')
+                if not rating_elem:
+                    provider = utils.safe_get_text(provider_tag, '').strip()
+                else:
+                    provider = utils.safe_get_text(provider_tag, '').strip()
+            else:
+                provider = ''
+        else:
+            provider = ''
+
+        # Build name with provider
+        if provider:
+            name = '[COLOR yellow][{}][/COLOR] {}'.format(provider, utils.cleantext(name))
+        else:
+            name = utils.cleantext(name)
+
+        # Get duration and HD info from float-right section
+        info_div = item.find_next(class_='float-right')
+        hd = ''
+        duration = ''
+        if info_div:
+            info_text = utils.safe_get_text(info_div)
+            hd = 'HD' if ' HD' in info_text else ''
+            duration_match = re.findall(r'([\d:]+)', info_text)
+            duration = duration_match[0] if duration_match else ''
+
+        # Build final URL
+        final_url = siteurl[:-1] + videourl.replace('&amp;', '&')
+        site.add_download_link(name, final_url, 'Playvid', thumb, name, duration=duration, quality=hd)
+
+    # Pagination
+    next_link = soup.select_one('a[aria-label*="Next"], a[label*="Next"]')
+    if next_link:
+        purl = utils.safe_get_attr(next_link, 'href')
+        if purl:
+            purl = siteurl[:-1] + purl.replace('&amp;', '&')
+            current_page = soup.select_one('a[aria-label*="Current"], a[label*="Current"]')
+            if current_page:
+                curr_pg_text = utils.safe_get_attr(current_page, 'aria-label', ['label'])
+                curr_pg_match = re.findall(r'(\d+)', curr_pg_text)
+                curr_pg = curr_pg_match[0] if curr_pg_match else '?'
+            else:
+                curr_pg = '?'
+            site.add_dir('Next Page... [COLOR hotpink](Currently in Page {})[/COLOR]'.format(curr_pg), purl, 'List', site.img_next)
+
     utils.eod()
 
 
@@ -139,10 +193,46 @@ def Search(url, keyword=None):
 def Tags(url):
     siteurl = getBaselink(url)
     cathtml = utils.getHtml(url, siteurl)
-    match = re.compile(r'<li\s*class="category".+?href="([^"]+)"><span class="category-title">([^<]+).+?>([\d\.km]+)<', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name, videos in match:
-        name = utils.cleantext(name) + " [COLOR deeppink](" + videos + " videos)[/COLOR]"
+    soup = utils.parse_html(cathtml)
+
+    # Find all category items
+    items = soup.select('li.category, li[class*="category"]')
+
+    for item in items:
+        link = item.select_one('a')
+        if not link:
+            continue
+
+        catpage = utils.safe_get_attr(link, 'href')
+        if not catpage:
+            continue
+
+        # Get category title
+        title_tag = link.select_one('span.category-title, span[class*="title"]')
+        name = utils.safe_get_text(title_tag, '')
+        if not name:
+            name = utils.safe_get_text(link)
+
+        if not name:
+            continue
+
+        # Get video count
+        count_tag = item.select_one('span, div')
+        if count_tag and count_tag != title_tag:
+            count_text = utils.safe_get_text(count_tag, '')
+            # Extract number (could be like "123", "1.2k", "1.2m")
+            videos_match = re.search(r'([\d\.km]+)', count_text, re.IGNORECASE)
+            videos = videos_match.group(1) if videos_match else ''
+        else:
+            videos = ''
+
+        if videos:
+            name = utils.cleantext(name) + " [COLOR deeppink](" + videos + " videos)[/COLOR]"
+        else:
+            name = utils.cleantext(name)
+
         site.add_dir(name, siteurl[:-1] + catpage + '?pricing=free', 'List', site.img_cat)
+
     utils.eod()
 
 
@@ -150,10 +240,41 @@ def Tags(url):
 def Categories(url):
     siteurl = getBaselink(url)
     cathtml = utils.getHtml(url, siteurl)
-    match = re.compile(r'class="card\s*group".+?href="([^"]+)"\s*title="([^"]+)".+?src="([^"]+).+?>([\d\.km]+)<', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name, image, videos in match:
-        name = utils.cleantext(name) + " [COLOR deeppink](" + videos + " videos)[/COLOR]"
+    soup = utils.parse_html(cathtml)
+
+    # Find all card group items
+    items = soup.select('div.card.group, div[class*="card"][class*="group"]')
+
+    for item in items:
+        link = item.select_one('a')
+        if not link:
+            continue
+
+        catpage = utils.safe_get_attr(link, 'href')
+        name = utils.safe_get_attr(link, 'title')
+
+        if not catpage or not name:
+            continue
+
+        img_tag = item.select_one('img')
+        image = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
+
+        # Get video count
+        count_tag = item.select_one('span, div')
+        if count_tag:
+            count_text = utils.safe_get_text(count_tag, '')
+            videos_match = re.search(r'([\d\.km]+)', count_text, re.IGNORECASE)
+            videos = videos_match.group(1) if videos_match else ''
+        else:
+            videos = ''
+
+        if videos:
+            name = utils.cleantext(name) + " [COLOR deeppink](" + videos + " videos)[/COLOR]"
+        else:
+            name = utils.cleantext(name)
+
         site.add_dir(name, siteurl[:-1] + catpage + '?pricing=free', 'List', image)
+
     xbmcplugin.addSortMethod(utils.addon_handle, xbmcplugin.SORT_METHOD_TITLE)
     utils.eod()
 

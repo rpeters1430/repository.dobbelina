@@ -47,8 +47,7 @@ pytest tests/sites/test_[sitename].py -v
 - **addons.xml** - Repository index of available addons
 - **addons.xml.md5** - MD5 checksum of addons.xml
 - **tests/** - Pytest test suite with fixtures and Kodi mocks
-- **ROADMAP.md** - BeautifulSoup migration roadmap tracking 137 sites
-- **improvement.md** - Ongoing modernization efforts tracker
+- **MODERNIZATION.md** - Comprehensive modernization roadmap (BeautifulSoup migration, testing, networking, UX improvements)
 
 ## Building and Packaging
 
@@ -178,11 +177,9 @@ def Playvid(url, name):
 
 ## BeautifulSoup Migration (Active Project)
 
-**Current Status**: 50/137 sites migrated (36.5% complete)
+**Current Status**: 55/137 sites migrated (40.1% complete)
 
-The codebase is undergoing a systematic migration from regex-based HTML parsing to BeautifulSoup4. This is tracked in **ROADMAP.md**.
-
-See **improvement.md** for additional modernization efforts including HTTP gateway unification, test coverage expansion, and repository structure improvements.
+The codebase is undergoing a systematic migration from regex-based HTML parsing to BeautifulSoup4. This is tracked in **MODERNIZATION.md** along with all other modernization efforts including HTTP gateway unification, test coverage expansion, repository structure improvements, and UX enhancements.
 
 ### Why BeautifulSoup?
 
@@ -195,9 +192,10 @@ See **improvement.md** for additional modernization efforts including HTTP gatew
 ### Migration Phases
 
 1. **Phase 1: High Priority Sites** (8/10 completed - 80%) - pornhub, xvideos, xnxx, spankbang, xhamster, eporner, hqporner, porntrex
-2. **Phase 2: Live Cam Sites** (4/8 completed - 100%) - chaturbate, stripchat, streamate, naked (API-based sites excluded)
+2. **Phase 2: Live Cam Sites** (4/4 completed - 100%) ✅ - chaturbate, stripchat, streamate, naked (API-based sites excluded)
 3. **Phase 3: Medium Priority Sites** (20/20 completed - 100%) ✅ - All medium-priority sites migrated including netflixporno, peekvids, playvids, porndig, pornhoarder, pornmz, longvideos, luxuretv
-4. **Phase 4-8**: JAV, Hentai, International, Niche, and remaining sites
+4. **Phase 4: JAV Sites** (20/20 completed - 100%) ✅ - All JAV sites migrated including missav, javgg, javguru, javbangers, javhdporn, javmoe, kissjav, supjav, hpjav, netflav, avple, iflix, japteenx, sextb, foxnxx, terebon, 85po, aagmaal, aagmaalpro, awmnet
+5. **Phase 5-8**: Hentai, International, Niche, and remaining sites
 
 ### Migration Pattern
 
@@ -279,10 +277,10 @@ See `plugin.video.cumination/resources/lib/sites/anybunny.py` for a reference im
 
 ### When Migrating a Site
 
-1. Check ROADMAP.md for migration status and priority
+1. Check MODERNIZATION.md for migration status and priority
 2. Use BeautifulSoup pattern shown above
 3. Test: listing, pagination, categories, search, playback
-4. Update ROADMAP.md status to ✅ **COMPLETED**
+4. Update MODERNIZATION.md status to ✅ **COMPLETED**
 5. Commit with format: `feat: migrate [sitename] to BeautifulSoup`
 
 Reference implementation: `plugin.video.cumination/resources/lib/sites/pornhub.py`
@@ -334,7 +332,7 @@ To add a new site to the addon:
    - Install and test in Kodi
 
 6. **Update documentation**:
-   - Add to ROADMAP.md if part of migration
+   - Add to MODERNIZATION.md if part of migration
    - Update CHANGES file for version notes
 
 ## Dependencies

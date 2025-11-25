@@ -29,7 +29,7 @@ from resources.lib.decrypters.kvsplayer import kvs_decode
 
 
 addon = xbmcaddon.Addon()
-site = AdultSite('thothub', '[COLOR hotpink]ThotHub[/COLOR]', 'https://thothub.lol/', 'thothub.png', 'thothub')
+site = AdultSite('thothub', '[COLOR hotpink]ThotHub[/COLOR]', 'https://thothub.mx/', 'thothub.png', 'thothub')
 REFERER_HEADER = site.url
 ORIGIN_HEADER = site.url.rstrip('/')
 UA_HEADER = urllib_parse.quote(utils.USER_AGENT, safe='')
@@ -37,7 +37,7 @@ IMG_HEADER_SUFFIX = '|Referer={0}&User-Agent={1}'.format(REFERER_HEADER, UA_HEAD
 VIDEO_HEADER_SUFFIX = '|Referer={0}&Origin={1}&User-Agent={2}'.format(
     REFERER_HEADER, ORIGIN_HEADER, UA_HEADER
 )
-SITE_DOMAIN = urllib_parse.urlsplit(site.url).hostname or 'thothub.lol'
+SITE_DOMAIN = urllib_parse.urlsplit(site.url).hostname or 'thothub.mx'
 VIDEO_FILTER_MODE = 'public_only'
 _VIDEO_PAGE_CACHE = {}
 
@@ -249,11 +249,8 @@ def _login(force=False):
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir('[COLOR hotpink]Latest Updates[/COLOR]', site.url + 'latest-updates/', 'List', site.img_cat)
-    site.add_dir('[COLOR hotpink]Top Rated[/COLOR]', site.url + 'top-rated/', 'List', site.img_cat)
-    site.add_dir('[COLOR hotpink]Most Viewed[/COLOR]', site.url + 'most-viewed/', 'List', site.img_cat)
-    site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + '?s=', 'Search', site.img_search)
-    utils.eod()
+    # Only show public videos to avoid private video issues
+    List(site.url + 'public/')
 
 
 def _extract_list_items(html):
@@ -261,9 +258,9 @@ def _extract_list_items(html):
     items = []
 
     # Extract video URLs and titles first
-    # Pattern: href="/videos/ID/slug/" with title nearby
+    # Pattern: href="/videos/ID/slug/" with title attribute
     video_pattern = re.compile(
-        r'<a[^>]+href="([^"]+/videos/(\d+)/[^"]+)"[^>]*(?:title="([^"]*)")?[^>]*>',
+        r'<a[^>]*href="([^"]+/videos/(\d+)/[^"]+)"[^>]*title="([^"]*)"[^>]*>',
         re.IGNORECASE
     )
     video_matches = list(video_pattern.finditer(html))
@@ -318,6 +315,12 @@ def _find_next_page(html, current_url):
             utils.kodilog("ThotHub found next page: {}".format(m.group(1)), xbmc.LOGDEBUG)
             return m.group(1)
 
+    # Pagination where the <li> holds the "next" class
+    li_next = re.search(r'<li[^>]+class="[^"]*next[^"]*"[^>]*>\s*<a[^>]+href="([^"]+)"', html, re.IGNORECASE)
+    if li_next:
+        utils.kodilog("ThotHub found next page via li.next: {}".format(li_next.group(1)), xbmc.LOGDEBUG)
+        return li_next.group(1)
+
     # Try to find numbered pagination and increment
     # URLs like /latest-updates/2/ -> /latest-updates/3/
     page_match = re.search(r'/(\d+)/?$', current_url)
@@ -353,23 +356,14 @@ def List(url):
         utils.kodilog("ThotHub: No items found on page", xbmc.LOGDEBUG)
         utils.notify('ThotHub', 'No videos found on this page')
 
-    # Add video links
-    added_items = 0
+    # Add video links (no filtering - /public/ page only has public videos)
     for videopage, name, img in items:
         # Make URLs absolute
         if videopage.startswith('/'):
             videopage = urllib_parse.urljoin(site.url, videopage)
 
-        if VIDEO_FILTER_MODE == 'public_only' and _is_private_video(videopage):
-            utils.kodilog("ThotHub: Skipping private video {}".format(videopage), xbmc.LOGDEBUG)
-            continue
-
         thumb = img + IMG_HEADER_SUFFIX if '|' not in img else img
         site.add_download_link(name, videopage, 'Playvid', thumb, name)
-        added_items += 1
-
-    if added_items == 0:
-        utils.notify('ThotHub', 'No public videos found on this page')
 
     # Add pagination
     nurl = _find_next_page(listhtml, url)
