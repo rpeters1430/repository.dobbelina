@@ -36,11 +36,29 @@ def HQMAIN():
 
 @site.register()
 def HQLIST(url):
-    try:
-        link = utils.getHtml(url, '', timeout=30)
-    except Exception as e:
-        utils.notify(msg='Error loading page: {}'.format(str(e)))
-        utils.kodilog('hqporner HQLIST error: {}'.format(str(e)))
+    # Retry logic for pagination pages that may be slow
+    max_retries = 3
+    timeout = 45  # Increased from 30 to handle slow pagination pages
+    link = None
+
+    for attempt in range(max_retries):
+        try:
+            link = utils.getHtml(url, '', timeout=timeout)
+            break  # Success, exit retry loop
+        except Exception as e:
+            utils.kodilog('hqporner HQLIST error (attempt {}/{}): {}'.format(attempt + 1, max_retries, str(e)))
+            if attempt < max_retries - 1:
+                # Not the last attempt, retry after a brief pause
+                import time
+                time.sleep(2)
+                continue
+            else:
+                # Last attempt failed, show error and return
+                utils.notify(msg='Error loading page after {} attempts: {}'.format(max_retries, str(e)))
+                utils.eod()
+                return
+
+    if not link:
         utils.eod()
         return
     soup = utils.parse_html(link)
@@ -87,11 +105,27 @@ def HQLIST(url):
 
 @site.register()
 def HQCAT(url):
-    try:
-        link = utils.getHtml(url, '', timeout=30)
-    except Exception as e:
-        utils.notify(msg='Error loading categories: {}'.format(str(e)))
-        utils.kodilog('hqporner HQCAT error: {}'.format(str(e)))
+    # Retry logic for slow page loads
+    max_retries = 3
+    timeout = 45
+    link = None
+
+    for attempt in range(max_retries):
+        try:
+            link = utils.getHtml(url, '', timeout=timeout)
+            break
+        except Exception as e:
+            utils.kodilog('hqporner HQCAT error (attempt {}/{}): {}'.format(attempt + 1, max_retries, str(e)))
+            if attempt < max_retries - 1:
+                import time
+                time.sleep(2)
+                continue
+            else:
+                utils.notify(msg='Error loading categories after {} attempts: {}'.format(max_retries, str(e)))
+                utils.eod()
+                return
+
+    if not link:
         utils.eod()
         return
 
