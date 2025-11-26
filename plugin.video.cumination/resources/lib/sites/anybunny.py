@@ -68,7 +68,13 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, '')
+    # Use Cloudflare retry to handle Cloudflare challenges on search/pagination
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+    if not listhtml:
+        utils.kodilog("anybunny List: Failed to fetch page (possibly Cloudflare blocked)")
+        utils.eod()
+        return
+
     soup = utils.parse_html(listhtml)
 
     VIDEO_LIST_SPEC.run(site, soup)
@@ -84,7 +90,11 @@ def Playvid(url, name, download=None):
 
 @site.register()
 def Categories(url):
-    cathtml = utils.getHtml(url, '')
+    cathtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+    if not cathtml:
+        utils.kodilog("anybunny Categories: Failed to fetch page")
+        utils.eod()
+        return
     soup = utils.parse_html(cathtml)
 
     categories = []
@@ -124,7 +134,11 @@ def Categories(url):
 
 @site.register()
 def Categories2(url):
-    cathtml = utils.getHtml(url, '')
+    cathtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+    if not cathtml:
+        utils.kodilog("anybunny Categories2: Failed to fetch page")
+        utils.eod()
+        return
     soup = utils.parse_html(cathtml)
 
     entries = []
