@@ -81,15 +81,49 @@ def List(url):
             utils.kodilog("Error parsing video item: " + str(e))
             continue
 
-    # Handle pagination
+    # Handle pagination - try multiple methods
+    next_url = None
+    next_page_num = ''
+
+    # Method 1: Look for <link rel="next"> (HTML5 pagination hint)
     next_link = soup.select_one('link[rel="next"]')
     if next_link:
-        np = utils.safe_get_attr(next_link, 'href')
-        if np:
-            # Extract page number
-            page_nums = re.findall(r'/(\d+)[/\?]', np)
-            npage = page_nums[-1] if page_nums else ''
-            site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(npage), np, 'List', site.img_next)
+        next_url = utils.safe_get_attr(next_link, 'href')
+        utils.kodilog('pornone: Found pagination via link[rel="next"]: {}'.format(next_url))
+
+    # Method 2: Look for pagination UI elements (more reliable)
+    if not next_url:
+        pagination = soup.select_one('.pagination, [class*="pag"]')
+        if pagination:
+            next_button = pagination.select_one('a[class*="next"], a:contains("Next"), a:contains(">")')
+            if next_button:
+                next_url = utils.safe_get_attr(next_button, 'href')
+                utils.kodilog('pornone: Found pagination via next button: {}'.format(next_url))
+
+    # Method 3: Look for numbered page links and find the highest page number + 1
+    if not next_url:
+        # Extract current page number from URL
+        current_page_match = re.search(r'/(\d+)[/\?]', url)
+        if current_page_match:
+            current_page = int(current_page_match.group(1))
+            # Construct next page URL by incrementing page number
+            next_url = re.sub(r'/(\d+)([/\?])', r'/{}\2'.format(current_page + 1), url)
+            utils.kodilog('pornone: Constructed next page URL from current page {}: {}'.format(current_page, next_url))
+
+    if next_url:
+        # Make absolute URL if needed
+        if not next_url.startswith('http'):
+            next_url = site.url[:-1] + next_url if next_url.startswith('/') else site.url + next_url
+
+        # Extract page number for display
+        page_nums = re.findall(r'/(\d+)[/\?]', next_url)
+        next_page_num = page_nums[-1] if page_nums else ''
+
+        # Validate that next page URL is different from current URL to prevent loops
+        if next_url != url:
+            site.add_dir('[COLOR hotpink]Next Page...[/COLOR] ({0})'.format(next_page_num), next_url, 'List', site.img_next)
+        else:
+            utils.kodilog('pornone: Next page URL same as current URL - pagination loop detected and prevented')
 
     utils.eod()
 
