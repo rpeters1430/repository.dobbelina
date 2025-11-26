@@ -15,7 +15,14 @@
       "Bash(git pull:*)",
       "Bash(git add:*)",
       "Bash(python -m py_compile:*)",
-      "WebFetch(domain:camcaps.to)"
+      "WebFetch(domain:camcaps.to)",
+      "WebFetch(domain:www.pornhub.com)",
+      "Bash(pytest:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(python debug_spankbang_tags.py:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

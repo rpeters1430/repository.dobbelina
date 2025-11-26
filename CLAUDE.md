@@ -177,7 +177,7 @@ def Playvid(url, name):
 
 ## BeautifulSoup Migration (Active Project)
 
-**Current Status**: 55/137 sites migrated (40.1% complete)
+**Current Status**: 57/137 sites migrated (41.6% complete)
 
 The codebase is undergoing a systematic migration from regex-based HTML parsing to BeautifulSoup4. This is tracked in **MODERNIZATION.md** along with all other modernization efforts including HTTP gateway unification, test coverage expansion, repository structure improvements, and UX enhancements.
 
@@ -193,9 +193,14 @@ The codebase is undergoing a systematic migration from regex-based HTML parsing 
 
 1. **Phase 1: High Priority Sites** (8/10 completed - 80%) - pornhub, xvideos, xnxx, spankbang, xhamster, eporner, hqporner, porntrex
 2. **Phase 2: Live Cam Sites** (4/4 completed - 100%) ✅ - chaturbate, stripchat, streamate, naked (API-based sites excluded)
-3. **Phase 3: Medium Priority Sites** (20/20 completed - 100%) ✅ - All medium-priority sites migrated including netflixporno, peekvids, playvids, porndig, pornhoarder, pornmz, longvideos, luxuretv
-4. **Phase 4: JAV Sites** (20/20 completed - 100%) ✅ - All JAV sites migrated including missav, javgg, javguru, javbangers, javhdporn, javmoe, kissjav, supjav, hpjav, netflav, avple, iflix, japteenx, sextb, foxnxx, terebon, 85po, aagmaal, aagmaalpro, awmnet
-5. **Phase 5-8**: Hentai, International, Niche, and remaining sites
+3. **Phase 3: Medium Priority Sites** (20/20 completed - 100%) ✅ - All medium-priority sites migrated
+4. **Phase 4: JAV Sites** (20/20 completed - 100%) ✅ - All JAV sites migrated
+5. **Phase 5: Hentai/Anime Sites** (0/10 completed)
+6. **Phase 6: International Sites** (0/15 completed)
+7. **Phase 7: Niche & Specialty Sites** (5/30 completed - 17%) - reallifecam, camwhoresbay, cambro, erome, thothub completed
+8. **Phase 8: Remaining Sites** (1/44 completed - 2%)
+
+See **MODERNIZATION.md** for complete site-by-site tracking and detailed progress.
 
 ### Migration Pattern
 
