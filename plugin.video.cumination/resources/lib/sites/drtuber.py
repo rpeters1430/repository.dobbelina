@@ -39,7 +39,22 @@ def Main():
 
 @site.register()
 def List(url):
+    # Add small delay for paginated/search requests to avoid rate limiting
+    # (drtuber rate limits after ~30 search results if requests are too fast)
+    is_paginated = any(x in url for x in ['/search/', '?page=', '/page/', '/2/', '/3/', '/4/'])
+    if is_paginated:
+        import time
+        time.sleep(1.5)  # 1.5 second delay to avoid rate limits
+
     listhtml = utils.getHtml(url)
+
+    # Check for rate limit or empty response
+    if not listhtml or len(listhtml) < 100:
+        utils.kodilog("drtuber: Empty or very short response - possible rate limit")
+        utils.notify(msg="DrTuber may have rate limited this request. Try again in a few seconds.")
+        utils.eod()
+        return
+
     soup = utils.parse_html(listhtml)
 
     # Find all video items (they use <a> tags with class "th ch-video")
