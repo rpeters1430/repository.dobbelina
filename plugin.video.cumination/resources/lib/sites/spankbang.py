@@ -142,13 +142,8 @@ def Tags(url):
     cathtml = utils.getHtml(url, '')
     soup = utils.parse_html(cathtml)
 
-    # Find the search holder or main container
-    search_holder = soup.select_one('.search_holder, div[class*="search"]')
-    if not search_holder:
-        search_holder = soup  # Use whole page if specific container not found
-
-    # Find all tag links
-    tag_links = search_holder.select('li a.keyword, a[class*="keyword"]')
+    # Find all tag links (don't restrict to search_holder as tags are in main_content_container)
+    tag_links = soup.select('a.keyword')
     tags = []
     for link in tag_links:
         try:
