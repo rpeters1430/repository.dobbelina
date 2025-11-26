@@ -115,21 +115,39 @@ def List(url):
         return
 
     for model in models:
-        name = model.get('model_seo_name').replace('-', ' ').title()
-        age = model.get('age')
-        subject = utils.cleantext(model.get('tagline', '') if utils.PY3 else model.get('tagline', '').encode('utf8'))
-        if model.get('location'):
-            subject += "[CR][CR][COLOR deeppink]Location: [/COLOR]{0}[CR][CR]".format(
-                model.get('location') if utils.PY3 else model.get('location').encode('utf8'))
-        if model.get('topic'):
-            subject += utils.cleantext(model.get('topic') if utils.PY3 else model.get('topic').encode('utf8'))
-        status = model.get('room_status') if model.get('room_status') != 'In Open' else ''
-        name = name + " [COLOR deeppink][" + age + "][/COLOR] " + status
-        mid = model.get('model_id')
-        img = 'https://live-screencaps.vscdns.com/{0}-desktop.jpg'.format(mid)
-        videourl = 'https://ws.vs3.com/chat/get-stream-urls.php?model_id={0}&video_host={1}'.format(
-            mid, model.get('video_host'))
-        site.add_download_link(name, videourl, 'Playvid', img, subject, noDownload=True)
+        try:
+            name = model.get('model_seo_name', 'Unknown').replace('-', ' ').title()
+            age = model.get('age', 'N/A')
+            subject = utils.cleantext(model.get('tagline', '') if utils.PY3 else model.get('tagline', '').encode('utf8'))
+            if model.get('location'):
+                subject += "[CR][CR][COLOR deeppink]Location: [/COLOR]{0}[CR][CR]".format(
+                    model.get('location') if utils.PY3 else model.get('location').encode('utf8'))
+            if model.get('topic'):
+                subject += utils.cleantext(model.get('topic') if utils.PY3 else model.get('topic').encode('utf8'))
+            status = model.get('room_status') if model.get('room_status') != 'In Open' else ''
+            name = name + " [COLOR deeppink][" + str(age) + "][/COLOR] " + status
+            mid = model.get('model_id')
+
+            if not mid:
+                utils.kodilog('Naked: Skipping model with missing model_id')
+                continue
+
+            # Try multiple thumbnail URL formats (CDN may change)
+            img = 'https://live-screencaps.vscdns.com/{0}-desktop.jpg'.format(mid)
+            # Fallback thumbnail patterns:
+            # img_fallback = 'https://live-screencaps.vscdns.com/{0}.jpg'.format(mid)
+
+            video_host = model.get('video_host', '')
+            if not video_host:
+                utils.kodilog('Naked: Skipping model {0} with missing video_host'.format(mid))
+                continue
+
+            videourl = 'https://ws.vs3.com/chat/get-stream-urls.php?model_id={0}&video_host={1}'.format(
+                mid, video_host)
+            site.add_download_link(name, videourl, 'Playvid', img, subject, noDownload=True)
+        except Exception as e:
+            utils.kodilog('Naked: Error processing model: {}'.format(str(e)))
+            continue
     utils.eod()
 
 
@@ -157,10 +175,29 @@ def Playvid(url, name):
     playmode = 0  # int(utils.addon.getSetting('chatplay'))
     url = "{0}&t={1}".format(url, int(time.time() * 1000))
     params = urllib_parse.parse_qs(url.split('?')[1])
+
+    # Retry logic for chat-room-interface API (handles occasional 500 errors)
     murl = '{0}webservices/chat-room-interface.php?a=login_room&model_id={1}&t={2}'.format(
         site.url, params['model_id'][0], params['t'][0])
-    mdata = utils._getHtml(murl, site.url)
-    if mdata:
+
+    mdata = None
+    for attempt in range(3):
+        try:
+            mdata = utils._getHtml(murl, site.url, timeout=10)
+            if mdata and len(mdata) > 10:  # Valid response
+                break
+            utils.kodilog('Naked: Empty response from API (attempt {}/3)'.format(attempt + 1))
+        except Exception as e:
+            utils.kodilog('Naked: API error (attempt {}/3): {}'.format(attempt + 1, str(e)))
+            if attempt < 2:  # Not the last attempt
+                time.sleep(1)  # Brief delay before retry
+                continue
+
+    if not mdata:
+        utils.notify('API Error', 'Naked.com API temporarily unavailable')
+        return None
+
+    try:
         mdata = json.loads(mdata).get('config', {}).get('room')
         if mdata:
             if mdata.get('status') != 'O':
@@ -169,15 +206,34 @@ def Playvid(url, name):
         else:
             utils.notify('Model Offline')
             return None
-    else:
-        utils.notify('Oh oh', 'Couldn\'t find a playable webcam link')
+    except (ValueError, KeyError) as e:
+        utils.kodilog('Naked: Error parsing room data: {}'.format(str(e)))
+        utils.notify('Error', 'Unable to parse model status')
         return None
 
-    vdata = utils._getHtml(url, site.url)
-    if vdata:
+    # Retry logic for stream URLs API
+    vdata = None
+    for attempt in range(3):
+        try:
+            vdata = utils._getHtml(url, site.url, timeout=10)
+            if vdata and len(vdata) > 10:
+                break
+            utils.kodilog('Naked: Empty stream URL response (attempt {}/3)'.format(attempt + 1))
+        except Exception as e:
+            utils.kodilog('Naked: Stream URL API error (attempt {}/3): {}'.format(attempt + 1, str(e)))
+            if attempt < 2:
+                time.sleep(1)
+                continue
+
+    if not vdata:
+        utils.notify('API Error', 'Unable to retrieve stream URL')
+        return
+
+    try:
         vdata = json.loads(vdata).get('data')
-    else:
-        utils.notify('Oh oh', 'Couldn\'t find a playable webcam link')
+    except (ValueError, KeyError) as e:
+        utils.kodilog('Naked: Error parsing stream data: {}'.format(str(e)))
+        utils.notify('Error', 'Unable to parse stream URL')
         return
 
     if playmode == 0:
