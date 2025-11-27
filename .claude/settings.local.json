@@ -22,7 +22,12 @@
       "Bash(git log:*)",
       "Bash(git show:*)",
       "Bash(python debug_spankbang_tags.py:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(rm:*)",
+      "WebFetch(domain:leakgallery.com)",
+      "WebFetch(domain:www.tube8.com)",
+      "WebFetch(domain:motherless.com)",
+      "Bash(where:*)"
     ],
     "deny": [],
     "ask": []
