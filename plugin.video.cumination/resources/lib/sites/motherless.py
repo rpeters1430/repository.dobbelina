@@ -67,12 +67,13 @@ def List(url):
             elif not video_url.startswith('http'):
                 video_url = site.url + video_url
 
-            # Normalise URL to drop query params to prevent duplicates
+            # Normalize URL to drop query params to prevent duplicates
             parsed = urllib_parse.urlsplit(video_url)
             canonical_url = urllib_parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, '', ''))
             if canonical_url in seen:
                 continue
             seen.add(canonical_url)
+            video_url = canonical_url
 
             # Extract title from the caption link
             title_link = item.select_one('a.caption.title')
@@ -111,7 +112,6 @@ def List(url):
         next_url = utils.safe_get_attr(next_link, 'href')
         if next_url:
             # Extract page number for display
-            import re
             page_match = re.search(r'page=(\d+)', next_url)
             page_num = page_match.group(1) if page_match else ''
 
@@ -131,7 +131,6 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, 'Search')
     else:
-        from six.moves import urllib_parse
         title = urllib_parse.quote_plus(keyword)
         searchUrl = searchUrl + title
         List(searchUrl)
@@ -201,7 +200,7 @@ def Playvid(url, name, download=None):
     src = _extract_best_source(html)
     if src:
         # Use the page URL as referer for CDN checks
-        vp.play_from_direct_link(f"{src}|Referer={url}")
+        vp.play_from_direct_link("{0}|Referer={1}".format(src, url))
     else:
         vp.play_from_link_to_resolve(url)
 

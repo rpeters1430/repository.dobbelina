@@ -190,7 +190,7 @@ def Playvid(url, name, download=None):
     src = _extract_best_source(html)
     if src:
         # Use the actual page as referer to satisfy Aylo CDN checks
-        vp.play_from_direct_link(f"{src}|Referer={url}")
+        vp.play_from_direct_link("{0}|Referer={1}".format(src, url))
     else:
         vp.play_from_link_to_resolve(url)
 
@@ -213,7 +213,7 @@ def _extract_best_source(html):
 
     if not candidates:
         # Fallback: look for quality/url pairs used by Aylo inline JSON
-        for quality, src in re.findall(r'"(?:quality|label)"\s*:\s*"?(\d{3,4})p?"?[^\n]*?"(?:videoUrl|src|url)"\s*:\s*"([^"]+)', html, re.IGNORECASE):
+        for quality, src in re.findall(r'"(?:quality|label)"\s*:\s*"?(\d{3,4})p?"?.*?"(?:videoUrl|src|url)"\s*:\s*"([^"]+)', html, re.IGNORECASE | re.DOTALL):
             candidates.append((quality, src.replace('\\/', '/')))
 
     if not candidates:
