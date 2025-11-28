@@ -48,6 +48,17 @@ If you already have Cumination installed:
 
 ---
 
+## 🧪 Running Automated Tests Locally
+
+The test suite expects the Python dependencies listed in `requirements-test.txt` (including `beautifulsoup4` for HTML parsing).
+
+1. Install dependencies: `pip install -r requirements-test.txt`
+2. Run the full suite: `pytest`
+
+This ensures site parsers that rely on BeautifulSoup are available and prevents import errors during collection.
+
+---
+
 ## ✅ Testing Checklist
 
 ### **Test 1: Verify Addon Loads**
