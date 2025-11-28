@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import re
+from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
@@ -64,9 +66,14 @@ def List(url):
                 video_url = site.url[:-1] + video_url
             elif not video_url.startswith('http'):
                 video_url = site.url + video_url
-            if video_url in seen:
+
+            # Normalize URL to drop query params to prevent duplicates
+            parsed = urllib_parse.urlsplit(video_url)
+            canonical_url = urllib_parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, '', ''))
+            if canonical_url in seen:
                 continue
-            seen.add(video_url)
+            seen.add(canonical_url)
+            video_url = canonical_url
 
             # Extract title from the caption link
             title_link = item.select_one('a.caption.title')
@@ -105,7 +112,6 @@ def List(url):
         next_url = utils.safe_get_attr(next_link, 'href')
         if next_url:
             # Extract page number for display
-            import re
             page_match = re.search(r'page=(\d+)', next_url)
             page_num = page_match.group(1) if page_match else ''
 
@@ -125,7 +131,6 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, 'Search')
     else:
-        from six.moves import urllib_parse
         title = urllib_parse.quote_plus(keyword)
         searchUrl = searchUrl + title
         List(searchUrl)
@@ -194,7 +199,8 @@ def Playvid(url, name, download=None):
 
     src = _extract_best_source(html)
     if src:
-        vp.play_from_direct_link(f"{src}|Referer={site.url}")
+        # Use the page URL as referer for CDN checks
+        vp.play_from_direct_link("{0}|Referer={1}".format(src, url))
     else:
         vp.play_from_link_to_resolve(url)
 
@@ -204,6 +210,10 @@ def _extract_best_source(html):
     candidates = []
     for src in re.findall(r'(?:file\"?:\\s*|source src=)[\"\\\']([^\"\\\']+)', html, re.IGNORECASE):
         if any(ext in src for ext in ('.mp4', '.m3u8')):
+            candidates.append(src.replace('\\/', '/'))
+
+    if not candidates:
+        for src in re.findall(r'https?://[^"\\\']+\.(?:mp4|m3u8)[^"\\\']*', html, re.IGNORECASE):
             candidates.append(src.replace('\\/', '/'))
 
     if not candidates:
