@@ -17,6 +17,7 @@
 """
 
 import json
+import re
 from html import unescape
 from uuid import uuid4
 
@@ -35,6 +36,9 @@ site = AdultSite(
 
 LIVEWIRE_BASE = urllib_parse.urljoin(site.url, 'livewire/message/')
 SEARCH_API = urllib_parse.urljoin(site.url, 'api/v1/search')
+POSTS_API = urllib_parse.urljoin(site.url, 'wp-json/wp/v2/posts')
+CATEGORIES_API = urllib_parse.urljoin(site.url, 'wp-json/wp/v2/categories')
+POSTS_PER_PAGE = 30
 
 LIVEWIRE_HEADERS = {
     'Content-Type': 'application/json',
@@ -52,86 +56,107 @@ SEARCH_HEADERS = {
 @site.register(default_mode=True)
 def Main(page_url=None):
     site.add_dir('[COLOR hotpink]Search Creators[/COLOR]', SEARCH_API, 'Search', site.img_search)
-    ListVideos(page_url or site.url)
+    ListVideos(page_url or POSTS_API, page=1)
 
 
 @site.register()
-def ListVideos(url, page_url=None):
-    page_url = page_url or url or site.url
-    snapshot = _get_livewire_snapshot(page_url)
-    if not snapshot:
-        utils.notify('ArchiveBate', 'Unable to load listing')
+def ListVideos(url=None, page=1):
+    """List videos from the WordPress API (JSON)."""
+    api_url = url or POSTS_API
+    parsed = urllib_parse.urlparse(api_url)
+    params = dict(urllib_parse.parse_qsl(parsed.query, keep_blank_values=True))
+    params.setdefault('per_page', POSTS_PER_PAGE)
+    try:
+        params['page'] = int(page)
+    except (TypeError, ValueError):
+        params['page'] = 1
+
+    api_url = parsed._replace(query=urllib_parse.urlencode(params)).geturl()
+    response = utils.getHtml(api_url, site.url)
+    if not response:
+        utils.notify('Unable to load listing')
         utils.eod()
         return
 
-    component_html = _call_livewire(snapshot)
-    if not component_html:
-        utils.notify('ArchiveBate', 'No response from server')
+    try:
+        posts = json.loads(response)
+    except ValueError:
+        utils.notify('Invalid response')
         utils.eod()
         return
 
-    soup = utils.parse_html(component_html)
-    videos = _parse_video_items(soup)
+    if not posts:
+        utils.notify('Nothing found')
+        utils.eod()
+        return
 
-    if not videos:
-        utils.notify('ArchiveBate', 'No videos found')
+    for post in posts:
+        title = utils.cleantext(_get_nested(post, ['title', 'rendered'])) or 'Video'
+        link = post.get('link') or _absolute_url('', site.url)
+        thumb = _select_thumb(post)
+        excerpt = utils.cleantext(_get_nested(post, ['excerpt', 'rendered']))
+        duration = _get_duration(post)
 
-    for video in videos:
         site.add_download_link(
-            video['title'],
-            video['url'],
+            title,
+            link,
             'Playvid',
-            video['thumb'],
-            video['description'],
-            duration=video['duration']
+            thumb or site.image,
+            excerpt,
+            duration=duration
         )
 
-    next_url = _find_next_page(soup, snapshot['page_url'])
-    if next_url:
-        label = '[COLOR hotpink]Next Page...[/COLOR] ({})'.format(_extract_page_number(next_url))
+    if len(posts) >= POSTS_PER_PAGE:
+        next_page = params['page'] + 1
+        params['page'] = next_page
+        next_url = parsed._replace(query=urllib_parse.urlencode(params)).geturl()
+        label = '[COLOR hotpink]Next Page ({})[/COLOR]'.format(next_page)
         site.add_dir(label, next_url, 'ListVideos', site.img_next)
 
     utils.eod()
 
 
 @site.register()
-def Search(url, keyword=None, page=1):
+def Search(url=None, keyword=None, page=1):
+    """Build a search URL for posts and delegate to ListVideos."""
     if not keyword:
-        site.search_dir(site.url, 'Search')
+        site.search_dir(url or POSTS_API, 'Search')
         return
 
-    try:
-        page = int(page)
-    except (TypeError, ValueError):
-        page = 1
+    base = url or POSTS_API
+    parsed = urllib_parse.urlparse(base)
+    params = dict(urllib_parse.parse_qsl(parsed.query, keep_blank_values=True))
+    params['search'] = keyword
+    params.setdefault('per_page', POSTS_PER_PAGE)
+    params['page'] = int(page or 1)
+    search_url = parsed._replace(query=urllib_parse.urlencode(params)).geturl()
+    ListVideos(search_url, page=params['page'])
 
-    payload = _search_creators(keyword, page)
-    if not payload:
-        utils.notify('ArchiveBate', 'No creators found')
+
+@site.register()
+def Categories(url=None):
+    """List categories via the WP API."""
+    api_url = url or CATEGORIES_API
+    response = utils.getHtml(api_url, site.url)
+    if not response:
+        utils.notify('Unable to load categories')
         utils.eod()
         return
 
-    creators = payload.get('data') or []
-    for creator in creators:
-        username = creator.get('username')
-        if not username:
-            continue
-        platform = creator.get('platform')
-        gender = creator.get('gender')
-        extras = [value for value in (platform, gender) if value]
-        label = username
-        if extras:
-            label = '{} [COLOR hotpink]({})[/COLOR]'.format(username, ' · '.join(extras))
-        profile_url = urllib_parse.urljoin(site.url, 'profile/{0}'.format(username))
-        site.add_dir(label, profile_url, 'ListVideos', site.img_cat)
+    try:
+        categories = json.loads(response)
+    except ValueError:
+        utils.notify('Invalid category response')
+        utils.eod()
+        return
 
-    meta = payload.get('meta') or {}
-    current_page = int(meta.get('current_page') or page)
-    last_page = int(meta.get('last_page') or current_page)
-    if current_page < last_page:
-        next_label = '[COLOR hotpink]Next Page ({})[/COLOR]'.format(current_page + 1)
-        site.add_dir(next_label, url or SEARCH_API, 'Search', site.img_next,
-                     keyword=keyword, page=current_page + 1)
+    for category in categories:
+        cat_id = category.get('id')
+        name = category.get('name') or 'Category'
+        count = category.get('count') or 0
+        label = f"{name} ({count})"
+        posts_url = f"{POSTS_API}?categories={cat_id}"
+        site.add_dir(label, posts_url, 'ListVideos', site.img_cat)
 
     utils.eod()
 
@@ -140,6 +165,44 @@ def Search(url, keyword=None, page=1):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.play_from_site_link(url, site.url)
+
+
+def _get_nested(data, path, default=''):
+    node = data
+    for key in path:
+        if not isinstance(node, dict):
+            return default
+        node = node.get(key, default)
+    return node or default
+
+
+def _select_thumb(post):
+    thumb = post.get('jetpack_featured_media_url') or ''
+    if thumb:
+        return thumb
+
+    embedded = post.get('_embedded') or {}
+    media = embedded.get('wp:featuredmedia') or []
+    if media:
+        thumb = _get_nested(media[0], ['media_details', 'sizes', 'medium_large', 'source_url'])
+        if not thumb:
+            thumb = media[0].get('source_url', '')
+    if thumb:
+        return thumb
+
+    better = post.get('better_featured_image') or {}
+    thumb = better.get('source_url', '')
+    return thumb
+
+
+def _get_duration(post):
+    acf = post.get('acf') or {}
+    duration = acf.get('duration')
+    if duration:
+        return duration
+    content = utils.cleantext(_get_nested(post, ['content', 'rendered']))
+    match = re.search(r'(\d{1,2}:\d{2})', content)
+    return match.group(1) if match else ''
 
 
 def _get_livewire_snapshot(page_url):

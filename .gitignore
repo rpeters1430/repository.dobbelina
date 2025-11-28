@@ -11,3 +11,4 @@ AGENTS.md
 
 .pytest_cache/
 .claude/
+.venv/

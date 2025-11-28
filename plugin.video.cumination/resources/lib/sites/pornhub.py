@@ -72,11 +72,7 @@ def List(url):
     # Extract video items
     # PornHub uses class="pcVideoListItem" for video cards
     # For search pages, also require "videoBoxesSearch" class to exclude recommended videos
-    is_search = 'search?' in url
-    if is_search:
-        video_items = soup.select('[class*="pcVideoListItem"][class*="videoBoxesSearch"]')
-    else:
-        video_items = soup.select('[class*="pcVideoListItem"]')
+    video_items = soup.select('[class*="pcVideoListItem"]')
 
     for item in video_items:
         try:

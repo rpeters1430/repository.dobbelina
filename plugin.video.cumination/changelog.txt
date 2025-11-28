@@ -63,3 +63,7 @@
 
 [B]Version 1.1.164[/B]
 - thothub - add robust listing fallback (videos/, page/1/, latest/) when homepage yields no items
+[B]Version 1.1.186[/B]
+- youporn, youjizz, tube8, redtube: fix playback by extracting direct sources and setting referer
+- youporn: remove duplicate listings
+- motherless: load Recent by default, de-dupe listings, and play direct sources

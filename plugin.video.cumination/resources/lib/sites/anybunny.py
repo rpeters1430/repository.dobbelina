@@ -68,16 +68,38 @@ def Main():
 
 @site.register()
 def List(url):
-    # Use Cloudflare retry to handle Cloudflare challenges on search/pagination
-    listhtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+    listhtml = utils.getHtml(url, site.url)
     if not listhtml:
-        utils.kodilog("anybunny List: Failed to fetch page (possibly Cloudflare blocked)")
+        utils.kodilog("anybunny List: Failed to fetch page")
         utils.eod()
         return
 
     soup = utils.parse_html(listhtml)
 
-    VIDEO_LIST_SPEC.run(site, soup)
+    items = []
+    for anchor in soup.select('a[href*="/videos/"]'):
+        href = utils.safe_get_attr(anchor, 'href')
+        if not href or '/videos/' not in href:
+            continue
+        video_url = urllib_parse.urljoin(site.url, href)
+        img_tag = anchor.find('img')
+        thumb = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-lazy', 'data-original'])
+        title = utils.cleantext(utils.safe_get_attr(img_tag, 'alt') or utils.safe_get_text(anchor))
+        if not title:
+            continue
+        items.append({
+            'title': title,
+            'url': video_url,
+            'thumb': urllib_parse.urljoin(site.url, thumb) if thumb else site.image
+        })
+
+    for item in items:
+        site.add_download_link(item['title'], item['url'], 'Playvid', item['thumb'])
+
+    next_link = soup.select_one('a[rel="next"], a.next')
+    if next_link and next_link.has_attr('href'):
+        next_url = urllib_parse.urljoin(site.url, next_link['href'])
+        site.add_dir('Next Page', next_url, 'List')
 
     utils.eod()
 

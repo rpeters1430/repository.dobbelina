@@ -26,7 +26,9 @@ site = AdultSite('motherless', '[COLOR hotpink]Motherless[/COLOR]', 'https://mot
 def Main():
     site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'search/videos?term=', 'Search', site.img_search)
     site.add_dir('[COLOR hotpink]Categories[/COLOR]', site.url + 'categories', 'Categories', site.img_cat)
+    # Show Recent Videos by default and as an explicit folder
     site.add_dir('[COLOR hotpink]Recent Videos[/COLOR]', site.url + 'videos/recent', 'List', site.img_cat)
+    List(site.url + 'videos/recent')
     utils.eod()
 
 
@@ -38,11 +40,9 @@ def List(url):
         utils.eod()
         return
 
-    # Parse HTML with BeautifulSoup
     soup = utils.parse_html(listhtml)
-
-    # Extract video items - Motherless uses class="desktop-thumb video"
     video_items = soup.select('.desktop-thumb.video, .thumb-container.video')
+    seen = set()
 
     for item in video_items:
         try:
@@ -64,6 +64,9 @@ def List(url):
                 video_url = site.url[:-1] + video_url
             elif not video_url.startswith('http'):
                 video_url = site.url + video_url
+            if video_url in seen:
+                continue
+            seen.add(video_url)
 
             # Extract title from the caption link
             title_link = item.select_one('a.caption.title')
@@ -184,4 +187,33 @@ def Categories(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
-    vp.play_from_link_to_resolve(url)
+    html = utils.getHtml(url, site.url)
+    if not html:
+        vp.play_from_link_to_resolve(url)
+        return
+
+    src = _extract_best_source(html)
+    if src:
+        vp.play_from_direct_link(f"{src}|Referer={site.url}")
+    else:
+        vp.play_from_link_to_resolve(url)
+
+
+def _extract_best_source(html):
+    # Motherless pages embed a file URL in JS variables or <source> tags
+    candidates = []
+    for src in re.findall(r'(?:file\"?:\\s*|source src=)[\"\\\']([^\"\\\']+)', html, re.IGNORECASE):
+        if any(ext in src for ext in ('.mp4', '.m3u8')):
+            candidates.append(src.replace('\\/', '/'))
+
+    if not candidates:
+        return ''
+
+    def score(url):
+        match = re.search(r'(\\d{3,4})p', url)
+        return int(match.group(1)) if match else 0
+
+    best = sorted(candidates, key=score, reverse=True)[0]
+    if best.startswith('//'):
+        best = 'https:' + best
+    return best

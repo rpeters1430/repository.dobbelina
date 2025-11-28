@@ -17,6 +17,7 @@
 '''
 
 import re
+import json
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
@@ -179,4 +180,47 @@ def Categories(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
-    vp.play_from_link_to_resolve(url)
+    html = utils.getHtml(url, site.url, cookiehdr)
+    if not html:
+        vp.play_from_link_to_resolve(url)
+        return
+
+    src = _extract_best_source(html)
+    if src:
+        vp.play_from_direct_link(f"{src}|Referer={site.url}")
+    else:
+        vp.play_from_link_to_resolve(url)
+
+
+def _extract_best_source(html):
+    match = re.search(r'mediaDefinition\"?\\s*:\\s*(\\[.*?\\])', html, re.DOTALL)
+    candidates = []
+    if match:
+        try:
+            items = json.loads(match.group(1).replace('\\/', '/'))
+            for item in items:
+                url = item.get('videoUrl') or item.get('videoUrlMain')
+                if not url:
+                    continue
+                quality = item.get('quality') or item.get('defaultQuality') or ''
+                candidates.append((str(quality), url))
+        except Exception:
+            pass
+
+    if not candidates:
+        for src in re.findall(r'<source[^>]+src=[\"\\\']([^\"\\\']+)', html, re.IGNORECASE):
+            if any(ext in src for ext in ('.mp4', '.m3u8')):
+                candidates.append(('', src.replace('\\/', '/')))
+
+    if not candidates:
+        return ''
+
+    def score(item):
+        label = item[0]
+        digits = ''.join(ch for ch in label if ch.isdigit())
+        return int(digits) if digits else 0
+
+    best = sorted(candidates, key=score, reverse=True)[0][1]
+    if best.startswith('//'):
+        best = 'https:' + best
+    return best

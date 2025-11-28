@@ -17,6 +17,8 @@
 '''
 
 import re
+import json
+from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
@@ -45,6 +47,7 @@ def List(url):
 
     # Extract video items - YouPorn uses class="video-box"
     video_items = soup.select('.video-box')
+    seen = set()
 
     for item in video_items:
         try:
@@ -61,6 +64,11 @@ def List(url):
             # Make absolute URL if needed
             if video_url.startswith('/'):
                 video_url = site.url[:-1] + video_url
+            normalized = urllib_parse.urlsplit(video_url)
+            normalized_url = urllib_parse.urlunsplit((normalized.scheme, normalized.netloc, normalized.path, '', ''))
+            if normalized_url in seen:
+                continue
+            seen.add(normalized_url)
 
             # Extract title from the title link
             title_link = item.select_one('.video-title-text span')
@@ -174,4 +182,50 @@ def Categories(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
-    vp.play_from_link_to_resolve(url)
+    html = utils.getHtml(url, site.url, cookiehdr)
+    if not html:
+        vp.play_from_link_to_resolve(url)
+        return
+
+    src = _extract_best_source(html)
+    if src:
+        # Keep referer for hosts that enforce it
+        vp.play_from_direct_link(f"{src}|Referer={site.url}")
+    else:
+        vp.play_from_link_to_resolve(url)
+
+
+def _extract_best_source(html):
+    # Aylo sites expose mediaDefinition JSON with videoUrl entries
+    match = re.search(r'mediaDefinition\"?\\s*:\\s*(\\[.*?\\])', html, re.DOTALL)
+    candidates = []
+    if match:
+        try:
+            items = json.loads(match.group(1).replace('\\/', '/'))
+            for item in items:
+                url = item.get('videoUrl') or item.get('videoUrlMain')
+                if not url:
+                    continue
+                quality = item.get('quality') or item.get('defaultQuality') or ''
+                candidates.append((str(quality), url))
+        except Exception:
+            pass
+
+    if not candidates:
+        # Fallback: look for <source> tags
+        for src in re.findall(r'<source[^>]+src=[\"\\\']([^\"\\\']+)', html, re.IGNORECASE):
+            if any(ext in src for ext in ('.mp4', '.m3u8')):
+                candidates.append(('', src.replace('\\/', '/')))
+
+    if not candidates:
+        return ''
+
+    def score(item):
+        label = item[0]
+        digits = ''.join(ch for ch in label if ch.isdigit())
+        return int(digits) if digits else 0
+
+    best = sorted(candidates, key=score, reverse=True)[0][1]
+    if best.startswith('//'):
+        best = 'https:' + best
+    return best
