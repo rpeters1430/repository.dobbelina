@@ -27,7 +27,7 @@ cookiehdr = {'Cookie': 'age_verified=1'}
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'srch.php?search=', 'Search', site.img_search)
+    site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'search?q=', 'Search', site.img_search)
     site.add_dir('[COLOR hotpink]Categories[/COLOR]', site.url + 'tags', 'Categories', site.img_cat)
     List(site.url)
     utils.eod()
@@ -133,6 +133,7 @@ def Search(url, keyword=None):
     else:
         from six.moves import urllib_parse
         title = urllib_parse.quote_plus(keyword)
+        # Search URL format is now /search?q=keyword
         searchUrl = searchUrl + title
         List(searchUrl)
 
@@ -203,17 +204,66 @@ def Playvid(url, name, download=None):
         vp.play_from_link_to_resolve(url)
         return
 
+    # Try to extract video from main page first
     src = _extract_best_source(html)
+
+    # If no video found in main page, try the embed player
+    if not src:
+        # Extract video ID from URL (e.g., /videos/title-123456.html -> 123456)
+        video_id_match = re.search(r'videos/[^/]+-(\d+)\.html', url)
+        if video_id_match:
+            video_id = video_id_match.group(1)
+            embed_url = site.url + 'videos/embed/' + video_id
+            utils.kodilog("YouJizz: Trying embed URL: " + embed_url)
+
+            embed_html = utils.getHtml(embed_url, site.url, cookiehdr)
+            if embed_html:
+                src = _extract_best_source(embed_html)
+
     if src:
         # Use the page URL as referer to satisfy CDN checks
         vp.play_from_direct_link("{0}|Referer={1}".format(src, url))
     else:
+        utils.kodilog("YouJizz: No video source found, trying resolveurl")
         vp.play_from_link_to_resolve(url)
 
 
 def _extract_best_source(html):
-    match = re.search(r'mediaDefinition\"?\\s*:\\s*(\\[.*?\\])', html, re.DOTALL)
+    # Try to find quality/filename pairs (Youjizz embed format)
+    # Pattern: "quality":"720","filename":"//cdne-mobile.youjizz.com/..."
+    quality_filename_pattern = r'"quality"\s*:\s*"(\d+)"\s*,\s*"filename"\s*:\s*"([^"]+)"'
+    matches = re.findall(quality_filename_pattern, html)
+
     candidates = []
+    if matches:
+        utils.kodilog("YouJizz: Found {} quality/filename pairs".format(len(matches)))
+        for quality, filename in matches:
+            url = filename.replace('\\/', '/')
+            # Prefer MP4 over HLS (HLS has '_hls' in the path and .m3u8 extension)
+            is_hls = '_hls' in url or '.m3u8' in url
+            is_mp4 = '.mp4' in url and '_hls' not in url
+
+            # Add MP4 URLs with higher priority
+            if is_mp4:
+                candidates.append((int(quality), url, True))  # True = is_mp4
+            elif is_hls:
+                candidates.append((int(quality), url, False))  # False = is_hls
+
+    # If we found candidates, sort by: 1) prefer MP4, 2) highest quality
+    if candidates:
+        # Sort by (is_mp4, quality) in descending order
+        candidates.sort(key=lambda x: (x[2], x[0]), reverse=True)
+        best = candidates[0][1]
+        if best.startswith('//'):
+            best = 'https:' + best
+        utils.kodilog("YouJizz: Selected {}p {} URL".format(
+            candidates[0][0],
+            'MP4' if candidates[0][2] else 'HLS'
+        ))
+        return best
+
+    # Fallback: Try mediaDefinition JSON (like Youporn)
+    match = re.search(r'mediaDefinition["\']?\s*:\s*(\[.*?\])', html, re.DOTALL)
     if match:
         try:
             items = json.loads(match.group(1).replace('\\/', '/'))
@@ -221,32 +271,38 @@ def _extract_best_source(html):
                 url = item.get('videoUrl') or item.get('videoUrlMain')
                 if not url:
                     continue
-                quality = item.get('quality') or item.get('defaultQuality') or ''
-                candidates.append((str(quality), url))
-        except Exception:
-            pass
 
-    if not candidates:
-        # Fallback: look for quality/url pairs used by Aylo inline JSON
-        for quality, src in re.findall(r'"(?:quality|label)"\s*:\s*"?(\d{3,4})p?"?.*?"(?:videoUrl|src|url)"\s*:\s*"([^"]+)', html, re.IGNORECASE | re.DOTALL):
-            candidates.append((quality, src.replace('\\/', '/')))
+                # If URL is a manifest endpoint, fetch it
+                if '/media/mp4/' in url or '/media/hls/' in url:
+                    try:
+                        manifest_data = utils.getHtml(url, site.url)
+                        if manifest_data:
+                            manifest_json = json.loads(manifest_data)
+                            for video in manifest_json:
+                                video_url = video.get('videoUrl', '')
+                                video_quality = video.get('quality', '')
+                                if video_url:
+                                    candidates.append((int(video_quality) if video_quality else 0, video_url, '.mp4' in video_url))
+                    except Exception as e:
+                        utils.kodilog("YouJizz: Error fetching manifest: " + str(e))
+                else:
+                    quality = item.get('quality') or item.get('defaultQuality') or '0'
+                    candidates.append((int(quality) if quality.isdigit() else 0, url, '.mp4' in url))
+        except Exception as e:
+            utils.kodilog("YouJizz: Error parsing mediaDefinition: " + str(e))
 
-    if not candidates:
-        for src in re.findall(r'<source[^>]+src=[\"\\\']([^\"\\\']+)', html, re.IGNORECASE):
-            if any(ext in src for ext in ('.mp4', '.m3u8')):
-                candidates.append(('', src.replace('\\/', '/')))
-        for src in re.findall(r'https?://[^"\\\']+\.(?:mp4|m3u8)[^"\\\']*', html, re.IGNORECASE):
-            candidates.append(('', src.replace('\\/', '/')))
+    if candidates:
+        candidates.sort(key=lambda x: (x[2], x[0]), reverse=True)
+        best = candidates[0][1]
+        if best.startswith('//'):
+            best = 'https:' + best
+        return best
 
-    if not candidates:
-        return ''
+    # Last resort: look for any video URLs
+    for src in re.findall(r'https?://[^"\\\'< ]+\.mp4[^"\\\'< ]*', html, re.IGNORECASE):
+        if 'cdne-pics' not in src and 'thumb' not in src:
+            if src.startswith('//'):
+                src = 'https:' + src
+            return src
 
-    def score(item):
-        label = item[0]
-        digits = ''.join(ch for ch in label if ch.isdigit())
-        return int(digits) if digits else 0
-
-    best = sorted(candidates, key=score, reverse=True)[0][1]
-    if best.startswith('//'):
-        best = 'https:' + best
-    return best
+    return ''

@@ -197,7 +197,7 @@ def Playvid(url, name, download=None):
 
 def _extract_best_source(html):
     # Aylo sites expose mediaDefinition JSON with videoUrl entries
-    match = re.search(r'mediaDefinition\"?\\s*:\\s*(\\[.*?\\])', html, re.DOTALL)
+    match = re.search(r'mediaDefinition["\']?\s*:\s*(\[.*?\])', html, re.DOTALL)
     candidates = []
     if match:
         try:
@@ -206,10 +206,29 @@ def _extract_best_source(html):
                 url = item.get('videoUrl') or item.get('videoUrlMain')
                 if not url:
                     continue
-                quality = item.get('quality') or item.get('defaultQuality') or ''
-                candidates.append((str(quality), url))
-        except Exception:
-            pass
+
+                # If URL is a manifest endpoint, fetch it to get actual video URLs
+                if '/media/mp4/' in url or '/media/hls/' in url:
+                    try:
+                        manifest_data = utils.getHtml(url, site.url)
+                        if manifest_data:
+                            manifest_json = json.loads(manifest_data)
+                            # Extract video URLs from manifest
+                            for video in manifest_json:
+                                video_url = video.get('videoUrl', '')
+                                video_quality = video.get('quality', '')
+                                if video_url:
+                                    candidates.append((str(video_quality), video_url))
+                    except Exception as e:
+                        utils.kodilog("YouPorn: Error fetching manifest: " + str(e))
+                        # Continue with the manifest URL itself as fallback
+                        quality = item.get('quality') or item.get('defaultQuality') or ''
+                        candidates.append((str(quality), url))
+                else:
+                    quality = item.get('quality') or item.get('defaultQuality') or ''
+                    candidates.append((str(quality), url))
+        except Exception as e:
+            utils.kodilog("YouPorn: Error parsing mediaDefinition: " + str(e))
 
     if not candidates:
         # Fallback: look for quality/url pairs used by Aylo inline JSON

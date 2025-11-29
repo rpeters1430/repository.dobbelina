@@ -27,7 +27,10 @@
       "WebFetch(domain:leakgallery.com)",
       "WebFetch(domain:www.tube8.com)",
       "WebFetch(domain:motherless.com)",
-      "Bash(where:*)"
+      "Bash(where:*)",
+      "WebFetch(domain:www.youporn.com)",
+      "Bash(cat:*)",
+      "Bash(ruff check:*)"
     ],
     "deny": [],
     "ask": []
