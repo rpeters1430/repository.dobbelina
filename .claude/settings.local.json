@@ -30,7 +30,8 @@
       "Bash(where:*)",
       "WebFetch(domain:www.youporn.com)",
       "Bash(cat:*)",
-      "Bash(ruff check:*)"
+      "Bash(ruff check:*)",
+      "WebFetch(domain:www.redtube.com)"
     ],
     "deny": [],
     "ask": []

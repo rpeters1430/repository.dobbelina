@@ -21,6 +21,13 @@ import json
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
+try:
+    from html import unescape as html_unescape
+except ImportError:
+    # Python 2 compatibility
+    from six.moves import html_parser
+    html_unescape = html_parser.HTMLParser().unescape
+
 site = AdultSite('redtube', '[COLOR hotpink]RedTube[/COLOR]', 'https://www.redtube.com/', 'redtube.png', 'redtube')
 cookiehdr = {'Cookie': 'age_verified=1'}
 
@@ -178,45 +185,96 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     html = utils.getHtml(url, site.url, cookiehdr)
     if not html:
-        vp.play_from_link_to_resolve(url)
+        utils.notify('Error', 'Could not load page')
         return
 
-    src = _extract_best_source(html)
-    if src:
-        # Use the page URL as referer to satisfy CDN checks
-        vp.play_from_direct_link("{0}|Referer={1}".format(src, url))
+    # RedTube only serves 360p preview videos to scrapers
+    # Extract and play the best available (even if just 360p)
+    video_urls = re.findall(r'(https://[^"\'<>]+\.mp4[^"\'<>\s]*)', html, re.IGNORECASE)
+
+    if not video_urls:
+        utils.notify('Error', 'No video found')
+        return
+
+    # Prefer URLs with hdnea auth (newer format) over validfrom/rate (rate-limited)
+    hdnea_urls = [u for u in video_urls if 'hdnea=' in u]
+    if hdnea_urls:
+        video_url = hdnea_urls[0]
     else:
-        vp.play_from_link_to_resolve(url)
+        video_url = video_urls[0]
+
+    # Decode HTML entities
+    video_url = html_unescape(video_url)
+
+    utils.kodilog("RedTube: Playing URL: " + video_url[:150])
+    vp.play_from_direct_link("{0}|Referer={1}".format(video_url, url))
 
 
 def _extract_best_source(html):
-    match = re.search(r'mediaDefinition\"?\\s*:\\s*(\\[.*?\\])', html, re.DOTALL)
+    # First, try to get video URLs from the new API endpoint format
     candidates = []
+
+    # Look for mediaDefinition/mediaDefinitions with API endpoints (both singular and plural)
+    # Matches: mediaDefinition:, "mediaDefinition":, mediaDefinitions:, "mediaDefinitions":
+    match = re.search(r'\"?mediaDefinitions?\"?\\s*:\\s*(\\[.*?\\])', html, re.DOTALL)
+    utils.kodilog("RedTube: Regex match result: {}".format("FOUND" if match else "NOT FOUND"))
     if match:
+        utils.kodilog("RedTube: Captured JSON: {}".format(match.group(1)[:200]))
         try:
             items = json.loads(match.group(1).replace('\\/', '/'))
+            utils.kodilog("RedTube: Parsed {} items from mediaDefinitions".format(len(items)))
             for item in items:
                 url = item.get('videoUrl') or item.get('videoUrlMain')
                 if not url:
                     continue
-                quality = item.get('quality') or item.get('defaultQuality') or ''
-                candidates.append((str(quality), url))
-        except Exception:
-            pass
+
+                # Check if this is an API endpoint URL
+                if url.startswith('/media/'):
+                    # Make absolute URL
+                    api_url = site.url.rstrip('/') + url
+                    utils.kodilog("RedTube: Fetching qualities from API: " + api_url)
+
+                    # Fetch video qualities from API
+                    try:
+                        api_response = utils.getHtml(api_url, site.url, cookiehdr)
+                        if api_response:
+                            api_data = json.loads(api_response)
+                            # Process each quality option
+                            for quality_item in api_data:
+                                video_url = quality_item.get('videoUrl', '')
+                                quality = quality_item.get('quality', '')
+                                if video_url and quality:
+                                    video_url = html_unescape(video_url)
+                                    candidates.append((str(quality), video_url))
+                                    utils.kodilog("RedTube: Found {}p: {}".format(quality, video_url[:100]))
+                    except Exception as e:
+                        utils.kodilog("RedTube: API error: " + str(e))
+                else:
+                    # Direct URL in old format
+                    url = html_unescape(url)
+                    quality = item.get('quality') or item.get('defaultQuality') or ''
+                    candidates.append((str(quality), url))
+        except Exception as e:
+            utils.kodilog("RedTube: mediaDefinition parse error: " + str(e))
 
     if not candidates:
         # Fallback: look for quality/url pairs used by Aylo inline JSON
         for quality, src in re.findall(r'"(?:quality|label)"\s*:\s*"?(\d{3,4})p?"?.*?"(?:videoUrl|src|url)"\s*:\s*"([^"]+)', html, re.IGNORECASE | re.DOTALL):
-            candidates.append((quality, src.replace('\\/', '/')))
+            # Decode HTML entities
+            src = html_unescape(src.replace('\\/', '/'))
+            candidates.append((quality, src))
 
     if not candidates:
         for src in re.findall(r'<source[^>]+src=[\"\\\']([^\"\\\']+)', html, re.IGNORECASE):
             if any(ext in src for ext in ('.mp4', '.m3u8')):
-                candidates.append(('', src.replace('\\/', '/')))
+                src = html_unescape(src.replace('\\/', '/'))
+                candidates.append(('', src))
         for src in re.findall(r'https?://[^"\\\']+\.(?:mp4|m3u8)[^"\\\']*', html, re.IGNORECASE):
-            candidates.append(('', src.replace('\\/', '/')))
+            src = html_unescape(src.replace('\\/', '/'))
+            candidates.append(('', src))
 
     if not candidates:
+        utils.kodilog("RedTube: No video sources found")
         return ''
 
     def score(item):
@@ -224,7 +282,14 @@ def _extract_best_source(html):
         digits = ''.join(ch for ch in label if ch.isdigit())
         return int(digits) if digits else 0
 
-    best = sorted(candidates, key=score, reverse=True)[0][1]
+    # Sort by quality (highest first)
+    sorted_candidates = sorted(candidates, key=score, reverse=True)
+    best = sorted_candidates[0][1]
+
+    utils.kodilog("RedTube: Selected best quality: {}p - {}".format(
+        sorted_candidates[0][0], best[:100]
+    ))
+
     if best.startswith('//'):
         best = 'https:' + best
     return best

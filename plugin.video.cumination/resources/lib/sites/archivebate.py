@@ -54,109 +54,112 @@ SEARCH_HEADERS = {
 
 
 @site.register(default_mode=True)
-def Main(page_url=None):
-    site.add_dir('[COLOR hotpink]Search Creators[/COLOR]', SEARCH_API, 'Search', site.img_search)
-    ListVideos(page_url or POSTS_API, page=1)
+def Main():
+    site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url, 'Search', site.img_search)
+    site.add_dir('[COLOR hotpink]Categories[/COLOR]', site.url, 'Categories', site.img_cat)
+    ListVideos(site.url)
 
 
 @site.register()
-def ListVideos(url=None, page=1):
-    """List videos from the WordPress API (JSON)."""
-    api_url = url or POSTS_API
-    parsed = urllib_parse.urlparse(api_url)
-    params = dict(urllib_parse.parse_qsl(parsed.query, keep_blank_values=True))
-    params.setdefault('per_page', POSTS_PER_PAGE)
-    try:
-        params['page'] = int(page)
-    except (TypeError, ValueError):
-        params['page'] = 1
-
-    api_url = parsed._replace(query=urllib_parse.urlencode(params)).geturl()
-    response = utils.getHtml(api_url, site.url)
-    if not response:
-        utils.notify('Unable to load listing')
-        utils.eod()
-        return
+def ListVideos(url=None):
+    """List videos using Livewire component."""
+    page_url = url or site.url
 
     try:
-        posts = json.loads(response)
-    except ValueError:
-        utils.notify('Invalid response')
-        utils.eod()
-        return
+        # Get Livewire snapshot from the page
+        snapshot = _get_livewire_snapshot(page_url)
+        if not snapshot:
+            utils.kodilog('ArchiveBate: Failed to get Livewire snapshot from {0}'.format(page_url))
+            utils.notify('Unable to load page data')
+            utils.eod()
+            return
 
-    if not posts:
-        utils.notify('Nothing found')
-        utils.eod()
-        return
+        # Call Livewire to get video HTML
+        html = _call_livewire(snapshot)
+        if not html:
+            utils.kodilog('ArchiveBate: Livewire API returned no HTML')
+            utils.notify('Unable to load videos - try again later')
+            utils.eod()
+            return
 
-    for post in posts:
-        title = utils.cleantext(_get_nested(post, ['title', 'rendered'])) or 'Video'
-        link = post.get('link') or _absolute_url('', site.url)
-        thumb = _select_thumb(post)
-        excerpt = utils.cleantext(_get_nested(post, ['excerpt', 'rendered']))
-        duration = _get_duration(post)
+        # Parse the video items
+        soup = utils.parse_html(html)
+        items = _parse_video_items(soup)
 
-        site.add_download_link(
-            title,
-            link,
-            'Playvid',
-            thumb or site.image,
-            excerpt,
-            duration=duration
-        )
+        if not items:
+            utils.kodilog('ArchiveBate: No videos parsed from HTML')
+            utils.notify('No videos found')
+            utils.eod()
+            return
 
-    if len(posts) >= POSTS_PER_PAGE:
-        next_page = params['page'] + 1
-        params['page'] = next_page
-        next_url = parsed._replace(query=urllib_parse.urlencode(params)).geturl()
-        label = '[COLOR hotpink]Next Page ({})[/COLOR]'.format(next_page)
-        site.add_dir(label, next_url, 'ListVideos', site.img_next)
+        utils.kodilog('ArchiveBate: Found {0} videos'.format(len(items)))
+
+        for item in items:
+            site.add_download_link(
+                item['title'],
+                item['url'],
+                'Playvid',
+                item['thumb'],
+                item['description'],
+                duration=item.get('duration', '')
+            )
+
+        # Check for next page
+        next_url = _find_next_page(soup, page_url)
+        if next_url:
+            page_num = _extract_page_number(next_url)
+            label = '[COLOR hotpink]Next Page ({})[/COLOR]'.format(page_num)
+            site.add_dir(label, next_url, 'ListVideos', site.img_next)
+
+    except Exception as e:
+        utils.kodilog('ArchiveBate: Unexpected error in ListVideos: {0}'.format(str(e)))
+        utils.notify('Error loading videos')
 
     utils.eod()
 
 
 @site.register()
-def Search(url=None, keyword=None, page=1):
-    """Build a search URL for posts and delegate to ListVideos."""
+def Search(url=None, keyword=None):
+    """Search for videos."""
     if not keyword:
-        site.search_dir(url or POSTS_API, 'Search')
+        site.search_dir(url or site.url, 'Search')
         return
 
-    base = url or POSTS_API
-    parsed = urllib_parse.urlparse(base)
-    params = dict(urllib_parse.parse_qsl(parsed.query, keep_blank_values=True))
-    params['search'] = keyword
-    params.setdefault('per_page', POSTS_PER_PAGE)
-    params['page'] = int(page or 1)
-    search_url = parsed._replace(query=urllib_parse.urlencode(params)).geturl()
-    ListVideos(search_url, page=params['page'])
+    # Build search URL
+    search_url = '{0}?query={1}'.format(site.url, urllib_parse.quote_plus(keyword))
+    ListVideos(search_url)
 
 
 @site.register()
 def Categories(url=None):
-    """List categories via the WP API."""
-    api_url = url or CATEGORIES_API
-    response = utils.getHtml(api_url, site.url)
-    if not response:
+    """List platform categories from homepage."""
+    page_url = url or site.url
+    html = utils.getHtml(page_url, site.url)
+    if not html:
         utils.notify('Unable to load categories')
         utils.eod()
         return
 
-    try:
-        categories = json.loads(response)
-    except ValueError:
-        utils.notify('Invalid category response')
+    soup = utils.parse_html(html)
+
+    # Find platform/category links (hashtags)
+    category_links = soup.select('a[href*="/platform/"]')
+
+    if not category_links:
+        utils.notify('No categories found')
         utils.eod()
         return
 
-    for category in categories:
-        cat_id = category.get('id')
-        name = category.get('name') or 'Category'
-        count = category.get('count') or 0
-        label = f"{name} ({count})"
-        posts_url = f"{POSTS_API}?categories={cat_id}"
-        site.add_dir(label, posts_url, 'ListVideos', site.img_cat)
+    seen = set()
+    for link in category_links:
+        cat_url = _absolute_url(utils.safe_get_attr(link, 'href'))
+        cat_name = utils.safe_get_text(link).strip()
+
+        if cat_url and cat_url not in seen:
+            seen.add(cat_url)
+            # Clean up hashtag formatting
+            display_name = cat_name.replace('#', '').title()
+            site.add_dir('[COLOR hotpink]{0}[/COLOR]'.format(display_name), cat_url, 'ListVideos', site.img_cat)
 
     utils.eod()
 
@@ -257,24 +260,35 @@ def _call_livewire(snapshot):
 
     headers = LIVEWIRE_HEADERS.copy()
     headers['X-CSRF-TOKEN'] = snapshot['csrf']
+    headers['Referer'] = snapshot['page_url']
 
-    response = utils._getHtml(  # pylint: disable=protected-access
-        post_url,
-        snapshot['page_url'],
-        headers=headers,
-        data=json.dumps(payload)
-    )
+    try:
+        response = utils.postHtml(
+            post_url,
+            headers=headers,
+            json_data=payload
+        )
+    except Exception as e:
+        utils.kodilog('ArchiveBate: Livewire API error: {0}'.format(str(e)))
+        return None
+
     if not response:
+        utils.kodilog('ArchiveBate: empty Livewire response')
         return None
 
     try:
         data = json.loads(response)
-    except ValueError:
-        utils.kodilog('ArchiveBate: unexpected Livewire response')
+    except ValueError as e:
+        utils.kodilog('ArchiveBate: JSON parse error: {0}'.format(str(e)))
         return None
 
     effects = data.get('effects') or {}
-    return effects.get('html')
+    html_content = effects.get('html', '')
+
+    if not html_content:
+        utils.kodilog('ArchiveBate: no HTML in Livewire response')
+
+    return html_content
 
 
 def _parse_video_items(soup):
