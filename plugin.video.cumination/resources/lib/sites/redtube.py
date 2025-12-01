@@ -42,17 +42,27 @@ def Main():
 
 @site.register()
 def List(url):
+    utils.kodilog("RedTube List: Fetching URL: {}".format(url))
     listhtml = utils.getHtml(url, site.url, cookiehdr)
 
-    if not listhtml or 'Error Page Not Found' in listhtml:
+    if not listhtml:
+        utils.kodilog("RedTube List: No HTML received")
         utils.eod()
         return
+
+    if 'Error Page Not Found' in listhtml:
+        utils.kodilog("RedTube List: Page not found error in HTML")
+        utils.eod()
+        return
+
+    utils.kodilog("RedTube List: Received {} bytes of HTML".format(len(listhtml)))
 
     # Parse HTML with BeautifulSoup
     soup = utils.parse_html(listhtml)
 
     # Extract video items - RedTube uses class="videoblock_list" or "thumbnail-card"
     video_items = soup.select('.videoblock_list, li.thumbnail-card')
+    utils.kodilog("RedTube List: Found {} video items".format(len(video_items)))
 
     for item in video_items:
         try:
@@ -138,32 +148,41 @@ def Categories(url):
 
     soup = utils.parse_html(cathtml)
 
-    # RedTube categories are in list items with links
-    categories = soup.select('.category_wrapper a, .category-item a, a[href*="/category/"]')
+    # RedTube categories are in .tm_cat_wrapper elements
+    category_wrappers = soup.select('.tm_cat_wrapper')
 
     entries = []
-    for category in categories:
+    for wrapper in category_wrappers:
         try:
-            catpage = utils.safe_get_attr(category, 'href')
-            if not catpage or '/category/' not in catpage:
+            # Get the category link (first <a> tag)
+            link = wrapper.select_one('a[href*="/redtube/"]')
+            if not link:
                 continue
 
+            catpage = utils.safe_get_attr(link, 'href')
+            if not catpage or '/redtube/' not in catpage:
+                continue
+
+            # Make absolute URL if needed
             if catpage.startswith('/'):
                 catpage = site.url[:-1] + catpage
 
-            # Extract category name
-            name = utils.safe_get_text(category)
+            # Extract category name from <strong> tag
+            strong_tag = wrapper.select_one('strong')
+            name = utils.safe_get_text(strong_tag) if strong_tag else ''
+
+            # Fallback to link text or title
             if not name:
-                name = utils.safe_get_attr(category, 'title')
+                name = utils.safe_get_text(link)
             if not name:
-                name = utils.safe_get_attr(category, 'alt')
+                name = utils.safe_get_attr(link, 'title')
 
             if not name:
                 continue
 
-            # Extract thumbnail
-            img_tag = category.select_one('img')
-            img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
+            # Extract thumbnail image
+            img_tag = wrapper.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
 
             entries.append((name, catpage, img, name.lower()))
 
@@ -183,28 +202,22 @@ def Categories(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
+    utils.kodilog("RedTube Playvid: Fetching URL: {}".format(url))
     html = utils.getHtml(url, site.url, cookiehdr)
+
     if not html:
+        utils.kodilog("RedTube Playvid: No HTML received")
         utils.notify('Error', 'Could not load page')
         return
 
-    # RedTube only serves 360p preview videos to scrapers
-    # Extract and play the best available (even if just 360p)
-    video_urls = re.findall(r'(https://[^"\'<>]+\.mp4[^"\'<>\s]*)', html, re.IGNORECASE)
+    utils.kodilog("RedTube Playvid: Received {} bytes of HTML".format(len(html)))
 
-    if not video_urls:
+    # Use the enhanced extraction function that handles API-based URLs
+    video_url = _extract_best_source(html)
+
+    if not video_url:
         utils.notify('Error', 'No video found')
         return
-
-    # Prefer URLs with hdnea auth (newer format) over validfrom/rate (rate-limited)
-    hdnea_urls = [u for u in video_urls if 'hdnea=' in u]
-    if hdnea_urls:
-        video_url = hdnea_urls[0]
-    else:
-        video_url = video_urls[0]
-
-    # Decode HTML entities
-    video_url = html_unescape(video_url)
 
     utils.kodilog("RedTube: Playing URL: " + video_url[:150])
     vp.play_from_direct_link("{0}|Referer={1}".format(video_url, url))
@@ -215,9 +228,23 @@ def _extract_best_source(html):
     candidates = []
 
     # Look for mediaDefinition/mediaDefinitions with API endpoints (both singular and plural)
-    # Matches: mediaDefinition:, "mediaDefinition":, mediaDefinitions:, "mediaDefinitions":
-    match = re.search(r'\"?mediaDefinitions?\"?\\s*:\\s*(\\[.*?\\])', html, re.DOTALL)
+    # Matches: "mediaDefinition": or "mediaDefinitions": in JSON
+    # The ?: makes it non-capturing, and we look for the key followed by the array value
+    match = re.search(r'mediaDefinitions?"\s*:\s*(\[.*?\])', html, re.DOTALL)
     utils.kodilog("RedTube: Regex match result: {}".format("FOUND" if match else "NOT FOUND"))
+
+    # Debug: Check if mediaDefinitions is even in the HTML
+    if not match and 'mediaDefinitions' in html:
+        idx = html.find('mediaDefinitions')
+        utils.kodilog("RedTube: mediaDefinitions found in HTML but regex didn't match")
+        utils.kodilog("RedTube: Context: {}".format(html[max(0, idx-100):idx+200]))
+    elif not match:
+        utils.kodilog("RedTube: mediaDefinitions NOT in HTML - checking for clues")
+        if '<title>' in html[:500]:
+            title_match = re.search(r'<title>(.*?)</title>', html[:1000], re.IGNORECASE)
+            if title_match:
+                utils.kodilog("RedTube: Page title: {}".format(title_match.group(1)[:100]))
+
     if match:
         utils.kodilog("RedTube: Captured JSON: {}".format(match.group(1)[:200]))
         try:
@@ -268,10 +295,14 @@ def _extract_best_source(html):
         for src in re.findall(r'<source[^>]+src=[\"\\\']([^\"\\\']+)', html, re.IGNORECASE):
             if any(ext in src for ext in ('.mp4', '.m3u8')):
                 src = html_unescape(src.replace('\\/', '/'))
-                candidates.append(('', src))
+                # Skip preview/feedback videos (360P with _fb suffix)
+                if '_fb.mp4' not in src:
+                    candidates.append(('', src))
         for src in re.findall(r'https?://[^"\\\']+\.(?:mp4|m3u8)[^"\\\']*', html, re.IGNORECASE):
             src = html_unescape(src.replace('\\/', '/'))
-            candidates.append(('', src))
+            # Skip preview/feedback videos (360P with _fb suffix)
+            if '_fb.mp4' not in src:
+                candidates.append(('', src))
 
     if not candidates:
         utils.kodilog("RedTube: No video sources found")

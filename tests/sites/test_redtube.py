@@ -72,9 +72,9 @@ def test_categories_parses_and_sorts(monkeypatch):
 
     assert [d["name"] for d in dirs] == ["Anal", "Blonde", "MILF"]
     assert [d["url"] for d in dirs] == [
-        "https://www.redtube.com/category/anal",
-        "https://www.redtube.com/category/blonde",
-        "https://www.redtube.com/category/milf",
+        "https://www.redtube.com/redtube/anal",
+        "https://www.redtube.com/redtube/blonde",
+        "https://www.redtube.com/redtube/milf",
     ]
 
 

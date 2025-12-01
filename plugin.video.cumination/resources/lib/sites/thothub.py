@@ -397,6 +397,14 @@ def List(url):
     if nurl:
         if nurl.startswith('/'):
             nurl = urllib_parse.urljoin(site.url, nurl)
+
+        # WORKAROUND: ThotHub has heavy overlap between page 1 and 2 (91% duplicate)
+        # Skip page 2 and go directly to page 3 when on page 1
+        if '/public/2/' in nurl and '/public/' in url and not re.search(r'/public/\d+/', url):
+            # User is on page 1 (/public/) and next is page 2 - skip to page 3 instead
+            nurl = nurl.replace('/public/2/', '/public/3/')
+            utils.kodilog("ThotHub: Skipping page 2 (high overlap), jumping to page 3", xbmc.LOGDEBUG)
+
         site.add_dir('[COLOR hotpink]Next Page...[/COLOR]', nurl, 'List', site.img_next)
 
     utils.eod()

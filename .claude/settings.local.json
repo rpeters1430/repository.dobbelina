@@ -31,7 +31,18 @@
       "WebFetch(domain:www.youporn.com)",
       "Bash(cat:*)",
       "Bash(ruff check:*)",
-      "WebFetch(domain:www.redtube.com)"
+      "WebFetch(domain:www.redtube.com)",
+      "Bash(pip3:*)",
+      "Bash(source:*)",
+      "Bash(ruff:*)",
+      "Bash(playwright --version:*)",
+      "Bash(python -m playwright:*)",
+      "Bash(playwright install:*)",
+      "Bash(playwright install-deps:*)",
+      "Bash(python:*)",
+      "Bash(sudo apt-get update:*)",
+      "Bash(sudo apt-get install:*)",
+      "Bash(dpkg:*)"
     ],
     "deny": [],
     "ask": []
