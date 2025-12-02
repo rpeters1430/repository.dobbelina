@@ -48,14 +48,23 @@ def List(url):
         if not videopage:
             continue
 
-        # Get name, removing any span tags
-        name_text = utils.safe_get_text(link)
-        # Remove span content if present
-        for span in link.find_all('span'):
-            span.decompose()
-        name = utils.safe_get_text(link)
+        # Try multiple sources for the title
+        name = utils.safe_get_attr(link, 'title')
         if not name:
-            name = name_text
+            # Look for title in item structure
+            title_tag = item.select_one('.title, h2, h3, .post-title, .entry-title')
+            name = utils.safe_get_text(title_tag)
+        if not name:
+            # Get from link text, but create a copy to avoid modifying original
+            link_copy = str(link)
+            # Remove span tags from copy
+            link_copy = re.sub(r'<span[^>]*>.*?</span>', '', link_copy, flags=re.DOTALL)
+            # Parse the cleaned HTML
+            from bs4 import BeautifulSoup
+            cleaned_link = BeautifulSoup(link_copy, 'html.parser')
+            name = utils.safe_get_text(cleaned_link)
+        if not name:
+            name = 'Video'
         name = utils.cleantext(name)
 
         img_tag = item.select_one('img')
@@ -84,23 +93,37 @@ def List2(url):
     listhtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(listhtml)
 
-    # Find all article items
+    # Try multiple selectors for items
     items = soup.select('article')
+    if not items:
+        # Fallback to recent-item selector like in List()
+        items = soup.select('div.recent-item, article.recent-item')
+    if not items:
+        # Another fallback for post entries
+        items = soup.select('div.post, div[class*="post"], div.entry')
 
     for item in items:
-        title_div = item.select_one('div.title, h2.title, div[class*="title"]')
-        if not title_div:
-            continue
-
-        link = title_div.select_one('a')
+        # Try to find link - multiple approaches
+        link = None
+        title_div = item.select_one('div.title, h2.title, h2, h3, div[class*="title"]')
+        if title_div:
+            link = title_div.select_one('a')
+        if not link:
+            link = item.select_one('a')
         if not link:
             continue
 
         iurl = utils.safe_get_attr(link, 'href')
-        name = utils.safe_get_text(link)
-
-        if not iurl or not name:
+        if not iurl:
             continue
+
+        # Try multiple sources for name
+        name = utils.safe_get_attr(link, 'title')
+        if not name:
+            name = utils.safe_get_text(title_div) if title_div else utils.safe_get_text(link)
+
+        if not name:
+            name = 'Video'
 
         img_tag = item.select_one('img')
         img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
@@ -131,14 +154,35 @@ def Playvid(url, name, download=None):
     videourl = ''
 
     videopage = utils.getHtml(url, site.url)
-    links = re.compile(r'''href="([^"]+)"\s*class="external.+?blank">.*?(?://|\.)([^/]+)''', re.DOTALL | re.IGNORECASE).findall(videopage)
+    soup = utils.parse_html(videopage)
+
+    # Try BeautifulSoup approach first for external links
+    external_links = soup.select('a.external[target="_blank"], a[class*="external"]')
+    links = {}
+    for ext_link in external_links:
+        link_url = utils.safe_get_attr(ext_link, 'href')
+        if link_url and vp.resolveurl.HostedMediaFile(link_url):
+            # Extract host from URL
+            from six.moves import urllib_parse
+            parsed = urllib_parse.urlparse(link_url)
+            host = parsed.netloc.replace('www.', '')
+            links[host] = link_url
+
     if links:
-        links = {host: link for link, host in links if vp.resolveurl.HostedMediaFile(link)}
         videourl = utils.selector('Select link', links)
-    else:
-        r = re.search(r'<iframe\s*loading="lazy"\s*src="([^"]+)', videopage)
-        if r:
-            videourl = r.group(1)
+
+    # Fallback to regex patterns
+    if not videourl:
+        patterns = [
+            r'''href="([^"]+)"\s*class="external''',
+            r'<iframe[^>]*\s+src="([^"]+)"',
+            r'<iframe[^>]*\s+loading="lazy"\s+src="([^"]+)"'
+        ]
+        for pattern in patterns:
+            match = re.search(pattern, videopage, re.DOTALL | re.IGNORECASE)
+            if match:
+                videourl = match.group(1)
+                break
 
     if not videourl:
         utils.notify('Oh Oh', 'No Videos found')

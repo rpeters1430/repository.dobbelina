@@ -38,11 +38,24 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url)
+    try:
+        listhtml = utils.getHtml(url)
+    except Exception as e:
+        utils.kodilog('Cambro List error fetching URL: ' + str(e))
+        utils.notify('Error', 'Could not load page')
+        return
+
+    if not listhtml:
+        utils.notify('Error', 'Empty response from site')
+        return
+
     soup = utils.parse_html(listhtml)
 
     seen = set()
     items = soup.select('div.item')
+    if not items:
+        utils.kodilog('Cambro: No items found with selector div.item')
+
     for item in items:
         classes = [cls.lower() for cls in item.get('class', [])]
         if any('private' in cls for cls in classes):

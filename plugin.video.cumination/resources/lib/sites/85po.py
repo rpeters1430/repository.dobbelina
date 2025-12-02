@@ -89,7 +89,8 @@ def List(url):
 
         site.add_download_link(name, videourl, 'Playvid', img, name, contextm=cm)
 
-    # Pagination
+    # Pagination - try async first, then fallback to standard
+    pagination_added = False
     active_page = soup.select_one('a.active')
     next_link = soup.select_one('a.next')
 
@@ -127,8 +128,21 @@ def List(url):
                     cm = [('[COLOR violet]Goto Page #[/COLOR]', 'RunPlugin(' + cm_page + ')')]
 
                     site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + lastp + ')', nurl, 'List', site.img_next, contextm=cm)
+                    pagination_added = True
             except (ValueError, AttributeError):
                 pass
+
+    # Fallback: standard pagination
+    if not pagination_added:
+        # Try finding pagination div and next link
+        pagination = soup.select_one('div.pagination, nav.pagination, .pager')
+        if pagination:
+            next_link = pagination.select_one('a.next, a[rel="next"], li.next a')
+            if next_link:
+                next_href = utils.safe_get_attr(next_link, 'href')
+                if next_href:
+                    next_url = urllib_parse.urljoin(url, next_href)
+                    site.add_dir('[COLOR hotpink]Next Page...[/COLOR]', next_url, 'List', site.img_next)
 
     utils.eod()
 

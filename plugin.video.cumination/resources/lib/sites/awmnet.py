@@ -114,12 +114,18 @@ def List(url):
     # Find all video items with item-link class
     items = soup.select('a.item-link, a[class*="item-link"]')
 
+    seen = set()
     for item in items:
         videourl = utils.safe_get_attr(item, 'href')
         name = utils.safe_get_attr(item, 'title')
 
         if not videourl or not name:
             continue
+
+        # Skip duplicates
+        if videourl in seen:
+            continue
+        seen.add(videourl)
 
         img_tag = item.select_one('img')
         thumb = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
