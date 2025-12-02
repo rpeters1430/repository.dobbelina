@@ -18,8 +18,6 @@
 
 import json
 import re
-from html import unescape
-from uuid import uuid4
 
 from six.moves import urllib_parse
 
@@ -34,23 +32,9 @@ site = AdultSite(
     'archivebate'
 )
 
-LIVEWIRE_BASE = urllib_parse.urljoin(site.url, 'livewire/message/')
-SEARCH_API = urllib_parse.urljoin(site.url, 'api/v1/search')
 POSTS_API = urllib_parse.urljoin(site.url, 'wp-json/wp/v2/posts')
 CATEGORIES_API = urllib_parse.urljoin(site.url, 'wp-json/wp/v2/categories')
 POSTS_PER_PAGE = 30
-
-LIVEWIRE_HEADERS = {
-    'Content-Type': 'application/json',
-    'X-Livewire': 'true',
-    'X-Requested-With': 'XMLHttpRequest',
-    'Accept': 'application/json, text/javascript, */*; q=0.01',
-}
-
-SEARCH_HEADERS = {
-    'X-Requested-With': 'XMLHttpRequest',
-    'Accept': 'application/json, text/javascript, */*; q=0.01'
-}
 
 
 @site.register(default_mode=True)
@@ -61,105 +45,104 @@ def Main():
 
 
 @site.register()
-def ListVideos(url=None):
-    """List videos using Livewire component."""
-    page_url = url or site.url
+def ListVideos(url=None, page=None):
+    """List videos using the WordPress posts API."""
+
+    current_page = _resolve_page(url, page)
+    api_url = _build_posts_url(url, current_page)
+    response = utils.getHtml(api_url, site.url)
+
+    if not response:
+        utils.notify('Nothing found')
+        utils.eod()
+        return
 
     try:
-        # Get Livewire snapshot from the page
-        snapshot = _get_livewire_snapshot(page_url)
-        if not snapshot:
-            utils.kodilog('ArchiveBate: Failed to get Livewire snapshot from {0}'.format(page_url))
-            utils.notify('Unable to load page data')
-            utils.eod()
-            return
+        posts = json.loads(response)
+    except ValueError as exc:  # pragma: no cover - defensive logging
+        utils.kodilog('ArchiveBate: Failed to decode posts JSON: {0}'.format(exc))
+        utils.notify('Nothing found')
+        utils.eod()
+        return
 
-        # Call Livewire to get video HTML
-        html = _call_livewire(snapshot)
-        if not html:
-            utils.kodilog('ArchiveBate: Livewire API returned no HTML')
-            utils.notify('Unable to load videos - try again later')
-            utils.eod()
-            return
+    if not isinstance(posts, list):
+        utils.kodilog('ArchiveBate: Unexpected posts payload type: {0}'.format(type(posts)))
+        utils.notify('Nothing found')
+        utils.eod()
+        return
 
-        # Parse the video items
-        soup = utils.parse_html(html)
-        items = _parse_video_items(soup)
+    if not posts:
+        utils.notify('Nothing found')
+        utils.eod()
+        return
 
-        if not items:
-            utils.kodilog('ArchiveBate: No videos parsed from HTML')
-            utils.notify('No videos found')
-            utils.eod()
-            return
+    for post in posts:
+        title = utils.cleantext(_get_nested(post, ['title', 'rendered']))
+        url = post.get('link', '')
+        thumb = _select_thumb(post)
+        description = utils.cleanhtml(_get_nested(post, ['excerpt', 'rendered']))
+        duration = _extract_duration(post)
 
-        utils.kodilog('ArchiveBate: Found {0} videos'.format(len(items)))
+        site.add_download_link(title, url, 'Playvid', thumb, description, duration=duration)
 
-        for item in items:
-            site.add_download_link(
-                item['title'],
-                item['url'],
-                'Playvid',
-                item['thumb'],
-                item['description'],
-                duration=item.get('duration', '')
-            )
-
-        # Check for next page
-        next_url = _find_next_page(soup, page_url)
-        if next_url:
-            page_num = _extract_page_number(next_url)
-            label = '[COLOR hotpink]Next Page ({})[/COLOR]'.format(page_num)
-            site.add_dir(label, next_url, 'ListVideos', site.img_next)
-
-    except Exception as e:
-        utils.kodilog('ArchiveBate: Unexpected error in ListVideos: {0}'.format(str(e)))
-        utils.notify('Error loading videos')
+    if len(posts) >= POSTS_PER_PAGE:
+        next_page = current_page + 1
+        label = '[COLOR hotpink]Next Page ({})[/COLOR]'.format(next_page)
+        next_url = _build_posts_url(url or site.url, next_page)
+        site.add_dir(label, next_url, 'ListVideos', site.img_next)
 
     utils.eod()
 
 
 @site.register()
 def Search(url=None, keyword=None):
-    """Search for videos."""
+    """Search for videos via the posts API."""
     if not keyword:
         site.search_dir(url or site.url, 'Search')
         return
 
-    # Build search URL
-    search_url = '{0}?query={1}'.format(site.url, urllib_parse.quote_plus(keyword))
+    search_url = _build_posts_url(url or site.url, search=keyword)
     ListVideos(search_url)
 
 
 @site.register()
 def Categories(url=None):
-    """List platform categories from homepage."""
-    page_url = url or site.url
-    html = utils.getHtml(page_url, site.url)
-    if not html:
+    """List categories from the WordPress categories API."""
+    api_url = url or CATEGORIES_API
+    response = utils.getHtml(api_url, site.url)
+
+    if not response:
         utils.notify('Unable to load categories')
         utils.eod()
         return
 
-    soup = utils.parse_html(html)
+    try:
+        categories = json.loads(response)
+    except ValueError as exc:  # pragma: no cover - defensive logging
+        utils.kodilog('ArchiveBate: Failed to decode categories JSON: {0}'.format(exc))
+        utils.notify('Unable to load categories')
+        utils.eod()
+        return
 
-    # Find platform/category links (hashtags)
-    category_links = soup.select('a[href*="/platform/"]')
+    if not isinstance(categories, list):
+        utils.kodilog('ArchiveBate: Unexpected categories payload type: {0}'.format(type(categories)))
+        utils.notify('Unable to load categories')
+        utils.eod()
+        return
 
-    if not category_links:
+    if not categories:
         utils.notify('No categories found')
         utils.eod()
         return
 
-    seen = set()
-    for link in category_links:
-        cat_url = _absolute_url(utils.safe_get_attr(link, 'href'))
-        cat_name = utils.safe_get_text(link).strip()
+    for category in categories:
+        cat_id = category.get('id')
+        name = category.get('name', '').strip()
+        count = category.get('count', 0)
 
-        if cat_url and cat_url not in seen:
-            seen.add(cat_url)
-            # Clean up hashtag formatting
-            display_name = cat_name.replace('#', '').title()
-            site.add_dir('[COLOR hotpink]{0}[/COLOR]'.format(display_name), cat_url, 'ListVideos', site.img_cat)
+        label = '[COLOR hotpink]{0} ({1})[/COLOR]'.format(name, count)
+        cat_url = '{0}?categories={1}&page=1'.format(POSTS_API, cat_id)
+        site.add_dir(label, cat_url, 'ListVideos', site.img_cat)
 
     utils.eod()
 
@@ -176,7 +159,7 @@ def _get_nested(data, path, default=''):
         if not isinstance(node, dict):
             return default
         node = node.get(key, default)
-    return node or default
+    return node if node is not None else default
 
 
 def _select_thumb(post):
@@ -198,177 +181,57 @@ def _select_thumb(post):
     return thumb
 
 
-def _get_duration(post):
+def _build_posts_url(url, page=None, search=None):
+    """Construct a posts API URL with pagination and optional search."""
+    base_url = url or POSTS_API
+    parsed = urllib_parse.urlparse(base_url)
+    if not parsed.path or parsed.path == '/':
+        api_path = urllib_parse.urlparse(POSTS_API).path
+        parsed = parsed._replace(path=api_path)
+    params = dict(urllib_parse.parse_qsl(parsed.query, keep_blank_values=True))
+    params.setdefault('per_page', str(POSTS_PER_PAGE))
+    if page is None:
+        try:
+            page_value = int(params.get('page', 1))
+        except (TypeError, ValueError):
+            page_value = 1
+    else:
+        try:
+            page_value = int(page)
+        except (TypeError, ValueError):
+            page_value = 1
+    params['page'] = str(page_value)
+    if search:
+        params['search'] = search
+    query = urllib_parse.urlencode(params)
+    return urllib_parse.urlunparse(parsed._replace(query=query))
+
+
+def _extract_duration(post):
+    """Pull duration from the ACF field or rendered content."""
     acf = post.get('acf') or {}
     duration = acf.get('duration')
     if duration:
         return duration
-    content = utils.cleantext(_get_nested(post, ['content', 'rendered']))
-    match = re.search(r'(\d{1,2}:\d{2})', content)
+
+    rendered = utils.cleantext(_get_nested(post, ['content', 'rendered'])) or ''
+    match = re.search(r'(\d{1,2}:\d{2})', rendered)
     return match.group(1) if match else ''
 
 
-def _get_livewire_snapshot(page_url):
-    html = utils._getHtml(page_url, site.url)  # pylint: disable=protected-access
-    if not html:
-        return None
-
-    soup = utils.parse_html(html)
-    section = soup.find('section', attrs={'wire:init': True, 'wire:initial-data': True})
-    if not section:
-        return None
-
+def _resolve_page(url, page=None):
     try:
-        initial = json.loads(unescape(section.get('wire:initial-data', '{}')))
-    except ValueError:
-        return None
-
-    fingerprint = initial.get('fingerprint') or {}
-    server_memo = initial.get('serverMemo') or {}
-    component = fingerprint.get('name')
-    csrf_tag = soup.find('meta', attrs={'name': 'csrf-token'})
-    csrf_token = csrf_tag.get('content') if csrf_tag else ''
-    method = section.get('wire:init') or 'loadVideos'
-
-    if not component or not csrf_token:
-        return None
-
-    return {
-        'page_url': page_url,
-        'component': component,
-        'fingerprint': fingerprint,
-        'serverMemo': server_memo,
-        'method': method,
-        'csrf': csrf_token
-    }
-
-
-def _call_livewire(snapshot):
-    post_url = urllib_parse.urljoin(LIVEWIRE_BASE, snapshot['component'])
-    payload = {
-        'fingerprint': snapshot['fingerprint'],
-        'serverMemo': snapshot['serverMemo'],
-        'updates': [{
-            'type': 'callMethod',
-            'payload': {
-                'id': uuid4().hex[:10],
-                'method': snapshot['method'],
-                'params': []
-            }
-        }]
-    }
-
-    headers = LIVEWIRE_HEADERS.copy()
-    headers['X-CSRF-TOKEN'] = snapshot['csrf']
-    headers['Referer'] = snapshot['page_url']
-
-    try:
-        response = utils.postHtml(
-            post_url,
-            headers=headers,
-            json_data=payload
-        )
-    except Exception as e:
-        utils.kodilog('ArchiveBate: Livewire API error: {0}'.format(str(e)))
-        return None
-
-    if not response:
-        utils.kodilog('ArchiveBate: empty Livewire response')
-        return None
-
-    try:
-        data = json.loads(response)
-    except ValueError as e:
-        utils.kodilog('ArchiveBate: JSON parse error: {0}'.format(str(e)))
-        return None
-
-    effects = data.get('effects') or {}
-    html_content = effects.get('html', '')
-
-    if not html_content:
-        utils.kodilog('ArchiveBate: no HTML in Livewire response')
-
-    return html_content
-
-
-def _parse_video_items(soup):
-    items = []
-    for section in soup.select('section.video_item'):
-        link_tag = section.find('a', href=True)
-        if not link_tag:
-            continue
-        url = _absolute_url(link_tag['href'])
-        video_tag = section.find('video')
-        thumb = video_tag.get('poster') if video_tag else ''
-        if not thumb:
-            img = section.find('img')
-            thumb = img['src'] if img and img.has_attr('src') else ''
-        thumb = _absolute_url(thumb)
-        duration = utils.cleantext(utils.safe_get_text(section.find('div', class_='duration')))
-        info_block = section.find('div', class_='info')
-        creator = utils.safe_get_text(info_block.find('a')) if info_block else ''
-        meta = utils.safe_get_text(info_block.find('p')) if info_block else ''
-        title = creator or 'Video'
-        if meta:
-            title = '{0} - {1}'.format(title, meta)
-        description = meta or ''
-        items.append({
-            'title': title,
-            'url': url,
-            'thumb': thumb or site.image,
-            'description': description,
-            'duration': duration
-        })
-    return items
-
-
-def _find_next_page(soup, current_url):
-    link = soup.select_one('a.page-link[rel="next"]')
-    if not link:
-        candidates = soup.select('a.page-link')
-        for candidate in candidates:
-            label = candidate.get('aria-label', '') or candidate.get_text(strip=True)
-            if label and 'next' in label.lower():
-                link = candidate
-                break
-    if link and link.get('href'):
-        return urllib_parse.urljoin(current_url, link['href'])
-    return None
-
-
-def _extract_page_number(url):
-    parsed = urllib_parse.urlparse(url)
-    params = dict(urllib_parse.parse_qsl(parsed.query, keep_blank_values=True))
-    try:
-        return int(params.get('page', '2'))
+        if page is not None:
+            return int(page)
     except (TypeError, ValueError):
-        return 2
+        return 1
 
+    if url:
+        parsed = urllib_parse.urlparse(url)
+        params = dict(urllib_parse.parse_qsl(parsed.query, keep_blank_values=True))
+        try:
+            return int(params.get('page', 1))
+        except (TypeError, ValueError):
+            return 1
 
-def _search_creators(keyword, page):
-    params = {
-        'query': keyword,
-        'page': page
-    }
-    query = urllib_parse.urlencode(params)
-    url = '{0}?{1}'.format(SEARCH_API, query)
-    headers = SEARCH_HEADERS.copy()
-    response = utils._getHtml(url, site.url, headers=headers)  # pylint: disable=protected-access
-    if not response:
-        return {}
-    try:
-        return json.loads(response)
-    except ValueError:
-        utils.kodilog('ArchiveBate: failed to parse search JSON')
-        return {}
-
-
-def _absolute_url(value, base=None):
-    if not value:
-        return ''
-    value = value.strip()
-    if value.startswith('//'):
-        return 'https:' + value
-    if value.startswith('http'):
-        return value
-    return urllib_parse.urljoin(base or site.url, value)
+    return 1

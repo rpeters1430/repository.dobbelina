@@ -1,4 +1,5 @@
 """Tests for archivebate.com site implementation."""
+import json
 import sys
 from pathlib import Path
 
@@ -150,3 +151,58 @@ def test_search_builds_correct_url(monkeypatch):
     assert len(called_urls) == 1
     assert "search=test+query" in called_urls[0]
     assert "page=1" in called_urls[0]
+
+
+def test_list_videos_respects_page_in_url(monkeypatch):
+    """ListVideos should honor an existing page query and advance correctly."""
+
+    json_data = json.dumps([
+        {
+            "title": {"rendered": f"Video {i}"},
+            "link": f"https://archivebate.com/video-{i}",
+            "excerpt": {"rendered": ""},
+            "acf": {},
+            "content": {"rendered": ""},
+        }
+        for i in range(archivebate.POSTS_PER_PAGE)
+    ])
+
+    requests = []
+    downloads = []
+    dirs = []
+
+    def fake_get_html(url, referer=None):
+        requests.append(url)
+        return json_data
+
+    def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
+        downloads.append({
+            "name": name,
+            "url": url,
+            "mode": mode,
+            "icon": iconimage,
+            "desc": desc,
+            "duration": kwargs.get("duration", ""),
+        })
+
+    def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
+        dirs.append({
+            "name": name,
+            "url": url,
+            "mode": mode,
+        })
+
+    monkeypatch.setattr(archivebate.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(archivebate.site, "add_download_link", fake_add_download_link)
+    monkeypatch.setattr(archivebate.site, "add_dir", fake_add_dir)
+    monkeypatch.setattr(archivebate.utils, "eod", lambda: None)
+
+    archivebate.ListVideos("https://archivebate.com/wp-json/wp/v2/posts?per_page=30&page=2")
+
+    assert requests
+    assert "page=2" in requests[0]
+    assert len(downloads) == archivebate.POSTS_PER_PAGE
+
+    next_pages = [d for d in dirs if "Next Page" in d["name"]]
+    assert len(next_pages) == 1
+    assert "page=3" in next_pages[0]["url"]

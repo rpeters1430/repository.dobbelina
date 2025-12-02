@@ -221,11 +221,12 @@ def Playvid(url, name, download=None):
         items = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(vpage)
         for surl, qual in items:
             qual = '00' if qual == 'preview' else qual
+            if not surl:
+                continue
+
             try:
-                if surl and 'function/' in surl:
-                    surl = kvs_decode(surl, license)
-                if surl:
-                    sources.update({qual: surl})
+                decoded = kvs_decode(surl, license)
+                sources[qual] = decoded or surl
             except Exception as e:
                 utils.kodilog('Error decoding video URL: ' + str(e))
                 continue
