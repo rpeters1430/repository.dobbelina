@@ -45,10 +45,11 @@ def Main():
 
 
 @site.register()
-def ListVideos(url=None, page=1):
+def ListVideos(url=None, page=None):
     """List videos using the WordPress posts API."""
 
-    api_url = _build_posts_url(url, page)
+    current_page = _resolve_page(url, page)
+    api_url = _build_posts_url(url, current_page)
     response = utils.getHtml(api_url, site.url)
 
     if not response:
@@ -60,6 +61,12 @@ def ListVideos(url=None, page=1):
         posts = json.loads(response)
     except ValueError as exc:  # pragma: no cover - defensive logging
         utils.kodilog('ArchiveBate: Failed to decode posts JSON: {0}'.format(exc))
+        utils.notify('Nothing found')
+        utils.eod()
+        return
+
+    if not isinstance(posts, list):
+        utils.kodilog('ArchiveBate: Unexpected posts payload type: {0}'.format(type(posts)))
         utils.notify('Nothing found')
         utils.eod()
         return
@@ -79,7 +86,7 @@ def ListVideos(url=None, page=1):
         site.add_download_link(title, url, 'Playvid', thumb, description, duration=duration)
 
     if len(posts) >= POSTS_PER_PAGE:
-        next_page = int(page) + 1 if str(page).isdigit() else 2
+        next_page = current_page + 1
         label = '[COLOR hotpink]Next Page ({})[/COLOR]'.format(next_page)
         next_url = _build_posts_url(url or site.url, next_page)
         site.add_dir(label, next_url, 'ListVideos', site.img_next)
@@ -94,8 +101,8 @@ def Search(url=None, keyword=None):
         site.search_dir(url or site.url, 'Search')
         return
 
-    search_url = _build_posts_url(url or site.url, page=1, search=keyword)
-    ListVideos(search_url, page=1)
+    search_url = _build_posts_url(url or site.url, search=keyword)
+    ListVideos(search_url)
 
 
 @site.register()
@@ -113,6 +120,12 @@ def Categories(url=None):
         categories = json.loads(response)
     except ValueError as exc:  # pragma: no cover - defensive logging
         utils.kodilog('ArchiveBate: Failed to decode categories JSON: {0}'.format(exc))
+        utils.notify('Unable to load categories')
+        utils.eod()
+        return
+
+    if not isinstance(categories, list):
+        utils.kodilog('ArchiveBate: Unexpected categories payload type: {0}'.format(type(categories)))
         utils.notify('Unable to load categories')
         utils.eod()
         return
@@ -146,7 +159,7 @@ def _get_nested(data, path, default=''):
         if not isinstance(node, dict):
             return default
         node = node.get(key, default)
-    return node or default
+    return node if node is not None else default
 
 
 def _select_thumb(post):
@@ -168,17 +181,30 @@ def _select_thumb(post):
     return thumb
 
 
-def _build_posts_url(url, page, search=None):
+def _build_posts_url(url, page=None, search=None):
     """Construct a posts API URL with pagination and optional search."""
     base_url = url or POSTS_API
     parsed = urllib_parse.urlparse(base_url)
+    if not parsed.path or parsed.path == '/':
+        api_path = urllib_parse.urlparse(POSTS_API).path
+        parsed = parsed._replace(path=api_path)
     params = dict(urllib_parse.parse_qsl(parsed.query, keep_blank_values=True))
     params.setdefault('per_page', str(POSTS_PER_PAGE))
-    params['page'] = str(page)
+    if page is None:
+        try:
+            page_value = int(params.get('page', 1))
+        except (TypeError, ValueError):
+            page_value = 1
+    else:
+        try:
+            page_value = int(page)
+        except (TypeError, ValueError):
+            page_value = 1
+    params['page'] = str(page_value)
     if search:
         params['search'] = search
     query = urllib_parse.urlencode(params)
-    return urllib_parse.urlunparse(parsed._replace(path=parsed.path or '/wp-json/wp/v2/posts', query=query))
+    return urllib_parse.urlunparse(parsed._replace(query=query))
 
 
 def _extract_duration(post):
@@ -188,17 +214,24 @@ def _extract_duration(post):
     if duration:
         return duration
 
-    rendered = _get_nested(post, ['content', 'rendered']) or ''
+    rendered = utils.cleantext(_get_nested(post, ['content', 'rendered'])) or ''
     match = re.search(r'(\d{1,2}:\d{2})', rendered)
     return match.group(1) if match else ''
 
 
-def _absolute_url(value, base=None):
-    if not value:
-        return ''
-    value = value.strip()
-    if value.startswith('//'):
-        return 'https:' + value
-    if value.startswith('http'):
-        return value
-    return urllib_parse.urljoin(base or site.url, value)
+def _resolve_page(url, page=None):
+    try:
+        if page is not None:
+            return int(page)
+    except (TypeError, ValueError):
+        return 1
+
+    if url:
+        parsed = urllib_parse.urlparse(url)
+        params = dict(urllib_parse.parse_qsl(parsed.query, keep_blank_values=True))
+        try:
+            return int(params.get('page', 1))
+        except (TypeError, ValueError):
+            return 1
+
+    return 1
