@@ -3,7 +3,7 @@ from tests.conftest import read_fixture
 
 
 def test_list_parses_video_items_and_next(monkeypatch):
-    html = read_fixture('eporner_list.html')
+    html = read_fixture('eporner/list.html')
     downloads = []
     dirs = []
 
