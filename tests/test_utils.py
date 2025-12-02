@@ -26,3 +26,39 @@ def test_safe_get_text_strips_whitespace():
 def test_safe_get_helpers_return_defaults_when_missing():
     assert utils.safe_get_attr(None, 'href', ['data-href'], default='missing') == 'missing'
     assert utils.safe_get_text(None, default='missing') == 'missing'
+
+
+def test_prefquality_prefers_best_quality_with_aliases(monkeypatch):
+    monkeypatch.setattr(utils.addon, '_settings', {**utils.addon._settings, 'qualityask': '1'})
+
+    sources = {
+        '4k': 'https://cdn.example.com/video-4k.mp4',
+        '1080p60': 'https://cdn.example.com/video-1080p60.mp4',
+        '720p': 'https://cdn.example.com/video-720p.mp4',
+    }
+
+    selected = utils.prefquality(sources)
+
+    assert selected == 'https://cdn.example.com/video-1080p60.mp4'
+
+
+def test_prefquality_defers_to_selector_when_configured(monkeypatch):
+    monkeypatch.setattr(utils.addon, '_settings', {**utils.addon._settings, 'qualityask': '4'})
+
+    called = {}
+
+    def fake_selector(prompt, items, sort_by=None, reverse=False):
+        called['prompt'] = prompt
+        called['sort_by'] = sort_by
+        called['reverse'] = reverse
+        return 'picked'
+
+    monkeypatch.setattr(utils, 'selector', fake_selector)
+
+    result = utils.prefquality({'360p': 'low', '720p': 'mid'}, sort_by=lambda k: k, reverse=True)
+
+    assert result == 'picked'
+    assert called['prompt'] == utils.i18n('pick_qual')
+    assert called['reverse'] is True
+    assert callable(called['sort_by'])
+    assert called['sort_by']('key') == 'key'
