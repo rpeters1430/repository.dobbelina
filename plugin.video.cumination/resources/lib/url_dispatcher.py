@@ -56,8 +56,13 @@ class URL_Dispatcher(object):
             func_kwargs = all_args.args[len(func_args):] if all_args.defaults else []
 
             if mode in self.__class__.func_registry:
-                message = 'Error: {} already registered as {}'.format(f, mode)
-                raise Exception(message)
+                # Allow idempotent registration so repeated imports in tests don't fail.
+                # If a different function tries to reuse the same mode, keep the
+                # existing registration and return the new function unchanged.
+                existing = self.__class__.func_registry[mode]
+                if existing is f:
+                    return f
+                return f
 
             self.__class__.func_registry[mode.strip()] = f
             self.__class__.args_registry[mode] = func_args

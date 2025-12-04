@@ -1,16 +1,7 @@
 """Tests for Motherless site implementation."""
-import sys
 from pathlib import Path
 
-import pytest
-
-ROOT = Path(__file__).resolve().parents[2]
-PLUGIN_ROOT = ROOT / "plugin.video.cumination"
-if str(PLUGIN_ROOT) not in sys.path:
-    sys.path.insert(0, str(PLUGIN_ROOT))
-
 from resources.lib.sites import motherless
-from tests.conftest import read_fixture
 
 FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "motherless"
 

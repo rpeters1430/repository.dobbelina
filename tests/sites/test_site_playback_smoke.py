@@ -1,9 +1,12 @@
+import json
 import re
+
 import pytest
 
 from tests.conftest import read_fixture
 
 from resources.lib.sites import (
+    pornhub,
     xvideos,
     xnxx,
     porntrex,
@@ -15,6 +18,10 @@ from resources.lib.sites import (
     watchporn,
     hqporner,
     tnaflix,
+    tube8,
+    redtube,
+    youjizz,
+    youporn,
 )
 
 
@@ -42,6 +49,21 @@ PLAY_CASES = [
         "url": "https://www.xvideos.com/video123",
         "fixture": None,
         "expect": lambda rec, url: rec.play_from_site_link == url,
+    },
+    {
+        "name": "pornhub",
+        "module": pornhub,
+        "func": "Playvid",
+        "url": "https://www.pornhub.com/view_video.php?viewkey=ph123",
+        "expect": lambda rec, url: rec.play_from_site_link == url,
+    },
+    {
+        "name": "youporn",
+        "module": youporn,
+        "func": "Playvid",
+        "url": "https://www.youporn.com/watch/abc123",
+        "fixture": "youporn_play.html",
+        "expect": lambda rec, url: rec.play_from_direct_link == "https://cdn.youporn.com/videos/vid720.mp4|Referer=https://www.youporn.com/watch/abc123",
     },
     {
         "name": "xnxx",
@@ -128,6 +150,49 @@ PLAY_CASES = [
         "fixture": "hqporner_play.html",
         "invoke": lambda module, recorder: recorder.__setattr__("play_from_direct_link", "https://cdn.hqporner.com/vid720.mp4"),
         "expect": lambda rec, url: rec.play_from_direct_link == "https://cdn.hqporner.com/vid720.mp4",
+    },
+    {
+        "name": "tube8",
+        "module": tube8,
+        "func": "Playvid",
+        "url": "https://www.tube8.com/video/abc123",
+        "fixture": "tube8_play.html",
+        "extra_patches": lambda module, monkeypatch: (
+            monkeypatch.setattr(module, "_extract_best_source", lambda html: "https://t8cdn.com/videos/vid720.mp4"),
+            monkeypatch.setattr(
+                module.utils,
+                "getHtml",
+                lambda url, ref=None, headers=None: json.dumps(
+                    [
+                        {"quality": "240", "videoUrl": "https://t8cdn.com/videos/vid240.mp4"},
+                        {"quality": "720", "videoUrl": "https://t8cdn.com/videos/vid720.mp4"},
+                    ]
+                )
+                if "t8cdn.com/media/mp4" in url
+                else read_fixture("tube8_play.html"),
+            ),
+        ),
+        "expect": lambda rec, url: rec.play_from_direct_link == "https://t8cdn.com/videos/vid720.mp4|Referer=https://www.tube8.com/video/abc123",
+    },
+    {
+        "name": "redtube",
+        "module": redtube,
+        "func": "Playvid",
+        "url": "https://www.redtube.com/123",
+        "fixture": "redtube_play.html",
+        "expect": lambda rec, url: rec.play_from_direct_link == "https://rtcdn.redtube.com/media/vid720.mp4|Referer=https://www.redtube.com/123",
+        "extra_patches": lambda module, monkeypatch: (
+            monkeypatch.setattr(module.utils, "getHtml", lambda url, ref=None, headers=None: read_fixture("redtube_play.html")),
+            monkeypatch.setattr(module.utils, "kodilog", lambda *a, **k: None),
+        ),
+    },
+    {
+        "name": "youjizz",
+        "module": youjizz,
+        "func": "Playvid",
+        "url": "https://www.youjizz.com/videos/sample-123456.html",
+        "fixture": "youjizz_play.html",
+        "expect": lambda rec, url: rec.play_from_direct_link == "https://cdne.youjizz.com/vid720.mp4|Referer=https://www.youjizz.com/videos/sample-123456.html",
     },
     {
         "name": "tnaflix",
