@@ -868,6 +868,8 @@ def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='ret
         req.add_header('Referer', referer)
     if data:
         req.add_header('Content-Length', len(data))
+    
+    response = None
     try:
         if ignoreCertificateErrors:
             ctx = ssl.create_default_context()
@@ -877,6 +879,7 @@ def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='ret
         else:
             response = urlopen(req, timeout=30)
     except urllib_error.HTTPError as e:
+        print(e)
         if error is True:
             response = e
         else:
@@ -944,11 +947,12 @@ def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='ret
             elif 400 < e.code < 500:
                 if not e.code == 403:
                     notify(i18n('oh_oh'), i18n('not_exist'))
-                raise
+                return ''
             else:
                 notify(i18n('oh_oh'), i18n('site_down'))
-                raise
+                return ''
     except urllib_error.URLError as e:
+        print(e)
         if 'return' in error:
             notify(i18n('oh_oh'), i18n('slow_site'))
             xbmc.log(str(e), xbmc.LOGDEBUG)
@@ -956,13 +960,17 @@ def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='ret
         else:
             raise
     except Exception as e:
+        print(e)
         if 'SSL23_GET_SERVER_HELLO' in str(e):
             notify(i18n('oh_oh'), i18n('python_old'))
-            raise
+            return ''
         else:
             notify(i18n('oh_oh'), i18n('site_down'))
-            raise
+            return ''
         return None
+
+    if not response:
+        return ''
 
     cencoding = response.info().get('Content-Encoding', '')
     if cencoding.lower() == 'gzip':

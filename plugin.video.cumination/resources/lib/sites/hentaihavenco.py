@@ -25,8 +25,8 @@ site = AdultSite('hentaihavenc', '[COLOR hotpink]Hentaihaven[/COLOR]', 'https://
 
 @site.register(default_mode=True)
 def Main():
-    # site.add_dir('[COLOR hotpink]Categories[/COLOR]', site.url + 'genres/', 'Categories', site.img_cat)
-    # site.add_dir('[COLOR hotpink]Series[/COLOR]', site.url + 'series/', 'Series', site.img_cat, section='Home')
+    site.add_dir('[COLOR hotpink]Categories[/COLOR]', site.url + 'genres/', 'Categories', site.img_cat)
+    site.add_dir('[COLOR hotpink]Series[/COLOR]', site.url + 'series/', 'Series', site.img_cat)
     site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'search/?q=', 'Search', site.img_search)
     List(site.url)
     utils.eod()
@@ -35,14 +35,25 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(r'class="a_item" href="([^"]+)".+?data-src="([^"]+).+?video_title">([^<]+).+?', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for videopage, img, name in match:
+    soup = utils.parse_html(listhtml)
+    for item in soup.select('a.a_item'):
+        videopage = item['href']
+        img = item.select_one('img')['data-src']
+        name = item.select_one('.video_title').text
         name = utils.cleantext(name)
         site.add_download_link(name, site.url[:-1] + videopage, 'Playvid', site.url[:-1] + img, name)
 
-    page = re.compile(r"class='page-link' href='([^']+page=(\d+))'>Next<", re.DOTALL | re.IGNORECASE).search(listhtml)
-    if page:
-        site.add_dir('[COLOR hotpink]Next Page[/COLOR] ({0})'.format(page.group(2)), site.url[:-1] + page.group(1), 'List', site.img_next)
+    next_page_link = None
+    for page_link in soup.select("a.page-link"):
+        if page_link.text == 'Next':
+            next_page_link = page_link
+            break
+            
+    if next_page_link:
+        page_num_match = re.search(r'page=(\d+)', next_page_link['href'])
+        if page_num_match:
+            page_num = page_num_match.group(1)
+            site.add_dir('[COLOR hotpink]Next Page[/COLOR] ({0})'.format(page_num), site.url[:-1] + next_page_link['href'], 'List', site.img_next)
 
     utils.eod()
 
@@ -52,25 +63,29 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videopage = utils.getHtml(url, site.url)
-    surl = re.compile(r'<iframe allowfullscreen.+?src="([^"]*)', re.DOTALL | re.IGNORECASE).search(videopage)
-    if surl:
-        surl = surl.group(1)
+    soup = utils.parse_html(videopage)
+    iframe = soup.select_one('iframe[src*="nhplayer.com"]')
+    if iframe:
+        surl = iframe['src']
         if 'nhplayer.com' in surl:
             videopage = utils.getHtml(surl, site.url)
-            surl = re.compile(r'<li data-id="([^"]+)').search(videopage)
-            if surl:
-                surl = surl.group(1)
+            soup = utils.parse_html(videopage)
+            data_id_li = soup.select_one('li[data-id]')
+            if data_id_li:
+                surl = data_id_li['data-id']
                 if surl.startswith('/'):
                     surl = 'https://nhplayer.com' + surl
-                    videohtml = utils.getHtml(surl, site.url)
-                    vp.direct_regex = r'file:\s*"([^"]+)"'
-                    vp.play_from_html(videohtml)
+                videohtml = utils.getHtml(surl, site.url)
+                match = re.search(r'file:\s*"([^"]+)"', videohtml)
+                if match:
+                    vp.play_from_direct_link(match.group(1))
                     vp.progress.close()
                     return
             else:
                 vp.progress.close()
                 utils.notify('Oh oh', 'Couldn\'t find a playable link')
-        vp.play_from_link_to_resolve(surl)
+        else:
+            vp.play_from_link_to_resolve(surl)
     else:
         vp.progress.close()
         utils.notify('Oh oh', 'Couldn\'t find a playable link')
@@ -80,8 +95,16 @@ def Playvid(url, name, download=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(r'class="cat_item" href="([^"]+)".+?url\(([^\)]+)\).+?cat_ttl">([^<]+).+?cat_dsc">([^<]+).+?fa-video"></i>\s*(\d+)', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, image, name, desc, count in match:
+    soup = utils.parse_html(cathtml)
+    for item in soup.select('a.cat_item'):
+        catpage = item['href']
+        style = item.select_one('.cat_bg')['style']
+        image_match = re.search(r"url\(([^)]+)\)", style)
+        image = image_match.group(1) if image_match else ''
+        name = item.select_one('.cat_ttl').text
+        desc = item.select_one('.cat_dsc').text
+        count = item.select_one('.cat_count').text.strip()
+        
         name = utils.cleantext(name)
         if count:
             name += " [COLOR orange][I]{0} videos[/I][/COLOR]".format(count)
@@ -90,17 +113,27 @@ def Categories(url):
 
 
 @site.register()
-def Series(url, section):
+def Series(url, section=None):
     cathtml = utils.getHtml(url, site.url)
-    if section == 'Home':
-        match = re.compile(r'<a\s*class="c-htr3[^>]+?href="#l-.*?">([^<]+)', re.DOTALL | re.IGNORECASE).findall(cathtml)
-        for alpha in match:
-            site.add_dir(alpha, url, 'Series', '', section=alpha)
-    else:
-        section = r'\d' if section == "#" else section
-        match = re.compile(r'<a\s*class="c-htr3[^>]+?href="(http[^"]+)">({0}[^<]+)'.format(section), re.DOTALL | re.IGNORECASE).findall(cathtml)
-        for spage, name in match:
-            site.add_dir(name, spage, 'List', '')
+    soup = utils.parse_html(cathtml)
+    for item in soup.select('a.vc_item'):
+        series_url = item['href']
+        name = item.select_one('.vcat_title').text
+        img = item.select_one('.vcat_poster img')['data-src']
+        site.add_dir(name, site.url[:-1] + series_url, 'List', site.url[:-1] + img)
+    
+    next_page_link = None
+    for page_link in soup.select("a.page-link"):
+        if page_link.text == 'Next':
+            next_page_link = page_link
+            break
+            
+    if next_page_link:
+        page_num_match = re.search(r'page=(\d+)', next_page_link['href'])
+        if page_num_match:
+            page_num = page_num_match.group(1)
+            site.add_dir('[COLOR hotpink]Next Page[/COLOR] ({0})'.format(page_num), site.url[:-1] + next_page_link['href'], 'Series', site.img_next)
+
     utils.eod()
 
 

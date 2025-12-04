@@ -12,3 +12,6 @@ AGENTS.md
 .pytest_cache/
 .claude/
 .venv/
+
+.gemini/
+gha-creds-*.json

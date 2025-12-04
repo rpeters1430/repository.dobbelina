@@ -1,0 +1,325 @@
+[
+    {
+        "url": "https://hanime.tv/videos/hentai/overflow-1",
+        "headers": {
+            "upgrade-insecure-requests": "1",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Linux\""
+        }
+    },
+    {
+        "url": "https://hanime.tv/404",
+        "headers": {
+            "upgrade-insecure-requests": "1",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Linux\""
+        }
+    },
+    {
+        "url": "https://cdn.jsdelivr.net/npm/vuetify@1.0.19/dist/vuetify.min.css",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://cdn.jsdelivr.net/npm/@mdi/font@2.6.95/css/materialdesignicons.min.css",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime.tv/assets/css/app.CPFMR-LU.min.css",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.runtime.min.js",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://cdn.jsdelivr.net/npm/vuetify@1.0.19/dist/vuetify.min.js",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://cdn.jsdelivr.net/npm/vue-lazyload@1.2.6/vue-lazyload.min.js",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://cdn.jsdelivr.net/npm/vue-router@3.6.5/dist/vue-router.min.js",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/js/vendor.0130da3e01eaf5c7d570b6ed1becb5f4.min.js",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://cdn.jsdelivr.net/npm/simplebar@6.3.2/dist/simplebar.min.js",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/vhtv2/806905f.js",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/vhtv2/a37eda4.js",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/vhtv2/b28452f.js",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/vhtv2/css/d4a40ec.css",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/vhtv2/0e77342.js",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/vhtv2/3b5033c.js",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015",
+        "headers": {
+            "origin": "https://hanime.tv",
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/images/marin.png",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/fonts/whitney-400.woff",
+        "headers": {
+            "origin": "https://hanime.tv",
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/fonts/whitney-300.woff",
+        "headers": {
+            "origin": "https://hanime.tv",
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/fonts/whitney-700.woff",
+        "headers": {
+            "origin": "https://hanime.tv",
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/fonts/whitney-500.woff",
+        "headers": {
+            "origin": "https://hanime.tv",
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://cdn.jsdelivr.net/npm/@mdi/font@2.6.95/fonts/materialdesignicons-webfont.woff2?v=2.6.95",
+        "headers": {
+            "origin": "https://hanime.tv",
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://cdn.jsdelivr.net/npm/@mdi/font@2.6.95/css/materialdesignicons.min.css",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/vhtv2/env.json",
+        "headers": {
+            "x-user-license": "",
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "x-time": "undefined",
+            "sec-ch-ua-mobile": "?0",
+            "x-session-token": "",
+            "x-license": "",
+            "x-signature": "undefined",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "accept": "application/json",
+            "x-signature-version": "web2",
+            "content-type": "application/json"
+        }
+    },
+    {
+        "url": "https://cached.freeanimehentai.net/api/v10/search_hvs",
+        "headers": {
+            "x-user-license": "",
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "x-time": "1764649291",
+            "sec-ch-ua-mobile": "?0",
+            "x-session-token": "",
+            "x-license": "",
+            "x-signature": "4b74291d241b5776348fc2f4df71e8954caf43559d492eaf6ae1bd8848f7d9e3",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "accept": "application/json",
+            "x-signature-version": "web2",
+            "content-type": "application/json"
+        }
+    },
+    {
+        "url": "https://hanime-cdn.com/images/logo-100.png",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "sec-ch-ua-mobile": "?0"
+        }
+    },
+    {
+        "url": "https://hanime.tv/cdn-cgi/rum?",
+        "headers": {
+            "sec-ch-ua-platform": "\"Linux\"",
+            "referer": "https://hanime.tv/",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"HeadlessChrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "content-type": "application/json",
+            "sec-ch-ua-mobile": "?0"
+        }
+    }
+]

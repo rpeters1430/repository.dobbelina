@@ -118,6 +118,50 @@ def take_screenshot(
             browser.close()
 
 
+def fetch_with_playwright_and_network(
+    url: str,
+    wait_for: str = 'networkidle',
+    wait_for_selector: Optional[str] = None,
+    timeout: int = 30000,
+    headers: Optional[Dict[str, str]] = None
+) -> (str, list):
+    """
+    Fetch HTML content and network requests using Playwright (headless Chromium).
+    """
+    requests = []
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(
+            user_agent='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+        )
+        context.clear_cookies()
+
+        if headers:
+            context.set_extra_http_headers(headers)
+
+        page = context.new_page()
+        
+        def handle_request(request):
+            requests.append({
+                'url': request.url,
+                'headers': request.headers
+            })
+        
+        page.on('request', handle_request)
+
+        try:
+            page.goto(url, wait_until=wait_for, timeout=timeout)
+
+            if wait_for_selector:
+                page.wait_for_selector(wait_for_selector, timeout=timeout)
+
+            html = page.content()
+
+            return html, requests
+
+        finally:
+            browser.close()
+
 if __name__ == '__main__':
     # Quick test
     html = fetch_with_playwright('https://example.com')
