@@ -53,6 +53,7 @@ def _ensure_kodi_stubs():
                 'setview': '',
                 'duration_in_name': 'false',
                 'quality_in_name': 'false',
+                'qualityask': '0',
             }
 
         def getAddonInfo(self, key):
@@ -194,3 +195,51 @@ _ensure_kodi_stubs()
 def read_fixture(filename):
     """Return the contents of a fixture file from tests/fixtures."""
     return (ROOT / 'tests' / 'fixtures' / filename).read_text(encoding='utf-8')
+
+
+def _block_network_access(*args, **kwargs):
+    raise AssertionError("Network access attempted during tests")
+
+
+# ---------------------------------------------------------------------------
+# Pytest fixtures
+# ---------------------------------------------------------------------------
+
+
+def pytest_configure(config):
+    """Install global network guards for test sessions."""
+    import urllib.request
+
+    # Prevent accidental outbound calls by ensuring the urllib opener raises.
+    urllib.request.urlopen = _block_network_access
+
+
+def pytest_runtest_setup(item):
+    """Ensure resources.lib.utils does not attempt live HTTP requests."""
+    try:
+        import resources.lib.utils as _utils
+
+        _utils.urlopen = _block_network_access
+    except Exception:
+        # Some unit tests import utils late; allow them to patch manually.
+        pass
+
+
+def fixture_mapped_get_html(monkeypatch, module, url_map):
+    """Patch ``module.utils.getHtml`` to return local fixtures.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        module: The site module whose ``utils`` dependency is patched.
+        url_map (dict): Mapping of URL substrings to fixture paths under
+            ``tests/fixtures``.
+    """
+
+    def _fake_get_html(url, *args, **kwargs):
+        for key, fixture_name in url_map.items():
+            if key in url:
+                return read_fixture(fixture_name)
+        raise AssertionError(f"No fixture mapped for URL: {url}")
+
+    monkeypatch.setattr(module.utils, "getHtml", _fake_get_html)
+    return _fake_get_html

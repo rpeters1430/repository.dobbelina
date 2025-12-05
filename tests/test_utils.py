@@ -113,3 +113,62 @@ def test_prefquality_falls_back_to_lowest_when_all_sources_exceed_limit(monkeypa
     }
 
     assert utils.prefquality(sources) == 'https://cdn.example.com/video-720p.mp4'
+
+
+def test_soup_videos_list_handles_missing_soup():
+    site = type('S', (), {'url': 'https://example.com', 'add_download_link': lambda *a, **k: None, 'add_dir': lambda *a, **k: None})()
+
+    result = utils.soup_videos_list(site, None, {'items': '.card'})
+
+    assert result['items'] == 0
+    assert result['skipped'] == 0
+    assert result['pagination'] == {}
+
+
+def test_soup_videos_list_skips_invalid_entries_and_finds_pagination():
+    html = """
+    <div class='card'>
+      <a class='video-link' href='/videos/valid'>
+        <img data-src='//cdn.example.com/valid.jpg' alt=' Valid Title ' />
+        <span class='length'>05:15</span>
+      </a>
+    </div>
+    <div class='card'>
+      <a class='video-link' href=''>
+        <img src='//cdn.example.com/missing.jpg' alt='' />
+      </a>
+    </div>
+    <nav class='pager'>
+      <a class='next' data-href='page/2'>Next »</a>
+    </nav>
+    """
+    soup = utils.parse_html(html)
+    captured = {'videos': [], 'dirs': []}
+
+    class _Site:
+        url = 'https://example.com'
+
+        @staticmethod
+        def add_download_link(name, url, mode, iconimage, desc='', contextm=None, fanart=None, duration='', quality=''):
+            captured['videos'].append({'name': name, 'url': url, 'thumb': iconimage, 'duration': duration})
+
+        @staticmethod
+        def add_dir(name, url, mode, *args, **kwargs):
+            captured['dirs'].append({'name': name, 'url': url, 'mode': mode})
+
+    selectors = {
+        'items': '.card',
+        'url': {'selector': 'a.video-link', 'attr': 'href'},
+        'title': {'selector': 'img', 'attr': 'alt', 'clean': True, 'fallback_selectors': ['a.video-link']},
+        'thumbnail': {'selector': 'img', 'attr': 'data-src', 'fallback_attrs': ['src']},
+        'duration': {'selector': '.length', 'text': True, 'clean': True, 'default': ''},
+        'pagination': {'selector': 'a.next', 'attr': 'data-href', 'text_matches': ['next'], 'base_url': 'https://example.com/list/'},
+    }
+
+    result = utils.soup_videos_list(_Site, soup, selectors)
+
+    assert result['items'] == 1
+    assert result['skipped'] == 1
+    assert captured['videos'][0]['url'] == 'https://example.com/videos/valid'
+    assert captured['videos'][0]['duration'] == '05:15'
+    assert captured['dirs'][0]['url'] == 'https://example.com/list/page/2'
