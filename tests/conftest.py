@@ -2,6 +2,8 @@ import sys
 import types
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_PATH = ROOT / "plugin.video.cumination"
 
@@ -9,8 +11,7 @@ PLUGIN_PATH = ROOT / "plugin.video.cumination"
 if str(PLUGIN_PATH) not in sys.path:
     sys.path.insert(0, str(PLUGIN_PATH))
 
-# Kodi-style scripts rely on positional argv entries provided by Kodi.
-sys.argv = ['plugin.video.cumination', '1', '']
+KODI_ARGV = ['plugin.video.cumination', '1', '']
 
 
 def _ensure_kodi_stubs():
@@ -195,6 +196,17 @@ _ensure_kodi_stubs()
 def read_fixture(filename):
     """Return the contents of a fixture file from tests/fixtures."""
     return (ROOT / 'tests' / 'fixtures' / filename).read_text(encoding='utf-8')
+
+
+@pytest.fixture(autouse=True)
+def _set_kodi_argv(monkeypatch):
+    """Provide minimal argv expected by the addon without clobbering pytest options.
+
+    Kodi plugins expect ``sys.argv`` to contain ``[plugin_id, handle, params]``.
+    Pytest consumes its CLI arguments before fixtures run, so we can safely
+    replace ``sys.argv`` here to satisfy addon expectations in every test.
+    """
+    monkeypatch.setattr(sys, 'argv', KODI_ARGV.copy())
 
 
 def _block_network_access(*args, **kwargs):

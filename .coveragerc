@@ -1,0 +1,9 @@
+[run]
+source = plugin.video.cumination/resources/lib
+
+[report]
+show_missing = True
+omit =
+    */tests/*
+    */test_*.py
+    */__pycache__/*
