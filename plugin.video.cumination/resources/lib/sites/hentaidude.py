@@ -20,6 +20,13 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.sites.soup_spec import SoupSiteSpec
 
+
+def _title_with_episode(title, item):
+    episode = utils.safe_get_text(item.select_one('.btn-link'), default='')
+    if episode:
+        return f"{title} [COLOR pink][I]{episode}[/I][/COLOR]"
+    return title
+
 site = AdultSite(
     "hentaidude",
     "[COLOR hotpink]Hentaidude[/COLOR]",
@@ -39,7 +46,7 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
             "text": True,
             "clean": True,
             "fallback_selectors": [".post-title", None],
-            "transform": lambda title, item: _title_with_episode(title, item),
+            "transform": _title_with_episode,
         },
         "thumbnail": {
             "selector": "img",
@@ -123,6 +130,10 @@ def Playvid(url, name, download=None):
         thumb_parts = thumb_url.rstrip('/').split('/')
         if len(thumb_parts) >= 2:
             stream_id = thumb_parts[-2]
+            if not stream_id:
+                vp.progress.close()
+                utils.notify('Oh Oh', 'No Videos found')
+                return
             videourl = f'https://master-lengs.org/api/v3/hh/{stream_id}/master.m3u8'
             vp.play_from_direct_link(videourl)
             return
@@ -150,15 +161,10 @@ def EpList(url):
             continue
 
         episode = utils.safe_get_text(chapter.select_one('div'), default='').strip()
+        chapter_num = chapter.get('data-chapter')
+        episode_name = episode or (f"Episode {chapter_num}" if chapter_num else utils.safe_get_attr(link, 'href', default=''))
         img = utils.safe_get_attr(chapter.select_one('img'), 'src', ['data-src', 'data-original'])
-        site.add_download_link(episode or utils.safe_get_attr(link, 'href', default=''),
+        site.add_download_link(episode_name,
                                utils.safe_get_attr(link, 'href', default=''), 'Playvid', img)
 
     utils.eod()
-
-
-def _title_with_episode(title, item):
-    episode = utils.safe_get_text(item.select_one('.btn-link'), default='')
-    if episode:
-        return f"{title} [COLOR pink][I]{episode}[/I][/COLOR]"
-    return title

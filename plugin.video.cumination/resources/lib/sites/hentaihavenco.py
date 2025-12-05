@@ -89,8 +89,14 @@ def Playvid(url, name, download=None):
                     surl = 'https://nhplayer.com' + surl
                 videohtml = utils.getHtml(surl, site.url)
                 file_script = utils.parse_html(videohtml)
-                script_text = ''.join(tag.get_text() for tag in file_script.find_all('script')) if file_script else ''
-                match = re.search(r'file:\s*"([^"]+)"', script_text)
+                # BeautifulSoup can't parse JavaScript, so we scan script tags with regex for the file URL.
+                match = None
+                if file_script:
+                    for script in file_script.find_all("script", string=True):
+                        if script.string:
+                            match = re.search(r'file:\s*"([^"]+)"', script.string)
+                            if match:
+                                break
                 if match:
                     vp.play_from_direct_link(match.group(1))
                     vp.progress.close()
@@ -152,8 +158,8 @@ def Series(url, section=None):
     next_page_link = soup.find('a', class_='page-link', string=lambda t: t and 'Next' in t)
     if next_page_link:
         page_num_match = re.search(r'page=(\d+)', utils.safe_get_attr(next_page_link, 'href', default=''))
-        page_label = page_num_match.group(1) if page_num_match else ''
-        site.add_dir('[COLOR hotpink]Next Page[/COLOR] ({0})'.format(page_label), site.url[:-1] + utils.safe_get_attr(next_page_link, 'href', default=''), 'Series', site.img_next)
+        page_label = f" ({page_num_match.group(1)})" if page_num_match else ''
+        site.add_dir(f'[COLOR hotpink]Next Page[/COLOR]{page_label}', site.url[:-1] + utils.safe_get_attr(next_page_link, 'href', default=''), 'Series', site.img_next)
 
     utils.eod()
 
