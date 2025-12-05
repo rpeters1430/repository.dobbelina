@@ -200,7 +200,12 @@ def read_fixture(filename):
 
 @pytest.fixture(autouse=True)
 def _set_kodi_argv(monkeypatch):
-    """Provide minimal argv expected by the addon without clobbering pytest options."""
+    """Provide minimal argv expected by the addon without clobbering pytest options.
+
+    Kodi plugins expect ``sys.argv`` to contain ``[plugin_id, handle, params]``.
+    Pytest consumes its CLI arguments before fixtures run, so we can safely
+    replace ``sys.argv`` here to satisfy addon expectations in every test.
+    """
     monkeypatch.setattr(sys, 'argv', KODI_ARGV.copy())
 
 

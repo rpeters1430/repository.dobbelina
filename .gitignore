@@ -15,3 +15,9 @@ AGENTS.md
 
 .gemini/
 gha-creds-*.json
+
+# Coverage reports
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
