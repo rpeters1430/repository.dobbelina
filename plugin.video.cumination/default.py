@@ -81,8 +81,8 @@ def _handle_custom_site_failure(module_name, error, dependency=None):
 
 
 def load_custom_sites():
-    custom_site_import_results['loaded'] = []
-    custom_site_import_results['failed'] = []
+    custom_site_import_results['loaded'].clear()
+    custom_site_import_results['failed'].clear()
     if addon_get_setting('custom_sites') != 'true':
         return custom_site_import_results
 
@@ -91,7 +91,7 @@ def load_custom_sites():
     for module_name in favorites.enabled_custom_sites():
         try:
             importlib.import_module(module_name)
-        except ModuleNotFoundError as error:
+        except ImportError as error:
             dependency = getattr(error, 'name', None)
             missing_dependency = dependency if dependency and dependency != module_name else None
             _handle_custom_site_failure(module_name, error, dependency=missing_dependency)
@@ -112,25 +112,26 @@ def custom_sites_health():
         utils.textBox('Custom site health', 'No custom sites are enabled.')
         return
 
-    loaded_sites = custom_site_import_results.get('loaded', [])
+    loaded_sites_data = custom_site_import_results.get('loaded', [])
     failed_sites = custom_site_import_results.get('failed', [])
-    failed_names = {failure['module']: failure for failure in failed_sites}
+    loaded_modules = {site['module'] for site in loaded_sites_data}
+    failed_modules = {failure['module'] for failure in failed_sites}
     message_lines = []
 
-    if loaded_sites:
+    if loaded_modules:
         message_lines.append('[B]Loaded custom sites[/B]')
-        for module_name in loaded_sites:
+        for module_name in sorted(loaded_modules):
             title = favorites.get_custom_site_title_by_module(module_name) or module_name
             message_lines.append('• {0}'.format(title))
 
     if failed_sites:
         message_lines.append('[B]Failed to load[/B]')
-        for failure in failed_sites:
+        for failure in sorted(failed_sites, key=lambda x: x['module']):
             title = failure.get('title') or favorites.get_custom_site_title_by_module(failure['module'])
             descriptor = failure['dependency'] if failure.get('dependency') else 'import error'
             message_lines.append('• {0} ({1})'.format(title or failure['module'], descriptor))
 
-    untouched = [m for m in enabled_sites if m not in loaded_sites and m not in failed_names]
+    untouched = sorted([m for m in enabled_sites if m not in loaded_modules and m not in failed_modules])
     if untouched:
         message_lines.append('[B]Not attempted[/B]')
         for module_name in untouched:

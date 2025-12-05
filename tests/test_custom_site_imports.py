@@ -48,3 +48,49 @@ def test_custom_site_import_failure_reports(monkeypatch):
     assert disabled_modules == ['custom.bad']
     assert any('missing_dependency' in body for _, body in textboxes)
     assert any('custom.bad' in log for log in logged_messages)
+
+
+def test_custom_sites_health_display(monkeypatch):
+    import default as plugin_default
+
+    enabled_sites = [
+        'custom.good',
+        'custom.other',
+        'custom.bad',
+        'custom.dep',
+        'custom.untried',
+    ]
+    plugin_default.custom_site_import_results['loaded'] = [
+        {'module': 'custom.other'},
+        {'module': 'custom.good'},
+    ]
+    plugin_default.custom_site_import_results['failed'] = [
+        {'module': 'custom.dep', 'dependency': None, 'title': None},
+        {'module': 'custom.bad', 'dependency': 'missing_dependency', 'title': 'Title custom.bad'},
+    ]
+
+    textboxes = []
+
+    fake_favorites = types.SimpleNamespace(
+        enabled_custom_sites=lambda: enabled_sites,
+        get_custom_site_title_by_module=lambda module: 'Title {0}'.format(module),
+    )
+
+    monkeypatch.setattr(plugin_default, 'favorites', fake_favorites)
+    monkeypatch.setattr(plugin_default.utils, 'textBox', lambda heading, body: textboxes.append((heading, body)))
+
+    plugin_default.custom_sites_health()
+
+    assert textboxes
+    heading, body = textboxes[0]
+    assert heading == 'Custom site health'
+    assert body.split('[CR]') == [
+        '[B]Loaded custom sites[/B]',
+        '• Title custom.good',
+        '• Title custom.other',
+        '[B]Failed to load[/B]',
+        '• Title custom.bad (missing_dependency)',
+        '• Title custom.dep (import error)',
+        '[B]Not attempted[/B]',
+        '• Title custom.untried',
+    ]
