@@ -18,7 +18,7 @@
 
 import re
 
-from kodi_six import xbmc
+import xbmc
 from six.moves import urllib_parse
 
 from resources.lib import utils
@@ -41,6 +41,13 @@ def Main(url):
 def List(url, page=1):
     try:
         listhtml = utils.getHtml(url, '')
+        if not listhtml:
+            utils.kodilog(
+                f"TabooTube: Got empty response for list page {page} at {url}",
+                xbmc.LOGWARNING,
+            )
+            utils.eod()
+            return
     except Exception as exc:
         utils.kodilog(f"TabooTube: Failed to fetch list page {page}: {exc}", xbmc.LOGERROR)
         raise
@@ -92,6 +99,10 @@ def Playvid(url, name, download=None):
 def Categories(url):
     try:
         cathtml = utils.getHtml(url, '')
+        if not cathtml:
+            utils.kodilog(f"TabooTube: Got empty response for categories at {url}", xbmc.LOGWARNING)
+            utils.eod()
+            return
     except Exception as exc:
         utils.kodilog(f"TabooTube: Failed to fetch categories: {exc}", xbmc.LOGERROR)
         raise
@@ -107,6 +118,10 @@ def Categories(url):
 def Tags(url):
     try:
         taghtml = utils.getHtml(url, '')
+        if not taghtml:
+            utils.kodilog(f"TabooTube: Got empty response for tags at {url}", xbmc.LOGWARNING)
+            utils.eod()
+            return
     except Exception as exc:
         utils.kodilog(f"TabooTube: Failed to fetch tags: {exc}", xbmc.LOGERROR)
         raise
