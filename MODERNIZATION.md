@@ -155,13 +155,16 @@ Highest-traffic mainstream sites that break most often.
 | aagmaalpro | ✅ **COMPLETED** | BeautifulSoup for List, List2, Categories with pagination loops (2025-11-22) |
 | awmnet | ✅ **COMPLETED** | BeautifulSoup for List, Tags, Categories (48-site network) (2025-11-22) |
 
-#### ⏳ Sub-Phase 5: Hentai/Anime Sites (0/10 completed)
+#### ⏳ Sub-Phase 5: Hentai/Anime Sites (2/10 completed - 20%)
+
+Detailed per-site migration steps remain documented in `plugin.video.cumination/resources/lib/sites/UNMIGRATED_CHECKLIST.md`;
+this table is the authoritative tracker for completion status.
 
 | Site | Status | Notes |
 |------|--------|-------|
 | hanime | ⏳ Pending | Popular hentai site |
-| hentaidude | ⏳ Pending | |
-| hentaihavenco | ⏳ Pending | |
+| hentaidude | ✅ **COMPLETED** | BeautifulSoup with SoupSiteSpec, episodes support (2025-12-05) |
+| hentaihavenco | ✅ **COMPLETED** | BeautifulSoup with SoupSiteSpec, categories/series support (2025-12-05) |
 | hentai-moon | ⏳ Pending | |
 | hentaistream | ⏳ Pending | |
 | heroero | ⏳ Pending | |
@@ -283,7 +286,7 @@ Part of BeautifulSoup migration roadmap (site X/137)
 | Sub-Phase 2: Live Cams | 4 | 4 | 100% ✅ |
 | Sub-Phase 3: Medium Priority | 20 | 20 | 100% ✅ |
 | Sub-Phase 4: JAV Sites | 20 | 20 | 100% ✅ |
-| Sub-Phase 5: Hentai/Anime | 10 | 0 | 0% |
+| Sub-Phase 5: Hentai/Anime | 10 | 2 | 20% 🚀 |
 | Sub-Phase 6: International | 15 | 0 | 0% |
 | Sub-Phase 7: Niche/Specialty | 30 | 5 | 17% 🚀 |
 | Sub-Phase 8: Remaining | 44 | 1 | 2% |
