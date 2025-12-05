@@ -32,6 +32,14 @@ def recorder(monkeypatch):
     return rec
 
 
+@pytest.fixture
+def quality_prompt(monkeypatch):
+    original_settings = justporn.utils.addon._settings.copy()
+    monkeypatch.setattr(justporn.utils.addon, '_settings', {**original_settings, 'qualityask': '1'})
+    yield
+    monkeypatch.setattr(justporn.utils.addon, '_settings', original_settings)
+
+
 def test_listing_uses_soup_spec(monkeypatch, recorder):
     fixture_mapped_get_html(monkeypatch, justporn, {'page=1': 'sites/justporn/listing.html'})
 
@@ -65,13 +73,13 @@ def test_search_delegates_to_listing(monkeypatch, recorder):
     assert recorder.dirs == [
         {
             'name': '[COLOR hotpink]Next Page...[/COLOR] (2)',
-            'url': 'https://justporn.com/searchsearch-term/?page=2',
+            'url': 'https://justporn.com/search/search-term/?page=2',
             'mode': 'justporn.List',
         }
     ]
 
 
-def test_playvid_prefers_highest_available_quality(monkeypatch):
+def test_playvid_prefers_highest_available_quality(monkeypatch, quality_prompt):
     fixture_mapped_get_html(monkeypatch, justporn, {'/video/': 'sites/justporn/video.html'})
 
     played = {}
@@ -84,8 +92,6 @@ def test_playvid_prefers_highest_available_quality(monkeypatch):
             played['url'] = url
 
     monkeypatch.setattr(justporn.utils, 'VideoPlayer', _DummyVideoPlayer)
-    monkeypatch.setattr(justporn.utils.addon, '_settings', {**justporn.utils.addon._settings, 'qualityask': '1'})
-
     justporn.Playvid('https://justporn.com/video/9999/example', 'Example video')
 
     assert played['url'] == 'https://justporn.com/media/videos/vid-1080.mp4'

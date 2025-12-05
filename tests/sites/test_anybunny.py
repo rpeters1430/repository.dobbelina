@@ -85,4 +85,4 @@ def test_playvid_uses_direct_regex(monkeypatch):
     anybunny.Playvid('http://anybunny.org/videos/video-123', 'Example')
 
     assert captured['site_url'] == 'http://anybunny.org/videos/video-123'
-    assert captured['direct_regex'] == r"source src=\\'([^']+)\\'"
+    assert captured['direct_regex'] == r"source src='([^']+)'"

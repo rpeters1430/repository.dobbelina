@@ -116,9 +116,18 @@ def test_prefquality_falls_back_to_lowest_when_all_sources_exceed_limit(monkeypa
 
 
 def test_soup_videos_list_handles_missing_soup():
-    site = type('S', (), {'url': 'https://example.com', 'add_download_link': lambda *a, **k: None, 'add_dir': lambda *a, **k: None})()
+    class _Site:
+        url = 'https://example.com'
 
-    result = utils.soup_videos_list(site, None, {'items': '.card'})
+        @staticmethod
+        def add_download_link(*args, **kwargs):
+            return None
+
+        @staticmethod
+        def add_dir(*args, **kwargs):
+            return None
+
+    result = utils.soup_videos_list(_Site, None, {'items': '.card'})
 
     assert result['items'] == 0
     assert result['skipped'] == 0

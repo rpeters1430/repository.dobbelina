@@ -198,6 +198,13 @@ def read_fixture(filename):
 
 
 def _block_network_access(*args, **kwargs):
+    """Prevent live HTTP requests during tests.
+
+    All site fetches should be routed through fixture helpers such as
+    :func:`fixture_mapped_get_html`. If this assertion is raised, add a
+    corresponding fixture mapping in your test instead of performing network
+    I/O.
+    """
     raise AssertionError("Network access attempted during tests")
 
 
@@ -220,7 +227,7 @@ def pytest_runtest_setup(item):
         import resources.lib.utils as _utils
 
         _utils.urlopen = _block_network_access
-    except Exception:
+    except (ImportError, AttributeError):
         # Some unit tests import utils late; allow them to patch manually.
         pass
 

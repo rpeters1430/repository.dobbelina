@@ -237,7 +237,7 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, 'Search')
     else:
-        url = "{0}{1}/".format(url, keyword.replace(' ', '-'))
+        url = "{0}/{1}/".format(url.rstrip('/'), keyword.replace(' ', '-'))
         List(url)
 
 
