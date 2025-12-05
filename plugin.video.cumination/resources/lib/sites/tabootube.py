@@ -17,7 +17,10 @@
 '''
 
 import re
+
+import xbmc
 from six.moves import urllib_parse
+
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.decrypters.kvsplayer import kvs_decode
@@ -38,8 +41,16 @@ def Main(url):
 def List(url, page=1):
     try:
         listhtml = utils.getHtml(url, '')
-    except Exception:
-        return None
+        if not listhtml:
+            utils.kodilog(
+                f"TabooTube: Got empty response for list page {page} at {url}",
+                xbmc.LOGWARNING,
+            )
+            utils.eod()
+            return
+    except Exception as exc:
+        utils.kodilog(f"TabooTube: Failed to fetch list page {page}: {exc}", xbmc.LOGERROR)
+        raise
 
     match = re.compile(r'class="item item-\d+\s*?">\s*<a href="https://www\.tabootube\.xxx/([^"]+)" title="([^"]+)".*?data-original="([^"]+)".*?duration">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
     for videopage, name, img, duration in match:
@@ -88,8 +99,13 @@ def Playvid(url, name, download=None):
 def Categories(url):
     try:
         cathtml = utils.getHtml(url, '')
-    except Exception:
-        return None
+        if not cathtml:
+            utils.kodilog(f"TabooTube: Got empty response for categories at {url}", xbmc.LOGWARNING)
+            utils.eod()
+            return
+    except Exception as exc:
+        utils.kodilog(f"TabooTube: Failed to fetch categories: {exc}", xbmc.LOGERROR)
+        raise
     match = re.compile('<a class="item" href="([^"]+)" title="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(cathtml)
     for catpage, name in match:
         name = utils.cleantext(name)
@@ -102,8 +118,13 @@ def Categories(url):
 def Tags(url):
     try:
         taghtml = utils.getHtml(url, '')
-    except Exception:
-        return None
+        if not taghtml:
+            utils.kodilog(f"TabooTube: Got empty response for tags at {url}", xbmc.LOGWARNING)
+            utils.eod()
+            return
+    except Exception as exc:
+        utils.kodilog(f"TabooTube: Failed to fetch tags: {exc}", xbmc.LOGERROR)
+        raise
     match = re.compile('/(tags/[^"]+)">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(taghtml)
     for tagpage, name in match:
         name = utils.cleantext(name)
