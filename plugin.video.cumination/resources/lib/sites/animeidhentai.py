@@ -1,4 +1,4 @@
-'''
+"""
     Cumination
     Copyright (C) 2018 Whitecream
 
@@ -14,7 +14,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 import re
 
@@ -37,25 +37,53 @@ def animeidhentai_main():
 @site.register()
 def animeidhentai_list(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(r'<article.+?loading="lazy"\s+(?:src|data-src)="(.*?)".+?link-co">([^<]+).+?mgr(.+?)description\s*dn">\s*(?:<p>)?([^<]+).+?href="([^"]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for img, name, hd, plot, video in match:
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.notify('Notify', 'No videos found')
+        return
+
+    for article in soup.select('article'):
+        link = article.select_one('a.link-co[href]') or article.select_one('a[href]')
+        title = utils.safe_get_text(article.select_one('.link-co') or link, default='')
+        if not link or not title:
+            continue
+
+        thumbnail = utils.safe_get_attr(article.select_one('img'), 'src', ['data-src'])
+        meta_block = article.find(attrs={'class': re.compile(r'\bmgr\b')})
+        meta_text = utils.safe_get_text(meta_block, default='')
+
         quality = ''
-        if '>hd<' in hd.lower():
-            quality = 'HD'
-        elif '1080p' in hd.lower():
+        meta_lower = meta_text.lower()
+        if '1080' in meta_lower:
             quality = 'FHD'
-        if 'uncensored' in name.lower():
-            name = name.replace('Uncensored', '') + " [COLOR hotpink][I]Uncensored[/I][/COLOR]"
-        match = re.search(r'>(\d\d\d\d)<', hd)
-        year = " [COLOR blue](" + match.group(1) + ")[/COLOR]" if match else ''
-        name += year
-        site.add_download_link(utils.cleantext(name), video, 'animeidhentai_play', img, utils.cleantext(plot), quality=quality)
-    next_page = re.compile('class="next page-numbers" href="([^"]+)"', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if next_page:
-        np = next_page.group(1)
-        npnr = re.search(r'page/(\d+)', np)
-        npnr = ' (' + npnr.group(1) + ')' if npnr else ''
-        site.add_dir('Next Page{}'.format(npnr), np, 'animeidhentai_list', site.img_next)
+        elif 'hd' in meta_lower or '720' in meta_lower:
+            quality = 'HD'
+
+        is_uncensored = 'uncensored' in title.lower()
+        clean_title = re.sub(r'uncensored', '', utils.cleantext(title), flags=re.IGNORECASE).strip()
+        if is_uncensored:
+            clean_title = f"{clean_title} [COLOR hotpink][I]Uncensored[/I][/COLOR]"
+
+        year_match = re.search(r'(19|20)\d{2}', meta_text)
+        year = f" [COLOR blue]({year_match.group(0)})[/COLOR]" if year_match else ''
+
+        plot = utils.cleantext(utils.safe_get_text(article.select_one('.description'), default=''))
+        video_url = utils.safe_get_attr(link, 'href', default='')
+        if not video_url:
+            continue
+
+        site.add_download_link(
+            f"{clean_title}{year}", video_url, 'animeidhentai_play', thumbnail, plot, quality=quality
+        )
+
+    next_link = soup.select_one('link[rel="next"]') or soup.select_one('a.next.page-numbers')
+    if next_link:
+        href = utils.safe_get_attr(next_link, 'href', default='')
+        if href:
+            page_match = re.search(r'page/(\d+)', href)
+            label_suffix = f" ({page_match.group(1)})" if page_match else ''
+            site.add_dir(f"Next Page{label_suffix}", href, 'animeidhentai_list', site.img_next)
+
     utils.eod()
 
 
@@ -72,21 +100,42 @@ def animeidhentai_search(url, keyword=None):
 @site.register()
 def animeidhentai_genres(url):
     listhtml = utils.getHtml(url, site.url)
-    r = re.compile(r'<article\s*class="anime\s*xs.+?src="([^"]+).+?link-co">([^<]+).+?fwb">([^<]+).+?href="([^"]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for img, name, count, iurl in sorted(r, key=lambda x: x[1].lower()):
-        name = name + " [COLOR cyan]{0} Videos[/COLOR]".format(count)
-        site.add_dir(name, iurl, 'animeidhentai_list', img)
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.notify('Notify', 'No genres found')
+        return
+
+    entries = []
+    for article in soup.select('article'):
+        name = utils.cleantext(utils.safe_get_text(article.select_one('.link-co'), default=''))
+        count = utils.safe_get_text(article.select_one('.fwb'), default='')
+        link = utils.safe_get_attr(article.select_one('a[href]'), 'href', default='')
+        thumb = utils.safe_get_attr(article.select_one('img'), 'src', ['data-src'])
+
+        if not name or not link:
+            continue
+
+        label = f"{name} [COLOR cyan]{count} Videos[/COLOR]" if count else name
+        entries.append((label, link, thumb))
+
+    for label, link, thumb in sorted(entries, key=lambda x: x[0].lower()):
+        site.add_dir(label, link, 'animeidhentai_list', thumb)
     utils.eod()
 
 
 @site.register()
 def Years(url):
     yearhtml = utils.getHtml(url, site.url)
-    match = re.compile(r'name="years"\s+id="year-\d+"\s+value="\d+"\s+data-name="(\d+)"\s*>', re.DOTALL | re.IGNORECASE).findall(yearhtml)
-    if match:
-        year = utils.selector('Select link', match, reverse=True)
+    soup = utils.parse_html(yearhtml)
+    if not soup:
+        utils.notify('Notify', 'No years found')
+        return
+
+    years = [item.get('data-name') for item in soup.select('input[name="years"][data-name]') if item.get('data-name')]
+    if years:
+        year = utils.selector('Select link', years, reverse=True)
         if year:
-            animeidhentai_list(site.url + 'year/' + year + '/')
+            animeidhentai_list(f"{site.url}year/{year}/")
 
 
 @site.register()
@@ -94,27 +143,30 @@ def animeidhentai_play(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videopage = utils.getHtml(url, site.url)
+    soup = utils.parse_html(videopage)
 
-    match = re.compile(r'data-player>\s+<iframe.+?src="([^"]+)', re.DOTALL | re.IGNORECASE).search(videopage)
-    if match:
-        videourl = match.group(1)
+    iframe = soup.select_one('iframe[src]') if soup else None
+    if iframe:
+        videourl = utils.safe_get_attr(iframe, 'src', default='')
         if 'nhplayer.com' in videourl:
             videopage = utils.getHtml(videourl, site.url)
-            match = re.compile(r'<li data-id="([^"]+)').search(videopage)
-            if match:
-                videourl = match.group(1)
-                if videourl.startswith('/'):
+            inner_soup = utils.parse_html(videopage)
+            if inner_soup:
+                source = inner_soup.select_one('li[data-id]')
+                videourl = utils.safe_get_attr(source, 'data-id', default='')
+                if videourl and videourl.startswith('/'):
                     videourl = 'https://nhplayer.com' + videourl
                     videohtml = utils.getHtml(videourl, site.url)
                     vp.direct_regex = r'file:\s*"([^"]+)"'
                     vp.play_from_html(videohtml)
                     vp.progress.close()
                     return
-            else:
-                vp.progress.close()
-                utils.notify('Oh oh', 'Couldn\'t find a playable link')
+            vp.progress.close()
+            utils.notify('Oh oh', 'Couldn\'t find a playable link')
+            return
+
         vp.play_from_link_to_resolve(videourl)
-    else:
-        vp.progress.close()
-        utils.notify('Oh oh', 'Couldn\'t find a playable link')
-    return
+        return
+
+    vp.progress.close()
+    utils.notify('Oh oh', 'Couldn\'t find a playable link')
