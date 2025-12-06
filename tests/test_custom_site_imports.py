@@ -5,6 +5,13 @@ import types
 def test_custom_site_import_failure_reports(monkeypatch):
     sys.modules.setdefault('requests', types.SimpleNamespace())
     sys.modules.setdefault('resources.lib.sites', types.ModuleType('resources.lib.sites'))
+    sys.modules.setdefault(
+        'websocket',
+        types.SimpleNamespace(
+            WebSocket=lambda: types.SimpleNamespace(send=lambda *a, **k: None, recv=lambda: ""),
+            create_connection=lambda *a, **k: types.SimpleNamespace(send=lambda *a, **k: None, recv=lambda: ""),
+        ),
+    )
     xbmcgui = sys.modules.get('kodi_six.xbmcgui')
     if xbmcgui and not hasattr(xbmcgui.Dialog, 'yesno'):
         setattr(xbmcgui.Dialog, 'yesno', lambda *args, **kwargs: True)
