@@ -42,7 +42,11 @@
       "Bash(python:*)",
       "Bash(sudo apt-get update:*)",
       "Bash(sudo apt-get install:*)",
-      "Bash(dpkg:*)"
+      "Bash(dpkg:*)",
+      "Bash(ls:*)",
+      "Bash(xargs:*)",
+      "Bash(apt list:*)",
+      "Bash(/home/rpeters1428/.local/share/pipx/venvs/pytest/bin/python:*)"
     ],
     "deny": [],
     "ask": []

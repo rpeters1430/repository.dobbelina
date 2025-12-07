@@ -189,6 +189,31 @@ def _ensure_kodi_stubs():
     storage_module.StorageServer = _StorageServer
     sys.modules['StorageServer'] = storage_module
 
+    # Requests stub --------------------------------------------------------
+    requests_module = types.ModuleType('requests')
+
+    class _Response:
+        def __init__(self, url):
+            self.url = url
+            self.status_code = 200
+            self.text = ''
+            self.content = b''
+            self.headers = {}
+
+    def _head(url, allow_redirects=True):
+        return _Response(url)
+
+    def _get(url, **kwargs):
+        return _Response(url)
+
+    def _post(url, **kwargs):
+        return _Response(url)
+
+    requests_module.head = _head
+    requests_module.get = _get
+    requests_module.post = _post
+    sys.modules['requests'] = requests_module
+
 
 _ensure_kodi_stubs()
 
