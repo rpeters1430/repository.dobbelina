@@ -254,6 +254,9 @@ def pytest_configure(config):
     """Install global network guards for test sessions."""
     import urllib.request
 
+    # Set sys.argv before any addon imports to prevent initialization errors
+    sys.argv = KODI_ARGV.copy()
+
     # Prevent accidental outbound calls by ensuring the urllib opener raises.
     urllib.request.urlopen = _block_network_access
 

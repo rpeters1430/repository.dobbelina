@@ -60,25 +60,104 @@ def List(url):
         utils.notify(msg='No data found')
         return
 
-    delimiter = 'article data-video-'
-    re_videopage = 'href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = 'src="([^"]+)" alt'
-    re_duration = 'fa-clock-o"></i>([^<]+)<'
-    re_quality = 'class="hd-video">(HD)<'
-    skip = 'type-photos'
+    soup = utils.parse_html(html)
 
-    cm = []
-    cm_lookupinfo = (utils.addon_sys + "?mode=erogarga.Lookupinfo&url=")
-    cm.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + cm_lookupinfo + ')'))
-    cm_related = (utils.addon_sys + "?mode=erogarga.Related&url=")
-    cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')'))
-    utils.videos_list(site, 'erogarga.Play', html, delimiter, re_videopage, re_name, re_img, re_duration=re_duration, re_quality=re_quality, contextm=cm, skip=skip)
+    if not soup:
+        utils.eod()
+        return
 
-    re_npurl = 'href="([^"]+)"[^>]*>Next' if '>Next' in html else 'class="current".+?href="([^"]+)"'
-    re_npnr = r'/page/(\d+)[^>]*>Next' if '>Next' in html else r'class="current".+?rel="follow">(\d+)<'
-    re_lpnr = r'/page/(\d+)[^>]*>Last' if '>Last' in html else r'rel="follow">(\d+)<\D+<\/main>'
-    utils.next_page(site, 'erogarga.List', html, re_npurl, re_npnr, re_lpnr=re_lpnr, contextm='erogarga.GotoPage')
+    # Find all video articles (skip photo galleries)
+    articles = soup.find_all('article', attrs={'data-video-id': True})
+
+    for article in articles:
+        # Skip photo galleries
+        if 'type-photos' in utils.safe_get_attr(article, 'class', default=''):
+            continue
+
+        link = article.find('a', href=True, title=True)
+        if not link:
+            continue
+
+        videourl = utils.safe_get_attr(link, 'href')
+        name = utils.safe_get_attr(link, 'title')
+
+        if not videourl or not name:
+            continue
+
+        name = utils.cleantext(name)
+
+        # Get thumbnail
+        img_tag = link.find('img')
+        img = utils.safe_get_attr(img_tag, 'src')
+
+        # Get duration
+        duration_div = article.find('div', class_='duration')
+        duration = ''
+        if duration_div:
+            duration = utils.safe_get_text(duration_div, default='').replace('\n', '').strip()
+
+        # Check for HD quality
+        hd_badge = article.find('span', class_='hd-video')
+        quality = 'HD' if hd_badge else ''
+
+        # Create context menu
+        cm = []
+        cm_lookupinfo = (utils.addon_sys + "?mode=erogarga.Lookupinfo&url=" + urllib_parse.quote_plus(videourl))
+        cm.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + cm_lookupinfo + ')'))
+        cm_related = (utils.addon_sys + "?mode=erogarga.Related&url=" + urllib_parse.quote_plus(videourl))
+        cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')'))
+
+        site.add_download_link(name, videourl, 'Play', img, name, contextm=cm, quality=quality)
+
+    # Handle pagination
+    pagination = soup.find('div', class_='pagination')
+    if pagination:
+        # Check if there's a "Next" link
+        next_link = pagination.find('a', string=re.compile('Next', re.IGNORECASE))
+        if not next_link:
+            # Alternative: find link after current page
+            current_span = pagination.find('span', class_='current')
+            if current_span:
+                next_link = current_span.find_next_sibling('a')
+
+        if next_link:
+            next_url = utils.safe_get_attr(next_link, 'href')
+            if next_url:
+                # Extract page number
+                page_match = re.search(r'/page/(\d+)', next_url)
+                page_num = page_match.group(1) if page_match else ''
+
+                # Find last page
+                last_link = pagination.find('a', string=re.compile('Last', re.IGNORECASE))
+                last_page = ''
+                if last_link:
+                    last_url = utils.safe_get_attr(last_link, 'href')
+                    last_match = re.search(r'/page/(\d+)', last_url)
+                    last_page = last_match.group(1) if last_match else ''
+                else:
+                    # Find all pagination links and get the highest number
+                    all_links = pagination.find_all('a', href=True)
+                    max_page = 0
+                    for link in all_links:
+                        href = utils.safe_get_attr(link, 'href')
+                        match = re.search(r'/page/(\d+)', href)
+                        if match:
+                            max_page = max(max_page, int(match.group(1)))
+                    last_page = str(max_page) if max_page > 0 else ''
+
+                # Add next page with goto context menu
+                contextmenu = []
+                if page_num and last_page:
+                    contexturl = (utils.addon_sys
+                                  + "?mode=erogarga.GotoPage"
+                                  + "&list_mode=erogarga.List"
+                                  + "&url=" + urllib_parse.quote_plus(url)
+                                  + "&np=" + page_num
+                                  + "&lp=" + last_page)
+                    contextmenu.append(('[COLOR violet]Goto Page[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+
+                site.add_dir('[COLOR hotpink]Next Page...[/COLOR]', next_url, 'List', site.img_next, contextm=contextmenu)
+
     utils.eod()
 
 
@@ -99,11 +178,29 @@ def GotoPage(list_mode, url, np, lp=0):
 def Cat(url):
     siteurl = getBaselink(url)
     cathtml = utils.getHtml(url, siteurl)
+
+    # Extract the tag cloud section
     cathtml = cathtml.split('class="wp-block-tag-cloud"')[-1].split('/section>')[0]
-    match = re.compile(r'<a href="([^"]+)".+?aria-label="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for caturl, name in match:
-        name = utils.cleantext(name)
+
+    soup = utils.parse_html(cathtml)
+
+    if not soup:
+        utils.eod()
+        return
+
+    # Find all category links with aria-label
+    links = soup.find_all('a', href=True, attrs={'aria-label': True})
+
+    for link in links:
+        caturl = utils.safe_get_attr(link, 'href')
+        aria_label = utils.safe_get_attr(link, 'aria-label')
+
+        if not caturl or not aria_label:
+            continue
+
+        name = utils.cleantext(aria_label)
         site.add_dir(name, caturl, 'List', '')
+
     utils.eod()
 
 

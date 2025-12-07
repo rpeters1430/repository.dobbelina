@@ -40,28 +40,98 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
+    soup = utils.parse_html(listhtml)
 
-    delimiter = 'class="item  "'
-    re_videopage = 'href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = 'data-original="([^"]+)"'
-    re_duration = 'item-panel-col">([^<]+)<'
-    re_quality = '>HD<'
-    utils.videos_list(site, 'heroero.Playvid', listhtml, delimiter, re_videopage, re_name, re_img, re_duration=re_duration, re_quality=re_quality, contextm='heroero.Related')
+    if not soup:
+        utils.eod()
+        return
 
+    # Find all video items (class contains 'item' and whitespace)
+    items = soup.find_all('div', class_='item')
+
+    for item in items:
+        link = item.find('a', href=True, title=True)
+        if not link:
+            continue
+
+        videourl = utils.safe_get_attr(link, 'href')
+        name = utils.safe_get_attr(link, 'title')
+
+        if not videourl or not name:
+            continue
+
+        name = utils.cleantext(name)
+
+        # Get thumbnail
+        img_tag = link.find('img')
+        img = utils.safe_get_attr(img_tag, 'data-original', fallback_attrs=['src'])
+
+        # Check for HD quality
+        hd_badge = item.find('div', class_='hd-badge')
+        quality = 'HD' if hd_badge else ''
+
+        # Create context menu
+        contextmenu = []
+        contexturl = (utils.addon_sys
+                      + "?mode=" + str('heroero.Related')
+                      + "&url=" + urllib_parse.quote_plus(videourl))
+        contextmenu.append(('[COLOR deeppink]Related Videos[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+
+        site.add_download_link(name, videourl, 'Playvid', img, name, contextm=contextmenu, quality=quality)
+
+    # Handle pagination
     if '?' in url:
-        match = re.compile(r'\D(\d+)">Next<', re.IGNORECASE | re.DOTALL).findall(listhtml)
-        if match:
-            npage = int(match[0])
-            match = re.compile(r'\D(\d+)">Last<', re.IGNORECASE | re.DOTALL).findall(listhtml)
-            lastp = '/' + match[0] if match else ''
-            nurl = re.sub(r'([&?])from([^=]*)=(\d+)', r'\1from\2={0:02d}', url).format(npage)
-            site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + lastp + ')', nurl, 'List', site.img_next, npage)
+        # Search results pagination
+        pagination = soup.find('div', class_='pagination')
+        if pagination:
+            next_link = pagination.find('a', string=re.compile('Next', re.IGNORECASE))
+            if next_link:
+                next_text = utils.safe_get_text(next_link)
+                npage_match = re.search(r'\d+', next_text)
+                npage = int(npage_match.group(0)) if npage_match else None
+
+                if npage:
+                    last_link = pagination.find('a', string=re.compile('Last', re.IGNORECASE))
+                    lastp = ''
+                    if last_link:
+                        last_text = utils.safe_get_text(last_link)
+                        last_match = re.search(r'\d+', last_text)
+                        lastp = '/' + last_match.group(0) if last_match else ''
+
+                    nurl = re.sub(r'([&?])from([^=]*)=(\d+)', r'\1from\2={0:02d}', url).format(npage)
+                    site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + lastp + ')', nurl, 'List', site.img_next, npage)
     else:
-        re_npurl = 'class="next"><a href="([^"]+)"'
-        re_npnr = r'class="next"><a href="[^"]+/(\d+)/"'
-        re_lpnr = r'class="last"><a href="[^"]+/(\d+)/"'
-        utils.next_page(site, 'heroero.List', listhtml, re_npurl, re_npnr, re_lpnr=re_lpnr, contextm='heroero.GotoPage')
+        # Regular pagination
+        pagination = soup.find('div', class_='pagination')
+        if pagination:
+            next_link = pagination.find('a', class_='next')
+            if next_link:
+                next_url = utils.safe_get_attr(next_link, 'href')
+                if next_url:
+                    # Extract page numbers
+                    page_match = re.search(r'/(\d+)/', next_url)
+                    page_num = page_match.group(1) if page_match else ''
+
+                    last_link = pagination.find('a', class_='last')
+                    last_page = ''
+                    if last_link:
+                        last_url = utils.safe_get_attr(last_link, 'href')
+                        last_match = re.search(r'/(\d+)/', last_url)
+                        last_page = last_match.group(1) if last_match else ''
+
+                    # Add next page with goto context menu
+                    contextmenu = []
+                    if page_num and last_page:
+                        contexturl = (utils.addon_sys
+                                      + "?mode=heroero.GotoPage"
+                                      + "&list_mode=heroero.List"
+                                      + "&url=" + urllib_parse.quote_plus(url)
+                                      + "&np=" + page_num
+                                      + "&lp=" + last_page)
+                        contextmenu.append(('[COLOR violet]Goto Page[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+
+                    site.add_dir('[COLOR hotpink]Next Page...[/COLOR]', next_url, 'List', site.img_next, contextm=contextmenu)
+
     utils.eod()
 
 
@@ -84,22 +154,77 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(r'class="item" href="([^"]+)" title="([^"]+)".+?(?:src="([^"]+)"|>no image<)(.+?)</a>', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for caturl, name, img, data in match:
-        img = img.replace(' ', '%20')
+    soup = utils.parse_html(cathtml)
+
+    if not soup:
+        utils.eod()
+        return
+
+    # Find all category/actress items
+    items = soup.find_all('a', class_='item', href=True, title=True)
+
+    for item in items:
+        caturl = utils.safe_get_attr(item, 'href')
+        name = utils.safe_get_attr(item, 'title')
+
+        if not caturl or not name:
+            continue
+
         name = utils.cleantext(name)
+
+        # Capitalize category names
         if '/categories/' in url:
             name = name.capitalize()
-        if 'videos">' in data:
-            match = re.compile(r'videos">([^<]+)<', re.IGNORECASE | re.DOTALL).findall(data)
-            name = name + ' [COLOR cyan][{}][/COLOR]'.format(match[0])
+
+        # Get thumbnail (may be missing for some categories)
+        img_tag = item.find('img')
+        img = utils.safe_get_attr(img_tag, 'src', default='')
+        if img:
+            img = img.replace(' ', '%20')
+
+        # Get video count if available
+        videos_div = item.find('div', class_='videos')
+        if videos_div:
+            video_count = utils.safe_get_text(videos_div, default='')
+            if video_count:
+                name = name + ' [COLOR cyan][{}][/COLOR]'.format(video_count)
+
         site.add_dir(name, caturl, 'List', img)
-    re_npurl = r'class="next"><a href="([^"]+)"'
-    re_npnr = r'class="next"><a href="[^"]+/(\d+)/"'
-    re_lpnr = r'class="last"><a href="[^"]+/(\d+)/"'
-    utils.next_page(site, 'heroero.Categories', cathtml, re_npurl, re_npnr, re_lpnr=re_lpnr, contextm='heroero.GotoPage')
+
+    # Handle pagination
+    pagination = soup.find('div', class_='pagination')
+    if pagination:
+        next_link = pagination.find('a', class_='next')
+        if next_link:
+            next_url = utils.safe_get_attr(next_link, 'href')
+            if next_url:
+                # Extract page numbers
+                page_match = re.search(r'/(\d+)/', next_url)
+                page_num = page_match.group(1) if page_match else ''
+
+                last_link = pagination.find('a', class_='last')
+                last_page = ''
+                if last_link:
+                    last_url = utils.safe_get_attr(last_link, 'href')
+                    last_match = re.search(r'/(\d+)/', last_url)
+                    last_page = last_match.group(1) if last_match else ''
+
+                # Add next page with goto context menu
+                contextmenu = []
+                if page_num and last_page:
+                    contexturl = (utils.addon_sys
+                                  + "?mode=heroero.GotoPage"
+                                  + "&list_mode=heroero.Categories"
+                                  + "&url=" + urllib_parse.quote_plus(url)
+                                  + "&np=" + page_num
+                                  + "&lp=" + last_page)
+                    contextmenu.append(('[COLOR violet]Goto Page[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+
+                site.add_dir('[COLOR hotpink]Next Page...[/COLOR]', next_url, 'Categories', site.img_next, contextm=contextmenu)
+
     if '/categories/' in url:
         xbmcplugin.addSortMethod(utils.addon_handle, xbmcplugin.SORT_METHOD_TITLE)
+
     utils.eod()
 
 

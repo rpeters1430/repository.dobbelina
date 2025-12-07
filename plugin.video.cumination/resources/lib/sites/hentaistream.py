@@ -35,21 +35,52 @@ def Main():
 @site.register()
 def List(url, episodes=True):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile('<div wire:key.*?href="([^"]+)".*?<img alt="([^"]+)".*?src="/([^"]+)".*?<p[^>]+>([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for videopage, name, img, hd in match:
-        name = utils.cleantext(name)
-        hd = " [COLOR orange]{0}[/COLOR]".format(hd.upper().strip())
-        fanart_img = site.url + img
-        cover_img = fanart_img.replace('gallery', 'cover').replace('-0-thumbnail', '')
-        site.add_download_link(name, videopage, 'Playvid', cover_img, name, fanart=fanart_img, quality=hd)
+    soup = utils.parse_html(listhtml)
 
-    nextregex = 'rel="next"' if episodes else 'nextPage'
-    np = re.compile(nextregex, re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        pagelookup = re.search(r"page=(\d+)", url).group(1)
+    # Find all video items with wire:key attribute
+    items = soup.find_all('div', attrs={'wire:key': True})
+
+    for item in items:
+        link = item.find('a')
+        if not link:
+            continue
+
+        videopage = utils.safe_get_attr(link, 'href')
+        if not videopage:
+            continue
+
+        img_tag = link.find('img')
+        name = utils.safe_get_attr(img_tag, 'alt')
+        img = utils.safe_get_attr(img_tag, 'src')
+
+        # Find quality indicator
+        quality_tag = link.find('p', class_='quality')
+        if not quality_tag:
+            quality_tag = link.find('p')
+        hd = utils.safe_get_text(quality_tag, default='')
+
+        if name and img:
+            name = utils.cleantext(name)
+            hd = " [COLOR orange]{0}[/COLOR]".format(hd.upper().strip()) if hd else ''
+
+            # Ensure full URLs
+            if not img.startswith('http'):
+                img = site.url + img.lstrip('/')
+            if not videopage.startswith('http'):
+                videopage = site.url + videopage.lstrip('/')
+
+            fanart_img = img
+            cover_img = fanart_img.replace('gallery', 'cover').replace('-0-thumbnail', '')
+            site.add_download_link(name, videopage, 'Playvid', cover_img, name, fanart=fanart_img, quality=hd)
+
+    # Handle pagination
+    nextregex = 'next' if episodes else 'nextPage'
+    next_link = soup.find('a', rel=nextregex)
+    if next_link:
+        pagelookup = re.search(r"page=(\d+)", url)
         if pagelookup:
-            np = int(pagelookup) + 1
-            url = url.replace("page={0}".format(pagelookup), "page={0}".format(np))
+            np = int(pagelookup.group(1)) + 1
+            url = url.replace("page={0}".format(pagelookup.group(1)), "page={0}".format(np))
             site.add_dir('Next Page ({0})'.format(np), url, 'List', site.img_next)
     utils.eod()
 
@@ -57,10 +88,24 @@ def List(url, episodes=True):
 @site.register()
 def Tags(url):
     listhtml = utils.getHtml(url)
-    match = re.compile('for="tags-([^"]+)">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for tagpage, name in sorted(match):
+    soup = utils.parse_html(listhtml)
+
+    # Find all label tags with for attribute starting with "tags-"
+    labels = soup.find_all('label')
+    tags_list = []
+
+    for label in labels:
+        for_attr = utils.safe_get_attr(label, 'for')
+        if for_attr and for_attr.startswith('tags-'):
+            tag_id = for_attr.replace('tags-', '')
+            name = utils.safe_get_text(label)
+            if tag_id and name:
+                tags_list.append((tag_id, name))
+
+    # Sort tags alphabetically
+    for tag_id, name in sorted(tags_list, key=lambda x: x[1]):
         name = utils.cleantext(name)
-        tagpage = site.url + 'search?order=recently-uploaded&page=1&tags[0]={}'.format(tagpage)
+        tagpage = site.url + 'search?order=recently-uploaded&page=1&tags[0]={}'.format(tag_id)
         site.add_dir(name, tagpage, 'List', '', name)
     utils.eod()
 
@@ -78,11 +123,16 @@ def Search(url, keyword=None):
 @site.register()
 def Playvid(url, name, download=None):
     vpage = utils.getHtml(url, site.url)
-    videoid = re.search('id="e_id" type="hidden" value="([^"]+)"', vpage)
+    soup = utils.parse_html(vpage)
 
-    if videoid:
-        videoid = videoid.group(1)
+    # Find the hidden input with episode ID
+    videoid_input = soup.find('input', {'id': 'e_id', 'type': 'hidden'})
+    if videoid_input:
+        videoid = utils.safe_get_attr(videoid_input, 'value')
     else:
+        videoid = None
+
+    if not videoid:
         utils.notify('Oh Oh', 'No Videos found')
         return
 

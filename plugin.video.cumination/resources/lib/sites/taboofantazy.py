@@ -37,25 +37,77 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url)
-    html = listhtml.split('>SHOULD WATCH<')[0]
-    match = re.compile(r'video-uid="\d*?".*?href="([^"]+)"\s*title="([^"]+)">.*?data-src="([^"]+)"(.*?)</span', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    if match:
-        for videourl, name, img, hd in match:
-            name = utils.cleantext(name)
-            hd = 'HD' if 'HD' in hd else ''
+    soup = utils.parse_html(listhtml)
 
-            contextmenu = []
-            contexturl = (utils.addon_sys
-                          + "?mode=" + str('taboofantazy.Lookupinfo')
-                          + "&url=" + urllib_parse.quote_plus(videourl))
-            contextmenu.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+    if not soup:
+        utils.eod()
+        return
 
-            site.add_download_link(name, videourl, 'Play', img, name, contextm=contextmenu, quality=hd)
+    # Find all video articles
+    articles = soup.find_all('article', attrs={'video-uid': True})
 
-    re_npurl = 'href="([^"]+)"[^>]*>Next' if '>Next' in html else r'class="current">\d+<[^=]+href="([^"]+)"'
-    re_npnr = r'/page/(\d+)[^>]*>Next' if '>Next' in html else r'class="current">\d+<[^=]+href=[^>]+>(\d+)<'
-    re_lpnr = r'/page/(\d+)[^>]*>Last' if '>Last' in html else r'class="inactive">(\d+)[^=]+="sidebar"'
-    utils.next_page(site, 'taboofantazy.List', html, re_npurl, re_npnr, re_lpnr=re_lpnr, contextm='taboofantazy.GotoPage')
+    for article in articles:
+        link = article.find('a', href=True, title=True)
+        if not link:
+            continue
+
+        videourl = utils.safe_get_attr(link, 'href')
+        name = utils.safe_get_attr(link, 'title')
+
+        if not videourl or not name:
+            continue
+
+        name = utils.cleantext(name)
+
+        # Get thumbnail
+        img_tag = link.find('img')
+        img = utils.safe_get_attr(img_tag, 'data-src', fallback_attrs=['src'])
+
+        # Check for HD badge
+        hd_badge = article.find('span', class_='hd-badge')
+        hd = 'HD' if hd_badge and 'HD' in utils.safe_get_text(hd_badge, default='') else ''
+
+        # Create context menu
+        contextmenu = []
+        contexturl = (utils.addon_sys
+                      + "?mode=" + str('taboofantazy.Lookupinfo')
+                      + "&url=" + urllib_parse.quote_plus(videourl))
+        contextmenu.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+
+        site.add_download_link(name, videourl, 'Play', img, name, contextm=contextmenu, quality=hd)
+
+    # Handle pagination
+    pagination = soup.find('div', class_='pagination')
+    if pagination:
+        next_link = pagination.find('a', string=re.compile('Next', re.IGNORECASE))
+        if next_link:
+            next_url = utils.safe_get_attr(next_link, 'href')
+            if next_url:
+                # Extract page number
+                page_match = re.search(r'/page/(\d+)', next_url)
+                page_num = page_match.group(1) if page_match else ''
+
+                # Find last page
+                last_link = pagination.find('a', string=re.compile('Last', re.IGNORECASE))
+                last_page = ''
+                if last_link:
+                    last_url = utils.safe_get_attr(last_link, 'href')
+                    last_match = re.search(r'/page/(\d+)', last_url)
+                    last_page = last_match.group(1) if last_match else ''
+
+                # Add next page with goto context menu
+                contextmenu = []
+                if page_num and last_page:
+                    contexturl = (utils.addon_sys
+                                  + "?mode=taboofantazy.GotoPage"
+                                  + "&list_mode=taboofantazy.List"
+                                  + "&url=" + urllib_parse.quote_plus(url)
+                                  + "&np=" + page_num
+                                  + "&lp=" + last_page)
+                    contextmenu.append(('[COLOR violet]Goto Page[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+
+                site.add_dir('[COLOR hotpink]Next Page[/COLOR]', next_url, 'List', site.img_next, contextm=contextmenu)
+
     utils.eod()
 
 
@@ -75,13 +127,44 @@ def GotoPage(list_mode, url, np, lp):
 @site.register()
 def Cat(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(r'article\s+id="post.+?href="([^"]+)"\s+title="([^"]+)".+?src="([^"]+)"\s+class', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for caturl, name, img in match:
+    soup = utils.parse_html(cathtml)
+
+    if not soup:
+        utils.eod()
+        return
+
+    # Find all category articles
+    articles = soup.find_all('article', id=re.compile(r'post'))
+
+    for article in articles:
+        link = article.find('a', href=True, title=True)
+        if not link:
+            continue
+
+        caturl = utils.safe_get_attr(link, 'href')
+        name = utils.safe_get_attr(link, 'title')
+
+        if not caturl or not name:
+            continue
+
         name = utils.cleantext(name)
+
+        # Get thumbnail
+        img_tag = link.find('img', class_=True)
+        img = utils.safe_get_attr(img_tag, 'src', fallback_attrs=['data-src'])
+
         site.add_dir(name, caturl, 'List', img)
-    match = re.compile(r'class="current">\d+<.+?href="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    if match and '/categories/' in match[0]:
-        site.add_dir('[COLOR hotpink]Next Page[/COLOR]', match[0], 'Cat', site.img_next)
+
+    # Handle pagination for categories
+    current_page = soup.find('span', class_='current')
+    if current_page:
+        # Find next page link after current
+        next_sibling = current_page.find_next_sibling('a', href=True)
+        if next_sibling:
+            next_url = utils.safe_get_attr(next_sibling, 'href')
+            if next_url and '/categories/' in next_url:
+                site.add_dir('[COLOR hotpink]Next Page[/COLOR]', next_url, 'Cat', site.img_next)
+
     utils.eod()
 
 
@@ -103,10 +186,29 @@ def Play(url, name, download=None):
 @site.register()
 def Tags(url):
     listhtml = utils.getHtml(url, url)
-    match = re.compile('/(tag/[^"]+)".*?aria-label="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for tagpage, name in match:
-        name = utils.cleantext(name)
-        site.add_dir(name, site.url + tagpage, 'List', '')
+    soup = utils.parse_html(listhtml)
+
+    if not soup:
+        utils.eod()
+        return
+
+    # Find all tag links
+    tag_links = soup.find_all('a', href=re.compile(r'/tag/'))
+
+    for link in tag_links:
+        tagpage = utils.safe_get_attr(link, 'href')
+        aria_label = utils.safe_get_attr(link, 'aria-label')
+
+        if not tagpage or not aria_label:
+            continue
+
+        name = utils.cleantext(aria_label)
+
+        # Build full URL if needed
+        if not tagpage.startswith('http'):
+            tagpage = site.url + tagpage.lstrip('/')
+
+        site.add_dir(name, tagpage, 'List', '')
 
     utils.eod()
 

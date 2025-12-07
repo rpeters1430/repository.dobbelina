@@ -192,14 +192,25 @@ def hanime_play(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
     videohtml = utils.getHtml(url)
+    soup = utils.parse_html(videohtml)
 
-    match = re.compile(r'height:"(\d+)",.+?url:([^,]+),').findall(videohtml)
     sources = {}
-    for height, videourl in match:
-        videourl = videourl.replace('"', '')
-        videourl = videourl.encode().decode('unicode-escape')
-        if videourl.startswith("http"):
-            sources[height] = videourl
+
+    if soup:
+        # Look for script tags containing video sources
+        scripts = soup.find_all('script')
+        for script in scripts:
+            script_text = utils.safe_get_text(script, default='')
+            if 'height:' in script_text and 'url:' in script_text:
+                # Extract height and URL pairs using regex on the script content
+                match = re.compile(r'height:"(\d+)",.+?url:([^,]+),').findall(script_text)
+                for height, videourl in match:
+                    videourl = videourl.replace('"', '')
+                    videourl = videourl.encode().decode('unicode-escape')
+                    if videourl.startswith("http"):
+                        sources[height] = videourl
+                if sources:
+                    break
 
     videourl = utils.prefquality(sources, sort_by=lambda x: int(x[:-1]), reverse=True)
     if videourl:
