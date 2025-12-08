@@ -120,6 +120,9 @@ def _ensure_kodi_stubs():
         def setArt(self, *args, **kwargs):
             pass
 
+        def addContextMenuItems(self, items, replaceItems=False):
+            pass
+
         def getVideoInfoTag(self):
             return _VideoInfoTag()
 

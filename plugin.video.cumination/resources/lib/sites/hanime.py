@@ -201,14 +201,46 @@ def hanime_play(url, name, download=None):
         scripts = soup.find_all('script')
         for script in scripts:
             script_text = utils.safe_get_text(script, default='')
-            if 'height:' in script_text and 'url:' in script_text:
-                # Extract height and URL pairs using regex on the script content
-                match = re.compile(r'height:"(\d+)",.+?url:([^,]+),').findall(script_text)
-                for height, videourl in match:
-                    videourl = videourl.replace('"', '')
-                    videourl = videourl.encode().decode('unicode-escape')
+
+            # Check for multiple patterns that indicate video sources
+            if ('height:' in script_text or 'height"' in script_text) and 'url:' in script_text:
+                # Try to extract sources using improved regex patterns
+                # Pattern 1: height:"1080" ... url:"https://..." (quoted height and url)
+                match_quoted_both = re.compile(r'height:"(\d+)"[^}]*?url:"([^"]+)"', re.DOTALL).findall(script_text)
+
+                # Pattern 2: height: "1080" ... url: "https://..." (unquoted property names)
+                match_unquoted_props = re.compile(r'height:\s*"(\d+)"[^}]*?url:\s*"([^"]+)"', re.DOTALL).findall(script_text)
+
+                # Pattern 3: height:"1080" ... url:variable_name (variable reference)
+                match_variable = re.compile(r'height:"(\d+)"[^}]*?url:([^,\}]+)', re.DOTALL).findall(script_text)
+
+                # Process quoted URLs first (most reliable)
+                for height, videourl in match_quoted_both:
                     if videourl.startswith("http"):
                         sources[height] = videourl
+
+                # Try unquoted property names pattern
+                if not sources:
+                    for height, videourl in match_unquoted_props:
+                        if videourl.startswith("http"):
+                            sources[height] = videourl
+
+                # If no quoted URLs found, try variable pattern
+                if not sources and match_variable:
+                    for height, videourl in match_variable:
+                        # Clean up the URL
+                        videourl = videourl.strip().replace('"', '').replace("'", '')
+                        # Handle unicode escapes
+                        try:
+                            if '\\u' in videourl or '\\x' in videourl:
+                                videourl = videourl.encode().decode('unicode-escape')
+                        except Exception:
+                            pass
+
+                        if videourl.startswith("http"):
+                            sources[height] = videourl
+
+                # If we found sources, we're done
                 if sources:
                     break
 

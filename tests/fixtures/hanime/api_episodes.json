@@ -1,0 +1,19 @@
+{
+  "hentai_franchise_hentai_videos": [
+    {
+      "name": "Sample Hentai Episode 1",
+      "slug": "sample-hentai-1",
+      "is_censored": false
+    },
+    {
+      "name": "Sample Hentai Episode 2",
+      "slug": "sample-hentai-2",
+      "is_censored": true
+    },
+    {
+      "name": "Sample Hentai Episode 3",
+      "slug": "sample-hentai-3",
+      "is_censored": false
+    }
+  ]
+}

@@ -221,17 +221,33 @@ def Play(url, name, download=None):
 
     if 'koreanporn' in url:
         vp = utils.VideoPlayer(name, download=download)
-        match = re.compile(r'<iframe src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(videohtml)
-        if match:
-            videohtml = utils.getHtml(match[0], url)
-        match = re.compile(r'<source src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(videohtml)
-        vp.play_from_direct_link(match[0] + '|referer=' + url)
+        soup = utils.parse_html(videohtml)
+        iframe = soup.select_one('iframe[src]')
+        if iframe:
+            iframe_url = utils.safe_get_attr(iframe, 'src')
+            if iframe_url:
+                videohtml = utils.getHtml(iframe_url, url)
+                soup = utils.parse_html(videohtml)
+        source = soup.select_one('source[src]')
+        if source:
+            source_url = utils.safe_get_attr(source, 'src')
+            if source_url:
+                vp.play_from_direct_link(source_url + '|referer=' + url)
         return
 
     vp = utils.VideoPlayer(name, download=download, regex='"file":"([^"]+)"', direct_regex='file:"([^"]+)"')
-    match = re.compile(r'''<iframe[^>]+src=['"](h[^'"]+)['"]''', re.DOTALL | re.IGNORECASE).findall(videohtml)
 
-    playerurl = match[0]
+    # Parse HTML with BeautifulSoup to find iframe
+    soup = utils.parse_html(videohtml)
+    iframe = soup.select_one('iframe[src^="h"]')
+
+    if not iframe:
+        return
+
+    playerurl = utils.safe_get_attr(iframe, 'src')
+    if not playerurl:
+        return
+
     if vp.resolveurl.HostedMediaFile(playerurl).valid_url():
         vp.play_from_link_to_resolve(playerurl)
         return
@@ -243,8 +259,15 @@ def Play(url, name, download=None):
     elif 'klcams.com' in playerurl:
         videohtml = utils.getHtml(playerurl, url)
 
-        match = re.compile(r'<iframe src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(videohtml)
-        videolink = match[0]
+        soup = utils.parse_html(videohtml)
+        iframe = soup.select_one('iframe[src]')
+        if not iframe:
+            return
+
+        videolink = utils.safe_get_attr(iframe, 'src')
+        if not videolink:
+            return
+
         hdr = utils.base_hdrs.copy()
         hdr['Sec-Fetch-Dest'] = 'iframe'
         klhtml = utils.getHtml(videolink, 'https://klcams.com/', headers=hdr, error=True)
@@ -270,18 +293,30 @@ def Play(url, name, download=None):
             videolink = jsondata["source"][0]["file"]
     elif 'pornflip.com' in playerurl:
         playerhtml = utils.getHtml(playerurl, url)
-        match = re.compile(r'(data-\S+src\d*)="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(playerhtml)
-        src = {m[0]: m[1] for m in match}
+        soup = utils.parse_html(playerhtml)
+
+        # Find all elements with data-*src* attributes
+        src = {}
+        for elem in soup.find_all(attrs=lambda x: x and any(k.startswith('data-') and 'src' in k for k in x.keys())):
+            for attr in elem.attrs:
+                if attr.startswith('data-') and 'src' in attr:
+                    src[attr] = elem[attr]
+
+        if not src:
+            return
+
         videolink = utils.selector('Select video', src)
         videolink = videolink.replace('&amp;', '&') + '|referer=https://www.pornflip.com/'
     elif 'watcherotic.com' in playerurl:
         embedhtml = utils.getHtml(playerurl, url)
+        # Keep regex for JavaScript variable extraction
         match = re.compile(r"video_url:\s*'([^']+)'", re.DOTALL | re.IGNORECASE).findall(embedhtml)
         if match:
             videolink = match[0] + '|referer=' + siteurl
             vp.play_from_direct_link(videolink)
     else:
         playerhtml = utils.getHtml(playerurl, url)
+        # Keep regex for JavaScript variable extraction (complex multi-variable pattern)
         match = re.compile(r'''var hash = '([^']+)'.+?var baseURL = '([^']+)'.+?getPhiPlayer\(hash,'([^']+)',"(\d+)"\);''', re.DOTALL | re.IGNORECASE).findall(playerhtml)
         if match:
             hash, baseurl, alternative, order = match[0]
@@ -295,8 +330,10 @@ def Play(url, name, download=None):
                 vp.play_from_site_link(videolink, url)
                 return
         else:
-            itemprop = re.compile('itemprop="contentURL" content="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(videohtml)
-            videolink = itemprop[0] if itemprop else playerurl
+            # Use BeautifulSoup for itemprop extraction
+            soup = utils.parse_html(videohtml)
+            itemprop_elem = soup.select_one('[itemprop="contentURL"][content]')
+            videolink = utils.safe_get_attr(itemprop_elem, 'content', default=playerurl)
 
     if 'spankbang' in videolink:
         videolink = videolink.replace('/embed/', '/video/')
@@ -308,13 +345,43 @@ def Play(url, name, download=None):
 @site.register()
 def Lookupinfo(url):
     siteurl = getBaselink(url)
-    lookup_list = [
-        ("Tag", r'<a href="{}([^"]+)"\s*?class="label"\s*?title="([^"]+)"'.format(siteurl), ''),
-        ("Actor", r'/(actor[^"]+)"\s*?title="([^"]+)"', ''),
-    ]
+    html = utils.getHtml(url, siteurl)
+    soup = utils.parse_html(html)
 
-    lookupinfo = utils.LookupInfo(siteurl, url, '{}.List'.format(site.module_name), lookup_list)
-    lookupinfo.getinfo()
+    if not soup:
+        return
+
+    # Extract tags
+    tag_links = soup.select('a.label[href^="{}"][title]'.format(siteurl))
+    tags = []
+    for link in tag_links:
+        tag_url = utils.safe_get_attr(link, 'href')
+        tag_name = utils.safe_get_attr(link, 'title')
+        if tag_url and tag_name:
+            tags.append((tag_url, tag_name))
+
+    # Extract actors
+    actor_links = soup.select('a[href*="/actor"][title]')
+    actors = []
+    for link in actor_links:
+        actor_url = utils.safe_get_attr(link, 'href')
+        actor_name = utils.safe_get_attr(link, 'title')
+        if actor_url and actor_name and '/actor' in actor_url:
+            actors.append((actor_url, actor_name))
+
+    # Build lookup list in LookupInfo format
+    lookup_results = []
+    if tags:
+        lookup_results.append(("Tag", tags))
+    if actors:
+        lookup_results.append(("Actor", actors))
+
+    # Display results using LookupInfo's display method
+    if lookup_results:
+        lookupinfo = utils.LookupInfo(siteurl, url, '{}.List'.format(site.module_name), [])
+        for category, items in lookup_results:
+            for item_url, item_name in items:
+                lookupinfo.additem(category, item_name, item_url)
 
 
 @site.register()

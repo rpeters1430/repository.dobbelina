@@ -1,0 +1,5 @@
+{
+  "hits": "[{\"name\": \"Sample Hentai Episode 1\", \"slug\": \"sample-hentai-1\", \"is_censored\": false, \"cover_url\": \"https://example.highwinds-cdn.com/covers/sample1.jpg\", \"poster_url\": \"https://example.highwinds-cdn.com/posters/sample1.jpg\", \"description\": \"<p>A thrilling first episode with amazing animation.</p>\", \"tags\": [\"HD\", \"Uncensored\", \"Big Boobs\", \"Vanilla\"]}, {\"name\": \"Another Hentai Episode 2\", \"slug\": \"another-hentai-2\", \"is_censored\": true, \"cover_url\": \"https://example.highwinds-cdn.com/covers/sample2.jpg\", \"poster_url\": \"https://example.highwinds-cdn.com/posters/sample2.jpg\", \"description\": \"<p>The exciting conclusion to the series.</p>\", \"tags\": [\"HD\", \"Censored\", \"Plot\", \"Romance\"]}]",
+  "nbPages": 5,
+  "page": 0
+}

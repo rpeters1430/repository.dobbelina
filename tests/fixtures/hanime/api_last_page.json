@@ -1,0 +1,5 @@
+{
+  "hits": "[{\"name\": \"Final Episode\", \"slug\": \"final-episode\", \"is_censored\": false, \"cover_url\": \"https://example.highwinds-cdn.com/covers/final.jpg\", \"poster_url\": \"https://example.highwinds-cdn.com/posters/final.jpg\", \"description\": \"<p>The last video on the last page.</p>\", \"tags\": [\"HD\", \"Uncensored\"]}]",
+  "nbPages": 5,
+  "page": 4
+}

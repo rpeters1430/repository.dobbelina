@@ -4,7 +4,7 @@
 
 **Started**: 2025-11-01
 **Current Version**: v1.1.196
-**Overall Progress**: Phase 0 ✅ Complete | Phase 1 🚀 In Progress (BeautifulSoup: 61/137 sites - 44.5%)
+**Overall Progress**: Phase 0 ✅ Complete | Phase 1 🚀 In Progress (BeautifulSoup: 65/137 sites - 47.4%)
 
 ---
 
@@ -47,7 +47,7 @@
 
 **Goal**: Migrate all 137 sites from regex-based HTML parsing to BeautifulSoup4 for improved reliability.
 
-**Status**: 🚀 **IN PROGRESS** - 61/137 sites (44.5%) migrated
+**Status**: 🚀 **IN PROGRESS** - 65/137 sites (47.4%) migrated
 
 ### Why BeautifulSoup?
 
@@ -155,22 +155,22 @@ Highest-traffic mainstream sites that break most often.
 | aagmaalpro | ✅ **COMPLETED** | BeautifulSoup for List, List2, Categories with pagination loops (2025-11-22) |
 | awmnet | ✅ **COMPLETED** | BeautifulSoup for List, Tags, Categories (48-site network) (2025-11-22) |
 
-#### ⏳ Sub-Phase 5: Hentai/Anime Sites (7/10 completed - 70%)
+#### ✅ Sub-Phase 5: Hentai/Anime Sites (10/10 completed - 100%) ✅
 
 Detailed per-site migration steps remain documented in `plugin.video.cumination/resources/lib/sites/UNMIGRATED_CHECKLIST.md`;
 this table is the authoritative tracker for completion status.
 
 | Site | Status | Notes |
 |------|--------|-------|
-| hanime | ⏳ Pending | Popular hentai site |
+| hanime | ✅ **COMPLETED** | BeautifulSoup for script tag extraction, improved regex resilience for JS parsing (2025-12-07) |
 | hentaidude | ✅ **COMPLETED** | BeautifulSoup with SoupSiteSpec, episodes support (2025-12-05) |
 | hentaihavenco | ✅ **COMPLETED** | BeautifulSoup with SoupSiteSpec, categories/series support (2025-12-05) |
 | hentai-moon | ✅ **COMPLETED** | BeautifulSoup for List, Categories, Series, Tags, Play (already migrated) |
 | hentaistream | ✅ **COMPLETED** | BeautifulSoup for List, Tags, Playvid with comprehensive tests (2025-12-06) |
 | heroero | ✅ **COMPLETED** | BeautifulSoup for List, Categories with comprehensive tests (2025-12-06) |
 | animeidhentai | ✅ **COMPLETED** | BeautifulSoup for List, Genres, Years, Play (already migrated) |
-| erogarga | ⏳ Pending | |
-| rule34video | ⏳ Pending | |
+| erogarga | ✅ **COMPLETED** | BeautifulSoup for Play (iframe/source extraction), Lookupinfo (2025-12-07) |
+| rule34video | ✅ **COMPLETED** | BeautifulSoup for List, TagMenu, Tag, Cats with comprehensive tests (2025-12-07) |
 | taboofantazy | ✅ **COMPLETED** | BeautifulSoup for List, Cat, Tags with comprehensive tests (2025-12-06) |
 
 #### ⏳ Sub-Phase 6: International Sites (0/15 completed)
@@ -286,15 +286,15 @@ Part of BeautifulSoup migration roadmap (site X/137)
 | Sub-Phase 2: Live Cams | 4 | 4 | 100% ✅ |
 | Sub-Phase 3: Medium Priority | 20 | 20 | 100% ✅ |
 | Sub-Phase 4: JAV Sites | 20 | 20 | 100% ✅ |
-| Sub-Phase 5: Hentai/Anime | 10 | 7 | 70% 🚀 |
+| Sub-Phase 5: Hentai/Anime | 10 | 10 | 100% ✅ |
 | Sub-Phase 6: International | 15 | 0 | 0% |
 | Sub-Phase 7: Niche/Specialty | 30 | 5 | 17% 🚀 |
 | Sub-Phase 8: Remaining | 44 | 1 | 2% |
-| **TOTAL** | **137** | **62** | **45.3%** |
+| **TOTAL** | **137** | **65** | **47.4%** |
 
 **Estimated Timeline**:
-- At 3 sites/week: ~25 weeks (≈5.8 months) to complete all 76 remaining sites
-- At 1 site/week: ~76 weeks (≈1.5 years)
+- At 3 sites/week: ~24 weeks (≈5.5 months) to complete all 72 remaining sites
+- At 1 site/week: ~72 weeks (≈1.4 years)
 
 ---
 
