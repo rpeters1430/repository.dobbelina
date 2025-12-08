@@ -30,12 +30,16 @@ def test_parse_query_gracefully_handles_invalid_ints():
     assert result["mode"] == "custom"
 
 
-def test_cleantext_unescapes_entities_and_strips():
-    messy = "  &lt;Hello&nbsp;World&gt; &amp; other&amp;apos;s&nbsp; "
-
-    cleaned = utils.cleantext(messy)
-
-    assert cleaned == "<Hello World> & other's"
+@pytest.mark.parametrize(
+    "raw, expected",
+    [
+        ("  &lt;Hello&nbsp;World&gt; &amp; other&amp;apos;s&nbsp; ", "<Hello World> & other's"),
+        ("&nbsp;\xa0", ""),
+        ("no_entities", "no_entities"),
+    ],
+)
+def test_cleantext_unescapes_entities_and_strips(raw, expected):
+    assert utils.cleantext(raw) == expected
 
 
 def test_cleanhtml_strips_tags_preserving_text():
@@ -54,8 +58,19 @@ def test_fix_url_handles_protocol_and_baseurl():
     assert utils.fix_url("//cdn.example.com/img.png", siteurl=siteurl) == "https://cdn.example.com/img.png"
 
 
-def test_get_vidhost_extracts_base_domain():
-    assert utils.get_vidhost("https://media.sub.hosting.example.co.uk/video.mp4") == "example.co.uk"
+@pytest.mark.parametrize(
+    "url, expected",
+    [
+        ("https://media.sub.hosting.example.co.uk/video.mp4", "example.co.uk"),
+        ("http://example.com/path", "example.com"),
+        ("https://google.com.au/watch", "google.com.au"),
+        ("http://localhost:8080", "localhost"),
+        ("192.168.1.10/video", "192.168.1.10"),
+        ("//cdn.example.com/resource", "example.com"),
+    ],
+)
+def test_get_vidhost_extracts_base_domain(url, expected):
+    assert utils.get_vidhost(url) == expected
 
 
 @pytest.mark.parametrize(

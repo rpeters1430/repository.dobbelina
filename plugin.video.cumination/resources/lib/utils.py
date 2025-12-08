@@ -1426,34 +1426,41 @@ def cleantext(text):
     else:
         h = html_parser.HTMLParser()
         text = h.unescape(text.decode('utf8')).encode('utf8')
-    text = text.replace('&amp;', '&')
-    text = text.replace('&apos;', "'")
-    text = text.replace('&lt;', '<')
-    text = text.replace('&gt;', '>')
-    text = text.replace('&ndash;', '-')
-    text = text.replace('&quot;', '"')
-    text = text.replace('&ntilde;', '~')
-    text = text.replace('&rsquo;', '\'')
-    text = text.replace('&nbsp;', ' ')
-    text = text.replace('\xa0', ' ')
-    text = text.replace('&equals;', '=')
-    text = text.replace('&quest;', '?')
-    text = text.replace('&comma;', ',')
-    text = text.replace('&period;', '.')
-    text = text.replace('&colon;', ':')
-    text = text.replace('&lpar;', '(')
-    text = text.replace('&rpar;', ')')
-    text = text.replace('&excl;', '!')
-    text = text.replace('&dollar;', '$')
-    text = text.replace('&num;', '#')
-    text = text.replace('&ast;', '*')
-    text = text.replace('&lowbar;', '_')
-    text = text.replace('&lsqb;', '[')
-    text = text.replace('&rsqb;', ']')
-    text = text.replace('&half;', '1/2')
-    text = text.replace('&DiacriticalTilde;', '~')
-    text = text.replace('&OpenCurlyDoubleQuote;', '"')
-    text = text.replace('&CloseCurlyDoubleQuote;', '"')
+
+    replacements = {
+        '&amp;': '&',
+        '&apos;': "'",
+        '&colon;': ':',
+        '&comma;': ',',
+        '&dollar;': '$',
+        '&equals;': '=',
+        '&excl;': '!',
+        '&gt;': '>',
+        '&half;': '1/2',
+        '&lpar;': '(',
+        '&lowbar;': '_',
+        '&lsqb;': '[',
+        '&lt;': '<',
+        '&nbsp;': ' ',
+        '\xa0': ' ',
+        '&ntilde;': '~',
+        '&num;': '#',
+        '&OpenCurlyDoubleQuote;': '"',
+        '&period;': '.',
+        '&quest;': '?',
+        '&quot;': '"',
+        '&rpar;': ')',
+        '&rsqb;': ']',
+        '&rsquo;': "'",
+        '&ndash;': '-',
+        '&ast;': '*',
+        '&DiacriticalTilde;': '~',
+        '&CloseCurlyDoubleQuote;': '"',
+    }
+
+    for key, value in replacements.items():
+        text = text.replace(key, value)
+
     return text.strip()
 
 
@@ -1468,13 +1475,27 @@ def get_vidhost(url):
     Trim the url to get the video hoster
     :return vidhost
     """
-    parts = url.split('/')[2].split('.')
+    normalized_url = url
+    if not re.match(r'^[a-zA-Z][a-zA-Z0-9+\.-]*://', url):
+        normalized_url = f'//{url.lstrip('/')}'
+
+    parsed_url = urllib_parse.urlparse(normalized_url)
+    hostname = parsed_url.hostname
+    if not hostname:
+        return ""
+
+    parts = hostname.split('.')
+
+    # Handle IPv4 addresses directly
+    if len(parts) == 4 and all(part.isdigit() for part in parts):
+        return hostname
+
     if len(parts) >= 3 and len(parts[-1]) == 2 and len(parts[-2]) <= 3:
         # Handle common country code TLDs such as co.uk, com.au, etc.
-        vidhost = '.'.join(parts[-3:])
-    else:
-        vidhost = '{}.{}'.format(parts[-2], parts[-1])
-    return vidhost
+        return '.'.join(parts[-3:])
+    if len(parts) >= 2:
+        return '{}.{}'.format(parts[-2], parts[-1])
+    return hostname
 
 
 def get_language(lang_code):
