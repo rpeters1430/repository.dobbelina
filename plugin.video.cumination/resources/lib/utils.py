@@ -1435,6 +1435,7 @@ def cleantext(text):
     text = text.replace('&ntilde;', '~')
     text = text.replace('&rsquo;', '\'')
     text = text.replace('&nbsp;', ' ')
+    text = text.replace('\xa0', ' ')
     text = text.replace('&equals;', '=')
     text = text.replace('&quest;', '?')
     text = text.replace('&comma;', ',')
@@ -1468,7 +1469,11 @@ def get_vidhost(url):
     :return vidhost
     """
     parts = url.split('/')[2].split('.')
-    vidhost = '{}.{}'.format(parts[-2], parts[-1])
+    if len(parts) >= 3 and len(parts[-1]) == 2 and len(parts[-2]) <= 3:
+        # Handle common country code TLDs such as co.uk, com.au, etc.
+        vidhost = '.'.join(parts[-3:])
+    else:
+        vidhost = '{}.{}'.format(parts[-2], parts[-1])
     return vidhost
 
 
