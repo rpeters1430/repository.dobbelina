@@ -52,44 +52,26 @@ def ListVideos(url=None, page=None):
     api_url = _build_posts_url(url, current_page)
     response = utils.getHtml(api_url, site.url)
 
-    if not response:
+    posts = _parse_posts_json(response)
+    if posts:
+        _render_posts(posts)
+        _add_next_dir(current_page, len(posts), url)
+        utils.eod()
+        return
+
+    html_url = _build_frontend_url(current_page)
+    html = response if response else utils.getHtml(html_url, site.url)
+    entries, next_page_url = _parse_posts_html(html)
+
+    if not entries:
         utils.notify('Nothing found')
         utils.eod()
         return
 
-    try:
-        posts = json.loads(response)
-    except ValueError as exc:  # pragma: no cover - defensive logging
-        utils.kodilog('ArchiveBate: Failed to decode posts JSON: {0}'.format(exc))
-        utils.notify('Nothing found')
-        utils.eod()
-        return
+    _render_posts(entries)
 
-    if not isinstance(posts, list):
-        utils.kodilog('ArchiveBate: Unexpected posts payload type: {0}'.format(type(posts)))
-        utils.notify('Nothing found')
-        utils.eod()
-        return
-
-    if not posts:
-        utils.notify('Nothing found')
-        utils.eod()
-        return
-
-    for post in posts:
-        title = utils.cleantext(_get_nested(post, ['title', 'rendered']))
-        url = post.get('link', '')
-        thumb = _select_thumb(post)
-        description = utils.cleanhtml(_get_nested(post, ['excerpt', 'rendered']))
-        duration = _extract_duration(post)
-
-        site.add_download_link(title, url, 'Playvid', thumb, description, duration=duration)
-
-    if len(posts) >= POSTS_PER_PAGE:
-        next_page = current_page + 1
-        label = '[COLOR hotpink]Next Page ({})[/COLOR]'.format(next_page)
-        next_url = _build_posts_url(url or site.url, next_page)
-        site.add_dir(label, next_url, 'ListVideos', site.img_next)
+    if next_page_url:
+        site.add_dir('[COLOR hotpink]Next Page[/COLOR]', next_page_url, 'ListVideos', site.img_next)
 
     utils.eod()
 
@@ -151,6 +133,42 @@ def Categories(url=None):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.play_from_site_link(url, site.url)
+
+
+def _parse_posts_json(response):
+    if not response:
+        return []
+
+    try:
+        posts = json.loads(response)
+    except ValueError as exc:  # pragma: no cover - defensive logging
+        utils.kodilog('ArchiveBate: Failed to decode posts JSON: {0}'.format(exc))
+        return []
+
+    if not isinstance(posts, list):
+        utils.kodilog('ArchiveBate: Unexpected posts payload type: {0}'.format(type(posts)))
+        return []
+
+    return posts
+
+
+def _render_posts(posts):
+    for post in posts:
+        title = utils.cleantext(_get_nested(post, ['title', 'rendered']))
+        url = post.get('link', '')
+        thumb = _select_thumb(post)
+        description = utils.cleanhtml(_get_nested(post, ['excerpt', 'rendered']))
+        duration = _extract_duration(post)
+
+        site.add_download_link(title, url, 'Playvid', thumb, description, duration=duration)
+
+
+def _add_next_dir(current_page, posts_count, url):
+    if posts_count >= POSTS_PER_PAGE:
+        next_page = current_page + 1
+        label = '[COLOR hotpink]Next Page ({})[/COLOR]'.format(next_page)
+        next_url = _build_posts_url(url or site.url, next_page)
+        site.add_dir(label, next_url, 'ListVideos', site.img_next)
 
 
 def _get_nested(data, path, default=''):
@@ -217,6 +235,95 @@ def _extract_duration(post):
     rendered = utils.cleantext(_get_nested(post, ['content', 'rendered'])) or ''
     match = re.search(r'(\d{1,2}:\d{2})', rendered)
     return match.group(1) if match else ''
+
+
+def _parse_posts_html(html):
+    if not html:
+        return [], None
+
+    try:
+        soup = utils.parse_html(html)
+    except Exception as exc:  # pragma: no cover - defensive logging
+        utils.kodilog('ArchiveBate: Failed to parse HTML listing with BeautifulSoup: {0}'.format(exc))
+        return _parse_posts_html_no_bs(html)
+
+    entries = []
+    for article in soup.select('article'):
+        link_el = article.select_one('h2.entry-title a, h3.entry-title a, a[rel="bookmark"]')
+        if not link_el:
+            continue
+
+        title = utils.cleantext(link_el.get_text())
+        url = urllib_parse.urljoin(site.url, link_el.get('href', ''))
+
+        img_el = article.select_one('img')
+        thumb = utils.safe_get_attr(img_el, 'data-src', ['data-original', 'src'])
+
+        desc_el = article.select_one('.entry-summary, .entry-content, p')
+        description = utils.cleantext(desc_el.get_text()) if desc_el else ''
+
+        duration_el = article.select_one('.duration, .video-duration')
+        duration = utils.cleantext(duration_el.get_text()) if duration_el else ''
+
+        entries.append({
+            'title': {'rendered': title},
+            'link': url,
+            'jetpack_featured_media_url': thumb,
+            'better_featured_image': {'source_url': thumb} if thumb else {},
+            'excerpt': {'rendered': description},
+            'content': {'rendered': description},
+            'acf': {'duration': duration} if duration else {},
+        })
+
+    next_link = _find_next_link(soup)
+    return entries, next_link
+
+
+def _parse_posts_html_no_bs(html):
+    entries = []
+    for article in re.findall(r'<article[^>]*>(.*?)</article>', html, re.S | re.I):
+        link_match = re.search(r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>([^<]+)', article, re.I)
+        if not link_match:
+            continue
+
+        url = urllib_parse.urljoin(site.url, link_match.group(1))
+        title = utils.cleantext(link_match.group(2))
+
+        img_match = re.search(r'<img[^>]+(?:data-src|data-original|src)=["\']([^"\']+)["\']', article, re.I)
+        thumb = img_match.group(1) if img_match else ''
+
+        desc_match = re.search(r'<(?:div|p)[^>]*(?:entry-summary|entry-content)[^>]*>(.*?)</(?:div|p)>', article, re.S | re.I)
+        description = utils.cleantext(desc_match.group(1)) if desc_match else ''
+
+        duration_match = re.search(r'class=["\'][^"\']*(?:duration|video-duration)[^"\']*["\'][^>]*>\s*([0-9]{1,2}:[0-9]{2})', article, re.I)
+        duration = duration_match.group(1) if duration_match else ''
+
+        entries.append({
+            'title': {'rendered': title},
+            'link': url,
+            'jetpack_featured_media_url': thumb,
+            'better_featured_image': {'source_url': thumb} if thumb else {},
+            'excerpt': {'rendered': description},
+            'content': {'rendered': description},
+            'acf': {'duration': duration} if duration else {},
+        })
+
+    next_match = re.search(r'<a[^>]+class=["\'][^"\']*(?:nextpostslink|next|pagination-next|page-numbers\s+next)[^"\']*["\'][^>]+href=["\']([^"\']+)["\']', html, re.I)
+    next_link = urllib_parse.urljoin(site.url, next_match.group(1)) if next_match else None
+    return entries, next_link
+
+
+def _find_next_link(soup):
+    link = soup.find('a', rel=lambda val: val and 'next' in val.lower())
+    if not link:
+        link = soup.select_one('a.next, a.nextpostslink, a.pagination-next, a.page-numbers.next')
+    return urllib_parse.urljoin(site.url, link.get('href', '')) if link else None
+
+
+def _build_frontend_url(page):
+    if page and page > 1:
+        return urllib_parse.urljoin(site.url, 'page/{0}/'.format(page))
+    return site.url
 
 
 def _resolve_page(url, page=None):

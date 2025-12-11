@@ -91,6 +91,57 @@ def test_list_videos_handles_empty_response(monkeypatch):
     assert "Nothing found" in notified
 
 
+def test_list_videos_falls_back_to_html(monkeypatch):
+    """When the API fails, ListVideos should parse the HTML listing."""
+
+    html_data = load_fixture("posts_listing.html")
+
+    downloads = []
+    dirs = []
+
+    def fake_get_html(url, referer=None):
+        return html_data
+
+    def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
+        downloads.append({
+            "name": name,
+            "url": url,
+            "mode": mode,
+            "icon": iconimage,
+            "desc": desc,
+            "duration": kwargs.get("duration", ""),
+        })
+
+    def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
+        dirs.append({
+            "name": name,
+            "url": url,
+            "mode": mode,
+        })
+
+    monkeypatch.setattr(archivebate.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(archivebate.site, "add_download_link", fake_add_download_link)
+    monkeypatch.setattr(archivebate.site, "add_dir", fake_add_dir)
+    monkeypatch.setattr(archivebate.utils, "notify", lambda *a, **k: None)
+    monkeypatch.setattr(archivebate.utils, "eod", lambda: None)
+
+    archivebate.ListVideos("https://archivebate.com/wp-json/wp/v2/posts", page=1)
+
+    assert len(downloads) == 2
+    assert downloads[0]["name"] == "Listing One"
+    assert downloads[0]["url"] == "https://archivebate.com/2024/11/listing-one/"
+    assert downloads[0]["icon"] == "https://archivebate.com/wp-content/uploads/listing1.jpg"
+    assert downloads[0]["duration"] == "12:34"
+
+    assert downloads[1]["name"] == "Listing Two"
+    assert downloads[1]["url"].endswith("/2024/11/listing-two/")
+    assert downloads[1]["icon"] == "https://archivebate.com/wp-content/uploads/listing2.jpg"
+
+    assert dirs
+    assert dirs[0]["mode"] == "ListVideos"
+    assert "page/2" in dirs[0]["url"]
+
+
 def test_categories_parses_api_response(monkeypatch):
     """Test that Categories correctly parses category JSON."""
     json_data = load_fixture("categories_list.json")
