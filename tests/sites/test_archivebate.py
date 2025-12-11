@@ -140,6 +140,55 @@ def test_list_videos_falls_back_to_html(monkeypatch):
     assert dirs
     assert dirs[0]["mode"] == "ListVideos"
     assert "page/2" in dirs[0]["url"]
+    assert "Next Page (2)" in dirs[0]["name"]
+
+
+def test_list_videos_uses_html_after_bad_json(monkeypatch):
+    """Malformed JSON should trigger an HTML fetch for listings."""
+
+    html_data = load_fixture("posts_listing.html")
+    requests = []
+    downloads = []
+    dirs = []
+
+    def fake_get_html(url, referer=None):
+        requests.append(url)
+        if "wp-json" in url:
+            return "{invalid json"
+        return html_data
+
+    def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
+        downloads.append({
+            "name": name,
+            "url": url,
+            "mode": mode,
+            "icon": iconimage,
+            "desc": desc,
+            "duration": kwargs.get("duration", ""),
+        })
+
+    def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
+        dirs.append({
+            "name": name,
+            "url": url,
+            "mode": mode,
+        })
+
+    monkeypatch.setattr(archivebate.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(archivebate.site, "add_download_link", fake_add_download_link)
+    monkeypatch.setattr(archivebate.site, "add_dir", fake_add_dir)
+    monkeypatch.setattr(archivebate.utils, "notify", lambda *a, **k: None)
+    monkeypatch.setattr(archivebate.utils, "eod", lambda: None)
+
+    archivebate.ListVideos("https://archivebate.com/wp-json/wp/v2/posts", page=1)
+
+    assert len(requests) == 2  # API call + HTML fallback call
+    assert "wp-json" in requests[0]
+    assert requests[1].rstrip("/") == "https://archivebate.com"
+
+    assert len(downloads) == 2
+    assert dirs
+    assert "Next Page (2)" in dirs[0]["name"]
 
 
 def test_categories_parses_api_response(monkeypatch):

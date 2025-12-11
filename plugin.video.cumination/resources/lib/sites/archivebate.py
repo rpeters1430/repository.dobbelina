@@ -60,7 +60,7 @@ def ListVideos(url=None, page=None):
         return
 
     html_url = _build_frontend_url(current_page)
-    html = response if response else utils.getHtml(html_url, site.url)
+    html = utils.getHtml(html_url, site.url)
     entries, next_page_url = _parse_posts_html(html)
 
     if not entries:
@@ -71,7 +71,8 @@ def ListVideos(url=None, page=None):
     _render_posts(entries)
 
     if next_page_url:
-        site.add_dir('[COLOR hotpink]Next Page[/COLOR]', next_page_url, 'ListVideos', site.img_next)
+        label = _format_next_label(next_page_url)
+        site.add_dir(label, next_page_url, 'ListVideos', site.img_next)
 
     utils.eod()
 
@@ -243,7 +244,7 @@ def _parse_posts_html(html):
 
     try:
         soup = utils.parse_html(html)
-    except Exception as exc:  # pragma: no cover - defensive logging
+    except (ImportError, ValueError) as exc:  # pragma: no cover - defensive logging
         utils.kodilog('ArchiveBate: Failed to parse HTML listing with BeautifulSoup: {0}'.format(exc))
         return _parse_posts_html_no_bs(html)
 
@@ -318,6 +319,31 @@ def _find_next_link(soup):
     if not link:
         link = soup.select_one('a.next, a.nextpostslink, a.pagination-next, a.page-numbers.next')
     return urllib_parse.urljoin(site.url, link.get('href', '')) if link else None
+
+
+def _format_next_label(next_page_url):
+    next_page = _extract_page_number(next_page_url)
+    if next_page:
+        return '[COLOR hotpink]Next Page ({})[/COLOR]'.format(next_page)
+    return '[COLOR hotpink]Next Page[/COLOR]'
+
+
+def _extract_page_number(url):
+    parsed = urllib_parse.urlparse(url or '')
+    params = dict(urllib_parse.parse_qsl(parsed.query, keep_blank_values=True))
+    try:
+        if 'page' in params:
+            return int(params.get('page'))
+    except (TypeError, ValueError):
+        return None
+
+    path_match = re.search(r'/page/(\d+)/?', parsed.path or '')
+    if path_match:
+        try:
+            return int(path_match.group(1))
+        except (TypeError, ValueError):
+            return None
+    return None
 
 
 def _build_frontend_url(page):
