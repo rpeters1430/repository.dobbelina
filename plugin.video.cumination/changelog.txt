@@ -1,3 +1,18 @@
+[B]Version 1.1.197[/B]
+- awmnet - migrate to BeautifulSoup for more reliable parsing
+- erogarga - add missing duration parameter to video listings
+- javbangers - migrate pagination to BeautifulSoup for better reliability
+- longvideos - fix parsing to handle videos without title attributes
+- luxuretv - fix parsing to handle videos without title attributes
+- pornhoarder - fix image parsing to support both src and data-src attributes
+- pornmz - fix video parsing and HD quality detection, improve pagination
+- reallifecam - fix lazy-loading images to prioritize data-src over placeholder
+- camwhoresbay - add Referer header to playback for compatibility (upstream fix)
+- freepornvideos - add new site (upstream addition)
+- Remove dead sites: bubbaporn, iflix, yespornplease (upstream removals)
+- Fix all ruff linting errors
+- Achieve 100% test pass rate (394 tests passing)
+
 [B]Version 1.1.185[/B]
 - thothub - add Next Page button so pagination loads subsequent videos
 

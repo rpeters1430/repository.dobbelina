@@ -8,6 +8,17 @@ This is a Kodi addon repository for adult content addons. The primary addon is *
 
 ## Quick Reference
 
+**Development Setup**:
+```bash
+# Set up Python virtual environment
+python3 -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+# .venv\Scripts\activate    # Windows
+
+# Install development dependencies
+pip install -r requirements-test.txt
+```
+
 **Common Commands**:
 ```bash
 # Build addon package
@@ -34,7 +45,7 @@ pytest tests/sites/test_[sitename].py -v
 
 ## Repository Structure
 
-- **plugin.video.cumination/** - Main Cumination addon (current version: 1.1.181)
+- **plugin.video.cumination/** - Main Cumination addon (current version: 1.1.196)
   - `default.py` - Entry point, initializes URL dispatcher and loads sites
   - `resources/lib/adultsite.py` - Base class for all site implementations
   - `resources/lib/url_dispatcher.py` - Routing system using decorators
@@ -177,7 +188,7 @@ def Playvid(url, name):
 
 ## BeautifulSoup Migration (Active Project)
 
-**Current Status**: 65/137 sites migrated (47.4% complete)
+**Current Status**: 69/137 sites migrated (50.4% complete)
 
 The codebase is undergoing a systematic migration from regex-based HTML parsing to BeautifulSoup4. This is tracked in **MODERNIZATION.md** along with all other modernization efforts including HTTP gateway unification, test coverage expansion, repository structure improvements, and UX enhancements.
 
@@ -449,7 +460,7 @@ def Playvid(url, name):
 The project has a pytest-based test suite for parsing and utility functions:
 
 ```bash
-# Install test dependencies
+# Install test dependencies (in virtual environment)
 pip install -r requirements-test.txt
 
 # Run all tests

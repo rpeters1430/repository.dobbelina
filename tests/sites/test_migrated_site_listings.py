@@ -22,7 +22,6 @@ from resources.lib.sites import (
     xhamster,
     xvideos,
     xnxx,
-    yespornplease,
 )
 
 
@@ -106,15 +105,6 @@ SITE_FIXTURES = [
         ("https://www.whoreshub.com/latest-updates/",),
         {},
         "sites/whoreshub/listing.html",
-        True,
-    ),
-    (
-        "yespornplease",
-        yespornplease,
-        "List",
-        ("https://www.yespornplease.sexy/most-recent/",),
-        {},
-        "sites/yespornplease/listing.html",
         True,
     ),
     (

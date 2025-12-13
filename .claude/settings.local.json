@@ -62,7 +62,17 @@
       "Bash(fi)",
       "Bash(done)",
       "Bash(.venv/bin/ruff check plugin.video.cumination/resources/lib/sites/taboofantazy.py)",
-      "WebFetch(domain:heroero.com)"
+      "WebFetch(domain:heroero.com)",
+      "Bash(if [ -f .venv/bin/python ])",
+      "Bash(then .venv/bin/python --version)",
+      "Bash(else echo \"venv python not found\")",
+      "Bash(.venv/bin/pip:*)",
+      "Bash(.venv/bin/pytest tests/ -v)",
+      "Bash(.venv/bin/pytest:*)",
+      "Bash(.venv/bin/ruff check:*)",
+      "Bash(git remote add:*)",
+      "Bash(git fetch:*)",
+      "Bash(unzip:*)"
     ],
     "deny": [],
     "ask": []

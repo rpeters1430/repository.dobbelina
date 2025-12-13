@@ -13,7 +13,6 @@ from resources.lib.sites import (
     spankbang,
     porngo,
     pornhat,
-    yespornplease,
     eporner,
     watchporn,
     hqporner,
@@ -109,17 +108,6 @@ PLAY_CASES = [
             monkeypatch.setattr(module.utils, "selector", lambda *_a, **_k: {"720p": "decoded:ENC720:LIC"}["720p"]),
             monkeypatch.setattr(module.utils, "getVideoLink", lambda link, ref: link + "|resolved"),
         ),
-    },
-    {
-        "name": "yespornplease",
-        "module": yespornplease,
-        "func": "Playvid",
-        "url": "https://www.yespornplease.sexy/watch/abc123",
-        "fixture_map": {
-            "main": "yespornplease_play.html",
-            "embed": "yespornplease_embed.html",
-        },
-        "expect": lambda rec, url: rec.play_from_direct_link == "https://cdn.yespornplease.sexy/video123.mp4",
     },
     {
         "name": "eporner",

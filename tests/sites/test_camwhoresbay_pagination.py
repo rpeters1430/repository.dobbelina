@@ -127,4 +127,4 @@ def test_playvid_decodes_and_plays(monkeypatch):
 
     camwhoresbay.Playvid('https://www.camwhoresbay.com/video/123', 'Sample Video')
 
-    assert played['url'] == 'decoded:ENC720:LIC123'
+    assert played['url'] == 'decoded:ENC720:LIC123|Referer=https://www.camwhoresbay.com/video/123'

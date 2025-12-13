@@ -94,12 +94,10 @@ def List(url):
             title_tag = card.select_one('.title-truncate, .title, h3, h4')
             name = utils.safe_get_text(title_tag)
         if not name:
-            # Try img alt attribute before falling back to all link text
+            # Try img alt attribute
             img_tag = card.select_one('img[alt]')
             if img_tag:
                 name = utils.safe_get_attr(img_tag, 'alt')
-        if not name:
-            name = utils.safe_get_text(link)
 
         name = utils.cleantext(name)
         if name.replace(':', '').isdigit():
