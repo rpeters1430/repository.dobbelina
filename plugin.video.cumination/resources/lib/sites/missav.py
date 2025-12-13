@@ -39,12 +39,12 @@ def List(url):
     html = utils.getHtml(url, site.url)
     soup = utils.parse_html(html)
 
-    # Find all video items with @mouseenter attribute
-    items = soup.select('div[\\@mouseenter], div[x-on\\:mouseenter]')
-    for item in items:
+    # Find all video items tagged with preview handlers
+    video_links = soup.select('a[href][alt]')
+    for link in video_links:
         try:
             # Get image
-            img_tag = item.select_one('img[data-src]')
+            img_tag = link.select_one('img[data-src]')
             if not img_tag:
                 continue
             img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
@@ -54,20 +54,17 @@ def List(url):
             info = utils.cleantext(info)
 
             # Get video link
-            link = item.select_one('a[href][alt]')
-            if not link:
-                continue
             videopage = utils.safe_get_attr(link, 'href')
             if not videopage:
                 continue
 
             # Get name from link alt
-            name = utils.safe_get_attr(link, 'alt', default='')
+            name = utils.safe_get_attr(link, 'alt', default='') or utils.safe_get_text(link, '').strip()
             if not name:
-                name = utils.safe_get_text(link, '').strip()
+                name = utils.safe_get_attr(img_tag, 'alt', default='')
 
             # Get duration from span
-            duration_tag = item.select_one('span')
+            duration_tag = link.find_next('span')
             duration = ''
             if duration_tag:
                 duration_text = utils.safe_get_text(duration_tag, '').strip()

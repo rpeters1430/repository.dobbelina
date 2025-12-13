@@ -107,7 +107,7 @@ def List(url):
         cm_related = (utils.addon_sys + "?mode=erogarga.Related&url=" + urllib_parse.quote_plus(videourl))
         cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')'))
 
-        site.add_download_link(name, videourl, 'Play', img, name, contextm=cm, quality=quality)
+        site.add_download_link(name, videourl, 'Play', img, name, contextm=cm, duration=duration, quality=quality)
 
     # Handle pagination
     pagination = soup.find('div', class_='pagination')

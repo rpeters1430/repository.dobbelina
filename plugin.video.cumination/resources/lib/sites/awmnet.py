@@ -130,21 +130,11 @@ def List(url):
         img_tag = item.select_one('img')
         thumb = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
 
-        # Get provider info (usually in a span or div with text-xsm class after item-rating)
-        parent = item.find_parent()
-        if parent:
-            provider_tag = parent.select_one('span.text-xsm, div.text-xsm, a.text-xsm')
-            if provider_tag:
-                # Get previous sibling that contains rating
-                rating_elem = provider_tag.find_previous_sibling(class_='item-rating')
-                if not rating_elem:
-                    provider = utils.safe_get_text(provider_tag, '').strip()
-                else:
-                    provider = utils.safe_get_text(provider_tag, '').strip()
-            else:
-                provider = ''
-        else:
-            provider = ''
+        # Get provider info (span/div with text-xsm after the link)
+        provider = ''
+        provider_tag = item.find_next(class_=re.compile(r'text-xsm'))
+        if provider_tag:
+            provider = utils.safe_get_text(provider_tag, '').strip()
 
         # Build name with provider
         if provider:
@@ -158,7 +148,7 @@ def List(url):
         duration = ''
         if info_div:
             info_text = utils.safe_get_text(info_div)
-            hd = 'HD' if ' HD' in info_text else ''
+            hd = 'HD' if 'HD' in info_text.upper() else ''
             duration_match = re.findall(r'([\d:]+)', info_text)
             duration = duration_match[0] if duration_match else ''
 

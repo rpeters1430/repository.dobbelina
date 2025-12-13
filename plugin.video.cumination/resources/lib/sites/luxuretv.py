@@ -40,7 +40,7 @@ def List(url):
     for item in content_items:
         try:
             # Get video link
-            link = item.select_one('a[href][title]')
+            link = item.select_one('a[href]')
             if not link:
                 continue
 
@@ -51,11 +51,13 @@ def List(url):
             name = utils.safe_get_attr(link, 'title')
             if not name:
                 name = utils.safe_get_text(link, '').strip()
+            if not name and video:
+                name = video.rstrip('/').split('/')[-1]
             name = utils.cleantext(name)
 
             # Get image
-            img_tag = item.select_one('img[src]')
-            img = utils.safe_get_attr(img_tag, 'src', ['data-src']) if img_tag else ''
+            img_tag = item.select_one('img[src], img[data-src]')
+            img = utils.safe_get_attr(img_tag, 'data-src', ['src']) if img_tag else ''
 
             # Get duration from time element
             time_tag = item.select_one('.time')
@@ -97,8 +99,8 @@ def Cat(url):
     for item in channel_items:
         try:
             # Get image
-            img_tag = item.select_one('img[src]')
-            img = utils.safe_get_attr(img_tag, 'src', ['data-src']) if img_tag else ''
+            img_tag = item.select_one('img[src], img[data-src]')
+            img = utils.safe_get_attr(img_tag, 'data-src', ['src']) if img_tag else ''
 
             # Get category link and name
             link = item.select_one('a[href]')

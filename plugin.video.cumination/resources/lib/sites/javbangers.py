@@ -144,25 +144,47 @@ def List(url):
             utils.log('javbangers List: Error processing video - {}'.format(e))
             continue
 
-    match = re.search(r'class="page-current"><span>(\d+)<.+?class="next">.+?data-block-id="([^"]+)"\s+data-parameters="([^"]+)">Next', listhtml, re.DOTALL | re.IGNORECASE)
-    if match:
-        npage = int(match.group(1)) + 1
-        block_id = match.group(2)
-        params = match.group(3).replace(';', '&').replace(':', '=')
-        rnd = 1000000000000 + randint(0, 999999999999)
-        nurl = url.split('?')[0] + '?mode=async&function=get_block&block_id={0}&{1}&_={2}'.format(block_id, params, str(rnd))
-        lpnr, lastp = None, ''
-        match = re.search(r':(\d+)">Last', listhtml, re.DOTALL | re.IGNORECASE)
-        if match:
-            lpnr = match.group(1)
-            lastp = '/{}'.format(lpnr)
-        nurl = nurl.replace('+from_albums', '')
-        nurl = re.sub(r'&from([^=]*)=\d+', r'&from\1={}'.format(npage), nurl)
+    next_link = soup.select_one('a.next')
+    if next_link:
+        block_id = utils.safe_get_attr(next_link, 'data-block-id')
+        params = utils.safe_get_attr(next_link, 'data-parameters', default='')
+        href = utils.safe_get_attr(next_link, 'href', default='')
+        params = params.replace(';', '&').replace(':', '=') if params else ''
 
-        cm_page = (utils.addon_sys + "?mode=javbangers.GotoPage" + "&url=" + urllib_parse.quote_plus(nurl) + "&np=" + str(npage) + "&lp=" + str(lpnr))
-        cm = [('[COLOR violet]Goto Page #[/COLOR]', 'RunPlugin(' + cm_page + ')')]
+        # Derive next page number from href or parameters
+        npage = ''
+        href_match = re.search(r'/(\d+)/', href)
+        if href_match:
+            npage = href_match.group(1)
+        elif params:
+            from_match = re.search(r'from=(\d+)', params)
+            if from_match:
+                npage = from_match.group(1)
 
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + lastp + ')', nurl, 'List', site.img_next, contextm=cm)
+        # Derive last page if available
+        lastp = ''
+        last_link = soup.find('a', string=re.compile('Last', re.IGNORECASE))
+        if last_link:
+            last_href = utils.safe_get_attr(last_link, 'href', default='')
+            last_match = re.search(r'/(\d+)/', last_href)
+            if last_match:
+                lastp = '/{}'.format(last_match.group(1))
+
+        if block_id and params:
+            rnd = 1000000000000 + randint(0, 999999999999)
+            nurl = url.split('?')[0] + '?mode=async&function=get_block&block_id={0}&{1}&_={2}'.format(block_id, params, str(rnd))
+            nurl = nurl.replace('+from_albums', '')
+            if npage:
+                nurl = re.sub(r'&from([^=]*)=\d+', r'&from\1={}'.format(npage), nurl)
+        else:
+            nurl = urllib_parse.urljoin(site.url, href) if href else url
+
+        cm_page = None
+        if npage:
+            cm_url = (utils.addon_sys + "?mode=javbangers.GotoPage" + "&url=" + urllib_parse.quote_plus(nurl) + "&np=" + str(npage) + "&lp=" + str(lastp[1:] if lastp else ''))
+            cm_page = [('[COLOR violet]Goto Page #[/COLOR]', 'RunPlugin(' + cm_url + ')')]
+
+        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage or '?') + str(lastp) + ')', nurl, 'List', site.img_next, contextm=cm_page)
     utils.eod()
 
 

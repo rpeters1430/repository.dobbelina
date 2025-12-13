@@ -7,6 +7,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_PATH = ROOT / "plugin.video.cumination"
 
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 # Ensure the plugin package is importable when running tests
 if str(PLUGIN_PATH) not in sys.path:
     sys.path.insert(0, str(PLUGIN_PATH))

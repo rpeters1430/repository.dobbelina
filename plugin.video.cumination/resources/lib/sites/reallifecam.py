@@ -102,11 +102,13 @@ def List(url):
             name = utils.safe_get_text(link)
 
         name = utils.cleantext(name)
+        if name.replace(':', '').isdigit():
+            name = 'Video'
         if not name:
             name = 'Video'
 
         img_tag = card.select_one('img[data-src], img[data-original], img[src]')
-        img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original']) if img_tag else None
+        img = utils.safe_get_attr(img_tag, 'data-src', ['data-original', 'src']) if img_tag else None
         if img and img.startswith('//'):
             img = 'https:' + img
         elif img and img.startswith('/'):
@@ -170,14 +172,19 @@ def Categories(url):
         seen.add(catpage)
 
         img_tag = container.select_one('img[data-src], img[data-original], img[src]')
-        img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original']) if img_tag else site.img_cat
+        img = utils.safe_get_attr(img_tag, 'data-src', ['data-original', 'src']) if img_tag else site.img_cat
         if img and img.startswith('//'):
             img = 'https:' + img
         elif img and img.startswith('/'):
             img = urllib_parse.urljoin(siteurl, img)
 
         name_tag = container.select_one('.title-truncate, .title, h4, h3, .name')
-        name = utils.safe_get_text(name_tag) if name_tag else utils.safe_get_text(link)
+        if name_tag:
+            name = utils.safe_get_text(name_tag)
+        else:
+            name = utils.safe_get_attr(link, 'title')
+            if not name:
+                name = utils.safe_get_text(link)
         name = utils.cleantext(name.strip()).title()
         if not name:
             name = 'Category'

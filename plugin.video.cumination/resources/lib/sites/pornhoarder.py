@@ -59,7 +59,7 @@ def List(url, page=1, section=None):
                 continue
 
             # Get image
-            img_tag = link.select_one('img[data-src]')
+            img_tag = link.select_one('img[data-src], img[src]')
             if not img_tag:
                 continue
             img = utils.safe_get_attr(img_tag, 'data-src', ['src'])

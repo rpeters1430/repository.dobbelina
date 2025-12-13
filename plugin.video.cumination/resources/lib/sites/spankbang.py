@@ -162,27 +162,65 @@ def Tags(url):
         full_url = site.url[:-1] + catpage if not catpage.startswith('http') else catpage
         site.add_dir(name, full_url, 'List')
 
+    pagination = soup.select_one('.pagination')
+    if pagination:
+        next_link = pagination.select_one('li.next a[href]')
+        if next_link:
+            next_href = utils.safe_get_attr(next_link, 'href')
+            if next_href:
+                pages = [utils.safe_get_text(a) for a in pagination.select('li a') if utils.safe_get_text(a).isdigit()]
+                lp = '/' + pages[-1] if pages else ''
+                # segment logic might be different for tags, but let's try generic
+                segment = next_href.split('/?')[0].rstrip('/').split('/')[-1]
+                np = segment if segment.isdigit() else ''
+                label = 'Next Page..'
+                if np or lp:
+                    display_np = np if np else '?'
+                    label += ' ({}{})'.format(display_np, lp)
+                if not next_href.startswith('http'):
+                    next_href = site.url[:-1] + next_href
+                site.add_dir(label, next_href, 'Tags', site.img_next)
+
     utils.eod()
 
 
 @site.register()
 def Models_alphabet(url):
     cathtml = utils.getHtml(url, '')
-    cathtml = cathtml.split('<ul class="alphabets">')[-1].split('</ul>')[0]
-    match = re.compile(r'<li><a href="([^"]+)".*?>([^<]+)<', re.DOTALL).findall(cathtml)
-    for catpage, name in match:
-        site.add_dir(name, site.url[:-1] + catpage, 'Models', '', '')
+    soup = utils.parse_html(cathtml)
+    items = soup.select('ul.alphabets li a')
+    for link in items:
+        catpage = utils.safe_get_attr(link, 'href')
+        name = utils.safe_get_text(link)
+        if catpage and name:
+            full_url = site.url[:-1] + catpage if not catpage.startswith('http') else catpage
+            site.add_dir(name, full_url, 'Models', '', '')
     utils.eod()
 
 
 @site.register()
 def Models(url):
     cathtml = utils.getHtml(url, '')
-    cathtml = cathtml.split('<ul class="list">')[-1].split('</ul>')[0]
-    match = re.compile(r'<li><a href="([^"]+)".*?>([^<]+)<.+?svg>([\s\d]+)</span', re.DOTALL).findall(cathtml)
-    for catpage, name, videos in match:
-        name = name + '[COLOR hotpink]{}[/COLOR]'.format(videos)
-        site.add_dir(name, site.url[:-1] + catpage, 'List', '', '')
+    soup = utils.parse_html(cathtml)
+    items = soup.select('ul.list li')
+    for item in items:
+        link = item.select_one('a')
+        if not link:
+            continue
+            
+        catpage = utils.safe_get_attr(link, 'href')
+        name = utils.safe_get_text(link)
+        
+        videos = ''
+        # Try to find the video count which is usually in a span with class "videos" or just a span
+        span = item.select_one('span.videos') or item.select_one('span')
+        if span:
+            videos = utils.safe_get_text(span).strip()
+            
+        if catpage and name:
+            name_display = name + '[COLOR hotpink]{}[/COLOR]'.format(videos)
+            full_url = site.url[:-1] + catpage if not catpage.startswith('http') else catpage
+            site.add_dir(name_display, full_url, 'List', '', '')
     utils.eod()
 
 

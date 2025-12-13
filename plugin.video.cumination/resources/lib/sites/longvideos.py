@@ -55,7 +55,7 @@ def List(url):
     for item in items:
         try:
             # Get video link
-            link = item.select_one('a[href*="/videos/"][title]')
+            link = item.select_one('a[href*="/videos/"]')
             if not link:
                 continue
 
@@ -66,10 +66,12 @@ def List(url):
             name = utils.safe_get_attr(link, 'title')
             if not name:
                 name = utils.safe_get_text(link, '').strip()
+            if not name and videopage:
+                name = videopage.rstrip('/').split('/')[-1]
             name = utils.cleantext(name)
 
             # Get image (must be jpg)
-            img_tag = item.select_one('img[src]')
+            img_tag = item.select_one('img[src], img[data-src]')
             img = ''
             if img_tag:
                 img_src = utils.safe_get_attr(img_tag, 'src', ['data-src'])

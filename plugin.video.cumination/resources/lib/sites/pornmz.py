@@ -53,7 +53,7 @@ def List(url):
     for article in articles:
         try:
             # Get video link
-            link = article.select_one('a[href][title]')
+            link = article.select_one('a[href][title]') or article.select_one('a[href]')
             if not link:
                 continue
 
@@ -64,6 +64,9 @@ def List(url):
             name = utils.safe_get_attr(link, 'title')
             if not name:
                 name = utils.safe_get_text(link, '').strip()
+            if not name and videopage:
+                slug = videopage.rstrip('/').split('/')[-1]
+                name = slug
             name = utils.cleantext(name)
 
             # Get image - check img src, img data-src, or poster attribute
@@ -82,7 +85,7 @@ def List(url):
             duration = utils.safe_get_text(duration_tag, '').strip() if duration_tag else ''
 
             # Check for HD quality
-            hd = 'HD' if '>HD<' in str(article) else ''
+            hd = 'HD' if 'HD' in article.get_text().upper() else ''
 
             site.add_download_link(name, videopage, 'Play', img, name, duration=duration, quality=hd, contextm=cm)
         except Exception as e:
@@ -90,20 +93,15 @@ def List(url):
             continue
 
     # Pagination - find current page and next inactive link
-    pagination = soup.select('.pagination a, .pagination li')
-    current_found = False
-    for item in pagination:
-        if 'current' in utils.safe_get_attr(item, 'class', default=''):
-            current_found = True
-        elif current_found:
-            # Next item after current should be the next page
-            next_link = item if item.name == 'a' else item.select_one('a')
-            if next_link and 'inactive' in utils.safe_get_attr(next_link, 'class', default=''):
-                next_url = utils.safe_get_attr(next_link, 'href')
-                next_page = utils.safe_get_text(next_link, '').strip()
-                if next_url and next_page:
-                    site.add_dir('Next Page... ({0})'.format(next_page), next_url, 'List', site.img_next)
-            break
+    pagination_container = soup.select_one('.pagination')
+    if pagination_container:
+        current = pagination_container.select_one('.current')
+        next_link = current.find_next('a') if current else pagination_container.select_one('a')
+        if next_link:
+            next_url = utils.safe_get_attr(next_link, 'href')
+            next_page = utils.safe_get_text(next_link, '').strip()
+            if next_url and next_page:
+                site.add_dir('Next Page... ({0})'.format(next_page), next_url, 'List', site.img_next)
 
     utils.eod()
 
