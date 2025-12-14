@@ -1477,7 +1477,7 @@ def get_vidhost(url):
     """
     normalized_url = url
     if not re.match(r'^[a-zA-Z][a-zA-Z0-9+\.-]*://', url):
-        normalized_url = f'//{url.lstrip('/')}'
+        normalized_url = f"//{url.lstrip('/')}"
 
     parsed_url = urllib_parse.urlparse(normalized_url)
     hostname = parsed_url.hostname
