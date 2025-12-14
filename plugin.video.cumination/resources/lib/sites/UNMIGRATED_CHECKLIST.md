@@ -15,10 +15,10 @@ This checklist groups regex-heavy site modules under `resources/lib/sites/` by m
 - [ ] `taboofantazy.py`
 
 ## Phase 6 – International
-- [ ] `mrsexe.py`
-- [ ] `porno1hu.py`
-- [ ] `porno365.py`
-- [ ] `nltubes.py`
+- [x] `mrsexe.py`
+- [x] `porno1hu.py`
+- [x] `porno365.py`
+- [x] `nltubes.py`
 - [ ] `vaginanl.py`
 - [ ] `perverzija.py`
 - [ ] `viralvideosporno.py`

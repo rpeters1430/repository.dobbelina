@@ -16,9 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import re
 import xbmc
 import xbmcgui
+from urllib.parse import urljoin
+
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
@@ -45,18 +46,23 @@ def List(url):
         utils.eod()
         return
 
-    html = html.split('class="related_video trailer"', 1)[1] if 'class="related_video trailer"' in html else html
-    delimiter = '<li id="'
-    re_videopage = 'class="image" href="([^"]+)"'
-    re_name = 'alt="([^"]+)"'
-    re_img = 'img src="([^"]+)"'
-    re_duration = '<span class="duration">([^<]+)<'
-    utils.videos_list(site, 'porno365.Playvid', html, delimiter, re_videopage, re_name, re_img, re_duration=re_duration, contextm='porno365.Related')
+    soup = utils.parse_html(html)
+    items = soup.select('li[id] .image') or soup.select('a.image')
 
-    re_npurl = r'class="next_link"\s*href="([^"]+)"'
-    re_npnr = r'class="next_link"\s*href="[^"]+/(\d+)"'
-    # re_lpnr = r'>(\d+)<[^"]+"[^"]+"\s*class="prevnext"'
-    utils.next_page(site, 'porno365.List', html, re_npurl, re_npnr, contextm='porno365.GotoPage')
+    for link in items:
+        videopage = urljoin(site.url, utils.safe_get_attr(link, 'href'))
+        name = utils.cleantext(utils.safe_get_attr(link, 'alt') or utils.safe_get_text(link, default=''))
+        img_tag = link.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
+        duration = utils.safe_get_text(link.select_one('.duration'), default='')
+        site.add_download_link(name, videopage, 'Playvid', img, name, duration=duration, contextm='porno365.Related')
+
+    next_link = soup.select_one('a.next_link')
+    if next_link:
+        np_url = urljoin(site.url, utils.safe_get_attr(next_link, 'href'))
+        np_num = utils.safe_get_text(next_link, default='').strip()
+        site.add_dir('Next Page ({})'.format(np_num or ''), np_url, 'List', site.img_next, contextm='porno365.GotoPage')
+
     utils.eod()
 
 
@@ -91,11 +97,15 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url, headers=porn365_headers)
-    match = re.compile(r'class="categories-list-div".+?href="([^"]+)".+?img src="([^"]+)".+?alt="([^"]+)".+?class="text">(\d+)<', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for caturl, img, name, count in match:
-        name = utils.cleantext(name) + '[COLOR hotpink] ({} videos)[/COLOR]'.format(count)
-        caturl = utils.fix_url(caturl, site.url)
-        img = utils.fix_url(img, site.url)
+    soup = utils.parse_html(cathtml)
+    for card in soup.select('.categories-list-div a[href]'):
+        caturl = utils.fix_url(utils.safe_get_attr(card, 'href'), site.url)
+        img_tag = card.select_one('img')
+        img = utils.fix_url(utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original']), site.url)
+        name = utils.cleantext(utils.safe_get_attr(img_tag, 'alt') or utils.safe_get_text(card, default=''))
+        count = utils.safe_get_text(card.select_one('.text'), default='').strip()
+        if count:
+            name = name + '[COLOR hotpink] ({} videos)[/COLOR]'.format(count)
         site.add_dir(name, caturl, 'List', img)
     utils.eod()
 
@@ -103,13 +113,20 @@ def Categories(url):
 @site.register()
 def Models(url):
     cathtml = utils.getHtml(url, headers=porn365_headers)
-    match = re.compile(r'class="item_model".+?href="([^"]+)".+?src="([^"]+)".+?class="cnt_span">(\d+)<.+?class="model_eng_name">([^<]+)<', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for caturl, img, count, name in match:
-        name = utils.cleantext(name) + '[COLOR hotpink] ({} videos)[/COLOR]'.format(count)
+    soup = utils.parse_html(cathtml)
+    for card in soup.select('.item_model'):
+        caturl = utils.safe_get_attr(card.select_one('a[href]'), 'href')
+        img = utils.safe_get_attr(card.select_one('img'), 'src', ['data-src', 'data-original'])
+        count = utils.safe_get_text(card.select_one('.cnt_span'), default='').strip()
+        name = utils.cleantext(utils.safe_get_text(card.select_one('.model_eng_name'), default=''))
+        if count:
+            name = name + '[COLOR hotpink] ({} videos)[/COLOR]'.format(count)
         site.add_dir(name, caturl, 'List', img)
-    re_npurl = r'class="next_link" href="([^"]+)"'
-    re_npnr = r'class="next_link" href="[^"]+/(\d+)"'
-    utils.next_page(site, 'porno365.Models', cathtml, re_npurl, re_npnr, contextm='porno365.GotoPage')
+    next_link = soup.select_one('a.next_link')
+    if next_link:
+        np_url = urljoin(site.url, utils.safe_get_attr(next_link, 'href'))
+        np_num = utils.safe_get_text(next_link, default='').strip()
+        site.add_dir('Next Page ({})'.format(np_num or ''), np_url, 'Models', site.img_next, contextm='porno365.GotoPage')
     utils.eod()
 
 

@@ -18,6 +18,8 @@
 """
 
 import re
+from urllib.parse import urljoin
+
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
@@ -39,19 +41,30 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, '')
-    match = re.compile(r'<ul\s*class="thumb-list\s*xx.+?class="dark', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    if not match:
-        match = re.compile(r'<ul\s*class="thumb-list\s*xx.+?footer', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    items = re.compile(r'<li\s*class="(\s*hd|)".+?href="([^"]+).+?src="([^"]+).+?tion">[^\d]+([^<]+).+?>([^<]+)', re.DOTALL | re.IGNORECASE).findall(match[0])
-    for qual, videopage, img, duration, name in items:
-        if img.startswith('//'):
-            img = 'http:' + img
-        name = utils.cleantext(name.strip())
-        site.add_download_link(name, site.url[:-1] + videopage, 'Playvid', img, name, duration=duration, quality=qual)
+    soup = utils.parse_html(listhtml)
 
-    nextp = re.compile(r'<li\s*class="arrow"><a\s*href="(.+?)">suivant').search(match[0])
-    if nextp:
-        site.add_dir('Next Page', site.url[:-1] + nextp.group(1), 'List', site.img_next)
+    container = soup.select_one('ul.thumb-list') or soup.find('ul', class_=lambda c: c and 'thumb-list' in c)
+    if not container:
+        utils.eod()
+        return
+
+    for item in container.select('li'):
+        link = item.select_one('a[href]')
+        if not link:
+            continue
+        videopage = urljoin(site.url, utils.safe_get_attr(link, 'href'))
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original', 'data-lazy'])
+        if img and img.startswith('//'):
+            img = 'https:' + img
+        duration = utils.safe_get_text(item.select_one('.duration, .thumb-duration, .time'), default='')
+        name = utils.cleantext(utils.safe_get_attr(link, 'title') or utils.safe_get_text(link, default=''))
+        quality = 'hd' if 'hd' in (item.get('class') or []) else ''
+        site.add_download_link(name, videopage, 'Playvid', img, name, duration=duration, quality=quality)
+
+    next_link = soup.select_one('li.arrow a') or soup.select_one('a.next')
+    if next_link:
+        site.add_dir('Next Page', urljoin(site.url, utils.safe_get_attr(next_link, 'href')), 'List', site.img_next)
 
     utils.eod()
 
@@ -70,35 +83,57 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url, '')
-    match = re.compile('value="(/cat[^"]+)">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name in match:
-        site.add_dir(name, site.url[:-1] + catpage, 'List', '')
+    soup = utils.parse_html(cathtml)
+    for opt in soup.select('option[value^="/cat"]'):
+        catpage = urljoin(site.url, utils.safe_get_attr(opt, 'value'))
+        name = utils.safe_get_text(opt, default='')
+        site.add_dir(name, catpage, 'List', '')
     utils.eod()
 
 
 @site.register()
 def Stars(url):
     starhtml = utils.getHtml(url, '')
-    match = re.compile(r'<ul\s*class="thumb-list\s*xx.+?Simila', re.DOTALL | re.IGNORECASE).findall(starhtml)[0]
-    items = re.compile(r'nail">.+?src="([^"]+).+?href="([^"]+)">([^<]+).+?\s([^<]+)', re.DOTALL | re.IGNORECASE).findall(match)
-    for img, starpage, name, vidcount in items:
-        if img.startswith('//'):
-            img = 'http:' + img
-        name = "{0}[COLOR orange] [COLOR deeppink][I]({1})[/I][/COLOR]".format(utils.cleantext(name), vidcount.strip())
-        site.add_dir(name, site.url[:-1] + starpage, 'List', img)
-    nextp = re.compile(r'<li\s*class="arrow"><a\s*href="(.+?)">suivant').search(starhtml)
+    soup = utils.parse_html(starhtml)
+    container = soup.select_one('ul.thumb-list') or soup.find('ul', class_=lambda c: c and 'thumb-list' in c)
+    if container:
+        for item in container.select('li'):
+            img_tag = item.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original', 'data-lazy'])
+            if img and img.startswith('//'):
+                img = 'https:' + img
+            link = item.select_one('a[href]')
+            if not link:
+                continue
+            starpage = urljoin(site.url, utils.safe_get_attr(link, 'href'))
+            name = utils.cleantext(utils.safe_get_attr(link, 'title') or utils.safe_get_text(link, default=''))
+            vidcount = utils.safe_get_text(item.select_one('.vids, .videos, .count'), default='').strip()
+            if vidcount:
+                name = "{0}[COLOR orange] [COLOR deeppink][I]({1})[/I][/COLOR]".format(name, vidcount)
+            site.add_dir(name, starpage, 'Stars', img)
+    nextp = soup.select_one('li.arrow a[href*="suiv"]')
     if nextp:
-        site.add_dir('Next Page', site.url[:-1] + nextp.group(1), 'Stars', site.img_next)
+        site.add_dir('Next Page', urljoin(site.url, utils.safe_get_attr(nextp, 'href')), 'Stars', site.img_next)
     utils.eod()
 
 
 @site.register()
 def Playvid(url, name, download=None):
     html = utils.getHtml(url, site.url)
-    videourl = re.compile(r"src='(/inc/clic\.php\?video=.+?&cat=mrsex.+?)'").findall(html)
-    html = utils.getHtml(site.url[:-1] + videourl[0], site.url)
-    videourl = re.compile("""['"]([^'"]*mp4)['"]""", re.DOTALL).findall(html)
-    if videourl:
-        utils.playvid(videourl[-1], name, download)
-    else:
+    soup = utils.parse_html(html)
+    clic_src = None
+    clic_tag = soup.select_one('[src*="/inc/clic.php"]')
+    if clic_tag:
+        clic_src = utils.safe_get_attr(clic_tag, 'src')
+    if not clic_src:
         return
+
+    click_url = urljoin(site.url, clic_src)
+    click_html = utils.getHtml(click_url, site.url)
+    click_soup = utils.parse_html(click_html)
+    sources = [utils.safe_get_attr(tag, 'src') for tag in click_soup.find_all(['source', 'a', 'video'], src=True)]
+    sources = [src for src in sources if src and '.mp4' in src]
+    if not sources:
+        sources = re.findall(r"https?://[^'\"]+\.mp4[^'\"]*", click_html, re.IGNORECASE)
+    if sources:
+        utils.playvid(sources[-1], name, download)

@@ -17,7 +17,10 @@
 '''
 
 import re
+from urllib.parse import urlencode, urljoin, urlparse, urlunparse
+
 from six.moves import urllib_parse
+
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.decrypters.kvsplayer import kvs_decode
@@ -40,9 +43,17 @@ def List(url, page=1):
     except Exception:
         return None
 
-    match = re.compile(r'class="item p1ppnd.+?href="([^"]+)"\s+title="([^"]+)".+?.+?data-original="([^"]+)".+?.+?class="duration">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for videopage, name, img, duration in match:
-        name = utils.cleantext(name)
+    soup = utils.parse_html(listhtml)
+
+    for item in soup.select('.item'):
+        link = item.select_one('a[href]')
+        if not link:
+            continue
+        videopage = urljoin(site.url, utils.safe_get_attr(link, 'href'))
+        name = utils.cleantext(utils.safe_get_attr(link, 'title') or utils.safe_get_text(link, default=''))
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'data-original', ['data-src', 'src'])
+        duration = utils.safe_get_text(item.select_one('.duration'), default='').strip()
 
         contextmenu = []
         contexturl = (utils.addon_sys
@@ -52,14 +63,22 @@ def List(url, page=1):
 
         site.add_download_link(name, videopage, 'Playvid', img, name, contextm=contextmenu, duration=duration)
 
-    np = re.compile(r'\D(\d+)">Utols.+?class="next">.*?sort_by:[^;]*?;from[^\d]+(\d+)"', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        lp = '/' + np.group(1)
-        np = np.group(2)
-        nextp = url
-        for p in ['from', 'from_videos']:
-            nextp = nextp.replace('{}={}'.format(p, str(page)), '{}={}'.format(p, np))
-        site.add_dir('Next Page ({}{})'.format(np, lp), nextp, 'List', site.img_next, page=np)
+    next_link = soup.select_one('a.next, li.next a')
+    if next_link:
+        next_href = utils.safe_get_attr(next_link, 'href')
+        if not next_href:
+            params = next_link.get('data-parameters')
+            if params:
+                parsed = dict(p.split('=') for p in params.split(';') if '=' in p)
+                base = urlparse(url)
+                query = urllib_parse.parse_qs(base.query)
+                for key in ('from', 'from_videos'):
+                    if key in parsed:
+                        query[key] = [parsed[key]]
+                query_str = urlencode(query, doseq=True)
+                next_href = urlunparse((base.scheme, base.netloc, base.path, base.params, query_str, base.fragment))
+        if next_href:
+            site.add_dir('Next Page', urljoin(site.url, next_href), 'List', site.img_next, page=page + 1)
 
     utils.eod()
 
@@ -69,11 +88,22 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     html = utils.getHtml(url, site.url)
-    embedurl = re.compile(r'embedURL" content="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(html)[0]
+    soup = utils.parse_html(html)
+    meta = soup.find('meta', attrs={'property': 'embedURL'}) or soup.find('meta', attrs={'name': 'embedURL'})
+    embedurl = utils.safe_get_attr(meta, 'content') if meta else None
+    if not embedurl:
+        iframe = soup.find('iframe', src=True)
+        embedurl = utils.safe_get_attr(iframe, 'src') if iframe else None
+    if not embedurl:
+        vp.progress.close()
+        return
+
     embedhtml = utils.getHtml(embedurl, url)
-    license = re.compile(r"license_code:\s*'([^']+)", re.DOTALL | re.IGNORECASE).findall(embedhtml)[0]
-    videourl = re.compile(r"video_url:\s*'([^']+)'", re.DOTALL | re.IGNORECASE).findall(embedhtml)[0]
-    videourl = kvs_decode(videourl, license)
+    license_match = re.search(r"license_code:\s*'([^']+)", embedhtml, re.IGNORECASE)
+    video_match = re.search(r"video_url:\s*'([^']+)'", embedhtml, re.IGNORECASE)
+    license_code = license_match.group(1) if license_match else ''
+    video_url_raw = video_match.group(1) if video_match else ''
+    videourl = kvs_decode(video_url_raw, license_code)
     if not videourl:
         vp.progress.close()
         return
@@ -86,11 +116,14 @@ def Categories(url):
         cathtml = utils.getHtml(url, '')
     except Exception:
         return None
-    match = re.compile('<a class="item" href="([^"]+)" title="([^"]+)".*?videos">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name, videos in match:
-        name = utils.cleantext(name)
-        name = name + ' [COLOR hotpink](' + videos + ')[/COLOR]'
-        catpage = catpage + '?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=post_date&from=1'
+    soup = utils.parse_html(cathtml)
+    for item in soup.select('a.item[href][title]'):
+        catpage = utils.safe_get_attr(item, 'href')
+        name = utils.cleantext(utils.safe_get_attr(item, 'title'))
+        videos = utils.safe_get_text(item.select_one('.videos, .count'), default='').strip()
+        if videos:
+            name = name + ' [COLOR hotpink](' + videos + ')[/COLOR]'
+        catpage = urljoin(site.url, catpage) + '?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=post_date&from=1'
         site.add_dir(name, catpage, 'List', '', page=1)
     utils.eod()
 

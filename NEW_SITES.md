@@ -68,10 +68,6 @@ This file tracks sites identified from screenshots that are not yet implemented 
 - [x] **SUJ** (pc.suj.mobi) (Implemented, testing pending due to environment issues)
 - [ ] **xMegaDrive** (xmegadrive.com)
 - [ ] **TubePornClassic** (tubepornclassic.com)
-- [ ] **RareLust** (rarelust.com)
-- [ ] **WIPFilms** (wipfilms.net)
-- [ ] **VintageClassix** (vintageclassix.com)
-- [ ] **EffedUpMovies** (effedupmovies.com)
 - [ ] **chuyenphim18** (chuyenphim18.site)
 
 **Asian / JAV**

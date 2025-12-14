@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
+from urllib.parse import urljoin
+
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
@@ -53,33 +54,46 @@ def NLTUBES(url):
 @site.register()
 def NLVIDEOLIST(url):
     siteurl = getBaselink(url)
-    link = utils.getHtml(url, '')
+    html = utils.getHtml(url, '')
+    soup = utils.parse_html(html)
 
     if 'poldertube' in siteurl or '12milf' in siteurl:
-        match = re.compile(r'<article.+?href="([^"]+)"\s*title="([^"]+)".+?src="([^"]+).+?tion"\D*?([\d:]+)', re.DOTALL | re.IGNORECASE).findall(link)
-        for surl, name, img, duration in match:
-            img = 'https:' + img if img.startswith('//') else img
-            surl = surl if surl.startswith('http') else siteurl + surl
-            name = utils.cleantext(name)
+        cards = soup.select('article a[href][title]')
+        for card in cards:
+            surl = utils.safe_get_attr(card, 'href')
+            surl = surl if surl.startswith('http') else urljoin(siteurl, surl)
+            name = utils.cleantext(utils.safe_get_attr(card, 'title'))
+            img_tag = card.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-lazy'])
+            if img and img.startswith('//'):
+                img = 'https:' + img
+            duration = utils.safe_get_text(card.select_one('.duration, .time'), default='')
             site.add_download_link(name, surl, 'NLPLAYVID', img, name, duration=duration)
-        nextp = re.compile(r'''class="pagination.+?class="current".+?href=['"]([^"']+)''', re.DOTALL | re.IGNORECASE).search(link)
+        nextp = soup.select_one('.pagination .current ~ a')
         if nextp:
-            nextp = nextp.group(1)
-            page_nr = re.findall(r'\d+', nextp)[-1]
-            nextp = nextp if nextp.startswith('http') else siteurl + nextp
-            site.add_dir('Next Page (' + page_nr + ')', nextp, 'NLVIDEOLIST', site.img_next)
+            next_url = utils.safe_get_attr(nextp, 'href')
+            next_url = next_url if next_url.startswith('http') else urljoin(siteurl, next_url)
+            page_nr = ''.join([c for c in next_url if c.isdigit()])
+            site.add_dir('Next Page ({})'.format(page_nr), next_url, 'NLVIDEOLIST', site.img_next)
     else:
-        match = re.compile(r'data-post-id=.+?data-src="([^"]+)".+?href="([^"]+)"\s*title="([^"]+)".+?.+?tion"\D*?([\d:]+)', re.DOTALL | re.IGNORECASE).findall(link)
-        for img, surl, name, duration in match:
-            surl = surl if surl.startswith('http') else siteurl + surl
-            name = utils.cleantext(name)
+        cards = soup.select('[data-post-id]')
+        for card in cards:
+            link = card.select_one('a[href][title]')
+            if not link:
+                continue
+            surl = utils.safe_get_attr(link, 'href')
+            surl = surl if surl.startswith('http') else urljoin(siteurl, surl)
+            name = utils.cleantext(utils.safe_get_attr(link, 'title'))
+            img_tag = card.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'data-src', ['src', 'data-original'])
+            duration = utils.safe_get_text(card.select_one('.duration, .time, .video-datas'), default='')
             site.add_download_link(name, surl, 'NLPLAYVID', img, name, duration=duration)
-        nextp = re.compile(r'class="next page-link"\s*href="([^"]+)"', re.DOTALL | re.IGNORECASE).search(link)
+        nextp = soup.select_one('a.next.page-link')
         if nextp:
-            nextp = nextp.group(1)
-            page_nr = re.findall(r'\d+', nextp)[-1]
-            nextp = nextp if nextp.startswith('http') else siteurl + nextp
-            site.add_dir('Next Page (' + page_nr + ')', nextp, 'NLVIDEOLIST', site.img_next)
+            next_url = utils.safe_get_attr(nextp, 'href')
+            next_url = next_url if next_url.startswith('http') else urljoin(siteurl, next_url)
+            page_nr = ''.join([c for c in next_url if c.isdigit()])
+            site.add_dir('Next Page ({})'.format(page_nr), next_url, 'NLVIDEOLIST', site.img_next)
     utils.eod()
 
 
@@ -88,11 +102,21 @@ def NLPLAYVID(url, name, download=None):
     siteurl = getBaselink(url)
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    hdr = utils.base_hdrs
+    hdr = utils.base_hdrs.copy()
     hdr['Cookie'] = 'pageviews=1; postviews=1'
     videopage = utils.getHtml(url, siteurl, hdr)
-    videourl = re.compile(r'contentURL"\s*content="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(videopage)
-    videourl = videourl[0] + '|Referer={}'.format(siteurl)
+    soup = utils.parse_html(videopage)
+    meta = soup.find('meta', attrs={'property': 'contentURL'}) or soup.find('meta', attrs={'itemprop': 'contentURL'})
+    videourl = utils.safe_get_attr(meta, 'content') if meta else None
+    if not videourl:
+        # fallback to legacy regex if needed
+        import re
+        matches = re.findall(r'contentURL"\s*content="([^"]+)"', videopage, re.IGNORECASE)
+        videourl = matches[0] if matches else None
+    if not videourl:
+        vp.progress.close()
+        return
+    videourl = videourl + '|Referer={}'.format(siteurl)
     vp.play_from_direct_link(videourl)
 
 
@@ -111,15 +135,23 @@ def NLSEARCH(url, keyword=None):
 def NLCAT(url):
     siteurl = getBaselink(url)
     link = utils.getHtml(url, '')
+    soup = utils.parse_html(link)
     if 'poldertube.nl' in siteurl:
-        tags = re.compile(r'<article.+?href="([^"]+).+?src="([^"]+).+?le">([^<]+)', re.DOTALL | re.IGNORECASE).findall(link)
-        for caturl, catimg, catname in tags:
-            catimg = catimg if catimg.startswith('http') else siteurl + catimg
+        tags = soup.select('article a[href][title]')
+        for cat in tags:
+            caturl = utils.safe_get_attr(cat, 'href')
+            catimg = utils.safe_get_attr(cat.select_one('img'), 'src', ['data-src', 'data-original'])
+            catname = utils.safe_get_text(cat.select_one('.title, .name'), default=utils.safe_get_attr(cat, 'title'))
+            catimg = catimg if catimg.startswith('http') else urljoin(siteurl, catimg)
             site.add_dir(catname, caturl, 'NLVIDEOLIST', catimg)
     else:
-        tags = re.compile(r'class="video-block.+?href="([^"]+)"\s*title="([^"]+)".+?src="([^"]+)".+?video-datas">\s*(\d[^<]+)', re.DOTALL | re.IGNORECASE).findall(link)
-        for caturl, catname, catimg, videos in tags:
+        tags = soup.select('.video-block a[href][title]')
+        for cat in tags:
+            caturl = utils.safe_get_attr(cat, 'href')
+            catname = utils.safe_get_attr(cat, 'title')
+            catimg = utils.safe_get_attr(cat.select_one('img'), 'src', ['data-src', 'data-original'])
+            videos = utils.safe_get_text(cat.select_one('.video-datas, .count'), default='')
             catname = catname.replace('sex films', '').replace('porn videos', '') + '[COLOR hotpink] ({})[/COLOR]'.format(videos)
-            catimg = catimg if catimg.startswith('http') else siteurl + catimg
+            catimg = catimg if catimg.startswith('http') else urljoin(siteurl, catimg)
             site.add_dir(catname, caturl, 'NLVIDEOLIST', catimg)
     utils.eod()
