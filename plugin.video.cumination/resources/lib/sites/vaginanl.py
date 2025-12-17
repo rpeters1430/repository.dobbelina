@@ -17,6 +17,8 @@
 """
 
 import re
+from six.moves import urllib_parse
+
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
@@ -32,21 +34,60 @@ def main(url):
 
 @site.register()
 def List(url):
-    html = utils.getHtml(url, '')
-    if "Geen zoekresultaten gevonden" in html or "Nothing found" in html:
+    listhtml = utils.getHtml(url, site.url)
+    if not listhtml or "Geen zoekresultaten gevonden" in listhtml or "Nothing found" in listhtml:
+        utils.eod()
         return
-    match = re.compile(r'class="card".+?href="([^"]+)" class="thumbnail-link" title="([^"]+)".+?data-src="([^"]+)".+?>\s*([\d:]+)\s*<', re.DOTALL | re.IGNORECASE).findall(html)
-    for videourl, name, img, duration in match:
-        videourl = videourl if videourl.startswith('http') else site.url[:-1] + videourl
-        name = utils.cleantext(name)
-        site.add_download_link(name, videourl, 'Playvid', img, name, duration=duration)
-    nextp = re.compile(r'>(\d+)<[^"]+class="next"><a href="([^"]+)"\s+rel="next"', re.DOTALL | re.IGNORECASE).search(html)
-    if nextp:
-        lp = '/' + nextp.group(1)
-        nextp = nextp.group(2)
-        np = re.findall(r'\d+', nextp)[-1]
-        nextp = nextp if nextp.startswith('http') else site.url + nextp
-        site.add_dir('Next Page (' + np + lp + ')', nextp, 'List', site.img_next)
+
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
+
+    cards = soup.select('div.card')
+
+    for card in cards:
+        link = card.select_one('a[href]')
+        if not link:
+            continue
+
+        videourl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
+        title = utils.safe_get_attr(link, 'title', default='')
+        if not title:
+            title = utils.safe_get_attr(card.select_one('img'), 'alt', default='') or utils.safe_get_text(
+                card.select_one('.title, .card-title'), default=''  # type: ignore[arg-type]
+            )
+        title = utils.cleantext(title)
+
+        if not videourl or not title:
+            continue
+
+        thumb = utils.safe_get_attr(card.select_one('img'), 'data-src', ['src', 'data-original'], default='')
+        if thumb:
+            thumb = urllib_parse.urljoin(site.url, thumb)
+
+        duration = utils.safe_get_text(card.select_one('.duration, .video-duration, .time'), default='')
+
+        site.add_download_link(title, videourl, 'Playvid', thumb, title, duration=duration)
+
+    next_link = soup.select_one('a.next[rel="next"], li.next a[rel="next"], a.next.page-numbers, a[rel="next"].page-numbers')
+    if next_link:
+        href = urllib_parse.urljoin(site.url, utils.safe_get_attr(next_link, 'href', default=''))
+        page_match = re.search(r'(?:page=|/page/)(\d+)', href)
+        last_page = ''
+        page_numbers = [int(num) for num in re.findall(r'\b(\d+)\b', utils.safe_get_text(soup.select_one('.pagination') or soup, default=''))]
+        if page_numbers:
+            last_page = str(max(page_numbers))
+
+        if href:
+            suffix = ''
+            if page_match:
+                suffix = f" ({page_match.group(1)}"
+                if last_page:
+                    suffix += f"/{last_page}"
+                suffix += ')'
+            site.add_dir(f"Next Page{suffix}", href, 'List', site.img_next)
+
     utils.eod()
 
 
@@ -71,9 +112,32 @@ def Search(url, keyword=None):
 
 @site.register()
 def Categories(url):
-    html = utils.getHtml(url, '')
-    tags = re.compile(r'class="card">.+?href="([^"]+)".+?data-src="([^"]+)".+?alt="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(html)
-    for caturl, catimg, catname in tags:
-        caturl = caturl if caturl.startswith('http') else site.url + caturl
-        site.add_dir(catname, caturl, 'List', catimg)
+    cathtml = utils.getHtml(url, site.url)
+    soup = utils.parse_html(cathtml)
+
+    if not soup:
+        utils.eod()
+        return
+
+    cards = soup.select('div.card')
+
+    for card in cards:
+        link = card.select_one('a[href]')
+        if not link:
+            continue
+
+        caturl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
+        name = utils.safe_get_attr(card.select_one('img'), 'alt', default='') or utils.safe_get_text(
+            card.select_one('.title, .card-title'), default=''  # type: ignore[arg-type]
+        )
+
+        if not caturl or not name:
+            continue
+
+        img = utils.safe_get_attr(card.select_one('img'), 'data-src', ['src', 'data-original'], default='')
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
+
+        site.add_dir(utils.cleantext(name), caturl, 'List', img)
+
     utils.eod()

@@ -19,8 +19,8 @@ This checklist groups regex-heavy site modules under `resources/lib/sites/` by m
 - [x] `porno1hu.py`
 - [x] `porno365.py`
 - [x] `nltubes.py`
-- [ ] `vaginanl.py`
-- [ ] `perverzija.py`
+- [x] `vaginanl.py`
+- [x] `perverzija.py`
 - [ ] `viralvideosporno.py`
 - [ ] `netfapx.py`
 - [ ] `porntn.py`

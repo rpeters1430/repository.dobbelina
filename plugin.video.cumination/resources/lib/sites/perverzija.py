@@ -18,6 +18,7 @@
 
 import re
 from six.moves import urllib_parse
+
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
@@ -37,58 +38,118 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url)
-    videos = listhtml.split('class="video-listing-filter"')[-1].split('<div class="item-thumbnail">')
-    videos.pop(0)
-    for video in videos:
-        videourl = re.compile(r'<a href="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(video)[0]
-        name = re.compile(r'title="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(video)[0]
-        img = re.compile(r'src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(video)[0]
-        name = utils.cleantext(name)
-        duration = re.compile(r'time_dur">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(video)
-        duration = duration[0] if duration else ''
+    soup = utils.parse_html(listhtml)
 
-        contextmenu = []
+    if not soup:
+        utils.eod()
+        return
+
+    video_items = soup.select('.video-listing-filter .item-thumbnail, div.item-thumbnail')
+
+    for item in video_items:
+        link = item.select_one('a[href]')
+        if not link:
+            continue
+
+        videourl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
+        title = utils.safe_get_attr(link, 'title', default='') or utils.safe_get_attr(
+            item.select_one('img'), 'alt', default=''  # type: ignore[arg-type]
+        )
+        title = utils.cleantext(title)
+
+        if not videourl or not title:
+            continue
+
+        img = utils.safe_get_attr(item.select_one('img'), 'src', ['data-src', 'data-original'], default='')
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
+
+        duration = utils.safe_get_text(item.select_one('.time_dur, .duration'), default='')
+
         contexturl = (utils.addon_sys
                       + "?mode=" + str('perverzija.Lookupinfo')
                       + "&url=" + urllib_parse.quote_plus(videourl))
-        contextmenu.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+        contextmenu = [('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')')]
 
-        site.add_download_link(name, videourl, 'Play', img, name, noDownload=True, contextm=contextmenu, duration=duration)
+        site.add_download_link(
+            title,
+            videourl,
+            'Play',
+            img,
+            title,
+            noDownload=True,
+            contextm=contextmenu,
+            duration=duration
+        )
 
-    nextp = re.compile(r'label="Next\s*Page"\s*href="([^"]+)', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if nextp:
-        pgtxt = re.compile("""class=["']pages["']>([^<]+)""", re.DOTALL | re.IGNORECASE).findall(listhtml)[0]
-        site.add_dir('Next Page... (Currently in {0})'.format(pgtxt), nextp.group(1), 'List', site.img_next)
+    next_link = soup.select_one('a[aria-label="Next Page"], a[rel="next"]')
+    if next_link:
+        next_href = urllib_parse.urljoin(site.url, utils.safe_get_attr(next_link, 'href', default=''))
+        pages_text = utils.safe_get_text(soup.select_one('.pages'), default='')
+        label = 'Next Page'
+        if pages_text:
+            label = 'Next Page... (Currently in {0})'.format(pages_text)
+        site.add_dir(label, next_href, 'List', site.img_next)
     utils.eod()
 
 
 @site.register()
 def Tag(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(r'(tag/[^"]+)">\s+([^\)]+\))', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for caturl, name in match:
-        name = utils.cleantext(name)
-        site.add_dir(name, site.url + caturl, 'List', '')
+    soup = utils.parse_html(cathtml)
+
+    if not soup:
+        utils.eod()
+        return
+
+    for link in soup.select('a[href*="tag/"]'):
+        caturl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
+        name = utils.cleantext(utils.safe_get_text(link, default=''))
+
+        if not caturl or not name:
+            continue
+
+        site.add_dir(name, caturl, 'List', '')
     utils.eod()
 
 
 @site.register()
 def Studios(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(r'(studio/[^"]+)">\s+([^\)]+\))', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for caturl, name in match:
-        name = utils.cleantext(name)
-        site.add_dir(name, site.url + caturl, 'List', '')
+    soup = utils.parse_html(cathtml)
+
+    if not soup:
+        utils.eod()
+        return
+
+    for link in soup.select('a[href*="studio/"]'):
+        caturl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
+        name = utils.cleantext(utils.safe_get_text(link, default=''))
+
+        if not caturl or not name:
+            continue
+
+        site.add_dir(name, caturl, 'List', '')
     utils.eod()
 
 
 @site.register()
 def Stars(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(r'(stars/[^"]+)">\s+([^\)]+\))', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for caturl, name in match:
-        name = utils.cleantext(name)
-        site.add_dir(name, site.url + caturl, 'List', '')
+    soup = utils.parse_html(cathtml)
+
+    if not soup:
+        utils.eod()
+        return
+
+    for link in soup.select('a[href*="stars/"]'):
+        caturl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
+        name = utils.cleantext(utils.safe_get_text(link, default=''))
+
+        if not caturl or not name:
+            continue
+
+        site.add_dir(name, caturl, 'List', '')
     utils.eod()
 
 
