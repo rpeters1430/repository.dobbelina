@@ -173,7 +173,7 @@ this table is the authoritative tracker for completion status.
 | rule34video | ✅ **COMPLETED** | BeautifulSoup for List, TagMenu, Tag, Cats with comprehensive tests (2025-12-07) |
 | taboofantazy | ✅ **COMPLETED** | BeautifulSoup for List, Cat, Tags with comprehensive tests (2025-12-06) |
 
-#### ⏳ Sub-Phase 6: International Sites (4/15 completed)
+#### ⏳ Sub-Phase 6: International Sites (6/15 completed)
 
 | Site | Status | Region |
 |------|--------|--------|
@@ -181,8 +181,8 @@ this table is the authoritative tracker for completion status.
 | porno1hu | ✅ **COMPLETED** | Hungarian |
 | porno365 | ✅ **COMPLETED** | Russian |
 | nltubes | ✅ **COMPLETED** | Dutch |
-| vaginanl | ⏳ Pending | Dutch |
-| perverzija | ⏳ Pending | Balkan |
+| vaginanl | ✅ **COMPLETED** | Dutch |
+| perverzija | ✅ **COMPLETED** | Balkan |
 | viralvideosporno | ⏳ Pending | Spanish |
 | netfapx | ⏳ Pending | International |
 | porntn | ⏳ Pending | International |
