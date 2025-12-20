@@ -1,4 +1,5 @@
-[B]Version 1.1.210[/B]
+[B]Version 1.1.211[/B]
+- americass - removed (site defunct) - cherry-picked from upstream
 - Fix video playback for FlareSolverr scraped sites (e.g. luxuretv) - cherry-picked from upstream
 - Add upstream sync tracking system with automated scripts
 
@@ -107,3 +108,8 @@
 Fix video playback for FlareSolverr scraped sites (e.g. luxuretv)
 
 >>>>>>> 7bbe1c7 (Fix video playback for FlareSolverr scraped sites (e.g. luxuretv))
+=======
+[B]Version 1.1.163[/B]
+- stripchat - fix playback (SD only)
+- americass - removed
+>>>>>>> 43c6322 (americass - removed fixes #1709)
