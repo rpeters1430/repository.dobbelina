@@ -31,7 +31,7 @@ site = AdultSite(
     "hentaidude",
     "[COLOR hotpink]Hentaidude[/COLOR]",
     "https://hentaidude.xxx/",
-    "https://hentaidude.xxx/wp-content/uploads/2021/03/Hentai-Dude.png",
+    "hentaidude.png",
     "hentaidude",
 )
 

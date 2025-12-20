@@ -21,7 +21,7 @@ from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('hitprn', '[COLOR hotpink]Hitprn[/COLOR]', 'https://www.hitprn.com/', 'https://www.hitprn.com/wp-content/uploads/2021/03/hitprn-logo.png', 'hitprn')
+site = AdultSite('hitprn', '[COLOR hotpink]Hitprn[/COLOR]', 'https://www.hitprn.com/', 'hitprn.png', 'hitprn')
 
 addon = utils.addon
 

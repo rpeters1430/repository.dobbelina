@@ -24,7 +24,7 @@ from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
 import json
 
-site = AdultSite('netfapx', '[COLOR hotpink]Netfapx[/COLOR]', 'https://netfapx.com/', 'https://netfapx.com/wp-content/uploads/2017/11/netfapx-lg-1_319381e1f227e13ae1201bfa30857622.png', 'netfapx')
+site = AdultSite('netfapx', '[COLOR hotpink]Netfapx[/COLOR]', 'https://netfapx.com/', 'netfapx.png', 'netfapx')
 
 
 @site.register(default_mode=True)

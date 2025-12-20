@@ -20,7 +20,7 @@ from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('peekvids', '[COLOR hotpink]PeekVids[/COLOR]', 'https://www.peekvids.com/', 'https://www.peekvids.com/img/logo.png', 'peekvids')
+site = AdultSite('peekvids', '[COLOR hotpink]PeekVids[/COLOR]', 'https://www.peekvids.com/', 'peekvids.png', 'peekvids')
 
 
 def _add_pagination(soup, mode):

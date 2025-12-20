@@ -21,7 +21,7 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 import requests
 
-site = AdultSite('pornhoarder', '[COLOR hotpink]PornHoarder[/COLOR]', 'https://www.pornhoarder.tv/', 'pornhoarder.jpg', 'pornhoarder')
+site = AdultSite('pornhoarder', '[COLOR hotpink]PornHoarder[/COLOR]', 'https://www.pornhoarder.tv/', 'pornhoarder.png', 'pornhoarder')
 
 ph_headers = {
     'Origin': site.url[:-1],

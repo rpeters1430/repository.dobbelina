@@ -20,7 +20,7 @@ import re
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('xtheatre', '[COLOR hotpink]Xtheatre[/COLOR]', 'https://pornxtheatre.com/', 'https://pornxtheatre.com/wp-content/uploads/2020/06/ggf.png', 'xtheatre')
+site = AdultSite('xtheatre', '[COLOR hotpink]Xtheatre[/COLOR]', 'https://pornxtheatre.com/', 'xtheatre.png', 'xtheatre')
 
 addon = utils.addon
 

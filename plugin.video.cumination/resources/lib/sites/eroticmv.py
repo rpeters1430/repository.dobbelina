@@ -23,7 +23,7 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
 
-site = AdultSite('eroticmv', "[COLOR hotpink]EroticMV[/COLOR]", 'http://eroticmv.com/', 'https://eroticmv.com/wp-content/uploads/2019/10/logo-2.png', 'eroticmv')
+site = AdultSite('eroticmv', "[COLOR hotpink]EroticMV[/COLOR]", 'http://eroticmv.com/', 'eroticmv.png', 'eroticmv')
 
 
 @site.register(default_mode=True)

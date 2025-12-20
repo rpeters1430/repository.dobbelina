@@ -24,7 +24,7 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
 
-site = AdultSite('porno365', "[COLOR hotpink]Porno365[/COLOR]", 'http://m.porno365.pics/', 'http://m.porno365.pics/settings/l8.png', 'porno365')
+site = AdultSite('porno365', "[COLOR hotpink]Porno365[/COLOR]", 'http://m.porno365.pics/', 'porno365.png', 'porno365')
 porn365_headers = utils.base_hdrs.copy()
 porn365_headers.update({'User-Agent': 'Mozilla/5.0 (Android 7.0; Mobile; rv:54.0) Gecko/54.0 Firefox/54.0'})
 

@@ -22,7 +22,7 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
 
-site = AdultSite("erome", "[COLOR hotpink]Erome[/COLOR]", "https://www.erome.com/", "https://www.erome.com/img/logo-erome-horizontal.png", "erome")
+site = AdultSite("erome", "[COLOR hotpink]Erome[/COLOR]", "https://www.erome.com/", "erome.png", "erome")
 
 
 @site.register(default_mode=True)

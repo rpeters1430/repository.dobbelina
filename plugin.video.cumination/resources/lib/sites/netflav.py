@@ -23,7 +23,7 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
 
-site = AdultSite('netflav', '[COLOR hotpink]Netflav[/COLOR]', 'https://netflav.com/', 'https://netflav.com/static/assets/logo.png', 'netflav')
+site = AdultSite('netflav', '[COLOR hotpink]Netflav[/COLOR]', 'https://netflav.com/', 'netflav.png', 'netflav')
 
 
 def make_netflav_headers():

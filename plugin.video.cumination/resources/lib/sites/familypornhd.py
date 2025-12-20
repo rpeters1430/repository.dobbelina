@@ -24,7 +24,7 @@ from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
 import json
 
-site = AdultSite('familypornhd', '[COLOR hotpink]Familypornhd[/COLOR]', 'https://familypornhd.com/', 'https://familypornhd.com/wp-content/uploads/2020/06/Light-normal.png', 'familypornhd')
+site = AdultSite('familypornhd', '[COLOR hotpink]Familypornhd[/COLOR]', 'https://familypornhd.com/', 'familypornhd.png', 'familypornhd')
 
 
 @site.register(default_mode=True)

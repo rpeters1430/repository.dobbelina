@@ -22,7 +22,7 @@ from resources.lib import utils
 from six.moves import urllib_parse
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('stripchat', '[COLOR hotpink]stripchat.com[/COLOR]', 'https://stripchat.com/', 'stripchat.jpg', 'stripchat', True)
+site = AdultSite('stripchat', '[COLOR hotpink]stripchat.com[/COLOR]', 'https://stripchat.com/', 'stripchat.png', 'stripchat', True)
 
 
 @site.register(default_mode=True)

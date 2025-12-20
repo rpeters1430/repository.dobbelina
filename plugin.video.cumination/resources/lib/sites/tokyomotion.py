@@ -21,7 +21,7 @@ from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('tokyomotion', '[COLOR hotpink]TokyoMotion[/COLOR]', 'https://www.tokyomotion.net/', 'https://cdn.tokyo-motion.net/img/logo.gif', 'tokyomotion')
+site = AdultSite('tokyomotion', '[COLOR hotpink]TokyoMotion[/COLOR]', 'https://www.tokyomotion.net/', 'tokyomotion.png', 'tokyomotion')
 
 
 @site.register(default_mode=True)

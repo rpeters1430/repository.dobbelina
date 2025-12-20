@@ -21,7 +21,7 @@ from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('porngo', '[COLOR hotpink]PornGO[/COLOR]', 'https://www.porngo.com/', 'https://www.porngo.com/img/logo.png', 'porngo')
+site = AdultSite('porngo', '[COLOR hotpink]PornGO[/COLOR]', 'https://www.porngo.com/', 'porngo.png', 'porngo')
 
 
 @site.register(default_mode=True)

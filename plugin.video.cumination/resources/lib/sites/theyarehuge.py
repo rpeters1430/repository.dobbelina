@@ -23,7 +23,7 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.decrypters.kvsplayer import kvs_decode
 
-site = AdultSite('theyarehuge', '[COLOR hotpink]They Are Huge[/COLOR]', 'https://www.theyarehuge.com/', 'https://www.theyarehuge.com/static/images/tah-logo-m.png', 'theyarehuge')
+site = AdultSite('theyarehuge', '[COLOR hotpink]They Are Huge[/COLOR]', 'https://www.theyarehuge.com/', 'theyarehuge.png', 'theyarehuge')
 tahlogged = 'true' in utils.addon.getSetting('tahlogged')
 getinput = utils._get_keyboard
 

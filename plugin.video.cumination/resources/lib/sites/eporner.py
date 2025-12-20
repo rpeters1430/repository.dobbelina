@@ -22,7 +22,7 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
 
-site = AdultSite('eporner', '[COLOR hotpink]Eporner[/COLOR]', 'https://www.eporner.com/', 'https://static-eu-cdn.eporner.com/new/logo.png', 'eporner')
+site = AdultSite('eporner', '[COLOR hotpink]Eporner[/COLOR]', 'https://www.eporner.com/', 'eporner.png', 'eporner')
 
 
 @site.register(default_mode=True)

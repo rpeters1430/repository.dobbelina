@@ -22,7 +22,7 @@ import xbmcplugin
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('xnxx', '[COLOR hotpink]XNXX[/COLOR]', 'https://www.xnxx.com/', 'https://static-cdn77.xnxx-cdn.com/v3/img/skins/xnxx/logo-xnxx.png', 'xnxx')
+site = AdultSite('xnxx', '[COLOR hotpink]XNXX[/COLOR]', 'https://www.xnxx.com/', 'xnxx.png', 'xnxx')
 
 
 @site.register(default_mode=True)

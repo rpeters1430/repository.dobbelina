@@ -21,7 +21,7 @@ from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('porn4k', '[COLOR hotpink]Porn4K[/COLOR]', 'https://porn4k.to/', 'https://porn4k.to/wp-content/uploads/2022/04/banner.png', 'porn4k')
+site = AdultSite('porn4k', '[COLOR hotpink]Porn4K[/COLOR]', 'https://porn4k.to/', 'porn4k.png', 'porn4k')
 
 
 @site.register(default_mode=True)

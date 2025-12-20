@@ -24,7 +24,7 @@ from resources.lib import utils
 from six.moves import urllib_parse
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('xsharings', '[COLOR hotpink]XSharings[/COLOR]', 'https://xsharings.com/', 'https://xsharings.com/wp-content/uploads/2025/05/Sharinglg5.png', 'xsharings')
+site = AdultSite('xsharings', '[COLOR hotpink]XSharings[/COLOR]', 'https://xsharings.com/', 'xsharings.png', 'xsharings')
 
 addon = utils.addon
 

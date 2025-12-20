@@ -22,7 +22,7 @@ from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('vaginanl', '[COLOR hotpink]Vagina.nl[/COLOR] [COLOR orange](Dutch)[/COLOR]', 'https://vagina.nl/', 'https://c749a9571b.mjedge.net/img/logo-default.png', 'vaginanl')
+site = AdultSite('vaginanl', '[COLOR hotpink]Vagina.nl[/COLOR] [COLOR orange](Dutch)[/COLOR]', 'https://vagina.nl/', 'vaginanl.png', 'vaginanl')
 
 
 @site.register(default_mode=True)

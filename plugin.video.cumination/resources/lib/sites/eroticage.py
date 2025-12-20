@@ -21,7 +21,7 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 import json
 
-site = AdultSite('eroticage', '[COLOR hotpink]EroticAge[/COLOR]', 'https://www.eroticage.net/', 'https://www.eroticage.net/wp-content/uploads/2021/08/eroticage-logo.jpg', 'eroticage')
+site = AdultSite('eroticage', '[COLOR hotpink]EroticAge[/COLOR]', 'https://www.eroticage.net/', 'eroticage.png', 'eroticage')
 
 
 @site.register(default_mode=True)

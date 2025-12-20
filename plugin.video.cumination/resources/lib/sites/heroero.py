@@ -24,7 +24,7 @@ from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
 from kodi_six import xbmcgui, xbmcplugin
 
-site = AdultSite('heroero', "[COLOR hotpink]Heroero[/COLOR]", 'https://heroero.com/', 'https://www.heroero.com/images/logo.png', 'heroero')
+site = AdultSite('heroero', "[COLOR hotpink]Heroero[/COLOR]", 'https://heroero.com/', 'heroero.png', 'heroero')
 
 
 @site.register(default_mode=True)

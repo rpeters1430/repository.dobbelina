@@ -21,7 +21,7 @@ import xbmcplugin
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('hobbyporn', '[COLOR hotpink]Hobby Porn[/COLOR]', 'https://hobby.porn/', 'https://hobby.porn/static/images/logo.png', 'hobbyporn')
+site = AdultSite('hobbyporn', '[COLOR hotpink]Hobby Porn[/COLOR]', 'https://hobby.porn/', 'hobbyporn.png', 'hobbyporn')
 
 
 @site.register(default_mode=True)

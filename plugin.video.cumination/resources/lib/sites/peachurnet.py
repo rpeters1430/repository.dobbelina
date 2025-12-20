@@ -30,7 +30,7 @@ site = AdultSite(
     'peachurnet',
     '[COLOR hotpink]PeachUrNet[/COLOR]',
     'https://peachurnet.com/',
-    'https://peachurnet.com/favicon-32x32.png',
+    'peachurnet.png',
     'peachurnet'
 )
 

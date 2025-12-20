@@ -23,7 +23,7 @@ from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
 import xbmc
 
-site = AdultSite('celebsroulette', '[COLOR hotpink]CelebsRoulette[/COLOR]', 'https://celebsroulette.com/', 'https://celebsroulette.com/images/logo.png', 'celebsroulette')
+site = AdultSite('celebsroulette', '[COLOR hotpink]CelebsRoulette[/COLOR]', 'https://celebsroulette.com/', 'celebsroulette.png', 'celebsroulette')
 
 
 @site.register(default_mode=True)

@@ -24,7 +24,7 @@ import xbmc
 import xbmcgui
 
 
-site = AdultSite('xxdbx', '[COLOR hotpink]xxdbx[/COLOR]', 'https://xxdbx.com/', 'https://xxdbx.com/l.png', 'xxdbx')
+site = AdultSite('xxdbx', '[COLOR hotpink]xxdbx[/COLOR]', 'https://xxdbx.com/', 'xxdbx.png', 'xxdbx')
 
 
 @site.register(default_mode=True)

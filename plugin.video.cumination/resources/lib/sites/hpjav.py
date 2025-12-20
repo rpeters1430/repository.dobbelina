@@ -22,7 +22,7 @@ from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('hpjav', '[COLOR hotpink]HPJav[/COLOR]', 'https://hpjav.in/', 'https://hpjav.in/wp-content/themes/HPJAV/images/logo.png', 'hpjav')
+site = AdultSite('hpjav', '[COLOR hotpink]HPJav[/COLOR]', 'https://hpjav.in/', 'hpjav.png', 'hpjav')
 
 
 @site.register(default_mode=True)

@@ -72,7 +72,10 @@
       "Bash(.venv/bin/ruff check:*)",
       "Bash(git remote add:*)",
       "Bash(git fetch:*)",
-      "Bash(unzip:*)"
+      "Bash(unzip:*)",
+      "Bash(comm:*)",
+      "Bash(grep:*)",
+      "Bash(magick:*)"
     ],
     "deny": [],
     "ask": []

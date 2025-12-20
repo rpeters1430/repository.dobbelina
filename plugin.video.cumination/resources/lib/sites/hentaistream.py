@@ -22,7 +22,7 @@ from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite("hentaistream", "[COLOR hotpink]HentaiStream[/COLOR]", 'https://hstream.moe/', "https://hstream.moe/images/hs_banner.png", "hentaistream")
+site = AdultSite("hentaistream", "[COLOR hotpink]HentaiStream[/COLOR]", 'https://hstream.moe/', "hentaistream.png", "hentaistream")
 
 
 @site.register(default_mode=True)

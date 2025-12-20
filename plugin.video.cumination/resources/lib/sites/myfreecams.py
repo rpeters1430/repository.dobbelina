@@ -24,7 +24,7 @@ from resources.lib import utils
 import websocket
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('myfreecams', '[COLOR hotpink]MyFreeCams[/COLOR]', 'https://www.myfreecams.com/', 'myfreecams.jpg', 'myfreecams', True)
+site = AdultSite('myfreecams', '[COLOR hotpink]MyFreeCams[/COLOR]', 'https://www.myfreecams.com/', 'myfreecams.png', 'myfreecams', True)
 
 
 def getMFC():

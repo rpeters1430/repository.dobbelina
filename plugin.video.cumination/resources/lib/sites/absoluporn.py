@@ -22,7 +22,7 @@ import xbmcplugin
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('absoluporn', '[COLOR hotpink]AbsoluPorn[/COLOR]', "http://www.absoluporn.com/en", "absoluporn.gif", 'absoluporn')
+site = AdultSite('absoluporn', '[COLOR hotpink]AbsoluPorn[/COLOR]', "http://www.absoluporn.com/en", "absoluporn.png", 'absoluporn')
 
 
 @site.register(default_mode=True)

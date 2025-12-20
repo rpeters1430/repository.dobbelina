@@ -24,7 +24,7 @@ from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
 import json
 
-site = AdultSite('uflash', '[COLOR hotpink]Uflash[/COLOR]', 'http://www.uflash.tv/', 'http://www.uflash.tv/templates/frontend/default/images/logo.png', 'uflash')
+site = AdultSite('uflash', '[COLOR hotpink]Uflash[/COLOR]', 'http://www.uflash.tv/', 'uflash.png', 'uflash')
 
 
 @site.register(default_mode=True)

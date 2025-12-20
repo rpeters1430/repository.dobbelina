@@ -20,7 +20,7 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
 
-site = AdultSite('luxuretv', '[COLOR hotpink]LuxureTV[/COLOR]', 'https://luxuretv.com/', 'https://luxuretv.com/images/logo.png', 'luxuretv')
+site = AdultSite('luxuretv', '[COLOR hotpink]LuxureTV[/COLOR]', 'https://luxuretv.com/', 'luxuretv.png', 'luxuretv')
 
 
 @site.register(default_mode=True)

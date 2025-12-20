@@ -25,7 +25,7 @@ from resources.lib.decrypters.kvsplayer import kvs_decode
 from resources.lib.decrypters import txxx
 
 
-site = AdultSite('awmnet', '[COLOR hotpink]AWM Network[/COLOR] - [COLOR deeppink]48 sites[/COLOR]', '', 'awmnet.jpg', 'awmnet')
+site = AdultSite('awmnet', '[COLOR hotpink]AWM Network[/COLOR] - [COLOR deeppink]48 sites[/COLOR]', '', 'awmnet.png', 'awmnet')
 
 sitelist = [
     ['4tube', 'https://www.4tube.com/templates/4tube/images/logo.png', 'https://www.4tube.com/'],

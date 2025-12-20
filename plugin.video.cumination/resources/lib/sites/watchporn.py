@@ -28,7 +28,7 @@ from resources.lib.adultsite import AdultSite
 from resources.lib.decrypters.kvsplayer import kvs_decode
 
 
-site = AdultSite('watchporn', '[COLOR hotpink]WatchPorn[/COLOR]', 'https://watchporn.to/', 'https://watchporn.to/contents/djifbwwmsrbs/theme/logo.png', 'watchporn')
+site = AdultSite('watchporn', '[COLOR hotpink]WatchPorn[/COLOR]', 'https://watchporn.to/', 'watchporn.png', 'watchporn')
 
 
 @site.register(default_mode=True)

@@ -22,7 +22,7 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
 
-site = AdultSite('cumlouder', '[COLOR hotpink]Cum Louder[/COLOR]', 'https://www.cumlouder.com/', 'cumlouder.jpg', 'cumlouder')
+site = AdultSite('cumlouder', '[COLOR hotpink]Cum Louder[/COLOR]', 'https://www.cumlouder.com/', 'cumlouder.png', 'cumlouder')
 
 
 @site.register(default_mode=True)

@@ -25,7 +25,7 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.decrypters.kvsplayer import kvs_decode
 
-site = AdultSite('tabootube', '[COLOR hotpink]TabooTube[/COLOR]', 'https://www.tabootube.xxx/', 'https://www.tabootube.xxx/contents/other/theme/logo.png', 'tabootube')
+site = AdultSite('tabootube', '[COLOR hotpink]TabooTube[/COLOR]', 'https://www.tabootube.xxx/', 'tabootube.png', 'tabootube')
 
 
 @site.register(default_mode=True)

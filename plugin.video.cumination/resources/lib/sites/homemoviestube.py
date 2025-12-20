@@ -21,7 +21,7 @@ from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('homemoviestube', '[COLOR hotpink]HomeMovies Tube[/COLOR]', 'https://www.homemoviestube.com/', 'https://www.homemoviestube.com/images/logo.png', 'homemoviestube')
+site = AdultSite('homemoviestube', '[COLOR hotpink]HomeMovies Tube[/COLOR]', 'https://www.homemoviestube.com/', 'homemoviestube.png', 'homemoviestube')
 
 
 @site.register(default_mode=True)
