@@ -12,7 +12,7 @@ This file tracks sites identified from screenshots that are not yet implemented 
 
 ## ⭐ Tier 2 - Popular Sites
 
-- [ ] **SexyPorn**
+- [x] **SexyPorn**
 - [ ] **Porninja**
 - [ ] **PlayHDPorn**
 - [ ] **PornHD3x**

@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import json
 import re
 import xbmc
 import xbmcgui
+from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
-from six.moves import urllib_parse
-import json
 
 site = AdultSite('netfapx', '[COLOR hotpink]Netfapx[/COLOR]', 'https://netfapx.com/', 'netfapx.png', 'netfapx')
 
@@ -44,16 +44,56 @@ def List(url):
         utils.eod()
         return
 
-    delimiter = '<article class="pinbox"'
-    re_videopage = 'class="thumb">.+?href="([^"]+)"'
-    re_name = 'class="title".+?title="([^"]+)"'
-    re_img = 'img.+?src="([^"]+)"'
-    re_duration = r'title="Duration">([\d:]+)'
-    utils.videos_list(site, 'netfapx.Playvid', html, delimiter, re_videopage, re_name, re_img, re_duration=re_duration)
+    soup = utils.parse_html(html)
+    if not soup:
+        utils.eod()
+        return
 
-    re_npurl = r'href="([^"]+)"\s*class="next">Next'
-    re_npnr = r'/page/(\d+)\D+class="next">Next'
-    utils.next_page(site, 'netfapx.List', html, re_npurl, re_npnr, videos_per_page=30, contextm='netfapx.GotoPage')
+    for article in soup.select('article.pinbox'):
+        link = article.select_one('.thumb[href]')
+        if not link:
+            link = article.select_one('a[href]')
+        if not link:
+            continue
+
+        videopage = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
+        name = utils.cleantext(utils.safe_get_attr(link, 'title', default=utils.safe_get_text(article.select_one('.title') or link, default='')))
+        if not videopage or not name:
+            continue
+
+        img_tag = article.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+        duration = utils.safe_get_text(article.select_one('[title="Duration"]'), default='')
+
+        site.add_download_link(name, videopage, 'netfapx.Playvid', img, name, duration=duration)
+
+    pagination = soup.select_one('a.next[href]')
+    if pagination:
+        next_url = utils.safe_get_attr(pagination, 'href', default='')
+        page_match = re.search(r'/page/(\d+)', next_url)
+        page_num = page_match.group(1) if page_match else ''
+        last_page = ''
+        last_link = soup.select_one('.pagination a:last-of-type[href]')
+        if last_link:
+            last_match = re.search(r'/page/(\d+)', utils.safe_get_attr(last_link, 'href', default=''))
+            last_page = last_match.group(1) if last_match else ''
+
+        contextmenu = []
+        if page_num and last_page:
+            contexturl = (utils.addon_sys
+                          + "?mode=netfapx.GotoPage"
+                          + "&list_mode=netfapx.List"
+                          + "&url=" + urllib_parse.quote_plus(url)
+                          + "&np=" + page_num
+                          + "&lp=" + last_page)
+            contextmenu.append(('[COLOR violet]Goto Page[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+
+        label = 'Next Page'
+        if page_num and last_page:
+            label += f' ({page_num}/{last_page})'
+        elif page_num:
+            label += f' ({page_num})'
+        site.add_dir(label, next_url, 'netfapx.List', site.img_next, contextm=contextmenu)
     utils.eod()
 
 
@@ -73,13 +113,26 @@ def GotoPage(list_mode, url, np, lp):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    cathtml = cathtml.split('class="infovideo-cat"')
-    match = re.compile(r'href="([^"]+)"><img width="\d+" height="\d+" src="([^"]+)">', re.IGNORECASE | re.DOTALL).findall(cathtml[0])
-    for caturl, img in match:
-        name = img.split('/')[-1].split('.')[0].replace('-', ' ')
+    soup = utils.parse_html(cathtml)
+    if not soup:
+        utils.eod()
+        return
+
+    category_section = soup.select('.infovideo-cat img[src]')
+    for img_tag in category_section:
+        caturl = utils.safe_get_attr(img_tag.find_parent('a'), 'href', default='')
+        img = utils.safe_get_attr(img_tag, 'src', default='')
+        name = img.split('/')[-1].split('.')[0].replace('-', ' ') if img else ''
+        if not caturl or not name:
+            continue
         site.add_dir(name, caturl, 'List', img)
-    match = re.compile(r'a href="([^"]+)"[^>]+>([^<]+)</a>', re.IGNORECASE | re.DOTALL).findall(cathtml[1].split('class="footerbar"')[0])
-    for caturl, name in match:
+
+    footer_section = soup.select_one('.footerbar') or soup
+    for link in footer_section.select('a[href]'):
+        name = utils.cleantext(utils.safe_get_text(link, default=''))
+        caturl = utils.safe_get_attr(link, 'href', default='')
+        if not name or not caturl:
+            continue
         site.add_dir('[tag] ' + name, caturl, 'List', '')
     utils.eod()
 
@@ -87,15 +140,57 @@ def Categories(url):
 @site.register()
 def Pornstars(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(r'class="preview">.+?href="([^"]+)">.+?src="([^"]+)".+?alt="([^"]+)".+?title="Videos">(\d+)', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for caturl, img, name, count in match:
+    soup = utils.parse_html(cathtml)
+    if not soup:
+        utils.eod()
+        return
+
+    for preview in soup.select('.preview'):
+        link = preview.select_one('a[href]')
+        img_tag = preview.select_one('img')
+        name_elem = preview.select_one('img[alt]') or link
+        count_elem = preview.select_one('[title="Videos"]') or preview.select_one('.videos-count')
+
+        caturl = utils.safe_get_attr(link, 'href', default='')
+        img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+        name = utils.cleantext(utils.safe_get_attr(name_elem, 'alt', default=utils.safe_get_text(name_elem, default='')))
+        count = utils.safe_get_text(count_elem, default='')
+
+        if not caturl or not name:
+            continue
+
         caturl = caturl.replace('/pornstar/', '/videos/')
-        name = utils.cleantext(name) + '[COLOR hotpink] ({} videos)[/COLOR]'.format(count)
+        if count:
+            name = f'{name}[COLOR hotpink] ({count} videos)[/COLOR]'
         site.add_dir(name, caturl, 'List', img)
 
-    re_npurl = r'href="([^"]+)"\s*class="next">Next'
-    re_npnr = r'/page/(\d+)\D+class="next">Next'
-    utils.next_page(site, 'netfapx.Pornstars', cathtml, re_npurl, re_npnr, contextm='netfapx.GotoPage')
+    pagination = soup.select_one('a.next[href]')
+    if pagination:
+        next_url = utils.safe_get_attr(pagination, 'href', default='')
+        page_match = re.search(r'/page/(\d+)', next_url)
+        page_num = page_match.group(1) if page_match else ''
+        last_page = ''
+        last_link = soup.select_one('.pagination a:last-of-type[href]')
+        if last_link:
+            last_match = re.search(r'/page/(\d+)', utils.safe_get_attr(last_link, 'href', default=''))
+            last_page = last_match.group(1) if last_match else ''
+
+        contextmenu = []
+        if page_num and last_page:
+            contexturl = (utils.addon_sys
+                          + "?mode=netfapx.GotoPage"
+                          + "&list_mode=netfapx.Pornstars"
+                          + "&url=" + urllib_parse.quote_plus(url)
+                          + "&np=" + page_num
+                          + "&lp=" + last_page)
+            contextmenu.append(('[COLOR violet]Goto Page[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+
+        label = 'Next Page'
+        if page_num and last_page:
+            label += f' ({page_num}/{last_page})'
+        elif page_num:
+            label += f' ({page_num})'
+        site.add_dir(label, next_url, 'netfapx.Pornstars', site.img_next, contextm=contextmenu)
     utils.eod()
 
 

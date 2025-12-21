@@ -41,11 +41,30 @@ def List(url, page=1):
     except Exception:
         return None
 
-    match = re.compile(r'class="item\s*?">\s+<a href="https://porntn\.com/([^"]+)" title="([^"]+)".*?data-original="([^"]+)".*?duration">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for videopage, name, img, duration in match:
-        name = utils.cleantext(name)
-        videopage = site.url + videopage
-        img = img if img.startswith('http') else site.url + img if not img.startswith('//') else 'https:' + img
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
+
+    for item in soup.select('.item'):
+        link = item.select_one('a[href][title]')
+        if not link:
+            continue
+
+        videopage = utils.safe_get_attr(link, 'href', default='')
+        if not videopage.startswith('http'):
+            videopage = urllib_parse.urljoin(site.url, videopage)
+
+        name = utils.cleantext(utils.safe_get_attr(link, 'title', default=utils.safe_get_text(link, default='')))
+        img_tag = item.select_one('[data-original]')
+        img = utils.safe_get_attr(img_tag, 'data-original', ['src'])
+        if img:
+            if img.startswith('//'):
+                img = 'https:' + img
+            elif not img.startswith('http'):
+                img = urllib_parse.urljoin(site.url, img)
+
+        duration = utils.safe_get_text(item.select_one('.duration'), default='')
 
         contextmenu = []
         contexturl = (utils.addon_sys
@@ -55,13 +74,16 @@ def List(url, page=1):
 
         site.add_download_link(name, videopage, 'Playvid', img, name, contextm=contextmenu, duration=duration)
 
-    np = re.compile(r'class="next">.*?sort_by:[^;]*?;from[^\d]+(\d+)"', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        np = np.group(1)
+    next_link = soup.select_one('.next[href]')
+    if next_link:
+        np = utils.safe_get_attr(next_link, 'href', default='')
+        np_match = re.search(r'from(?:_videos)?=(\d+)', np)
+        next_from = np_match.group(1) if np_match else ''
         nextp = url
         for p in ['from', 'from_videos']:
-            nextp = nextp.replace('{}={}'.format(p, str(page)), '{}={}'.format(p, np))
-        site.add_dir('Next Page ({})'.format(np), nextp, 'List', site.img_next, page=np)
+            nextp = nextp.replace('{}={}'.format(p, str(page)), '{}={}'.format(p, next_from))
+        label = 'Next Page ({})'.format(next_from) if next_from else 'Next Page'
+        site.add_dir(label, nextp, 'List', site.img_next, page=next_from)
 
     utils.eod()
 
@@ -98,12 +120,21 @@ def Categories(url):
         cathtml = utils.getHtml(url, '')
     except Exception:
         return None
-    match = re.compile('<a class="item" href="([^"]+)" title="([^"]+)".*?videos">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name, videos in match:
-        name = utils.cleantext(name)
-        name = name + ' [COLOR hotpink](' + videos + ')[/COLOR]'
+    soup = utils.parse_html(cathtml)
+    if not soup:
+        utils.eod()
+        return
+
+    for card in soup.select('a.item[href][title]'):
+        catpage = utils.safe_get_attr(card, 'href', default='')
+        name = utils.cleantext(utils.safe_get_attr(card, 'title', default=''))
+        videos = utils.safe_get_text(card.select_one('.videos'), default='')
+        if not catpage or not name:
+            continue
+
+        label = name + (' [COLOR hotpink]({})[/COLOR]'.format(videos) if videos else '')
         catpage = catpage + '?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=post_date&from=1'
-        site.add_dir(name, catpage, 'List', '', page=1)
+        site.add_dir(label, catpage, 'List', '', page=1)
     utils.eod()
 
 
@@ -113,10 +144,19 @@ def Tags(url):
         taghtml = utils.getHtml(url, '')
     except Exception:
         return None
-    match = re.compile('/(tags/[^"]+)">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(taghtml)
-    for tagpage, name in match:
-        name = utils.cleantext(name)
-        tagpage = site.url + tagpage + '?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=post_date&from=1'
+    soup = utils.parse_html(taghtml)
+    if not soup:
+        utils.eod()
+        return
+
+    for link in soup.select('a[href*="/tags/"]'):
+        tagpage = utils.safe_get_attr(link, 'href', default='')
+        name = utils.cleantext(utils.safe_get_text(link, default=''))
+        if not tagpage or not name:
+            continue
+        if tagpage.startswith('/'):
+            tagpage = site.url.rstrip('/') + tagpage
+        tagpage = tagpage + '?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=post_date&from=1'
         site.add_dir(name, tagpage, 'List', '', page=1)
     utils.eod()
 

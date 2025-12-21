@@ -18,11 +18,11 @@
 
 import re
 from six.moves import urllib_parse
-
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('perverzija', '[COLOR hotpink]Perverzija[/COLOR]', 'https://tube.perverzija.com/', 'perverzija.png', 'perverzija')
+site = AdultSite('perverzija', '[COLOR hotpink]Perverzija[/COLOR]', 'https://tube.perverzija.com/',
+                 'https://tube.perverzija.com/wp-content/uploads/2018/12/favico2.ico', 'perverzija')
 
 
 @site.register(default_mode=True)
@@ -39,118 +39,84 @@ def Main():
 def List(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-
     if not soup:
         utils.eod()
         return
 
-    video_items = soup.select('.video-listing-filter .item-thumbnail, div.item-thumbnail')
+    container = soup.select_one('.video-listing-filter') or soup
+    videos = container.select('div.item-thumbnail')
 
-    for item in video_items:
-        link = item.select_one('a[href]')
+    for video in videos:
+        link = video.select_one('a[href][title]')
         if not link:
             continue
 
         videourl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
-        title = utils.safe_get_attr(link, 'title', default='') or utils.safe_get_attr(
-            item.select_one('img'), 'alt', default=''  # type: ignore[arg-type]
-        )
-        title = utils.cleantext(title)
-
-        if not videourl or not title:
+        name = utils.cleantext(utils.safe_get_attr(link, 'title', default=utils.safe_get_text(link, default='')))
+        if not videourl or not name:
             continue
 
-        img = utils.safe_get_attr(item.select_one('img'), 'src', ['data-src', 'data-original'], default='')
-        if img:
-            img = urllib_parse.urljoin(site.url, img)
+        img_tag = video.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+        duration = utils.safe_get_text(video.select_one('.time_dur'), default='')
 
-        duration = utils.safe_get_text(item.select_one('.time_dur, .duration'), default='')
-
+        contextmenu = []
         contexturl = (utils.addon_sys
                       + "?mode=" + str('perverzija.Lookupinfo')
                       + "&url=" + urllib_parse.quote_plus(videourl))
-        contextmenu = [('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')')]
+        contextmenu.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + contexturl + ')'))
 
-        site.add_download_link(
-            title,
-            videourl,
-            'Play',
-            img,
-            title,
-            noDownload=True,
-            contextm=contextmenu,
-            duration=duration
-        )
+        site.add_download_link(name, videourl, 'Play', img, name, noDownload=True, contextm=contextmenu, duration=duration)
 
-    next_link = soup.select_one('a[aria-label="Next Page"], a[rel="next"]')
-    if next_link:
-        next_href = urllib_parse.urljoin(site.url, utils.safe_get_attr(next_link, 'href', default=''))
-        pages_text = utils.safe_get_text(soup.select_one('.pages'), default='')
-        label = 'Next Page'
-        if pages_text:
-            label = 'Next Page... (Currently in {0})'.format(pages_text)
-        site.add_dir(label, next_href, 'List', site.img_next)
+    pagination = soup.find('a', attrs={'label': re.compile(r'Next', re.IGNORECASE)}) or soup.select_one('a[rel="next"]')
+    if pagination:
+        pgtxt_elem = soup.find(class_=re.compile(r'\bpages\b'))
+        pgtxt = utils.cleantext(utils.safe_get_text(pgtxt_elem, default=''))
+        label = 'Next Page...'
+        if pgtxt:
+            label += f' (Currently in {pgtxt})'
+        next_url = urllib_parse.urljoin(site.url, utils.safe_get_attr(pagination, 'href', default=''))
+        site.add_dir(label, next_url, 'List', site.img_next)
+    utils.eod()
+
+
+def _taxonomy(url, fragment):
+    html = utils.getHtml(url)
+    soup = utils.parse_html(html)
+    if not soup:
+        utils.eod()
+        return
+
+    seen = set()
+    for link in soup.select(f'a[href*="{fragment}"]'):
+        href = utils.safe_get_attr(link, 'href', default='')
+        name = utils.cleantext(utils.safe_get_text(link, default=''))
+        if not href or not name or fragment not in href:
+            continue
+
+        key = (href, name)
+        if key in seen:
+            continue
+        seen.add(key)
+
+        caturl = href if href.startswith('http') else urllib_parse.urljoin(site.url, href)
+        site.add_dir(name, caturl, 'List', '')
     utils.eod()
 
 
 @site.register()
 def Tag(url):
-    cathtml = utils.getHtml(url)
-    soup = utils.parse_html(cathtml)
-
-    if not soup:
-        utils.eod()
-        return
-
-    for link in soup.select('a[href*="tag/"]'):
-        caturl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
-        name = utils.cleantext(utils.safe_get_text(link, default=''))
-
-        if not caturl or not name:
-            continue
-
-        site.add_dir(name, caturl, 'List', '')
-    utils.eod()
+    _taxonomy(url, 'tag/')
 
 
 @site.register()
 def Studios(url):
-    cathtml = utils.getHtml(url)
-    soup = utils.parse_html(cathtml)
-
-    if not soup:
-        utils.eod()
-        return
-
-    for link in soup.select('a[href*="studio/"]'):
-        caturl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
-        name = utils.cleantext(utils.safe_get_text(link, default=''))
-
-        if not caturl or not name:
-            continue
-
-        site.add_dir(name, caturl, 'List', '')
-    utils.eod()
+    _taxonomy(url, 'studio/')
 
 
 @site.register()
 def Stars(url):
-    cathtml = utils.getHtml(url)
-    soup = utils.parse_html(cathtml)
-
-    if not soup:
-        utils.eod()
-        return
-
-    for link in soup.select('a[href*="stars/"]'):
-        caturl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
-        name = utils.cleantext(utils.safe_get_text(link, default=''))
-
-        if not caturl or not name:
-            continue
-
-        site.add_dir(name, caturl, 'List', '')
-    utils.eod()
+    _taxonomy(url, 'stars/')
 
 
 @site.register()

@@ -17,13 +17,14 @@
 '''
 
 import re
-from resources.lib import utils
-from resources.lib.decrypters.kvsplayer import kvs_decode
-from resources.lib.adultsite import AdultSite
-from six.moves import urllib_parse
 import xbmc
 import xbmcgui
 from random import randint
+from six.moves import urllib_parse
+
+from resources.lib import utils
+from resources.lib.adultsite import AdultSite
+from resources.lib.decrypters.kvsplayer import kvs_decode
 
 site = AdultSite('watchmdh', '[COLOR hotpink]WatchMDH[/COLOR]', 'https://watchdirty.is/', 'watchmdh.png', 'watchmdh')
 
@@ -40,13 +41,10 @@ def Main():
 def List(url):
     utils.kodilog(url)
     listhtml = utils.getHtml(url)
-
-    delimiter = 'class="item  "'
-    re_videopage = '<a href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = 'data-original="([^"]+)"'
-    re_duration = '"duration">([^<]+)<'
-    re_quality = '"is-hd">([^<]+)<'
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
 
     cm = []
     cm_lookupinfo = (utils.addon_sys + "?mode=" + str('watchmdh.Lookupinfo') + "&url=")
@@ -54,21 +52,40 @@ def List(url):
     cm_related = (utils.addon_sys + "?mode=" + str('watchmdh.Related') + "&url=")
     cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')'))
 
-    utils.videos_list(site, 'watchmdh.Playvid', listhtml, delimiter, re_videopage, re_name, re_img, re_duration=re_duration, re_quality=re_quality, contextm=cm)
+    for item in soup.select('.item'):
+        link = item.select_one('a[href][title]')
+        if not link:
+            continue
 
-    match = re.search(r'class="page-current"><span>(\d+)<.+?class="next">.+?data-block-id="([^"]+)"\s+data-parameters="([^"]+)">', listhtml, re.DOTALL | re.IGNORECASE)
-    if match:
-        npage = int(match.group(1)) + 1
-        block_id = match.group(2)
-        params = match.group(3).replace(';', '&').replace(':', '=')
+        videopage = utils.safe_get_attr(link, 'href', default='')
+        name = utils.cleantext(utils.safe_get_attr(link, 'title', default=''))
+        thumb = utils.safe_get_attr(item.select_one('[data-original]'), 'data-original', ['src'])
+        duration = utils.safe_get_text(item.select_one('.duration'), default='')
+        quality = utils.safe_get_text(item.select_one('.is-hd'), default='')
+
+        if not videopage or not name:
+            continue
+
+        site.add_download_link(name, videopage, 'watchmdh.Playvid', thumb, name, duration=duration, quality=quality, contextm=cm)
+
+    next_link = soup.select_one('.next[data-block-id][data-parameters]') or soup.select_one('.next[href]')
+    if next_link:
+        block_id = utils.safe_get_attr(next_link, 'data-block-id', default='')
+        params = utils.safe_get_attr(next_link, 'data-parameters', default='')
+        npage_match = re.search(r'from[^:]*:(\d+)', params)
+        current_page = int(npage_match.group(1)) if npage_match else 1
+        npage = current_page + 1
+
+        params = params.replace(';', '&').replace(':', '=')
         rnd = 1000000000000 + randint(0, 999999999999)
-        nurl = url.split('?')[0] + '?mode=async&function=get_block&block_id={0}&{1}&_={2}'.format(block_id, params, str(rnd))
+        base = url.split('?')[0]
+        nurl = f"{base}?mode=async&function=get_block&block_id={block_id}&{params}&_={rnd}"
         nurl = nurl.replace('+from_albums', '')
         nurl = re.sub(r'&from([^=]*)=\d+', r'&from\1={}'.format(npage), nurl)
 
-        match = re.search(r'from[^:]*:(\d+)">Letzte<', listhtml, re.DOTALL | re.IGNORECASE)
-        lpparam = "&lp={}".format(match.group(1)) if match else "&lp=0"
-        lptxt = "/{}".format(match.group(1)) if match else ""
+        match_lp = re.search(r'from[^:]*:(\d+)"', listhtml, re.DOTALL | re.IGNORECASE)
+        lpparam = "&lp={}".format(match_lp.group(1)) if match_lp else "&lp=0"
+        lptxt = "/{}".format(match_lp.group(1)) if match_lp else ""
 
         cm_page = (utils.addon_sys + "?mode=watchmdh.GotoPage" + "&url=" + urllib_parse.quote_plus(nurl) + "&np=" + str(npage) + lpparam + "&listmode=watchmdh.List")
         cm = [('[COLOR violet]Goto Page #[/COLOR]', 'RunPlugin(' + cm_page + ')')]
