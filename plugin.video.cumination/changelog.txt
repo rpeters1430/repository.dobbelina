@@ -1,3 +1,7 @@
+[B]Version 1.1.210[/B]
+- Fix video playback for FlareSolverr scraped sites (e.g. luxuretv) - cherry-picked from upstream
+- Add upstream sync tracking system with automated scripts
+
 [B]Version 1.1.204[/B]
 - Testing Infrastructure: Expanded test suite from 449 to 622 tests (38% increase)
 - Testing Coverage: Achieved 38% overall code coverage (up from 37%)
@@ -96,3 +100,10 @@
 - youporn, youjizz, tube8, redtube: fix playback by extracting direct sources and setting referer
 - youporn: remove duplicate listings
 - motherless: load Recent by default, de-dupe listings, and play direct sources
+=======
+[B]Version 1.1.163[/B]
+- stripchat - fix playback (SD only)
+- americass - removed
+Fix video playback for FlareSolverr scraped sites (e.g. luxuretv)
+
+>>>>>>> 7bbe1c7 (Fix video playback for FlareSolverr scraped sites (e.g. luxuretv))
