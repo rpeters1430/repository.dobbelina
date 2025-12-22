@@ -1,0 +1,80 @@
+from pathlib import Path
+
+from resources.lib.sites import porntn
+
+
+FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "porntn"
+
+
+def load_fixture(name: str) -> str:
+    return (FIXTURE_DIR / name).read_text(encoding="utf-8")
+
+
+def test_list_parses_items_and_next(monkeypatch):
+    html = load_fixture("list.html")
+    downloads = []
+    dirs = []
+
+    monkeypatch.setattr(porntn.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(porntn.utils, "eod", lambda: None)
+    monkeypatch.setattr(porntn.site, "add_download_link",
+                        lambda name, url, mode, iconimage, desc='', contextm=None, duration='', **kwargs: downloads.append(
+                            {"name": name, "url": url, "mode": mode, "icon": iconimage, "duration": duration, "contextm": contextm}
+                        ))
+    monkeypatch.setattr(porntn.site, "add_dir",
+                        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+                            {"name": name, "url": url, "mode": mode}
+                        ))
+
+    porntn.List("https://porntn.com/?mode=async&function=get_block&block_id=list_videos_most_recent_videos&sort_by=post_date&from=1", 1)
+
+    assert len(downloads) == 3
+    assert downloads[0]["name"] == "Video One"
+    assert downloads[0]["url"] == "https://porntn.com/video-one"
+    assert downloads[0]["duration"] == "10:01"
+    assert downloads[1]["url"] == "https://porntn.com/video-two"
+    assert downloads[2]["icon"].endswith("/images/3.jpg")
+    assert downloads[0]["contextm"] is not None
+
+    next_entries = [d for d in dirs if d["mode"] == "List"]
+    assert len(next_entries) == 1
+    assert "31" in next_entries[0]["name"]
+    assert "from=31" in next_entries[0]["url"]
+
+
+def test_categories(monkeypatch):
+    html = load_fixture("categories.html")
+    dirs = []
+
+    monkeypatch.setattr(porntn.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(porntn.utils, "eod", lambda: None)
+    monkeypatch.setattr(porntn.site, "add_dir",
+                        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+                            {"name": name, "url": url, "mode": mode}
+                        ))
+
+    porntn.Categories("https://porntn.com/new/?mode=async&function=get_block&block_id=list_categories_categories_list&sort_by=title")
+
+    assert len(dirs) == 2
+    assert dirs[0]["name"] == "Anal [COLOR hotpink](12)[/COLOR]"
+    assert dirs[0]["url"].endswith("from=1")
+    assert dirs[1]["url"].startswith("/categories/teen")
+
+
+def test_tags(monkeypatch):
+    html = load_fixture("tags.html")
+    dirs = []
+
+    monkeypatch.setattr(porntn.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(porntn.utils, "eod", lambda: None)
+    monkeypatch.setattr(porntn.site, "add_dir",
+                        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+                            {"name": name, "url": url, "mode": mode}
+                        ))
+
+    porntn.Tags("https://porntn.com/tags/")
+
+    assert len(dirs) == 2
+    assert dirs[0]["name"] == "Amateur"
+    assert dirs[0]["url"].startswith("https://porntn.com/tags/amateur")
+    assert "common_videos_list" in dirs[1]["url"]

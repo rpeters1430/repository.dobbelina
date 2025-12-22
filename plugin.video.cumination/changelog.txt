@@ -1,3 +1,9 @@
+[B]Version 1.1.203[/B]
+- sexyporn - add new site with soup-based listings, categories, search, and playback
+- watchmdh - migrate listings to BeautifulSoup and add pagination fixture coverage
+- porntn/yrprno/netfapx/perverzija/vaginanl/viralvideosporno - soup migrations with deterministic fixtures and tests
+- update migration checklists and NEW_SITES status markers
+
 [B]Version 1.1.197[/B]
 - awmnet - migrate to BeautifulSoup for more reliable parsing
 - erogarga - add missing duration parameter to video listings

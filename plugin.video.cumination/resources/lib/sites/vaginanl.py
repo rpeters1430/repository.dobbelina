@@ -18,11 +18,11 @@
 
 import re
 from six.moves import urllib_parse
-
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('vaginanl', '[COLOR hotpink]Vagina.nl[/COLOR] [COLOR orange](Dutch)[/COLOR]', 'https://vagina.nl/', 'vaginanl.png', 'vaginanl')
+site = AdultSite('vaginanl', '[COLOR hotpink]Vagina.nl[/COLOR] [COLOR orange](Dutch)[/COLOR]',
+                 'https://vagina.nl/', 'https://c749a9571b.mjedge.net/img/logo-default.png', 'vaginanl')
 
 
 @site.register(default_mode=True)
@@ -34,60 +34,53 @@ def main(url):
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, site.url)
-    if not listhtml or "Geen zoekresultaten gevonden" in listhtml or "Nothing found" in listhtml:
+    html = utils.getHtml(url, '')
+    if "Geen zoekresultaten gevonden" in html or "Nothing found" in html:
         utils.eod()
         return
 
-    soup = utils.parse_html(listhtml)
+    soup = utils.parse_html(html)
     if not soup:
         utils.eod()
         return
 
-    cards = soup.select('div.card')
-
-    for card in cards:
-        link = card.select_one('a[href]')
+    for card in soup.select('.card'):
+        link = card.select_one('a.thumbnail-link[href]')
         if not link:
             continue
 
         videourl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
-        title = utils.safe_get_attr(link, 'title', default='')
-        if not title:
-            title = utils.safe_get_attr(card.select_one('img'), 'alt', default='') or utils.safe_get_text(
-                card.select_one('.title, .card-title'), default=''  # type: ignore[arg-type]
-            )
-        title = utils.cleantext(title)
-
-        if not videourl or not title:
+        name = utils.cleantext(utils.safe_get_attr(link, 'title', default=utils.safe_get_text(link, default='')))
+        if not videourl or not name:
             continue
 
-        thumb = utils.safe_get_attr(card.select_one('img'), 'data-src', ['src', 'data-original'], default='')
-        if thumb:
-            thumb = urllib_parse.urljoin(site.url, thumb)
+        img_tag = card.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
+        duration_elem = card.select_one('.duration') or card.select_one('.time') or card.select_one('.video-duration')
+        duration = utils.safe_get_text(duration_elem, default='')
 
-        duration = utils.safe_get_text(card.select_one('.duration, .video-duration, .time'), default='')
+        site.add_download_link(name, videourl, 'Playvid', img, name, duration=duration)
 
-        site.add_download_link(title, videourl, 'Playvid', thumb, title, duration=duration)
-
-    next_link = soup.select_one('a.next[rel="next"], li.next a[rel="next"], a.next.page-numbers, a[rel="next"].page-numbers')
+    pagination = soup.select_one('.pagination') or soup.select_one('nav[aria-label*="pagination" i]')
+    next_link = soup.select_one('a[rel="next"]') or (pagination.select_one('.next a[href]') if pagination else None)
     if next_link:
-        href = urllib_parse.urljoin(site.url, utils.safe_get_attr(next_link, 'href', default=''))
-        page_match = re.search(r'(?:page=|/page/)(\d+)', href)
-        last_page = ''
-        page_numbers = [int(num) for num in re.findall(r'\b(\d+)\b', utils.safe_get_text(soup.select_one('.pagination') or soup, default=''))]
-        if page_numbers:
-            last_page = str(max(page_numbers))
-
-        if href:
+        next_url = urllib_parse.urljoin(site.url, utils.safe_get_attr(next_link, 'href', default=''))
+        page_numbers = []
+        if pagination:
+            for node in pagination.find_all(['a', 'span']):
+                text = utils.safe_get_text(node, default='')
+                if text.isdigit():
+                    page_numbers.append(int(text))
+        last_page = str(max(page_numbers)) if page_numbers else ''
+        np_match = re.search(r'(\d+)(?!.*\d)', next_url)
+        next_page_num = np_match.group(1) if np_match else ''
+        if next_url:
             suffix = ''
-            if page_match:
-                suffix = f" ({page_match.group(1)}"
-                if last_page:
-                    suffix += f"/{last_page}"
-                suffix += ')'
-            site.add_dir(f"Next Page{suffix}", href, 'List', site.img_next)
-
+            if next_page_num and last_page:
+                suffix = f" ({next_page_num}/{last_page})"
+            elif next_page_num:
+                suffix = f" ({next_page_num})"
+            site.add_dir(f'Next Page{suffix}', next_url, 'List', site.img_next)
     utils.eod()
 
 
@@ -112,32 +105,23 @@ def Search(url, keyword=None):
 
 @site.register()
 def Categories(url):
-    cathtml = utils.getHtml(url, site.url)
-    soup = utils.parse_html(cathtml)
-
+    html = utils.getHtml(url, '')
+    soup = utils.parse_html(html)
     if not soup:
         utils.eod()
         return
 
-    cards = soup.select('div.card')
-
-    for card in cards:
+    for card in soup.select('.card'):
         link = card.select_one('a[href]')
-        if not link:
-            continue
-
         caturl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, 'href', default=''))
-        name = utils.safe_get_attr(card.select_one('img'), 'alt', default='') or utils.safe_get_text(
-            card.select_one('.title, .card-title'), default=''  # type: ignore[arg-type]
+        img_tag = card.select_one('img')
+        catimg = utils.safe_get_attr(img_tag, 'data-src', ['src'])
+        catname = utils.cleantext(
+            utils.safe_get_attr(img_tag, 'alt', default=utils.safe_get_text(link, default=''))
         )
 
-        if not caturl or not name:
+        if not caturl or not catname:
             continue
 
-        img = utils.safe_get_attr(card.select_one('img'), 'data-src', ['src', 'data-original'], default='')
-        if img:
-            img = urllib_parse.urljoin(site.url, img)
-
-        site.add_dir(utils.cleantext(name), caturl, 'List', img)
-
+        site.add_dir(catname, caturl, 'List', catimg)
     utils.eod()

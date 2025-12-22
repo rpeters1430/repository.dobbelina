@@ -17,11 +17,12 @@
 '''
 
 import re
+from six.moves import urllib_parse
 
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('viralvideosporno', '[COLOR hotpink]Viral Videos Porno[/COLOR]', 'https://www.viralvideosporno.com/', 'vvp.png', 'viralvideosporno')
+site = AdultSite('viralvideosporno', '[COLOR hotpink]Viral Videos Porno[/COLOR]', 'https://www.viralvideosporno.com/', 'vvp.jpg', 'viralvideosporno')
 
 
 @site.register(default_mode=True)
@@ -37,28 +38,56 @@ def Main():
     utils.eod()
 
 
+def _normalize_url(url):
+    if not url:
+        return ''
+    if url.startswith('//'):
+        return 'https:' + url
+    return urllib_parse.urljoin(site.url, url)
+
+
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(r'class="notice".+?href="([^"]+)">([^<]+).+?src="([^"]+).+?tion">(.*?)</div', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for videopage, name, img, desc in match:
-        if videopage.startswith('//'):
-            videopage = 'https:' + videopage
-        if img.startswith('//'):
-            img = 'https:' + img
-        name = utils.cleantext(name)
-        desc = re.sub(r"<.+?>", "", desc, 0, re.MULTILINE)
-        desc = utils.cleantext(desc)
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
+
+    for notice in soup.select('.notice'):
+        link = notice.select_one('a[href]')
+        if not link:
+            continue
+
+        videopage = _normalize_url(utils.safe_get_attr(link, 'href', default=''))
+        name = utils.cleantext(utils.safe_get_text(link, default=''))
+        if not videopage or not name:
+            continue
+
+        img_tag = notice.select_one('img[src]')
+        img = _normalize_url(utils.safe_get_attr(img_tag, 'src', default=''))
+
+        desc_elem = notice.select_one('.description') or notice
+        desc = utils.cleantext(utils.safe_get_text(desc_elem, default=''))
+
         site.add_download_link(name, videopage, 'Playvid', img, desc)
-    np = re.compile(r'''id="pagination".+?href=['"]([^'"]+)[^>]+>(?:<span.+?span>)?\s*&raquo''', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        nextp = np.group(1)
-        if nextp.startswith('//'):
-            nextp = 'https:' + nextp
-        elif not nextp.startswith('http'):
-            nextp = site.url + nextp
-        page_number = re.search(r'.+[/-](\d+)[/.]?', nextp).group(1)
-        site.add_dir('Next Page (' + page_number + ')', nextp, 'List', site.img_next)
+
+    pagination = soup.select_one('#pagination a[rel="next"]') or soup.select_one('#pagination a[href*="raquo"]')
+    if not pagination:
+        # Fallback to any link containing » in pagination container
+        pagination_container = soup.select_one('#pagination')
+        if pagination_container:
+            for link in pagination_container.find_all('a', href=True):
+                if '»' in utils.safe_get_text(link, default=''):
+                    pagination = link
+                    break
+    if pagination:
+        nextp = _normalize_url(utils.safe_get_attr(pagination, 'href', default=''))
+        if nextp:
+            page_number_match = re.search(r'(\d+)(?!.*\d)', nextp)
+            page_number = page_number_match.group(1) if page_number_match else ''
+            label = f'Next Page ({page_number})' if page_number else 'Next Page'
+            site.add_dir(label, nextp, 'List', site.img_next)
     utils.eod()
 
 
@@ -67,11 +96,23 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     phtml = utils.getHtml(url, site.url)
-    sources = re.compile(r'class="box\s.+?href="([^"]+)', re.DOTALL | re.IGNORECASE).findall(phtml)
-    if utils.addon.getSetting("universal_resolvers") == "true":
-        sources += re.compile(r'class="ocult".+?Enlaces"[^>]+>(?:<b>)?(.*?)(?:...)?<', re.DOTALL | re.IGNORECASE).findall(phtml)
+    soup = utils.parse_html(phtml)
+
+    sources = []
+    if soup:
+        sources.extend([utils.safe_get_attr(a, 'href', default='') for a in soup.select('.box[href]')])
+        if utils.addon.getSetting("universal_resolvers") == "true":
+            for ocult in soup.select('.ocult'):
+                sources.extend(re.findall(r'https?://[^\s"<>]+', ocult.get_text(' ')))
+    else:
+        sources = re.compile(r'class="box\s.+?href="([^"]+)', re.DOTALL | re.IGNORECASE).findall(phtml)
+        if utils.addon.getSetting("universal_resolvers") == "true":
+            sources += re.compile(r'class="ocult".+?Enlaces"[^>]+>(?:<b>)?(.*?)(?:...)?<', re.DOTALL | re.IGNORECASE).findall(phtml)
+
     links = {}
     for link in sources:
+        if not link:
+            continue
         if vp.resolveurl.HostedMediaFile(link).valid_url():
             links[link.split('/')[2]] = link
     videourl = utils.selector('Select link', links)
@@ -84,12 +125,21 @@ def Playvid(url, name, download=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url, site.url)
+    soup = utils.parse_html(cathtml)
+    if not soup:
+        utils.eod()
+        return
 
-    match = re.compile(r'href="([^"]+)"\s*title="Ver.+?>([^<]+)', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name in match[1:]:
-        name = utils.cleantext(name)
-        if catpage.startswith('//'):
-            catpage = 'https:' + catpage
+    seen = False
+    for link in soup.select('a[title^="Ver"][href]'):
+        catpage = _normalize_url(utils.safe_get_attr(link, 'href', default=''))
+        name = utils.cleantext(utils.safe_get_text(link, default=''))
+        if not catpage or not name:
+            continue
+        if not seen:
+            # Skip the first entry, which is usually the homepage
+            seen = True
+            continue
         site.add_dir(name, catpage, 'List', '')
 
     utils.eod()
@@ -98,19 +148,34 @@ def Categories(url):
 @site.register()
 def MList(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(r'class="portada.+?href="([^"]+).+?src="([^"]+).+?titles">([^<]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for videopage, img, name in match:
-        if videopage.startswith('//'):
-            videopage = 'https:' + videopage
-        if img.startswith('//'):
-            img = 'https:' + img
-        name = utils.cleantext(name)
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
+
+    for card in soup.select('.portada'):
+        link = card.select_one('a[href]')
+        if not link:
+            continue
+
+        videopage = _normalize_url(utils.safe_get_attr(link, 'href', default=''))
+        img_tag = card.select_one('img[src]')
+        img = _normalize_url(utils.safe_get_attr(img_tag, 'src', default=''))
+        name_elem = card.select_one('.titles') or link
+        name = utils.cleantext(utils.safe_get_text(name_elem, default=''))
+
+        if not videopage or not name:
+            continue
+
         site.add_download_link(name, videopage, 'Playvid', img, name)
-    np = re.compile(r'''id="pagination".+?href='([^']+)[^>]+>(?:<span.+?span>)?\s*&raquo''', re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        nextp = re.findall('(.+/)', url)[0] + np.group(1)
-        page_number = np.group(1).split('_')[-1]
-        site.add_dir('Next Page (' + page_number + ')', nextp, 'MList', site.img_next)
+
+    pagination = soup.select_one('#pagination a[rel="next"]') or soup.select_one('#pagination a[href]')
+    if pagination:
+        next_suffix = utils.safe_get_attr(pagination, 'href', default='')
+        nextp = urllib_parse.urljoin(url, next_suffix)
+        page_number = next_suffix.split('_')[-1] if '_' in next_suffix else ''
+        label = f'Next Page ({page_number})' if page_number else 'Next Page'
+        site.add_dir(label, nextp, 'MList', site.img_next)
     utils.eod()
 
 

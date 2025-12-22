@@ -19,9 +19,9 @@
 import re
 import xbmc
 import xbmcgui
+from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
-from six.moves import urllib_parse
 
 site = AdultSite('yrprno', "[COLOR hotpink]YrPrno[/COLOR]", 'https://www.yrprno.com/', 'yrprno.png', 'yrprno')
 
@@ -42,18 +42,59 @@ def List(url):
         utils.eod()
         return
 
-    delimiter = '<div class="well well-sm"'
-    re_videopage = 'class="video-link" href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = 'data-original="([^"]+)"'
-    re_duration = '<div class="duration">([^<]+)<'
-    re_quality = '>HD<'
-    skip = '=modelfeed'
-    utils.videos_list(site, 'yrprno.Playvid', html, delimiter, re_videopage, re_name, re_img, re_duration=re_duration, re_quality=re_quality, contextm='yrprno.Related', skip=skip)
+    soup = utils.parse_html(html)
+    if not soup:
+        utils.eod()
+        return
 
-    re_npurl = r'''href=['"]([^'"]+)['"]\s*class="prevnext">Next'''
-    re_npnr = r'''href=['"]page(\d+)\.html['"]\s*class="prevnext">Next'''
-    utils.next_page(site, 'yrprno.List', html, re_npurl, re_npnr, baseurl=url.split('page')[0], contextm='yrprno.GotoPage')
+    for card in soup.select('.well.well-sm'):
+        link = card.select_one('.video-link[href]')
+        if not link:
+            continue
+        videopage = utils.safe_get_attr(link, 'href', default='')
+        name = utils.cleantext(utils.safe_get_attr(link, 'title', default=utils.safe_get_text(link, default='')))
+
+        if not videopage or '=modelfeed' in videopage:
+            continue
+
+        img = utils.safe_get_attr(link.select_one('img'), 'data-original', ['src'])
+        duration = utils.safe_get_text(card.select_one('.duration'), default='')
+        quality = 'HD' if card.find(string=re.compile(r'\bHD\b')) else ''
+
+        site.add_download_link(name, videopage, 'yrprno.Playvid', img, name, duration=duration, quality=quality, contextm='yrprno.Related')
+
+    pagination_links = [link for link in soup.select('a.prevnext[href]') if 'Next' in utils.safe_get_text(link, default='')]
+    pagination = pagination_links[0] if pagination_links else soup.select_one('a.prevnext[href]')
+    if pagination:
+        next_url = utils.safe_get_attr(pagination, 'href', default='')
+        page_match = re.search(r'page(\d+)\.html', next_url)
+        page_num = page_match.group(1) if page_match else ''
+
+        # Attempt to find last page number
+        last_page = ''
+        for link in soup.select('a.prevnext[href]'):
+            href = utils.safe_get_attr(link, 'href', default='')
+            match = re.search(r'page(\d+)\.html', href)
+            if match:
+                last_page = max(last_page, match.group(1)) if last_page else match.group(1)
+        last_page = last_page or page_num
+
+        contextmenu = []
+        if page_num and last_page:
+            contexturl = (utils.addon_sys
+                          + "?mode=yrprno.GotoPage"
+                          + "&list_mode=yrprno.List"
+                          + "&url=" + urllib_parse.quote_plus(url)
+                          + "&np=" + page_num
+                          + "&lp=" + last_page)
+            contextmenu.append(('[COLOR violet]Goto Page[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+
+        label = 'Next Page'
+        if page_num and last_page:
+            label += f' ({page_num}/{last_page})'
+        elif page_num:
+            label += f' ({page_num})'
+        site.add_dir(label, next_url, 'yrprno.List', site.img_next, contextm=contextmenu)
     utils.eod()
 
 
@@ -88,9 +129,16 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(r'<a href="([^"]+)" title="([^"]+)">', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for caturl, name in match:
-        name = utils.cleantext(name)
+    soup = utils.parse_html(cathtml)
+    if not soup:
+        utils.eod()
+        return
+
+    for link in soup.select('a[href][title]'):
+        caturl = utils.safe_get_attr(link, 'href', default='')
+        name = utils.cleantext(utils.safe_get_attr(link, 'title', default=utils.safe_get_text(link, default='')))
+        if not caturl or not name:
+            continue
         site.add_dir(name, caturl, 'List', '')
     utils.eod()
 
