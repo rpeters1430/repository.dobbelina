@@ -55,7 +55,7 @@ def List(url):
         duration = utils.safe_get_text(item.select_one('.duration'), default='')
         quality = 'HD' if item.find(string=re.compile(r'\bHD\b', re.IGNORECASE)) else ''
 
-        site.add_download_link(name, videourl, 'sexyporn.Playvid', thumb, name, duration=duration, quality=quality)
+        site.add_download_link(name, videourl, 'Playvid', thumb, name, duration=duration, quality=quality)
 
     pagination = soup.select_one('a[rel="next"]') or soup.select_one('a.next[href]')
     if pagination:
@@ -63,7 +63,7 @@ def List(url):
         page_match = re.search(r'(\d+)(?!.*\d)', next_url)
         page_num = page_match.group(1) if page_match else ''
         label = f'Next Page ({page_num})' if page_num else 'Next Page'
-        site.add_dir(label, next_url, 'sexyporn.List', site.img_next)
+        site.add_dir(label, next_url, 'List', site.img_next)
     utils.eod()
 
 
@@ -80,7 +80,7 @@ def Categories(url):
         name = utils.cleantext(utils.safe_get_text(link, default=''))
         if not caturl or not name:
             continue
-        site.add_dir(name, caturl, 'sexyporn.List', '')
+        site.add_dir(name, caturl, 'List', '')
     utils.eod()
 
 

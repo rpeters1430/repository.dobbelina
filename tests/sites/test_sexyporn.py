@@ -35,7 +35,7 @@ def test_list_parses_videos_and_pagination(monkeypatch):
     assert downloads[1]["url"] == "https://www.sexyporn.xxx/videos/video-two"
     assert downloads[2]["duration"] == "05:55"
 
-    next_dirs = [d for d in dirs if d["mode"] == "sexyporn.List"]
+    next_dirs = [d for d in dirs if d["mode"] == "List"]
     assert len(next_dirs) == 1
     assert next_dirs[0]["url"] == "https://www.sexyporn.xxx/page/2/"
     assert "Next Page" in next_dirs[0]["name"]

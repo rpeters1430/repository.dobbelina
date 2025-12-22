@@ -188,7 +188,7 @@ def Playvid(url, name):
 
 ## BeautifulSoup Migration (Active Project)
 
-**Current Status**: 69/137 sites migrated (50.4% complete)
+**Current Status**: 65/137 sites migrated (47.4% complete)
 
 The codebase is undergoing a systematic migration from regex-based HTML parsing to BeautifulSoup4. This is tracked in **MODERNIZATION.md** along with all other modernization efforts including HTTP gateway unification, test coverage expansion, repository structure improvements, and UX enhancements.
 
@@ -207,7 +207,7 @@ The codebase is undergoing a systematic migration from regex-based HTML parsing 
 3. **Phase 3: Medium Priority Sites** (20/20 completed - 100%) ✅ - All medium-priority sites migrated
 4. **Phase 4: JAV Sites** (20/20 completed - 100%) ✅ - All JAV sites migrated
 5. **Phase 5: Hentai/Anime Sites** (10/10 completed - 100%) ✅ - ALL SITES COMPLETED: hentaidude, hentaihavenco, hentai-moon, hentaistream, heroero, animeidhentai, rule34video, taboofantazy, hanime, erogarga
-6. **Phase 6: International Sites** (0/15 completed)
+6. **Phase 6: International Sites** (6/15 completed - 40%) - mrsexe, porno1hu, porno365, nltubes, vaginanl, perverzija completed
 7. **Phase 7: Niche & Specialty Sites** (5/30 completed - 17%) - reallifecam, camwhoresbay, cambro, erome, thothub completed
 8. **Phase 8: Remaining Sites** (1/44 completed - 2%)
 
