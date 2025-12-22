@@ -66,7 +66,7 @@ This file tracks sites identified from screenshots that are not yet implemented 
 
 **General & Movies**
 - [x] **SUJ** (pc.suj.mobi) (Implemented, testing pending due to environment issues)
-- [ ] **xMegaDrive** (xmegadrive.com)
+- [x] **xMegaDrive** (xmegadrive.com)
 - [ ] **TubePornClassic** (tubepornclassic.com)
 - [ ] **chuyenphim18** (chuyenphim18.site)
 

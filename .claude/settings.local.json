@@ -75,7 +75,9 @@
       "Bash(unzip:*)",
       "Bash(comm:*)",
       "Bash(grep:*)",
-      "Bash(magick:*)"
+      "Bash(magick:*)",
+      "WebFetch(domain:archivebate.com)",
+      "Bash(.venv/bin/python -m pytest tests/sites/test_archivebate.py -v)"
     ],
     "deny": [],
     "ask": []
