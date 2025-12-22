@@ -65,7 +65,7 @@ This file tracks sites identified from screenshots that are not yet implemented 
 *These sites responded to standard requests and are likely easiest to implement.*
 
 **General & Movies**
-- [x] **SUJ** (pc.suj.mobi) (Implemented, testing pending due to environment issues)
+- [ ] **SUJ** (pc.suj.mobi)
 - [x] **xMegaDrive** (xmegadrive.com)
 - [ ] **TubePornClassic** (tubepornclassic.com)
 - [ ] **chuyenphim18** (chuyenphim18.site)
@@ -81,9 +81,9 @@ This file tracks sites identified from screenshots that are not yet implemented 
 
 **Cam Models**
 - [ ] **LiveCamRips** (livecamrips.su)
-- [x] **Webpussi** (webpussi.com) (Implemented, testing pending due to environment issues)
+- [ ] **Webpussi** (webpussi.com)
 - [ ] **CamSeek.TV** (camseek.tv) (Redirects to FreePornFlix)
-- [x] **KBJFan** (kbjfan.com) (Implemented, testing pending due to environment issues)
+- [ ] **KBJFan** (kbjfan.com)
 
 ### ⚠️ Medium / Hard (Cloudflare Detected)
 *These sites returned Cloudflare headers or 403 errors. May require `cfscrape`, `flaresolverr`, or advanced header spoofing.*
