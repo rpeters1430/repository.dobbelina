@@ -1,6 +1,5 @@
 """Comprehensive tests for rule34video site implementation."""
 from pathlib import Path
-import re
 
 from resources.lib.sites import rule34video
 

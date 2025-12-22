@@ -912,9 +912,11 @@ def add_custom_site(author, name, title, url, image, about, version, module_file
     conn = sqlite3.connect(favoritesdb)
     conn.text_factory = str
     c = conn.cursor()
-    c.execute("INSERT INTO custom_sites VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (author, name, title, url, image, about,
-                                                                                version, datetime.datetime.now(),
-                                                                                False, module_file))
+    installed_at = datetime.datetime.now().isoformat()
+    c.execute(
+        "INSERT INTO custom_sites VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (author, name, title, url, image, about, version, installed_at, False, module_file),
+    )
     conn.commit()
     conn.close()
 

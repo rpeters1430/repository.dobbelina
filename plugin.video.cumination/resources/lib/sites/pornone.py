@@ -95,7 +95,7 @@ def List(url):
     if not next_url:
         pagination = soup.select_one('.pagination, [class*="pag"]')
         if pagination:
-            next_button = pagination.select_one('a[class*="next"], a:contains("Next"), a:contains(">")')
+            next_button = pagination.select_one('a[class*="next"], a:-soup-contains("Next"), a:-soup-contains(">")')
             if next_button:
                 next_url = utils.safe_get_attr(next_button, 'href')
                 utils.kodilog('pornone: Found pagination via next button: {}'.format(next_url))

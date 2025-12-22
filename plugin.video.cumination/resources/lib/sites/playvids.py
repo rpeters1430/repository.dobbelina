@@ -71,7 +71,7 @@ def List(url):
             name = utils.cleantext(name)
 
             # Check for HD badge
-            hd = 'HD' if info_section.select_one('.badge:contains("HD")') or '>HD<' in str(info_section) else ''
+            hd = 'HD' if info_section.select_one('.badge:-soup-contains("HD")') or '>HD<' in str(info_section) else ''
 
             if videopage.startswith('/'):
                 videopage = site.url[:-1] + videopage
@@ -131,7 +131,7 @@ def PList(url):
             name = utils.cleantext(name)
 
             # Check for HD badge
-            hd = 'HD' if info_section.select_one('.badge:contains("HD")') or '>HD<' in str(info_section) else ''
+            hd = 'HD' if info_section.select_one('.badge:-soup-contains("HD")') or '>HD<' in str(info_section) else ''
 
             if videopage.startswith('/'):
                 videopage = site.url[:-1] + videopage
@@ -187,7 +187,7 @@ def CList(url, page=1):
             name = utils.cleantext(name)
 
             # Check for HD badge
-            hd = 'HD' if info_section.select_one('.badge:contains("HD")') or '>HD<' in str(info_section) else ''
+            hd = 'HD' if info_section.select_one('.badge:-soup-contains("HD")') or '>HD<' in str(info_section) else ''
 
             if videopage.startswith('/'):
                 videopage = site.url[:-1] + videopage

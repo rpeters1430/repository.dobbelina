@@ -12,7 +12,6 @@ for video page parsing. Tests cover:
 
 from pathlib import Path
 from unittest.mock import MagicMock
-import pytest
 
 from resources.lib.sites import hanime
 

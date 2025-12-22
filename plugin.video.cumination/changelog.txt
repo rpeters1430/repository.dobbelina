@@ -1,3 +1,11 @@
+[B]Version 1.1.204[/B]
+- Testing Infrastructure: Expanded test suite from 449 to 622 tests (38% increase)
+- Testing Coverage: Achieved 38% overall code coverage (up from 37%)
+- Core Module Testing: Added comprehensive tests for url_dispatcher (44%→96%), adultsite (66%→100%), basics (17%→48%), favorites (11%→24%), and utils (30%→31%)
+- Site Testing: Added 22 new tests for thothub.py utility functions (21%→31% coverage)
+- Test Quality: All 622 tests passing with proper fixtures and mocking
+- Code Quality: Improved test infrastructure with better fixtures, helpers, and organization
+
 [B]Version 1.1.203[/B]
 - sexyporn - add new site with soup-based listings, categories, search, and playback
 - watchmdh - migrate listings to BeautifulSoup and add pagination fixture coverage
