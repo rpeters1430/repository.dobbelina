@@ -1,20 +1,20 @@
-'''
-    Cumination
-    Copyright (C) 2025 Team Cumination
+"""
+Cumination
+Copyright (C) 2025 Team Cumination
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
 
 import re
 import xbmc
@@ -25,101 +25,159 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.decrypters.kvsplayer import kvs_decode
 
-site = AdultSite('terebon', '[COLOR hotpink]Terebon[/COLOR]', 'https://b.terebon.net/', 'terebon.png', 'terebon')
+site = AdultSite(
+    "terebon",
+    "[COLOR hotpink]Terebon[/COLOR]",
+    "https://b.terebon.net/",
+    "terebon.png",
+    "terebon",
+)
 
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir('[COLOR hotpink]Sites[/COLOR]', site.url + 'sites/?mode=async&function=get_block&block_id=list_content_sources_sponsors_list&sort_by=title&_=' + str(int(time.time() * 1000)), 'Sites', site.img_cat)
-    site.add_dir('[COLOR hotpink]Tags[/COLOR]', site.url + 'tags/', 'Tags', site.img_cat)
-    site.add_dir('[COLOR hotpink]Categories[/COLOR]', site.url + 'categories/', 'Cat', site.img_cat)
-    site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'search/?q=', 'Search', site.img_search)
+    site.add_dir(
+        "[COLOR hotpink]Sites[/COLOR]",
+        site.url
+        + "sites/?mode=async&function=get_block&block_id=list_content_sources_sponsors_list&sort_by=title&_="
+        + str(int(time.time() * 1000)),
+        "Sites",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Tags[/COLOR]", site.url + "tags/", "Tags", site.img_cat
+    )
+    site.add_dir(
+        "[COLOR hotpink]Categories[/COLOR]",
+        site.url + "categories/",
+        "Cat",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Search[/COLOR]",
+        site.url + "search/?q=",
+        "Search",
+        site.img_search,
+    )
     List(site.url)
     utils.eod()
 
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, '')
-    if 'There is no data in this list' in listhtml:
-        utils.notify(msg='No data found')
+    listhtml = utils.getHtml(url, "")
+    if "There is no data in this list" in listhtml:
+        utils.notify(msg="No data found")
         return
 
     soup = utils.parse_html(listhtml)
 
     # Find all video items
-    items = soup.select('div.col-lg-4, div.col-md-6')
+    items = soup.select("div.col-lg-4, div.col-md-6")
 
     cm = []
-    cm_lookupinfo = (utils.addon_sys + "?mode=terebon.Lookupinfo&url=")
-    cm.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + cm_lookupinfo + ')'))
-    cm_related = (utils.addon_sys + "?mode=terebon.Related&url=")
-    cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')'))
+    cm_lookupinfo = utils.addon_sys + "?mode=terebon.Lookupinfo&url="
+    cm.append(
+        ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + cm_lookupinfo + ")")
+    )
+    cm_related = utils.addon_sys + "?mode=terebon.Related&url="
+    cm.append(
+        ("[COLOR deeppink]Related videos[/COLOR]", "RunPlugin(" + cm_related + ")")
+    )
 
     for item in items:
         # Skip captcha items
-        if 'Captcha' in str(item):
+        if "Captcha" in str(item):
             continue
 
-        link = item.select_one('a')
+        link = item.select_one("a")
         if not link:
             continue
 
-        videourl = utils.safe_get_attr(link, 'href')
+        videourl = utils.safe_get_attr(link, "href")
         if not videourl:
             continue
 
-        img_tag = item.select_one('img')
-        name = utils.safe_get_attr(img_tag, 'alt')
-        img = utils.safe_get_attr(img_tag, 'src', ['data-original', 'data-src'])
+        img_tag = item.select_one("img")
+        name = utils.safe_get_attr(img_tag, "alt")
+        img = utils.safe_get_attr(img_tag, "src", ["data-original", "data-src"])
 
-        duration_tag = item.select_one('div.video-preview__duration')
-        duration = utils.safe_get_text(duration_tag, '')
+        duration_tag = item.select_one("div.video-preview__duration")
+        duration = utils.safe_get_text(duration_tag, "")
 
-        quality_tag = item.select_one('div.video-preview__quality')
-        quality = utils.safe_get_text(quality_tag, '')
+        quality_tag = item.select_one("div.video-preview__quality")
+        quality = utils.safe_get_text(quality_tag, "")
 
         # Build name with quality and duration
         if quality:
-            name = '[COLOR yellow]' + quality + '[/COLOR] ' + name
+            name = "[COLOR yellow]" + quality + "[/COLOR] " + name
         if duration:
-            name = name + ' [COLOR deeppink]' + duration + '[/COLOR]'
+            name = name + " [COLOR deeppink]" + duration + "[/COLOR]"
 
-        site.add_download_link(name, videourl, 'Playvid', img, name, contextm=cm)
+        site.add_download_link(name, videourl, "Playvid", img, name, contextm=cm)
 
     # Pagination
-    page_current = soup.select_one('span.page-current span')
-    next_link = soup.select_one('a.next')
+    page_current = soup.select_one("span.page-current span")
+    next_link = soup.select_one("a.next")
 
     if page_current and next_link:
         current_page = utils.safe_get_text(page_current)
         if current_page:
             try:
                 npage = int(current_page) + 1
-                block_id = utils.safe_get_attr(next_link, 'data-block-id')
-                params = utils.safe_get_attr(next_link, 'data-parameters')
+                block_id = utils.safe_get_attr(next_link, "data-block-id")
+                params = utils.safe_get_attr(next_link, "data-parameters")
 
                 if block_id and params:
-                    params = params.replace(';', '&').replace(':', '=')
+                    params = params.replace(";", "&").replace(":", "=")
                     ts = int(time.time() * 1000)
-                    nurl = url.split('?')[0] + '?mode=async&function=get_block&block_id={0}&{1}&_={2}'.format(block_id, params, ts)
+                    nurl = url.split("?")[
+                        0
+                    ] + "?mode=async&function=get_block&block_id={0}&{1}&_={2}".format(
+                        block_id, params, ts
+                    )
 
-                    lpnr, lastp = 0, ''
+                    lpnr, lastp = 0, ""
                     last_link = soup.select_one('a[href*="Last"]')
                     if last_link:
                         last_text = utils.safe_get_text(last_link)
-                        match = re.search(r'(\d+)', last_text)
+                        match = re.search(r"(\d+)", last_text)
                         if match:
                             lpnr = match.group(1)
-                            lastp = '/{}'.format(lpnr)
+                            lastp = "/{}".format(lpnr)
 
-                    nurl = nurl.replace('+from_albums', '')
-                    nurl = re.sub(r'&from([^=]*)=\d+', r'&from\1={}'.format(npage), nurl)
+                    nurl = nurl.replace("+from_albums", "")
+                    nurl = re.sub(
+                        r"&from([^=]*)=\d+", r"&from\1={}".format(npage), nurl
+                    )
 
-                    cm_page = (utils.addon_sys + "?mode=terebon.GotoPage" + "&url=" + urllib_parse.quote_plus(nurl) + "&np=" + str(npage) + "&lp=" + str(lpnr))
-                    cm = [('[COLOR violet]Goto Page #[/COLOR]', 'RunPlugin(' + cm_page + ')')]
+                    cm_page = (
+                        utils.addon_sys
+                        + "?mode=terebon.GotoPage"
+                        + "&url="
+                        + urllib_parse.quote_plus(nurl)
+                        + "&np="
+                        + str(npage)
+                        + "&lp="
+                        + str(lpnr)
+                    )
+                    cm = [
+                        (
+                            "[COLOR violet]Goto Page #[/COLOR]",
+                            "RunPlugin(" + cm_page + ")",
+                        )
+                    ]
 
-                    site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + lastp + ')', nurl, 'List', site.img_next, contextm=cm)
+                    site.add_dir(
+                        "[COLOR hotpink]Next Page...[/COLOR] ("
+                        + str(npage)
+                        + lastp
+                        + ")",
+                        nurl,
+                        "List",
+                        site.img_next,
+                        contextm=cm,
+                    )
             except (ValueError, AttributeError):
                 pass
 
@@ -129,20 +187,31 @@ def List(url):
 @site.register()
 def GotoPage(url, np, lp=0):
     dialog = xbmcgui.Dialog()
-    pg = dialog.numeric(0, 'Enter Page number')
+    pg = dialog.numeric(0, "Enter Page number")
     if pg:
         if int(lp) > 0 and int(pg) > int(lp):
-            utils.notify(msg='Out of range!')
+            utils.notify(msg="Out of range!")
             return
-        url = re.sub(r'&from([^=]*)=\d+', r'&from\1={}'.format(pg), url, re.IGNORECASE)
-        contexturl = (utils.addon_sys + "?mode=" + "terebon.List&url=" + urllib_parse.quote_plus(url))
-        xbmc.executebuiltin('Container.Update(' + contexturl + ')')
+        url = re.sub(r"&from([^=]*)=\d+", r"&from\1={}".format(pg), url, re.IGNORECASE)
+        contexturl = (
+            utils.addon_sys
+            + "?mode="
+            + "terebon.List&url="
+            + urllib_parse.quote_plus(url)
+        )
+        xbmc.executebuiltin("Container.Update(" + contexturl + ")")
 
 
 @site.register()
 def Related(url):
-    contexturl = (utils.addon_sys + "?mode=" + str('terebon.List') + "&url=" + urllib_parse.quote_plus(url))
-    xbmc.executebuiltin('Container.Update(' + contexturl + ')')
+    contexturl = (
+        utils.addon_sys
+        + "?mode="
+        + str("terebon.List")
+        + "&url="
+        + urllib_parse.quote_plus(url)
+    )
+    xbmc.executebuiltin("Container.Update(" + contexturl + ")")
 
 
 @site.register()
@@ -158,18 +227,28 @@ def Playvid(url, name, download=None):
     iframehtml = videopage
 
     sources = {}
-    license = re.compile(r"license_code:\s*'([^']+)", re.DOTALL | re.IGNORECASE).findall(iframehtml)[0]
-    patterns = [r"video_url:\s*'([^']+)[^;]+?video_url_text:\s*'([^']+)",
-                r"video_alt_url:\s*'([^']+)[^;]+?video_alt_url_text:\s*'([^']+)",
-                r"video_alt_url2:\s*'([^']+)[^;]+?video_alt_url2_text:\s*'([^']+)",
-                r"video_url:\s*'([^']+)',\s*postfix:\s*'\.mp4',\s*(preview)"]
+    license = re.compile(
+        r"license_code:\s*'([^']+)", re.DOTALL | re.IGNORECASE
+    ).findall(iframehtml)[0]
+    patterns = [
+        r"video_url:\s*'([^']+)[^;]+?video_url_text:\s*'([^']+)",
+        r"video_alt_url:\s*'([^']+)[^;]+?video_alt_url_text:\s*'([^']+)",
+        r"video_alt_url2:\s*'([^']+)[^;]+?video_alt_url2_text:\s*'([^']+)",
+        r"video_url:\s*'([^']+)',\s*postfix:\s*'\.mp4',\s*(preview)",
+    ]
     for pattern in patterns:
         items = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(iframehtml)
         for surl, qual in items:
-            qual = '00' if qual == 'preview' else qual
+            qual = "00" if qual == "preview" else qual
             surl = kvs_decode(surl, license)
             sources.update({qual: surl})
-    videourl = utils.selector('Select quality', sources, setting_valid='qualityask', sort_by=lambda x: 1081 if x == '4k' else int(x[:-1]), reverse=True)
+    videourl = utils.selector(
+        "Select quality",
+        sources,
+        setting_valid="qualityask",
+        sort_by=lambda x: 1081 if x == "4k" else int(x[:-1]),
+        reverse=True,
+    )
     if videourl:
         vp.progress.update(75, "[CR]Video found[CR]")
         vp.play_from_direct_link(videourl)
@@ -178,9 +257,9 @@ def Playvid(url, name, download=None):
 @site.register()
 def Search(url, keyword=None):
     if not keyword:
-        site.search_dir(url, 'Search')
+        site.search_dir(url, "Search")
     else:
-        List(url + keyword.replace(' ', '+'))
+        List(url + keyword.replace(" ", "+"))
 
 
 @site.register()
@@ -189,24 +268,24 @@ def Cat(url):
     soup = utils.parse_html(listhtml)
 
     # Find all category items
-    items = soup.select('div.col-xxl-2, div.col-xl-3, div.col-lg-4')
+    items = soup.select("div.col-xxl-2, div.col-xl-3, div.col-lg-4")
 
     for item in items:
-        link = item.select_one('a')
+        link = item.select_one("a")
         if not link:
             continue
 
-        page = utils.safe_get_attr(link, 'href')
-        name = utils.safe_get_attr(link, 'title')
+        page = utils.safe_get_attr(link, "href")
+        name = utils.safe_get_attr(link, "title")
 
         if not page or not name:
             continue
 
-        img_tag = item.select_one('img')
-        img = utils.safe_get_attr(img_tag, 'data-original', ['src', 'data-src'])
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-original", ["src", "data-src"])
 
         name = utils.cleantext(name)
-        site.add_dir(name, page, 'List', img)
+        site.add_dir(name, page, "List", img)
 
     utils.eod()
 
@@ -217,17 +296,17 @@ def Tags(url):
     soup = utils.parse_html(listhtml)
 
     # Find all tag links
-    tag_links = soup.select('a.video-specs__tag')
+    tag_links = soup.select("a.video-specs__tag")
 
     for link in tag_links:
-        page = utils.safe_get_attr(link, 'href')
+        page = utils.safe_get_attr(link, "href")
         tag = utils.safe_get_text(link)
 
         if not page or not tag:
             continue
 
         tag = utils.cleantext(tag.strip())
-        site.add_dir(tag, page, 'List', '')
+        site.add_dir(tag, page, "List", "")
 
     utils.eod()
 
@@ -238,45 +317,56 @@ def Sites(url):
     soup = utils.parse_html(listhtml)
 
     # Find all site items
-    items = soup.select('a.item')
+    items = soup.select("a.item")
 
     for item in items:
-        page = utils.safe_get_attr(item, 'href')
-        name = utils.safe_get_attr(item, 'title')
+        page = utils.safe_get_attr(item, "href")
+        name = utils.safe_get_attr(item, "title")
 
         if not page or not name:
             continue
 
         # Get video count
-        videos_tag = item.select_one('span.videos, div.videos')
-        videos = utils.safe_get_text(videos_tag, '')
+        videos_tag = item.select_one("span.videos, div.videos")
+        videos = utils.safe_get_text(videos_tag, "")
 
         if videos:
-            name = utils.cleantext(name.strip()) + ' (' + videos.strip() + ')'
+            name = utils.cleantext(name.strip()) + " (" + videos.strip() + ")"
         else:
             name = utils.cleantext(name.strip())
 
-        site.add_dir(name, page, 'List', '')
+        site.add_dir(name, page, "List", "")
 
     # Pagination
-    page_current = soup.select_one('span.page-current span')
-    next_link = soup.select_one('a.next')
+    page_current = soup.select_one("span.page-current span")
+    next_link = soup.select_one("a.next")
 
     if page_current and next_link:
         current_page = utils.safe_get_text(page_current)
         if current_page:
             try:
                 npage = int(current_page) + 1
-                block_id = utils.safe_get_attr(next_link, 'data-block-id')
-                params = utils.safe_get_attr(next_link, 'data-parameters')
+                block_id = utils.safe_get_attr(next_link, "data-block-id")
+                params = utils.safe_get_attr(next_link, "data-parameters")
 
                 if block_id and params:
-                    params = params.replace(';', '&').replace(':', '=')
+                    params = params.replace(";", "&").replace(":", "=")
                     ts = int(time.time() * 1000)
-                    nurl = url.split('?')[0] + '?mode=async&function=get_block&block_id={0}&{1}&_={2}'.format(block_id, params, ts)
-                    nurl = nurl.replace('+from_albums', '')
-                    nurl = re.sub(r'&from([^=]*)=\d+', r'&from\1={}'.format(npage), nurl)
-                    site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + ')', nurl, 'Sites', site.img_next)
+                    nurl = url.split("?")[
+                        0
+                    ] + "?mode=async&function=get_block&block_id={0}&{1}&_={2}".format(
+                        block_id, params, ts
+                    )
+                    nurl = nurl.replace("+from_albums", "")
+                    nurl = re.sub(
+                        r"&from([^=]*)=\d+", r"&from\1={}".format(npage), nurl
+                    )
+                    site.add_dir(
+                        "[COLOR hotpink]Next Page...[/COLOR] (" + str(npage) + ")",
+                        nurl,
+                        "Sites",
+                        site.img_next,
+                    )
             except (ValueError, AttributeError):
                 pass
 
@@ -286,8 +376,8 @@ def Sites(url):
 @site.register()
 def Lookupinfo(url):
     lookup_list = [
-        ("Category", '/(categories/[^"]+)">([^<]+)<', ''),
-        ("Tags", '/(tags/[^"]+)">([^<]+)<', '')
+        ("Category", '/(categories/[^"]+)">([^<]+)<', ""),
+        ("Tags", '/(tags/[^"]+)">([^<]+)<', ""),
     ]
-    lookupinfo = utils.LookupInfo(site.url, url, 'terebon.List', lookup_list)
+    lookupinfo = utils.LookupInfo(site.url, url, "terebon.List", lookup_list)
     lookupinfo.getinfo()

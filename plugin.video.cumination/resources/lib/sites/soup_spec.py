@@ -27,7 +27,7 @@ class SoupSiteSpec:
     """
 
     selectors: Mapping[str, Any]
-    play_mode: str = 'Playvid'
+    play_mode: str = "Playvid"
     contextm: Optional[Any] = None
     base_url: Optional[str] = None
     fanart: Optional[str] = None
@@ -41,16 +41,15 @@ class SoupSiteSpec:
         re-defining an entirely new spec per scenario.
         """
 
-        selectors = overrides.get('selectors', self.selectors)
+        selectors = overrides.get("selectors", self.selectors)
         options = {
             field.name: getattr(self, field.name)
             for field in fields(self)
-            if field.name != 'selectors'
+            if field.name != "selectors"
         }
-        filtered_overrides = {k: v for k, v in overrides.items() if k != 'selectors'}
+        filtered_overrides = {k: v for k, v in overrides.items() if k != "selectors"}
         options.update(filtered_overrides)
         return utils.soup_videos_list(site, soup, selectors, **options)
 
 
-__all__ = ['SoupSiteSpec']
-
+__all__ = ["SoupSiteSpec"]

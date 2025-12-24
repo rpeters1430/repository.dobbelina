@@ -47,7 +47,6 @@ there clears it up.
 # THE SOFTWARE.
 ####
 
-
 from array import array
 from six.moves import range
 import codecs
@@ -72,6 +71,7 @@ def new(key, mode, IV=None):
         return CBCMode(AES(key), IV)
     else:
         raise NotImplementedError
+
 
 # AES cipher implementation
 
@@ -110,7 +110,7 @@ class AES(object):
         # http://en.wikipedia.org/wiki/Rijndael_key_schedule
 
         # The expanded key starts with the actual key itself
-        exkey = array('B', self.key)
+        exkey = array("B", self.key)
 
         # extra key expansion steps
         if self.key_size == 16:
@@ -124,7 +124,6 @@ class AES(object):
         word = exkey[-4:]
         # Each expansion cycle uses 'i' once for Rcon table lookup
         for i in range(1, 11):
-
             # key schedule core:
             # left-rotate by 1 byte
             word = word[1:4] + word[0:1]
@@ -227,8 +226,12 @@ class AES(object):
             col = i * 4
 
             # v0, v1, v2, v3 = block[col : col+4]
-            v0, v1, v2, v3 = (block[col], block[col + 1], block[col + 2],
-                              block[col + 3])
+            v0, v1, v2, v3 = (
+                block[col],
+                block[col + 1],
+                block[col + 2],
+                block[col + 3],
+            )
 
             block[col] = mul_by_2[v0] ^ v3 ^ v2 ^ mul_by_3[v1]
             block[col + 1] = mul_by_2[v1] ^ v0 ^ v3 ^ mul_by_3[v2]
@@ -251,8 +254,12 @@ class AES(object):
         for i in range(4):
             col = i * 4
 
-            v0, v1, v2, v3 = (block[col], block[col + 1], block[col + 2],
-                              block[col + 3])
+            v0, v1, v2, v3 = (
+                block[col],
+                block[col + 1],
+                block[col + 2],
+                block[col + 3],
+            )
             # v0, v1, v2, v3 = block[col:col+4]
 
             block[col] = mul_14[v0] ^ mul_9[v3] ^ mul_13[v2] ^ mul_11[v1]
@@ -302,6 +309,7 @@ class AES(object):
 
 # ECB mode implementation
 
+
 class ECBMode(object):
     """Electronic CodeBook (ECB) mode encryption.
 
@@ -320,12 +328,12 @@ class ECBMode(object):
             raise ValueError("Plaintext length must be multiple of 16")
 
         block_size = self.block_size
-        data = array('B', data)
+        data = array("B", data)
 
         for offset in range(0, len(data), block_size):
-            block = data[offset: offset + block_size]
+            block = data[offset : offset + block_size]
             block_func(block)
-            data[offset: offset + block_size] = block
+            data[offset : offset + block_size] = block
 
         return data.tostring()
 
@@ -338,6 +346,7 @@ class ECBMode(object):
         """Decrypt data in ECB mode"""
 
         return self.ecb(data, self.cipher.decrypt_block)
+
 
 # CBC mode
 
@@ -355,7 +364,7 @@ class CBCMode(object):
     def __init__(self, cipher, IV):
         self.cipher = cipher
         self.block_size = cipher.block_size
-        self.IV = array('B', IV)
+        self.IV = array("B", IV)
 
     def encrypt(self, data):
         """Encrypt data in CBC mode"""
@@ -364,18 +373,18 @@ class CBCMode(object):
         if len(data) % block_size != 0:
             raise ValueError("Plaintext length must be multiple of 16")
 
-        data = array('B', data)
+        data = array("B", data)
         IV = self.IV
 
         for offset in range(0, len(data), block_size):
-            block = data[offset: offset + block_size]
+            block = data[offset : offset + block_size]
 
             # Perform CBC chaining
             for i in range(block_size):
                 block[i] ^= IV[i]
 
             self.cipher.encrypt_block(block)
-            data[offset: offset + block_size] = block
+            data[offset : offset + block_size] = block
             IV = block
 
         self.IV = IV
@@ -388,11 +397,11 @@ class CBCMode(object):
         if len(data) % block_size != 0:
             raise ValueError("Ciphertext length must be multiple of 16")
 
-        data = array('B', data)
+        data = array("B", data)
         IV = self.IV
 
         for offset in range(0, len(data), block_size):
-            ctext = data[offset: offset + block_size]
+            ctext = data[offset : offset + block_size]
             block = ctext[:]
             self.cipher.decrypt_block(block)
 
@@ -401,13 +410,14 @@ class CBCMode(object):
             #    data[offset + i] ^= IV[i]
             for i in range(block_size):
                 block[i] ^= IV[i]
-            data[offset: offset + block_size] = block
+            data[offset : offset + block_size] = block
 
             IV = ctext
             # data[offset : offset+block_size] = block
 
         self.IV = IV
         return data.tostring()
+
 
 ####
 
@@ -420,20 +430,20 @@ def galois_multiply(a, b):
             p ^= a
         a <<= 1
         if a & 0x100:
-            a ^= 0x1b
+            a ^= 0x1B
         b >>= 1
 
-    return p & 0xff
+    return p & 0xFF
 
 
 # Precompute the multiplication tables for encryption
-gf_mul_by_2 = array('B', [galois_multiply(x, 2) for x in range(256)])
-gf_mul_by_3 = array('B', [galois_multiply(x, 3) for x in range(256)])
+gf_mul_by_2 = array("B", [galois_multiply(x, 2) for x in range(256)])
+gf_mul_by_3 = array("B", [galois_multiply(x, 3) for x in range(256)])
 # ... for decryption
-gf_mul_by_9 = array('B', [galois_multiply(x, 9) for x in range(256)])
-gf_mul_by_11 = array('B', [galois_multiply(x, 11) for x in range(256)])
-gf_mul_by_13 = array('B', [galois_multiply(x, 13) for x in range(256)])
-gf_mul_by_14 = array('B', [galois_multiply(x, 14) for x in range(256)])
+gf_mul_by_9 = array("B", [galois_multiply(x, 9) for x in range(256)])
+gf_mul_by_11 = array("B", [galois_multiply(x, 11) for x in range(256)])
+gf_mul_by_13 = array("B", [galois_multiply(x, 13) for x in range(256)])
+gf_mul_by_14 = array("B", [galois_multiply(x, 14) for x in range(256)])
 
 ####
 
@@ -443,67 +453,79 @@ gf_mul_by_14 = array('B', [galois_multiply(x, 14) for x in range(256)])
 #
 # More information: http://en.wikipedia.org/wiki/Rijndael_S-box
 
-aes_sbox = array('B', codecs.decode(
-                 '637c777bf26b6fc53001672bfed7ab76'
-                 'ca82c97dfa5947f0add4a2af9ca472c0'
-                 'b7fd9326363ff7cc34a5e5f171d83115'
-                 '04c723c31896059a071280e2eb27b275'
-                 '09832c1a1b6e5aa0523bd6b329e32f84'
-                 '53d100ed20fcb15b6acbbe394a4c58cf'
-                 'd0efaafb434d338545f9027f503c9fa8'
-                 '51a3408f929d38f5bcb6da2110fff3d2'
-                 'cd0c13ec5f974417c4a77e3d645d1973'
-                 '60814fdc222a908846eeb814de5e0bdb'
-                 'e0323a0a4906245cc2d3ac629195e479'
-                 'e7c8376d8dd54ea96c56f4ea657aae08'
-                 'ba78252e1ca6b4c6e8dd741f4bbd8b8a'
-                 '703eb5664803f60e613557b986c11d9e'
-                 'e1f8981169d98e949b1e87e9ce5528df'
-                 '8ca1890dbfe6426841992d0fb054bb16', 'hex')
-                 )
+aes_sbox = array(
+    "B",
+    codecs.decode(
+        "637c777bf26b6fc53001672bfed7ab76"
+        "ca82c97dfa5947f0add4a2af9ca472c0"
+        "b7fd9326363ff7cc34a5e5f171d83115"
+        "04c723c31896059a071280e2eb27b275"
+        "09832c1a1b6e5aa0523bd6b329e32f84"
+        "53d100ed20fcb15b6acbbe394a4c58cf"
+        "d0efaafb434d338545f9027f503c9fa8"
+        "51a3408f929d38f5bcb6da2110fff3d2"
+        "cd0c13ec5f974417c4a77e3d645d1973"
+        "60814fdc222a908846eeb814de5e0bdb"
+        "e0323a0a4906245cc2d3ac629195e479"
+        "e7c8376d8dd54ea96c56f4ea657aae08"
+        "ba78252e1ca6b4c6e8dd741f4bbd8b8a"
+        "703eb5664803f60e613557b986c11d9e"
+        "e1f8981169d98e949b1e87e9ce5528df"
+        "8ca1890dbfe6426841992d0fb054bb16",
+        "hex",
+    ),
+)
 
 # This is the inverse of the above. In other words:
 # aes_inv_sbox[aes_sbox[val]] == val
 
-aes_inv_sbox = array('B', codecs.decode(
-                     '52096ad53036a538bf40a39e81f3d7fb'
-                     '7ce339829b2fff87348e4344c4dee9cb'
-                     '547b9432a6c2233dee4c950b42fac34e'
-                     '082ea16628d924b2765ba2496d8bd125'
-                     '72f8f66486689816d4a45ccc5d65b692'
-                     '6c704850fdedb9da5e154657a78d9d84'
-                     '90d8ab008cbcd30af7e45805b8b34506'
-                     'd02c1e8fca3f0f02c1afbd0301138a6b'
-                     '3a9111414f67dcea97f2cfcef0b4e673'
-                     '96ac7422e7ad3585e2f937e81c75df6e'
-                     '47f11a711d29c5896fb7620eaa18be1b'
-                     'fc563e4bc6d279209adbc0fe78cd5af4'
-                     '1fdda8338807c731b11210592780ec5f'
-                     '60517fa919b54a0d2de57a9f93c99cef'
-                     'a0e03b4dae2af5b0c8ebbb3c83539961'
-                     '172b047eba77d626e169146355210c7d', 'hex')
-                     )
+aes_inv_sbox = array(
+    "B",
+    codecs.decode(
+        "52096ad53036a538bf40a39e81f3d7fb"
+        "7ce339829b2fff87348e4344c4dee9cb"
+        "547b9432a6c2233dee4c950b42fac34e"
+        "082ea16628d924b2765ba2496d8bd125"
+        "72f8f66486689816d4a45ccc5d65b692"
+        "6c704850fdedb9da5e154657a78d9d84"
+        "90d8ab008cbcd30af7e45805b8b34506"
+        "d02c1e8fca3f0f02c1afbd0301138a6b"
+        "3a9111414f67dcea97f2cfcef0b4e673"
+        "96ac7422e7ad3585e2f937e81c75df6e"
+        "47f11a711d29c5896fb7620eaa18be1b"
+        "fc563e4bc6d279209adbc0fe78cd5af4"
+        "1fdda8338807c731b11210592780ec5f"
+        "60517fa919b54a0d2de57a9f93c99cef"
+        "a0e03b4dae2af5b0c8ebbb3c83539961"
+        "172b047eba77d626e169146355210c7d",
+        "hex",
+    ),
+)
 
 # The Rcon table is used in AES's key schedule (key expansion)
 # It's a pre-computed table of exponentation of 2 in AES's finite field
 #
 # More information: http://en.wikipedia.org/wiki/Rijndael_key_schedule
 
-aes_Rcon = array('B', codecs.decode(
-                 '8d01020408102040801b366cd8ab4d9a'
-                 '2f5ebc63c697356ad4b37dfaefc59139'
-                 '72e4d3bd61c29f254a943366cc831d3a'
-                 '74e8cb8d01020408102040801b366cd8'
-                 'ab4d9a2f5ebc63c697356ad4b37dfaef'
-                 'c5913972e4d3bd61c29f254a943366cc'
-                 '831d3a74e8cb8d01020408102040801b'
-                 '366cd8ab4d9a2f5ebc63c697356ad4b3'
-                 '7dfaefc5913972e4d3bd61c29f254a94'
-                 '3366cc831d3a74e8cb8d010204081020'
-                 '40801b366cd8ab4d9a2f5ebc63c69735'
-                 '6ad4b37dfaefc5913972e4d3bd61c29f'
-                 '254a943366cc831d3a74e8cb8d010204'
-                 '08102040801b366cd8ab4d9a2f5ebc63'
-                 'c697356ad4b37dfaefc5913972e4d3bd'
-                 '61c29f254a943366cc831d3a74e8cb', 'hex')
-                 )
+aes_Rcon = array(
+    "B",
+    codecs.decode(
+        "8d01020408102040801b366cd8ab4d9a"
+        "2f5ebc63c697356ad4b37dfaefc59139"
+        "72e4d3bd61c29f254a943366cc831d3a"
+        "74e8cb8d01020408102040801b366cd8"
+        "ab4d9a2f5ebc63c697356ad4b37dfaef"
+        "c5913972e4d3bd61c29f254a943366cc"
+        "831d3a74e8cb8d01020408102040801b"
+        "366cd8ab4d9a2f5ebc63c697356ad4b3"
+        "7dfaefc5913972e4d3bd61c29f254a94"
+        "3366cc831d3a74e8cb8d010204081020"
+        "40801b366cd8ab4d9a2f5ebc63c69735"
+        "6ad4b37dfaefc5913972e4d3bd61c29f"
+        "254a943366cc831d3a74e8cb8d010204"
+        "08102040801b366cd8ab4d9a2f5ebc63"
+        "c697356ad4b37dfaefc5913972e4d3bd"
+        "61c29f254a943366cc831d3a74e8cb",
+        "hex",
+    ),
+)

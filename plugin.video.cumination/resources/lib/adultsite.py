@@ -9,11 +9,11 @@ class AdultSite(URL_Dispatcher):
     clean_functions = set()
 
     def __init__(self, name, title, url, image=None, about=None, webcam=False):
-        self.default_mode = ''
+        self.default_mode = ""
         self.name = name
-        self.title = title + '[COLOR white] - webcams[/COLOR]' if webcam else title
+        self.title = title + "[COLOR white] - webcams[/COLOR]" if webcam else title
         self.url = url
-        self.image = basics.cum_image(image) if image else ''
+        self.image = basics.cum_image(image) if image else ""
         self.about = about
         self.webcam = webcam
         self.custom = False
@@ -25,21 +25,22 @@ class AdultSite(URL_Dispatcher):
 
     def get_clean_title(self):
         title = self.title
-        if ']' in title and '[/' in title:
-            title = ''.join(re.compile(r'[\]](.*?)[\[]/').findall(title))
+        if "]" in title and "[/" in title:
+            title = "".join(re.compile(r"[\]](.*?)[\[]/").findall(title))
         return title
 
     def register(self, default_mode=False, clean_mode=False):
         def dec(f):
             if default_mode:
                 if self.default_mode:
-                    raise Exception('A default mode is already defined')
-                self.default_mode = '{}.{}'.format(self.module_name, f.__name__)
+                    raise Exception("A default mode is already defined")
+                self.default_mode = "{}.{}".format(self.module_name, f.__name__)
             if clean_mode:
                 self.__class__.clean_functions.add(f)
             super_register = super(AdultSite, self).register()
             func = super_register(f)
             return func
+
         return dec
 
     @classmethod

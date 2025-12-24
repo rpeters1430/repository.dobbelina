@@ -20,6 +20,7 @@ import sys
 from contextlib import contextmanager
 from platform import uname
 from pprint import pformat
+
 try:
     pass
 except ImportError:
@@ -38,24 +39,27 @@ def _format_vars(variables):
     :param variables: variables dict
     :return: formatted string with sorted ``var = val`` pairs
     """
-    var_list = [(var, val) for var, val in variables.items()
-                if not (var.startswith('__') or var.endswith('__'))]
+    var_list = [
+        (var, val)
+        for var, val in variables.items()
+        if not (var.startswith("__") or var.endswith("__"))
+    ]
     var_list.sort(key=lambda i: i[0])
     lines = []
     for var, val in var_list:
-        lines.append('{} = {}'.format(var, pformat(val)))
-    return '\n'.join(lines)
+        lines.append("{} = {}".format(var, pformat(val)))
+    return "\n".join(lines)
 
 
 def _format_code_context(frame_info):
     # type: (tuple) -> Text
-    context = ''
+    context = ""
     if frame_info[4] is not None:
         for i, line in enumerate(frame_info[4], frame_info[2] - frame_info[5]):
             if i == frame_info[2]:
-                context += '{}:>{}'.format(str(i).rjust(5), line)
+                context += "{}:>{}".format(str(i).rjust(5), line)
             else:
-                context += '{}: {}'.format(str(i).rjust(5), line)
+                context += "{}: {}".format(str(i).rjust(5), line)
     return context
 
 
@@ -77,7 +81,7 @@ def _format_frame_info(frame_info):
         file_path=frame_info[1],
         lineno=frame_info[2],
         code_context=_format_code_context(frame_info),
-        local_vars=_format_vars(frame_info[0].f_locals)
+        local_vars=_format_vars(frame_info[0].f_locals),
     )
 
 
@@ -136,18 +140,18 @@ def log_exception(logger_func=logger.error):
     try:
         yield
     except Exception as exc:
-        stack_trace = ''
+        stack_trace = ""
         for frame_info in inspect.trace(5):
             stack_trace += _format_frame_info(frame_info)
         message = EXCEPTION_TEMPLATE.format(
             exc_type=exc.__class__.__name__,
             exc=exc,
             system_info=uname(),
-            python_version=sys.version.replace('\n', ' '),
-            kodi_version=xbmc.getInfoLabel('System.BuildVersion'),
+            python_version=sys.version.replace("\n", " "),
+            kodi_version=xbmc.getInfoLabel("System.BuildVersion"),
             sys_argv=pformat(sys.argv),
             sys_path=pformat(sys.path),
-            stack_trace=stack_trace
+            stack_trace=stack_trace,
         )
         logger_func(message)
         raise exc

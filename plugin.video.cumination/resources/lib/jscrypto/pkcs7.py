@@ -4,7 +4,7 @@ from six.moves import range
 
 
 class PKCS7Encoder(object):
-    '''
+    """
     RFC 2315: PKCS#7 page 21
     Some content-encryption algorithms assume the
     input length is a multiple of k octets, where k > 1, and
@@ -27,7 +27,7 @@ class PKCS7Encoder(object):
     padded and no padding string is a suffix of another. This
     padding method is well-defined if and only if k < 256;
     methods for larger k are an open issue for further study.
-    '''
+    """
 
     def __init__(self, k=16):
         self.k = k
@@ -35,25 +35,25 @@ class PKCS7Encoder(object):
     # @param text The padded text for which the padding is to be removed.
     # @exception ValueError Raised when the input padding is missing or corrupt.
     def decode(self, text):
-        '''
+        """
         Remove the PKCS#7 padding from a text string
-        '''
+        """
         nl = len(text)
         val = int(binascii.hexlify(six.ensure_binary(text[-1])), 16)
         if val > self.k:
-            raise ValueError('Input is not padded or padding is corrupt')
+            raise ValueError("Input is not padded or padding is corrupt")
 
         ln = nl - val
         return text[:ln]
 
     # @param text The text to encode.
     def encode(self, text):
-        '''
+        """
         Pad an input string according to PKCS#7
-        '''
+        """
         lt = len(text)
         output = six.StringIO()
         val = self.k - (lt % self.k)
         for _ in range(val):
-            output.write('%02x' % val)
+            output.write("%02x" % val)
         return text + binascii.unhexlify(output.getvalue())

@@ -1,4 +1,3 @@
-
 # Modded just for Kodi
 #############################################################################
 #                              /T /I                                        #
@@ -48,13 +47,16 @@ import stat
 import io
 import re
 import string
+
 try:
     import zlib
+
     crc32 = zlib.crc32
 except ImportError:
     zlib = None
     crc32 = binascii.crc32
 import xbmc
+
 KODIV = float(xbmc.getInfoLabel("System.BuildVersion")[:4])
 # if KODIV >= 18:  # FTG mod for Kodi 18
 #     import xbmcaddon
@@ -62,8 +64,17 @@ KODIV = float(xbmc.getInfoLabel("System.BuildVersion")[:4])
 #     import xbmcplugin
 # else:
 #     pass
-__all__ = ["BadZipfile", "error", "ZIP_STORED", "ZIP_DEFLATED", "is_zipfile",
-           "ZipInfo", "ZipFile", "PyZipFile", "LargeZipFile"]
+__all__ = [
+    "BadZipfile",
+    "error",
+    "ZIP_STORED",
+    "ZIP_DEFLATED",
+    "is_zipfile",
+    "ZipInfo",
+    "ZipFile",
+    "PyZipFile",
+    "LargeZipFile",
+]
 
 
 class BadZipfile(Exception):
@@ -154,7 +165,7 @@ _CD64_OFFSET_START_CENTDIR = 9
 def _check_zipfile(fp):
     try:
         if _EndRecData(fp):
-            return True         # file has correct magic number
+            return True  # file has correct magic number
     except IOError:
         pass
     return False
@@ -196,9 +207,9 @@ def _EndRecData64(fpin, offset, endrec):
     data = fpin.read(sizeEndCentDir64)
     if len(data) != sizeEndCentDir64:
         return endrec
-    sig, _, _, _, disk_num, disk_dir, \
-        dircount, dircount2, dirsize, diroffset = \
+    sig, _, _, _, disk_num, disk_dir, dircount, dircount2, dirsize, diroffset = (
         struct.unpack(structEndArchive64, data)
+    )
     if sig != stringEndArchive64:
         return endrec
     endrec[_ECD_SIGNATURE] = sig
@@ -222,9 +233,11 @@ def _EndRecData(fpin):
     except IOError:
         return None
     data = fpin.read()
-    if (len(data) == sizeEndCentDir
-       and data[0:4] == stringEndArchive
-       and data[-2:] == b"\000\000"):
+    if (
+        len(data) == sizeEndCentDir
+        and data[0:4] == stringEndArchive
+        and data[-2:] == b"\000\000"
+    ):
         endrec = struct.unpack(structEndArchive, data)
         endrec = list(endrec)
         endrec.append("")
@@ -235,41 +248,42 @@ def _EndRecData(fpin):
     data = fpin.read()
     start = data.rfind(stringEndArchive)
     if start >= 0:
-        recData = data[start:start + sizeEndCentDir]
+        recData = data[start : start + sizeEndCentDir]
         if len(recData) != sizeEndCentDir:
             return None
         endrec = list(struct.unpack(structEndArchive, recData))
         commentSize = endrec[_ECD_COMMENT_SIZE]
-        comment = data[start + sizeEndCentDir:start + sizeEndCentDir + commentSize]
+        comment = data[start + sizeEndCentDir : start + sizeEndCentDir + commentSize]
         endrec.append(comment)
         endrec.append(maxCommentStart + start)
-        return _EndRecData64(fpin, maxCommentStart + start - filesize,
-                             endrec)
+        return _EndRecData64(fpin, maxCommentStart + start - filesize, endrec)
     return None
 
 
-class ZipInfo (object):
+class ZipInfo(object):
     """Class with attributes describing each file in the ZIP archive."""
+
     __slots__ = (
-        'orig_filename',
-        'filename',
-        'date_time',
-        'compress_type',
-        'comment',
-        'extra',
-        'create_system',
-        'create_version',
-        'extract_version',
-        'reserved',
-        'flag_bits',
-        'volume',
-        'internal_attr',
-        'external_attr',
-        'header_offset',
-        'CRC',
-        'compress_size',
-        'file_size',
-        '_raw_time')
+        "orig_filename",
+        "filename",
+        "date_time",
+        "compress_type",
+        "comment",
+        "extra",
+        "create_system",
+        "create_version",
+        "extract_version",
+        "reserved",
+        "flag_bits",
+        "volume",
+        "internal_attr",
+        "external_attr",
+        "header_offset",
+        "CRC",
+        "compress_size",
+        "file_size",
+        "_raw_time",
+    )
 
     def __init__(self, filename="NoName", date_time=(1980, 1, 1, 0, 0, 0)):
         self.orig_filename = filename
@@ -283,12 +297,12 @@ class ZipInfo (object):
         self.date_time = date_time
 
         if date_time[0] < 1980:
-            raise ValueError('ZIP does not support timestamps before 1980')
+            raise ValueError("ZIP does not support timestamps before 1980")
 
         self.compress_type = ZIP_STORED
         self.comment = ""
         self.extra = ""
-        if sys.platform == 'win32':
+        if sys.platform == "win32":
             self.create_system = 0
         else:
             self.create_system = 3
@@ -317,37 +331,48 @@ class ZipInfo (object):
         if zip64 is None:
             zip64 = file_size > ZIP64_LIMIT or compress_size > ZIP64_LIMIT
         if zip64:
-            fmt = '<HHQQ'
-            extra = extra + struct.pack(fmt, 1, struct.calcsize(fmt) - 4,
-                                        file_size, compress_size)
+            fmt = "<HHQQ"
+            extra = extra + struct.pack(
+                fmt, 1, struct.calcsize(fmt) - 4, file_size, compress_size
+            )
         if file_size > ZIP64_LIMIT or compress_size > ZIP64_LIMIT:
             if not zip64:
                 raise LargeZipFile("Filesize would require ZIP64 extensions")
-            file_size = 0xffffffff
-            compress_size = 0xffffffff
+            file_size = 0xFFFFFFFF
+            compress_size = 0xFFFFFFFF
             self.extract_version = max(45, self.extract_version)
             self.create_version = max(45, self.extract_version)
 
         filename, flag_bits = self._encodeFilenameFlags()
-        header = struct.pack(structFileHeader, stringFileHeader,
-                             self.extract_version, self.reserved, flag_bits,
-                             self.compress_type, dostime, dosdate, CRC,
-                             compress_size, file_size,
-                             len(filename), len(extra))
+        header = struct.pack(
+            structFileHeader,
+            stringFileHeader,
+            self.extract_version,
+            self.reserved,
+            flag_bits,
+            self.compress_type,
+            dostime,
+            dosdate,
+            CRC,
+            compress_size,
+            file_size,
+            len(filename),
+            len(extra),
+        )
         return header + filename + extra
 
     def _encodeFilenameFlags(self):
         if isinstance(self.filename, six.text_type) and six.PY2:
             try:
-                return self.filename.encode('ascii'), self.flag_bits
+                return self.filename.encode("ascii"), self.flag_bits
             except UnicodeEncodeError:
-                return self.filename.encode('utf-8'), self.flag_bits | 0x800
+                return self.filename.encode("utf-8"), self.flag_bits | 0x800
         else:
             return self.filename, self.flag_bits
 
     def _decodeFilename(self):
         if self.flag_bits & 0x800:
-            return self.filename.decode('utf-8')
+            return self.filename.decode("utf-8")
         else:
             return self.filename
 
@@ -355,20 +380,20 @@ class ZipInfo (object):
         extra = self.extra
         unpack = struct.unpack
         while len(extra) >= 4:
-            tp, ln = unpack('<HH', extra[:4])
+            tp, ln = unpack("<HH", extra[:4])
             if tp == 1:
                 if ln >= 24:
-                    counts = unpack('<QQQ', extra[4:28])
+                    counts = unpack("<QQQ", extra[4:28])
                 elif ln == 16:
-                    counts = unpack('<QQ', extra[4:20])
+                    counts = unpack("<QQ", extra[4:20])
                 elif ln == 8:
-                    counts = unpack('<Q', extra[4:12])
+                    counts = unpack("<Q", extra[4:12])
                 elif ln == 0:
                     counts = ()
                 else:
                     raise RuntimeError("Corrupt extra field %s" % (ln))
                 idx = 0
-                if self.file_size in (0xffffffffffffffff, 0xffffffff):
+                if self.file_size in (0xFFFFFFFFFFFFFFFF, 0xFFFFFFFF):
                     self.file_size = counts[idx]
                     idx += 1
 
@@ -376,12 +401,12 @@ class ZipInfo (object):
                     self.compress_size = counts[idx]
                     idx += 1
 
-                if self.header_offset == 0xffffffff:
+                if self.header_offset == 0xFFFFFFFF:
                     _ = self.header_offset
                     self.header_offset = counts[idx]
                     idx += 1
 
-            extra = extra[ln + 4:]
+            extra = extra[ln + 4 :]
 
 
 class _ZipDecrypter:
@@ -401,7 +426,7 @@ class _ZipDecrypter:
         internal keys. We noticed that a direct implementation is faster than
         relying on binascii.crc32().
         """
-        poly = 0xedb88320
+        poly = 0xEDB88320
         table = [0] * 256
         for i in range(256):
             crc = i
@@ -409,14 +434,15 @@ class _ZipDecrypter:
                 if crc & 1:
                     crc = ((crc >> 1) & 0x7FFFFFFF) ^ poly
                 else:
-                    crc = ((crc >> 1) & 0x7FFFFFFF)
+                    crc = (crc >> 1) & 0x7FFFFFFF
             table[i] = crc
         return table
+
     crctable = _GenerateCRCTable()
 
     def _crc32(self, ch, crc):
         """Compute the CRC32 primitive on one byte."""
-        return ((crc >> 8) & 0xffffff) ^ self.crctable[(crc ^ ord(ch)) & 0xff]
+        return ((crc >> 8) & 0xFFFFFF) ^ self.crctable[(crc ^ ord(ch)) & 0xFF]
 
     def __init__(self, pwd):
         self.key0 = 305419896
@@ -442,33 +468,34 @@ class _ZipDecrypter:
 
 
 compressor_names = {
-    0: 'store',
-    1: 'shrink',
-    2: 'reduce',
-    3: 'reduce',
-    4: 'reduce',
-    5: 'reduce',
-    6: 'implode',
-    7: 'tokenize',
-    8: 'deflate',
-    9: 'deflate64',
-    10: 'implode',
-    12: 'bzip2',
-    14: 'lzma',
-    18: 'terse',
-    19: 'lz77',
-    97: 'wavpack',
-    98: 'ppmd',
+    0: "store",
+    1: "shrink",
+    2: "reduce",
+    3: "reduce",
+    4: "reduce",
+    5: "reduce",
+    6: "implode",
+    7: "tokenize",
+    8: "deflate",
+    9: "deflate64",
+    10: "implode",
+    12: "bzip2",
+    14: "lzma",
+    18: "terse",
+    19: "lz77",
+    97: "wavpack",
+    98: "ppmd",
 }
 
 
 class ZipExtFile(io.BufferedIOBase):
     """File-like object for reading an archive member.
-       Is returned by ZipFile.open().
+    Is returned by ZipFile.open().
     """
+
     MAX_N = 1 << 31 - 1
     MIN_READ_SIZE = 4096
-    PATTERN = re.compile(r'^(?P<chunk>[^\r\n]+)|(?P<newline>\n|\r\n?)')
+    PATTERN = re.compile(r"^(?P<chunk>[^\r\n]+)|(?P<newline>\n|\r\n?)")
 
     def __init__(self, fileobj, mode, zipinfo, decrypter=None, close_fileobj=False):
         self._fileobj = fileobj
@@ -483,21 +510,25 @@ class ZipExtFile(io.BufferedIOBase):
         elif self._compress_type != ZIP_STORED:
             descr = compressor_names.get(self._compress_type)
             if descr:
-                raise NotImplementedError("compression type %d (%s)" % (self._compress_type, descr))
+                raise NotImplementedError(
+                    "compression type %d (%s)" % (self._compress_type, descr)
+                )
             else:
-                raise NotImplementedError("compression type %d" % (self._compress_type,))
-        self._unconsumed = ''
-        self._readbuffer = ''
+                raise NotImplementedError(
+                    "compression type %d" % (self._compress_type,)
+                )
+        self._unconsumed = ""
+        self._readbuffer = ""
         self._offset = 0
-        self._universal = 'U' in mode
+        self._universal = "U" in mode
         self.newlines = None
         if self._decrypter is not None:
             self._compress_left -= 12
         self.mode = mode
         self.name = zipinfo.filename
-        if hasattr(zipinfo, 'CRC'):
+        if hasattr(zipinfo, "CRC"):
             self._expected_crc = zipinfo.CRC
-            self._running_crc = crc32(b'') & 0xffffffff
+            self._running_crc = crc32(b"") & 0xFFFFFFFF
         else:
             self._expected_crc = None
 
@@ -506,29 +537,29 @@ class ZipExtFile(io.BufferedIOBase):
         If limit is specified, at most limit bytes will be read.
         """
         if not self._universal and limit < 0:
-            i = self._readbuffer.find('\n', self._offset) + 1
+            i = self._readbuffer.find("\n", self._offset) + 1
             if i > 0:
-                line = self._readbuffer[self._offset: i]
+                line = self._readbuffer[self._offset : i]
                 self._offset = i
                 return line
         if not self._universal:
             return io.BufferedIOBase.readline(self, limit)
-        line = ''
+        line = ""
         while limit < 0 or len(line) < limit:
             readahead = self.peek(2)
-            if readahead == '':
+            if readahead == "":
                 return line
             match = self.PATTERN.search(readahead)
-            newline = match.group('newline')
+            newline = match.group("newline")
             if newline is not None:
                 if self.newlines is None:
                     self.newlines = []
                 if newline not in self.newlines:
                     self.newlines.append(newline)
                 self._offset += len(newline)
-                return line + '\n'
+                return line + "\n"
 
-            chunk = match.group('chunk')
+            chunk = match.group("chunk")
             if limit >= 0:
                 chunk = chunk[: limit - len(line)]
 
@@ -541,11 +572,11 @@ class ZipExtFile(io.BufferedIOBase):
         if n > len(self._readbuffer) - self._offset:
             chunk = self.read(n)
             if len(chunk) > self._offset:
-                self._readbuffer = chunk + self._readbuffer[self._offset:]
+                self._readbuffer = chunk + self._readbuffer[self._offset :]
                 self._offset = 0
             else:
                 self._offset -= len(chunk)
-        return self._readbuffer[self._offset: self._offset + 512]
+        return self._readbuffer[self._offset : self._offset + 512]
 
     def readable(self):
         return True
@@ -554,7 +585,7 @@ class ZipExtFile(io.BufferedIOBase):
         """Read and return up to n bytes.
         If the argument is omitted, None, or negative, data is read and returned until EOF is reached..
         """
-        buf = ''
+        buf = ""
         if n is None:
             n = -1
         while True:
@@ -571,7 +602,7 @@ class ZipExtFile(io.BufferedIOBase):
     def _update_crc(self, newdata, eof):
         if self._expected_crc is None:
             return
-        self._running_crc = crc32(newdata, self._running_crc) & 0xffffffff
+        self._running_crc = crc32(newdata, self._running_crc) & 0xFFFFFFFF
         if eof and self._running_crc != self._expected_crc:
             raise BadZipfile("Bad CRC-32 for file %r" % self.name)
 
@@ -589,19 +620,21 @@ class ZipExtFile(io.BufferedIOBase):
             self._compress_left -= len(data)
 
             if data and self._decrypter is not None:
-                data = ''.join(map(self._decrypter, data))
+                data = "".join(map(self._decrypter, data))
 
             if self._compress_type == ZIP_STORED:
                 self._update_crc(data, eof=(self._compress_left == 0))
-                self._readbuffer = self._readbuffer[self._offset:] + data
+                self._readbuffer = self._readbuffer[self._offset :] + data
                 self._offset = 0
             else:
                 self._unconsumed += data
-        if (len(self._unconsumed) > 0 and n > len_readbuffer
-           and self._compress_type == ZIP_DEFLATED):
+        if (
+            len(self._unconsumed) > 0
+            and n > len_readbuffer
+            and self._compress_type == ZIP_DEFLATED
+        ):
             data = self._decompressor.decompress(
-                self._unconsumed,
-                max(n - len_readbuffer, self.MIN_READ_SIZE)
+                self._unconsumed, max(n - len_readbuffer, self.MIN_READ_SIZE)
             )
 
             self._unconsumed = self._decompressor.unconsumed_tail
@@ -610,9 +643,9 @@ class ZipExtFile(io.BufferedIOBase):
                 data += self._decompressor.flush()
 
             self._update_crc(data, eof=eof)
-            self._readbuffer = self._readbuffer[self._offset:] + data
+            self._readbuffer = self._readbuffer[self._offset :] + data
             self._offset = 0
-        data = self._readbuffer[self._offset: self._offset + n]
+        data = self._readbuffer[self._offset : self._offset + n]
         self._offset += len(data)
         return data
 
@@ -625,22 +658,22 @@ class ZipExtFile(io.BufferedIOBase):
 
 
 def platform():
-    if xbmc.getCondVisibility('system.platform.android'):
-        return 'android'
-    elif xbmc.getCondVisibility('system.platform.linux'):
-        return 'linux'
-    elif xbmc.getCondVisibility('system.platform.linux.Raspberrypi'):
-        return 'linux'
-    elif xbmc.getCondVisibility('system.platform.windows'):
-        return 'windows'
-    elif xbmc.getCondVisibility('system.platform.osx'):
-        return 'osx'
-    elif xbmc.getCondVisibility('system.platform.atv2'):
-        return 'atv2'
-    elif xbmc.getCondVisibility('system.platform.ios'):
-        return 'ios'
-    elif xbmc.getCondVisibility('system.platform.darwin'):
-        return 'ios'
+    if xbmc.getCondVisibility("system.platform.android"):
+        return "android"
+    elif xbmc.getCondVisibility("system.platform.linux"):
+        return "linux"
+    elif xbmc.getCondVisibility("system.platform.linux.Raspberrypi"):
+        return "linux"
+    elif xbmc.getCondVisibility("system.platform.windows"):
+        return "windows"
+    elif xbmc.getCondVisibility("system.platform.osx"):
+        return "osx"
+    elif xbmc.getCondVisibility("system.platform.atv2"):
+        return "atv2"
+    elif xbmc.getCondVisibility("system.platform.ios"):
+        return "ios"
+    elif xbmc.getCondVisibility("system.platform.darwin"):
+        return "ios"
 
 
 class ZipFile(object):
@@ -664,35 +697,35 @@ class ZipFile(object):
         self.NameToInfo = {}
         self.filelist = []
         self.compression = compression
-        self.mode = key = mode.replace('b', '')[0]
+        self.mode = key = mode.replace("b", "")[0]
         self.pwd = None
-        self._comment = ''
+        self._comment = ""
         # FTG mod for Kodi 18
-        if platform() == 'android':
+        if platform() == "android":
             file = io.FileIO(file, mode)
         if isinstance(file, six.string_types):
             self._filePassed = 0
             self.filename = file
-            modeDict = {'r': 'rb', 'w': 'wb', 'a': 'r+b'}
+            modeDict = {"r": "rb", "w": "wb", "a": "r+b"}
             try:
                 self.fp = open(file, modeDict[mode])
             except IOError:
-                if mode == 'a':
-                    mode = key = 'w'
+                if mode == "a":
+                    mode = key = "w"
                     self.fp = open(file, modeDict[mode])
                 else:
                     raise  # ###############
         else:
             self._filePassed = 1
             self.fp = file
-            self.filename = getattr(file, 'name', None)
+            self.filename = getattr(file, "name", None)
 
         try:
-            if key == 'r':
+            if key == "r":
                 self._RealGetContents()
-            elif key == 'w':
+            elif key == "w":
                 self._didModify = True
-            elif key == 'a':
+            elif key == "a":
                 try:
                     self._RealGetContents()
                     self.fp.seek(self.start_dir, 0)
@@ -730,7 +763,7 @@ class ZipFile(object):
         self._comment = endrec[_ECD_COMMENT]
         concat = endrec[_ECD_LOCATION] - size_cd - offset_cd
         if endrec[_ECD_SIGNATURE] == stringEndArchive64:
-            concat -= (sizeEndCentDir64 + sizeEndCentDir64Locator)
+            concat -= sizeEndCentDir64 + sizeEndCentDir64Locator
 
         if self.debug > 2:
             inferred = concat + offset_cd
@@ -754,22 +787,42 @@ class ZipFile(object):
             x.extra = fp.read(centdir[_CD_EXTRA_FIELD_LENGTH])
             x.comment = fp.read(centdir[_CD_COMMENT_LENGTH])
             x.header_offset = centdir[_CD_LOCAL_HEADER_OFFSET]
-            (x.create_version, x.create_system, x.extract_version, x.reserved,
-                x.flag_bits, x.compress_type, t, d,
-                x.CRC, x.compress_size, x.file_size) = centdir[1:12]
+            (
+                x.create_version,
+                x.create_system,
+                x.extract_version,
+                x.reserved,
+                x.flag_bits,
+                x.compress_type,
+                t,
+                d,
+                x.CRC,
+                x.compress_size,
+                x.file_size,
+            ) = centdir[1:12]
             x.volume, x.internal_attr, x.external_attr = centdir[15:18]
             x._raw_time = t
-            x.date_time = ((d >> 9) + 1980, (d >> 5) & 0xF, d & 0x1F,
-                           t >> 11, (t >> 5) & 0x3F, (t & 0x1F) * 2)
+            x.date_time = (
+                (d >> 9) + 1980,
+                (d >> 5) & 0xF,
+                d & 0x1F,
+                t >> 11,
+                (t >> 5) & 0x3F,
+                (t & 0x1F) * 2,
+            )
 
             x._decodeExtra()
             x.header_offset = x.header_offset + concat
             x.filename = x._decodeFilename()
             self.filelist.append(x)
             self.NameToInfo[x.filename] = x
-            total = (total + sizeCentralDir + centdir[_CD_FILENAME_LENGTH]
-                     + centdir[_CD_EXTRA_FIELD_LENGTH]
-                     + centdir[_CD_COMMENT_LENGTH])
+            total = (
+                total
+                + sizeCentralDir
+                + centdir[_CD_FILENAME_LENGTH]
+                + centdir[_CD_EXTRA_FIELD_LENGTH]
+                + centdir[_CD_COMMENT_LENGTH]
+            )
             if self.debug > 2:
                 six.print_("total", total)
 
@@ -794,7 +847,7 @@ class ZipFile(object):
 
     def testzip(self):
         """Read all the files and check the CRC."""
-        chunk_size = 2 ** 20
+        chunk_size = 2**20
         for zinfo in self.filelist:
             try:
                 with self.open(zinfo.filename, "r") as f:
@@ -807,8 +860,7 @@ class ZipFile(object):
         """Return the instance of ZipInfo given 'name'."""
         info = self.NameToInfo.get(name)
         if info is None:
-            raise KeyError(
-                'There is no item named %r in the archive' % name)
+            raise KeyError("There is no item named %r in the archive" % name)
         return info
 
     def setpassword(self, pwd):
@@ -824,8 +876,11 @@ class ZipFile(object):
     def comment(self, comment):
         if len(comment) > ZIP_MAX_COMMENT:
             import warnings
-            warnings.warn('Archive comment is too long; truncating to %d bytes'
-                          % ZIP_MAX_COMMENT, stacklevel=2)
+
+            warnings.warn(
+                "Archive comment is too long; truncating to %d bytes" % ZIP_MAX_COMMENT,
+                stacklevel=2,
+            )
             comment = comment[:ZIP_MAX_COMMENT]
         self._comment = comment
         self._didModify = True
@@ -845,7 +900,7 @@ class ZipFile(object):
             zef_file = self.fp
             should_close = False
         else:
-            zef_file = open(self.filename, 'rb')
+            zef_file = open(self.filename, "rb")
             should_close = True
         try:
             if isinstance(name, ZipInfo):
@@ -863,23 +918,26 @@ class ZipFile(object):
             if fheader[_FH_EXTRA_FIELD_LENGTH]:
                 zef_file.read(fheader[_FH_EXTRA_FIELD_LENGTH])
             if fname != zinfo.orig_filename:
-                raise BadZipfile('File name in directory "%s" and header "%s" differ.'
-                                 % (zinfo.orig_filename, fname))
+                raise BadZipfile(
+                    'File name in directory "%s" and header "%s" differ.'
+                    % (zinfo.orig_filename, fname)
+                )
             is_encrypted = zinfo.flag_bits & 0x1
             zd = None
             if is_encrypted:
                 if not pwd:
                     pwd = self.pwd
                 if not pwd:
-                    raise RuntimeError("File %s is encrypted, "
-                                       "password required for extraction" % name)
+                    raise RuntimeError(
+                        "File %s is encrypted, password required for extraction" % name
+                    )
                 zd = _ZipDecrypter(pwd)
                 bytes = zef_file.read(12)
                 h = list(map(zd, bytes[0:12]))
                 if zinfo.flag_bits & 0x8:
-                    check_byte = (zinfo._raw_time >> 8) & 0xff
+                    check_byte = (zinfo._raw_time >> 8) & 0xFF
                 else:
-                    check_byte = (zinfo.CRC >> 24) & 0xff
+                    check_byte = (zinfo.CRC >> 24) & 0xFF
                 if ord(h[11]) != check_byte:
                     raise RuntimeError("Bad password for file", name)
             return ZipExtFile(zef_file, mode, zinfo, zd, close_fileobj=should_close)
@@ -891,9 +949,9 @@ class ZipFile(object):
 
     def extract(self, member, path=None, pwd=None):
         """Extract a member from the archive to the current working directory,
-           using its full name. Its file information is extracted as accurately
-           as possible. `member' may be a filename or a ZipInfo object. You can
-           specify a different directory using `path'.
+        using its full name. Its file information is extracted as accurately
+        as possible. `member' may be a filename or a ZipInfo object. You can
+        specify a different directory using `path'.
         """
         if not isinstance(member, ZipInfo):
             member = self.getinfo(member)
@@ -903,9 +961,9 @@ class ZipFile(object):
 
     def extractall(self, path=None, members=None, pwd=None):
         """Extract all members from the archive to the current working
-           directory. `path' specifies a different directory to extract to.
-           `members' is optional and must be a subset of the list returned
-           by namelist().
+        directory. `path' specifies a different directory to extract to.
+        `members' is optional and must be a subset of the list returned
+        by namelist().
         """
         if members is None:
             members = self.namelist()
@@ -915,29 +973,32 @@ class ZipFile(object):
 
     def _extract_member(self, member, targetpath, pwd):
         """Extract the ZipInfo object 'member' to a physical
-           file on the path targetpath.
+        file on the path targetpath.
         """
-        arcname = member.filename.replace('/', os.path.sep)
+        arcname = member.filename.replace("/", os.path.sep)
         if os.path.altsep:
             arcname = arcname.replace(os.path.altsep, os.path.sep)
         arcname = os.path.splitdrive(arcname)[1]
-        arcname = os.path.sep.join(x for x in arcname.split(os.path.sep)
-                                   if x not in ('', os.path.curdir, os.path.pardir))
-        if os.path.sep == '\\':
+        arcname = os.path.sep.join(
+            x
+            for x in arcname.split(os.path.sep)
+            if x not in ("", os.path.curdir, os.path.pardir)
+        )
+        if os.path.sep == "\\":
             illegal = ':<>|"?*'
             if isinstance(arcname, six.text_type):
-                table = {ord(c): ord('_') for c in illegal}
+                table = {ord(c): ord("_") for c in illegal}
             else:
-                table = string.maketrans(illegal, '_' * len(illegal))
+                table = string.maketrans(illegal, "_" * len(illegal))
             arcname = arcname.translate(table)
-            arcname = (x.rstrip('.') for x in arcname.split(os.path.sep))
+            arcname = (x.rstrip(".") for x in arcname.split(os.path.sep))
             arcname = os.path.sep.join(x for x in arcname if x)
         targetpath = os.path.join(targetpath, arcname)
         targetpath = os.path.normpath(targetpath)
         upperdirs = os.path.dirname(targetpath)
         if upperdirs and not os.path.exists(upperdirs):
             os.makedirs(upperdirs)
-        if member.filename[-1] == '/':
+        if member.filename[-1] == "/":
             if not os.path.isdir(targetpath):
                 os.mkdir(targetpath)
             return targetpath
@@ -949,7 +1010,8 @@ class ZipFile(object):
         """Check for errors before writing a file to the archive."""
         if zinfo.filename in self.NameToInfo:
             import warnings
-            warnings.warn('Duplicate name: %r' % zinfo.filename, stacklevel=3)
+
+            warnings.warn("Duplicate name: %r" % zinfo.filename, stacklevel=3)
         if self.mode not in ("w", "a"):
             raise RuntimeError('write() requires mode "w" or "a"')
         if not self.fp:
@@ -967,14 +1029,15 @@ class ZipFile(object):
             elif zinfo.header_offset > ZIP64_LIMIT:
                 requires_zip64 = "Zipfile size"
             if requires_zip64:
-                raise LargeZipFile(requires_zip64
-                                   + " would require ZIP64 extensions")
+                raise LargeZipFile(requires_zip64 + " would require ZIP64 extensions")
 
     def write(self, filename, arcname=None, compress_type=None):
         """Put the bytes from filename into the archive under the name
         arcname."""
         if not self.fp:
-            raise RuntimeError("Attempt to write to ZIP archive that was already closed")
+            raise RuntimeError(
+                "Attempt to write to ZIP archive that was already closed"
+            )
         st = os.stat(filename)
         isdir = stat.S_ISDIR(st.st_mode)
         mtime = time.localtime(st.st_mtime)
@@ -985,7 +1048,7 @@ class ZipFile(object):
         while arcname[0] in (os.sep, os.altsep):
             arcname = arcname[1:]
         if isdir:
-            arcname += '/'
+            arcname += "/"
         zinfo = ZipInfo(arcname, date_time)
         zinfo.external_attr = (st[0] & 0xFFFF) << 16
         if isdir:
@@ -1026,7 +1089,7 @@ class ZipFile(object):
                 if not buf:
                     break
                 file_size = file_size + len(buf)
-                CRC = crc32(buf, CRC) & 0xffffffff
+                CRC = crc32(buf, CRC) & 0xFFFFFFFF
                 if cmpr:
                     buf = cmpr.compress(buf)
                     compress_size = compress_size + len(buf)
@@ -1042,9 +1105,9 @@ class ZipFile(object):
         zinfo.file_size = file_size
         if not zip64 and self._allowZip64:
             if file_size > ZIP64_LIMIT:
-                raise RuntimeError('File size has increased during compressing')
+                raise RuntimeError("File size has increased during compressing")
             if compress_size > ZIP64_LIMIT:
-                raise RuntimeError('Compressed size larger than uncompressed size')
+                raise RuntimeError("Compressed size larger than uncompressed size")
         # FTG mod for Kodi 18 Android
         position = self.fp.tell()
         self.fp.seek(zinfo.header_offset, 0)
@@ -1059,11 +1122,12 @@ class ZipFile(object):
         'bytes'.  'zinfo_or_arcname' is either a ZipInfo instance or
         the name of the file in the archive."""
         if not isinstance(zinfo_or_arcname, ZipInfo):
-            zinfo = ZipInfo(filename=zinfo_or_arcname,
-                            date_time=time.localtime(time.time())[:6])
+            zinfo = ZipInfo(
+                filename=zinfo_or_arcname, date_time=time.localtime(time.time())[:6]
+            )
 
             zinfo.compress_type = self.compression
-            if zinfo.filename[-1] == '/':
+            if zinfo.filename[-1] == "/":
                 zinfo.external_attr = 0o40775 << 16
                 zinfo.external_attr |= 0x10
             else:
@@ -1072,7 +1136,9 @@ class ZipFile(object):
             zinfo = zinfo_or_arcname
 
         if not self.fp:
-            raise RuntimeError("Attempt to write to ZIP archive that was already closed")
+            raise RuntimeError(
+                "Attempt to write to ZIP archive that was already closed"
+            )
 
         if compress_type is not None:
             zinfo.compress_type = compress_type
@@ -1081,7 +1147,7 @@ class ZipFile(object):
         zinfo.header_offset = self.fp.tell()
         self._writecheck(zinfo)
         self._didModify = True
-        zinfo.CRC = crc32(bytes) & 0xffffffff
+        zinfo.CRC = crc32(bytes) & 0xFFFFFFFF
         if zinfo.compress_type == ZIP_DEFLATED:
             co = zlib.compressobj(zlib.Z_DEFAULT_COMPRESSION, zlib.DEFLATED, -15)
             bytes = co.compress(bytes) + co.flush()
@@ -1095,8 +1161,10 @@ class ZipFile(object):
         self.fp.write(bytes)
         # FTG Mod for kodi 18
         if zinfo.flag_bits & 0x08:
-            fmt = '<LQQ' if zip64 else '<LLL'
-            self.fp.write(struct.pack(fmt, zinfo.CRC, zinfo.compress_size, zinfo.file_size))
+            fmt = "<LQQ" if zip64 else "<LLL"
+            self.fp.write(
+                struct.pack(fmt, zinfo.CRC, zinfo.compress_size, zinfo.file_size)
+            )
         ######################################
         self.fp.flush()
         self.filelist.append(zinfo)
@@ -1119,25 +1187,31 @@ class ZipFile(object):
                     dosdate = (dt[0] - 1980) << 9 | dt[1] << 5 | dt[2]
                     dostime = dt[3] << 11 | dt[4] << 5 | (dt[5] // 2)
                     extra = []
-                    if zinfo.file_size > ZIP64_LIMIT \
-                            or zinfo.compress_size > ZIP64_LIMIT:
+                    if (
+                        zinfo.file_size > ZIP64_LIMIT
+                        or zinfo.compress_size > ZIP64_LIMIT
+                    ):
                         extra.append(zinfo.file_size)
                         extra.append(zinfo.compress_size)
-                        file_size = 0xffffffff
-                        compress_size = 0xffffffff
+                        file_size = 0xFFFFFFFF
+                        compress_size = 0xFFFFFFFF
                     else:
                         file_size = zinfo.file_size
                         compress_size = zinfo.compress_size
                     if zinfo.header_offset > ZIP64_LIMIT:
                         extra.append(zinfo.header_offset)
-                        header_offset = 0xffffffff
+                        header_offset = 0xFFFFFFFF
                     else:
                         header_offset = zinfo.header_offset
                     extra_data = zinfo.extra
                     if extra:
                         # FTG mod for Kodi 18
-                        extra_data = struct.pack('<HH' + 'Q' * len(extra),
-                                                 1, 8 * len(extra), *extra) + extra_data
+                        extra_data = (
+                            struct.pack(
+                                "<HH" + "Q" * len(extra), 1, 8 * len(extra), *extra
+                            )
+                            + extra_data
+                        )
                         #############################
                         extract_version = max(45, zinfo.extract_version)
                         create_version = max(45, zinfo.create_version)
@@ -1147,22 +1221,51 @@ class ZipFile(object):
 
                     try:
                         filename, flag_bits = zinfo._encodeFilenameFlags()
-                        centdir = struct.pack(structCentralDir,
-                                              stringCentralDir, create_version,
-                                              flag_bits, zinfo.compress_type, dostime, dosdate,
-                                              zinfo.CRC, compress_size, file_size,
-                                              len(filename), len(extra_data), len(zinfo.comment),
-                                              0, zinfo.internal_attr, zinfo.external_attr,
-                                              header_offset)
+                        centdir = struct.pack(
+                            structCentralDir,
+                            stringCentralDir,
+                            create_version,
+                            flag_bits,
+                            zinfo.compress_type,
+                            dostime,
+                            dosdate,
+                            zinfo.CRC,
+                            compress_size,
+                            file_size,
+                            len(filename),
+                            len(extra_data),
+                            len(zinfo.comment),
+                            0,
+                            zinfo.internal_attr,
+                            zinfo.external_attr,
+                            header_offset,
+                        )
                     except DeprecationWarning:
-                        six.print_((structCentralDir,
-                                    stringCentralDir, create_version,
-                                    zinfo.create_system, extract_version, zinfo.reserved,
-                                    zinfo.flag_bits, zinfo.compress_type, dostime, dosdate,
-                                    zinfo.CRC, compress_size, file_size,
-                                    len(zinfo.filename), len(extra_data), len(zinfo.comment),
-                                    0, zinfo.internal_attr, zinfo.external_attr,
-                                    header_offset), file=sys.stderr)
+                        six.print_(
+                            (
+                                structCentralDir,
+                                stringCentralDir,
+                                create_version,
+                                zinfo.create_system,
+                                extract_version,
+                                zinfo.reserved,
+                                zinfo.flag_bits,
+                                zinfo.compress_type,
+                                dostime,
+                                dosdate,
+                                zinfo.CRC,
+                                compress_size,
+                                file_size,
+                                len(zinfo.filename),
+                                len(extra_data),
+                                len(zinfo.comment),
+                                0,
+                                zinfo.internal_attr,
+                                zinfo.external_attr,
+                                header_offset,
+                            ),
+                            file=sys.stderr,
+                        )
                         raise
                     self.fp.write(centdir)
                     self.fp.write(filename)
@@ -1183,23 +1286,43 @@ class ZipFile(object):
                 if requires_zip64:
                     ##############
                     if not self._allowZip64:
-                        raise LargeZipFile(requires_zip64
-                                           + " would require ZIP64 extensions")
-                    zip64endrec = struct.pack(structEndArchive64, stringEndArchive64,
-                                              44, 45, 45, 0, 0, centDirCount, centDirCount,
-                                              centDirSize, centDirOffset)
+                        raise LargeZipFile(
+                            requires_zip64 + " would require ZIP64 extensions"
+                        )
+                    zip64endrec = struct.pack(
+                        structEndArchive64,
+                        stringEndArchive64,
+                        44,
+                        45,
+                        45,
+                        0,
+                        0,
+                        centDirCount,
+                        centDirCount,
+                        centDirSize,
+                        centDirOffset,
+                    )
                     self.fp.write(zip64endrec)
 
-                    zip64locrec = struct.pack(structEndArchive64Locator,
-                                              stringEndArchive64Locator, 0, pos2, 1)
+                    zip64locrec = struct.pack(
+                        structEndArchive64Locator, stringEndArchive64Locator, 0, pos2, 1
+                    )
                     self.fp.write(zip64locrec)
                     centDirCount = min(centDirCount, 0xFFFF)
                     centDirSize = min(centDirSize, 0xFFFFFFFF)
                     centDirOffset = min(centDirOffset, 0xFFFFFFFF)
 
-                endrec = struct.pack(structEndArchive, stringEndArchive,
-                                     0, 0, centDirCount, centDirCount,
-                                     centDirSize, centDirOffset, len(self._comment))
+                endrec = struct.pack(
+                    structEndArchive,
+                    stringEndArchive,
+                    0,
+                    0,
+                    centDirCount,
+                    centDirCount,
+                    centDirSize,
+                    centDirOffset,
+                    len(self._comment),
+                )
                 self.fp.write(endrec)
                 self.fp.write(self._comment)
                 self.fp.flush()
@@ -1212,6 +1335,7 @@ class ZipFile(object):
 
 class PyZipFile(ZipFile):
     """Class to create ZIP archives with Python library files and packages."""
+
     def writepy(self, pathname, basename=""):
         """Add all files from "pathname" to the ZIP archive.
         If pathname is a package directory, search the directory and
@@ -1279,10 +1403,17 @@ class PyZipFile(ZipFile):
         file_py = pathname + ".py"
         file_pyc = pathname + ".pyc"
         file_pyo = pathname + ".pyo"
-        if os.path.isfile(file_pyo) and os.stat(file_pyo).st_mtime >= os.stat(file_py).st_mtime:
+        if (
+            os.path.isfile(file_pyo)
+            and os.stat(file_pyo).st_mtime >= os.stat(file_py).st_mtime
+        ):
             fname = file_pyo  # FTG mod for Kodi 18
-        elif not os.path.isfile(file_pyc) or os.stat(file_pyc).st_mtime < os.stat(file_py).st_mtime:
+        elif (
+            not os.path.isfile(file_pyc)
+            or os.stat(file_pyc).st_mtime < os.stat(file_py).st_mtime
+        ):
             import py_compile
+
             if self.debug:
                 six.print_("Compiling", file_py)
             try:

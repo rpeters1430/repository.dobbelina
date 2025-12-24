@@ -7,17 +7,38 @@ class BrotliBitReader:
     """Wrap a bytes buffer to enable reading 0 < n <=24 bits at a time, or transfer of arbitrary number of bytes"""
 
     kBitMask = [
-        0x000000, 0x000001, 0x000003, 0x000007, 0x00000f, 0x00001f, 0x00003f, 0x00007f,
-        0x0000ff, 0x0001ff, 0x0003ff, 0x0007ff, 0x000fff, 0x001fff, 0x003fff, 0x007fff,
-        0x00ffff, 0x01ffff, 0x03ffff, 0x07ffff, 0x0fffff, 0x1fffff, 0x3fffff, 0x7fffff,
-        0xffffff
+        0x000000,
+        0x000001,
+        0x000003,
+        0x000007,
+        0x00000F,
+        0x00001F,
+        0x00003F,
+        0x00007F,
+        0x0000FF,
+        0x0001FF,
+        0x0003FF,
+        0x0007FF,
+        0x000FFF,
+        0x001FFF,
+        0x003FFF,
+        0x007FFF,
+        0x00FFFF,
+        0x01FFFF,
+        0x03FFFF,
+        0x07FFFF,
+        0x0FFFFF,
+        0x1FFFFF,
+        0x3FFFFF,
+        0x7FFFFF,
+        0xFFFFFF,
     ]
 
     def __init__(self, input_buffer):
         self.buf_ = bytearray(input_buffer)
         self.buf_len_ = len(input_buffer)
-        self.pos_ = 0          # byte position in stream
-        self.bit_pos_ = 0      # current bit-reading position in current byte (number bits already read from byte, 0-7)
+        self.pos_ = 0  # byte position in stream
+        self.bit_pos_ = 0  # current bit-reading position in current byte (number bits already read from byte, 0-7)
 
     def reset(self):
         """Reset an initialized BrotliBitReader to start of input buffer"""
@@ -59,5 +80,7 @@ class BrotliBitReader:
             self.pos_ += 1
         if n_bytes > 0:  # call with n_bytes == 0 to just skip to next byte boundary
             new_pos = self.pos_ + n_bytes
-            memoryview(dest_buffer)[dest_pos:dest_pos + n_bytes] = self.buf_[self.pos_:new_pos]
+            memoryview(dest_buffer)[dest_pos : dest_pos + n_bytes] = self.buf_[
+                self.pos_ : new_pos
+            ]
             self.pos_ = new_pos

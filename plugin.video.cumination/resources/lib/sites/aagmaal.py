@@ -1,32 +1,42 @@
-'''
-    Cumination Site Plugin
-    Copyright (C) 2020 Team Cumination
+"""
+Cumination Site Plugin
+Copyright (C) 2020 Team Cumination
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
 
 import re
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('aagmaal', '[COLOR hotpink]Aag Maal[/COLOR]', 'https://aagmaal.gay/', 'aagmaal.png', 'aagmaal')
+site = AdultSite(
+    "aagmaal",
+    "[COLOR hotpink]Aag Maal[/COLOR]",
+    "https://aagmaal.gay/",
+    "aagmaal.png",
+    "aagmaal",
+)
 
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir('[COLOR hotpink]Categories[/COLOR]', site.url, 'Categories', site.img_cat)
-    site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + '?s=', 'Search', site.img_search)
+    site.add_dir(
+        "[COLOR hotpink]Categories[/COLOR]", site.url, "Categories", site.img_cat
+    )
+    site.add_dir(
+        "[COLOR hotpink]Search[/COLOR]", site.url + "?s=", "Search", site.img_search
+    )
     List(site.url)
     utils.eod()
 
@@ -37,53 +47,61 @@ def List(url):
     soup = utils.parse_html(listhtml)
 
     # Find all recent items
-    items = soup.select('div.recent-item, article.recent-item')
+    items = soup.select("div.recent-item, article.recent-item")
 
     for item in items:
-        link = item.select_one('a')
+        link = item.select_one("a")
         if not link:
             continue
 
-        videopage = utils.safe_get_attr(link, 'href')
+        videopage = utils.safe_get_attr(link, "href")
         if not videopage:
             continue
 
         # Try multiple sources for the title
-        name = utils.safe_get_attr(link, 'title')
+        name = utils.safe_get_attr(link, "title")
         if not name:
             # Look for title in item structure
-            title_tag = item.select_one('.title, h2, h3, .post-title, .entry-title')
+            title_tag = item.select_one(".title, h2, h3, .post-title, .entry-title")
             name = utils.safe_get_text(title_tag)
         if not name:
             # Get from link text, but create a copy to avoid modifying original
             link_copy = str(link)
             # Remove span tags from copy
-            link_copy = re.sub(r'<span[^>]*>.*?</span>', '', link_copy, flags=re.DOTALL)
+            link_copy = re.sub(r"<span[^>]*>.*?</span>", "", link_copy, flags=re.DOTALL)
             # Parse the cleaned HTML
             from bs4 import BeautifulSoup
-            cleaned_link = BeautifulSoup(link_copy, 'html.parser')
+
+            cleaned_link = BeautifulSoup(link_copy, "html.parser")
             name = utils.safe_get_text(cleaned_link)
         if not name:
-            name = 'Video'
+            name = "Video"
         name = utils.cleantext(name)
 
-        img_tag = item.select_one('img')
-        img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
 
-        site.add_download_link(name, videopage, 'Playvid', img, name)
+        site.add_download_link(name, videopage, "Playvid", img, name)
 
     # Pagination
-    pagination = soup.select_one('div.pagination, nav.pagination')
+    pagination = soup.select_one("div.pagination, nav.pagination")
     if pagination:
-        current = pagination.select_one('span.current, a.current')
+        current = pagination.select_one("span.current, a.current")
         if current:
-            next_link = current.find_next_sibling('a')
+            next_link = current.find_next_sibling("a")
             if next_link:
-                next_url = utils.safe_get_attr(next_link, 'href')
+                next_url = utils.safe_get_attr(next_link, "href")
                 if next_url:
-                    pages_tag = pagination.select_one('span.pages')
-                    pgtxt = 'Currently in {0}'.format(utils.safe_get_text(pages_tag, ''))
-                    site.add_dir('[COLOR hotpink]Next Page...[/COLOR] {0}'.format(pgtxt), next_url, 'List', site.img_next)
+                    pages_tag = pagination.select_one("span.pages")
+                    pgtxt = "Currently in {0}".format(
+                        utils.safe_get_text(pages_tag, "")
+                    )
+                    site.add_dir(
+                        "[COLOR hotpink]Next Page...[/COLOR] {0}".format(pgtxt),
+                        next_url,
+                        "List",
+                        site.img_next,
+                    )
 
     utils.eod()
 
@@ -94,10 +112,10 @@ def List2(url):
     soup = utils.parse_html(listhtml)
 
     # Try multiple selectors for items
-    items = soup.select('article')
+    items = soup.select("article")
     if not items:
         # Fallback to recent-item selector like in List()
-        items = soup.select('div.recent-item, article.recent-item')
+        items = soup.select("div.recent-item, article.recent-item")
     if not items:
         # Another fallback for post entries
         items = soup.select('div.post, div[class*="post"], div.entry')
@@ -107,42 +125,53 @@ def List2(url):
         link = None
         title_div = item.select_one('div.title, h2.title, h2, h3, div[class*="title"]')
         if title_div:
-            link = title_div.select_one('a')
+            link = title_div.select_one("a")
         if not link:
-            link = item.select_one('a')
+            link = item.select_one("a")
         if not link:
             continue
 
-        iurl = utils.safe_get_attr(link, 'href')
+        iurl = utils.safe_get_attr(link, "href")
         if not iurl:
             continue
 
         # Try multiple sources for name
-        name = utils.safe_get_attr(link, 'title')
+        name = utils.safe_get_attr(link, "title")
         if not name:
-            name = utils.safe_get_text(title_div) if title_div else utils.safe_get_text(link)
+            name = (
+                utils.safe_get_text(title_div)
+                if title_div
+                else utils.safe_get_text(link)
+            )
 
         if not name:
-            name = 'Video'
+            name = "Video"
 
-        img_tag = item.select_one('img')
-        img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
 
         name = utils.cleantext(name)
-        site.add_download_link(name, iurl, 'Playvid', img, name)
+        site.add_download_link(name, iurl, "Playvid", img, name)
 
     # Pagination
-    pagination = soup.select_one('div.pagination, nav.pagination')
+    pagination = soup.select_one("div.pagination, nav.pagination")
     if pagination:
-        current = pagination.select_one('span.current, a.current')
+        current = pagination.select_one("span.current, a.current")
         if current:
-            next_link = current.find_next_sibling('a')
+            next_link = current.find_next_sibling("a")
             if next_link:
-                purl = utils.safe_get_attr(next_link, 'href')
+                purl = utils.safe_get_attr(next_link, "href")
                 if purl:
-                    pages_tag = pagination.select_one('span.pages')
-                    pgtxt = 'Currently in {0}'.format(utils.safe_get_text(pages_tag, ''))
-                    site.add_dir('[COLOR hotpink]Next Page...[/COLOR] {0}'.format(pgtxt), purl, 'List2', site.img_next)
+                    pages_tag = pagination.select_one("span.pages")
+                    pgtxt = "Currently in {0}".format(
+                        utils.safe_get_text(pages_tag, "")
+                    )
+                    site.add_dir(
+                        "[COLOR hotpink]Next Page...[/COLOR] {0}".format(pgtxt),
+                        purl,
+                        "List2",
+                        site.img_next,
+                    )
 
     utils.eod()
 
@@ -151,7 +180,7 @@ def List2(url):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    videourl = ''
+    videourl = ""
 
     videopage = utils.getHtml(url, site.url)
     soup = utils.parse_html(videopage)
@@ -160,23 +189,24 @@ def Playvid(url, name, download=None):
     external_links = soup.select('a.external[target="_blank"], a[class*="external"]')
     links = {}
     for ext_link in external_links:
-        link_url = utils.safe_get_attr(ext_link, 'href')
+        link_url = utils.safe_get_attr(ext_link, "href")
         if link_url and vp.resolveurl.HostedMediaFile(link_url):
             # Extract host from URL
             from six.moves import urllib_parse
+
             parsed = urllib_parse.urlparse(link_url)
-            host = parsed.netloc.replace('www.', '')
+            host = parsed.netloc.replace("www.", "")
             links[host] = link_url
 
     if links:
-        videourl = utils.selector('Select link', links)
+        videourl = utils.selector("Select link", links)
 
     # Fallback to regex patterns
     if not videourl:
         patterns = [
-            r'''href="([^"]+)"\s*class="external''',
+            r"""href="([^"]+)"\s*class="external""",
             r'<iframe[^>]*\s+src="([^"]+)"',
-            r'<iframe[^>]*\s+loading="lazy"\s+src="([^"]+)"'
+            r'<iframe[^>]*\s+loading="lazy"\s+src="([^"]+)"',
         ]
         for pattern in patterns:
             match = re.search(pattern, videopage, re.DOTALL | re.IGNORECASE)
@@ -185,7 +215,7 @@ def Playvid(url, name, download=None):
                 break
 
     if not videourl:
-        utils.notify('Oh Oh', 'No Videos found')
+        utils.notify("Oh Oh", "No Videos found")
         vp.progress.close()
         return
 
@@ -201,8 +231,8 @@ def Categories(url):
     tag_links = soup.select('a.tag, a[class*="tag"]')
 
     for link in tag_links:
-        catpage = utils.safe_get_attr(link, 'href')
-        name = utils.safe_get_attr(link, 'aria-label', ['label', 'title'])
+        catpage = utils.safe_get_attr(link, "href")
+        name = utils.safe_get_attr(link, "aria-label", ["label", "title"])
 
         if not catpage or not name:
             # Try getting name from text content
@@ -212,7 +242,7 @@ def Categories(url):
                 continue
 
         name = utils.cleantext(name)
-        site.add_dir(name, catpage, 'List2')
+        site.add_dir(name, catpage, "List2")
 
     utils.eod()
 
@@ -221,8 +251,8 @@ def Categories(url):
 def Search(url, keyword=None):
     searchUrl = url
     if not keyword:
-        site.search_dir(url, 'Search')
+        site.search_dir(url, "Search")
     else:
-        title = keyword.replace(' ', '+')
+        title = keyword.replace(" ", "+")
         searchUrl = searchUrl + title
         List2(searchUrl)

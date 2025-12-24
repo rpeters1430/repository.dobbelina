@@ -3,6 +3,7 @@
 # See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 
 from .dictionary import BrotliDictionary
+
 """
 Transformations on dictionary words
 
@@ -102,9 +103,9 @@ kTransforms = [
     Transform(b"", kIdentity, b" in "),
     Transform(b"", kIdentity, b" to "),
     Transform(b"e ", kIdentity, b" "),
-    Transform(b"", kIdentity, b"\""),
+    Transform(b"", kIdentity, b'"'),
     Transform(b"", kIdentity, b"."),
-    Transform(b"", kIdentity, b"\">"),
+    Transform(b"", kIdentity, b'">'),
     Transform(b"", kIdentity, b"\n"),
     Transform(b"", kOmitLast3, b""),
     Transform(b"", kIdentity, b"]"),
@@ -149,11 +150,11 @@ kTransforms = [
     Transform(b"", kOmitLast5, b""),
     Transform(b"", kOmitLast9, b""),
     Transform(b" ", kUppercaseFirst, b", "),
-    Transform(b"", kUppercaseFirst, b"\""),
+    Transform(b"", kUppercaseFirst, b'"'),
     Transform(b".", kIdentity, b"("),
     Transform(b"", kUppercaseAll, b" "),
-    Transform(b"", kUppercaseFirst, b"\">"),
-    Transform(b"", kIdentity, b"=\""),
+    Transform(b"", kUppercaseFirst, b'">'),
+    Transform(b"", kIdentity, b'="'),
     Transform(b" ", kIdentity, b"."),
     Transform(b".com/", kIdentity, b""),
     Transform(b" the ", kIdentity, b" of the "),
@@ -164,13 +165,13 @@ kTransforms = [
     Transform(b"", kUppercaseFirst, b"("),
     Transform(b"", kUppercaseFirst, b"."),
     Transform(b"", kIdentity, b" not "),
-    Transform(b" ", kIdentity, b"=\""),
+    Transform(b" ", kIdentity, b'="'),
     Transform(b"", kIdentity, b"er "),
     Transform(b" ", kUppercaseAll, b" "),
     Transform(b"", kIdentity, b"al "),
     Transform(b" ", kUppercaseAll, b""),
     Transform(b"", kIdentity, b"='"),
-    Transform(b"", kUppercaseAll, b"\""),
+    Transform(b"", kUppercaseAll, b'"'),
     Transform(b"", kUppercaseFirst, b". "),
     Transform(b" ", kIdentity, b"("),
     Transform(b"", kIdentity, b"ful "),
@@ -180,20 +181,20 @@ kTransforms = [
     Transform(b"", kUppercaseAll, b"'"),
     Transform(b"", kIdentity, b"est "),
     Transform(b" ", kUppercaseFirst, b"."),
-    Transform(b"", kUppercaseAll, b"\">"),
+    Transform(b"", kUppercaseAll, b'">'),
     Transform(b" ", kIdentity, b"='"),
     Transform(b"", kUppercaseFirst, b","),
     Transform(b"", kIdentity, b"ize "),
     Transform(b"", kUppercaseAll, b"."),
     Transform(b"\xc2\xa0", kIdentity, b""),
     Transform(b" ", kIdentity, b","),
-    Transform(b"", kUppercaseFirst, b"=\""),
-    Transform(b"", kUppercaseAll, b"=\""),
+    Transform(b"", kUppercaseFirst, b'="'),
+    Transform(b"", kUppercaseAll, b'="'),
     Transform(b"", kIdentity, b"ous "),
     Transform(b"", kUppercaseAll, b", "),
     Transform(b"", kUppercaseFirst, b"='"),
     Transform(b" ", kUppercaseFirst, b","),
-    Transform(b" ", kUppercaseAll, b"=\""),
+    Transform(b" ", kUppercaseAll, b'="'),
     Transform(b" ", kUppercaseAll, b", "),
     Transform(b"", kUppercaseAll, b","),
     Transform(b"", kUppercaseAll, b"("),
@@ -201,9 +202,9 @@ kTransforms = [
     Transform(b" ", kUppercaseAll, b"."),
     Transform(b"", kUppercaseAll, b"='"),
     Transform(b" ", kUppercaseAll, b". "),
-    Transform(b" ", kUppercaseFirst, b"=\""),
+    Transform(b" ", kUppercaseFirst, b'="'),
     Transform(b" ", kUppercaseAll, b"='"),
-    Transform(b" ", kUppercaseFirst, b"='")
+    Transform(b" ", kUppercaseFirst, b"='"),
 ]
 
 kNumTransforms = len(kTransforms)
@@ -211,11 +212,11 @@ kNumTransforms = len(kTransforms)
 
 def _to_upper_case(p, i):
     """Overly simplified model of uppercase in utf-8, but what RFC7932 specifies to use"""
-    if p[i] < 0xc0:
+    if p[i] < 0xC0:
         if 97 <= p[i] <= 122:
             p[i] ^= 32
         return 1
-    if p[i] < 0xe0:
+    if p[i] < 0xE0:
         p[i + 1] ^= 32
         return 2
     p[i + 2] ^= 5

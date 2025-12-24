@@ -7,7 +7,7 @@ MAX_LENGTH = 15
 
 def _get_next_key(key, length):
     """Returns reverse(reverse(key, len) + 1, len), where reverse(key, len) is the
-     bit-wise reversal of the length least significant bits of key"""
+    bit-wise reversal of the length least significant bits of key"""
     step = 1 << (length - 1)
     while key & step:
         step >>= 1
@@ -22,7 +22,7 @@ def _replicate_value(table, i, step, end, code):
 
 def _next_table_bit_size(count, length, root_bits):
     """Returns the table width of the next 2nd level table. count is the histogram of bit lengths for the
-     remaining symbols, len is the code length of the next processed symbol"""
+    remaining symbols, len is the code length of the next processed symbol"""
     left = 1 << (length - root_bits)
     while length < MAX_LENGTH:
         left -= count[length]
@@ -39,7 +39,9 @@ class HuffmanCode:
         self.value = value  # symbol value or table offset
 
 
-def brotli_build_huffman_table(root_table, table, root_bits, code_lengths, code_lengths_size):
+def brotli_build_huffman_table(
+    root_table, table, root_bits, code_lengths, code_lengths_size
+):
     start_table = table
     # Local variables used
     # code             current table entry
@@ -81,7 +83,7 @@ def brotli_build_huffman_table(root_table, table, root_bits, code_lengths, code_
     # special case code with only one value
     if offset[MAX_LENGTH] == 1:
         for key in range(0, total_size):
-            root_table[table + key] = HuffmanCode(0, sorted_symbols[0] & 0xffff)
+            root_table[table + key] = HuffmanCode(0, sorted_symbols[0] & 0xFFFF)
         return total_size
 
     # fill in root table
@@ -90,7 +92,7 @@ def brotli_build_huffman_table(root_table, table, root_bits, code_lengths, code_
     step = 2
     for length in range(1, root_bits + 1):
         while count[length] > 0:
-            code = HuffmanCode(length & 0xff, sorted_symbols[symbol] & 0xffff)
+            code = HuffmanCode(length & 0xFF, sorted_symbols[symbol] & 0xFFFF)
             symbol += 1
             _replicate_value(root_table, table + key, step, table_size, code)
             key = _get_next_key(key, length)
@@ -109,11 +111,17 @@ def brotli_build_huffman_table(root_table, table, root_bits, code_lengths, code_
                 table_size = 1 << table_bits
                 total_size += table_size
                 low = key & mask
-                root_table[start_table + low] = HuffmanCode((table_bits + root_bits) & 0xff,
-                                                            ((table - start_table) - low) & 0xffff)
-            code = HuffmanCode((length - root_bits) & 0xff, sorted_symbols[symbol] & 0xffff)
+                root_table[start_table + low] = HuffmanCode(
+                    (table_bits + root_bits) & 0xFF,
+                    ((table - start_table) - low) & 0xFFFF,
+                )
+            code = HuffmanCode(
+                (length - root_bits) & 0xFF, sorted_symbols[symbol] & 0xFFFF
+            )
             symbol += 1
-            _replicate_value(root_table, table + (key >> root_bits), step, table_size, code)
+            _replicate_value(
+                root_table, table + (key >> root_bits), step, table_size, code
+            )
             key = _get_next_key(key, length)
             count[length] -= 1
         step <<= 1

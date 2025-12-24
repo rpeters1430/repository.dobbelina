@@ -1,4 +1,3 @@
-
 #
 #      Copyright (C) 2015 tknorris (Derived from Mikey1234's & Lambda's)
 #
@@ -28,7 +27,9 @@ from six.moves import urllib_error, urllib_parse, urllib_request
 import xbmc
 
 
-USER_AGENT = "Mozilla/5.0 (compatible, MSIE 11, Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
+USER_AGENT = (
+    "Mozilla/5.0 (compatible, MSIE 11, Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
+)
 
 MAX_TRIES = 6
 COMPONENT = __name__
@@ -36,7 +37,7 @@ COMPONENT = __name__
 
 class NoRedirection(urllib_request.HTTPErrorProcessor):
     def http_response(self, request, response):
-        xbmc.log('Stopping Redirect')
+        xbmc.log("Stopping Redirect")
         return response
 
     https_response = http_response
@@ -60,7 +61,7 @@ def solve_equation(equation):
 def solve(url, cj, user_agent=None, wait=True):
     if user_agent is None:
         user_agent = USER_AGENT
-    headers = {'User-Agent': user_agent, 'Referer': url}
+    headers = {"User-Agent": user_agent, "Referer": url}
     if cj is not None:
         try:
             cj.load(ignore_discard=True)
@@ -88,7 +89,10 @@ def solve(url, cj, user_agent=None, wait=True):
         pass_match = re.search(pass_pattern, html)
 
         if not init_match or not vc_match or not pass_match:
-            xbmc.log("Couldn't find attribute: init: |%s| vc: |%s| pass: |%s| No cloudflare check?" % (init_match, vc_match, pass_match))
+            xbmc.log(
+                "Couldn't find attribute: init: |%s| vc: |%s| pass: |%s| No cloudflare check?"
+                % (init_match, vc_match, pass_match)
+            )
             return False
 
         init_dict, init_var, init_equation, equations = init_match.groups()
@@ -98,30 +102,30 @@ def solve(url, cj, user_agent=None, wait=True):
         # log_utils.log("VC is: %s" % (vc), xbmc.LOGDEBUG, COMPONENT)
         varname = (init_dict, init_var)
         result = int(solve_equation(init_equation.rstrip()))
-        xbmc.log('Initial value: |%s| Result: |%s|' % (init_equation, result))
+        xbmc.log("Initial value: |%s| Result: |%s|" % (init_equation, result))
 
-        for equation in equations.split(';'):
+        for equation in equations.split(";"):
             equation = equation.rstrip()
-            if equation[:len('.'.join(varname))] != '.'.join(varname):
-                xbmc.log('Equation does not start with varname |%s|' % (equation))
+            if equation[: len(".".join(varname))] != ".".join(varname):
+                xbmc.log("Equation does not start with varname |%s|" % (equation))
             else:
-                equation = equation[len('.'.join(varname)):]
+                equation = equation[len(".".join(varname)) :]
 
             expression = equation[2:]
             operator = equation[0]
-            if operator not in ['+', '-', '*', '/']:
+            if operator not in ["+", "-", "*", "/"]:
                 # log_utils.log('Unknown operator: |%s|' % (equation), log_utils.LOGWARNING, COMPONENT)
                 continue
 
             # SECURITY FIX: Replaced eval() with safe arithmetic operations
             expr_value = solve_equation(expression)
-            if operator == '+':
+            if operator == "+":
                 result = result + expr_value
-            elif operator == '-':
+            elif operator == "-":
                 result = result - expr_value
-            elif operator == '*':
+            elif operator == "*":
                 result = result * expr_value
-            elif operator == '/':
+            elif operator == "/":
                 result = result // expr_value  # Integer division
             result = int(result)
             # log_utils.log('intermediate: %s = %s' % (equation, result), log_utils.LOGDEBUG, COMPONENT)
@@ -135,7 +139,13 @@ def solve(url, cj, user_agent=None, wait=True):
             # log_utils.log('Sleeping for 5 Seconds', log_utils.LOGDEBUG, COMPONENT)
             xbmc.sleep(5000)
 
-        url = '%s://%s/cdn-cgi/l/chk_jschl?jschl_vc=%s&jschl_answer=%s&pass=%s' % (scheme, domain, vc, result, urllib_parse.quote(password))
+        url = "%s://%s/cdn-cgi/l/chk_jschl?jschl_vc=%s&jschl_answer=%s&pass=%s" % (
+            scheme,
+            domain,
+            vc,
+            result,
+            urllib_parse.quote(password),
+        )
         # log_utils.log('url: %s' % (url), log_utils.LOGDEBUG, COMPONENT)
         request = urllib_request.Request(url)
         for key in headers:
@@ -148,9 +158,9 @@ def solve(url, cj, user_agent=None, wait=True):
                 if cj is not None:
                     cj.extract_cookies(response, request)
 
-                redir_url = response.info().getheader('location')
-                if not redir_url.startswith('http'):
-                    base_url = '%s://%s' % (scheme, domain)
+                redir_url = response.info().getheader("location")
+                if not redir_url.startswith("http"):
+                    base_url = "%s://%s" % (scheme, domain)
                     redir_url = urllib_parse.urljoin(base_url, redir_url)
 
                 request = urllib_request.Request(redir_url)
@@ -161,7 +171,7 @@ def solve(url, cj, user_agent=None, wait=True):
 
                 response = urllib_request.urlopen(request)
             final = response.read()
-            if 'cf-browser-verification' in final:
+            if "cf-browser-verification" in final:
                 # log_utils.log('CF Failure: html: %s url: %s' % (html, url), log_utils.LOGWARNING, COMPONENT)
                 tries += 1
                 html = final

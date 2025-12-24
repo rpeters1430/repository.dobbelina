@@ -1,19 +1,19 @@
 """
-    Cumination
-    Copyright (C) 2015 Whitecream
+Cumination
+Copyright (C) 2015 Whitecream
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import base64
@@ -35,33 +35,47 @@ import StorageServer
 from kodi_six import xbmc, xbmcgui, xbmcplugin, xbmcvfs, xbmcaddon
 from resources.lib import cloudflare, random_ua, strings, jsunpack
 from resources.lib.basics import (
-    addDir, addon, addon_handle, addon_sys,
-    cookiePath, cum_image, cuminationicon, eod,
-    favoritesdb, keys, searchDir, profileDir
+    addDir,
+    addon,
+    addon_handle,
+    addon_sys,
+    cookiePath,
+    cum_image,
+    cuminationicon,
+    eod,
+    favoritesdb,
+    keys,
+    searchDir,
+    profileDir,
 )
 from resources.lib.brotlidecpy import decompress
 from resources.lib.url_dispatcher import URL_Dispatcher
 from resources.lib.jsonrpc import toggle_debug
-from six.moves import (html_parser, http_cookiejar, urllib_error, urllib_parse,
-                       urllib_request)
+from six.moves import (
+    html_parser,
+    http_cookiejar,
+    urllib_error,
+    urllib_parse,
+    urllib_request,
+)
 
-cache = StorageServer.StorageServer("cumination", int(addon.getSetting('cache_time')))
-url_dispatcher = URL_Dispatcher('utils')
+cache = StorageServer.StorageServer("cumination", int(addon.getSetting("cache_time")))
+url_dispatcher = URL_Dispatcher("utils")
 
 USER_AGENT = random_ua.get_ua()
 PY2 = six.PY2
 PY3 = six.PY3
 TRANSLATEPATH = xbmcvfs.translatePath if PY3 else xbmc.translatePath
 LOGINFO = xbmc.LOGINFO if PY3 else xbmc.LOGNOTICE
-KODIVER = float(xbmcaddon.Addon('xbmc.addon').getAddonInfo('version')[:4])
+KODIVER = float(xbmcaddon.Addon("xbmc.addon").getAddonInfo("version")[:4])
 
 base_hdrs = {
-    'User-Agent': USER_AGENT,
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-    'Accept-Encoding': 'gzip',
-    'Accept-Language': 'en-US,en;q=0.8',
-    'Connection': 'keep-alive'
+    "User-Agent": USER_AGENT,
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Charset": "ISO-8859-1,utf-8;q=0.7,*;q=0.3",
+    "Accept-Encoding": "gzip",
+    "Accept-Language": "en-US,en;q=0.8",
+    "Connection": "keep-alive",
 }
 
 progress = xbmcgui.DialogProgress()
@@ -71,7 +85,11 @@ urlopen = urllib_request.urlopen
 cj = http_cookiejar.LWPCookieJar(TRANSLATEPATH(cookiePath))
 Request = urllib_request.Request
 
-handlers = [urllib_request.HTTPBasicAuthHandler(), urllib_request.HTTPHandler(), urllib_request.HTTPSHandler()]
+handlers = [
+    urllib_request.HTTPBasicAuthHandler(),
+    urllib_request.HTTPHandler(),
+    urllib_request.HTTPSHandler(),
+]
 ssl_context = ssl._create_unverified_context()
 ssl._create_default_https_context = ssl._create_unverified_context
 handlers.append(urllib_request.HTTPSHandler(context=ssl_context))
@@ -84,6 +102,7 @@ def kodilog(logvar, level=LOGINFO):
 # ============================================================================
 # BeautifulSoup HTML Parsing Helpers
 # ============================================================================
+
 
 def parse_html(html):
     """
@@ -103,17 +122,23 @@ def parse_html(html):
     """
     try:
         from bs4 import BeautifulSoup
+
         try:
-            return BeautifulSoup(html, 'lxml')
+            return BeautifulSoup(html, "lxml")
         except Exception:
             # Fallback to built-in parser if lxml not available
-            return BeautifulSoup(html, 'html.parser')
+            return BeautifulSoup(html, "html.parser")
     except ImportError:
-        kodilog("BeautifulSoup not available, install script.module.beautifulsoup4", xbmc.LOGERROR)
-        raise ImportError("BeautifulSoup4 is required. Install script.module.beautifulsoup4 addon.")
+        kodilog(
+            "BeautifulSoup not available, install script.module.beautifulsoup4",
+            xbmc.LOGERROR,
+        )
+        raise ImportError(
+            "BeautifulSoup4 is required. Install script.module.beautifulsoup4 addon."
+        )
 
 
-def safe_get_attr(element, attr, fallback_attrs=None, default=''):
+def safe_get_attr(element, attr, fallback_attrs=None, default=""):
     """
     Safely get attribute from BeautifulSoup element with fallback options.
 
@@ -148,7 +173,7 @@ def safe_get_attr(element, attr, fallback_attrs=None, default=''):
     return default
 
 
-def safe_get_text(element, default='', strip=True):
+def safe_get_text(element, default="", strip=True):
     """
     Safely get text content from BeautifulSoup element.
 
@@ -170,8 +195,16 @@ def safe_get_text(element, default='', strip=True):
     return text.strip() if strip else text
 
 
-def soup_videos_list(site, soup, selectors, play_mode='Playvid', contextm=None,
-                     base_url=None, fanart=None, description=None):
+def soup_videos_list(
+    site,
+    soup,
+    selectors,
+    play_mode="Playvid",
+    contextm=None,
+    base_url=None,
+    fanart=None,
+    description=None,
+):
     """Build a list of videos from BeautifulSoup selections.
 
     The helper processes BeautifulSoup fragments using declarative selector
@@ -229,32 +262,32 @@ def soup_videos_list(site, soup, selectors, play_mode='Playvid', contextm=None,
             return list(value)
         return [value]
 
-    def _select_element(root, config, *, default_scope='item'):
+    def _select_element(root, config, *, default_scope="item"):
         if config is None:
             return root
         if isinstance(config, dict):
-            scope = config.get('scope', default_scope)
+            scope = config.get("scope", default_scope)
             selectors_list = None
-            if 'selectors' in config:
-                selectors_list = config['selectors']
-            elif 'selector' in config:
-                selectors_list = config['selector']
-            elif 'query' in config:
-                selectors_list = config['query']
+            if "selectors" in config:
+                selectors_list = config["selectors"]
+            elif "selector" in config:
+                selectors_list = config["selector"]
+            elif "query" in config:
+                selectors_list = config["query"]
             selectors_list = _ensure_iterable(selectors_list)
             if not selectors_list:
                 selectors_list = [None]
-            base = soup if scope == 'soup' else root
+            base = soup if scope == "soup" else root
             for selector in selectors_list:
                 element = None
                 if callable(selector):
                     element = selector(root, soup)
                 elif isinstance(selector, dict):
                     element = _select_element(root, selector, default_scope=scope)
-                elif selector is None or selector == ':self':
+                elif selector is None or selector == ":self":
                     element = base
                 else:
-                    if base is not None and hasattr(base, 'select_one'):
+                    if base is not None and hasattr(base, "select_one"):
                         element = base.select_one(selector)
                 if element:
                     return element
@@ -269,14 +302,14 @@ def soup_videos_list(site, soup, selectors, play_mode='Playvid', contextm=None,
                 if element:
                     return element
             return root
-        if config is None or config == ':self':
+        if config is None or config == ":self":
             return root
-        base = soup if default_scope == 'soup' else root
-        if base is not None and hasattr(base, 'select_one'):
+        base = soup if default_scope == "soup" else root
+        if base is not None and hasattr(base, "select_one"):
             return base.select_one(config)
         return base
 
-    def _extract_value(item, config, *, default=''):
+    def _extract_value(item, config, *, default=""):
         if config is None:
             return default
         if callable(config) and not isinstance(config, dict):
@@ -284,50 +317,56 @@ def soup_videos_list(site, soup, selectors, play_mode='Playvid', contextm=None,
         local_config = config.copy() if isinstance(config, dict) else config
         if isinstance(local_config, dict):
             element = _select_element(item, local_config)
-            attr_name = local_config.get('attr')
-            fallback_attrs = list(local_config.get('fallback_attrs', []) or [])
+            attr_name = local_config.get("attr")
+            fallback_attrs = list(local_config.get("fallback_attrs", []) or [])
             if not attr_name and fallback_attrs:
                 attr_name = fallback_attrs.pop(0)
             value = default
             if attr_name and element:
-                value = safe_get_attr(element, attr_name, fallback_attrs or None, default=default)
-            if (not value or value == default) and local_config.get('text'):
-                strip = local_config.get('strip', True)
+                value = safe_get_attr(
+                    element, attr_name, fallback_attrs or None, default=default
+                )
+            if (not value or value == default) and local_config.get("text"):
+                strip = local_config.get("strip", True)
                 value = safe_get_text(element, default=default, strip=strip)
             if not value:
-                value = local_config.get('default', default)
-            if (not value or value == default) and local_config.get('fallback_selectors'):
-                fallback_selectors = _ensure_iterable(local_config.get('fallback_selectors'))
+                value = local_config.get("default", default)
+            if (not value or value == default) and local_config.get(
+                "fallback_selectors"
+            ):
+                fallback_selectors = _ensure_iterable(
+                    local_config.get("fallback_selectors")
+                )
                 for fallback in fallback_selectors:
                     fallback_config = local_config.copy()
-                    fallback_config.pop('fallback_selectors', None)
-                    fallback_config['selector'] = fallback
+                    fallback_config.pop("fallback_selectors", None)
+                    fallback_config["selector"] = fallback
                     value = _extract_value(item, fallback_config, default=default)
                     if value and value != default:
                         break
-            if local_config.get('clean'):
+            if local_config.get("clean"):
                 value = cleantext(value)
-            transform = local_config.get('transform')
+            transform = local_config.get("transform")
             if callable(transform):
                 value = transform(value, item)
             return value
         return default
 
     if soup is None:
-        return {'items': 0, 'skipped': 0, 'pagination': {}}
+        return {"items": 0, "skipped": 0, "pagination": {}}
 
     result = {
-        'items': 0,
-        'skipped': 0,
-        'pagination': {},
-        'next_url': None,
-        'next_label': None,
-        'next_mode': None,
-        'pagination_added': False
+        "items": 0,
+        "skipped": 0,
+        "pagination": {},
+        "next_url": None,
+        "next_label": None,
+        "next_mode": None,
+        "pagination_added": False,
     }
 
-    base_url = base_url or selectors.get('base_url') or getattr(site, 'url', '')
-    items_conf = selectors.get('items')
+    base_url = base_url or selectors.get("base_url") or getattr(site, "url", "")
+    items_conf = selectors.get("items")
     if items_conf is None:
         return result
 
@@ -346,15 +385,15 @@ def soup_videos_list(site, soup, selectors, play_mode='Playvid', contextm=None,
                 raw_items.append(candidate)
                 seen_ids.add(marker)
 
-    filter_fn = selectors.get('filter')
+    filter_fn = selectors.get("filter")
 
-    url_conf = selectors.get('url') or selectors.get('link')
-    title_conf = selectors.get('title') or selectors.get('name')
-    image_conf = selectors.get('thumbnail') or selectors.get('image')
-    duration_conf = selectors.get('duration')
-    quality_conf = selectors.get('quality')
-    description_conf = selectors.get('description')
-    static_description = ''
+    url_conf = selectors.get("url") or selectors.get("link")
+    title_conf = selectors.get("title") or selectors.get("name")
+    image_conf = selectors.get("thumbnail") or selectors.get("image")
+    duration_conf = selectors.get("duration")
+    quality_conf = selectors.get("quality")
+    description_conf = selectors.get("description")
+    static_description = ""
     if isinstance(description, dict) or callable(description):
         description_conf = description
     elif isinstance(description, str):
@@ -362,115 +401,137 @@ def soup_videos_list(site, soup, selectors, play_mode='Playvid', contextm=None,
 
     for item in raw_items:
         if filter_fn and not filter_fn(item):
-            result['skipped'] += 1
+            result["skipped"] += 1
             continue
 
-        video_url = _extract_value(item, url_conf, default='') if url_conf else ''
+        video_url = _extract_value(item, url_conf, default="") if url_conf else ""
         if not video_url:
-            result['skipped'] += 1
+            result["skipped"] += 1
             continue
         url_base = base_url
-        if isinstance(url_conf, dict) and url_conf.get('base_url'):
-            url_base = url_conf['base_url']
-        video_url = urllib_parse.urljoin(url_base or '', video_url)
+        if isinstance(url_conf, dict) and url_conf.get("base_url"):
+            url_base = url_conf["base_url"]
+        video_url = urllib_parse.urljoin(url_base or "", video_url)
 
-        local_title_conf = title_conf.copy() if isinstance(title_conf, dict) else title_conf
+        local_title_conf = (
+            title_conf.copy() if isinstance(title_conf, dict) else title_conf
+        )
         if isinstance(local_title_conf, dict):
-            local_title_conf.setdefault('clean', True)
+            local_title_conf.setdefault("clean", True)
         if local_title_conf:
-            name = _extract_value(item, local_title_conf, default='')
+            name = _extract_value(item, local_title_conf, default="")
         else:
-            name = cleantext(safe_get_text(item, default=''))
+            name = cleantext(safe_get_text(item, default=""))
 
         if not name:
-            result['skipped'] += 1
+            result["skipped"] += 1
             continue
 
-        thumb = _extract_value(item, image_conf, default='') if image_conf else ''
+        thumb = _extract_value(item, image_conf, default="") if image_conf else ""
         if thumb:
             join_thumb = True
             thumb_base = base_url
             if isinstance(image_conf, dict):
-                join_thumb = image_conf.get('join', True)
-                thumb_base = image_conf.get('base_url', thumb_base)
+                join_thumb = image_conf.get("join", True)
+                thumb_base = image_conf.get("base_url", thumb_base)
             if join_thumb:
-                thumb = urllib_parse.urljoin(thumb_base or '', thumb)
+                thumb = urllib_parse.urljoin(thumb_base or "", thumb)
 
-        duration = _extract_value(item, duration_conf, default='') if duration_conf else ''
-        quality = _extract_value(item, quality_conf, default='') if quality_conf else ''
+        duration = (
+            _extract_value(item, duration_conf, default="") if duration_conf else ""
+        )
+        quality = _extract_value(item, quality_conf, default="") if quality_conf else ""
 
         if isinstance(description_conf, dict):
-            desc_value = _extract_value(item, description_conf, default=static_description)
+            desc_value = _extract_value(
+                item, description_conf, default=static_description
+            )
         elif callable(description_conf):
             desc_value = description_conf(item, soup)
         else:
-            desc_value = description_conf if isinstance(description_conf, str) else static_description
+            desc_value = (
+                description_conf
+                if isinstance(description_conf, str)
+                else static_description
+            )
 
         site.add_download_link(
             name,
             video_url,
             play_mode,
             thumb,
-            desc=desc_value or '',
+            desc=desc_value or "",
             contextm=contextm,
             fanart=fanart,
             duration=duration,
-            quality=quality
+            quality=quality,
         )
-        result['items'] += 1
+        result["items"] += 1
 
-    pagination_conf = selectors.get('pagination') or selectors.get('next')
+    pagination_conf = selectors.get("pagination") or selectors.get("next")
     if pagination_conf:
         pagination_local = pagination_conf.copy()
-        if 'scope' not in pagination_local:
-            pagination_local['scope'] = 'soup'
-        next_element = _select_element(soup, pagination_local, default_scope='soup')
+        if "scope" not in pagination_local:
+            pagination_local["scope"] = "soup"
+        next_element = _select_element(soup, pagination_local, default_scope="soup")
         if next_element is soup:
             next_element = None
 
-        text_matches = [m.lower() for m in pagination_conf.get('text_matches', []) if isinstance(m, str)]
+        text_matches = [
+            m.lower()
+            for m in pagination_conf.get("text_matches", [])
+            if isinstance(m, str)
+        ]
 
-        attr_name = pagination_conf.get('attr', 'href')
-        fallback_attrs = list(pagination_conf.get('fallback_attrs', []) or [])
+        attr_name = pagination_conf.get("attr", "href")
+        fallback_attrs = list(pagination_conf.get("fallback_attrs", []) or [])
         if not attr_name and fallback_attrs:
             attr_name = fallback_attrs.pop(0)
         attr_fallbacks = fallback_attrs or None
 
-        next_url = ''
+        next_url = ""
         if next_element and attr_name:
-            next_url = safe_get_attr(next_element, attr_name, attr_fallbacks, default='')
+            next_url = safe_get_attr(
+                next_element, attr_name, attr_fallbacks, default=""
+            )
 
         if not next_url and text_matches:
-            tag_name = pagination_conf.get('tag', 'a')
+            tag_name = pagination_conf.get("tag", "a")
             for candidate in soup.find_all(tag_name):
-                text = safe_get_text(candidate, default='').lower()
+                text = safe_get_text(candidate, default="").lower()
                 if any(match in text for match in text_matches):
                     next_element = candidate
-                    next_url = safe_get_attr(candidate, attr_name, attr_fallbacks, default='') if attr_name else ''
+                    next_url = (
+                        safe_get_attr(candidate, attr_name, attr_fallbacks, default="")
+                        if attr_name
+                        else ""
+                    )
                     if next_url:
                         break
 
         if next_url:
-            next_base = pagination_conf.get('base_url', base_url)
-            next_url = urllib_parse.urljoin(next_base or '', next_url)
-            label = pagination_conf.get('label', 'Next Page')
-            mode = pagination_conf.get('mode', 'List')
-            icon = pagination_conf.get('icon', getattr(site, 'img_next', None))
-            add_dir = pagination_conf.get('add_dir', True)
+            next_base = pagination_conf.get("base_url", base_url)
+            next_url = urllib_parse.urljoin(next_base or "", next_url)
+            label = pagination_conf.get("label", "Next Page")
+            mode = pagination_conf.get("mode", "List")
+            icon = pagination_conf.get("icon", getattr(site, "img_next", None))
+            add_dir = pagination_conf.get("add_dir", True)
             if add_dir:
                 site.add_dir(label, next_url, mode, icon)
-            result.update({
-                'next_url': next_url,
-                'next_label': label,
-                'next_mode': mode,
-                'pagination_added': bool(add_dir)
-            })
-            result['pagination'] = {
-                'url': next_url,
-                'label': label,
-                'mode': mode,
-                'icon': icon,
-                'added': bool(add_dir)
+            result.update(
+                {
+                    "next_url": next_url,
+                    "next_label": label,
+                    "next_mode": mode,
+                    "pagination_added": bool(add_dir),
+                }
+            )
+            result["pagination"] = {
+                "url": next_url,
+                "label": label,
+                "mode": mode,
+                "icon": icon,
+                "added": bool(add_dir),
             }
 
     return result
@@ -481,25 +542,25 @@ def clear_cache():
     """
     Clear the cache database.
     """
-    msg = i18n('cache_cleared')
-    cache.table_name = 'cumination'
-    cache.cacheDelete('%get%')
-    xbmcgui.Dialog().notification('Cumination', msg, cuminationicon, 3000, False)
+    msg = i18n("cache_cleared")
+    cache.table_name = "cumination"
+    cache.cacheDelete("%get%")
+    xbmcgui.Dialog().notification("Cumination", msg, cuminationicon, 3000, False)
 
 
 @url_dispatcher.register()
 def clear_cookies():
-    msg = i18n('cookies_cleared')
+    msg = i18n("cookies_cleared")
     cj.clear()
     cj.save(cookiePath, ignore_discard=True)
-    xbmcgui.Dialog().notification('Cumination', msg, cuminationicon, 3000, False)
+    xbmcgui.Dialog().notification("Cumination", msg, cuminationicon, 3000, False)
 
 
 def i18n(string_id):
     try:
         return six.ensure_str(addon.getLocalizedString(strings.STRINGS[string_id]))
     except Exception as e:
-        kodilog('Failed String Lookup: %s (%s)' % (string_id, e))
+        kodilog("Failed String Lookup: %s (%s)" % (string_id, e))
         return string_id
 
 
@@ -512,7 +573,7 @@ if cj is not None:
                 xbmcvfs.delete(TRANSLATEPATH(cookiePath))
                 pass
             except Exception:
-                dialog.ok(i18n('oh_oh'), i18n('cookie_lock'))
+                dialog.ok(i18n("oh_oh"), i18n("cookie_lock"))
                 pass
     cookie_handler = urllib_request.HTTPCookieProcessor(cj)
     handlers += [cookie_handler]
@@ -535,34 +596,35 @@ class NoRedirection(urllib_request.HTTPRedirectHandler):
 
 
 def downloadVideo(url, name):
-
-    def _pbhook(downloaded, filesize, url=None, dp=None, name=''):
+    def _pbhook(downloaded, filesize, url=None, dp=None, name=""):
         try:
             percent = min(int((downloaded * 100) / filesize), 100)
             currently_downloaded = float(downloaded) / (1024 * 1024)
-            kbps_speed = int(downloaded / (time.perf_counter() if PY3 else time.clock() - start))
+            kbps_speed = int(
+                downloaded / (time.perf_counter() if PY3 else time.clock() - start)
+            )
             if kbps_speed > 0:
                 eta = (filesize - downloaded) / kbps_speed
             else:
                 eta = 0
             kbps_speed = kbps_speed / 1024
             total = float(filesize) / (1024 * 1024)
-            mbs = '%.02f MB of %.02f MB' % (currently_downloaded, total)
-            e = 'Speed: %.02f Kb/s ' % kbps_speed
-            e += 'ETA: %02d:%02d' % divmod(eta, 60)
-            dp.update(percent, '{0}[CR]{1}[CR]{2}'.format(name[:50], mbs, e))
+            mbs = "%.02f MB of %.02f MB" % (currently_downloaded, total)
+            e = "Speed: %.02f Kb/s " % kbps_speed
+            e += "ETA: %02d:%02d" % divmod(eta, 60)
+            dp.update(percent, "{0}[CR]{1}[CR]{2}".format(name[:50], mbs, e))
         except Exception:
             percent = 100
             dp.update(percent)
         if dp.iscanceled():
             dp.close()
-            raise StopDownloading('Stopped Downloading')
+            raise StopDownloading("Stopped Downloading")
 
     def getResponse(url, headers2, size):
         try:
             if size > 0:
                 size = int(size)
-                headers2['Range'] = 'bytes=%d-' % size
+                headers2["Range"] = "bytes=%d-" % size
 
             req = Request(url, headers=headers2)
 
@@ -573,31 +635,35 @@ def downloadVideo(url, name):
 
     def doDownload(url, dest, dp, name):
         headers = {}
-        if '|' in url:
-            url, uheaders = url.split('|')
+        if "|" in url:
+            url, uheaders = url.split("|")
             headers = dict(urllib_parse.parse_qsl(uheaders))
 
-        if 'User-Agent' not in list(headers.keys()):
-            headers.update({'User-Agent': USER_AGENT})
+        if "User-Agent" not in list(headers.keys()):
+            headers.update({"User-Agent": USER_AGENT})
 
         resp = getResponse(url, headers, 0)
 
         if not resp:
-            dialog.ok("Cumination", '{0}[CR]{1}'.format(i18n('dnld_fail'), i18n('no_resp')))
+            dialog.ok(
+                "Cumination", "{0}[CR]{1}".format(i18n("dnld_fail"), i18n("no_resp"))
+            )
             return False
         try:
-            content = int(resp.headers['Content-Length'])
+            content = int(resp.headers["Content-Length"])
         except Exception:
             content = 0
         try:
-            resumable = 'bytes' in resp.headers['Accept-Ranges'].lower()
+            resumable = "bytes" in resp.headers["Accept-Ranges"].lower()
         except Exception:
             resumable = False
         if resumable:
             six.print_("Download is resumable")
 
         if content < 1:
-            dialog.ok("Cumination", '{0}[CR]{1}'.format(i18n('unkn_size'), i18n('no_dnld')))
+            dialog.ok(
+                "Cumination", "{0}[CR]{1}".format(i18n("unkn_size"), i18n("no_dnld"))
+            )
             return False
 
         size = 8192
@@ -612,8 +678,8 @@ def downloadVideo(url, name):
         resume = 0
         sleep = 0
 
-        six.print_('{0} : {1}MB {2} '.format(i18n('file_size'), mb, dest))
-        f = xbmcvfs.File(dest, 'w')
+        six.print_("{0} : {1}MB {2} ".format(i18n("file_size"), mb, dest))
+        f = xbmcvfs.File(dest, "w")
 
         chunk = None
         chunks = []
@@ -648,13 +714,17 @@ def downloadVideo(url, name):
                 sleep = 10
                 errno = 0
 
-                if hasattr(e, 'errno'):
+                if hasattr(e, "errno"):
                     errno = e.errno
 
-                if errno == 10035:  # 'A non-blocking socket operation could not be completed immediately'
+                if (
+                    errno == 10035
+                ):  # 'A non-blocking socket operation could not be completed immediately'
                     pass
 
-                if errno == 10054:  # 'An existing connection was forcibly closed by the remote host'
+                if (
+                    errno == 10054
+                ):  # 'An existing connection was forcibly closed by the remote host'
                     errors = 10  # force resume
                     sleep = 30
 
@@ -693,42 +763,50 @@ def downloadVideo(url, name):
 
     def clean_filename(s):
         if not s:
-            return ''
-        badchars = '\\/:*?\"<>|\''
+            return ""
+        badchars = "\\/:*?\"<>|'"
         for c in badchars:
-            s = s.replace(c, '')
+            s = s.replace(c, "")
         return s.strip()
 
-    download_path = addon.getSetting('download_path')
-    if download_path == '':
+    download_path = addon.getSetting("download_path")
+    if download_path == "":
         try:
-            download_path = dialog.browse(0, i18n('dnld_path'), "", "", False, False)
-            addon.setSetting(id='download_path', value=download_path)
+            download_path = dialog.browse(0, i18n("dnld_path"), "", "", False, False)
+            addon.setSetting(id="download_path", value=download_path)
             if not xbmcvfs.exists(download_path):
                 xbmcvfs.mkdir(download_path)
         except Exception:
             pass
-    if download_path != '':
+    if download_path != "":
         dp = xbmcgui.DialogProgress()
-        name = re.sub(r'\[COLOR.+?\/COLOR\]', '', name).strip()
-        dp.create(i18n('cum_dnld'), name[:50])
+        name = re.sub(r"\[COLOR.+?\/COLOR\]", "", name).strip()
+        dp.create(i18n("cum_dnld"), name[:50])
         tmp_file = tempfile.mktemp(dir=download_path, suffix=".mp4")
-        tmp_file = xbmc.makeLegalFilename(tmp_file) if PY2 else xbmcvfs.makeLegalFilename(tmp_file)
+        tmp_file = (
+            xbmc.makeLegalFilename(tmp_file)
+            if PY2
+            else xbmcvfs.makeLegalFilename(tmp_file)
+        )
         start = time.perf_counter() if PY3 else time.clock()
         try:
             downloaded = doDownload(url, tmp_file, dp, name)
             if downloaded:
                 if PY2:
-                    vidfile = xbmc.makeLegalFilename(download_path + clean_filename(name) + ".mp4")
+                    vidfile = xbmc.makeLegalFilename(
+                        download_path + clean_filename(name) + ".mp4"
+                    )
                 else:
-                    vidfile = xbmcvfs.makeLegalFilename(download_path + clean_filename(name) + ".mp4")
+                    vidfile = xbmcvfs.makeLegalFilename(
+                        download_path + clean_filename(name) + ".mp4"
+                    )
                 try:
                     xbmcvfs.rename(tmp_file, vidfile)
                     return vidfile
                 except Exception:
                     return tmp_file
             else:
-                raise StopDownloading(i18n('stop_dnld'))
+                raise StopDownloading(i18n("stop_dnld"))
         except Exception:
             while xbmcvfs.exists(tmp_file):
                 try:
@@ -738,14 +816,14 @@ def downloadVideo(url, name):
                     pass
 
 
-def notify(header=None, msg='', duration=5000, icon=None):
+def notify(header=None, msg="", duration=5000, icon=None):
     if header is None:
-        header = 'Cumination'
+        header = "Cumination"
     if icon is None:
         icon = cuminationicon
-    elif icon == 'thumb':
+    elif icon == "thumb":
         icon = xbmc.getInfoImage("ListItem.Thumb")
-    elif not icon.startswith('http'):
+    elif not icon.startswith("http"):
         icon = cuminationicon
     dialog.notification(header, msg, icon, duration, False)
 
@@ -755,36 +833,46 @@ def setview():
     skin = xbmc.getSkinDir().lower()
     win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
     viewtype = str(win.getFocusId())
-    addon.setSetting('setview', ';'.join([skin, viewtype]))
-    addon.setSetting('customview', 'true')
-    viewName = xbmc.getInfoLabel('Container.Viewmode')
-    notify(i18n('dflt_view_set'), '{0} {1}'.format(i18n('dflt_set'), viewName))
-    xbmc.executebuiltin('Container.Refresh')
+    addon.setSetting("setview", ";".join([skin, viewtype]))
+    addon.setSetting("customview", "true")
+    viewName = xbmc.getInfoLabel("Container.Viewmode")
+    notify(i18n("dflt_view_set"), "{0} {1}".format(i18n("dflt_set"), viewName))
+    xbmc.executebuiltin("Container.Refresh")
 
 
 @url_dispatcher.register()
 def refresh():
-    xbmc.executebuiltin('Container.Refresh')
+    xbmc.executebuiltin("Container.Refresh")
 
 
-def playvid(videourl, name, download=None, subtitle=None, IA_check='check'):
+def playvid(videourl, name, download=None, subtitle=None, IA_check="check"):
     if download == 1:
         downloadVideo(videourl, name)
     else:
         iconimage = xbmc.getInfoImage("ListItem.Thumb")
         subject = xbmc.getInfoLabel("ListItem.Plot")
         listitem = xbmcgui.ListItem(name)
-        listitem.setArt({'thumb': iconimage, 'icon': "DefaultVideo.png", 'poster': iconimage})
+        listitem.setArt(
+            {"thumb": iconimage, "icon": "DefaultVideo.png", "poster": iconimage}
+        )
         if KODIVER > 19.8:
             vtag = listitem.getVideoInfoTag()
             vtag.setTitle(name)
-            vtag.setGenres(['Porn'])
+            vtag.setGenres(["Porn"])
             vtag.setPlot(subject)
             vtag.setPlotOutline(subject)
         else:
-            listitem.setInfo('video', {'Title': name, 'Genre': 'Porn', 'plot': subject, 'plotoutline': subject})
+            listitem.setInfo(
+                "video",
+                {
+                    "Title": name,
+                    "Genre": "Porn",
+                    "plot": subject,
+                    "plotoutline": subject,
+                },
+            )
 
-        if IA_check != 'skip':
+        if IA_check != "skip":
             videourl, listitem = inputstream_check(videourl, listitem, IA_check)
 
         if subtitle:
@@ -798,13 +886,17 @@ def playvid(videourl, name, download=None, subtitle=None, IA_check='check'):
 
 
 def inputstream_check(url, listitem, IA_check):
-    supported_endings = [[".hls", 'application/vnd.apple.mpegstream_url'],
-                         [".mpd", 'application/dash+xml'],
-                         [".ism", 'application/vnd.ms-sstr+xml']]
+    supported_endings = [
+        [".hls", "application/vnd.apple.mpegstream_url"],
+        [".mpd", "application/dash+xml"],
+        [".ism", "application/vnd.ms-sstr+xml"],
+    ]
 
-    m3u8_use_ia = True if IA_check == 'IA' or addon.getSetting("m3u8_use_ia") == "true" else False
+    m3u8_use_ia = (
+        True if IA_check == "IA" or addon.getSetting("m3u8_use_ia") == "true" else False
+    )
     if m3u8_use_ia:
-        supported_endings.append([".m3u8", 'application/x-mpegURL'])
+        supported_endings.append([".m3u8", "application/x-mpegURL"])
     adaptive_type = None
     for ending in supported_endings:
         if ending[0] in url:
@@ -816,24 +908,25 @@ def inputstream_check(url, listitem, IA_check):
 
     if adaptive_type:
         from inputstreamhelper import Helper
+
         is_helper = Helper(adaptive_type)
         if not is_helper.check_inputstream():
             return url, listitem
 
-        IA = 'inputstream' if six.PY3 else 'inputstreamaddon'
-        listitem.setProperty(IA, 'inputstream.adaptive')
+        IA = "inputstream" if six.PY3 else "inputstreamaddon"
+        listitem.setProperty(IA, "inputstream.adaptive")
 
-        if '|' in url:
-            url, strhdr = url.split('|')
-            listitem.setProperty('inputstream.adaptive.stream_headers', strhdr)
+        if "|" in url:
+            url, strhdr = url.split("|")
+            listitem.setProperty("inputstream.adaptive.stream_headers", strhdr)
             if KODIVER > 21.8:
-                listitem.setProperty('inputstream.adaptive.common_headers', strhdr)
+                listitem.setProperty("inputstream.adaptive.common_headers", strhdr)
             elif KODIVER > 19.8:
-                listitem.setProperty('inputstream.adaptive.manifest_headers', strhdr)
-                listitem.setProperty('inputstream.adaptive.stream_params', strhdr)
+                listitem.setProperty("inputstream.adaptive.manifest_headers", strhdr)
+                listitem.setProperty("inputstream.adaptive.stream_params", strhdr)
 
         if KODIVER < 20.8:
-            listitem.setProperty('inputstream.adaptive.manifest_type', adaptive_type)
+            listitem.setProperty("inputstream.adaptive.manifest_type", adaptive_type)
         listitem.setMimeType(mime_type)
         listitem.setContentLookup(False)
 
@@ -847,12 +940,30 @@ def PlayStream(name, url):
     return
 
 
-def getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='return', ignoreCertificateErrors=False):
-    return cache.cacheFunction(_getHtml, url, referer, headers, NoCookie, data, error, ignoreCertificateErrors)
+def getHtml(
+    url,
+    referer="",
+    headers=None,
+    NoCookie=None,
+    data=None,
+    error="return",
+    ignoreCertificateErrors=False,
+):
+    return cache.cacheFunction(
+        _getHtml, url, referer, headers, NoCookie, data, error, ignoreCertificateErrors
+    )
 
 
-def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='return', ignoreCertificateErrors=False):
-    url = urllib_parse.quote(url, r':/%?+&=')
+def _getHtml(
+    url,
+    referer="",
+    headers=None,
+    NoCookie=None,
+    data=None,
+    error="return",
+    ignoreCertificateErrors=False,
+):
+    url = urllib_parse.quote(url, r":/%?+&=")
 
     if data:
         if not isinstance(data, six.string_types):
@@ -860,15 +971,15 @@ def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='ret
         data = data if PY2 else six.b(data)
     if headers is None:
         headers = base_hdrs
-    if 'User-Agent' not in headers.keys():
-        headers.update({'User-Agent': USER_AGENT})
+    if "User-Agent" not in headers.keys():
+        headers.update({"User-Agent": USER_AGENT})
 
     req = Request(url, data, headers)
     if len(referer) > 1:
-        req.add_header('Referer', referer)
+        req.add_header("Referer", referer)
     if data:
-        req.add_header('Content-Length', len(data))
-    
+        req.add_header("Content-Length", len(data))
+
     response = None
     try:
         if ignoreCertificateErrors:
@@ -883,16 +994,20 @@ def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='ret
         if error is True:
             response = e
         else:
-            if e.info().get('Content-Encoding', '').lower() == 'gzip':
+            if e.info().get("Content-Encoding", "").lower() == "gzip":
                 buf = six.BytesIO(e.read())
                 f = gzip.GzipFile(fileobj=buf)
                 result = f.read()
                 f.close()
             else:
                 result = e.read()
-            result = result.decode('latin-1', errors='ignore') if PY3 else result.encode('utf-8')
-            if 'cloudflare' in e.info().get('Server', '').lower():
-                if e.code == 403 and not e.info().get('cf-mitigated', False):
+            result = (
+                result.decode("latin-1", errors="ignore")
+                if PY3
+                else result.encode("utf-8")
+            )
+            if "cloudflare" in e.info().get("Server", "").lower():
+                if e.code == 403 and not e.info().get("cf-mitigated", False):
                     # Drop to TLS1.2 and try again
                     ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
                     handle = [urllib_request.HTTPSHandler(context=ctx)]
@@ -900,15 +1015,19 @@ def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='ret
                     try:
                         response = opener.open(req, timeout=30)
                     except urllib_error.HTTPError as e:
-                        if e.info().get('Content-Encoding', '').lower() == 'gzip':
+                        if e.info().get("Content-Encoding", "").lower() == "gzip":
                             buf = six.BytesIO(e.read())
                             f = gzip.GzipFile(fileobj=buf)
                             result = f.read()
                             f.close()
                         else:
                             result = e.read()
-                        result = result.decode('latin-1', errors='ignore') if PY3 else result.encode('utf-8')
-                        if e.code == 403 and not e.info().get('Set-Cookie', False):
+                        result = (
+                            result.decode("latin-1", errors="ignore")
+                            if PY3
+                            else result.encode("utf-8")
+                        )
+                        if e.code == 403 and not e.info().get("Set-Cookie", False):
                             # Drop to TLS1.1 and try again
                             ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_1)
                             handle = [urllib_request.HTTPSHandler(context=ctx)]
@@ -916,64 +1035,81 @@ def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='ret
                             try:
                                 response = opener.open(req, timeout=30)
                             except Exception:
-                                notify(i18n('oh_oh'), i18n('site_down'))
-                                if 'return' in error:
+                                notify(i18n("oh_oh"), i18n("site_down"))
+                                if "return" in error:
                                     # Give up
-                                    return ''
+                                    return ""
                                 else:
                                     raise
-                elif any(x == e.code for x in [403, 429, 503]) and any(x in result for x in ['__cf_chl_f_tk', '__cf_chl_jschl_tk__=', '/cdn-cgi/challenge-platform/']):
-                    if addon.getSetting('fs_enable') == 'true':
-                        notify('FlareSolverr', 'Cloudflare detected, solving challenge...')
-                        kodilog("Cloudflare protection detected on {}, using FlareSolverr".format(url))
+                elif any(x == e.code for x in [403, 429, 503]) and any(
+                    x in result
+                    for x in [
+                        "__cf_chl_f_tk",
+                        "__cf_chl_jschl_tk__=",
+                        "/cdn-cgi/challenge-platform/",
+                    ]
+                ):
+                    if addon.getSetting("fs_enable") == "true":
+                        notify(
+                            "FlareSolverr", "Cloudflare detected, solving challenge..."
+                        )
+                        kodilog(
+                            "Cloudflare protection detected on {}, using FlareSolverr".format(
+                                url
+                            )
+                        )
                         try:
                             return flaresolve(url, referer)
                         except RuntimeError as fs_error:
                             # FlareSolverr failed with a clear error message
-                            notify('FlareSolverr Failed', str(fs_error), time=8000)
+                            notify("FlareSolverr Failed", str(fs_error), time=8000)
                             raise
                         except Exception as fs_error:
                             # Unexpected error from FlareSolverr
                             kodilog("FlareSolverr error: {}".format(str(fs_error)))
-                            notify('FlareSolverr Error', 'Failed to bypass Cloudflare. Check Kodi log.', time=6000)
+                            notify(
+                                "FlareSolverr Error",
+                                "Failed to bypass Cloudflare. Check Kodi log.",
+                                time=6000,
+                            )
                             raise
                     else:
                         notify(
-                            i18n('oh_oh'),
-                            'Cloudflare protection detected. Enable FlareSolverr in addon settings.',
-                            time=6000
+                            i18n("oh_oh"),
+                            "Cloudflare protection detected. Enable FlareSolverr in addon settings.",
+                            time=6000,
                         )
                         raise
             elif 400 < e.code < 500:
                 if not e.code == 403:
-                    notify(i18n('oh_oh'), i18n('not_exist'))
-                return ''
+                    notify(i18n("oh_oh"), i18n("not_exist"))
+                return ""
             else:
-                notify(i18n('oh_oh'), i18n('site_down'))
-                return ''
+                notify(i18n("oh_oh"), i18n("site_down"))
+                return ""
     except urllib_error.URLError as e:
         print(e)
-        if 'return' in error:
-            notify(i18n('oh_oh'), i18n('slow_site'))
+        if "return" in error:
+            notify(i18n("oh_oh"), i18n("slow_site"))
             xbmc.log(str(e), xbmc.LOGDEBUG)
-            return ''
+            return ""
         else:
             raise
     except Exception as e:
         print(e)
-        if 'SSL23_GET_SERVER_HELLO' in str(e):
-            notify(i18n('oh_oh'), i18n('python_old'))
-            return ''
+        if "SSL23_GET_SERVER_HELLO" in str(e):
+            notify(i18n("oh_oh"), i18n("python_old"))
+            return ""
         else:
-            notify(i18n('oh_oh'), i18n('site_down'))
-            return ''
+            notify(i18n("oh_oh"), i18n("site_down"))
+            return ""
         return None
 
     if not response:
-        return ''
+        return ""
 
-    cencoding = response.info().get('Content-Encoding', '')
-    if cencoding.lower() == 'gzip':
+    cencoding = response.info().get("Content-Encoding", "")
+    if cencoding.lower() == "gzip":
         buf = six.BytesIO(response.read())
         f = gzip.GzipFile(fileobj=buf)
         result = f.read()
@@ -981,32 +1117,36 @@ def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='ret
     else:
         result = response.read()
 
-    if cencoding.lower() == 'br':
+    if cencoding.lower() == "br":
         result = decompress(result)
 
     encoding = None
-    content_type = response.headers.get('content-type', '')
-    if 'charset=' in content_type:
-        encoding = content_type.split('charset=')[-1]
+    content_type = response.headers.get("content-type", "")
+    if "charset=" in content_type:
+        encoding = content_type.split("charset=")[-1]
 
     if encoding is None:
-        epattern = r'<meta\s+http-equiv="Content-Type"\s+content="(?:.+?);\s+charset=(.+?)"'
-        epattern = epattern.encode('utf8') if PY3 else epattern
+        epattern = (
+            r'<meta\s+http-equiv="Content-Type"\s+content="(?:.+?);\s+charset=(.+?)"'
+        )
+        epattern = epattern.encode("utf8") if PY3 else epattern
         r = re.search(epattern, result, re.IGNORECASE)
         if r:
-            encoding = r.group(1).decode('utf8') if PY3 else r.group(1)
+            encoding = r.group(1).decode("utf8") if PY3 else r.group(1)
         else:
-            epattern = r'''<meta\s+charset=["']?([^"'>]+)'''
-            epattern = epattern.encode('utf8') if PY3 else epattern
+            epattern = r"""<meta\s+charset=["']?([^"'>]+)"""
+            epattern = epattern.encode("utf8") if PY3 else epattern
             r = re.search(epattern, result, re.IGNORECASE)
             if r:
-                encoding = r.group(1).decode('utf8') if PY3 else r.group(1)
+                encoding = r.group(1).decode("utf8") if PY3 else r.group(1)
 
     if encoding is not None:
-        result = result.decode(encoding.lower(), errors='ignore')
-        result = result.encode('utf8') if PY2 else result
+        result = result.decode(encoding.lower(), errors="ignore")
+        result = result.encode("utf8") if PY2 else result
     else:
-        result = result.decode('latin-1', errors='ignore') if PY3 else result.encode('utf-8')
+        result = (
+            result.decode("latin-1", errors="ignore") if PY3 else result.encode("utf-8")
+        )
 
     if not NoCookie:
         # Cope with problematic timestamp values on RPi on OpenElec 4.2.1
@@ -1016,8 +1156,8 @@ def _getHtml(url, referer='', headers=None, NoCookie=None, data=None, error='ret
             pass
     response.close()
 
-    if 'sucuri_cloudproxy_js' in result:
-        headers['Cookie'] = get_sucuri_cookie(result)
+    if "sucuri_cloudproxy_js" in result:
+        headers["Cookie"] = get_sucuri_cookie(result)
         result = getHtml(url, referer, headers=headers)
     return result
 
@@ -1038,11 +1178,12 @@ def flaresolve(url, referer):
     """
     from resources.lib.flaresolverr import FlareSolverrManager
 
-    fs_host = addon.getSetting('fs_host')
+    fs_host = addon.getSetting("fs_host")
     if not fs_host or fs_host == "http://localhost:8191/v1":
         # Check if default localhost FlareSolverr is actually available
         try:
             import requests
+
             requests.get("http://localhost:8191", timeout=2)
         except Exception:
             raise RuntimeError(
@@ -1057,19 +1198,21 @@ def flaresolve(url, referer):
         listjson = response.json()
 
         # Check if the request was successful
-        if listjson.get('status') == 'error':
-            error_msg = listjson.get('message', 'Unknown FlareSolverr error')
+        if listjson.get("status") == "error":
+            error_msg = listjson.get("message", "Unknown FlareSolverr error")
             raise RuntimeError("FlareSolverr failed: {}".format(error_msg))
 
-        solution = listjson.get('solution', {})
-        status = solution.get('status')
+        solution = listjson.get("solution", {})
+        status = solution.get("status")
 
         if status != 200:
             raise RuntimeError(
-                "FlareSolverr solved challenge but got HTTP {} from website".format(status)
+                "FlareSolverr solved challenge but got HTTP {} from website".format(
+                    status
+                )
             )
 
-        listhtml = solution.get('response', '')
+        listhtml = solution.get("response", "")
         if not listhtml:
             raise RuntimeError("FlareSolverr returned empty response")
 
@@ -1086,20 +1229,18 @@ def flaresolve(url, referer):
         # Wrap any other exception in RuntimeError with helpful message
         raise RuntimeError(
             "FlareSolverr error for {}: {}. "
-            "Check if FlareSolverr is running at {}".format(
-                url, str(e), fs_host
-            )
+            "Check if FlareSolverr is running at {}".format(url, str(e), fs_host)
         )
 
 
 _CLOUDFLARE_CHALLENGE_MARKERS = (
-    'cf-browser-verification',
-    '__cf_chl',
-    'just a moment...',
-    'checking your browser before accessing',
-    'attention required! | cloudflare',
-    'why do i have to complete a captcha',
-    'cloudflare-ray',
+    "cf-browser-verification",
+    "__cf_chl",
+    "just a moment...",
+    "checking your browser before accessing",
+    "attention required! | cloudflare",
+    "why do i have to complete a captcha",
+    "cloudflare-ray",
 )
 
 
@@ -1110,7 +1251,7 @@ def is_cloudflare_challenge_page(content):
         return False
     if isinstance(content, bytes):
         try:
-            content = content.decode('utf-8', errors='ignore')
+            content = content.decode("utf-8", errors="ignore")
         except UnicodeDecodeError:
             return False
     lowered = content.lower()
@@ -1119,11 +1260,11 @@ def is_cloudflare_challenge_page(content):
 
 def get_html_with_cloudflare_retry(
     url,
-    referer='',
+    referer="",
     headers=None,
     NoCookie=None,
     data=None,
-    error='return',
+    error="return",
     ignoreCertificateErrors=False,
     retry_on_empty=False,
 ):
@@ -1144,18 +1285,24 @@ def get_html_with_cloudflare_retry(
         ignoreCertificateErrors=ignoreCertificateErrors,
     )
 
-    fs_enabled = addon.getSetting('fs_enable') == 'true'
+    fs_enabled = addon.getSetting("fs_enable") == "true"
     used_fs = False
 
     if is_cloudflare_challenge_page(html):
         if not fs_enabled:
             return html, False
-        kodilog('Cloudflare challenge detected on {}, retrying with FlareSolverr'.format(url))
+        kodilog(
+            "Cloudflare challenge detected on {}, retrying with FlareSolverr".format(
+                url
+            )
+        )
         html = flaresolve(url, referer)
         used_fs = True
 
     if retry_on_empty and not html and fs_enabled and not used_fs:
-        kodilog('Empty response received from {}, retrying with FlareSolverr'.format(url))
+        kodilog(
+            "Empty response received from {}, retrying with FlareSolverr".format(url)
+        )
         html = flaresolve(url, referer)
         used_fs = True
 
@@ -1164,30 +1311,30 @@ def get_html_with_cloudflare_retry(
 
 def savecookies(flarejson):
     cj_cf = cj
-    for cookie in flarejson['solution']['cookies']:
+    for cookie in flarejson["solution"]["cookies"]:
         c = http_cookiejar.Cookie(
             version=0,
-            name=cookie.get('name'),
-            value=cookie.get('value'),
+            name=cookie.get("name"),
+            value=cookie.get("value"),
             port=None,
             port_specified=False,
-            domain=cookie.get('domain'),
+            domain=cookie.get("domain"),
             domain_specified=False,
             domain_initial_dot=False,
-            path=cookie.get('path'),
+            path=cookie.get("path"),
             path_specified=True,
-            secure=cookie.get('secure'),
-            expires=cookie.get('expiry'),
+            secure=cookie.get("secure"),
+            expires=cookie.get("expiry"),
             discard=True,
             comment=None,
             comment_url=None,
-            rest={'HttpOnly': cookie.get('httpOnly')},
-            rfc2109=False
+            rest={"HttpOnly": cookie.get("httpOnly")},
+            rfc2109=False,
         )
 
         cj_cf.set_cookie(c)
     cj_cf.save(cookiePath, ignore_discard=True)
-    UA = flarejson['solution']['userAgent']
+    UA = flarejson["solution"]["userAgent"]
     random_ua.set_ua(UA)
 
 
@@ -1209,7 +1356,9 @@ def get_sucuri_cookie(html):
     )
 
 
-def postHtml(url, form_data=None, headers=None, json_data=None, compression=True, NoCookie=None):
+def postHtml(
+    url, form_data=None, headers=None, json_data=None, compression=True, NoCookie=None
+):
     """Cached wrapper around :func:`_postHtml` with safe default arguments.
 
     Using ``None`` as the default prevents callers from accidentally sharing
@@ -1229,7 +1378,9 @@ def postHtml(url, form_data=None, headers=None, json_data=None, compression=True
     )
 
 
-def _postHtml(url, form_data=None, headers=None, json_data=None, compression=True, NoCookie=None):
+def _postHtml(
+    url, form_data=None, headers=None, json_data=None, compression=True, NoCookie=None
+):
     if form_data is None:
         form_data = {}
     if headers is None:
@@ -1243,33 +1394,35 @@ def _postHtml(url, form_data=None, headers=None, json_data=None, compression=Tru
         req = urllib_request.Request(url, form_data)
     elif json_data:
         json_data = json.dumps(json_data)
-        json_data = json_data.encode('utf8') if PY3 else json_data
+        json_data = json_data.encode("utf8") if PY3 else json_data
         req = urllib_request.Request(url, json_data)
-        req.add_header('Content-Type', 'application/json')
+        req.add_header("Content-Type", "application/json")
     else:
         req = urllib_request.Request(url)
-        req.get_method = lambda: 'POST'
-    if 'User-Agent' not in headers.keys():
-        req.add_header('User-Agent', USER_AGENT)
+        req.get_method = lambda: "POST"
+    if "User-Agent" not in headers.keys():
+        req.add_header("User-Agent", USER_AGENT)
     for k, v in list(headers.items()):
         req.add_header(k, v)
     if compression:
-        req.add_header('Accept-Encoding', 'gzip')
+        req.add_header("Accept-Encoding", "gzip")
 
     try:
         response = urllib_request.urlopen(req)
     except urllib_error.HTTPError as e:
-        if e.info().get('Content-Encoding', '').lower() == 'gzip':
+        if e.info().get("Content-Encoding", "").lower() == "gzip":
             buf = six.BytesIO(e.read())
             f = gzip.GzipFile(fileobj=buf)
             result = f.read()
             f.close()
         else:
             result = e.read()
-        result = result.decode('latin-1', errors='ignore') if PY3 else result.encode('utf-8')
-        if e.code == 503 and 'cf-browser-verification' in result:
+        result = (
+            result.decode("latin-1", errors="ignore") if PY3 else result.encode("utf-8")
+        )
+        if e.code == 503 and "cf-browser-verification" in result:
             result = cloudflare.solve(url, cj, USER_AGENT)
-        elif e.code == 403 and 'cf-alert-error' in result:
+        elif e.code == 403 and "cf-alert-error" in result:
             # Drop to TLS1.2 and try again
             ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
             handle = [urllib_request.HTTPSHandler(context=ctx)]
@@ -1277,15 +1430,19 @@ def _postHtml(url, form_data=None, headers=None, json_data=None, compression=Tru
             try:
                 response = opener.open(req, timeout=30)
             except urllib_error.HTTPError as e:
-                if e.info().get('Content-Encoding', '').lower() == 'gzip':
+                if e.info().get("Content-Encoding", "").lower() == "gzip":
                     buf = six.BytesIO(e.read())
                     f = gzip.GzipFile(fileobj=buf)
                     result = f.read()
                     f.close()
                 else:
                     result = e.read()
-                result = result.decode('latin-1', errors='ignore') if PY3 else result.encode('utf-8')
-                if e.code == 403 and 'cf-alert-error' in result:
+                result = (
+                    result.decode("latin-1", errors="ignore")
+                    if PY3
+                    else result.encode("utf-8")
+                )
+                if e.code == 403 and "cf-alert-error" in result:
                     # Drop to TLS1.1 and try again
                     ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_1)
                     handle = [urllib_request.HTTPSHandler(context=ctx)]
@@ -1293,17 +1450,17 @@ def _postHtml(url, form_data=None, headers=None, json_data=None, compression=Tru
                     try:
                         response = opener.open(req, timeout=30)
                     except Exception:
-                        notify(i18n('oh_oh'), i18n('site_down'))
+                        notify(i18n("oh_oh"), i18n("site_down"))
                         raise
         elif 400 < e.code < 500:
             if not e.code == 403:
-                notify(i18n('oh_oh'), i18n('not_exist'))
+                notify(i18n("oh_oh"), i18n("not_exist"))
             raise
         else:
-            notify(i18n('oh_oh'), i18n('site_down'))
+            notify(i18n("oh_oh"), i18n("site_down"))
             raise
     except urllib_error.URLError as e:
-        notify(i18n('oh_oh'), i18n('slow_site'))
+        notify(i18n("oh_oh"), i18n("slow_site"))
         xbmc.log(str(e), xbmc.LOGDEBUG)
         raise
     # except Exception as e:
@@ -1315,7 +1472,7 @@ def _postHtml(url, form_data=None, headers=None, json_data=None, compression=Tru
     #         raise
     #     return None
 
-    if response.info().get('Content-Encoding', '').lower() == 'gzip':
+    if response.info().get("Content-Encoding", "").lower() == "gzip":
         buf = six.BytesIO(response.read())
         f = gzip.GzipFile(fileobj=buf)
         data = f.read()
@@ -1325,22 +1482,24 @@ def _postHtml(url, form_data=None, headers=None, json_data=None, compression=Tru
 
     encoding = None
 
-    content_type = response.headers.get('content-type', '')
-    if 'charset=' in content_type:
-        encoding = content_type.split('charset=')[-1]
+    content_type = response.headers.get("content-type", "")
+    if "charset=" in content_type:
+        encoding = content_type.split("charset=")[-1]
 
     if encoding is None:
-        epattern = r'<meta\s+http-equiv="Content-Type"\s+content="(?:.+?);\s+charset=(.+?)"'
-        epattern = epattern.encode('utf8') if PY3 else epattern
+        epattern = (
+            r'<meta\s+http-equiv="Content-Type"\s+content="(?:.+?);\s+charset=(.+?)"'
+        )
+        epattern = epattern.encode("utf8") if PY3 else epattern
         r = re.search(epattern, data, re.IGNORECASE)
         if r:
-            encoding = r.group(1).decode('utf8') if PY3 else r.group(1)
+            encoding = r.group(1).decode("utf8") if PY3 else r.group(1)
 
     if encoding is not None:
-        data = data.decode(encoding.lower(), errors='ignore')
-        data = data.encode('utf8') if PY2 else data
+        data = data.decode(encoding.lower(), errors="ignore")
+        data = data.encode("utf8") if PY2 else data
     else:
-        data = data.decode('ascii', errors='ignore') if PY3 else data.encode('utf8')
+        data = data.decode("ascii", errors="ignore") if PY3 else data.encode("utf8")
 
     if not NoCookie:
         cj.save(cookiePath, ignore_discard=True)
@@ -1352,10 +1511,10 @@ def _postHtml(url, form_data=None, headers=None, json_data=None, compression=Tru
 def checkUrl(url, headers=None):
     if headers is None:
         headers = {}
-    if 'User-Agent' not in headers.keys():
-        headers.update({'User-Agent': USER_AGENT})
+    if "User-Agent" not in headers.keys():
+        headers.update({"User-Agent": USER_AGENT})
     req = Request(url, headers=headers)
-    req.get_method = lambda: 'HEAD'
+    req.get_method = lambda: "HEAD"
     try:
         response = urlopen(req, timeout=60)
         code = response.code
@@ -1373,21 +1532,21 @@ def _getHtml2(url):
     response = urlopen(req, timeout=60)
     data = response.read()
     response.close()
-    data = data.decode('latin-1') if PY3 else data
+    data = data.decode("latin-1") if PY3 else data
     return data
 
 
-def getVideoLink(url, referer='', headers=None, data=None):
+def getVideoLink(url, referer="", headers=None, data=None):
     if not headers:
         headers = base_hdrs
 
-    if 'User-Agent' not in headers:
-        headers.update({'User-Agent': base_hdrs.get('User-Agent')})
+    if "User-Agent" not in headers:
+        headers.update({"User-Agent": base_hdrs.get("User-Agent")})
 
     req2 = Request(url, data=data, headers=headers)
 
     if referer:
-        req2.add_header('Referer', referer)
+        req2.add_header("Referer", referer)
 
     opener = urllib_request.build_opener(NoRedirection())
 
@@ -1396,13 +1555,13 @@ def getVideoLink(url, referer='', headers=None, data=None):
     except urllib_error.HTTPError as e:
         response = e
 
-    return response.headers.get('location') or url
+    return response.headers.get("location") or url
 
 
 def parse_query(query):
-    toint = ['page', 'download', 'favmode', 'channel', 'section']
-    q = {'mode': 'main.INDEX'}
-    if query.startswith('?'):
+    toint = ["page", "download", "favmode", "channel", "section"]
+    q = {"mode": "main.INDEX"}
+    if query.startswith("?"):
         query = query[1:]
     queries = urllib_parse.parse_qs(query)
     for key in queries:
@@ -1422,40 +1581,41 @@ def parse_query(query):
 def cleantext(text):
     if PY3:
         import html
+
         text = html.unescape(text)
     else:
         h = html_parser.HTMLParser()
-        text = h.unescape(text.decode('utf8')).encode('utf8')
+        text = h.unescape(text.decode("utf8")).encode("utf8")
 
     replacements = {
-        '&amp;': '&',
-        '&apos;': "'",
-        '&colon;': ':',
-        '&comma;': ',',
-        '&dollar;': '$',
-        '&equals;': '=',
-        '&excl;': '!',
-        '&gt;': '>',
-        '&half;': '1/2',
-        '&lpar;': '(',
-        '&lowbar;': '_',
-        '&lsqb;': '[',
-        '&lt;': '<',
-        '&nbsp;': ' ',
-        '\xa0': ' ',
-        '&ntilde;': '~',
-        '&num;': '#',
-        '&OpenCurlyDoubleQuote;': '"',
-        '&period;': '.',
-        '&quest;': '?',
-        '&quot;': '"',
-        '&rpar;': ')',
-        '&rsqb;': ']',
-        '&rsquo;': "'",
-        '&ndash;': '-',
-        '&ast;': '*',
-        '&DiacriticalTilde;': '~',
-        '&CloseCurlyDoubleQuote;': '"',
+        "&amp;": "&",
+        "&apos;": "'",
+        "&colon;": ":",
+        "&comma;": ",",
+        "&dollar;": "$",
+        "&equals;": "=",
+        "&excl;": "!",
+        "&gt;": ">",
+        "&half;": "1/2",
+        "&lpar;": "(",
+        "&lowbar;": "_",
+        "&lsqb;": "[",
+        "&lt;": "<",
+        "&nbsp;": " ",
+        "\xa0": " ",
+        "&ntilde;": "~",
+        "&num;": "#",
+        "&OpenCurlyDoubleQuote;": '"',
+        "&period;": ".",
+        "&quest;": "?",
+        "&quot;": '"',
+        "&rpar;": ")",
+        "&rsqb;": "]",
+        "&rsquo;": "'",
+        "&ndash;": "-",
+        "&ast;": "*",
+        "&DiacriticalTilde;": "~",
+        "&CloseCurlyDoubleQuote;": '"',
     }
 
     for key, value in replacements.items():
@@ -1465,8 +1625,8 @@ def cleantext(text):
 
 
 def cleanhtml(raw_html):
-    cleanr = re.compile('<.*?>')
-    cleantext = re.sub(cleanr, '', raw_html)
+    cleanr = re.compile("<.*?>")
+    cleantext = re.sub(cleanr, "", raw_html)
     return cleantext
 
 
@@ -1476,7 +1636,7 @@ def get_vidhost(url):
     :return vidhost
     """
     normalized_url = url
-    if not re.match(r'^[a-zA-Z][a-zA-Z0-9+\.-]*://', url):
+    if not re.match(r"^[a-zA-Z][a-zA-Z0-9+\.-]*://", url):
         normalized_url = f"//{url.lstrip('/')}"
 
     parsed_url = urllib_parse.urlparse(normalized_url)
@@ -1484,7 +1644,7 @@ def get_vidhost(url):
     if not hostname:
         return ""
 
-    parts = hostname.split('.')
+    parts = hostname.split(".")
 
     # Handle IPv4 addresses directly
     if len(parts) == 4 and all(part.isdigit() for part in parts):
@@ -1492,34 +1652,156 @@ def get_vidhost(url):
 
     if len(parts) >= 3 and len(parts[-1]) == 2 and len(parts[-2]) <= 3:
         # Handle common country code TLDs such as co.uk, com.au, etc.
-        return '.'.join(parts[-3:])
+        return ".".join(parts[-3:])
     if len(parts) >= 2:
-        return '{}.{}'.format(parts[-2], parts[-1])
+        return "{}.{}".format(parts[-2], parts[-1])
     return hostname
 
 
 def get_language(lang_code):
     languages = {
-        "aa": "Afar", "ab": "Abkhazian", "af": "Afrikaans", "am": "Amharic", "ar": "Arabic", "as": "Assamese", "ay": "Aymara",
-        "az": "Azerbaijani", "ba": "Bashkir", "be": "Byelorussian", "bg": "Bulgarian", "bh": "Bihari", "bi": "Bislama", "bn": "Bengali",
-        "bo": "Tibetan", "br": "Breton", "ca": "Catalan", "co": "Corsican", "cs": "Czech", "cy": "Welch", "da": "Danish", "de": "German",
-        "dz": "Bhutani", "el": "Greek", "en": "English", "eo": "Esperanto", "es": "Spanish", "et": "Estonian", "eu": "Basque",
-        "fa": "Persian", "fi": "Finnish", "fj": "Fiji", "fo": "Faeroese", "fr": "French", "fy": "Frisian", "ga": "Irish",
-        "gd": "Scots Gaelic", "gl": "Galician", "gn": "Guarani", "gu": "Gujarati", "ha": "Hausa", "hi": "Hindi", "he": "Hebrew",
-        "hr": "Croatian", "hu": "Hungarian", "hy": "Armenian", "ia": "Interlingua", "id": "Indonesian", "ie": "Interlingue",
-        "ik": "Inupiak", "in": "former Indonesian", "is": "Icelandic", "it": "Italian", "iu": "Inuktitut (Eskimo)", "iw": "former Hebrew",
-        "ja": "Japanese", "ji": "former Yiddish", "jw": "Javanese", "ka": "Georgian", "kk": "Kazakh", "kl": "Greenlandic", "km": "Cambodian",
-        "kn": "Kannada", "ko": "Korean", "ks": "Kashmiri", "ku": "Kurdish", "ky": "Kirghiz", "la": "Latin", "ln": "Lingala", "lo": "Laothian",
-        "lt": "Lithuanian", "lv": "Latvian,  Lettish", "mg": "Malagasy", "mi": "Maori", "mk": "Macedonian", "ml": "Malayalam", "mn": "Mongolian",
-        "mo": "Moldavian", "mr": "Marathi", "ms": "Malay", "mt": "Maltese", "my": "Burmese", "na": "Nauru", "ne": "Nepali", "nl": "Dutch",
-        "no": "Norwegian", "oc": "Occitan", "om": "(Afan) Oromo", "or": "Oriya", "pa": "Punjabi", "pl": "Polish", "ps": "Pashto,  Pushto",
-        "pt": "Portuguese", "qu": "Quechua", "rm": "Rhaeto-Romance", "rn": "Kirundi", "ro": "Romanian", "ru": "Russian", "rw": "Kinyarwanda",
-        "sa": "Sanskrit", "sd": "Sindhi", "sg": "Sangro", "sh": "Serbo-Croatian", "si": "Singhalese", "sk": "Slovak", "sl": "Slovenian",
-        "sm": "Samoan", "sn": "Shona", "so": "Somali", "sq": "Albanian", "sr": "Serbian", "ss": "Siswati", "st": "Sesotho", "su": "Sudanese",
-        "sv": "Swedish", "sw": "Swahili", "ta": "Tamil", "te": "Tegulu", "tg": "Tajik", "th": "Thai", "ti": "Tigrinya", "tk": "Turkmen",
-        "tl": "Tagalog", "tn": "Setswana", "to": "Tonga", "tr": "Turkish", "ts": "Tsonga", "tt": "Tatar", "tw": "Twi", "ug": "Uigur",
-        "uk": "Ukrainian", "ur": "Urdu", "uz": "Uzbek", "vi": "Vietnamese", "vo": "Volapuk", "wo": "Wolof", "xh": "Xhosa", "yi": "Yiddish",
-        "yo": "Yoruba", "za": "Zhuang", "zh": "Chinese", "zu": "Zulu"
+        "aa": "Afar",
+        "ab": "Abkhazian",
+        "af": "Afrikaans",
+        "am": "Amharic",
+        "ar": "Arabic",
+        "as": "Assamese",
+        "ay": "Aymara",
+        "az": "Azerbaijani",
+        "ba": "Bashkir",
+        "be": "Byelorussian",
+        "bg": "Bulgarian",
+        "bh": "Bihari",
+        "bi": "Bislama",
+        "bn": "Bengali",
+        "bo": "Tibetan",
+        "br": "Breton",
+        "ca": "Catalan",
+        "co": "Corsican",
+        "cs": "Czech",
+        "cy": "Welch",
+        "da": "Danish",
+        "de": "German",
+        "dz": "Bhutani",
+        "el": "Greek",
+        "en": "English",
+        "eo": "Esperanto",
+        "es": "Spanish",
+        "et": "Estonian",
+        "eu": "Basque",
+        "fa": "Persian",
+        "fi": "Finnish",
+        "fj": "Fiji",
+        "fo": "Faeroese",
+        "fr": "French",
+        "fy": "Frisian",
+        "ga": "Irish",
+        "gd": "Scots Gaelic",
+        "gl": "Galician",
+        "gn": "Guarani",
+        "gu": "Gujarati",
+        "ha": "Hausa",
+        "hi": "Hindi",
+        "he": "Hebrew",
+        "hr": "Croatian",
+        "hu": "Hungarian",
+        "hy": "Armenian",
+        "ia": "Interlingua",
+        "id": "Indonesian",
+        "ie": "Interlingue",
+        "ik": "Inupiak",
+        "in": "former Indonesian",
+        "is": "Icelandic",
+        "it": "Italian",
+        "iu": "Inuktitut (Eskimo)",
+        "iw": "former Hebrew",
+        "ja": "Japanese",
+        "ji": "former Yiddish",
+        "jw": "Javanese",
+        "ka": "Georgian",
+        "kk": "Kazakh",
+        "kl": "Greenlandic",
+        "km": "Cambodian",
+        "kn": "Kannada",
+        "ko": "Korean",
+        "ks": "Kashmiri",
+        "ku": "Kurdish",
+        "ky": "Kirghiz",
+        "la": "Latin",
+        "ln": "Lingala",
+        "lo": "Laothian",
+        "lt": "Lithuanian",
+        "lv": "Latvian,  Lettish",
+        "mg": "Malagasy",
+        "mi": "Maori",
+        "mk": "Macedonian",
+        "ml": "Malayalam",
+        "mn": "Mongolian",
+        "mo": "Moldavian",
+        "mr": "Marathi",
+        "ms": "Malay",
+        "mt": "Maltese",
+        "my": "Burmese",
+        "na": "Nauru",
+        "ne": "Nepali",
+        "nl": "Dutch",
+        "no": "Norwegian",
+        "oc": "Occitan",
+        "om": "(Afan) Oromo",
+        "or": "Oriya",
+        "pa": "Punjabi",
+        "pl": "Polish",
+        "ps": "Pashto,  Pushto",
+        "pt": "Portuguese",
+        "qu": "Quechua",
+        "rm": "Rhaeto-Romance",
+        "rn": "Kirundi",
+        "ro": "Romanian",
+        "ru": "Russian",
+        "rw": "Kinyarwanda",
+        "sa": "Sanskrit",
+        "sd": "Sindhi",
+        "sg": "Sangro",
+        "sh": "Serbo-Croatian",
+        "si": "Singhalese",
+        "sk": "Slovak",
+        "sl": "Slovenian",
+        "sm": "Samoan",
+        "sn": "Shona",
+        "so": "Somali",
+        "sq": "Albanian",
+        "sr": "Serbian",
+        "ss": "Siswati",
+        "st": "Sesotho",
+        "su": "Sudanese",
+        "sv": "Swedish",
+        "sw": "Swahili",
+        "ta": "Tamil",
+        "te": "Tegulu",
+        "tg": "Tajik",
+        "th": "Thai",
+        "ti": "Tigrinya",
+        "tk": "Turkmen",
+        "tl": "Tagalog",
+        "tn": "Setswana",
+        "to": "Tonga",
+        "tr": "Turkish",
+        "ts": "Tsonga",
+        "tt": "Tatar",
+        "tw": "Twi",
+        "ug": "Uigur",
+        "uk": "Ukrainian",
+        "ur": "Urdu",
+        "uz": "Uzbek",
+        "vi": "Vietnamese",
+        "vo": "Volapuk",
+        "wo": "Wolof",
+        "xh": "Xhosa",
+        "yi": "Yiddish",
+        "yo": "Yoruba",
+        "za": "Zhuang",
+        "zh": "Chinese",
+        "zu": "Zulu",
     }
 
     return languages.get(lang_code.lower(), lang_code)
@@ -1527,46 +1809,248 @@ def get_language(lang_code):
 
 def get_country(country_code):
     countries = {
-        "af": "Afghanistan", "al": "Albania", "dz": "Algeria", "as": "American Samoa", "ad": "Andorra", "ao": "Angola", "ai": "Anguilla",
-        "ag": "Antigua & Barbuda", "ar": "Argentina", "am": "Armenia", "aw": "Aruba", "au": "Australia", "at": "Austria", "az": "Azerbaijan",
-        "bs": "Bahamas", "bh": "Bahrain", "bd": "Bangladesh", "bb": "Barbados", "by": "Belarus", "be": "Belgium", "bz": "Belize", "bj": "Benin",
-        "bm": "Bermuda", "bt": "Bhutan", "bo": "Bolivia", "ba": "Bosnia & Herzegovina", "bw": "Botswana", "bv": "Bouvet Island", "br": "Brazil",
-        "bn": "Brunei Darussalam", "bg": "Bulgaria", "bf": "Burkina Faso", "bi": "Burundi", "kh": "Cambodia", "cm": "Cameroon", "ca": "Canada",
-        "cv": "Cape Verde", "ky": "Cayman Islands", "cf": "Central African Republic", "td": "Chad", "cl": "Chile", "cn": "China", "co": "Colombia",
-        "km": "Comoros", "cg": "Congo", "cd": "Congo,  the Democratic Republic of the", "ck": "Cook Islands", "cr": "Costa Rica", "ci": "Cote D'Ivoire",
-        "hr": "Croatia", "cu": "Cuba", "cw": "Curacao", "cy": "Cyprus", "cz": "Czech Republic", "dk": "Denmark", "dj": "Djibouti", "dm": "Dominica",
-        "do": "Dominican Republic", "ec": "Ecuador", "eg": "Egypt", "sv": "El Salvador", "gq": "Equatorial Guinea", "er": "Eritrea", "ee": "Estonia",
-        "et": "Ethiopia", "fk": "Falkland Islands (Malvinas)", "fo": "Faroe Islands", "fj": "Fiji", "fi": "Finland", "fr": "France", "gf": "French Guiana",
-        "pf": "French Polynesia", "ga": "Gabon", "gm": "Gambia", "ge": "Georgia", "de": "Germany", "gh": "Ghana", "gi": "Gibraltar", "gr": "Greece",
-        "gl": "Greenland", "gd": "Grenada", "gp": "Guadeloupe", "gu": "Guam", "gt": "Guatemala", "gn": "Guinea", "gw": "Guinea-Bissau", "gy": "Guyana",
-        "ht": "Haiti", "va": "Holy See (Vatican City)", "hn": "Honduras", "hk": "Hong Kong", "hu": "Hungary", "is": "Iceland", "in": "India",
-        "id": "Indonesia", "ir": "Iran", "iq": "Iraq", "ie": "Ireland", "il": "Israel", "it": "Italy", "jm": "Jamaica", "jp": "Japan", "je": "Jersey",
-        "jo": "Jordan", "kz": "Kazakhstan", "ke": "Kenya", "ki": "Kiribati", "kp": "Korea,  Democratic People\'s Republic of", "kr": "Korea,  Republic of",
-        "kw": "Kuwait", "kg": "Kyrgyzstan", "la": "Lao", "lv": "Latvia", "lb": "Lebanon", "ls": "Lesotho", "lr": "Liberia", "ly": "Libyan Arab Jamahiriya",
-        "li": "Liechtenstein", "lt": "Lithuania", "lu": "Luxembourg", "mo": "Macao", "mk": "Macedonia", "mg": "Madagascar", "mw": "Malawi", "my": "Malaysia",
-        "mv": "Maldives", "ml": "Mali", "mt": "Malta", "mh": "Marshall Islands", "mq": "Martinique", "mr": "Mauritania", "mu": "Mauritius", "mx": "Mexico",
-        "fm": "Micronesia", "md": "Moldova", "mc": "Monaco", "mn": "Mongolia", "me": "Montenegro", "ms": "Montserrat", "ma": "Morocco", "mz": "Mozambique",
-        "mm": "Myanmar", "na": "Namibia", "nr": "Nauru", "np": "Nepal", "nl": "Netherlands", "an": "Netherlands Antilles", "nc": "New Caledonia",
-        "nz": "New Zealand", "ni": "Nicaragua", "ne": "Niger", "ng": "Nigeria", "nu": "Niue", "nf": "Norfolk Island", "mp": "Northern Mariana Islands",
-        "no": "Norway", "om": "Oman", "pk": "Pakistan", "pw": "Palau", "ps": "Palestine", "pa": "Panama", "pg": "Papua New Guinea", "py": "Paraguay",
-        "pe": "Peru", "ph": "Philippines", "pn": "Pitcairn", "pl": "Poland", "pt": "Portugal", "pr": "Puerto Rico", "qa": "Qatar", "re": "Reunion",
-        "ro": "Romania", "ru": "Russian Federation", "rw": "Rwanda", "bl": "Saint Barths", "sh": "Saint Helena", "kn": "Saint Kitts and Nevis",
-        "lc": "Saint Lucia", "pm": "Saint Pierre & Miquelon", "vc": "Saint Vincent & the Grenadines", "ws": "Samoa", "sm": "San Marino",
-        "st": "Sao Tome & Principe", "sa": "Saudi Arabia", "sn": "Senegal", "rs": "Serbia", "sc": "Seychelles", "sl": "Sierra Leone", "sg": "Singapore",
-        "sk": "Slovakia", "si": "Slovenia", "sb": "Solomon Islands", "so": "Somalia", "za": "South Africa", "es": "Spain", "lk": "Sri Lanka", "sd": "Sudan",
-        "sr": "Suriname", "sj": "Svalbard & Jan Mayen", "sz": "Swaziland", "se": "Sweden", "ch": "Switzerland", "sy": "Syrian Arab Republic", "tw": "Taiwan",
-        "tj": "Tajikistan", "tz": "Tanzania", "th": "Thailand", "tl": "Timor-Leste", "tg": "Togo", "tk": "Tokelau", "to": "Tonga", "tt": "Trinidad & Tobago",
-        "tn": "Tunisia", "tr": "Turkey", "tm": "Turkmenistan", "tc": "Turks & Caicos", "tv": "Tuvalu", "ug": "Uganda", "ua": "Ukraine", "ae": "United Arab Emirates",
-        "gb": "United Kingdom", "us": "United States", "um": "United States Minor Outlying Islands", "uy": "Uruguay", "uz": "Uzbekistan", "vu": "Vanuatu",
-        "ve": "Venezuela", "vn": "Viet Nam", "vg": "Virgin Islands,  British", "vi": "Virgin Islands,  U.S.", "wf": "Wallis & Futuna", "eh": "Western Sahara",
-        "ye": "Yemen", "zm": "Zambia", "zw": "Zimbabwe"
+        "af": "Afghanistan",
+        "al": "Albania",
+        "dz": "Algeria",
+        "as": "American Samoa",
+        "ad": "Andorra",
+        "ao": "Angola",
+        "ai": "Anguilla",
+        "ag": "Antigua & Barbuda",
+        "ar": "Argentina",
+        "am": "Armenia",
+        "aw": "Aruba",
+        "au": "Australia",
+        "at": "Austria",
+        "az": "Azerbaijan",
+        "bs": "Bahamas",
+        "bh": "Bahrain",
+        "bd": "Bangladesh",
+        "bb": "Barbados",
+        "by": "Belarus",
+        "be": "Belgium",
+        "bz": "Belize",
+        "bj": "Benin",
+        "bm": "Bermuda",
+        "bt": "Bhutan",
+        "bo": "Bolivia",
+        "ba": "Bosnia & Herzegovina",
+        "bw": "Botswana",
+        "bv": "Bouvet Island",
+        "br": "Brazil",
+        "bn": "Brunei Darussalam",
+        "bg": "Bulgaria",
+        "bf": "Burkina Faso",
+        "bi": "Burundi",
+        "kh": "Cambodia",
+        "cm": "Cameroon",
+        "ca": "Canada",
+        "cv": "Cape Verde",
+        "ky": "Cayman Islands",
+        "cf": "Central African Republic",
+        "td": "Chad",
+        "cl": "Chile",
+        "cn": "China",
+        "co": "Colombia",
+        "km": "Comoros",
+        "cg": "Congo",
+        "cd": "Congo,  the Democratic Republic of the",
+        "ck": "Cook Islands",
+        "cr": "Costa Rica",
+        "ci": "Cote D'Ivoire",
+        "hr": "Croatia",
+        "cu": "Cuba",
+        "cw": "Curacao",
+        "cy": "Cyprus",
+        "cz": "Czech Republic",
+        "dk": "Denmark",
+        "dj": "Djibouti",
+        "dm": "Dominica",
+        "do": "Dominican Republic",
+        "ec": "Ecuador",
+        "eg": "Egypt",
+        "sv": "El Salvador",
+        "gq": "Equatorial Guinea",
+        "er": "Eritrea",
+        "ee": "Estonia",
+        "et": "Ethiopia",
+        "fk": "Falkland Islands (Malvinas)",
+        "fo": "Faroe Islands",
+        "fj": "Fiji",
+        "fi": "Finland",
+        "fr": "France",
+        "gf": "French Guiana",
+        "pf": "French Polynesia",
+        "ga": "Gabon",
+        "gm": "Gambia",
+        "ge": "Georgia",
+        "de": "Germany",
+        "gh": "Ghana",
+        "gi": "Gibraltar",
+        "gr": "Greece",
+        "gl": "Greenland",
+        "gd": "Grenada",
+        "gp": "Guadeloupe",
+        "gu": "Guam",
+        "gt": "Guatemala",
+        "gn": "Guinea",
+        "gw": "Guinea-Bissau",
+        "gy": "Guyana",
+        "ht": "Haiti",
+        "va": "Holy See (Vatican City)",
+        "hn": "Honduras",
+        "hk": "Hong Kong",
+        "hu": "Hungary",
+        "is": "Iceland",
+        "in": "India",
+        "id": "Indonesia",
+        "ir": "Iran",
+        "iq": "Iraq",
+        "ie": "Ireland",
+        "il": "Israel",
+        "it": "Italy",
+        "jm": "Jamaica",
+        "jp": "Japan",
+        "je": "Jersey",
+        "jo": "Jordan",
+        "kz": "Kazakhstan",
+        "ke": "Kenya",
+        "ki": "Kiribati",
+        "kp": "Korea,  Democratic People's Republic of",
+        "kr": "Korea,  Republic of",
+        "kw": "Kuwait",
+        "kg": "Kyrgyzstan",
+        "la": "Lao",
+        "lv": "Latvia",
+        "lb": "Lebanon",
+        "ls": "Lesotho",
+        "lr": "Liberia",
+        "ly": "Libyan Arab Jamahiriya",
+        "li": "Liechtenstein",
+        "lt": "Lithuania",
+        "lu": "Luxembourg",
+        "mo": "Macao",
+        "mk": "Macedonia",
+        "mg": "Madagascar",
+        "mw": "Malawi",
+        "my": "Malaysia",
+        "mv": "Maldives",
+        "ml": "Mali",
+        "mt": "Malta",
+        "mh": "Marshall Islands",
+        "mq": "Martinique",
+        "mr": "Mauritania",
+        "mu": "Mauritius",
+        "mx": "Mexico",
+        "fm": "Micronesia",
+        "md": "Moldova",
+        "mc": "Monaco",
+        "mn": "Mongolia",
+        "me": "Montenegro",
+        "ms": "Montserrat",
+        "ma": "Morocco",
+        "mz": "Mozambique",
+        "mm": "Myanmar",
+        "na": "Namibia",
+        "nr": "Nauru",
+        "np": "Nepal",
+        "nl": "Netherlands",
+        "an": "Netherlands Antilles",
+        "nc": "New Caledonia",
+        "nz": "New Zealand",
+        "ni": "Nicaragua",
+        "ne": "Niger",
+        "ng": "Nigeria",
+        "nu": "Niue",
+        "nf": "Norfolk Island",
+        "mp": "Northern Mariana Islands",
+        "no": "Norway",
+        "om": "Oman",
+        "pk": "Pakistan",
+        "pw": "Palau",
+        "ps": "Palestine",
+        "pa": "Panama",
+        "pg": "Papua New Guinea",
+        "py": "Paraguay",
+        "pe": "Peru",
+        "ph": "Philippines",
+        "pn": "Pitcairn",
+        "pl": "Poland",
+        "pt": "Portugal",
+        "pr": "Puerto Rico",
+        "qa": "Qatar",
+        "re": "Reunion",
+        "ro": "Romania",
+        "ru": "Russian Federation",
+        "rw": "Rwanda",
+        "bl": "Saint Barths",
+        "sh": "Saint Helena",
+        "kn": "Saint Kitts and Nevis",
+        "lc": "Saint Lucia",
+        "pm": "Saint Pierre & Miquelon",
+        "vc": "Saint Vincent & the Grenadines",
+        "ws": "Samoa",
+        "sm": "San Marino",
+        "st": "Sao Tome & Principe",
+        "sa": "Saudi Arabia",
+        "sn": "Senegal",
+        "rs": "Serbia",
+        "sc": "Seychelles",
+        "sl": "Sierra Leone",
+        "sg": "Singapore",
+        "sk": "Slovakia",
+        "si": "Slovenia",
+        "sb": "Solomon Islands",
+        "so": "Somalia",
+        "za": "South Africa",
+        "es": "Spain",
+        "lk": "Sri Lanka",
+        "sd": "Sudan",
+        "sr": "Suriname",
+        "sj": "Svalbard & Jan Mayen",
+        "sz": "Swaziland",
+        "se": "Sweden",
+        "ch": "Switzerland",
+        "sy": "Syrian Arab Republic",
+        "tw": "Taiwan",
+        "tj": "Tajikistan",
+        "tz": "Tanzania",
+        "th": "Thailand",
+        "tl": "Timor-Leste",
+        "tg": "Togo",
+        "tk": "Tokelau",
+        "to": "Tonga",
+        "tt": "Trinidad & Tobago",
+        "tn": "Tunisia",
+        "tr": "Turkey",
+        "tm": "Turkmenistan",
+        "tc": "Turks & Caicos",
+        "tv": "Tuvalu",
+        "ug": "Uganda",
+        "ua": "Ukraine",
+        "ae": "United Arab Emirates",
+        "gb": "United Kingdom",
+        "us": "United States",
+        "um": "United States Minor Outlying Islands",
+        "uy": "Uruguay",
+        "uz": "Uzbekistan",
+        "vu": "Vanuatu",
+        "ve": "Venezuela",
+        "vn": "Viet Nam",
+        "vg": "Virgin Islands,  British",
+        "vi": "Virgin Islands,  U.S.",
+        "wf": "Wallis & Futuna",
+        "eh": "Western Sahara",
+        "ye": "Yemen",
+        "zm": "Zambia",
+        "zw": "Zimbabwe",
     }
 
     return countries.get(country_code.lower(), country_code)
 
 
 def _get_keyboard(default="", heading="", hidden=False):
-    """ shows a keyboard and returns a value """
+    """shows a keyboard and returns a value"""
     keyboard = xbmc.Keyboard(default, heading, hidden)
     keyboard.doModal()
     if keyboard.isConfirmed():
@@ -1575,74 +2059,77 @@ def _get_keyboard(default="", heading="", hidden=False):
 
 
 def streamdefence(html):
-    if '<iframe' not in html:
+    if "<iframe" not in html:
         decoded = html
         for _ in range(2):
             match = re.findall(r'\("([^"]+)', decoded, re.DOTALL | re.IGNORECASE)[0]
-            decoded = base64.b64decode(match.encode('ascii'))
-            decoded = base64.b64decode(decoded).decode('ascii')
+            decoded = base64.b64decode(match.encode("ascii"))
+            decoded = base64.b64decode(decoded).decode("ascii")
         match = re.search(r'var\s[^"=]+="([^"]+)', decoded)
         if match:
-            decoded = base64.b64decode(match.group(1).encode('ascii')).decode('ascii')
+            decoded = base64.b64decode(match.group(1).encode("ascii")).decode("ascii")
             return decoded
     return html
 
 
 @url_dispatcher.register()
 def setSorted():
-    addon.setSetting('keywords_sorted', 'true')
-    xbmc.executebuiltin('Container.Refresh')
+    addon.setSetting("keywords_sorted", "true")
+    xbmc.executebuiltin("Container.Refresh")
 
 
 @url_dispatcher.register()
 def setUnsorted():
-    addon.setSetting('keywords_sorted', 'false')
-    xbmc.executebuiltin('Container.Refresh')
+    addon.setSetting("keywords_sorted", "false")
+    xbmc.executebuiltin("Container.Refresh")
 
 
 @url_dispatcher.register()
 def oneSearch(url, page, channel):
-    vq = _get_keyboard(heading=i18n('srch_for'))
+    vq = _get_keyboard(heading=i18n("srch_for"))
     if not vq:
         return False, 0
     keyword = urllib_parse.quote_plus(vq)
     searchcmd = (
         sys.argv[0]
-        + "?url=" + urllib_parse.quote_plus(url)
-        + "&mode=" + str(channel)
-        + "&keyword=" + keyword
+        + "?url="
+        + urllib_parse.quote_plus(url)
+        + "&mode="
+        + str(channel)
+        + "&keyword="
+        + keyword
     )
-    xbmc.executebuiltin('Container.Update(' + searchcmd + ')')
+    xbmc.executebuiltin("Container.Update(" + searchcmd + ")")
 
 
 @url_dispatcher.register()
 def newSearch(url=None, channel=None, keyword=None):
-    vq = _get_keyboard(default=keyword, heading=i18n('srch_for'))
+    vq = _get_keyboard(default=keyword, heading=i18n("srch_for"))
     if not vq:
         return False, 0
     if not keyword:
         addKeyword(vq)
     elif keyword != vq:
         updateKeyword(keyword, vq)
-    xbmc.executebuiltin('Container.Refresh')
+    xbmc.executebuiltin("Container.Refresh")
 
 
 @url_dispatcher.register()
 def copySearch(url=None, channel=None, keyword=None):
-    vq = _get_keyboard(default=keyword, heading=i18n('srch_for'))
+    vq = _get_keyboard(default=keyword, heading=i18n("srch_for"))
     if not vq:
         return False, 0
     if not keyword:
         addKeyword(vq)
     elif keyword != vq:
         addKeyword(vq)
-    xbmc.executebuiltin('Container.Refresh')
+    xbmc.executebuiltin("Container.Refresh")
 
 
 @url_dispatcher.register()
 def clearSearch():
     delallKeyword()
-    xbmc.executebuiltin('Container.Refresh')
+    xbmc.executebuiltin("Container.Refresh")
 
 
 @url_dispatcher.register()
@@ -1652,14 +2139,24 @@ def alphabeticalSearch(url, channel, keyword=None):
     else:
         key_list = keys()
         for c, count in sorted(key_list.items()):
-            name = '[COLOR deeppink]{}[/COLOR] [COLOR lightpink]({})[/COLOR]'.format(c, count)
-            addDir(name, url, "utils.alphabeticalSearch", cum_image('cum-search.png'), '', channel, keyword=c)
+            name = "[COLOR deeppink]{}[/COLOR] [COLOR lightpink]({})[/COLOR]".format(
+                c, count
+            )
+            addDir(
+                name,
+                url,
+                "utils.alphabeticalSearch",
+                cum_image("cum-search.png"),
+                "",
+                channel,
+                keyword=c,
+            )
         eod()
 
 
 def addKeyword(keyword):
     if check_if_keyword_exists(keyword):
-        notify(i18n('error'), i18n('keyword_exists'))
+        notify(i18n("error"), i18n("keyword_exists"))
         return
     conn = sqlite3.connect(favoritesdb)
     conn.text_factory = str
@@ -1671,19 +2168,24 @@ def addKeyword(keyword):
 
 def updateKeyword(keyword, new_keyword):
     if check_if_keyword_exists(new_keyword):
-        notify(i18n('error'), i18n('keyword_exists'))
+        notify(i18n("error"), i18n("keyword_exists"))
         return
     conn = sqlite3.connect(favoritesdb)
     conn.text_factory = str
     c = conn.cursor()
-    c.execute("UPDATE keywords SET keyword=? WHERE keyword=?", (urllib_parse.quote_plus(new_keyword), urllib_parse.quote_plus(keyword)))
+    c.execute(
+        "UPDATE keywords SET keyword=? WHERE keyword=?",
+        (urllib_parse.quote_plus(new_keyword), urllib_parse.quote_plus(keyword)),
+    )
     conn.commit()
     conn.close()
 
 
 @url_dispatcher.register()
 def delallKeyword():
-    yes = dialog.yesno(i18n('warning'), '{0}[CR]{1}?'.format(i18n('clear_kwds'), i18n('continue')))  # , nolabel='No', yeslabel='Yes')
+    yes = dialog.yesno(
+        i18n("warning"), "{0}[CR]{1}?".format(i18n("clear_kwds"), i18n("continue"))
+    )  # , nolabel='No', yeslabel='Yes')
     if yes:
         conn = sqlite3.connect(favoritesdb)
         c = conn.cursor()
@@ -1696,21 +2198,24 @@ def delallKeyword():
 def delKeyword(keyword):
     conn = sqlite3.connect(favoritesdb)
     c = conn.cursor()
-    c.execute("DELETE FROM keywords WHERE keyword = ?", (urllib_parse.quote_plus(keyword),))
+    c.execute(
+        "DELETE FROM keywords WHERE keyword = ?", (urllib_parse.quote_plus(keyword),)
+    )
     conn.commit()
     conn.close()
-    xbmc.executebuiltin('Container.Refresh')
+    xbmc.executebuiltin("Container.Refresh")
 
 
 @url_dispatcher.register()
 def backup_keywords():
-    path = dialog.browseSingle(0, i18n('bkup_dir'), '')
-    progress.create(i18n('backing_up'), i18n('init'))
+    path = dialog.browseSingle(0, i18n("bkup_dir"), "")
+    progress.create(i18n("backing_up"), i18n("init"))
     if not path:
         return
     import datetime
     import json
-    progress.update(25, i18n('read_db'))
+
+    progress.update(25, i18n("read_db"))
     conn = sqlite3.connect(favoritesdb)
     conn.text_factory = str
     c = conn.cursor()
@@ -1718,19 +2223,23 @@ def backup_keywords():
     keywords = [{"keyword": keyword} for (keyword,) in c.fetchall()]
     if not keywords:
         progress.close()
-        notify(i18n('words_empty'), i18n('no_words'))
+        notify(i18n("words_empty"), i18n("no_words"))
         return
     conn.close()
     time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    backup_content = {"meta": {"type": "cumination-keywords", "version": 1, "datetime": time}, "data": keywords}
+    backup_content = {
+        "meta": {"type": "cumination-keywords", "version": 1, "datetime": time},
+        "data": keywords,
+    }
     if progress.iscanceled():
         progress.close()
         return
-    progress.update(75, i18n('write_bkup'))
-    filename = "cumination-keywords_" + time + '.bak'
+    progress.update(75, i18n("write_bkup"))
+    filename = "cumination-keywords_" + time + ".bak"
     compressbackup = True if addon.getSetting("compressbackup") == "true" else False
     if compressbackup:
         import gzip
+
         try:
             if PY3:
                 with gzip.open(path + filename, "wt", encoding="utf-8") as fav_file:
@@ -1740,7 +2249,7 @@ def backup_keywords():
                     json.dump(backup_content, fav_file)
         except IOError:
             progress.close()
-            notify(i18n('invalid_path'), i18n('write_permission'))
+            notify(i18n("invalid_path"), i18n("write_permission"))
             return
     else:
         try:
@@ -1752,17 +2261,21 @@ def backup_keywords():
                     json.dump(backup_content, fav_file)
         except IOError:
             progress.close()
-            notify(i18n('invalid_path'), i18n('write_permission'))
+            notify(i18n("invalid_path"), i18n("write_permission"))
             return
     progress.close()
-    dialog.ok(i18n('bkup_complete'), "{0} {1}".format(i18n('bkup_file'), path + filename))
+    dialog.ok(
+        i18n("bkup_complete"), "{0} {1}".format(i18n("bkup_file"), path + filename)
+    )
 
 
 def check_if_keyword_exists(keyword):
     conn = sqlite3.connect(favoritesdb)
     conn.text_factory = str
     c = conn.cursor()
-    c.execute("SELECT * FROM keywords WHERE keyword = ?", (urllib_parse.quote_plus(keyword),))
+    c.execute(
+        "SELECT * FROM keywords WHERE keyword = ?", (urllib_parse.quote_plus(keyword),)
+    )
     row = c.fetchone()
     conn.close()
     if row:
@@ -1772,13 +2285,15 @@ def check_if_keyword_exists(keyword):
 
 @url_dispatcher.register()
 def restore_keywords():
-    path = dialog.browseSingle(1, i18n('slct_file'), '')
+    path = dialog.browseSingle(1, i18n("slct_file"), "")
     if not path:
         return
     import json
+
     compressbackup = True if addon.getSetting("compressbackup") == "true" else False
     if compressbackup:
         import gzip
+
         try:
             if PY3:
                 with gzip.open(path, "rt", encoding="utf-8") as fav_file:
@@ -1788,10 +2303,13 @@ def restore_keywords():
                     backup_content = json.load(fav_file)
 
         except (ValueError, IOError):
-            notify(i18n('error'), i18n('invalid_bkup'))
+            notify(i18n("error"), i18n("invalid_bkup"))
             return
-        if backup_content["meta"]["type"] not in ("cumination-keywords", "uwc-keywords"):
-            notify(i18n('error'), i18n('invalid_bkup'))
+        if backup_content["meta"]["type"] not in (
+            "cumination-keywords",
+            "uwc-keywords",
+        ):
+            notify(i18n("error"), i18n("invalid_bkup"))
             return
     else:
         try:
@@ -1803,25 +2321,33 @@ def restore_keywords():
                     backup_content = json.load(fav_file)
 
         except (ValueError, IOError):
-            notify(i18n('error'), i18n('invalid_bkup'))
+            notify(i18n("error"), i18n("invalid_bkup"))
             return
-        if backup_content["meta"]["type"] not in ("cumination-keywords", "uwc-keywords"):
-            notify(i18n('error'), i18n('invalid_bkup'))
+        if backup_content["meta"]["type"] not in (
+            "cumination-keywords",
+            "uwc-keywords",
+        ):
+            notify(i18n("error"), i18n("invalid_bkup"))
             return
     keywords = backup_content["data"]
     if not keywords:
-        notify(i18n('error'), i18n('empty_bkup'))
+        notify(i18n("error"), i18n("empty_bkup"))
     added = 0
     skipped = 0
     for keyword in keywords:
-        keyw = keyword['keyword']
+        keyw = keyword["keyword"]
         if check_if_keyword_exists(keyw):
             skipped += 1
         else:
             addKeyword(keyw)
             added += 1
-    xbmc.executebuiltin('Container.Refresh')
-    dialog.ok(i18n('rstr_cmpl'), "{0}[CR]{1}: {2}[CR]{3}: {4}".format(i18n('rstr_msg'), i18n('added'), added, i18n('skipped'), skipped))
+    xbmc.executebuiltin("Container.Refresh")
+    dialog.ok(
+        i18n("rstr_cmpl"),
+        "{0}[CR]{1}: {2}[CR]{3}: {4}".format(
+            i18n("rstr_msg"), i18n("added"), added, i18n("skipped"), skipped
+        ),
+    )
 
 
 @url_dispatcher.register()
@@ -1830,13 +2356,12 @@ def openSettings():
 
 
 def textBox(heading, announce):
-    class TextBox():
-
+    class TextBox:
         def __init__(self, *args, **kwargs):
             self.WINDOW = 10147
             self.CONTROL_LABEL = 1
             self.CONTROL_TEXTBOX = 5
-            xbmc.executebuiltin("ActivateWindow(%d)" % (self.WINDOW, ))
+            xbmc.executebuiltin("ActivateWindow(%d)" % (self.WINDOW,))
             self.win = xbmcgui.Window(self.WINDOW)
             xbmc.sleep(500)
             self.setControls()
@@ -1852,11 +2377,18 @@ def textBox(heading, announce):
             return
 
     TextBox()
-    while xbmc.getCondVisibility('Window.IsVisible(10147)'):
+    while xbmc.getCondVisibility("Window.IsVisible(10147)"):
         xbmc.sleep(500)
 
 
-def selector(dialog_name, select_from, setting_valid=False, sort_by=None, reverse=False, show_on_one=False):
+def selector(
+    dialog_name,
+    select_from,
+    setting_valid=False,
+    sort_by=None,
+    reverse=False,
+    show_on_one=False,
+):
     """
     Shows a dialog where the user can choose from the values provided
     Returns the value of the selected key, or None if no selection was made
@@ -1881,7 +2413,9 @@ def selector(dialog_name, select_from, setting_valid=False, sort_by=None, revers
         values = None
     if not keys:
         return None
-    if (setting_valid and int(addon.getSetting(setting_valid)) != 4) or (len(keys) == 1 and not show_on_one):
+    if (setting_valid and int(addon.getSetting(setting_valid)) != 4) or (
+        len(keys) == 1 and not show_on_one
+    ):
         selected = 0
     else:
         selected = dialog.select(dialog_name, keys)
@@ -1891,24 +2425,27 @@ def selector(dialog_name, select_from, setting_valid=False, sort_by=None, revers
 
 
 def prefquality(video_list, sort_by=None, reverse=False):
-    maxquality = int(addon.getSetting('qualityask'))
+    maxquality = int(addon.getSetting("qualityask"))
     if maxquality == 4:
-        return selector(i18n('pick_qual'), video_list, sort_by=sort_by, reverse=reverse)
+        return selector(i18n("pick_qual"), video_list, sort_by=sort_by, reverse=reverse)
 
     vidurl = None
     if isinstance(video_list, dict):
         qualities = [2160, 1080, 720, 576]
         quality = qualities[maxquality]
         for key in video_list.copy():
-            if key.lower().endswith('p60'):
-                video_list[key.replace('p60', '')] = video_list[key]
+            if key.lower().endswith("p60"):
+                video_list[key.replace("p60", "")] = video_list[key]
                 video_list.pop(key)
             else:
-                if key.lower() == '4k':
-                    video_list['2160'] = video_list[key]
+                if key.lower() == "4k":
+                    video_list["2160"] = video_list[key]
                     video_list.pop(key)
 
-        video_list = [(int(''.join([y for y in key if y.isdigit()])), value) for key, value in list(video_list.items())]
+        video_list = [
+            (int("".join([y for y in key if y.isdigit()])), value)
+            for key, value in list(video_list.items())
+        ]
         video_list = sorted(video_list, reverse=True)
 
         for video in video_list:
@@ -1930,20 +2467,30 @@ def prefquality(video_list, sort_by=None, reverse=False):
     return vidurl
 
 
-class VideoPlayer():
-    def __init__(self, name, download=False, regex=r'''(?:src|SRC|href|HREF)=\s*["']([^'"]+)''', direct_regex="""<source.*?src=(?:"|')([^"']+)[^>]+>""", IA_check='check'):
+class VideoPlayer:
+    def __init__(
+        self,
+        name,
+        download=False,
+        regex=r"""(?:src|SRC|href|HREF)=\s*["']([^'"]+)""",
+        direct_regex="""<source.*?src=(?:"|')([^"']+)[^>]+>""",
+        IA_check="check",
+    ):
         self.regex = regex
         self.direct_regex = direct_regex
         self.name = name
         self.download = download
         self.progress = progress
-        self.progress.create(i18n('plyng_vid'), "[CR]{0}[CR]".format(i18n('srch_vid')))
-        self.bypass_string = addon.getSetting('filter_hosters') or None
+        self.progress.create(i18n("plyng_vid"), "[CR]{0}[CR]".format(i18n("srch_vid")))
+        self.bypass_string = addon.getSetting("filter_hosters") or None
         self.IA_check = IA_check
 
         import resolveurl
+
         self.resolveurl = resolveurl
-        xxx_plugins_path = 'special://home/addons/script.module.resolveurl.xxx/resources/plugins/'
+        xxx_plugins_path = (
+            "special://home/addons/script.module.resolveurl.xxx/resources/plugins/"
+        )
         if xbmcvfs.exists(xxx_plugins_path):
             self.resolveurl.add_plugin_dirs(TRANSLATEPATH(xxx_plugins_path))
 
@@ -1954,12 +2501,13 @@ class VideoPlayer():
                 inst.progress.close()
                 return
             return f(inst, *args, **kwargs)
+
         return wrapped
 
     @_cancellable
     def _clean_urls(self, url_list):
-        filtered_words = ['google']
-        filtered_ends = ['.js', '.css', '/premium.html', '.jpg', '.gif', '.png', '.ico']
+        filtered_words = ["google"]
+        filtered_ends = [".js", ".css", "/premium.html", ".jpg", ".gif", ".png", ".ico"]
         added = set()
         new_list = []
         for source in url_list:
@@ -1975,7 +2523,7 @@ class VideoPlayer():
                     to_break = True
                     break
             else:
-                source.title = source._domain.split('.')[0]
+                source.title = source._domain.split(".")[0]
                 added.add(source._url)
                 new_list.append(source)
         return new_list
@@ -1984,9 +2532,13 @@ class VideoPlayer():
         if not self.bypass_string:
             return video_list
 
-        bypass_list = self.bypass_string.split(';')
+        bypass_list = self.bypass_string.split(";")
         original_videos = video_list.copy()
-        video_list = [video for video in video_list if not any(hoster.lower() in video.lower() for hoster in bypass_list)]
+        video_list = [
+            video
+            for video in video_list
+            if not any(hoster.lower() in video.lower() for hoster in bypass_list)
+        ]
 
         if not video_list:
             video_list = original_videos
@@ -1997,45 +2549,58 @@ class VideoPlayer():
         if not self.bypass_string:
             return False
 
-        bypass_list = self.bypass_string.split(';')
+        bypass_list = self.bypass_string.split(";")
         if any(x.lower() in videourl.lower() for x in bypass_list):
             return True
         return False
 
-    def play_from_site_link(self, url, referrer=''):
-        self.progress.update(25, "[CR]{0}[CR]".format(i18n('load_vpage')))
+    def play_from_site_link(self, url, referrer=""):
+        self.progress.update(25, "[CR]{0}[CR]".format(i18n("load_vpage")))
         html = getHtml(url, referrer)
         self.play_from_html(html, url)
 
     @_cancellable
     def play_from_html(self, html, url=None):
-        self.progress.update(40, "[CR]{0}[CR]".format(i18n('srch_host')))
+        self.progress.update(40, "[CR]{0}[CR]".format(i18n("srch_host")))
         solved_suburls = self._check_suburls(html, url)
-        self.progress.update(60, "[CR]{0}[CR]".format(i18n('srch_host')))
+        self.progress.update(60, "[CR]{0}[CR]".format(i18n("srch_host")))
         direct_links = None
         if self.direct_regex:
-            direct_links = re.compile(self.direct_regex, re.DOTALL | re.IGNORECASE).findall(html)
+            direct_links = re.compile(
+                self.direct_regex, re.DOTALL | re.IGNORECASE
+            ).findall(html)
             if direct_links:
-                selected = urllib_parse.urljoin(url, direct_links[0]) if direct_links[0].startswith('/') else direct_links[0]
-                self.progress.update(50, "[CR]{0}[CR]".format(i18n('play_dlink')))
+                selected = (
+                    urllib_parse.urljoin(url, direct_links[0])
+                    if direct_links[0].startswith("/")
+                    else direct_links[0]
+                )
+                self.progress.update(50, "[CR]{0}[CR]".format(i18n("play_dlink")))
                 self.play_from_direct_link(selected)
             elif not self.regex:
-                notify(i18n('oh_oh'), i18n('not_found'))
+                notify(i18n("oh_oh"), i18n("not_found"))
         if self.regex and not direct_links:
             scraped_sources = self.resolveurl.scrape_supported(html, self.regex)
             scraped_sources = scraped_sources if scraped_sources else []
             scraped_sources.extend(solved_suburls)
             self.play_from_link_list(scraped_sources)
         if not self.direct_regex and not self.regex:
-            raise ValueError(i18n('no_regex'))
+            raise ValueError(i18n("no_regex"))
 
     @_cancellable
     def play_from_link_list(self, links):
         use_universal = addon.getSetting("universal_resolvers") == "true"
         links = self.bypass_hosters(links)
-        sources = self._clean_urls([self.resolveurl.HostedMediaFile(x, title=x.split('/')[2], include_universal=use_universal) for x in links])
+        sources = self._clean_urls(
+            [
+                self.resolveurl.HostedMediaFile(
+                    x, title=x.split("/")[2], include_universal=use_universal
+                )
+                for x in links
+            ]
+        )
         if not sources:
-            notify(i18n('oh_oh'), i18n('not_found'))
+            notify(i18n("oh_oh"), i18n("not_found"))
             return
         self._select_source(sources)
 
@@ -2053,31 +2618,46 @@ class VideoPlayer():
         if isinstance(source, six.string_types):
             self.play_from_link_list([source])
             return
-        self.progress.update(80, "[CR]{0}[CR]{1} {2}".format(i18n('to_smr'), i18n('play_from'), source.title))
+        self.progress.update(
+            80,
+            "[CR]{0}[CR]{1} {2}".format(
+                i18n("to_smr"), i18n("play_from"), source.title
+            ),
+        )
         try:
             link = source.resolve()
         except self.resolveurl.resolver.ResolverError:
             link = False  # ResolveURL returns False in some cases when resolving fails
         if not link:
-            notify(i18n('rslv_fail'), '{0} {1}'.format(source.title, i18n('not_rslv')))
+            notify(i18n("rslv_fail"), "{0} {1}".format(source.title, i18n("not_rslv")))
         else:
             playvid(link, self.name, self.download, IA_check=self.IA_check)
 
     @_cancellable
     def play_from_direct_link(self, direct_link):
-        self.progress.update(90, "[CR]{0}[CR]".format(i18n('play_dlink')))
+        self.progress.update(90, "[CR]{0}[CR]".format(i18n("play_dlink")))
         playvid(direct_link, self.name, self.download, IA_check=self.IA_check)
 
     @_cancellable
     def _check_suburls(self, html, referrer_url):
-        sdurl = re.compile(r'''streamdefence\.com/view.php\?ref=([^"']+)''', re.DOTALL | re.IGNORECASE).findall(html)
-        sdurl_world = re.compile(r'''.strdef\.world/([^"']+)''', re.DOTALL | re.IGNORECASE).findall(html)
-        fcurl = re.compile(r'filecrypt\.cc/Container/([^\.]+)\.html', re.DOTALL | re.IGNORECASE).findall(html)
-        shortixurl = re.compile(r'1155xmv\.com/\?u=(\w+)', re.DOTALL | re.IGNORECASE).findall(html)
-        klurl = re.compile(r'(https://www.keeplinks.org/[^/]+/[0-9a-fA-f]+)', re.DOTALL | re.IGNORECASE).findall(html)
+        sdurl = re.compile(
+            r"""streamdefence\.com/view.php\?ref=([^"']+)""", re.DOTALL | re.IGNORECASE
+        ).findall(html)
+        sdurl_world = re.compile(
+            r""".strdef\.world/([^"']+)""", re.DOTALL | re.IGNORECASE
+        ).findall(html)
+        fcurl = re.compile(
+            r"filecrypt\.cc/Container/([^\.]+)\.html", re.DOTALL | re.IGNORECASE
+        ).findall(html)
+        shortixurl = re.compile(
+            r"1155xmv\.com/\?u=(\w+)", re.DOTALL | re.IGNORECASE
+        ).findall(html)
+        klurl = re.compile(
+            r"(https://www.keeplinks.org/[^/]+/[0-9a-fA-f]+)", re.DOTALL | re.IGNORECASE
+        ).findall(html)
         links = []
         if sdurl or sdurl_world or fcurl or shortixurl or klurl:
-            self.progress.update(50, "[CR]{0}[CR]".format(i18n('fnd_sbsite')))
+            self.progress.update(50, "[CR]{0}[CR]".format(i18n("fnd_sbsite")))
         if sdurl:
             links.extend(self._solve_streamdefence(sdurl, referrer_url, False))
         elif sdurl_world:
@@ -2092,31 +2672,37 @@ class VideoPlayer():
 
     @_cancellable
     def _solve_streamdefence(self, sdurls, url, world=False):
-        self.progress.update(55, "[CR]{0}[CR]".format(i18n('load_strdfn')))
-        sdpages = ''
+        self.progress.update(55, "[CR]{0}[CR]".format(i18n("load_strdfn")))
+        sdpages = ""
         for sd_url in sdurls:
             if not world:
-                sdurl = 'http://www.streamdefence.com/view.php?ref=' + sd_url
+                sdurl = "http://www.streamdefence.com/view.php?ref=" + sd_url
             else:
-                sdurl = 'https://www.strdef.world/' + sd_url
+                sdurl = "https://www.strdef.world/" + sd_url
             sdsrc = getHtml(sdurl, url if url else sdurl)
             sdpage = streamdefence(sdsrc)
             sdpages += sdpage
-        sources = set(re.compile(r'<iframe.+?src="([^"]+)', re.DOTALL | re.IGNORECASE).findall(sdpages))
+        sources = set(
+            re.compile(r'<iframe.+?src="([^"]+)', re.DOTALL | re.IGNORECASE).findall(
+                sdpages
+            )
+        )
         return sources
 
     @_cancellable
     def _solve_filecrypt(self, fc_urls, url):
-        self.progress.update(55, "[CR]{0}[CR]".format(i18n('load_fcrypt')))
+        self.progress.update(55, "[CR]{0}[CR]".format(i18n("load_fcrypt")))
         sites = set()
         for fc_url in fc_urls:
-            fcurl = 'http://filecrypt.cc/Container/' + fc_url + ".html"
+            fcurl = "http://filecrypt.cc/Container/" + fc_url + ".html"
             fcsrc = getHtml(fcurl, url if url else fcurl, base_hdrs)
-            fcmatch = re.compile(r"openLink.?'([\w\-]*)',", re.DOTALL | re.IGNORECASE).findall(fcsrc)
+            fcmatch = re.compile(
+                r"openLink.?'([\w\-]*)',", re.DOTALL | re.IGNORECASE
+            ).findall(fcsrc)
             for fclink in fcmatch:
                 fcpage = "http://filecrypt.cc/Link/" + fclink + ".html"
                 fcpagesrc = getHtml(fcpage, fcurl)
-                fclink2 = re.search('''top.location.href='([^']+)''', fcpagesrc)
+                fclink2 = re.search("""top.location.href='([^']+)""", fcpagesrc)
                 if fclink2:
                     try:
                         fcurl2 = getVideoLink(fclink2.group(1), fcpage)
@@ -2127,92 +2713,141 @@ class VideoPlayer():
 
     @_cancellable
     def _solve_shortix(self, shortixurls, url):
-        self.progress.update(55, "[CR]{0}[CR]".format(i18n('load_shortix')))
+        self.progress.update(55, "[CR]{0}[CR]".format(i18n("load_shortix")))
         sources = set()
         for shortix in shortixurls:
-            shortixurl = 'https://1155xmv.com/?u=' + shortix
+            shortixurl = "https://1155xmv.com/?u=" + shortix
             shortixsrc = getHtml(shortixurl, url if url else shortixurl)
-            sources.add(re.compile('src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(shortixsrc)[0])
+            sources.add(
+                re.compile('src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(
+                    shortixsrc
+                )[0]
+            )
         return sources
 
     @_cancellable
     def _solve_keeplinks(self, klurls, url):
-        self.progress.update(55, "[CR]{0}[CR]".format(i18n('load_kl')))
+        self.progress.update(55, "[CR]{0}[CR]".format(i18n("load_kl")))
         sources = []
         klurls = set(klurls)
         for klurl in klurls:
-            headers = {'Cookie': 'flag[{0}]=1'.format(klurl.split('/')[-1])}
+            headers = {"Cookie": "flag[{0}]=1".format(klurl.split("/")[-1])}
             klsrc = getHtml(klurl, klurl, headers=headers)
-            srcs = re.compile('class="numlive.+?href="([^"\r]+)', re.DOTALL | re.IGNORECASE).findall(klsrc)
+            srcs = re.compile(
+                'class="numlive.+?href="([^"\r]+)', re.DOTALL | re.IGNORECASE
+            ).findall(klsrc)
             sources.extend(srcs)
         return sources
 
 
 def showimage(url):
-    xbmc.executebuiltin('ShowPicture({0})'.format(url))
+    xbmc.executebuiltin("ShowPicture({0})".format(url))
 
 
-def playvideo(videosource, name, download=None, url=None, regex=r'''(?:src|SRC|href|HREF)=\s*["']([^'"]+)'''):
+def playvideo(
+    videosource,
+    name,
+    download=None,
+    url=None,
+    regex=r"""(?:src|SRC|href|HREF)=\s*["']([^'"]+)""",
+):
     """Deprecated function, use VideoPlayer class.
     Exists for compatiblity with old site plug-ins."""
     vp = VideoPlayer(name, download, regex)
     vp.play_from_html(videosource)
 
 
-def PLAYVIDEO(url, name, download=None, regex=r'''(?:src|SRC|href|HREF)=\s*["']([^'"]+)'''):
+def PLAYVIDEO(
+    url, name, download=None, regex=r"""(?:src|SRC|href|HREF)=\s*["']([^'"]+)"""
+):
     """Deprecated function, use VideoPlayer class.
     Exists for compatiblity with old site plug-ins."""
     vp = VideoPlayer(name, download, regex)
     vp.play_from_site_link(url, url)
 
 
-def next_page(site, list_mode, html, re_npurl, re_npnr=None, re_lpnr=None, videos_per_page=None, contextm=None, baseurl=None):
+def next_page(
+    site,
+    list_mode,
+    html,
+    re_npurl,
+    re_npnr=None,
+    re_lpnr=None,
+    videos_per_page=None,
+    contextm=None,
+    baseurl=None,
+):
     match = re.compile(re_npurl, re.DOTALL | re.IGNORECASE).findall(html)
     if match:
-        npurl = fix_url(match[0], site.url, baseurl).replace('&amp;', '&')
-        np = ''
+        npurl = fix_url(match[0], site.url, baseurl).replace("&amp;", "&")
+        np = ""
         npnr = 0
         if re_npnr:
             match = re.compile(re_npnr, re.DOTALL | re.IGNORECASE).findall(html)
             if match:
-                npnr = match[0].replace(',', '')
+                npnr = match[0].replace(",", "")
                 np = npnr
-        lp = ''
+        lp = ""
         lpnr = 0
         if re_lpnr:
             match = re.compile(re_lpnr, re.DOTALL | re.IGNORECASE).findall(html)
-            lpnr = match[0].replace(',', '') if match else '0'
+            lpnr = match[0].replace(",", "") if match else "0"
             if videos_per_page:
                 lpnr = int(ceil(int(lpnr) / int(videos_per_page)))
-            lp = '/' + str(lpnr) if match else ''
+            lp = "/" + str(lpnr) if match else ""
         if np:
-            np = '(' + np
-            lp = lp + ')'
+            np = "(" + np
+            lp = lp + ")"
 
         cm = None
         if contextm:
-            cm_page = (addon_sys + "?mode=" + str(contextm) + "&list_mode=" + list_mode + "&url=" + urllib_parse.quote_plus(npurl) + "&np=" + str(npnr) + "&lp=" + str(lpnr))
-            cm = [('[COLOR violet]Goto Page #[/COLOR]', 'RunPlugin(' + cm_page + ')')]
-        site.add_dir('Next Page {}{}'.format(np, lp), npurl, list_mode, contextm=cm)
+            cm_page = (
+                addon_sys
+                + "?mode="
+                + str(contextm)
+                + "&list_mode="
+                + list_mode
+                + "&url="
+                + urllib_parse.quote_plus(npurl)
+                + "&np="
+                + str(npnr)
+                + "&lp="
+                + str(lpnr)
+            )
+            cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
+        site.add_dir("Next Page {}{}".format(np, lp), npurl, list_mode, contextm=cm)
 
 
 def fix_url(url, siteurl=None, baseurl=None):
     if siteurl:
         baseurl = baseurl if baseurl else siteurl[:-1]
-        if url.startswith('//'):
-            url = siteurl.split(':')[0] + ':' + url
-        elif url.startswith('?'):
+        if url.startswith("//"):
+            url = siteurl.split(":")[0] + ":" + url
+        elif url.startswith("?"):
             url = baseurl + url
-        elif url.startswith('/'):
+        elif url.startswith("/"):
             url = siteurl[:-1] + url
-        elif '/' not in url:
+        elif "/" not in url:
             url = baseurl + url
-        elif not url.startswith('http'):
+        elif not url.startswith("http"):
             url = siteurl + url
     return url
 
 
-def videos_list(site, playvid, html, delimiter, re_videopage, re_name=None, re_img=None, re_quality=None, re_duration=None, contextm=None, skip=None, thumbnails=None):
+def videos_list(
+    site,
+    playvid,
+    html,
+    delimiter,
+    re_videopage,
+    re_name=None,
+    re_img=None,
+    re_quality=None,
+    re_duration=None,
+    contextm=None,
+    skip=None,
+    thumbnails=None,
+):
     """Legacy regex driven listing helper.
 
     .. deprecated:: 1.1.167
@@ -2234,39 +2869,71 @@ def videos_list(site, playvid, html, delimiter, re_videopage, re_name=None, re_i
                 videopage = fix_url(match.group(1), site.url)
             else:
                 continue
-            name = ''
+            name = ""
             if re_name:
                 match = re.search(re_name, video, flags=re.DOTALL | re.IGNORECASE)
                 if match:
-                    name = re.sub(r"\\u([0-9A-Fa-f]{4})", lambda x: six.unichr(int(x.group(1), 16)), match.group(1).strip())
-                    name = name.encode('utf-8', 'ignore').decode("utf-8")
+                    name = re.sub(
+                        r"\\u([0-9A-Fa-f]{4})",
+                        lambda x: six.unichr(int(x.group(1), 16)),
+                        match.group(1).strip(),
+                    )
+                    name = name.encode("utf-8", "ignore").decode("utf-8")
                     name = six.ensure_str(name)
                     name = cleantext(name)
-            img = ''
+            img = ""
             if re_img:
                 match = re.search(re_img, video, flags=re.DOTALL | re.IGNORECASE)
                 if match:
-                    img = fix_url(match.group(1).replace('&amp;', '&'), site.url)
+                    img = fix_url(match.group(1).replace("&amp;", "&"), site.url)
                     if thumbnails:
                         img = thumbnails.fix_img(img)
-            quality = ''
+            quality = ""
             if re_quality:
                 match = re.search(re_quality, video, flags=re.DOTALL | re.IGNORECASE)
                 if match:
                     quality = match.group(1) if match.groups() else match.group(0)
-            duration = ''
+            duration = ""
             if re_duration:
                 match = re.search(re_duration, video, flags=re.DOTALL | re.IGNORECASE)
                 if match:
                     duration = match.group(1)
-            cm = ''
+            cm = ""
             if contextm:
                 if isinstance(contextm, six.string_types):
-                    cm_related = (addon_sys + "?mode=" + str(contextm) + "&url=" + urllib_parse.quote_plus(videopage))
-                    cm = [('[COLOR violet]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')')]
+                    cm_related = (
+                        addon_sys
+                        + "?mode="
+                        + str(contextm)
+                        + "&url="
+                        + urllib_parse.quote_plus(videopage)
+                    )
+                    cm = [
+                        (
+                            "[COLOR violet]Related videos[/COLOR]",
+                            "RunPlugin(" + cm_related + ")",
+                        )
+                    ]
                 else:
-                    cm = [(x[0], x[1].replace("&url=", "&url=" + urllib_parse.quote_plus(videopage))) for x in contextm]
-            site.add_download_link(name, videopage, playvid, img, name, quality=quality, duration=duration, contextm=cm)
+                    cm = [
+                        (
+                            x[0],
+                            x[1].replace(
+                                "&url=", "&url=" + urllib_parse.quote_plus(videopage)
+                            ),
+                        )
+                        for x in contextm
+                    ]
+            site.add_download_link(
+                name,
+                videopage,
+                playvid,
+                img,
+                name,
+                quality=quality,
+                duration=duration,
+                contextm=cm,
+            )
 
 
 def _bencode(text):
@@ -2279,16 +2946,18 @@ def _bdecode(text, binary=False):
 
 
 def get_packed_data(html):
-    packed_data = ''
-    for match in re.finditer(r'''(eval\s*\(function\(p,a,c,k,e,.*?)</script>''', html, re.DOTALL | re.I):
+    packed_data = ""
+    for match in re.finditer(
+        r"""(eval\s*\(function\(p,a,c,k,e,.*?)</script>""", html, re.DOTALL | re.I
+    ):
         r = match.group(1)
-        t = re.findall(r'(eval\s*\(function\(p,a,c,k,e,)', r, re.DOTALL | re.IGNORECASE)
+        t = re.findall(r"(eval\s*\(function\(p,a,c,k,e,)", r, re.DOTALL | re.IGNORECASE)
         if len(t) == 1:
             if jsunpack.detect(r):
                 packed_data += jsunpack.unpack(r)
         else:
-            t = r.split('eval')
-            t = ['eval' + x for x in t if x]
+            t = r.split("eval")
+            t = ["eval" + x for x in t if x]
             for r in t:
                 if jsunpack.detect(r):
                     packed_data += jsunpack.unpack(r)
@@ -2296,7 +2965,9 @@ def get_packed_data(html):
 
 
 class LookupInfo:
-    def __init__(self, siteurl, url, default_mode, lookup_list, starthtml=None, stophtml=None):
+    def __init__(
+        self, siteurl, url, default_mode, lookup_list, starthtml=None, stophtml=None
+    ):
         self.siteurl = siteurl
         self.url = url
         self.default_mode = default_mode
@@ -2306,7 +2977,7 @@ class LookupInfo:
 
     def url_constructor(self, url):
         # Default url_constructor - can be overridden in derived classes
-        return 'http:' + url if url.startswith('//') else self.siteurl + url
+        return "http:" + url if url.startswith("//") else self.siteurl + url
 
     def getinfo(self, headers=base_hdrs):
         try:
@@ -2324,13 +2995,19 @@ class LookupInfo:
 
         for item_name, pattern, mode in self.lookup_list:
             if isinstance(pattern, list):
-                match = re.compile(pattern[0], re.DOTALL | re.IGNORECASE).findall(listhtml)
+                match = re.compile(pattern[0], re.DOTALL | re.IGNORECASE).findall(
+                    listhtml
+                )
                 if match:
                     matchhtml = match[0]
                     pattern = pattern[1]
-                    matches = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(matchhtml)
+                    matches = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(
+                        matchhtml
+                    )
             else:
-                matches = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(listhtml)
+                matches = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(
+                    listhtml
+                )
 
             if matches:
                 for url, name in matches:
@@ -2340,25 +3017,30 @@ class LookupInfo:
                     infodict[name] = (self.url_constructor(url), mode)
 
         if infodict:
-            selected_item = selector('Choose item', infodict, show_on_one=True)
+            selected_item = selector("Choose item", infodict, show_on_one=True)
             if not selected_item:
                 return
-            contexturl = (addon_sys
-                          + "?mode=" + selected_item[1]
-                          + "&url=" + urllib_parse.quote_plus(selected_item[0]))
-            xbmc.executebuiltin('Container.Update(' + contexturl + ')')
+            contexturl = (
+                addon_sys
+                + "?mode="
+                + selected_item[1]
+                + "&url="
+                + urllib_parse.quote_plus(selected_item[0])
+            )
+            xbmc.executebuiltin("Container.Update(" + contexturl + ")")
         else:
             if len(item_names) > 1:
-                item_names_str = ', '.join(item_names[:-1]) + ' or ' + item_names[-1]
+                item_names_str = ", ".join(item_names[:-1]) + " or " + item_names[-1]
             else:
                 item_names_str = item_names[0]
-            notify('Notify', 'No {} found for this video'.format(item_names_str))
+            notify("Notify", "No {} found for this video".format(item_names_str))
         return
 
 
 class logger:
-    log_message_prefix = '[{} ({})]: '.format(
-        addon.getAddonInfo('name'), addon.getAddonInfo('version'))
+    log_message_prefix = "[{} ({})]: ".format(
+        addon.getAddonInfo("name"), addon.getAddonInfo("version")
+    )
 
     @staticmethod
     def log(message, level=xbmc.LOGDEBUG):
@@ -2394,7 +3076,7 @@ class Thumbnails:
     def __init__(self, site):
         if KODIVER < 21:
             return
-        self.path = os.path.join(profileDir, 'thumbnails', site)
+        self.path = os.path.join(profileDir, "thumbnails", site)
         if not os.path.exists(self.path):
             os.makedirs(self.path)
         self.cache_time = 480
@@ -2412,7 +3094,7 @@ class Thumbnails:
         try:
             response = urlopen(Request(img, headers=base_hdrs))
             try:
-                with open(img_path, 'wb') as f:
+                with open(img_path, "wb") as f:
                     f.write(response.read())
             except IOError as e:
                 kodilog("Failed to write image to {}: {}".format(img_path, e))
@@ -2422,8 +3104,8 @@ class Thumbnails:
     def fix_img(self, img):
         if KODIVER < 21:
             return img
-        thumbnail = urllib_parse.quote(urllib_parse.urlparse(img).path, safe='')
-        img_path = os.path.join(self.path, thumbnail).replace('.jpg', '.webp')
+        thumbnail = urllib_parse.quote(urllib_parse.urlparse(img).path, safe="")
+        img_path = os.path.join(self.path, thumbnail).replace(".jpg", ".webp")
         if os.path.exists(img_path):
             return img_path
         Thread(target=self.download_image, args=(img, img_path), daemon=True).start()

@@ -1,19 +1,19 @@
-'''
-    Cumination
-    Copyright (C) 2016 Whitecream, hdgdl
+"""
+Cumination
+Copyright (C) 2016 Whitecream, hdgdl
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
 
 import re
 import json
@@ -24,7 +24,14 @@ from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('naked', '[COLOR hotpink]Naked[/COLOR]', 'https://www.naked.com/', 'naked.png', 'naked', True)
+site = AdultSite(
+    "naked",
+    "[COLOR hotpink]Naked[/COLOR]",
+    "https://www.naked.com/",
+    "naked.png",
+    "naked",
+    True,
+)
 
 
 @site.register(default_mode=True)
@@ -32,13 +39,29 @@ def Main():
     female = True if utils.addon.getSetting("chatfemale") == "true" else False
     male = True if utils.addon.getSetting("chatmale") == "true" else False
     trans = True if utils.addon.getSetting("chattrans") == "true" else False
-    site.add_dir('[COLOR red]Refresh naked.com images[/COLOR]', '', 'clean_database', '', Folder=False)
+    site.add_dir(
+        "[COLOR red]Refresh naked.com images[/COLOR]",
+        "",
+        "clean_database",
+        "",
+        Folder=False,
+    )
     if female:
-        site.add_dir('[COLOR hotpink]Females[/COLOR]', site.url + 'live/girls/', 'List', '', 1)
+        site.add_dir(
+            "[COLOR hotpink]Females[/COLOR]", site.url + "live/girls/", "List", "", 1
+        )
     if male:
-        site.add_dir('[COLOR hotpink]Males[/COLOR]', site.url + 'live/guys/', 'List', '', 1)
+        site.add_dir(
+            "[COLOR hotpink]Males[/COLOR]", site.url + "live/guys/", "List", "", 1
+        )
     if trans:
-        site.add_dir('[COLOR hotpink]Transsexual[/COLOR]', site.url + 'live/trans/', 'List', '', 1)
+        site.add_dir(
+            "[COLOR hotpink]Transsexual[/COLOR]",
+            site.url + "live/trans/",
+            "List",
+            "",
+            1,
+        )
     utils.eod()
 
 
@@ -51,9 +74,9 @@ def List(url):
         """Return JSON array string for the models listing."""
 
         soup = utils.parse_html(html)
-        for script_tag in soup.find_all('script'):
+        for script_tag in soup.find_all("script"):
             script_text = script_tag.string or script_tag.get_text()
-            if not script_text or 'models' not in script_text:
+            if not script_text or "models" not in script_text:
                 continue
 
             for marker in ("models':", '"models":'):
@@ -61,20 +84,20 @@ def List(url):
                 if idx == -1:
                     continue
 
-                start = script_text.find('[', idx)
+                start = script_text.find("[", idx)
                 if start == -1:
                     continue
 
                 depth = 0
                 for pos in range(start, len(script_text)):
                     char = script_text[pos]
-                    if char == '[':
+                    if char == "[":
                         depth += 1
-                    elif char == ']':
+                    elif char == "]":
                         depth -= 1
                         if depth == 0:
-                            payload = script_text[start:pos + 1].strip()
-                            while payload.endswith(','):
+                            payload = script_text[start : pos + 1].strip()
+                            while payload.endswith(","):
                                 payload = payload[:-1].rstrip()
                             return payload
         return None
@@ -82,71 +105,97 @@ def List(url):
     try:
         listhtml = utils._getHtml(url, site.url, timeout=30)
     except Exception as e:
-        utils.kodilog('Naked: Error fetching page: {}'.format(str(e)))
-        utils.notify('Error', 'Unable to load naked.com page')
+        utils.kodilog("Naked: Error fetching page: {}".format(str(e)))
+        utils.notify("Error", "Unable to load naked.com page")
         utils.eod()
         return
 
     payload = _extract_models_payload(listhtml)
 
     if not payload:
-        utils.kodilog('Naked: models payload not found, falling back to legacy parser')
-        match = re.search(r"models[\"']:\s*(\[[^\]]*\])", listhtml, re.DOTALL | re.IGNORECASE)
+        utils.kodilog("Naked: models payload not found, falling back to legacy parser")
+        match = re.search(
+            r"models[\"']:\s*(\[[^\]]*\])", listhtml, re.DOTALL | re.IGNORECASE
+        )
         payload = match.group(1).strip() if match else None
 
     if not payload:
-        utils.kodilog('Naked: Unable to find models payload in page')
-        utils.notify('Error', 'Unable to load naked.com models (site may have changed)')
+        utils.kodilog("Naked: Unable to find models payload in page")
+        utils.notify("Error", "Unable to load naked.com models (site may have changed)")
         utils.eod()
         return
 
     try:
         models = json.loads(payload)
     except ValueError as e:
-        utils.kodilog('Naked: Failed to decode models JSON: {}'.format(str(e)))
-        utils.notify('Error', 'Unable to parse naked.com models')
+        utils.kodilog("Naked: Failed to decode models JSON: {}".format(str(e)))
+        utils.notify("Error", "Unable to parse naked.com models")
         utils.eod()
         return
 
     if not models or len(models) == 0:
-        utils.kodilog('Naked: Models array is empty - site may be loading data dynamically')
-        utils.notify('No Models Online', 'No models currently broadcasting')
+        utils.kodilog(
+            "Naked: Models array is empty - site may be loading data dynamically"
+        )
+        utils.notify("No Models Online", "No models currently broadcasting")
         utils.eod()
         return
 
     for model in models:
         try:
-            name = model.get('model_seo_name', 'Unknown').replace('-', ' ').title()
-            age = model.get('age', 'N/A')
-            subject = utils.cleantext(model.get('tagline', '') if utils.PY3 else model.get('tagline', '').encode('utf8'))
-            if model.get('location'):
-                subject += "[CR][CR][COLOR deeppink]Location: [/COLOR]{0}[CR][CR]".format(
-                    model.get('location') if utils.PY3 else model.get('location').encode('utf8'))
-            if model.get('topic'):
-                subject += utils.cleantext(model.get('topic') if utils.PY3 else model.get('topic').encode('utf8'))
-            status = model.get('room_status') if model.get('room_status') != 'In Open' else ''
+            name = model.get("model_seo_name", "Unknown").replace("-", " ").title()
+            age = model.get("age", "N/A")
+            subject = utils.cleantext(
+                model.get("tagline", "")
+                if utils.PY3
+                else model.get("tagline", "").encode("utf8")
+            )
+            if model.get("location"):
+                subject += (
+                    "[CR][CR][COLOR deeppink]Location: [/COLOR]{0}[CR][CR]".format(
+                        model.get("location")
+                        if utils.PY3
+                        else model.get("location").encode("utf8")
+                    )
+                )
+            if model.get("topic"):
+                subject += utils.cleantext(
+                    model.get("topic")
+                    if utils.PY3
+                    else model.get("topic").encode("utf8")
+                )
+            status = (
+                model.get("room_status")
+                if model.get("room_status") != "In Open"
+                else ""
+            )
             name = name + " [COLOR deeppink][" + str(age) + "][/COLOR] " + status
-            mid = model.get('model_id')
+            mid = model.get("model_id")
 
             if not mid:
-                utils.kodilog('Naked: Skipping model with missing model_id')
+                utils.kodilog("Naked: Skipping model with missing model_id")
                 continue
 
             # Try multiple thumbnail URL formats (CDN may change)
-            img = 'https://live-screencaps.vscdns.com/{0}-desktop.jpg'.format(mid)
+            img = "https://live-screencaps.vscdns.com/{0}-desktop.jpg".format(mid)
             # Fallback thumbnail patterns:
             # img_fallback = 'https://live-screencaps.vscdns.com/{0}.jpg'.format(mid)
 
-            video_host = model.get('video_host', '')
+            video_host = model.get("video_host", "")
             if not video_host:
-                utils.kodilog('Naked: Skipping model {0} with missing video_host'.format(mid))
+                utils.kodilog(
+                    "Naked: Skipping model {0} with missing video_host".format(mid)
+                )
                 continue
 
-            videourl = 'https://ws.vs3.com/chat/get-stream-urls.php?model_id={0}&video_host={1}'.format(
-                mid, video_host)
-            site.add_download_link(name, videourl, 'Playvid', img, subject, noDownload=True)
+            videourl = "https://ws.vs3.com/chat/get-stream-urls.php?model_id={0}&video_host={1}".format(
+                mid, video_host
+            )
+            site.add_download_link(
+                name, videourl, "Playvid", img, subject, noDownload=True
+            )
         except Exception as e:
-            utils.kodilog('Naked: Error processing model: {}'.format(str(e)))
+            utils.kodilog("Naked: Error processing model: {}".format(str(e)))
             continue
     utils.eod()
 
@@ -156,16 +205,21 @@ def clean_database(showdialog=True):
     conn = sqlite3.connect(utils.TRANSLATEPATH("special://database/Textures13.db"))
     try:
         with conn:
-            list = conn.execute("SELECT id, cachedurl FROM texture WHERE url LIKE ?;", ('%' + ".vscdns.com" + '%',))
+            list = conn.execute(
+                "SELECT id, cachedurl FROM texture WHERE url LIKE ?;",
+                ("%" + ".vscdns.com" + "%",),
+            )
             for row in list:
                 conn.execute("DELETE FROM sizes WHERE idtexture = ?;", (row[0],))
                 try:
                     os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
                 except Exception:
                     pass
-            conn.execute("DELETE FROM texture WHERE url LIKE ?;", ('%' + ".vscdns.com" + '%',))
+            conn.execute(
+                "DELETE FROM texture WHERE url LIKE ?;", ("%" + ".vscdns.com" + "%",)
+            )
             if showdialog:
-                utils.notify('Finished', 'naked.com images cleared')
+                utils.notify("Finished", "naked.com images cleared")
     except Exception:
         pass
 
@@ -174,11 +228,14 @@ def clean_database(showdialog=True):
 def Playvid(url, name):
     playmode = 0  # int(utils.addon.getSetting('chatplay'))
     url = "{0}&t={1}".format(url, int(time.time() * 1000))
-    params = urllib_parse.parse_qs(url.split('?')[1])
+    params = urllib_parse.parse_qs(url.split("?")[1])
 
     # Retry logic for chat-room-interface API (handles occasional 500 errors)
-    murl = '{0}webservices/chat-room-interface.php?a=login_room&model_id={1}&t={2}'.format(
-        site.url, params['model_id'][0], params['t'][0])
+    murl = (
+        "{0}webservices/chat-room-interface.php?a=login_room&model_id={1}&t={2}".format(
+            site.url, params["model_id"][0], params["t"][0]
+        )
+    )
 
     mdata = None
     for attempt in range(3):
@@ -186,29 +243,33 @@ def Playvid(url, name):
             mdata = utils._getHtml(murl, site.url, timeout=10)
             if mdata and len(mdata) > 10:  # Valid response
                 break
-            utils.kodilog('Naked: Empty response from API (attempt {}/3)'.format(attempt + 1))
+            utils.kodilog(
+                "Naked: Empty response from API (attempt {}/3)".format(attempt + 1)
+            )
         except Exception as e:
-            utils.kodilog('Naked: API error (attempt {}/3): {}'.format(attempt + 1, str(e)))
+            utils.kodilog(
+                "Naked: API error (attempt {}/3): {}".format(attempt + 1, str(e))
+            )
             if attempt < 2:  # Not the last attempt
                 time.sleep(1)  # Brief delay before retry
                 continue
 
     if not mdata:
-        utils.notify('API Error', 'Naked.com API temporarily unavailable')
+        utils.notify("API Error", "Naked.com API temporarily unavailable")
         return None
 
     try:
-        mdata = json.loads(mdata).get('config', {}).get('room')
+        mdata = json.loads(mdata).get("config", {}).get("room")
         if mdata:
-            if mdata.get('status') != 'O':
-                utils.notify('Model not in freechat')
+            if mdata.get("status") != "O":
+                utils.notify("Model not in freechat")
                 return None
         else:
-            utils.notify('Model Offline')
+            utils.notify("Model Offline")
             return None
     except (ValueError, KeyError) as e:
-        utils.kodilog('Naked: Error parsing room data: {}'.format(str(e)))
-        utils.notify('Error', 'Unable to parse model status')
+        utils.kodilog("Naked: Error parsing room data: {}".format(str(e)))
+        utils.notify("Error", "Unable to parse model status")
         return None
 
     # Retry logic for stream URLs API
@@ -218,39 +279,47 @@ def Playvid(url, name):
             vdata = utils._getHtml(url, site.url, timeout=10)
             if vdata and len(vdata) > 10:
                 break
-            utils.kodilog('Naked: Empty stream URL response (attempt {}/3)'.format(attempt + 1))
+            utils.kodilog(
+                "Naked: Empty stream URL response (attempt {}/3)".format(attempt + 1)
+            )
         except Exception as e:
-            utils.kodilog('Naked: Stream URL API error (attempt {}/3): {}'.format(attempt + 1, str(e)))
+            utils.kodilog(
+                "Naked: Stream URL API error (attempt {}/3): {}".format(
+                    attempt + 1, str(e)
+                )
+            )
             if attempt < 2:
                 time.sleep(1)
                 continue
 
     if not vdata:
-        utils.notify('API Error', 'Unable to retrieve stream URL')
+        utils.notify("API Error", "Unable to retrieve stream URL")
         return
 
     try:
-        vdata = json.loads(vdata).get('data')
+        vdata = json.loads(vdata).get("data")
     except (ValueError, KeyError) as e:
-        utils.kodilog('Naked: Error parsing stream data: {}'.format(str(e)))
-        utils.notify('Error', 'Unable to parse stream URL')
+        utils.kodilog("Naked: Error parsing stream data: {}".format(str(e)))
+        utils.notify("Error", "Unable to parse stream URL")
         return
 
     if playmode == 0:
-        sdata = vdata.get('hls')[0]
+        sdata = vdata.get("hls")[0]
         if sdata:
-            videourl = 'https:{0}'.format(sdata.get('url'))
+            videourl = "https:{0}".format(sdata.get("url"))
         else:
-            utils.notify('Oh oh', 'Couldn\'t find a playable webcam link')
+            utils.notify("Oh oh", "Couldn't find a playable webcam link")
             return
 
     elif playmode == 1:
-        sdata = vdata.get('flash')[0]
+        sdata = vdata.get("flash")[0]
         if sdata:
             swfurl = site.url + "chat/flash/live-video-player-nw2.swf"
-            videourl = "rtmp://{0} app=liveEdge/{3} swfUrl={1} pageUrl={2} playpath=mp4:{3}".format(sdata.get('stream_host'), swfurl, site.url, sdata.get('stream_name'))
+            videourl = "rtmp://{0} app=liveEdge/{3} swfUrl={1} pageUrl={2} playpath=mp4:{3}".format(
+                sdata.get("stream_host"), swfurl, site.url, sdata.get("stream_name")
+            )
         else:
-            utils.notify('Oh oh', 'Couldn\'t find a playable webcam link')
+            utils.notify("Oh oh", "Couldn't find a playable webcam link")
             return
 
     vp = utils.VideoPlayer(name)

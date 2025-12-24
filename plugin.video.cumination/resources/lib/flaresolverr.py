@@ -15,9 +15,7 @@ class FlareSolverrManager:
         session_create_request = {"cmd": "sessions.create", "session": self.session_id}
         try:
             session_create_response = requests.post(
-                self.flaresolverr_url,
-                json=session_create_request,
-                timeout=10
+                self.flaresolverr_url, json=session_create_request, timeout=10
             )
             response_data = session_create_response.json()
 
@@ -25,7 +23,9 @@ class FlareSolverrManager:
                 # Session might already exist, use it
                 self.flaresolverr_session = self.session_id
             else:
-                self.flaresolverr_session = response_data.get("session", self.session_id)
+                self.flaresolverr_session = response_data.get(
+                    "session", self.session_id
+                )
         except Exception as e:
             raise RuntimeError(
                 "Failed to connect to FlareSolverr at {}: {}. "
@@ -35,7 +35,10 @@ class FlareSolverrManager:
             )
 
     def __del__(self):
-        session_destroy_request = {"cmd": "sessions.destroy", "session": self.flaresolverr_session}
+        session_destroy_request = {
+            "cmd": "sessions.destroy",
+            "session": self.flaresolverr_session,
+        }
         requests.post(self.flaresolverr_url, json=session_destroy_request)
 
     def clear_old_sessions(self):
@@ -52,16 +55,33 @@ class FlareSolverrManager:
             # Clear only our old cumination sessions (identified by prefix)
             if sessions:
                 for session_id in sessions:
-                    if isinstance(session_id, str) and session_id.startswith("cumination_session_"):
+                    if isinstance(session_id, str) and session_id.startswith(
+                        "cumination_session_"
+                    ):
                         # Don't clear the current session we're trying to use
                         if session_id != self.session_id:
-                            session_destroy_request = {"cmd": "sessions.destroy", "session": session_id}
-                            requests.post(self.flaresolverr_url, json=session_destroy_request, timeout=5)
+                            session_destroy_request = {
+                                "cmd": "sessions.destroy",
+                                "session": session_id,
+                            }
+                            requests.post(
+                                self.flaresolverr_url,
+                                json=session_destroy_request,
+                                timeout=5,
+                            )
         except Exception:
             # If clearing fails, continue anyway - not critical
             pass
 
-    def request(self, url, method="GET", cookies=None, post_data=None, tries=3, max_timeout=60000):
+    def request(
+        self,
+        url,
+        method="GET",
+        cookies=None,
+        post_data=None,
+        tries=3,
+        max_timeout=60000,
+    ):
         """
         Make a request through FlareSolverr to bypass Cloudflare protection.
 
@@ -103,7 +123,7 @@ class FlareSolverrManager:
                 flaresolverr_response = self.session.post(
                     self.flaresolverr_url,
                     json=flaresolverr_request,
-                    timeout=request_timeout
+                    timeout=request_timeout,
                 )
 
                 status_code = flaresolverr_response.status_code
@@ -111,8 +131,7 @@ class FlareSolverrManager:
                 if status_code >= 500:
                     raise ValueError(
                         "FlareSolverr server error (HTTP {}): {}".format(
-                            status_code,
-                            flaresolverr_response.text[:200]
+                            status_code, flaresolverr_response.text[:200]
                         )
                     )
 
