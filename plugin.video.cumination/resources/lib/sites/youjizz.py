@@ -45,7 +45,8 @@ def Main():
         "Categories",
         site.img_cat,
     )
-    List(site.url)
+    # Show newest videos by default
+    List(site.url + "newest-clips/1.html")
     utils.eod()
 
 

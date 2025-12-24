@@ -35,6 +35,7 @@ def _ensure_kodi_stubs():
     xbmc.log = _noop
     xbmc.executebuiltin = _noop
     xbmc.getSkinDir = lambda: 'skin.estuary'
+    xbmc.getInfoLabel = lambda key: '19.0' if 'BuildVersion' in key else ''
 
     class _VideoStreamDetail:
         def __init__(self, **kwargs):

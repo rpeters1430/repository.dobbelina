@@ -78,7 +78,10 @@
       "Bash(magick:*)",
       "WebFetch(domain:archivebate.com)",
       "Bash(.venv/bin/python -m pytest tests/sites/test_archivebate.py -v)",
-      "Bash(.venvScriptspython -m ruff check plugin.video.cuminationresourceslibsitesporntn.py)"
+      "Bash(.venvScriptspython -m ruff check plugin.video.cuminationresourceslibsitesporntn.py)",
+      "WebFetch(domain:www.youjizz.com)",
+      "WebFetch(domain:www.freepornvideos.xxx)",
+      "Bash(else echo \"No venv found\")"
     ],
     "deny": [],
     "ask": []

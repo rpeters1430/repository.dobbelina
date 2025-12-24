@@ -43,7 +43,8 @@ def Main():
         "Categories",
         site.img_cat,
     )
-    List(site.url)
+    # Show newest videos by default
+    List(site.url + "browse/time/")
     utils.eod()
 
 

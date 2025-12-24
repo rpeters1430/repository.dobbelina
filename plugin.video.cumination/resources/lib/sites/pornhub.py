@@ -280,7 +280,7 @@ def Playvid(url, name, download=None):
 def get_setting(x):
     dict = {
         "production": "All",
-        "minlength": "0",
+        "minlength": "10 min",
         "maxlength": "40+ Min",
         "quality": "All",
         "country": "World",
@@ -551,7 +551,7 @@ def update_url(url):
 def ResetFilters():
     dict = {
         "production": "All",
-        "minlength": "0",
+        "minlength": "10 min",
         "maxlength": "40+ Min",
         "quality": "All",
         "country": "World",

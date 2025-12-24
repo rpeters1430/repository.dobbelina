@@ -131,24 +131,72 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videopage = utils.getHtml(url, site.url)
+
+    # Try multiple patterns for video source extraction
+    sources = {}
+
+    # Pattern 1: <source src='...' label="..."> (original pattern with single quotes)
     match = re.compile(
         r"<source\s+src='([^']+)'[^>]+?label=\"([^\"]+)\"", re.DOTALL | re.IGNORECASE
     ).findall(videopage)
-    sources = {}
     if match:
         for videourl, quality in match:
             quality = "1080p" if quality == "2160p" else quality
             sources[quality] = videourl
+
+    # Pattern 2: <source src="..." label="..."> (double quotes for both)
+    if not sources:
+        match = re.compile(
+            r"<source\s+src=\"([^\"]+)\"[^>]+?label=\"([^\"]+)\"", re.DOTALL | re.IGNORECASE
+        ).findall(videopage)
+        if match:
+            for videourl, quality in match:
+                quality = "1080p" if quality == "2160p" else quality
+                sources[quality] = videourl
+
+    # Pattern 3: <source label="..." src="..."> (reversed attribute order)
+    if not sources:
+        match = re.compile(
+            r"<source\s+label=[\"']([^\"']+)[\"'][^>]+?src=[\"']([^\"']+)[\"']", re.DOTALL | re.IGNORECASE
+        ).findall(videopage)
+        if match:
+            for quality, videourl in match:
+                quality = "1080p" if quality == "2160p" else quality
+                sources[quality] = videourl
+
+    # Pattern 4: General <source> tag with src and label/res/data-res attributes
+    if not sources:
+        # Find all source tags and extract both src and quality indicators
+        source_tags = re.findall(
+            r"<source[^>]+>", videopage, re.IGNORECASE
+        )
+        for tag in source_tags:
+            src_match = re.search(r'src=["\']([^"\']+)["\']', tag, re.IGNORECASE)
+            quality_match = re.search(
+                r'(?:label|res|data-res|title)=["\']([^"\']+)["\']', tag, re.IGNORECASE
+            )
+            if src_match:
+                videourl = src_match.group(1)
+                quality = quality_match.group(1) if quality_match else "Unknown"
+                if not quality.endswith('p'):
+                    quality = quality + 'p'
+                quality = "1080p" if quality == "2160p" else quality
+                sources[quality] = videourl
+
+    if sources:
         videourl = utils.selector(
             "Select quality",
             sources,
             setting_valid="qualityask",
-            sort_by=lambda x: 1081 if x == "4k" else int(x[:-1]),
+            sort_by=lambda x: 1081 if x == "4k" else (int(x[:-1]) if x[:-1].isdigit() else 0),
             reverse=True,
         )
         if videourl:
             vp.progress.update(75, "[CR]Video found[CR]")
             vp.play_from_direct_link(videourl)
+    else:
+        utils.kodilog("FreePornVideos: No video sources found, trying resolveurl")
+        vp.play_from_link_to_resolve(url)
 
 
 @site.register()
