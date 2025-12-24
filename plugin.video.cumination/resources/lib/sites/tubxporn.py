@@ -45,18 +45,67 @@ def List(url):
         utils.eod()
         return
 
-    delimiter = '<div class="inner">'
-    re_videopage = '<a href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = r'src=\s*"https:([^"]+)"'
-    re_duration = 'class="length">([^<]+)<'
-    skip = 'www.rexporn.com'
-    utils.videos_list(site, 'tubxporn.Playvid', html, delimiter, re_videopage, re_name, re_img, re_duration=re_duration, contextm='tubxporn.Related', skip=skip)
+    soup = utils.parse_html(html)
+    if not soup:
+        utils.eod()
+        return
 
-    re_npurl = r'<a href="([^"]+)"\s+class="mobnav">Next<'
-    re_npnr = r'<a href="[^"]+/(\d+)(?:/\?[^"]+|/)"\s+class="mobnav">Next<'
-    re_lpnr = r'<a href="[^"]+">(\d+)</a></span>\s*</div>'
-    utils.next_page(site, 'tubxporn.List', html, re_npurl, re_npnr, re_lpnr=re_lpnr, baseurl=url.split('page')[0], contextm='tubxporn.GotoPage')
+    for inner in soup.select('.inner'):
+        link = inner.select_one('a[href][title]')
+        if not link:
+            continue
+
+        videopage = utils.safe_get_attr(link, 'href', default='')
+        # Skip rexporn.com links
+        if 'www.rexporn.com' in videopage:
+            continue
+
+        name = utils.cleantext(utils.safe_get_attr(link, 'title', default=''))
+        img_tag = inner.select_one('img[src]')
+        img = utils.safe_get_attr(img_tag, 'src', default='')
+        if img and not img.startswith('http'):
+            img = 'https:' + img
+
+        duration_elem = inner.select_one('.length')
+        duration = utils.safe_get_text(duration_elem, default='')
+
+        if videopage and name:
+            site.add_download_link(name, videopage, 'tubxporn.Playvid', img, name, duration=duration, contextm='tubxporn.Related')
+
+    # Pagination
+    next_link = soup.select_one('a.mobnav[href]')
+    if next_link and 'Next' in utils.safe_get_text(next_link, default=''):
+        next_url = utils.safe_get_attr(next_link, 'href', default='')
+        if next_url:
+            # Extract page number from next URL
+            np_match = re.search(r'/(\d+)(?:/\?|/)', next_url)
+            np = np_match.group(1) if np_match else ''
+
+            # Find last page number
+            lp = ''
+            for page_link in soup.select('a[href]'):
+                page_text = utils.safe_get_text(page_link, default='')
+                if page_text.isdigit():
+                    lp = max(lp, page_text) if lp else page_text
+
+            contextmenu = []
+            if np and lp:
+                baseurl = url.split('page')[0] if 'page' in url else url.rstrip('/') + '/'
+                contexturl = (utils.addon_sys
+                              + "?mode=tubxporn.GotoPage"
+                              + "&list_mode=tubxporn.List"
+                              + "&url=" + urllib_parse.quote_plus(baseurl)
+                              + "&np=" + np
+                              + "&lp=" + lp)
+                contextmenu.append(('[COLOR violet]Goto Page[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+
+            label = 'Next Page'
+            if np and lp:
+                label += f' ({np}/{lp})'
+            elif np:
+                label += f' ({np})'
+            site.add_dir(label, next_url, 'tubxporn.List', site.img_next, contextm=contextmenu)
+
     utils.eod()
 
 
@@ -91,10 +140,35 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(r'<div class="item".+?href="([^"]+)".+?<img src="([^"]+)".+?>([^<]+)\s+\((\d+)\)</a></h2>', re.IGNORECASE | re.DOTALL).findall(cathtml)
-    for caturl, img, name, count in match:
-        name = utils.cleantext(name) + '[COLOR hotpink] ({} videos)[/COLOR]'.format(count)
-        site.add_dir(name, caturl, 'List', img)
+    soup = utils.parse_html(cathtml)
+    if not soup:
+        utils.eod()
+        return
+
+    for item in soup.select('.item'):
+        link = item.select_one('a[href]')
+        if not link:
+            continue
+
+        caturl = utils.safe_get_attr(link, 'href', default='')
+        img_tag = item.select_one('img[src]')
+        img = utils.safe_get_attr(img_tag, 'src', default='')
+
+        h2 = item.select_one('h2')
+        if h2:
+            # Extract name and count from h2 text (e.g., "Category Name (123)")
+            full_text = utils.safe_get_text(h2, default='')
+            count_match = re.search(r'\((\d+)\)', full_text)
+            count = count_match.group(1) if count_match else ''
+            name = re.sub(r'\s*\(\d+\)\s*$', '', full_text)
+            name = utils.cleantext(name)
+            if count:
+                name = name + '[COLOR hotpink] ({} videos)[/COLOR]'.format(count)
+        else:
+            name = utils.cleantext(utils.safe_get_text(link, default=''))
+
+        if caturl and name:
+            site.add_dir(name, caturl, 'List', img)
     utils.eod()
 
 

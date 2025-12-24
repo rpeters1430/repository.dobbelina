@@ -174,14 +174,21 @@ def Search(url, keyword=None):
 
 @site.register()
 def Lookupinfo(url):
-    class porntnLookup(utils.LookupInfo):
-        def url_constructor(self, url):
-            if 'categories/' in url:
-                return url + '?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=post_date&from=1'
+    html = utils.getHtml(url, site.url)
+    soup = utils.parse_html(html)
+    if not soup:
+        return
 
-    lookup_list = [
-        ("Cat", r'<a href="(https://porntn\.com/categories/[^"]+)">([^<]+)<', ''),
-    ]
+    categories = []
+    for link in soup.select('a[href*="/categories/"]'):
+        caturl = utils.safe_get_attr(link, 'href', default='')
+        catname = utils.cleantext(utils.safe_get_text(link, default=''))
+        if caturl and catname and caturl.startswith('https://porntn.com/categories/'):
+            caturl = caturl + '?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=post_date&from=1'
+            categories.append(('Cat', catname, caturl))
 
-    lookupinfo = porntnLookup(site.url, url, 'porntn.List', lookup_list)
-    lookupinfo.getinfo()
+    if not categories:
+        utils.notify('Lookup', 'No categories found')
+        return
+
+    utils.kodiDB(categories, 'porntn.List')

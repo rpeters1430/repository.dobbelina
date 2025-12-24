@@ -77,7 +77,8 @@
       "Bash(grep:*)",
       "Bash(magick:*)",
       "WebFetch(domain:archivebate.com)",
-      "Bash(.venv/bin/python -m pytest tests/sites/test_archivebate.py -v)"
+      "Bash(.venv/bin/python -m pytest tests/sites/test_archivebate.py -v)",
+      "Bash(.venvScriptspython -m ruff check plugin.video.cuminationresourceslibsitesporntn.py)"
     ],
     "deny": [],
     "ask": []

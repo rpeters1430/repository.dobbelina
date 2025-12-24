@@ -41,22 +41,68 @@ def List(url):
         utils.notify(msg='No videos found!')
         return
 
-    delimiter = '<div class="v">'
-    re_videopage = '<a href="([^"]+)">'
-    re_name = 'class="v_title">([^<]+)<'
-    re_img = 'src="(//[^"]+)"'
-    re_duration = r'class="v_dur">([^<]+)<'
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
 
     cm = []
     cm_lookupinfo = (utils.addon_sys + "?mode=" + str('xxdbx.Lookupinfo') + "&url=")
     cm.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + cm_lookupinfo + ')'))
     cm_related = (utils.addon_sys + "?mode=" + str('xxdbx.Related') + "&url=")
     cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin(' + cm_related + ')'))
-    utils.videos_list(site, 'xxdbx.Playvid', listhtml, delimiter, re_videopage, re_name, re_img, re_duration=re_duration, contextm=cm)
 
-    re_npurl = r'<a href="([^"]+)" class="">Next '
-    re_npnr = r'\?page=(\d+)" class="">Next '
-    utils.next_page(site, 'xxdbx.List', listhtml, re_npurl, re_npnr, contextm='xxdbx.GotoPage')
+    for v_div in soup.select('.v'):
+        link = v_div.select_one('a[href]')
+        if not link:
+            continue
+
+        videopage = utils.safe_get_attr(link, 'href', default='')
+        if not videopage:
+            continue
+
+        title_elem = v_div.select_one('.v_title')
+        name = utils.cleantext(utils.safe_get_text(title_elem, default=''))
+
+        img_tag = v_div.select_one('img[src]')
+        img = utils.safe_get_attr(img_tag, 'src', default='')
+        if img and img.startswith('//'):
+            img = 'https:' + img
+
+        duration_elem = v_div.select_one('.v_dur')
+        duration = utils.safe_get_text(duration_elem, default='')
+
+        if name and videopage:
+            site.add_download_link(name, videopage, 'xxdbx.Playvid', img, name, duration=duration, contextm=cm)
+
+    # Pagination
+    next_link = None
+    for link in soup.select('a[href][class=""]'):
+        if 'Next' in utils.safe_get_text(link, default=''):
+            next_link = link
+            break
+
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, 'href', default='')
+        if next_url:
+            # Extract page number from URL
+            np_match = re.search(r'\?page=(\d+)', next_url)
+            np = np_match.group(1) if np_match else ''
+
+            contextmenu = []
+            if np:
+                contexturl = (utils.addon_sys
+                              + "?mode=xxdbx.GotoPage"
+                              + "&url=" + urllib_parse.quote_plus(next_url)
+                              + "&np=" + np
+                              + "&lp=0")
+                contextmenu.append(('[COLOR violet]Goto Page[/COLOR]', 'RunPlugin(' + contexturl + ')'))
+
+            label = 'Next Page'
+            if np:
+                label += f' ({np})'
+            site.add_dir(label, next_url, 'xxdbx.List', site.img_next, contextm=contextmenu)
+
     utils.eod()
 
 
@@ -86,9 +132,19 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videopage = utils.getHtml(url, site.url)
-    match = re.compile(r'<source\s+src="([^"]+)"\s+title="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(videopage)
-    if match:
-        sources = {qual: 'https:' + videourl for videourl, qual in match}
+    soup = utils.parse_html(videopage)
+
+    sources = {}
+    if soup:
+        for source_tag in soup.select('source[src][title]'):
+            videourl = utils.safe_get_attr(source_tag, 'src', default='')
+            qual = utils.safe_get_attr(source_tag, 'title', default='')
+            if videourl and qual:
+                if videourl.startswith('//'):
+                    videourl = 'https:' + videourl
+                sources[qual] = videourl
+
+    if sources:
         videourl = utils.prefquality(sources, sort_by=lambda x: 2160 if x == '4k' else int(x[:-1]), reverse=True)
         if videourl:
             vp.progress.update(75, "[CR]Video found[CR]")
@@ -99,14 +155,57 @@ def Playvid(url, name, download=None):
 
 @site.register()
 def Lookupinfo(url):
-    lookup_list = [
-        ("Dates", r'href="(/dates/[^"]+)">([^<]+)<', ''),
-        ("Channels", r'href="(/channels/[^"]+)">([^<]+)<', ''),
-        ("Stars", r'href="(/stars/[^"]+)">([^<]+)<', ''),
-        ("Search", r'href="(/search/[^"]+)">([^<]+)<', '')
-    ]
-    lookupinfo = utils.LookupInfo(site.url, url, 'xxdbx.List', lookup_list, starthtml='<div class="tags">', stophtml='</div>')
-    lookupinfo.getinfo()
+    html = utils.getHtml(url, site.url)
+    soup = utils.parse_html(html)
+    if not soup:
+        return
+
+    lookup_items = []
+
+    # Find the tags div
+    tags_div = soup.select_one('.tags')
+    if tags_div:
+        # Find dates
+        for link in tags_div.select('a[href*="/dates/"]'):
+            date_url = utils.safe_get_attr(link, 'href', default='')
+            date_name = utils.cleantext(utils.safe_get_text(link, default=''))
+            if date_url and date_name:
+                if date_url.startswith('/'):
+                    date_url = site.url.rstrip('/') + date_url
+                lookup_items.append(('Dates', date_name, date_url))
+
+        # Find channels
+        for link in tags_div.select('a[href*="/channels/"]'):
+            channel_url = utils.safe_get_attr(link, 'href', default='')
+            channel_name = utils.cleantext(utils.safe_get_text(link, default=''))
+            if channel_url and channel_name:
+                if channel_url.startswith('/'):
+                    channel_url = site.url.rstrip('/') + channel_url
+                lookup_items.append(('Channels', channel_name, channel_url))
+
+        # Find stars
+        for link in tags_div.select('a[href*="/stars/"]'):
+            star_url = utils.safe_get_attr(link, 'href', default='')
+            star_name = utils.cleantext(utils.safe_get_text(link, default=''))
+            if star_url and star_name:
+                if star_url.startswith('/'):
+                    star_url = site.url.rstrip('/') + star_url
+                lookup_items.append(('Stars', star_name, star_url))
+
+        # Find search tags
+        for link in tags_div.select('a[href*="/search/"]'):
+            search_url = utils.safe_get_attr(link, 'href', default='')
+            search_name = utils.cleantext(utils.safe_get_text(link, default=''))
+            if search_url and search_name:
+                if search_url.startswith('/'):
+                    search_url = site.url.rstrip('/') + search_url
+                lookup_items.append(('Search', search_name, search_url))
+
+    if not lookup_items:
+        utils.notify('Lookup', 'No tags found')
+        return
+
+    utils.kodiDB(lookup_items, 'xxdbx.List')
 
 
 @site.register()

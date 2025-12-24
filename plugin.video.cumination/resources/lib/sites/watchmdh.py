@@ -122,31 +122,55 @@ def Search(url, keyword=None):
 def Categories(url):
     url = url + str(1000000000000 + randint(0, 999999999999))
     cathtml = utils.getHtml(url)
+    soup = utils.parse_html(cathtml)
+    if not soup:
+        utils.eod()
+        return
 
-    match = re.compile(r'class="item"\shref="([^"]+)"\stitle="([^"]+)".+?"videos">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name, videos in match:
-        name = utils.cleantext(name) + " [COLOR deeppink]" + videos + "[/COLOR]"
+    for item in soup.select('.item[href][title]'):
+        catpage = utils.safe_get_attr(item, 'href', default='')
+        name = utils.cleantext(utils.safe_get_attr(item, 'title', default=''))
+        videos_elem = item.select_one('.videos')
+        videos = utils.safe_get_text(videos_elem, default='')
+        if not catpage or not name:
+            continue
+        name = name + " [COLOR deeppink]" + videos + "[/COLOR]" if videos else name
         site.add_dir(name, catpage, 'List', '')
 
-    match = re.search(r'class="page-current"><span>(\d+)<.+?class="next">.+?data-block-id="([^"]+)"\s+data-parameters="([^"]+)">', cathtml, re.DOTALL | re.IGNORECASE)
-    if match:
-        npage = int(match.group(1)) + 1
-        block_id = match.group(2)
-        params = match.group(3).replace(';', '&').replace(':', '=')
+    current_page_elem = soup.select_one('.page-current span')
+    next_link = soup.select_one('.next[data-block-id][data-parameters]')
+    if current_page_elem and next_link:
+        current_page_text = utils.safe_get_text(current_page_elem, default='1')
+        npage = int(current_page_text) + 1 if current_page_text.isdigit() else 1
+        block_id = utils.safe_get_attr(next_link, 'data-block-id', default='')
+        params = utils.safe_get_attr(next_link, 'data-parameters', default='')
+        params = params.replace(';', '&').replace(':', '=')
         rnd = 1000000000000 + randint(0, 999999999999)
         nurl = url.split('?')[0] + '?mode=async&function=get_block&block_id={0}&{1}&_={2}'.format(block_id, params, str(rnd))
         nurl = nurl.replace('+from_albums', '')
         nurl = re.sub(r'&from([^=]*)=\d+', r'&from\1={}'.format(npage), nurl)
 
-        match = re.search(r'from[^:]*:(\d+)">Letzte<', cathtml, re.DOTALL | re.IGNORECASE)
-        utils.kodilog(match.group(1))
-        lpparam = "&lp={}".format(match.group(1)) if match else "&lp=0"
-        lptxt = "/{}".format(match.group(1)) if match else ""
+        # Find last page from "Letzte" link
+        last_page_link = None
+        for link in soup.select('a[data-parameters]'):
+            if 'Letzte' in utils.safe_get_text(link, default=''):
+                last_page_link = link
+                break
+
+        lp_text = ''
+        lpparam = '&lp=0'
+        if last_page_link:
+            lp_params = utils.safe_get_attr(last_page_link, 'data-parameters', default='')
+            lp_match = re.search(r'from[^:]*:(\d+)', lp_params)
+            if lp_match:
+                lp_text = "/" + lp_match.group(1)
+                lpparam = "&lp=" + lp_match.group(1)
+                utils.kodilog(lp_match.group(1))
 
         cm_page = (utils.addon_sys + "?mode=watchmdh.GotoPage" + "&url=" + urllib_parse.quote_plus(nurl) + "&np=" + str(npage) + lpparam + "&listmode=watchmdh.Categories")
         cm = [('[COLOR violet]Goto Page #[/COLOR]', 'RunPlugin(' + cm_page + ')')]
 
-        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + lptxt + ')', nurl, 'Categories', site.img_next, contextm=cm)
+        site.add_dir('[COLOR hotpink]Next Page...[/COLOR] (' + str(npage) + lp_text + ')', nurl, 'Categories', site.img_next, contextm=cm)
 
     utils.eod()
 
@@ -177,12 +201,32 @@ def Playvid(url, name, download=None):
 
 @site.register()
 def Lookupinfo(url):
-    lookup_list = [
-        ("Tags", r'<a href="([^"]+/tags/[^"]+)">([^<]+)<', ''),
-        ("Models", r'<a href="([^"]+/models/[^"]+)">([^<]+)<', '')
-    ]
-    lookupinfo = utils.LookupInfo('', url, 'watchmdh.List', lookup_list)
-    lookupinfo.getinfo()
+    html = utils.getHtml(url, site.url)
+    soup = utils.parse_html(html)
+    if not soup:
+        return
+
+    lookup_items = []
+
+    # Find tags
+    for link in soup.select('a[href*="/tags/"]'):
+        tag_url = utils.safe_get_attr(link, 'href', default='')
+        tag_name = utils.cleantext(utils.safe_get_text(link, default=''))
+        if tag_url and tag_name and '/tags/' in tag_url:
+            lookup_items.append(('Tags', tag_name, tag_url))
+
+    # Find models
+    for link in soup.select('a[href*="/models/"]'):
+        model_url = utils.safe_get_attr(link, 'href', default='')
+        model_name = utils.cleantext(utils.safe_get_text(link, default=''))
+        if model_url and model_name and '/models/' in model_url:
+            lookup_items.append(('Models', model_name, model_url))
+
+    if not lookup_items:
+        utils.notify('Lookup', 'No tags or models found')
+        return
+
+    utils.kodiDB(lookup_items, 'watchmdh.List')
 
 
 @site.register()

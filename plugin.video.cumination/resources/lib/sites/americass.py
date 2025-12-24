@@ -36,13 +36,36 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, '')
-    match = re.compile(r'wrapper">\s*<a href="/([^"]+)".*?data-src="([^"]+)".*?duration-overlay">([^<]+)<.*?mb-0">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    if not match:
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
         return
-    for videopage, img, duration, name in match:
-        name = utils.cleantext(name)
-        img = 'https:' + img if img.startswith('//') else img
+
+    for wrapper in soup.select('.wrapper'):
+        link = wrapper.select_one('a[href]')
+        if not link:
+            continue
+
+        videopage = utils.safe_get_attr(link, 'href', default='')
+        if not videopage:
+            continue
+
+        videopage = videopage.lstrip('/')
         videopage = site.url + videopage.replace('interstice-ad?path=/', '')
+
+        img_tag = wrapper.select_one('img[data-src]')
+        img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
+        if img and img.startswith('//'):
+            img = 'https:' + img
+
+        duration_elem = wrapper.select_one('.duration-overlay')
+        duration = utils.safe_get_text(duration_elem, default='')
+
+        name_elem = wrapper.select_one('.mb-0')
+        name = utils.cleantext(utils.safe_get_text(name_elem, default=''))
+
+        if not name:
+            continue
 
         contexturl = (utils.addon_sys
                       + "?mode=americass.Lookupinfo"
@@ -51,11 +74,13 @@ def List(url):
 
         site.add_download_link(name, videopage, 'Playvid', img, name, contextm=contextmenu, duration=duration)
 
-    nextp = re.compile(r'rel="next"\s*href="/([^"]+)">', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    if nextp:
-        np = nextp[0]
-        np = site.url + np
-        site.add_dir('Next Page...', np, 'List', site.img_next)
+    next_link = soup.select_one('a[rel="next"][href]')
+    if next_link:
+        np = utils.safe_get_attr(next_link, 'href', default='')
+        if np:
+            np = np.lstrip('/')
+            np = site.url + np
+            site.add_dir('Next Page...', np, 'List', site.img_next)
     utils.eod()
 
 
@@ -92,11 +117,26 @@ def Search(url, keyword=None):
 @site.register()
 def Tags(url):
     listhtml = utils.getHtml(url)
-    tags = re.compile('/(tag[^"]+)"[^>]+>([^<]+)<[^>]+>([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for tagpage, tag, videos in tags:
-        tag = utils.cleantext(tag.strip())
-        tag = '{} - Videos {}'.format(tag, videos)
-        site.add_dir(tag, site.url + tagpage, 'List', '')
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
+
+    for link in soup.select('a[href*="/tag/"]'):
+        tagpage = utils.safe_get_attr(link, 'href', default='')
+        if not tagpage or not tagpage.startswith('/tag'):
+            continue
+
+        tag = utils.cleantext(utils.safe_get_text(link, default=''))
+        # Try to find video count (usually in next sibling or nearby element)
+        videos = ''
+        next_elem = link.find_next_sibling()
+        if next_elem:
+            videos = utils.safe_get_text(next_elem, default='')
+
+        if tag:
+            tag_name = '{} - Videos {}'.format(tag, videos) if videos else tag
+            site.add_dir(tag_name, site.url + tagpage.lstrip('/'), 'List', '')
 
     utils.eod()
 
@@ -113,27 +153,65 @@ def ActorABC(url):
 @site.register()
 def Actor(url):
     listhtml = utils.getHtml(url)
-    actors = re.compile('a href="/(actor/[^"]+)".*?src="([^"]+)".*?label">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for actorpage, img, name in actors:
-        name = utils.cleantext(name.strip())
-        img = site.url + img
-        site.add_dir(name, site.url + actorpage, 'List', img)
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
 
-    nextp = re.compile(r'rel="next"\s*href="/([^"]+)">', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    if nextp:
-        np = nextp[0]
-        np = np.replace('&amp;', '&')
-        np = site.url + np
-        site.add_dir('Next Page...', np, 'Actor', site.img_next)
+    for link in soup.select('a[href*="/actor/"]'):
+        actorpage = utils.safe_get_attr(link, 'href', default='')
+        if not actorpage or not actorpage.startswith('/actor'):
+            continue
+
+        img_tag = link.select_one('img[src]')
+        img = utils.safe_get_attr(img_tag, 'src', default='')
+        if img and not img.startswith('http'):
+            img = site.url + img.lstrip('/')
+
+        label_elem = link.select_one('.label')
+        name = utils.cleantext(utils.safe_get_text(label_elem, default=''))
+
+        if name:
+            site.add_dir(name, site.url + actorpage.lstrip('/'), 'List', img)
+
+    next_link = soup.select_one('a[rel="next"][href]')
+    if next_link:
+        np = utils.safe_get_attr(next_link, 'href', default='')
+        if np:
+            np = np.lstrip('/')
+            site.add_dir('Next Page...', site.url + np, 'Actor', site.img_next)
     utils.eod()
 
 
 @site.register()
 def Lookupinfo(url):
-    lookup_list = [
-        ("Actor", '/(actor/[^"]+)".*?name">([^<]+)<', ''),
-        ("Tag", '/(tag/[^"]+)".*?badge">([^<]+)<', '')
-    ]
+    html = utils.getHtml(url, site.url)
+    soup = utils.parse_html(html)
+    if not soup:
+        return
 
-    lookupinfo = utils.LookupInfo(site.url, url, 'americass.List', lookup_list)
-    lookupinfo.getinfo()
+    lookup_items = []
+
+    # Find actors
+    for link in soup.select('a[href*="/actor/"]'):
+        actor_url = utils.safe_get_attr(link, 'href', default='')
+        name_elem = link.select_one('.name')
+        actor_name = utils.cleantext(utils.safe_get_text(name_elem, default=''))
+        if actor_url and actor_name and '/actor/' in actor_url:
+            actor_url = site.url + actor_url.lstrip('/')
+            lookup_items.append(('Actor', actor_name, actor_url))
+
+    # Find tags
+    for link in soup.select('a[href*="/tag/"]'):
+        tag_url = utils.safe_get_attr(link, 'href', default='')
+        badge_elem = link.select_one('.badge')
+        tag_name = utils.cleantext(utils.safe_get_text(badge_elem or link, default=''))
+        if tag_url and tag_name and '/tag/' in tag_url:
+            tag_url = site.url + tag_url.lstrip('/')
+            lookup_items.append(('Tag', tag_name, tag_url))
+
+    if not lookup_items:
+        utils.notify('Lookup', 'No actors or tags found')
+        return
+
+    utils.kodiDB(lookup_items, 'americass.List')

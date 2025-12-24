@@ -303,11 +303,21 @@ def Playvid(url, name, download=None):
             match = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(vpage)
             if match:
                 sources.update({title: src for src, title in match})
-        videourl = utils.prefquality(sources, sort_by=lambda x: 2160 if x == '4k' else int(x[:-1]), reverse=True)
-        if videourl:
-            videourl = videourl.replace(r'\/', '/')
-            vp.play_from_direct_link(videourl)
-            return
+
+        if sources:
+            def quality_sort_key(x):
+                if x == '4k':
+                    return 2160
+                try:
+                    return int(x.replace('p', '').replace('P', ''))
+                except (ValueError, AttributeError):
+                    return 0
+
+            videourl = utils.prefquality(sources, sort_by=quality_sort_key, reverse=True)
+            if videourl:
+                videourl = videourl.replace(r'\/', '/')
+                vp.play_from_direct_link(videourl)
+                return
 
         patterns = [r'embed_url:\s*"([^"]+)"',
                     r"video_url:\s*'([^']+.mp4)'",
@@ -317,11 +327,12 @@ def Playvid(url, name, download=None):
             match = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(vpage)
             if match:
                 sources = sources + match
-        videourl = utils.selector('Select source', sources)
-        if videourl:
-            videourl = 'https:' + match[0] if match[0].startswith('//') else match[0]
-            vp.play_from_direct_link(videourl)
-            return
+        if sources:
+            videourl = utils.selector('Select source', sources)
+            if videourl:
+                videourl = 'https:' + videourl if videourl.startswith('//') else videourl
+                vp.play_from_direct_link(videourl)
+                return
 
         if 'function/0/http' not in vpage and '<div class="embed-wrap"' in vpage:
             match = re.compile(r'<div class="embed-wrap".+?src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(vpage)
@@ -348,11 +359,21 @@ def Playvid(url, name, download=None):
                     surl = surl.replace('//', '/%2F').replace('https:/%2F', 'https://')
                     if '.mp4' in surl:
                         sources.update({qual: surl})
-            videourl = utils.selector('Select quality', sources, setting_valid='qualityask', sort_by=lambda x: 2160 if x == '4k' else int(x[:-1]), reverse=True)
 
-            if videourl:
-                vp.play_from_direct_link(videourl)
-                return
+            if sources:
+                def quality_sort_key2(x):
+                    if x == '4k':
+                        return 2160
+                    try:
+                        return int(x.replace('p', '').replace('P', ''))
+                    except (ValueError, AttributeError):
+                        return 0
+
+                videourl = utils.selector('Select quality', sources, setting_valid='qualityask', sort_by=quality_sort_key2, reverse=True)
+
+                if videourl:
+                    vp.play_from_direct_link(videourl)
+                    return
 
         match = re.search(r'^(http[s]?://[^/]+/)videos*/(\d+)/', vlink, re.IGNORECASE)
         if match:

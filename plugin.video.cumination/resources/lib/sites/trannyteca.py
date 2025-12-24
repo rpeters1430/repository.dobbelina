@@ -35,16 +35,42 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    items = re.compile(r'<article.+?src="([^"]+).+?href="([^"]+).+?>([^<]+)', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for img, vurl, name in items:
-        name = utils.cleantext(name)
-        site.add_download_link(name, vurl, 'Playvid', img, name)
-    nextp = re.search(r'class="next\s*page-numbers"\s*href="([^"]+)', listhtml, re.DOTALL)
-    if nextp:
-        nextp = nextp.group(1)
-        curr_pg = re.findall(r'class="page-numbers current"[^\d]+(\d+)', listhtml)[0]
-        last_pg = re.findall(r'class="page-numbers"[^\d]+(\d+)', listhtml)[-1]
-        site.add_dir('Next Page... (Currently in Page {0} of {1})'.format(curr_pg, last_pg), nextp, 'List', site.img_next)
+    soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
+
+    for article in soup.select('article'):
+        img_tag = article.select_one('img[src]')
+        link = article.select_one('a[href]')
+        if not link:
+            continue
+
+        vurl = utils.safe_get_attr(link, 'href', default='')
+        img = utils.safe_get_attr(img_tag, 'src', ['data-src'])
+        name = utils.cleantext(utils.safe_get_text(link, default=''))
+
+        if vurl and name:
+            site.add_download_link(name, vurl, 'Playvid', img, name)
+
+    next_link = soup.select_one('a.next.page-numbers[href]')
+    if next_link:
+        nextp = utils.safe_get_attr(next_link, 'href', default='')
+        if nextp:
+            curr_pg_elem = soup.select_one('.page-numbers.current')
+            curr_pg = utils.safe_get_text(curr_pg_elem, default='')
+
+            # Find last page number
+            last_pg = ''
+            for page_link in soup.select('.page-numbers'):
+                page_text = utils.safe_get_text(page_link, default='')
+                if page_text.isdigit():
+                    last_pg = page_text
+
+            if curr_pg and last_pg:
+                site.add_dir('Next Page... (Currently in Page {0} of {1})'.format(curr_pg, last_pg), nextp, 'List', site.img_next)
+            else:
+                site.add_dir('Next Page...', nextp, 'List', site.img_next)
 
     utils.eod()
 
@@ -69,9 +95,24 @@ def Playvid(url, name, download=None):
 @site.register()
 def Categories(url):
     cathtml = utils._getHtml(url, site.url)
-    cats = re.compile(r'id="menu-item-[467]\d\d?".+?href="([^"]+)">([^<]+)', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for catpage, name in cats:
-        site.add_dir(name, catpage, 'List', '')
+    soup = utils.parse_html(cathtml)
+    if not soup:
+        utils.eod()
+        return
+
+    # Select menu items matching the pattern (menu-item-4xx, 6xx, 7xx)
+    for menu_id in ['4', '6', '7']:
+        for item in soup.select(f'[id^="menu-item-{menu_id}"]'):
+            link = item.select_one('a[href]')
+            if not link:
+                continue
+
+            catpage = utils.safe_get_attr(link, 'href', default='')
+            name = utils.cleantext(utils.safe_get_text(link, default=''))
+
+            if catpage and name:
+                site.add_dir(name, catpage, 'List', '')
+
     utils.eod()
 
 
