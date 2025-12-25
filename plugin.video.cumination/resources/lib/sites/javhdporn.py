@@ -308,7 +308,6 @@ def dex(key, data, dver, use_alt=False, mtype=1):
         x = (x + y[s]) % 256
         y[s], y[x] = y[x], y[s]
         ct += chr(
-            (item if isinstance(item, int) else ord(item))
-            ^ y[(y[s] + y[x]) % 256]
+            (item if isinstance(item, int) else ord(item)) ^ y[(y[s] + y[x]) % 256]
         )
     return utils._bdecode(ct)
