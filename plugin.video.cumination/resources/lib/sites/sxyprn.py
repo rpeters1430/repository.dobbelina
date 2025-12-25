@@ -180,8 +180,8 @@ def List(url):
 def ssut51(j):
     j = re.sub(r"\D", "", j)
     sut = 0
-    for i in range(len(j)):
-        sut += int(j[i])
+    for i, item in enumerate(j):
+        sut += int(item)
     return sut
 
 

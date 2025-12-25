@@ -36,8 +36,8 @@ def kvs_decode(vu, lc, hr="16"):
                 while el >= len(uhash):
                     el -= len(uhash)
                 n = ""
-                for o in range(len(uhash)):
-                    n += uhash[el] if o == k else uhash[k] if o == el else uhash[o]
+                for o, item in enumerate(uhash):
+                    n += uhash[el] if o == k else uhash[k] if o == el else item
                 uhash = n
             vup[7] = uhash + nchash
         vu = "/".join(vup[2:]) + "&rnd={}".format(int(time.time() * 1000))
