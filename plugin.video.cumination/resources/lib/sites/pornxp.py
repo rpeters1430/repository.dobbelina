@@ -24,7 +24,7 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "pornxp",
     "[COLOR hotpink]PornXP[/COLOR]",
-    "https://pornxp.com/",
+    "https://pornxp.com-mirror.com/",
     "pornxp.png",
     "pornxp",
 )
