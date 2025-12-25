@@ -531,7 +531,6 @@ def backup_fav():
     if not path:
         return
     import json
-    import datetime
 
     progress.update(25, "Reading database")
     conn = sqlite3.connect(favoritesdb)
