@@ -34,10 +34,14 @@ class _Recorder:
 def _pref_by_number(sources):
     if not sources:
         return ""
+
     def quality_value(label):
         nums = "".join(filter(str.isdigit, label))
         return int(nums) if nums else 0
-    return sorted(sources.items(), key=lambda kv: quality_value(kv[0]), reverse=True)[0][1]
+
+    return sorted(sources.items(), key=lambda kv: quality_value(kv[0]), reverse=True)[
+        0
+    ][1]
 
 
 PLAY_CASES = [
@@ -62,7 +66,8 @@ PLAY_CASES = [
         "func": "Playvid",
         "url": "https://www.youporn.com/watch/abc123",
         "fixture": "youporn_play.html",
-        "expect": lambda rec, url: rec.play_from_direct_link == "https://cdn.youporn.com/videos/vid720.mp4|Referer=https://www.youporn.com/watch/abc123",
+        "expect": lambda rec, url: rec.play_from_direct_link
+        == "https://cdn.youporn.com/videos/vid720.mp4|Referer=https://www.youporn.com/watch/abc123",
     },
     {
         "name": "xnxx",
@@ -70,7 +75,8 @@ PLAY_CASES = [
         "func": "Playvid",
         "url": "https://www.xnxx.com/video123",
         "fixture": "xnxx_play.html",
-        "expect": lambda rec, url: rec.play_from_direct_link == "https://cdn.xnxx-cdn.com/video123.m3u8",
+        "expect": lambda rec, url: rec.play_from_direct_link
+        == "https://cdn.xnxx-cdn.com/video123.m3u8",
     },
     {
         "name": "porntrex",
@@ -78,7 +84,8 @@ PLAY_CASES = [
         "func": "PTPlayvid",
         "url": "https://www.porntrex.com/video/123",
         "fixture": "porntrex_play.html",
-        "expect": lambda rec, url: rec.play_from_direct_link == "https://cdn.porntrex.com/video-high.mp4|Referer=https://www.porntrex.com/video/123",
+        "expect": lambda rec, url: rec.play_from_direct_link
+        == "https://cdn.porntrex.com/video-high.mp4|Referer=https://www.porntrex.com/video/123",
     },
     {
         "name": "spankbang",
@@ -86,7 +93,8 @@ PLAY_CASES = [
         "func": "Playvid",
         "url": "https://spankbang.party/abc123",
         "fixture": "spankbang_play.html",
-        "expect": lambda rec, url: rec.play_from_direct_link == "https://cdn.spankbang.com/video720.mp4",
+        "expect": lambda rec, url: rec.play_from_direct_link
+        == "https://cdn.spankbang.com/video720.mp4",
     },
     {
         "name": "porngo",
@@ -94,7 +102,8 @@ PLAY_CASES = [
         "func": "Play",
         "url": "https://www.porngo.com/videos/abc123",
         "fixture": "porngo_play.html",
-        "expect": lambda rec, url: rec.play_from_direct_link == "https://www.porngo.com/vid720.mp4",
+        "expect": lambda rec, url: rec.play_from_direct_link
+        == "https://www.porngo.com/vid720.mp4",
     },
     {
         "name": "pornhat",
@@ -102,11 +111,20 @@ PLAY_CASES = [
         "func": "Play",
         "url": "https://www.pornhat.com/video/abc123",
         "fixture": "pornhat_play.html",
-        "expect": lambda rec, url: rec.play_from_direct_link == "decoded:ENC720:LIC|resolved",
+        "expect": lambda rec, url: rec.play_from_direct_link
+        == "decoded:ENC720:LIC|resolved",
         "extra_patches": lambda module, monkeypatch: (
-            monkeypatch.setattr(module, "kvs_decode", lambda surl, lic: f"decoded:{surl}:{lic}"),
-            monkeypatch.setattr(module.utils, "selector", lambda *_a, **_k: {"720p": "decoded:ENC720:LIC"}["720p"]),
-            monkeypatch.setattr(module.utils, "getVideoLink", lambda link, ref: link + "|resolved"),
+            monkeypatch.setattr(
+                module, "kvs_decode", lambda surl, lic: f"decoded:{surl}:{lic}"
+            ),
+            monkeypatch.setattr(
+                module.utils,
+                "selector",
+                lambda *_a, **_k: {"720p": "decoded:ENC720:LIC"}["720p"],
+            ),
+            monkeypatch.setattr(
+                module.utils, "getVideoLink", lambda link, ref: link + "|resolved"
+            ),
         ),
     },
     {
@@ -117,10 +135,23 @@ PLAY_CASES = [
         "fixture": "eporner_play.html",
         "extra_patches": lambda module, monkeypatch: (
             monkeypatch.setattr(module, "encode_base_n", lambda v, base: "a"),
-            monkeypatch.setattr(module.utils, "getHtml", lambda url, ref=None, headers=None: '{"sources":{"mp4":{"360p":{"src":"https://eporner.com/vid360.mp4"},"720p":{"src":"https://eporner.com/vid720.mp4"}}}}' if "xhr/video" in url else read_fixture("eporner_play.html")),
-            monkeypatch.setattr(module.utils, "prefquality", lambda sources, sort_by=None, reverse=False: sources.get("720p")),
+            monkeypatch.setattr(
+                module.utils,
+                "getHtml",
+                lambda url,
+                ref=None,
+                headers=None: '{"sources":{"mp4":{"360p":{"src":"https://eporner.com/vid360.mp4"},"720p":{"src":"https://eporner.com/vid720.mp4"}}}}'
+                if "xhr/video" in url
+                else read_fixture("eporner_play.html"),
+            ),
+            monkeypatch.setattr(
+                module.utils,
+                "prefquality",
+                lambda sources, sort_by=None, reverse=False: sources.get("720p"),
+            ),
         ),
-        "expect": lambda rec, url: rec.play_from_direct_link == "https://eporner.com/vid720.mp4",
+        "expect": lambda rec, url: rec.play_from_direct_link
+        == "https://eporner.com/vid720.mp4",
     },
     {
         "name": "watchporn",
@@ -128,7 +159,8 @@ PLAY_CASES = [
         "func": "Playvid",
         "url": "https://watchporn.to/video/abc123",
         "fixture": "watchporn_play.html",
-        "expect": lambda rec, url: rec.play_from_direct_link == "https://watchporn.to/video720.mp4",
+        "expect": lambda rec, url: rec.play_from_direct_link
+        == "https://watchporn.to/video720.mp4",
     },
     {
         "name": "hqporner",
@@ -136,8 +168,11 @@ PLAY_CASES = [
         "func": "HQPLAY",
         "url": "https://hqporner.com/hdporn/abc123",
         "fixture": "hqporner_play.html",
-        "invoke": lambda module, recorder: recorder.__setattr__("play_from_direct_link", "https://cdn.hqporner.com/vid720.mp4"),
-        "expect": lambda rec, url: rec.play_from_direct_link == "https://cdn.hqporner.com/vid720.mp4",
+        "invoke": lambda module, recorder: recorder.__setattr__(
+            "play_from_direct_link", "https://cdn.hqporner.com/vid720.mp4"
+        ),
+        "expect": lambda rec, url: rec.play_from_direct_link
+        == "https://cdn.hqporner.com/vid720.mp4",
     },
     {
         "name": "tube8",
@@ -146,21 +181,32 @@ PLAY_CASES = [
         "url": "https://www.tube8.com/video/abc123",
         "fixture": "tube8_play.html",
         "extra_patches": lambda module, monkeypatch: (
-            monkeypatch.setattr(module, "_extract_best_source", lambda html: "https://t8cdn.com/videos/vid720.mp4"),
+            monkeypatch.setattr(
+                module,
+                "_extract_best_source",
+                lambda html: "https://t8cdn.com/videos/vid720.mp4",
+            ),
             monkeypatch.setattr(
                 module.utils,
                 "getHtml",
                 lambda url, ref=None, headers=None: json.dumps(
                     [
-                        {"quality": "240", "videoUrl": "https://t8cdn.com/videos/vid240.mp4"},
-                        {"quality": "720", "videoUrl": "https://t8cdn.com/videos/vid720.mp4"},
+                        {
+                            "quality": "240",
+                            "videoUrl": "https://t8cdn.com/videos/vid240.mp4",
+                        },
+                        {
+                            "quality": "720",
+                            "videoUrl": "https://t8cdn.com/videos/vid720.mp4",
+                        },
                     ]
                 )
                 if "t8cdn.com/media/mp4" in url
                 else read_fixture("tube8_play.html"),
             ),
         ),
-        "expect": lambda rec, url: rec.play_from_direct_link == "https://t8cdn.com/videos/vid720.mp4|Referer=https://www.tube8.com/video/abc123",
+        "expect": lambda rec, url: rec.play_from_direct_link
+        == "https://t8cdn.com/videos/vid720.mp4|Referer=https://www.tube8.com/video/abc123",
     },
     {
         "name": "redtube",
@@ -168,9 +214,14 @@ PLAY_CASES = [
         "func": "Playvid",
         "url": "https://www.redtube.com/123",
         "fixture": "redtube_play.html",
-        "expect": lambda rec, url: rec.play_from_direct_link == "https://rtcdn.redtube.com/media/vid720.mp4|Referer=https://www.redtube.com/123",
+        "expect": lambda rec, url: rec.play_from_direct_link
+        == "https://rtcdn.redtube.com/media/vid720.mp4|Referer=https://www.redtube.com/123",
         "extra_patches": lambda module, monkeypatch: (
-            monkeypatch.setattr(module.utils, "getHtml", lambda url, ref=None, headers=None: read_fixture("redtube_play.html")),
+            monkeypatch.setattr(
+                module.utils,
+                "getHtml",
+                lambda url, ref=None, headers=None: read_fixture("redtube_play.html"),
+            ),
             monkeypatch.setattr(module.utils, "kodilog", lambda *a, **k: None),
         ),
     },
@@ -180,7 +231,8 @@ PLAY_CASES = [
         "func": "Playvid",
         "url": "https://www.youjizz.com/videos/sample-123456.html",
         "fixture": "youjizz_play.html",
-        "expect": lambda rec, url: rec.play_from_direct_link == "https://cdne.youjizz.com/vid720.mp4|Referer=https://www.youjizz.com/videos/sample-123456.html",
+        "expect": lambda rec, url: rec.play_from_direct_link
+        == "https://cdne.youjizz.com/vid720.mp4|Referer=https://www.youjizz.com/videos/sample-123456.html",
     },
     {
         "name": "tnaflix",
@@ -191,8 +243,11 @@ PLAY_CASES = [
             "main": "tnaflix_play.html",
             "embed": "tnaflix_embed.html",
         },
-        "invoke": lambda module, recorder: recorder.__setattr__("play_from_direct_link", "https://cdn.tnaflix.com/vid720.mp4"),
-        "expect": lambda rec, url: rec.play_from_direct_link == "https://cdn.tnaflix.com/vid720.mp4",
+        "invoke": lambda module, recorder: recorder.__setattr__(
+            "play_from_direct_link", "https://cdn.tnaflix.com/vid720.mp4"
+        ),
+        "expect": lambda rec, url: rec.play_from_direct_link
+        == "https://cdn.tnaflix.com/vid720.mp4",
     },
 ]
 
@@ -208,7 +263,9 @@ def test_playback_smoke(monkeypatch, case):
             self.name = name
             self.download = download
             self.direct_regex = kwargs.get("direct_regex")
-            self.progress = type("P", (), {"update": lambda *a, **k: None, "close": lambda *a, **k: None})
+            self.progress = type(
+                "P", (), {"update": lambda *a, **k: None, "close": lambda *a, **k: None}
+            )
 
         def play_from_direct_link(self, url):
             recorder.play_from_direct_link = url
@@ -237,7 +294,11 @@ def test_playback_smoke(monkeypatch, case):
 
     monkeypatch.setattr(module.utils, "VideoPlayer", DummyVP)
     monkeypatch.setattr(module.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(module.utils, "prefquality", lambda sources, sort_by=None, reverse=False: _pref_by_number(sources))
+    monkeypatch.setattr(
+        module.utils,
+        "prefquality",
+        lambda sources, sort_by=None, reverse=False: _pref_by_number(sources),
+    )
 
     # Stub cookies and headers if modules expect them
     if hasattr(module, "get_cookies"):
@@ -251,4 +312,6 @@ def test_playback_smoke(monkeypatch, case):
     else:
         getattr(module, case["func"])(case["url"], "Test Video")
 
-    assert case["expect"](recorder, case["url"]), f"{case['name']} playback expectation failed"
+    assert case["expect"](recorder, case["url"]), (
+        f"{case['name']} playback expectation failed"
+    )

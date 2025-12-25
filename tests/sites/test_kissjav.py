@@ -1,4 +1,5 @@
 """Comprehensive tests for kissjav site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import kissjav
@@ -23,21 +24,25 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration", ""),
-            "quality": kwargs.get("quality", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration", ""),
+                "quality": kwargs.get("quality", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, desc="", **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(kissjav.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(kissjav.site, "add_download_link", fake_add_download_link)
@@ -88,7 +93,9 @@ def test_list_handles_empty_results(monkeypatch):
         return html
 
     monkeypatch.setattr(kissjav.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(kissjav.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        kissjav.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(kissjav.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(kissjav.utils, "eod", lambda: None)
 
@@ -108,12 +115,14 @@ def test_categories_parses_category_items(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, desc=""):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage or "",
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage or "",
+            }
+        )
 
     monkeypatch.setattr(kissjav.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(kissjav.site, "add_dir", fake_add_dir)
@@ -177,11 +186,13 @@ def test_list_with_pagination_context_menu(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(kissjav.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(kissjav.site, "add_download_link", lambda *a, **k: None)

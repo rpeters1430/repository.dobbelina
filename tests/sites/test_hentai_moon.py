@@ -15,7 +15,9 @@ if spec and spec.loader:
     sys.modules["hentai_moon"] = hentai_moon
 
 
-FIXTURE_BASE = Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "hentai-moon"
+FIXTURE_BASE = (
+    Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "hentai-moon"
+)
 
 
 def load_fixture(name: str) -> str:
@@ -32,17 +34,23 @@ def test_list_parses_videos_and_pagination(monkeypatch):
     monkeypatch.setattr(hentai_moon.utils, "notify", lambda *a, **k: None)
 
     def fake_add_download_link(name, url, mode, thumb, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "thumb": thumb,
-            "duration": kwargs.get("duration"),
-            "quality": kwargs.get("quality"),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "thumb": thumb,
+                "duration": kwargs.get("duration"),
+                "quality": kwargs.get("quality"),
+            }
+        )
 
     monkeypatch.setattr(hentai_moon.site, "add_download_link", fake_add_download_link)
-    monkeypatch.setattr(hentai_moon.site, "add_dir", lambda name, url, mode, icon=None, *a, **k: dirs.append((name, url, mode)))
+    monkeypatch.setattr(
+        hentai_moon.site,
+        "add_dir",
+        lambda name, url, mode, icon=None, *a, **k: dirs.append((name, url, mode)),
+    )
 
     hentai_moon.List("https://hentai-moon.com/latest-updates/" + hentai_moon.ajaxlist)
 

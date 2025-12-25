@@ -1,4 +1,5 @@
 """Tests for perverzija BeautifulSoup migration."""
+
 from pathlib import Path
 
 from resources.lib.sites import perverzija
@@ -20,7 +21,9 @@ def test_list_parses_items(monkeypatch):
     monkeypatch.setattr(perverzija.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(perverzija.utils, "eod", lambda: None)
 
-    def fake_add_download_link(name, url, mode, iconimage, desc, contextm=None, duration="", **kwargs):
+    def fake_add_download_link(
+        name, url, mode, iconimage, desc, contextm=None, duration="", **kwargs
+    ):
         downloads.append(
             {
                 "name": name,

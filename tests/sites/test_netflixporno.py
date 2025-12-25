@@ -1,10 +1,13 @@
 """Tests for netflixporno.com site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import netflixporno
 
 
-FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "netflixporno"
+FIXTURE_DIR = (
+    Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "netflixporno"
+)
 
 
 def load_fixture(name):
@@ -23,19 +26,23 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc=""):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(netflixporno.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(netflixporno.site, "add_download_link", fake_add_download_link)
@@ -113,11 +120,13 @@ def test_categories_parses_categories(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(netflixporno.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(netflixporno.site, "add_dir", fake_add_dir)

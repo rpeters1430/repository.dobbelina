@@ -19,21 +19,25 @@ def test_list_parses_videos_and_next_page(monkeypatch):
     monkeypatch.setattr(netflav.utils, "eod", lambda *a, **k: None)
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "icon": iconimage,
-            "plot": desc,
-            "context": kwargs.get("contextm"),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "icon": iconimage,
+                "plot": desc,
+                "context": kwargs.get("contextm"),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, desc="", **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "section": kwargs.get("section"),
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "section": kwargs.get("section"),
+            }
+        )
 
     monkeypatch.setattr(netflav.site, "add_download_link", fake_add_download_link)
     monkeypatch.setattr(netflav.site, "add_dir", fake_add_dir)
@@ -65,11 +69,13 @@ def test_genres_groups_and_sorts(monkeypatch):
     monkeypatch.setattr(netflav.utils, "eod", lambda *a, **k: None)
 
     def fake_add_dir(name, url, mode, iconimage=None, desc="", **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(netflav.site, "add_dir", fake_add_dir)
 

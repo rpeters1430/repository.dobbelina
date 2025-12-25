@@ -2,13 +2,14 @@
 Additional tests for utils.py functions
 Testing utility functions not covered by other test files
 """
+
 from unittest.mock import Mock, patch
 
 
 class TestKodilog:
     """Test kodilog() function"""
 
-    @patch('resources.lib.utils.xbmc')
+    @patch("resources.lib.utils.xbmc")
     def test_kodilog_default_level(self, mock_xbmc):
         """Test kodilog with default log level"""
         from resources.lib import utils
@@ -19,7 +20,7 @@ class TestKodilog:
         call_args = mock_xbmc.log.call_args[0]
         assert "@@@@Cumination: Test message" in call_args[0]
 
-    @patch('resources.lib.utils.xbmc')
+    @patch("resources.lib.utils.xbmc")
     def test_kodilog_custom_level(self, mock_xbmc):
         """Test kodilog with custom log level"""
         from resources.lib import utils
@@ -32,7 +33,7 @@ class TestKodilog:
         assert "@@@@Cumination: Error message" in call_args[0][0]
         assert call_args[0][1] == xbmc.LOGERROR
 
-    @patch('resources.lib.utils.xbmc')
+    @patch("resources.lib.utils.xbmc")
     def test_kodilog_with_numbers(self, mock_xbmc):
         """Test kodilog converts numbers to strings"""
         from resources.lib import utils
@@ -47,8 +48,8 @@ class TestKodilog:
 class TestClearFunctions:
     """Test cache and cookie clearing functions"""
 
-    @patch('resources.lib.utils.xbmcgui.Dialog')
-    @patch('resources.lib.utils.cache')
+    @patch("resources.lib.utils.xbmcgui.Dialog")
+    @patch("resources.lib.utils.cache")
     def test_clear_cache(self, mock_cache, mock_dialog_class):
         """Test clear_cache clears the cache"""
         from resources.lib import utils
@@ -58,10 +59,10 @@ class TestClearFunctions:
 
         utils.clear_cache()
 
-        mock_cache.cacheDelete.assert_called_once_with('%get%')
+        mock_cache.cacheDelete.assert_called_once_with("%get%")
 
-    @patch('resources.lib.utils.xbmcgui.Dialog')
-    @patch('resources.lib.utils.cj')
+    @patch("resources.lib.utils.xbmcgui.Dialog")
+    @patch("resources.lib.utils.cj")
     def test_clear_cookies(self, mock_cj, mock_dialog_class):
         """Test clear_cookies clears cookies"""
         from resources.lib import utils
@@ -91,7 +92,7 @@ class TestStreamdefence:
         """Test streamdefence handles non-iframe HTML"""
         from resources.lib import utils
 
-        html = '<html><div>Simple content</div></html>'
+        html = "<html><div>Simple content</div></html>"
 
         # Should either decode or return as-is
         # The function may fail decoding and return original
@@ -107,40 +108,40 @@ class TestStreamdefence:
 class TestSetSortedFunctions:
     """Test setSorted and setUnsorted functions"""
 
-    @patch('resources.lib.utils.xbmc')
-    @patch('resources.lib.utils.addon')
+    @patch("resources.lib.utils.xbmc")
+    @patch("resources.lib.utils.addon")
     def test_setSorted(self, mock_addon, mock_xbmc):
         """Test setSorted sets the setting to true"""
         from resources.lib import utils
 
         utils.setSorted()
 
-        mock_addon.setSetting.assert_called_once_with('keywords_sorted', 'true')
-        mock_xbmc.executebuiltin.assert_called_once_with('Container.Refresh')
+        mock_addon.setSetting.assert_called_once_with("keywords_sorted", "true")
+        mock_xbmc.executebuiltin.assert_called_once_with("Container.Refresh")
 
-    @patch('resources.lib.utils.xbmc')
-    @patch('resources.lib.utils.addon')
+    @patch("resources.lib.utils.xbmc")
+    @patch("resources.lib.utils.addon")
     def test_setUnsorted(self, mock_addon, mock_xbmc):
         """Test setUnsorted sets the setting to false"""
         from resources.lib import utils
 
         utils.setUnsorted()
 
-        mock_addon.setSetting.assert_called_once_with('keywords_sorted', 'false')
-        mock_xbmc.executebuiltin.assert_called_once_with('Container.Refresh')
+        mock_addon.setSetting.assert_called_once_with("keywords_sorted", "false")
+        mock_xbmc.executebuiltin.assert_called_once_with("Container.Refresh")
 
 
 class TestRefresh:
     """Test refresh() function"""
 
-    @patch('resources.lib.utils.xbmc')
+    @patch("resources.lib.utils.xbmc")
     def test_refresh(self, mock_xbmc):
         """Test refresh executes Container.Refresh"""
         from resources.lib import utils
 
         utils.refresh()
 
-        mock_xbmc.executebuiltin.assert_called_once_with('Container.Refresh')
+        mock_xbmc.executebuiltin.assert_called_once_with("Container.Refresh")
 
 
 class TestProtocolRelativeUrls:
@@ -150,16 +151,16 @@ class TestProtocolRelativeUrls:
         """Test fix_url with protocol-relative URL"""
         from resources.lib import utils
 
-        result = utils.fix_url('//cdn.example.com/video.mp4', 'https://example.com')
+        result = utils.fix_url("//cdn.example.com/video.mp4", "https://example.com")
 
-        assert result == 'https://cdn.example.com/video.mp4'
+        assert result == "https://cdn.example.com/video.mp4"
 
     def test_fix_url_absolute_url(self):
         """Test fix_url with absolute URL returns as-is"""
         from resources.lib import utils
 
-        url = 'https://cdn.example.com/video.mp4'
-        result = utils.fix_url(url, 'https://example.com')
+        url = "https://cdn.example.com/video.mp4"
+        result = utils.fix_url(url, "https://example.com")
 
         assert result == url
 
@@ -167,7 +168,7 @@ class TestProtocolRelativeUrls:
         """Test fix_url with http URL"""
         from resources.lib import utils
 
-        url = 'http://example.com/video.mp4'
+        url = "http://example.com/video.mp4"
         result = utils.fix_url(url)
 
         assert result == url
@@ -227,17 +228,17 @@ class TestSafeAttrHelpers:
         """Test safe_get_attr with None element"""
         from resources.lib import utils
 
-        result = utils.safe_get_attr(None, 'href')
+        result = utils.safe_get_attr(None, "href")
 
-        assert result == ''
+        assert result == ""
 
     def test_safe_get_attr_with_custom_default(self):
         """Test safe_get_attr with custom default"""
         from resources.lib import utils
 
-        result = utils.safe_get_attr(None, 'href', default='default_value')
+        result = utils.safe_get_attr(None, "href", default="default_value")
 
-        assert result == 'default_value'
+        assert result == "default_value"
 
     def test_safe_get_text_with_none_element(self):
         """Test safe_get_text with None element"""
@@ -245,15 +246,15 @@ class TestSafeAttrHelpers:
 
         result = utils.safe_get_text(None)
 
-        assert result == ''
+        assert result == ""
 
     def test_safe_get_text_with_custom_default(self):
         """Test safe_get_text with custom default"""
         from resources.lib import utils
 
-        result = utils.safe_get_text(None, default='default_text')
+        result = utils.safe_get_text(None, default="default_text")
 
-        assert result == 'default_text'
+        assert result == "default_text"
 
 
 class TestGetVidhost:
@@ -263,25 +264,25 @@ class TestGetVidhost:
         """Test get_vidhost extracts domain from URL with path"""
         from resources.lib import utils
 
-        result = utils.get_vidhost('https://example.com/videos/watch.html')
+        result = utils.get_vidhost("https://example.com/videos/watch.html")
 
-        assert result == 'example.com'
+        assert result == "example.com"
 
     def test_get_vidhost_with_subdomain(self):
         """Test get_vidhost handles subdomains"""
         from resources.lib import utils
 
-        result = utils.get_vidhost('https://cdn.example.com/video.mp4')
+        result = utils.get_vidhost("https://cdn.example.com/video.mp4")
 
-        assert result == 'example.com'
+        assert result == "example.com"
 
     def test_get_vidhost_with_port(self):
         """Test get_vidhost handles port numbers"""
         from resources.lib import utils
 
-        result = utils.get_vidhost('http://localhost:8080/video.mp4')
+        result = utils.get_vidhost("http://localhost:8080/video.mp4")
 
-        assert result == 'localhost'
+        assert result == "localhost"
 
 
 class TestGetLanguage:
@@ -291,17 +292,17 @@ class TestGetLanguage:
         """Test get_language returns code for unknown language"""
         from resources.lib import utils
 
-        result = utils.get_language('zz')
+        result = utils.get_language("zz")
 
-        assert result == 'zz'
+        assert result == "zz"
 
     def test_get_language_uppercase(self):
         """Test get_language handles uppercase codes"""
         from resources.lib import utils
 
-        result = utils.get_language('EN')
+        result = utils.get_language("EN")
 
-        assert result == 'English'
+        assert result == "English"
 
 
 class TestGetCountry:
@@ -311,14 +312,14 @@ class TestGetCountry:
         """Test get_country returns code for unknown country"""
         from resources.lib import utils
 
-        result = utils.get_country('xx')
+        result = utils.get_country("xx")
 
-        assert result == 'xx'
+        assert result == "xx"
 
     def test_get_country_uppercase(self):
         """Test get_country handles uppercase codes"""
         from resources.lib import utils
 
-        result = utils.get_country('US')
+        result = utils.get_country("US")
 
-        assert result == 'United States'
+        assert result == "United States"

@@ -17,6 +17,7 @@ if spec and spec.loader:
 
 FIXTURE_BASE = Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "hentaidude"
 
+
 def load_fixture(name: str) -> str:
     return (FIXTURE_BASE / name).read_text(encoding="utf-8")
 
@@ -30,18 +31,22 @@ def test_list_uses_soup_spec_and_next_page(monkeypatch):
     monkeypatch.setattr(hentaidude.utils, "eod", lambda: None)
 
     def fake_add_download_link(name, url, mode, thumb, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "thumb": thumb,
-            "desc": desc,
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "thumb": thumb,
+                "desc": desc,
+            }
+        )
 
     monkeypatch.setattr(hentaidude.site, "add_download_link", fake_add_download_link)
     monkeypatch.setattr(hentaidude.site, "add_dir", lambda *a, **k: dirs.append(a))
 
-    hentaidude.List("https://hentaidude.xxx/genre/uncensored-hentai/page/1/?m_orderby=latest")
+    hentaidude.List(
+        "https://hentaidude.xxx/genre/uncensored-hentai/page/1/?m_orderby=latest"
+    )
 
     assert len(downloads) == 20
     assert downloads[0]["url"].startswith("https://hentaidude.xxx/watch/")
@@ -59,7 +64,9 @@ def test_search_path_shares_listing(monkeypatch):
     monkeypatch.setattr(hentaidude.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(hentaidude.utils, "eod", lambda: None)
 
-    monkeypatch.setattr(hentaidude.site, "add_download_link", lambda *a, **k: downloads.append(a))
+    monkeypatch.setattr(
+        hentaidude.site, "add_download_link", lambda *a, **k: downloads.append(a)
+    )
 
     hentaidude.List("https://hentaidude.xxx/?s=query")
 

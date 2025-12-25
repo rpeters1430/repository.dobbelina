@@ -13,7 +13,6 @@ if pycryptoLoaded:
         return PyCrypto_AES(key, mode, IV)
 
     class PyCrypto_AES(AES):
-
         def __init__(self, key, mode, IV):
             AES.__init__(self, key, mode, IV, "pycrypto")
             key = bytes(key)

@@ -1,4 +1,5 @@
 """Comprehensive tests for reallifecam.to site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import reallifecam
@@ -23,21 +24,25 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration"),
-            "quality": kwargs.get("quality"),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration"),
+                "quality": kwargs.get("quality"),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(reallifecam.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(reallifecam.site, "add_download_link", fake_add_download_link)
@@ -244,12 +249,14 @@ def test_categories_parses_items(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+            }
+        )
 
     monkeypatch.setattr(reallifecam.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(reallifecam.site, "add_dir", fake_add_dir)
@@ -345,7 +352,9 @@ def test_search_with_keyword_calls_list(monkeypatch):
 
     monkeypatch.setattr(reallifecam, "List", fake_list)
 
-    reallifecam.Search("https://reallifecam.to/search/videos?search_query=", keyword="test query")
+    reallifecam.Search(
+        "https://reallifecam.to/search/videos?search_query=", keyword="test query"
+    )
 
     assert len(list_calls) == 1
     assert "test%20query" in list_calls[0]

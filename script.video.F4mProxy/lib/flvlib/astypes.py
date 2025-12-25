@@ -12,7 +12,7 @@ from helpers import OrderedAttrDict, utc
 The AS types and their FLV representations.
 """
 
-log = logging.getLogger('flvlib.astypes')
+log = logging.getLogger("flvlib.astypes")
 
 
 class MalformedFLV(Exception):
@@ -23,6 +23,7 @@ class MalformedFLV(Exception):
 def get_number(f, max_offset=None):
     return get_double(f)
 
+
 def make_number(num):
     return make_double(num)
 
@@ -31,6 +32,7 @@ def make_number(num):
 def get_boolean(f, max_offset=None):
     value = get_ui8(f)
     return bool(value)
+
 
 def make_boolean(value):
     return make_ui8((value and 1) or 0)
@@ -44,10 +46,11 @@ def get_string(f, max_offset=None):
     ret = f.read(length)
     return ret
 
+
 def make_string(string):
     if isinstance(string, unicode):
         # We need a blob, not unicode. Arbitrarily choose UTF-8
-        string = string.encode('UTF-8')
+        string = string.encode("UTF-8")
     length = make_ui16(len(string))
     return length + string
 
@@ -60,10 +63,11 @@ def get_longstring(f, max_offset=None):
     ret = f.read(length)
     return ret
 
+
 def make_longstring(string):
     if isinstance(string, unicode):
         # We need a blob, not unicode. Arbitrarily choose UTF-8
-        string = string.encode('UTF-8')
+        string = string.encode("UTF-8")
     length = make_ui32(len(string))
     return length + string
 
@@ -91,10 +95,12 @@ def get_ecma_array(f, max_offset=None):
         array[name] = value
     return array
 
+
 def make_ecma_array(d):
     length = make_ui32(len(d))
-    rest = ''.join([make_script_data_variable(name, value)
-                    for name, value in d.iteritems()])
+    rest = "".join(
+        [make_script_data_variable(name, value) for name, value in d.iteritems()]
+    )
     marker = make_ui24(9)
     return length + rest + marker
 
@@ -103,13 +109,13 @@ def make_ecma_array(d):
 def get_strict_array(f, max_offset=None):
     length = get_ui32(f)
     log.debug("The length is %d", length)
-    elements = [get_script_data_value(f, max_offset=max_offset)
-                for _ in xrange(length)]
+    elements = [get_script_data_value(f, max_offset=max_offset) for _ in xrange(length)]
     return elements
+
 
 def make_strict_array(l):
     ret = make_ui32(len(l))
-    rest = ''.join([make_script_data_value(value) for value in l])
+    rest = "".join([make_script_data_value(value) for value in l])
     return ret + rest
 
 
@@ -127,6 +133,7 @@ def get_date(f, max_offset=None):
     _ignored = get_si16(f)
     return datetime.datetime.fromtimestamp(timestamp, utc)
 
+
 def make_date(date):
     if date.tzinfo:
         utc_date = date.astimezone(utc)
@@ -142,8 +149,9 @@ def make_date(date):
 def get_null(f, max_offset=None):
     return None
 
+
 def make_null(none):
-    return ''
+    return ""
 
 
 # Object
@@ -167,6 +175,7 @@ def get_object(f, max_offset=None):
         setattr(ret, name, value)
     return ret
 
+
 def make_object(obj):
     # If the object is iterable, serialize keys/values. If not, fall
     # back on iterating over __dict__.
@@ -175,15 +184,13 @@ def make_object(obj):
         iterator = obj.iteritems()
     except AttributeError:
         iterator = obj.__dict__.iteritems()
-    ret = ''.join([make_script_data_variable(name, value)
-                   for name, value in iterator])
+    ret = "".join([make_script_data_variable(name, value) for name, value in iterator])
     marker = make_ui24(9)
     return ret + marker
 
 
 # MovieClip
 class MovieClip(object):
-
     def __init__(self, path):
         self.path = path
 
@@ -193,9 +200,11 @@ class MovieClip(object):
     def __repr__(self):
         return "<MovieClip at %s>" % self.path
 
+
 def get_movieclip(f, max_offset=None):
     ret = get_string(f)
     return MovieClip(ret)
+
 
 def make_movieclip(clip):
     return make_string(clip.path)
@@ -203,23 +212,23 @@ def make_movieclip(clip):
 
 # Undefined
 class Undefined(object):
-
     def __eq__(self, other):
         return isinstance(other, Undefined)
 
     def __repr__(self):
-        return '<Undefined>'
+        return "<Undefined>"
+
 
 def get_undefined(f, max_offset=None):
     return Undefined()
 
+
 def make_undefined(undefined):
-    return ''
+    return ""
 
 
 # Reference
 class Reference(object):
-
     def __init__(self, ref):
         self.ref = ref
 
@@ -229,9 +238,11 @@ class Reference(object):
     def __repr__(self):
         return "<Reference to %d>" % self.ref
 
+
 def get_reference(f, max_offset=None):
     ret = get_ui16(f)
     return Reference(ret)
+
 
 def make_reference(reference):
     return make_ui16(reference.ref)
@@ -249,7 +260,7 @@ as_type_to_getter_and_maker = {
     VALUE_TYPE_ECMA_ARRAY: (get_ecma_array, make_ecma_array),
     VALUE_TYPE_STRICT_ARRAY: (get_strict_array, make_strict_array),
     VALUE_TYPE_DATE: (get_date, make_date),
-    VALUE_TYPE_LONGSTRING: (get_longstring, make_longstring)
+    VALUE_TYPE_LONGSTRING: (get_longstring, make_longstring),
 }
 
 type_to_as_type = {
@@ -268,8 +279,9 @@ type_to_as_type = {
     Undefined: VALUE_TYPE_UNDEFINED,
     MovieClip: VALUE_TYPE_MOVIECLIP,
     Reference: VALUE_TYPE_REFERENCE,
-    type(None): VALUE_TYPE_NULL
+    type(None): VALUE_TYPE_NULL,
 }
+
 
 # SCRIPTDATAVARIABLE
 def get_script_data_variable(f, max_offset=None):
@@ -278,6 +290,7 @@ def get_script_data_variable(f, max_offset=None):
     value = get_script_data_value(f, max_offset=max_offset)
     log.debug("The value is %r", value)
     return (name, value)
+
 
 def make_script_data_variable(name, value):
     log.debug("The name is %s", name)
@@ -297,6 +310,7 @@ def get_script_data_value(f, max_offset=None):
     log.debug("The getter function is %r", get_value)
     value = get_value(f, max_offset=max_offset)
     return value
+
 
 def make_script_data_value(value):
     value_type = type_to_as_type.get(value.__class__, VALUE_TYPE_OBJECT)

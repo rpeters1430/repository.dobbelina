@@ -12,7 +12,6 @@ if m2cryptoLoaded:
         return OpenSSL_TripleDES(key, mode, IV)
 
     class OpenSSL_TripleDES(TripleDES):
-
         def __init__(self, key, mode, IV):
             TripleDES.__init__(self, key, mode, IV, "openssl")
             self.key = key
@@ -29,19 +28,19 @@ if m2cryptoLoaded:
             context = self._createContext(1)
             ciphertext = m2.cipher_update(context, plaintext)
             m2.cipher_ctx_free(context)
-            self.IV = ciphertext[-self.block_size:]
+            self.IV = ciphertext[-self.block_size :]
             return bytearray(ciphertext)
 
         def decrypt(self, ciphertext):
             TripleDES.decrypt(self, ciphertext)
             context = self._createContext(0)
-            #I think M2Crypto has a bug - it fails to decrypt and return the last block passed in.
-            #To work around this, we append sixteen zeros to the string, below:
-            plaintext = m2.cipher_update(context, ciphertext+('\0'*16))
+            # I think M2Crypto has a bug - it fails to decrypt and return the last block passed in.
+            # To work around this, we append sixteen zeros to the string, below:
+            plaintext = m2.cipher_update(context, ciphertext + ("\0" * 16))
 
-            #If this bug is ever fixed, then plaintext will end up having a garbage
-            #plaintext block on the end.  That's okay - the below code will ignore it.
-            plaintext = plaintext[:len(ciphertext)]
+            # If this bug is ever fixed, then plaintext will end up having a garbage
+            # plaintext block on the end.  That's okay - the below code will ignore it.
+            plaintext = plaintext[: len(ciphertext)]
             m2.cipher_ctx_free(context)
-            self.IV = ciphertext[-self.block_size:]
+            self.IV = ciphertext[-self.block_size :]
             return bytearray(plaintext)

@@ -1,4 +1,5 @@
 """Tests for Motherless site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import motherless
@@ -22,13 +23,15 @@ def test_list_parses_videos(monkeypatch):
         return html_data
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
         dirs.append({"name": name, "url": url})
@@ -45,7 +48,9 @@ def test_list_parses_videos(monkeypatch):
 
     # Check first video has required fields
     assert downloads[0]["name"], "Video should have a title"
-    assert "motherless.com" in downloads[0]["url"], "Video URL should be for motherless.com"
+    assert "motherless.com" in downloads[0]["url"], (
+        "Video URL should be for motherless.com"
+    )
 
 
 def test_list_handles_pagination(monkeypatch):
@@ -70,7 +75,9 @@ def test_list_handles_pagination(monkeypatch):
     # Should have Next Page
     next_pages = [d for d in dirs if "Next Page" in d["name"]]
     assert len(next_pages) > 0, "Should have next page"
-    assert "page=" in next_pages[0]["url"], "Next page URL should contain page parameter"
+    assert "page=" in next_pages[0]["url"], (
+        "Next page URL should contain page parameter"
+    )
 
 
 def test_categories_parses_and_sorts(monkeypatch):
@@ -83,11 +90,13 @@ def test_categories_parses_and_sorts(monkeypatch):
         return html_data
 
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(motherless.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(motherless.site, "add_dir", fake_add_dir)
@@ -105,7 +114,9 @@ def test_categories_parses_and_sorts(monkeypatch):
 
     # Check that categories are sorted alphabetically
     if len(dirs) >= 2:
-        assert dirs[0]["name"].lower() <= dirs[-1]["name"].lower(), "Categories should be sorted alphabetically"
+        assert dirs[0]["name"].lower() <= dirs[-1]["name"].lower(), (
+            "Categories should be sorted alphabetically"
+        )
 
 
 def test_search_builds_correct_url(monkeypatch):
@@ -117,7 +128,9 @@ def test_search_builds_correct_url(monkeypatch):
 
     monkeypatch.setattr(motherless, "List", fake_list)
 
-    motherless.Search("https://motherless.com/search/videos?term=", keyword="test search")
+    motherless.Search(
+        "https://motherless.com/search/videos?term=", keyword="test search"
+    )
 
     assert len(called_urls) == 1
     assert "test+search" in called_urls[0]

@@ -21,10 +21,10 @@ from typing import Optional, Dict
 
 def fetch_with_playwright(
     url: str,
-    wait_for: str = 'networkidle',
+    wait_for: str = "networkidle",
     wait_for_selector: Optional[str] = None,
     timeout: int = 30000,
-    headers: Optional[Dict[str, str]] = None
+    headers: Optional[Dict[str, str]] = None,
 ) -> str:
     """
     Fetch HTML content using Playwright (headless Chromium).
@@ -56,9 +56,11 @@ def fetch_with_playwright(
             context.set_extra_http_headers(headers)
         else:
             # Default user agent
-            context.set_extra_http_headers({
-                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-            })
+            context.set_extra_http_headers(
+                {
+                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                }
+            )
 
         page = context.new_page()
 
@@ -83,7 +85,7 @@ def take_screenshot(
     url: str,
     output_path: str,
     wait_for_selector: Optional[str] = None,
-    full_page: bool = True
+    full_page: bool = True,
 ) -> None:
     """
     Take a screenshot of a page (useful for debugging failed tests).
@@ -106,7 +108,7 @@ def take_screenshot(
         page = browser.new_page()
 
         try:
-            page.goto(url, wait_until='networkidle')
+            page.goto(url, wait_until="networkidle")
 
             if wait_for_selector:
                 page.wait_for_selector(wait_for_selector)
@@ -120,10 +122,10 @@ def take_screenshot(
 
 def fetch_with_playwright_and_network(
     url: str,
-    wait_for: str = 'networkidle',
+    wait_for: str = "networkidle",
     wait_for_selector: Optional[str] = None,
     timeout: int = 30000,
-    headers: Optional[Dict[str, str]] = None
+    headers: Optional[Dict[str, str]] = None,
 ) -> (str, list):
     """
     Fetch HTML content and network requests using Playwright (headless Chromium).
@@ -132,7 +134,7 @@ def fetch_with_playwright_and_network(
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         context = browser.new_context(
-            user_agent='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+            user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
         )
         context.clear_cookies()
 
@@ -140,14 +142,11 @@ def fetch_with_playwright_and_network(
             context.set_extra_http_headers(headers)
 
         page = context.new_page()
-        
+
         def handle_request(request):
-            requests.append({
-                'url': request.url,
-                'headers': request.headers
-            })
-        
-        page.on('request', handle_request)
+            requests.append({"url": request.url, "headers": request.headers})
+
+        page.on("request", handle_request)
 
         try:
             page.goto(url, wait_until=wait_for, timeout=timeout)
@@ -162,8 +161,9 @@ def fetch_with_playwright_and_network(
         finally:
             browser.close()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     # Quick test
-    html = fetch_with_playwright('https://example.com')
+    html = fetch_with_playwright("https://example.com")
     print(f"Fetched {len(html)} bytes")
     print("✅ Playwright helper is working!")

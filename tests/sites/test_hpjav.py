@@ -1,4 +1,5 @@
 """Comprehensive tests for hpjav site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import hpjav
@@ -23,20 +24,24 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, desc="", **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(hpjav.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(hpjav.site, "add_download_link", fake_add_download_link)
@@ -87,7 +92,9 @@ def test_list_handles_empty_results(monkeypatch):
         return html
 
     monkeypatch.setattr(hpjav.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(hpjav.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        hpjav.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(hpjav.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(hpjav.utils, "eod", lambda: None)
 
@@ -99,6 +106,7 @@ def test_list_handles_empty_results(monkeypatch):
 
 def test_list_handles_timeout_gracefully(monkeypatch):
     """Test that List handles timeout errors gracefully."""
+
     def fake_get_html(url, referer=None, timeout=None, headers=None):
         raise Exception("Timeout")
 
@@ -149,9 +157,11 @@ def test_list_duration_cleaning(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "duration": kwargs.get("duration", ""),
-        })
+        downloads.append(
+            {
+                "duration": kwargs.get("duration", ""),
+            }
+        )
 
     monkeypatch.setattr(hpjav.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(hpjav.site, "add_download_link", fake_add_download_link)
@@ -176,10 +186,12 @@ def test_list_pagination_with_page_info(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+            }
+        )
 
     monkeypatch.setattr(hpjav.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(hpjav.site, "add_download_link", lambda *a, **k: None)

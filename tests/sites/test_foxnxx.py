@@ -16,22 +16,26 @@ def test_list_parses_videos_and_pagination(monkeypatch):
     dirs = []
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "desc": desc,
-            "duration": kwargs.get("duration"),
-            "context": kwargs.get("contextm"),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "desc": desc,
+                "duration": kwargs.get("duration"),
+                "context": kwargs.get("contextm"),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, desc="", **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(foxnxx.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(foxnxx.utils, "eod", lambda *a, **k: None)

@@ -1,4 +1,5 @@
 """Tests for NL tubes BeautifulSoup migration."""
+
 from pathlib import Path
 
 from resources.lib.sites import nltubes
@@ -16,9 +17,21 @@ def test_list_poldertube_branch(monkeypatch):
     downloads = []
     dirs = []
 
-    monkeypatch.setattr(nltubes.utils, "getHtml", lambda url, ref='': html)
-    monkeypatch.setattr(nltubes.site, "add_download_link", lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append({"name": name, "url": url, "duration": kwargs.get("duration")}))
-    monkeypatch.setattr(nltubes.site, "add_dir", lambda name, url, mode, iconimage=None, **kwargs: dirs.append({"name": name, "url": url}))
+    monkeypatch.setattr(nltubes.utils, "getHtml", lambda url, ref="": html)
+    monkeypatch.setattr(
+        nltubes.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append(
+            {"name": name, "url": url, "duration": kwargs.get("duration")}
+        ),
+    )
+    monkeypatch.setattr(
+        nltubes.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url}
+        ),
+    )
 
     nltubes.NLVIDEOLIST("https://www.poldertube.nl/page1")
 
@@ -33,9 +46,21 @@ def test_list_sextube_branch(monkeypatch):
     downloads = []
     dirs = []
 
-    monkeypatch.setattr(nltubes.utils, "getHtml", lambda url, ref='': html)
-    monkeypatch.setattr(nltubes.site, "add_download_link", lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append({"name": name, "url": url}))
-    monkeypatch.setattr(nltubes.site, "add_dir", lambda name, url, mode, iconimage=None, **kwargs: dirs.append({"name": name, "url": url}))
+    monkeypatch.setattr(nltubes.utils, "getHtml", lambda url, ref="": html)
+    monkeypatch.setattr(
+        nltubes.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append(
+            {"name": name, "url": url}
+        ),
+    )
+    monkeypatch.setattr(
+        nltubes.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url}
+        ),
+    )
 
     nltubes.NLVIDEOLIST("https://www.sextube.nl/page1")
 
@@ -49,7 +74,15 @@ def test_playvid_uses_meta(monkeypatch):
 
     class FakeVP:
         def __init__(self, name, download=None):
-            self.progress = type("p", (), {"update": lambda *args, **kwargs: None, "close": lambda *args, **kwargs: None})()
+            self.progress = type(
+                "p",
+                (),
+                {
+                    "update": lambda *args, **kwargs: None,
+                    "close": lambda *args, **kwargs: None,
+                },
+            )()
+
         def play_from_direct_link(self, url):
             plays.append(url)
 

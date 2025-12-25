@@ -17,14 +17,32 @@ def test_list_parses_cards_and_pagination(monkeypatch):
 
     monkeypatch.setattr(netfapx.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(netfapx.utils, "eod", lambda: None)
-    monkeypatch.setattr(netfapx.site, "add_download_link",
-                        lambda name, url, mode, iconimage, desc='', duration='', **kwargs: downloads.append(
-                            {"name": name, "url": url, "mode": mode, "icon": iconimage, "duration": duration}
-                        ))
-    monkeypatch.setattr(netfapx.site, "add_dir",
-                        lambda name, url, mode, iconimage=None, contextm=None, **kwargs: dirs.append(
-                            {"name": name, "url": url, "mode": mode, "contextm": contextm}
-                        ))
+    monkeypatch.setattr(
+        netfapx.site,
+        "add_download_link",
+        lambda name,
+        url,
+        mode,
+        iconimage,
+        desc="",
+        duration="",
+        **kwargs: downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": duration,
+            }
+        ),
+    )
+    monkeypatch.setattr(
+        netfapx.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, contextm=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode, "contextm": contextm}
+        ),
+    )
 
     netfapx.List("https://netfapx.com/?orderby=newest")
 
@@ -48,10 +66,13 @@ def test_categories_and_tags(monkeypatch):
 
     monkeypatch.setattr(netfapx.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(netfapx.utils, "eod", lambda: None)
-    monkeypatch.setattr(netfapx.site, "add_dir",
-                        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
-                            {"name": name, "url": url, "mode": mode, "icon": iconimage}
-                        ))
+    monkeypatch.setattr(
+        netfapx.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode, "icon": iconimage}
+        ),
+    )
 
     netfapx.Categories("https://netfapx.com/categories")
 
@@ -71,10 +92,19 @@ def test_pornstars(monkeypatch):
 
     monkeypatch.setattr(netfapx.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(netfapx.utils, "eod", lambda: None)
-    monkeypatch.setattr(netfapx.site, "add_dir",
-                        lambda name, url, mode, iconimage=None, contextm=None, **kwargs: dirs.append(
-                            {"name": name, "url": url, "mode": mode, "icon": iconimage, "contextm": contextm}
-                        ))
+    monkeypatch.setattr(
+        netfapx.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, contextm=None, **kwargs: dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "contextm": contextm,
+            }
+        ),
+    )
 
     netfapx.Pornstars("https://netfapx.com/pornstar/?orderby=popular")
 

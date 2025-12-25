@@ -1,4 +1,5 @@
 """Comprehensive tests for erogarga site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import erogarga
@@ -22,19 +23,23 @@ def test_list_parses_video_items(monkeypatch):
     def fake_get_html(url, *args, **kwargs):
         return html
 
-    def fake_add_download_link(name, url, mode, iconimage, desc="", contextm=None, quality='', **kwargs):
-        downloads.append({
-            'name': name,
-            'url': url,
-            'mode': mode,
-            'icon': iconimage,
-            'desc': desc,
-            'quality': quality,
-            'contextm': contextm
-        })
+    def fake_add_download_link(
+        name, url, mode, iconimage, desc="", contextm=None, quality="", **kwargs
+    ):
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "desc": desc,
+                "quality": quality,
+                "contextm": contextm,
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, contextm=None, **kwargs):
-        dirs.append({'name': name, 'url': url, 'mode': mode, 'contextm': contextm})
+        dirs.append({"name": name, "url": url, "mode": mode, "contextm": contextm})
 
     monkeypatch.setattr(erogarga.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(erogarga.site, "add_download_link", fake_add_download_link)
@@ -42,26 +47,26 @@ def test_list_parses_video_items(monkeypatch):
     monkeypatch.setattr(erogarga.utils, "eod", lambda: None)
 
     # Call List
-    erogarga.List('https://www.erogarga.com/?filter=latest')
+    erogarga.List("https://www.erogarga.com/?filter=latest")
 
     # Verify we got 3 videos (skipped the photo gallery)
     assert len(downloads) == 3
 
     # Verify first video (HD)
-    assert downloads[0]['name'] == 'Sample Video 1'
-    assert downloads[0]['url'] == 'https://www.erogarga.com/video/sample-video-1/'
-    assert downloads[0]['mode'] == 'Play'
-    assert 'thumb1.jpg' in downloads[0]['icon']
-    assert downloads[0]['quality'] == 'HD'
-    assert downloads[0]['contextm'] is not None
+    assert downloads[0]["name"] == "Sample Video 1"
+    assert downloads[0]["url"] == "https://www.erogarga.com/video/sample-video-1/"
+    assert downloads[0]["mode"] == "Play"
+    assert "thumb1.jpg" in downloads[0]["icon"]
+    assert downloads[0]["quality"] == "HD"
+    assert downloads[0]["contextm"] is not None
 
     # Verify second video (no HD)
-    assert downloads[1]['name'] == 'Sample Video 2'
-    assert downloads[1]['quality'] == ''
+    assert downloads[1]["name"] == "Sample Video 2"
+    assert downloads[1]["quality"] == ""
 
     # Verify third video (HD)
-    assert downloads[2]['name'] == 'Sample Video 3'
-    assert downloads[2]['quality'] == 'HD'
+    assert downloads[2]["name"] == "Sample Video 3"
+    assert downloads[2]["quality"] == "HD"
 
 
 def test_list_skips_photo_galleries(monkeypatch):
@@ -71,17 +76,19 @@ def test_list_skips_photo_galleries(monkeypatch):
     downloads = []
 
     monkeypatch.setattr(erogarga.utils, "getHtml", lambda *a, **k: html)
-    monkeypatch.setattr(erogarga.site, "add_download_link", lambda *a, **k: downloads.append(a))
+    monkeypatch.setattr(
+        erogarga.site, "add_download_link", lambda *a, **k: downloads.append(a)
+    )
     monkeypatch.setattr(erogarga.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(erogarga.utils, "eod", lambda: None)
 
-    erogarga.List('https://www.erogarga.com/?filter=latest')
+    erogarga.List("https://www.erogarga.com/?filter=latest")
 
     # Should have 3 videos, skipping the 1 photo gallery
     assert len(downloads) == 3
     # Verify none of the downloads are the photo album
     for download in downloads:
-        assert 'Sample Album' not in str(download)
+        assert "Sample Album" not in str(download)
 
 
 def test_list_handles_pagination(monkeypatch):
@@ -91,7 +98,7 @@ def test_list_handles_pagination(monkeypatch):
     dirs = []
 
     def fake_add_dir(name, url, mode, iconimage=None, contextm=None, **kwargs):
-        dirs.append({'name': name, 'url': url, 'mode': mode, 'contextm': contextm})
+        dirs.append({"name": name, "url": url, "mode": mode, "contextm": contextm})
 
     monkeypatch.setattr(erogarga.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(erogarga.site, "add_download_link", lambda *a, **k: None)
@@ -99,15 +106,15 @@ def test_list_handles_pagination(monkeypatch):
     monkeypatch.setattr(erogarga.utils, "eod", lambda: None)
 
     # Call List
-    erogarga.List('https://www.erogarga.com/?filter=latest')
+    erogarga.List("https://www.erogarga.com/?filter=latest")
 
     # Verify pagination was added
-    next_pages = [d for d in dirs if 'Next Page' in d['name']]
+    next_pages = [d for d in dirs if "Next Page" in d["name"]]
     assert len(next_pages) == 1
-    assert next_pages[0]['url'] == '/page/4/'
-    assert next_pages[0]['mode'] == 'List'
+    assert next_pages[0]["url"] == "/page/4/"
+    assert next_pages[0]["mode"] == "List"
     # Should have goto page context menu
-    assert next_pages[0]['contextm'] is not None
+    assert next_pages[0]["contextm"] is not None
 
 
 def test_cat_parses_categories(monkeypatch):
@@ -117,29 +124,29 @@ def test_cat_parses_categories(monkeypatch):
     dirs = []
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({'name': name, 'url': url, 'mode': mode, 'icon': iconimage})
+        dirs.append({"name": name, "url": url, "mode": mode, "icon": iconimage})
 
     monkeypatch.setattr(erogarga.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(erogarga.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(erogarga.utils, "eod", lambda: None)
 
     # Call Cat
-    erogarga.Cat('https://www.erogarga.com/categories/')
+    erogarga.Cat("https://www.erogarga.com/categories/")
 
     # Should have 3 categories
     assert len(dirs) == 3
 
     # Verify first category
-    assert dirs[0]['name'] == 'Asian (125 videos)'
-    assert dirs[0]['url'] == 'https://www.erogarga.com/category/asian/'
-    assert dirs[0]['mode'] == 'List'
+    assert dirs[0]["name"] == "Asian (125 videos)"
+    assert dirs[0]["url"] == "https://www.erogarga.com/category/asian/"
+    assert dirs[0]["mode"] == "List"
 
     # Verify second category
-    assert dirs[1]['name'] == 'Brunette (89 videos)'
-    assert dirs[1]['url'] == 'https://www.erogarga.com/category/brunette/'
+    assert dirs[1]["name"] == "Brunette (89 videos)"
+    assert dirs[1]["url"] == "https://www.erogarga.com/category/brunette/"
 
     # Verify third category
-    assert dirs[2]['name'] == 'MILF (156 videos)'
+    assert dirs[2]["name"] == "MILF (156 videos)"
 
 
 def test_search_without_keyword_shows_dialog(monkeypatch):
@@ -149,9 +156,9 @@ def test_search_without_keyword_shows_dialog(monkeypatch):
     def fake_search_dir(*args):
         search_dir_called[0] = True
 
-    monkeypatch.setattr(erogarga.site, 'search_dir', fake_search_dir)
+    monkeypatch.setattr(erogarga.site, "search_dir", fake_search_dir)
 
-    erogarga.Search('https://www.erogarga.com/?s=')
+    erogarga.Search("https://www.erogarga.com/?s=")
 
     assert search_dir_called[0]
 
@@ -161,15 +168,15 @@ def test_search_with_keyword_calls_list(monkeypatch):
     list_called_with = {}
 
     def fake_list(url):
-        list_called_with['url'] = url
+        list_called_with["url"] = url
 
-    monkeypatch.setattr(erogarga, 'List', fake_list)
+    monkeypatch.setattr(erogarga, "List", fake_list)
 
-    erogarga.Search('https://www.erogarga.com/?s=', keyword='sample search')
+    erogarga.Search("https://www.erogarga.com/?s=", keyword="sample search")
 
     # Verify URL contains the search keyword
-    assert 'url' in list_called_with
-    assert 'sample%20search' in list_called_with['url']
+    assert "url" in list_called_with
+    assert "sample%20search" in list_called_with["url"]
 
 
 def test_list_handles_empty_results(monkeypatch):
@@ -186,11 +193,11 @@ def test_list_handles_empty_results(monkeypatch):
     monkeypatch.setattr(erogarga.site, "add_download_link", lambda *a, **k: None)
     monkeypatch.setattr(erogarga.site, "add_dir", lambda *a, **k: None)
 
-    erogarga.List('https://www.erogarga.com/?s=nonexistent')
+    erogarga.List("https://www.erogarga.com/?s=nonexistent")
 
     # Should have called notify with "No data found"
     assert len(notify_called) == 1
-    assert notify_called[0] == 'No data found'
+    assert notify_called[0] == "No data found"
 
 
 def test_list_extracts_duration(monkeypatch):
@@ -200,19 +207,19 @@ def test_list_extracts_duration(monkeypatch):
     downloads = []
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({'name': name, 'desc': desc})
+        downloads.append({"name": name, "desc": desc})
 
     monkeypatch.setattr(erogarga.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(erogarga.site, "add_download_link", fake_add_download_link)
     monkeypatch.setattr(erogarga.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(erogarga.utils, "eod", lambda: None)
 
-    erogarga.List('https://www.erogarga.com/?filter=latest')
+    erogarga.List("https://www.erogarga.com/?filter=latest")
 
     # The description should be the video name (as per the code)
     assert len(downloads) == 3
-    assert downloads[0]['name'] == 'Sample Video 1'
-    assert downloads[0]['desc'] == 'Sample Video 1'
+    assert downloads[0]["name"] == "Sample Video 1"
+    assert downloads[0]["desc"] == "Sample Video 1"
 
 
 def test_list_adds_context_menu(monkeypatch):
@@ -221,25 +228,27 @@ def test_list_adds_context_menu(monkeypatch):
 
     downloads = []
 
-    def fake_add_download_link(name, url, mode, iconimage, desc="", contextm=None, **kwargs):
-        downloads.append({'contextm': contextm})
+    def fake_add_download_link(
+        name, url, mode, iconimage, desc="", contextm=None, **kwargs
+    ):
+        downloads.append({"contextm": contextm})
 
     monkeypatch.setattr(erogarga.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(erogarga.site, "add_download_link", fake_add_download_link)
     monkeypatch.setattr(erogarga.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(erogarga.utils, "eod", lambda: None)
 
-    erogarga.List('https://www.erogarga.com/?filter=latest')
+    erogarga.List("https://www.erogarga.com/?filter=latest")
 
     # All videos should have context menus
     assert len(downloads) == 3
     for download in downloads:
-        assert download['contextm'] is not None
-        assert len(download['contextm']) == 2  # Lookup info and Related videos
+        assert download["contextm"] is not None
+        assert len(download["contextm"]) == 2  # Lookup info and Related videos
         # Check for expected context menu text
-        cm_text = str(download['contextm'])
-        assert 'Lookup info' in cm_text
-        assert 'Related videos' in cm_text
+        cm_text = str(download["contextm"])
+        assert "Lookup info" in cm_text
+        assert "Related videos" in cm_text
 
 
 def test_play_extracts_phixxx_iframe(monkeypatch):
@@ -255,19 +264,19 @@ def test_play_extracts_phixxx_iframe(monkeypatch):
             self.regex = regex
             self.direct_regex = direct_regex
             self.resolveurl = FakeResolveUrl()
-            video_player_calls.append(('init', name, download))
+            video_player_calls.append(("init", name, download))
 
         def play_from_link_to_resolve(self, url):
-            video_player_calls.append(('play_resolve', url))
+            video_player_calls.append(("play_resolve", url))
 
         def play_from_direct_link(self, url):
-            video_player_calls.append(('play_direct', url))
+            video_player_calls.append(("play_direct", url))
 
         def play_from_html(self, html, url):
-            video_player_calls.append(('play_html', html, url))
+            video_player_calls.append(("play_html", html, url))
 
         def play_from_site_link(self, url, referer):
-            video_player_calls.append(('play_site', url, referer))
+            video_player_calls.append(("play_site", url, referer))
 
     class FakeResolveUrl:
         def HostedMediaFile(self, url):
@@ -289,12 +298,14 @@ def test_play_extracts_phixxx_iframe(monkeypatch):
     monkeypatch.setattr(erogarga.utils, "postHtml", fake_post_html)
 
     # Call Play
-    erogarga.Play('https://www.erogarga.com/video/hot-japanese-schoolgirl-12345/', 'Test Video')
+    erogarga.Play(
+        "https://www.erogarga.com/video/hot-japanese-schoolgirl-12345/", "Test Video"
+    )
 
     # Should have initialized VideoPlayer
     assert len(video_player_calls) >= 1
-    assert video_player_calls[0][0] == 'init'
-    assert video_player_calls[0][1] == 'Test Video'
+    assert video_player_calls[0][0] == "init"
+    assert video_player_calls[0][1] == "Test Video"
 
 
 def test_play_handles_watcherotic_embed(monkeypatch):
@@ -307,10 +318,10 @@ def test_play_handles_watcherotic_embed(monkeypatch):
         def __init__(self, name, download=None, regex=None, direct_regex=None):
             self.name = name
             self.resolveurl = FakeResolveUrl()
-            video_player_calls.append(('init', name))
+            video_player_calls.append(("init", name))
 
         def play_from_direct_link(self, url):
-            video_player_calls.append(('play_direct', url))
+            video_player_calls.append(("play_direct", url))
 
     class FakeResolveUrl:
         def HostedMediaFile(self, url):
@@ -329,17 +340,17 @@ def test_play_handles_watcherotic_embed(monkeypatch):
     """
 
     def fake_get_html(url, *args, **kwargs):
-        if 'watcherotic' in url:
+        if "watcherotic" in url:
             return embed_html
         return html
 
     monkeypatch.setattr(erogarga.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(erogarga.utils, "VideoPlayer", FakeVideoPlayer)
 
-    erogarga.Play('https://www.erogarga.com/video/asian-milf-69/', 'Test Video')
+    erogarga.Play("https://www.erogarga.com/video/asian-milf-69/", "Test Video")
 
     assert len(video_player_calls) >= 1
-    assert video_player_calls[0][0] == 'init'
+    assert video_player_calls[0][0] == "init"
 
 
 def test_play_handles_spankbang_embed(monkeypatch):
@@ -364,18 +375,18 @@ def test_play_handles_spankbang_embed(monkeypatch):
             return False
 
     def fake_playvid(url, name, download=None):
-        playvid_calls.append({'url': url, 'name': name, 'download': download})
+        playvid_calls.append({"url": url, "name": name, "download": download})
 
     monkeypatch.setattr(erogarga.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(erogarga.utils, "VideoPlayer", FakeVideoPlayer)
     monkeypatch.setattr(erogarga, "Playvid", fake_playvid)
 
-    erogarga.Play('https://www.erogarga.com/video/korean-beauty-xxx/', 'Test Video')
+    erogarga.Play("https://www.erogarga.com/video/korean-beauty-xxx/", "Test Video")
 
     # Should have called spankbang Playvid
     assert len(playvid_calls) == 1
-    assert 'spankbang.com/video/' in playvid_calls[0]['url']
-    assert playvid_calls[0]['name'] == 'Test Video'
+    assert "spankbang.com/video/" in playvid_calls[0]["url"]
+    assert playvid_calls[0]["name"] == "Test Video"
 
 
 def test_play_handles_koreanpornmovie(monkeypatch):
@@ -387,28 +398,28 @@ def test_play_handles_koreanpornmovie(monkeypatch):
 
     class FakeVideoPlayer:
         def __init__(self, name, download=None):
-            video_player_calls.append(('init', name, download))
+            video_player_calls.append(("init", name, download))
 
         def play_from_direct_link(self, url):
-            video_player_calls.append(('play_direct', url))
+            video_player_calls.append(("play_direct", url))
 
     def fake_get_html(url, *args, **kwargs):
-        if 'somecdn.com' in url:
+        if "somecdn.com" in url:
             return iframe_html
         return html
 
     monkeypatch.setattr(erogarga.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(erogarga.utils, "VideoPlayer", FakeVideoPlayer)
 
-    erogarga.Play('https://koreanpornmovie.com/video/test-video/', 'Korean Video')
+    erogarga.Play("https://koreanpornmovie.com/video/test-video/", "Korean Video")
 
     # Should have initialized VideoPlayer and played direct link
     assert len(video_player_calls) >= 2
-    assert video_player_calls[0][0] == 'init'
-    assert video_player_calls[0][1] == 'Korean Video'
-    assert video_player_calls[1][0] == 'play_direct'
-    assert 'sample-video.mp4' in video_player_calls[1][1]
-    assert 'referer=' in video_player_calls[1][1]
+    assert video_player_calls[0][0] == "init"
+    assert video_player_calls[0][1] == "Korean Video"
+    assert video_player_calls[1][0] == "play_direct"
+    assert "sample-video.mp4" in video_player_calls[1][1]
+    assert "referer=" in video_player_calls[1][1]
 
 
 def test_lookupinfo_extracts_tags_and_actors(monkeypatch):
@@ -418,19 +429,17 @@ def test_lookupinfo_extracts_tags_and_actors(monkeypatch):
 
     class FakeLookupInfo:
         def __init__(self, siteurl, url, mode, lookup_list):
-            lookup_calls.append({
-                'siteurl': siteurl,
-                'url': url,
-                'mode': mode,
-                'lookup_list': lookup_list
-            })
+            lookup_calls.append(
+                {
+                    "siteurl": siteurl,
+                    "url": url,
+                    "mode": mode,
+                    "lookup_list": lookup_list,
+                }
+            )
 
         def additem(self, category, name, url):
-            additem_calls.append({
-                'category': category,
-                'name': name,
-                'url': url
-            })
+            additem_calls.append({"category": category, "name": name, "url": url})
 
     def fake_get_html(url, *args, **kwargs):
         return """
@@ -443,23 +452,23 @@ def test_lookupinfo_extracts_tags_and_actors(monkeypatch):
     monkeypatch.setattr(erogarga.utils, "LookupInfo", FakeLookupInfo)
     monkeypatch.setattr(erogarga.utils, "getHtml", fake_get_html)
 
-    erogarga.Lookupinfo('https://www.erogarga.com/video/test-video/')
+    erogarga.Lookupinfo("https://www.erogarga.com/video/test-video/")
 
     # Should have initialized LookupInfo
     assert len(lookup_calls) == 1
-    assert lookup_calls[0]['url'] == 'https://www.erogarga.com/video/test-video/'
-    assert lookup_calls[0]['mode'] == 'erogarga.List'
+    assert lookup_calls[0]["url"] == "https://www.erogarga.com/video/test-video/"
+    assert lookup_calls[0]["mode"] == "erogarga.List"
 
     # Should have added items for tag and actor
     assert len(additem_calls) == 2
     # First item should be the tag
-    assert additem_calls[0]['category'] == 'Tag'
-    assert additem_calls[0]['name'] == 'Asian'
-    assert 'tag/asian' in additem_calls[0]['url']
+    assert additem_calls[0]["category"] == "Tag"
+    assert additem_calls[0]["name"] == "Asian"
+    assert "tag/asian" in additem_calls[0]["url"]
     # Second item should be the actor
-    assert additem_calls[1]['category'] == 'Actor'
-    assert additem_calls[1]['name'] == 'Jane Doe'
-    assert 'actor/jane-doe' in additem_calls[1]['url']
+    assert additem_calls[1]["category"] == "Actor"
+    assert additem_calls[1]["name"] == "Jane Doe"
+    assert "actor/jane-doe" in additem_calls[1]["url"]
 
 
 def test_related_navigates_to_video_page(monkeypatch):
@@ -470,30 +479,31 @@ def test_related_navigates_to_video_page(monkeypatch):
         executebuiltin_calls.append(cmd)
 
     import xbmc
-    monkeypatch.setattr(xbmc, 'executebuiltin', fake_executebuiltin)
 
-    erogarga.Related('https://www.erogarga.com/video/test-video/')
+    monkeypatch.setattr(xbmc, "executebuiltin", fake_executebuiltin)
+
+    erogarga.Related("https://www.erogarga.com/video/test-video/")
 
     # Should have called Container.Update
     assert len(executebuiltin_calls) == 1
-    assert 'Container.Update' in executebuiltin_calls[0]
-    assert 'erogarga.List' in executebuiltin_calls[0]
-    assert 'test-video' in executebuiltin_calls[0]
+    assert "Container.Update" in executebuiltin_calls[0]
+    assert "erogarga.List" in executebuiltin_calls[0]
+    assert "test-video" in executebuiltin_calls[0]
 
 
 def test_getbaselink_identifies_site(monkeypatch):
     """Test that getBaselink() correctly identifies the site from URL."""
     # Test erogarga.com
-    result = erogarga.getBaselink('https://www.erogarga.com/video/test/')
-    assert result == 'https://www.erogarga.com/'
+    result = erogarga.getBaselink("https://www.erogarga.com/video/test/")
+    assert result == "https://www.erogarga.com/"
 
     # Test fulltaboo.tv
-    result = erogarga.getBaselink('https://fulltaboo.tv/video/test/')
-    assert result == 'https://fulltaboo.tv/'
+    result = erogarga.getBaselink("https://fulltaboo.tv/video/test/")
+    assert result == "https://fulltaboo.tv/"
 
     # Test koreanpornmovie.com
-    result = erogarga.getBaselink('https://koreanpornmovie.com/video/test/')
-    assert result == 'https://koreanpornmovie.com/'
+    result = erogarga.getBaselink("https://koreanpornmovie.com/video/test/")
+    assert result == "https://koreanpornmovie.com/"
 
 
 def test_main_creates_proper_menu_structure(monkeypatch):
@@ -501,24 +511,24 @@ def test_main_creates_proper_menu_structure(monkeypatch):
     dirs = []
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({'name': name, 'url': url, 'mode': mode})
+        dirs.append({"name": name, "url": url, "mode": mode})
 
     def fake_list(url):
         pass
 
-    monkeypatch.setattr(erogarga.site, 'add_dir', fake_add_dir)
-    monkeypatch.setattr(erogarga, 'List', fake_list)
+    monkeypatch.setattr(erogarga.site, "add_dir", fake_add_dir)
+    monkeypatch.setattr(erogarga, "List", fake_list)
 
-    erogarga.Main('https://www.erogarga.com/')
+    erogarga.Main("https://www.erogarga.com/")
 
     # Should have Categories and Search
     assert len(dirs) == 2
-    categories = [d for d in dirs if 'Categories' in d['name']]
-    search = [d for d in dirs if 'Search' in d['name']]
+    categories = [d for d in dirs if "Categories" in d["name"]]
+    search = [d for d in dirs if "Search" in d["name"]]
     assert len(categories) == 1
     assert len(search) == 1
-    assert categories[0]['mode'] == 'Cat'
-    assert search[0]['mode'] == 'Search'
+    assert categories[0]["mode"] == "Cat"
+    assert search[0]["mode"] == "Search"
 
 
 def test_main_fulltaboo_skips_categories(monkeypatch):
@@ -526,20 +536,20 @@ def test_main_fulltaboo_skips_categories(monkeypatch):
     dirs = []
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({'name': name, 'url': url, 'mode': mode})
+        dirs.append({"name": name, "url": url, "mode": mode})
 
     def fake_list(url):
         pass
 
     # Main always uses site.add_dir, not site1.add_dir
-    monkeypatch.setattr(erogarga.site, 'add_dir', fake_add_dir)
-    monkeypatch.setattr(erogarga, 'List', fake_list)
+    monkeypatch.setattr(erogarga.site, "add_dir", fake_add_dir)
+    monkeypatch.setattr(erogarga, "List", fake_list)
 
-    erogarga.Main('https://fulltaboo.tv/')
+    erogarga.Main("https://fulltaboo.tv/")
 
     # Should only have Search, not Categories
     assert len(dirs) == 1
-    search = [d for d in dirs if 'Search' in d['name']]
-    categories = [d for d in dirs if 'Categories' in d['name']]
+    search = [d for d in dirs if "Search" in d["name"]]
+    categories = [d for d in dirs if "Categories" in d["name"]]
     assert len(search) == 1
     assert len(categories) == 0

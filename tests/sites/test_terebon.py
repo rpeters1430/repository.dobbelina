@@ -1,4 +1,5 @@
 """Comprehensive tests for terebon.net site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import terebon
@@ -23,21 +24,25 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "contextm": kwargs.get("contextm"),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "contextm": kwargs.get("contextm"),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "contextm": kwargs.get("contextm"),
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "contextm": kwargs.get("contextm"),
+            }
+        )
 
     monkeypatch.setattr(terebon.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(terebon.site, "add_download_link", fake_add_download_link)
@@ -63,7 +68,10 @@ def test_list_parses_video_items(monkeypatch):
     assert "15:30" in downloads[1]["name"]
     assert "67890" in downloads[1]["url"]
     # Note: data-original has precedence, but if not loaded it falls back to src
-    assert "thumb2.jpg" in downloads[1]["icon"] or "placeholder.jpg" in downloads[1]["icon"]
+    assert (
+        "thumb2.jpg" in downloads[1]["icon"]
+        or "placeholder.jpg" in downloads[1]["icon"]
+    )
 
     # Check third video (4k quality)
     assert "Premium JAV 4K" in downloads[2]["name"]

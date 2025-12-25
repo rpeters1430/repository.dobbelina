@@ -1,4 +1,5 @@
 """Tests for YouJizz site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import youjizz
@@ -22,13 +23,15 @@ def test_list_parses_videos(monkeypatch):
         return html_data
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
         dirs.append({"name": name, "url": url})
@@ -45,7 +48,9 @@ def test_list_parses_videos(monkeypatch):
 
     # Check first video has required fields
     assert downloads[0]["name"], "Video should have a title"
-    assert downloads[0]["url"].startswith("https://www.youjizz.com/"), "Video URL should be absolute"
+    assert downloads[0]["url"].startswith("https://www.youjizz.com/"), (
+        "Video URL should be absolute"
+    )
 
 
 def test_list_handles_pagination(monkeypatch):
@@ -70,7 +75,9 @@ def test_list_handles_pagination(monkeypatch):
     # Should have Next Page if pagination exists
     next_pages = [d for d in dirs if "Next Page" in d["name"]]
     if next_pages:
-        assert next_pages[0]["url"].startswith("https://"), "Next page URL should be absolute"
+        assert next_pages[0]["url"].startswith("https://"), (
+            "Next page URL should be absolute"
+        )
 
 
 def test_categories_parses_tags(monkeypatch):
@@ -83,11 +90,13 @@ def test_categories_parses_tags(monkeypatch):
         return html_data
 
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(youjizz.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(youjizz.site, "add_dir", fake_add_dir)
@@ -105,7 +114,9 @@ def test_categories_parses_tags(monkeypatch):
 
     # Check that tags are sorted alphabetically (first should come before last)
     if len(dirs) >= 2:
-        assert dirs[0]["name"].lower() <= dirs[-1]["name"].lower(), "Tags should be sorted alphabetically"
+        assert dirs[0]["name"].lower() <= dirs[-1]["name"].lower(), (
+            "Tags should be sorted alphabetically"
+        )
 
 
 def test_search_builds_correct_url(monkeypatch):

@@ -21,15 +21,29 @@ def test_list_parses_videos_and_pagination(monkeypatch, fixture_name):
     downloads = []
     dirs = []
 
-    def fake_add_download_link(name, url, mode, iconimage, desc="", stream=None, fav='add',
-                                noDownload=False, contextm=None, fanart=None, duration="", quality=""):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "icon": iconimage,
-            "duration": duration,
-            "context": contextm,
-        })
+    def fake_add_download_link(
+        name,
+        url,
+        mode,
+        iconimage,
+        desc="",
+        stream=None,
+        fav="add",
+        noDownload=False,
+        contextm=None,
+        fanart=None,
+        duration="",
+        quality="",
+    ):
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "icon": iconimage,
+                "duration": duration,
+                "context": contextm,
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
         dirs.append({"name": name, "url": url, "mode": mode, "icon": iconimage})
@@ -43,7 +57,7 @@ def test_list_parses_videos_and_pagination(monkeypatch, fixture_name):
     assert downloads[0]["name"] == "Video One"
     assert downloads[0]["url"] == "https://pornkai.com/videos/12345"
     assert downloads[0]["duration"] == "12:34"
-    assert downloads[0]["context"][0][0].startswith('[COLOR violet]Related videos')
+    assert downloads[0]["context"][0][0].startswith("[COLOR violet]Related videos")
 
     assert downloads[1]["name"] == "Video Two"
     assert downloads[1]["icon"] == "https://cdn.example.com/thumb2.jpg"
@@ -61,8 +75,20 @@ def test_list_handles_missing_results_remaining(monkeypatch):
     dirs = []
     downloads = []
 
-    def fake_add_download_link(name, url, mode, iconimage, desc="", stream=None, fav='add',
-                                noDownload=False, contextm=None, fanart=None, duration="", quality=""):
+    def fake_add_download_link(
+        name,
+        url,
+        mode,
+        iconimage,
+        desc="",
+        stream=None,
+        fav="add",
+        noDownload=False,
+        contextm=None,
+        fanart=None,
+        duration="",
+        quality="",
+    ):
         downloads.append(name)
 
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
@@ -92,8 +118,14 @@ def test_categories_parse_links(monkeypatch):
 
     assert len(dirs) == 2
     assert dirs[0]["name"] == "Amateur"
-    assert dirs[0]["url"] == "https://pornkai.com/api?query=amateur&sort=best&page=0&method=search"
+    assert (
+        dirs[0]["url"]
+        == "https://pornkai.com/api?query=amateur&sort=best&page=0&method=search"
+    )
     assert dirs[0]["icon"] == "https://cdn.example.com/cat1.jpg"
 
     assert dirs[1]["name"] == "MILF"
-    assert dirs[1]["url"] == "https://pornkai.com/api?query=milf&sort=best&page=0&method=search"
+    assert (
+        dirs[1]["url"]
+        == "https://pornkai.com/api?query=milf&sort=best&page=0&method=search"
+    )

@@ -17,14 +17,34 @@ def test_list_parses_videos_and_pagination(monkeypatch):
 
     monkeypatch.setattr(sexyporn.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(sexyporn.utils, "eod", lambda: None)
-    monkeypatch.setattr(sexyporn.site, "add_download_link",
-                        lambda name, url, mode, iconimage, desc='', quality='', duration='', **kwargs: downloads.append(
-                            {"name": name, "url": url, "mode": mode, "icon": iconimage, "quality": quality, "duration": duration}
-                        ))
-    monkeypatch.setattr(sexyporn.site, "add_dir",
-                        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
-                            {"name": name, "url": url, "mode": mode}
-                        ))
+    monkeypatch.setattr(
+        sexyporn.site,
+        "add_download_link",
+        lambda name,
+        url,
+        mode,
+        iconimage,
+        desc="",
+        quality="",
+        duration="",
+        **kwargs: downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "quality": quality,
+                "duration": duration,
+            }
+        ),
+    )
+    monkeypatch.setattr(
+        sexyporn.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
 
     sexyporn.List("https://www.sexyporn.xxx/")
 
@@ -47,10 +67,13 @@ def test_categories(monkeypatch):
 
     monkeypatch.setattr(sexyporn.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(sexyporn.utils, "eod", lambda: None)
-    monkeypatch.setattr(sexyporn.site, "add_dir",
-                        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
-                            {"name": name, "url": url, "mode": mode}
-                        ))
+    monkeypatch.setattr(
+        sexyporn.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
 
     sexyporn.Categories("https://www.sexyporn.xxx/categories")
 
@@ -81,4 +104,7 @@ def test_playvid_uses_direct_source(monkeypatch):
     sexyporn.Playvid("https://www.sexyporn.xxx/videos/video-one", "Video One")
 
     assert "url" in played
-    assert played["url"] == "https://cdn.sexyporn.xxx/videos/video-one.mp4|referer=https://www.sexyporn.xxx/"
+    assert (
+        played["url"]
+        == "https://cdn.sexyporn.xxx/videos/video-one.mp4|referer=https://www.sexyporn.xxx/"
+    )

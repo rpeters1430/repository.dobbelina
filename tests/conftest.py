@@ -13,16 +13,16 @@ if str(ROOT) not in sys.path:
 if str(PLUGIN_PATH) not in sys.path:
     sys.path.insert(0, str(PLUGIN_PATH))
 
-KODI_ARGV = ['plugin.video.cumination', '1', '']
+KODI_ARGV = ["plugin.video.cumination", "1", ""]
 
 
 def _ensure_kodi_stubs():
     """Install lightweight stubs for Kodi specific modules used by the addon."""
-    if 'kodi_six' in sys.modules:
+    if "kodi_six" in sys.modules:
         return
 
     # xbmc core module -----------------------------------------------------
-    xbmc = types.ModuleType('kodi_six.xbmc')
+    xbmc = types.ModuleType("kodi_six.xbmc")
     xbmc.LOGDEBUG = 0
     xbmc.LOGINFO = 1
     xbmc.LOGNOTICE = 2
@@ -34,8 +34,8 @@ def _ensure_kodi_stubs():
 
     xbmc.log = _noop
     xbmc.executebuiltin = _noop
-    xbmc.getSkinDir = lambda: 'skin.estuary'
-    xbmc.getInfoLabel = lambda key: '19.0' if 'BuildVersion' in key else ''
+    xbmc.getSkinDir = lambda: "skin.estuary"
+    xbmc.getInfoLabel = lambda key: "19.0" if "BuildVersion" in key else ""
 
     class _VideoStreamDetail:
         def __init__(self, **kwargs):
@@ -44,33 +44,33 @@ def _ensure_kodi_stubs():
     xbmc.VideoStreamDetail = _VideoStreamDetail
 
     # xbmcaddon module -----------------------------------------------------
-    xbmcaddon = types.ModuleType('kodi_six.xbmcaddon')
+    xbmcaddon = types.ModuleType("kodi_six.xbmcaddon")
 
     class _Addon:
         def __init__(self, addon_id=None):
-            self.addon_id = addon_id or 'plugin.video.cumination'
+            self.addon_id = addon_id or "plugin.video.cumination"
             self._settings = {
-                'cache_time': '0',
-                'custom_favorites': 'false',
-                'favorites_path': '',
-                'customview': 'false',
-                'setview': '',
-                'duration_in_name': 'false',
-                'quality_in_name': 'false',
-                'qualityask': '0',
+                "cache_time": "0",
+                "custom_favorites": "false",
+                "favorites_path": "",
+                "customview": "false",
+                "setview": "",
+                "duration_in_name": "false",
+                "quality_in_name": "false",
+                "qualityask": "0",
             }
 
         def getAddonInfo(self, key):
-            if key == 'path':
+            if key == "path":
                 return str(PLUGIN_PATH)
-            if key == 'profile':
-                return str(ROOT / '.profile')
-            if key == 'version':
-                return '19.9'
-            return ''
+            if key == "profile":
+                return str(ROOT / ".profile")
+            if key == "version":
+                return "19.9"
+            return ""
 
         def getSetting(self, key):
-            return self._settings.get(key, '')
+            return self._settings.get(key, "")
 
         def getLocalizedString(self, string_id):
             return string_id
@@ -81,7 +81,7 @@ def _ensure_kodi_stubs():
     xbmcaddon.Addon = _Addon
 
     # xbmcplugin module ----------------------------------------------------
-    xbmcplugin = types.ModuleType('kodi_six.xbmcplugin')
+    xbmcplugin = types.ModuleType("kodi_six.xbmcplugin")
     xbmcplugin.addDirectoryItem = lambda *args, **kwargs: True
     xbmcplugin.endOfDirectory = _noop
     xbmcplugin.setContent = _noop
@@ -89,7 +89,7 @@ def _ensure_kodi_stubs():
     xbmcplugin.SORT_METHOD_TITLE = 10  # Add sort method constant
 
     # xbmcgui module -------------------------------------------------------
-    xbmcgui = types.ModuleType('kodi_six.xbmcgui')
+    xbmcgui = types.ModuleType("kodi_six.xbmcgui")
 
     class _VideoInfoTag:
         def setMediaType(self, *args, **kwargs):
@@ -114,7 +114,7 @@ def _ensure_kodi_stubs():
             pass
 
     class _ListItem:
-        def __init__(self, label=''):
+        def __init__(self, label=""):
             self.label = label
 
         def setInfo(self, *args, **kwargs):
@@ -148,7 +148,7 @@ def _ensure_kodi_stubs():
     xbmcgui.DialogProgress = _DialogProgress
 
     # xbmcvfs module -------------------------------------------------------
-    xbmcvfs = types.ModuleType('kodi_six.xbmcvfs')
+    xbmcvfs = types.ModuleType("kodi_six.xbmcvfs")
 
     def _translate_path(path):
         path_obj = Path(path)
@@ -161,49 +161,49 @@ def _ensure_kodi_stubs():
     xbmcvfs.mkdirs = lambda path: Path(path).mkdir(parents=True, exist_ok=True)
 
     # Assemble kodi_six package --------------------------------------------
-    kodi_six = types.ModuleType('kodi_six')
+    kodi_six = types.ModuleType("kodi_six")
     kodi_six.xbmc = xbmc
     kodi_six.xbmcaddon = xbmcaddon
     kodi_six.xbmcplugin = xbmcplugin
     kodi_six.xbmcgui = xbmcgui
     kodi_six.xbmcvfs = xbmcvfs
 
-    sys.modules['kodi_six'] = kodi_six
-    sys.modules['kodi_six.xbmc'] = xbmc
-    sys.modules['kodi_six.xbmcaddon'] = xbmcaddon
-    sys.modules['kodi_six.xbmcplugin'] = xbmcplugin
-    sys.modules['kodi_six.xbmcgui'] = xbmcgui
-    sys.modules['kodi_six.xbmcvfs'] = xbmcvfs
+    sys.modules["kodi_six"] = kodi_six
+    sys.modules["kodi_six.xbmc"] = xbmc
+    sys.modules["kodi_six.xbmcaddon"] = xbmcaddon
+    sys.modules["kodi_six.xbmcplugin"] = xbmcplugin
+    sys.modules["kodi_six.xbmcgui"] = xbmcgui
+    sys.modules["kodi_six.xbmcvfs"] = xbmcvfs
 
     # Provide top-level aliases that some modules may import directly.
-    sys.modules.setdefault('xbmc', xbmc)
-    sys.modules.setdefault('xbmcaddon', xbmcaddon)
-    sys.modules.setdefault('xbmcplugin', xbmcplugin)
-    sys.modules.setdefault('xbmcgui', xbmcgui)
-    sys.modules.setdefault('xbmcvfs', xbmcvfs)
+    sys.modules.setdefault("xbmc", xbmc)
+    sys.modules.setdefault("xbmcaddon", xbmcaddon)
+    sys.modules.setdefault("xbmcplugin", xbmcplugin)
+    sys.modules.setdefault("xbmcgui", xbmcgui)
+    sys.modules.setdefault("xbmcvfs", xbmcvfs)
 
     # StorageServer stub ---------------------------------------------------
-    storage_module = types.ModuleType('StorageServer')
+    storage_module = types.ModuleType("StorageServer")
 
     class _StorageServer:
         def __init__(self, *args, **kwargs):
-            self.table_name = args[0] if args else 'default'
+            self.table_name = args[0] if args else "default"
 
         def cacheDelete(self, *args, **kwargs):
             pass
 
     storage_module.StorageServer = _StorageServer
-    sys.modules['StorageServer'] = storage_module
+    sys.modules["StorageServer"] = storage_module
 
     # Requests stub --------------------------------------------------------
-    requests_module = types.ModuleType('requests')
+    requests_module = types.ModuleType("requests")
 
     class _Response:
         def __init__(self, url):
             self.url = url
             self.status_code = 200
-            self.text = ''
-            self.content = b''
+            self.text = ""
+            self.content = b""
             self.headers = {}
 
     def _head(url, allow_redirects=True):
@@ -218,7 +218,7 @@ def _ensure_kodi_stubs():
     requests_module.head = _head
     requests_module.get = _get
     requests_module.post = _post
-    sys.modules['requests'] = requests_module
+    sys.modules["requests"] = requests_module
 
 
 _ensure_kodi_stubs()
@@ -226,7 +226,7 @@ _ensure_kodi_stubs()
 
 def read_fixture(filename):
     """Return the contents of a fixture file from tests/fixtures."""
-    return (ROOT / 'tests' / 'fixtures' / filename).read_text(encoding='utf-8')
+    return (ROOT / "tests" / "fixtures" / filename).read_text(encoding="utf-8")
 
 
 @pytest.fixture(autouse=True)
@@ -237,7 +237,7 @@ def _set_kodi_argv(monkeypatch):
     Pytest consumes its CLI arguments before fixtures run, so we can safely
     replace ``sys.argv`` here to satisfy addon expectations in every test.
     """
-    monkeypatch.setattr(sys, 'argv', KODI_ARGV.copy())
+    monkeypatch.setattr(sys, "argv", KODI_ARGV.copy())
 
 
 def _block_network_access(*args, **kwargs):

@@ -17,14 +17,36 @@ def test_list_uses_soup_and_pagination(monkeypatch):
 
     monkeypatch.setattr(yrprno.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(yrprno.utils, "eod", lambda: None)
-    monkeypatch.setattr(yrprno.site, "add_download_link",
-                        lambda name, url, mode, iconimage, desc='', quality='', duration='', contextm=None, **kwargs: downloads.append(
-                            {"name": name, "url": url, "mode": mode, "icon": iconimage, "quality": quality, "duration": duration, "contextm": contextm}
-                        ))
-    monkeypatch.setattr(yrprno.site, "add_dir",
-                        lambda name, url, mode, iconimage=None, contextm=None, **kwargs: dirs.append(
-                            {"name": name, "url": url, "mode": mode, "contextm": contextm}
-                        ))
+    monkeypatch.setattr(
+        yrprno.site,
+        "add_download_link",
+        lambda name,
+        url,
+        mode,
+        iconimage,
+        desc="",
+        quality="",
+        duration="",
+        contextm=None,
+        **kwargs: downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "quality": quality,
+                "duration": duration,
+                "contextm": contextm,
+            }
+        ),
+    )
+    monkeypatch.setattr(
+        yrprno.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, contextm=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode, "contextm": contextm}
+        ),
+    )
 
     yrprno.List("https://www.yrprno.com/most-recent/")
 
@@ -33,7 +55,7 @@ def test_list_uses_soup_and_pagination(monkeypatch):
     assert downloads[0]["url"] == "https://www.yrprno.com/video-one"
     assert downloads[0]["quality"] == "HD"
     assert downloads[1]["url"] == "/video-two"
-    assert downloads[0]["contextm"] == 'yrprno.Related'
+    assert downloads[0]["contextm"] == "yrprno.Related"
 
     next_dirs = [d for d in dirs if d["mode"] == "yrprno.List"]
     assert len(next_dirs) == 1
@@ -48,10 +70,13 @@ def test_categories(monkeypatch):
 
     monkeypatch.setattr(yrprno.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(yrprno.utils, "eod", lambda: None)
-    monkeypatch.setattr(yrprno.site, "add_dir",
-                        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
-                            {"name": name, "url": url, "mode": mode}
-                        ))
+    monkeypatch.setattr(
+        yrprno.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
 
     yrprno.Categories("https://www.yrprno.com/channels/")
 
