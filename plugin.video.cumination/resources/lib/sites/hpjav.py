@@ -162,9 +162,9 @@ def Playvid(url, name, download=None):
 def hpjav_decode(a1):
     def c(c1, c4, c5):
         c6 = ""
-        for i in range(len(c1)):
+        for i, item in enumerate(c1):
             k = i % c4
-            c6 += chr(ord(c1[i]) ^ ord(c5[k]))
+            c6 += chr(ord(item) ^ ord(c5[k]))
         return c6
 
     a1 = base64.b64decode(a1).decode()

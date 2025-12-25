@@ -303,12 +303,12 @@ def dex(key, data, dver, use_alt=False, mtype=1):
     s = 0
     x = 0
     ddata = utils._bdecode(data, binary=True)
-    for r in range(len(ddata)):
+    for r, item in enumerate(ddata):
         s = (s + 1) % 256
         x = (x + y[s]) % 256
         y[s], y[x] = y[x], y[s]
         ct += chr(
-            (ddata[r] if isinstance(ddata[r], int) else ord(ddata[r]))
+            (item if isinstance(item, int) else ord(item))
             ^ y[(y[s] + y[x]) % 256]
         )
     return utils._bdecode(ct)
