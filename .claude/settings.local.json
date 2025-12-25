@@ -81,7 +81,10 @@
       "Bash(.venvScriptspython -m ruff check plugin.video.cuminationresourceslibsitesporntn.py)",
       "WebFetch(domain:www.youjizz.com)",
       "WebFetch(domain:www.freepornvideos.xxx)",
-      "Bash(else echo \"No venv found\")"
+      "Bash(else echo \"No venv found\")",
+      "Bash(git checkout:*)",
+      "Bash(.venv/Scripts/python -m pytest:*)",
+      "Bash(git merge:*)"
     ],
     "deny": [],
     "ask": []
