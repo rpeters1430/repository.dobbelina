@@ -154,7 +154,7 @@ def Search(url, keyword=None):
 
 @site.register()
 def Playvid(url, name, download=None):
-    playall = True if utils.addon.getSetting("paradisehill") == "true" else False
+    playall = utils.addon.getSetting("paradisehill") == "true"
     videopage = utils.getHtml(url, site.url)
     videojson = re.compile("videoList = ([^;]+)", re.IGNORECASE | re.DOTALL).findall(
         videopage

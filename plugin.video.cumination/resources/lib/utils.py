@@ -893,9 +893,7 @@ def inputstream_check(url, listitem, IA_check):
         [".ism", "application/vnd.ms-sstr+xml"],
     ]
 
-    m3u8_use_ia = (
-        True if IA_check == "IA" or addon.getSetting("m3u8_use_ia") == "true" else False
-    )
+    m3u8_use_ia = bool(IA_check == "IA" or addon.getSetting("m3u8_use_ia") == "true")
     if m3u8_use_ia:
         supported_endings.append([".m3u8", "application/x-mpegURL"])
     adaptive_type = None
@@ -2237,7 +2235,7 @@ def backup_keywords():
         return
     progress.update(75, i18n("write_bkup"))
     filename = "cumination-keywords_" + time + ".bak"
-    compressbackup = True if addon.getSetting("compressbackup") == "true" else False
+    compressbackup = addon.getSetting("compressbackup") == "true"
     if compressbackup:
         import gzip
 
@@ -2291,7 +2289,7 @@ def restore_keywords():
         return
     import json
 
-    compressbackup = True if addon.getSetting("compressbackup") == "true" else False
+    compressbackup = addon.getSetting("compressbackup") == "true"
     if compressbackup:
         import gzip
 

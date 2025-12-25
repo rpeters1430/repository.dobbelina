@@ -85,7 +85,7 @@ def toggle_debug():
         for x in settings["result"]["settings"]
         if x["id"] == "debug.showloginfo"
     ][0]
-    togglevar = False if result else True
+    togglevar = not result
     debug_show_log_info(togglevar)
     return True
 

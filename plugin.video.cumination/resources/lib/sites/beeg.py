@@ -194,7 +194,7 @@ def ContextRelated(slug):
 
 @site.register()
 def BGPlayvid(url, name, download=None):
-    playall = True if utils.addon.getSetting("paradisehill") == "true" else False
+    playall = utils.addon.getSetting("paradisehill") == "true"
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     # listjson = utils.getHtml(url, site.url)
