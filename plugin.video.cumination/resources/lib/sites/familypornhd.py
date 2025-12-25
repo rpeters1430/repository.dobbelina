@@ -47,7 +47,6 @@ def Main():
         "Categories",
         site.img_cat,
     )
-    # site.add_dir('[COLOR hotpink]Pornstars[/COLOR]', site.url + 'pornstars', 'Pornstars', site.img_cat)
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]", site.url + "?s=", "Search", site.img_search
     )

@@ -197,8 +197,6 @@ def BGPlayvid(url, name, download=None):
     playall = True if utils.addon.getSetting("paradisehill") == "true" else False
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    # listjson = utils.getHtml(url, site.url)
-    # jdata = json.loads(listjson)
     listjson = base64.b64decode(url)
     jdata = json.loads(listjson.decode())
 

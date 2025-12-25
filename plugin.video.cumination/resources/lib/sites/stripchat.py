@@ -47,7 +47,6 @@ def Main():
     )
 
     bu = "https://stripchat.com/api/front/models?limit=80&parentTag=autoTagNew&sortBy=trending&offset=0&primaryTag="
-    # site.add_dir('[COLOR hotpink]HD[/COLOR]', '{0}hd&broadcastHD=true'.format(bu), 'List', '', '')
     if female:
         site.add_dir(
             "[COLOR hotpink]Female HD[/COLOR]",
@@ -123,12 +122,10 @@ def List(url, page=1):
     for model in model_list:
         name = utils.cleanhtml(model["username"])
         videourl = model["hlsPlaylist"]
-        # fanart = model.get('') if utils.addon.getSetting('posterfanart') == 'true' else None
         fanart = model.get("previewUrlThumbSmall")
         img = "https://img.strpst.com/thumbs/{0}/{1}_webp".format(
             model.get("snapshotTimestamp"), model.get("id")
         )
-        # img = img.replace('{0}/previews'.format(model.get('snapshotServer')), 'thumbs') + '_webp'
         subject = model.get("groupShowTopic")
         if subject:
             subject += "[CR]"

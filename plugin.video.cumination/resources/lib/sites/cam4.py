@@ -115,7 +115,6 @@ def List(url, page=1):
             name = "{0} [COLOR deeppink][{1}][/COLOR]".format(name, age)
         hd = ""
         if cam.get("hdStream"):
-            # name = '{0} [COLOR limegreen][HD][/COLOR]'.format(name)
             hd = "HD"
         img = cam.get("snapshotImageLink")
         if not img:

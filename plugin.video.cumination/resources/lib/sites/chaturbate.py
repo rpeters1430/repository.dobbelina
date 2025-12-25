@@ -59,7 +59,6 @@ def Main():
         "",
         Folder=False,
     )
-    # site.add_dir('[COLOR hotpink]Look for Online Models[/COLOR]', rapi + '?limit=100&offset=0&keywords=', 'Search', site.img_search)
     site.add_dir(
         "[COLOR hotpink]Look for Online Models[/COLOR]",
         site.url + "ax/search/?keywords=",
@@ -688,7 +687,6 @@ def Playvid(url, name):
     else:
         m3u8stream = False
 
-    # m3u8stream = m3u8stream.replace('playlist.m3u8', 'playlist_sfm4s.m3u8').replace('live-hls', 'live-c-fhls').replace('live-edge', 'live-c-fhls')
 
     if playmode == 0:
         if m3u8stream:
@@ -702,7 +700,6 @@ def Playvid(url, name):
     elif playmode == 1:
         if data:
             streamserver = "rtmp://{}/live-edge".format(m3u8stream.split("/")[2])
-            # streamserver = "rtmp://{}/live-edge".format(data['flash_host'])
             modelname = data["broadcaster_username"]
             username_full = data["viewer_username"]
             username = "anonymous"
@@ -727,7 +724,6 @@ def Playvid(url, name):
             return
 
     vp = utils.VideoPlayer(name)
-    # vp.IA_check = 'IA'
     vp.play_from_direct_link(videourl)
 
 

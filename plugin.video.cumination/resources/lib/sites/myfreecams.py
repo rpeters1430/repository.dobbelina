@@ -64,7 +64,6 @@ def Main():
 
 @site.register()
 def List(url, page=1):
-    # MFC_SERVERS = getMFC()
     listhtml = utils._getHtml(url)
     res = re.compile(
         r"broadcaster_id:(\d+).+?avatar_border.+?src=([^\s]+).+?:19px;'>([^<]+).+?<X>(.+?)<X>",
@@ -73,9 +72,6 @@ def List(url, page=1):
 
     for model_id, pic, name, plot in res:
         pic = pic.replace("100x100", "300x300")
-        # idx = random.choice(list(MFC_SERVERS['H5SERVERS'].keys()))
-        # imgserver = MFC_SERVERS.get('H5SERVERS').get(idx)[5:]
-        # img = 'https://snap.mfcimg.com/snapimg/{0}/853x480/mfc_{1}?no-cache={2}'.format(imgserver, int(model_id) + 100000000, random.random())
         site.add_download_link(
             name, name, "Playvid", pic, utils.cleantext(plot), noDownload=True
         )
@@ -180,11 +176,6 @@ def read_model_data(m, MFC_SERVERS):
 
     usr = ""
     msg = fc_decode_json(m)
-    # try:
-    #     sid = msg['sid']
-    #     level = msg['lv']
-    # except Exception:
-    #     return
 
     vs = msg["vs"]
 
@@ -244,7 +235,6 @@ def myfreecam_start(url):
     MFC_SERVERS = getMFC()
 
     try:
-        # host = "ws://{0}.myfreecams.com:8080/fcsl".format(random.choice(MFC_SERVERS['CHATSERVERS']))
         host = "wss://{0}.myfreecams.com/fcsl".format(
             random.choice(MFC_SERVERS["CHATSERVERS"])
         )

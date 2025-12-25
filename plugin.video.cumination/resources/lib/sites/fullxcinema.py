@@ -48,8 +48,6 @@ def List(url):
     videos = html.split("article data-video-uid")
     videos.pop(0)
     for video in videos:
-        # if 'type-photos' in video:
-        #     continue
         match = re.search(
             r'href="([^"]+).+?data-src="([^"]+)"\salt="([^"]+)".+?fa-clock-o"></i>([^<]+)<',
             video,

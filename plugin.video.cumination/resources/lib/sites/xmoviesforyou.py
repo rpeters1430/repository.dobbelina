@@ -39,7 +39,6 @@ def Main():
         "Categories",
         site.img_cat,
     )
-    # site.add_dir('[COLOR hotpink]Tags[/COLOR]', site.url + 'wp-json/wp/v2/tags?page=1', 'Categories', site.img_cat)
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]", site.url + "?s=", "Search", site.img_search
     )

@@ -111,7 +111,6 @@ def INDEXbrowse():
 
 @utils.url_dispatcher.register("1")
 def INDEXS():
-    #    utils.addDir('[COLOR hotpink]JustFullPorn NETU !!![/COLOR]','https://justfullporn.com/',10,'https://justfullporn.com/wp-content/uploads/2020/04/cropped-FJUD.png','')
     utils.addDir(
         "[COLOR hotpink]PornTrex[/COLOR]",
         "https://www.porntrex.com/latest-updates/1/",
@@ -119,7 +118,6 @@ def INDEXS():
         os.path.join(imgDir, "pt.png"),
         "",
     )
-    #    utils.addDir('[COLOR hotpink]Woxtube NO LONGER EXISTS[/COLOR]','http://www.woxtube.com/page/1/',60,os.path.join(imgDir, 'woxtube.png'),'')
     utils.addDir(
         "[COLOR hotpink]Porn00[/COLOR]",
         "https://www.porn00.org/page/1/",
@@ -162,7 +160,6 @@ def INDEXS():
         os.path.join(imgDir, "streamxxx.png"),
         "",
     )
-    #    utils.addDir('[COLOR grey]JustPorn[/COLOR] [COLOR red]Broken[/COLOR]','http://justporn.to/category/scenes/',240,os.path.join(imgDir, 'justporn.png'),'')
     utils.addDir(
         "[COLOR hotpink]VipPorns[/COLOR]",
         "https://www.vipporns.com/latest-updates/",
@@ -170,7 +167,6 @@ def INDEXS():
         "https://www.vipporns.com/images/logo.png",
         "",
     )
-    #    utils.addDir('[COLOR hotpink]Xtasie - GIFS !!![/COLOR]','http://xtasie.com/porn-video-list/page/1/',200,os.path.join(imgDir, 'xtasie.png'),'')
     utils.addDir(
         "[COLOR hotpink]HD Zog[/COLOR]",
         "http://www.hdzog.com/new/",
@@ -206,7 +202,6 @@ def INDEXS():
         os.path.join(imgDir, "daftsex.png"),
         "",
     )
-    #    utils.addDir('[COLOR hotpink]PornsLand - NO LINKS !!![/COLOR]','https://porns.land/recent-porns/',620,os.path.join(imgDir, 'pl.png'),'')
     utils.addDir(
         "[COLOR hotpink]Hdpornz[/COLOR]",
         "https://hdpornz.biz",
@@ -249,7 +244,6 @@ def INDEXS():
         "https://www.porngo.com/img/logo.png",
         "",
     )
-    #    utils.addDir('[COLOR hotpink]XVideosHits - NETU !!![/COLOR]','https://www.xvideoshits.com/',700,os.path.join(imgDir, 'xvideoshits.png'),'')
     utils.addDir(
         "[COLOR hotpink]PerfectGirls[/COLOR]",
         "http://www.perfectgirls.net/",
@@ -386,8 +380,6 @@ def INDEXS():
 
 @utils.url_dispatcher.register("2")
 def INDEXM():
-    #    if sys.version_info >= (2, 7, 9):
-    #        utils.addDir('[COLOR hotpink]Xtheatre[/COLOR] - NETU !!!','http://xtheatre.net/page/1/',20,os.path.join(imgDir, 'xt.png'),'')
     utils.addDir(
         "[COLOR hotpink]PornHive[/COLOR]",
         "http://www.pornhive.tv/en/movies/all",
@@ -402,7 +394,6 @@ def INDEXM():
         os.path.join(imgDir, "justporn.png"),
         "",
     )
-    #    utils.addDir('[COLOR hotpink]ElReyX[/COLOR]','http://elreyx.com/index1.html',116,os.path.join(imgDir, 'elreyx.png'),'')
     utils.addDir(
         "[COLOR hotpink]PelisxPorno[/COLOR]",
         "http://www.pelisxporno.com/",

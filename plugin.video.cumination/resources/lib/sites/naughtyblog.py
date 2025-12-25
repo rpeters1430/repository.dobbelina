@@ -125,7 +125,6 @@ def Playvid(url, name, download=None):
                 continue
         if vp.resolveurl.HostedMediaFile(link).valid_url():
             linkparts = link.split("/")
-            # quality = linkparts[-3] if link.endswith('.html') else linkparts[-2]
             hoster = "{0} {1}".format(hoster, linkparts[-1])
             links[hoster] = link
     videourl = utils.selector("Select link", links)

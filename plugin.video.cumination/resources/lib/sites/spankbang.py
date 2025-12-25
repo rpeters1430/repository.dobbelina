@@ -155,10 +155,6 @@ def List(url):
                 if not next_href.startswith("http"):
                     next_href = site.url[:-1] + next_href
                 site.add_dir(label, next_href, "List", site.img_next)
-    # elif nextps:
-    #     nextp = nextps.group(1)
-    #     pgtxt = re.findall(r'class="status">(.*?)</span', listhtml)[0].replace('<span>/', 'of').capitalize()
-    #     site.add_dir('Next Page... (Currently in {})'.format(pgtxt), site.url[:-1] + nextp, 'List', site.img_next)
 
     utils.eod()
 

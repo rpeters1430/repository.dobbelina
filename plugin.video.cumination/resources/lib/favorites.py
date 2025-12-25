@@ -1144,7 +1144,6 @@ def delete_custom_site(author, name, keep_favorites=False):
             "DELETE FROM favorites WHERE substr(mode, 1, instr(mode, '.') - 1) = ?",
             (mode_name,),
         )
-        # c.execute("DELETE FROM favorite_sites WHERE name = ?", (mode_name,))
         c.execute(
             "DELETE FROM custom_listitems WHERE substr(mode, 1, instr(mode, '.') - 1) = ?",
             (mode_name,),

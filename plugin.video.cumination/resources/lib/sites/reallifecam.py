@@ -29,7 +29,6 @@ site = AdultSite(
     "rlc.png",
     "rlc",
 )
-# site1 = AdultSite('vh', '[COLOR hotpink]Voyeur-house.to[/COLOR]', 'https://voyeur-house.to/', 'https://voyeur-house.to/images/logo/logo.png', 'vh')
 site2 = AdultSite(
     "vhlife",
     "[COLOR hotpink]Voyeur-house.cc[/COLOR]",
@@ -56,8 +55,6 @@ site4 = AdultSite(
 def getBaselink(url):
     if "reallifecam.to" in url:
         siteurl = site.url
-    # elif 'voyeur-house.to' in url:
-    #     siteurl = site1.url
     elif "voyeur-house.cc" in url:
         siteurl = site2.url
     elif "reallifecams.in" in url:
@@ -68,7 +65,6 @@ def getBaselink(url):
 
 
 @site.register(default_mode=True)
-# @site1.register(default_mode=True)
 @site2.register(default_mode=True)
 @site3.register(default_mode=True)
 @site4.register(default_mode=True)
