@@ -37,10 +37,10 @@ IOS_UA = {
 
 @site.register(default_mode=True)
 def Main():
-    female = True if utils.addon.getSetting("chatfemale") == "true" else False
-    male = True if utils.addon.getSetting("chatmale") == "true" else False
-    couple = True if utils.addon.getSetting("chatcouple") == "true" else False
-    trans = True if utils.addon.getSetting("chattrans") == "true" else False
+    female = utils.addon.getSetting("chatfemale") == "true"
+    male = utils.addon.getSetting("chatmale") == "true"
+    couple = utils.addon.getSetting("chatcouple") == "true"
+    trans = utils.addon.getSetting("chattrans") == "true"
     site.add_dir(
         "[COLOR red]Refresh Cam4 images[/COLOR]", "", "clean_database", "", Folder=False
     )

@@ -564,9 +564,7 @@ def backup_fav():
         return
     progress.update(75, "Writing backup file")
     filename = "cumination-favorites_" + time + ".bak"
-    compressbackup = (
-        True if utils.addon.getSetting("compressbackup") == "true" else False
-    )
+    compressbackup = utils.addon.getSetting("compressbackup") == "true"
     if compressbackup:
         import gzip
 
@@ -610,9 +608,7 @@ def restore_fav():
         return
     import json
 
-    compressbackup = (
-        True if utils.addon.getSetting("compressbackup") == "true" else False
-    )
+    compressbackup = utils.addon.getSetting("compressbackup") == "true"
     if compressbackup:
         import gzip
 

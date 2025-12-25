@@ -66,7 +66,7 @@ def List(url):
     cm.append(
         ("[COLOR deeppink]Related videos[/COLOR]", "RunPlugin(" + cm_related + ")")
     )
-    thumbnails = True if "watcherotic" in site.url else False
+    thumbnails = "watcherotic" in site.url
     utils.videos_list(
         site,
         "watcherotic.Play",
