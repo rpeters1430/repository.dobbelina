@@ -17,16 +17,39 @@ def test_list_parses_items_and_next(monkeypatch):
 
     monkeypatch.setattr(porntn.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(porntn.utils, "eod", lambda: None)
-    monkeypatch.setattr(porntn.site, "add_download_link",
-                        lambda name, url, mode, iconimage, desc='', contextm=None, duration='', **kwargs: downloads.append(
-                            {"name": name, "url": url, "mode": mode, "icon": iconimage, "duration": duration, "contextm": contextm}
-                        ))
-    monkeypatch.setattr(porntn.site, "add_dir",
-                        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
-                            {"name": name, "url": url, "mode": mode}
-                        ))
+    monkeypatch.setattr(
+        porntn.site,
+        "add_download_link",
+        lambda name,
+        url,
+        mode,
+        iconimage,
+        desc="",
+        contextm=None,
+        duration="",
+        **kwargs: downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": duration,
+                "contextm": contextm,
+            }
+        ),
+    )
+    monkeypatch.setattr(
+        porntn.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
 
-    porntn.List("https://porntn.com/?mode=async&function=get_block&block_id=list_videos_most_recent_videos&sort_by=post_date&from=1", 1)
+    porntn.List(
+        "https://porntn.com/?mode=async&function=get_block&block_id=list_videos_most_recent_videos&sort_by=post_date&from=1",
+        1,
+    )
 
     assert len(downloads) == 3
     assert downloads[0]["name"] == "Video One"
@@ -48,12 +71,17 @@ def test_categories(monkeypatch):
 
     monkeypatch.setattr(porntn.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(porntn.utils, "eod", lambda: None)
-    monkeypatch.setattr(porntn.site, "add_dir",
-                        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
-                            {"name": name, "url": url, "mode": mode}
-                        ))
+    monkeypatch.setattr(
+        porntn.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
 
-    porntn.Categories("https://porntn.com/new/?mode=async&function=get_block&block_id=list_categories_categories_list&sort_by=title")
+    porntn.Categories(
+        "https://porntn.com/new/?mode=async&function=get_block&block_id=list_categories_categories_list&sort_by=title"
+    )
 
     assert len(dirs) == 2
     assert dirs[0]["name"] == "Anal [COLOR hotpink](12)[/COLOR]"
@@ -67,10 +95,13 @@ def test_tags(monkeypatch):
 
     monkeypatch.setattr(porntn.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(porntn.utils, "eod", lambda: None)
-    monkeypatch.setattr(porntn.site, "add_dir",
-                        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
-                            {"name": name, "url": url, "mode": mode}
-                        ))
+    monkeypatch.setattr(
+        porntn.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
 
     porntn.Tags("https://porntn.com/tags/")
 

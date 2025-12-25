@@ -1,4 +1,5 @@
 """Tests for vaginanl site BeautifulSoup parsing."""
+
 from pathlib import Path
 
 from resources.lib.sites import vaginanl

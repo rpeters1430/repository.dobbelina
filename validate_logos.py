@@ -3,6 +3,7 @@
 Logo Validation Script
 Validates all logos meet Cumination standards and site references are correct
 """
+
 import os
 import re
 import subprocess
@@ -19,22 +20,26 @@ TARGET_SIZE = "256x256"
 MAX_FILE_SIZE_KB = 50
 OPTIMAL_FILE_SIZE_RANGE = (5, 30)
 
+
 class Colors:
     """ANSI color codes for terminal output"""
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    BLUE = '\033[94m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
+
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    RED = "\033[91m"
+    BLUE = "\033[94m"
+    ENDC = "\033[0m"
+    BOLD = "\033[1m"
+
 
 def check_imagemagick():
     """Check if ImageMagick is available"""
     try:
-        subprocess.run(['magick', '--version'], capture_output=True, timeout=5)
+        subprocess.run(["magick", "--version"], capture_output=True, timeout=5)
         return True
     except (FileNotFoundError, subprocess.TimeoutExpired):
         return False
+
 
 def get_site_configs():
     """Extract all site configurations from site modules"""
@@ -47,51 +52,60 @@ def get_site_configs():
         r"\s*,\s*['\"][^'\"]*['\"]"  # display_name
         r"\s*,\s*['\"][^'\"]*['\"]"  # base_url
         r"\s*,\s*['\"]([^'\"]+)['\"]",  # logo_file (group 2)
-        re.DOTALL
+        re.DOTALL,
     )
 
     for site_file in SITES_DIR.glob("*.py"):
-        if site_file.name in ('__init__.py', 'soup_spec.py'):
+        if site_file.name in ("__init__.py", "soup_spec.py"):
             continue
 
         try:
-            content = site_file.read_text(encoding='utf-8')
-            content_single = content.replace('\n', ' ')
+            content = site_file.read_text(encoding="utf-8")
+            content_single = content.replace("\n", " ")
             match = site_pattern.search(content_single)
 
             if match:
                 site_id = match.group(1)
                 logo_ref = match.group(2)
                 sites[site_id] = {
-                    'module': site_file.name,
-                    'logo_ref': logo_ref,
-                    'expected_local': f"{site_id}.png"
+                    "module": site_file.name,
+                    "logo_ref": logo_ref,
+                    "expected_local": f"{site_id}.png",
                 }
         except Exception as e:
-            print(f"{Colors.YELLOW}[WARNING]{Colors.ENDC} Error reading {site_file.name}: {e}")
+            print(
+                f"{Colors.YELLOW}[WARNING]{Colors.ENDC} Error reading {site_file.name}: {e}"
+            )
 
     return sites
+
 
 def get_logo_files():
     """Get all logo files from images directory"""
     logos = {}
 
     for logo_file in IMAGES_DIR.glob("*"):
-        if logo_file.is_file() and logo_file.suffix.lower() in ('.png', '.jpg', '.gif', '.jpeg'):
+        if logo_file.is_file() and logo_file.suffix.lower() in (
+            ".png",
+            ".jpg",
+            ".gif",
+            ".jpeg",
+        ):
             logos[logo_file.name] = {
-                'path': logo_file,
-                'size_bytes': logo_file.stat().st_size,
-                'extension': logo_file.suffix.lower()
+                "path": logo_file,
+                "size_bytes": logo_file.stat().st_size,
+                "extension": logo_file.suffix.lower(),
             }
 
     return logos
+
 
 def validate_logo_specs(logo_path, use_imagemagick=True):
     """Validate a single logo meets specifications"""
     issues = []
 
     # Check extension
-    if logo_path.suffix.lower() != '.png':
+    if logo_path.suffix.lower() != ".png":
         issues.append(f"Wrong format: {logo_path.suffix} (should be .png)")
 
     # Check file size
@@ -99,18 +113,22 @@ def validate_logo_specs(logo_path, use_imagemagick=True):
     if size_kb > MAX_FILE_SIZE_KB:
         issues.append(f"Too large: {size_kb:.1f} KB (max {MAX_FILE_SIZE_KB} KB)")
     elif size_kb < OPTIMAL_FILE_SIZE_RANGE[0]:
-        issues.append(f"Too small: {size_kb:.1f} KB (min {OPTIMAL_FILE_SIZE_RANGE[0]} KB)")
+        issues.append(
+            f"Too small: {size_kb:.1f} KB (min {OPTIMAL_FILE_SIZE_RANGE[0]} KB)"
+        )
     elif size_kb > OPTIMAL_FILE_SIZE_RANGE[1]:
-        issues.append(f"Suboptimal size: {size_kb:.1f} KB (optimal {OPTIMAL_FILE_SIZE_RANGE[0]}-{OPTIMAL_FILE_SIZE_RANGE[1]} KB)")
+        issues.append(
+            f"Suboptimal size: {size_kb:.1f} KB (optimal {OPTIMAL_FILE_SIZE_RANGE[0]}-{OPTIMAL_FILE_SIZE_RANGE[1]} KB)"
+        )
 
     # Check dimensions with ImageMagick if available
     if use_imagemagick:
         try:
             result = subprocess.run(
-                ['magick', 'identify', '-format', '%wx%h', str(logo_path)],
+                ["magick", "identify", "-format", "%wx%h", str(logo_path)],
                 capture_output=True,
                 text=True,
-                timeout=5
+                timeout=5,
             )
             if result.returncode == 0:
                 dims = result.stdout.strip()
@@ -121,16 +139,21 @@ def validate_logo_specs(logo_path, use_imagemagick=True):
 
     return issues
 
+
 def main():
     """Main validation routine"""
-    print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{'=' * 80}{Colors.ENDC}")
     print(f"{Colors.BOLD}CUMINATION LOGO VALIDATION REPORT{Colors.ENDC}")
-    print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}\n")
+    print(f"{Colors.BOLD}{'=' * 80}{Colors.ENDC}\n")
 
     has_imagemagick = check_imagemagick()
     if not has_imagemagick:
-        print(f"{Colors.YELLOW}[WARNING]{Colors.ENDC} ImageMagick not found - dimension checks will be skipped")
-        print(f"            Install from: https://imagemagick.org/script/download.php\n")
+        print(
+            f"{Colors.YELLOW}[WARNING]{Colors.ENDC} ImageMagick not found - dimension checks will be skipped"
+        )
+        print(
+            f"            Install from: https://imagemagick.org/script/download.php\n"
+        )
 
     # Load data
     sites = get_site_configs()
@@ -138,7 +161,9 @@ def main():
 
     print(f"Total site modules: {len(sites)}")
     print(f"Total logo files: {len([l for l in logos if not l.startswith('cum-')])}")
-    print(f"Total cum-* utility icons: {len([l for l in logos if l.startswith('cum-')])}\n")
+    print(
+        f"Total cum-* utility icons: {len([l for l in logos if l.startswith('cum-')])}\n"
+    )
 
     # Validation checks
     errors = []
@@ -149,12 +174,16 @@ def main():
     print(f"{Colors.BLUE}[CHECK 1]{Colors.ENDC} Sites using remote URLs...")
     remote_sites = []
     for site_id, config in sites.items():
-        if config['logo_ref'].startswith('http://') or config['logo_ref'].startswith('https://'):
-            remote_sites.append((site_id, config['logo_ref'], config['module']))
+        if config["logo_ref"].startswith("http://") or config["logo_ref"].startswith(
+            "https://"
+        ):
+            remote_sites.append((site_id, config["logo_ref"], config["module"]))
             errors.append(f"Site '{site_id}' uses remote URL: {config['logo_ref']}")
 
     if remote_sites:
-        print(f"  {Colors.RED}FAILED:{Colors.ENDC} {len(remote_sites)} sites use remote URLs")
+        print(
+            f"  {Colors.RED}FAILED:{Colors.ENDC} {len(remote_sites)} sites use remote URLs"
+        )
         for site_id, url, module in remote_sites[:5]:  # Show first 5
             print(f"    - {site_id} ({module}): {url[:60]}...")
         if len(remote_sites) > 5:
@@ -168,15 +197,19 @@ def main():
     missing_logos = []
     for site_id, config in sites.items():
         # Skip sites using remote URLs
-        if config['logo_ref'].startswith('http'):
+        if config["logo_ref"].startswith("http"):
             continue
 
-        if config['logo_ref'] not in logos:
-            missing_logos.append((site_id, config['logo_ref'], config['module']))
-            errors.append(f"Site '{site_id}' references missing file: {config['logo_ref']}")
+        if config["logo_ref"] not in logos:
+            missing_logos.append((site_id, config["logo_ref"], config["module"]))
+            errors.append(
+                f"Site '{site_id}' references missing file: {config['logo_ref']}"
+            )
 
     if missing_logos:
-        print(f"  {Colors.RED}FAILED:{Colors.ENDC} {len(missing_logos)} sites missing logos")
+        print(
+            f"  {Colors.RED}FAILED:{Colors.ENDC} {len(missing_logos)} sites missing logos"
+        )
         for site_id, logo_file, module in missing_logos[:10]:
             print(f"    - {site_id} ({module}): expects {logo_file}")
         if len(missing_logos) > 10:
@@ -187,17 +220,19 @@ def main():
 
     # Check 3: Orphaned logos (not referenced by any site)
     print(f"{Colors.BLUE}[CHECK 3]{Colors.ENDC} Orphaned logo files...")
-    referenced_logos = {config['logo_ref'] for config in sites.values()}
+    referenced_logos = {config["logo_ref"] for config in sites.values()}
     orphaned = []
     for logo_name in logos.keys():
-        if logo_name.startswith('cum-'):
+        if logo_name.startswith("cum-"):
             continue  # Skip utility icons
         if logo_name not in referenced_logos:
             orphaned.append(logo_name)
             warnings.append(f"Orphaned logo file: {logo_name}")
 
     if orphaned:
-        print(f"  {Colors.YELLOW}WARNING:{Colors.ENDC} {len(orphaned)} orphaned logos found")
+        print(
+            f"  {Colors.YELLOW}WARNING:{Colors.ENDC} {len(orphaned)} orphaned logos found"
+        )
         for logo_name in orphaned[:10]:
             print(f"    - {logo_name}")
         if len(orphaned) > 10:
@@ -214,24 +249,24 @@ def main():
     dimension_issues = 0
 
     for logo_name, logo_info in logos.items():
-        if logo_name.startswith('cum-'):
+        if logo_name.startswith("cum-"):
             continue
 
-        issues = validate_logo_specs(logo_info['path'], has_imagemagick)
+        issues = validate_logo_specs(logo_info["path"], has_imagemagick)
 
         for issue in issues:
             spec_issues[logo_name].append(issue)
 
-            if 'Wrong format' in issue:
+            if "Wrong format" in issue:
                 non_png_count += 1
                 warnings.append(f"{logo_name}: {issue}")
-            elif 'dimensions' in issue:
+            elif "dimensions" in issue:
                 dimension_issues += 1
                 warnings.append(f"{logo_name}: {issue}")
-            elif 'Too large' in issue or 'Too small' in issue:
+            elif "Too large" in issue or "Too small" in issue:
                 wrong_size_count += 1
                 warnings.append(f"{logo_name}: {issue}")
-            elif 'Suboptimal' in issue:
+            elif "Suboptimal" in issue:
                 info.append(f"{logo_name}: {issue}")
 
     if spec_issues:
@@ -255,7 +290,7 @@ def main():
     print(f"{Colors.BLUE}[CHECK 5]{Colors.ENDC} Logo filename conventions...")
     naming_issues = []
     for logo_name in logos.keys():
-        if logo_name.startswith('cum-'):
+        if logo_name.startswith("cum-"):
             continue
 
         # Check for uppercase in extension
@@ -265,12 +300,14 @@ def main():
 
         # Check for special characters (except hyphen and underscore)
         base_name = Path(logo_name).stem
-        if not re.match(r'^[a-z0-9_-]+$', base_name):
+        if not re.match(r"^[a-z0-9_-]+$", base_name):
             naming_issues.append(f"{logo_name}: Invalid characters in filename")
             warnings.append(f"Invalid filename characters: {logo_name}")
 
     if naming_issues:
-        print(f"  {Colors.YELLOW}ISSUES:{Colors.ENDC} {len(naming_issues)} naming issues")
+        print(
+            f"  {Colors.YELLOW}ISSUES:{Colors.ENDC} {len(naming_issues)} naming issues"
+        )
         for issue in naming_issues[:10]:
             print(f"    - {issue}")
         if len(naming_issues) > 10:
@@ -280,9 +317,9 @@ def main():
     print()
 
     # Summary
-    print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{'=' * 80}{Colors.ENDC}")
     print(f"{Colors.BOLD}SUMMARY{Colors.ENDC}")
-    print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}\n")
+    print(f"{Colors.BOLD}{'=' * 80}{Colors.ENDC}\n")
 
     print(f"{Colors.RED}Errors:{Colors.ENDC} {len(errors)}")
     print(f"{Colors.YELLOW}Warnings:{Colors.ENDC} {len(warnings)}")
@@ -303,8 +340,11 @@ def main():
         print(f"  - {wrong_size_count} logos have file size issues")
         return 0
     else:
-        print(f"{Colors.GREEN}VALIDATION PASSED - ALL LOGOS MEET STANDARDS!{Colors.ENDC}")
+        print(
+            f"{Colors.GREEN}VALIDATION PASSED - ALL LOGOS MEET STANDARDS!{Colors.ENDC}"
+        )
         return 0
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     exit(main())

@@ -13,7 +13,6 @@ if pycryptoLoaded:
         return PyCrypto_RC4(key)
 
     class PyCrypto_RC4(RC4):
-
         def __init__(self, key):
             RC4.__init__(self, key, "pycrypto")
             key = bytes(key)

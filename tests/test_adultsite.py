@@ -2,6 +2,7 @@
 Tests for adultsite.py
 Testing the AdultSite base class
 """
+
 import pytest
 
 
@@ -9,6 +10,7 @@ import pytest
 def clear_adultsite_instances():
     """Clear AdultSite instances before each test"""
     from resources.lib.adultsite import AdultSite
+
     AdultSite.instances.clear()
     AdultSite.clean_functions.clear()
     yield
@@ -23,46 +25,50 @@ class TestAdultSiteInit:
         """Test initialization with basic parameters"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('testsite', 'Test Site', 'https://test.com/')
+        site = AdultSite("testsite", "Test Site", "https://test.com/")
 
-        assert site.name == 'testsite'
-        assert 'Test Site' in site.title
-        assert site.url == 'https://test.com/'
+        assert site.name == "testsite"
+        assert "Test Site" in site.title
+        assert site.url == "https://test.com/"
         assert not site.webcam
         assert not site.custom
-        assert site.default_mode == ''
+        assert site.default_mode == ""
 
     def test_init_with_image(self):
         """Test initialization with custom image"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('testsite', 'Test Site', 'https://test.com/', image='custom.png')
+        site = AdultSite(
+            "testsite", "Test Site", "https://test.com/", image="custom.png"
+        )
 
         assert site.image is not None
-        assert 'custom.png' in site.image
+        assert "custom.png" in site.image
 
     def test_init_with_webcam_true(self):
         """Test initialization with webcam=True adds webcam text"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('camsite', 'Cam Site', 'https://cam.com/', webcam=True)
+        site = AdultSite("camsite", "Cam Site", "https://cam.com/", webcam=True)
 
-        assert 'webcams' in site.title
+        assert "webcams" in site.title
         assert site.webcam
 
     def test_init_with_about(self):
         """Test initialization with about parameter"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('testsite', 'Test Site', 'https://test.com/', about='test_about')
+        site = AdultSite(
+            "testsite", "Test Site", "https://test.com/", about="test_about"
+        )
 
-        assert site.about == 'test_about'
+        assert site.about == "test_about"
 
     def test_init_adds_to_instances(self):
         """Test that initialization adds site to instances WeakSet"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('testsite', 'Test Site', 'https://test.com/')
+        site = AdultSite("testsite", "Test Site", "https://test.com/")
 
         assert site in AdultSite.instances
 
@@ -70,11 +76,11 @@ class TestAdultSiteInit:
         """Test that AdultSite inherits from URL_Dispatcher"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('testsite', 'Test Site', 'https://test.com/')
+        site = AdultSite("testsite", "Test Site", "https://test.com/")
 
-        assert hasattr(site, 'module_name')
-        assert site.module_name == 'testsite'
-        assert hasattr(site, 'register')
+        assert hasattr(site, "module_name")
+        assert site.module_name == "testsite"
+        assert hasattr(site, "register")
 
 
 class TestGetCleanTitle:
@@ -84,33 +90,40 @@ class TestGetCleanTitle:
         """Test get_clean_title removes color formatting"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('testsite', '[COLOR hotpink]Test Site[/COLOR]', 'https://test.com/')
+        site = AdultSite(
+            "testsite", "[COLOR hotpink]Test Site[/COLOR]", "https://test.com/"
+        )
 
         result = site.get_clean_title()
 
-        assert '[COLOR' not in result
-        assert '[/COLOR]' not in result
+        assert "[COLOR" not in result
+        assert "[/COLOR]" not in result
 
     def test_get_clean_title_no_formatting(self):
         """Test get_clean_title with plain title"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('testsite', 'Plain Title', 'https://test.com/')
+        site = AdultSite("testsite", "Plain Title", "https://test.com/")
 
         result = site.get_clean_title()
 
-        assert result == 'Plain Title'
+        assert result == "Plain Title"
 
     def test_get_clean_title_with_webcam_text(self):
         """Test get_clean_title handles webcam text"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('camsite', '[COLOR hotpink]Cam Site[/COLOR]', 'https://cam.com/', webcam=True)
+        site = AdultSite(
+            "camsite",
+            "[COLOR hotpink]Cam Site[/COLOR]",
+            "https://cam.com/",
+            webcam=True,
+        )
 
         result = site.get_clean_title()
 
         # Should extract text between tags
-        assert 'Cam Site' in result or 'webcams' in result
+        assert "Cam Site" in result or "webcams" in result
 
 
 class TestRegister:
@@ -120,38 +133,39 @@ class TestRegister:
         """Test registering a basic function"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('testsite', 'Test Site', 'https://test.com/')
+        site = AdultSite("testsite", "Test Site", "https://test.com/")
 
         @site.register()
         def test_function():
             return "result"
 
-        mode = 'testsite.test_function'
+        mode = "testsite.test_function"
         assert mode in AdultSite.func_registry
 
     def test_register_with_default_mode_true(self):
         """Test registering function with default_mode=True"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('testsite', 'Test Site', 'https://test.com/')
+        site = AdultSite("testsite", "Test Site", "https://test.com/")
 
         @site.register(default_mode=True)
         def Main():
             pass
 
-        assert site.default_mode == 'testsite.Main'
+        assert site.default_mode == "testsite.Main"
 
     def test_register_second_default_mode_raises_exception(self):
         """Test registering second default mode raises exception"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('testsite', 'Test Site', 'https://test.com/')
+        site = AdultSite("testsite", "Test Site", "https://test.com/")
 
         @site.register(default_mode=True)
         def Main():
             pass
 
         with pytest.raises(Exception, match="default mode is already defined"):
+
             @site.register(default_mode=True)
             def AnotherMain():
                 pass
@@ -160,7 +174,7 @@ class TestRegister:
         """Test registering function with clean_mode=True"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('testsite', 'Test Site', 'https://test.com/')
+        site = AdultSite("testsite", "Test Site", "https://test.com/")
 
         @site.register(clean_mode=True)
         def public_function():
@@ -172,13 +186,13 @@ class TestRegister:
         """Test registering with both default_mode and clean_mode"""
         from resources.lib.adultsite import AdultSite
 
-        site = AdultSite('testsite', 'Test Site', 'https://test.com/')
+        site = AdultSite("testsite", "Test Site", "https://test.com/")
 
         @site.register(default_mode=True, clean_mode=True)
         def Main():
             pass
 
-        assert site.default_mode == 'testsite.Main'
+        assert site.default_mode == "testsite.Main"
         assert Main in AdultSite.clean_functions
 
 
@@ -189,8 +203,8 @@ class TestGetSites:
         """Test get_sites returns only sites with default_mode set"""
         from resources.lib.adultsite import AdultSite
 
-        site1 = AdultSite('site1', 'Site 1', 'https://site1.com/')
-        site2 = AdultSite('site2', 'Site 2', 'https://site2.com/')
+        site1 = AdultSite("site1", "Site 1", "https://site1.com/")
+        site2 = AdultSite("site2", "Site 2", "https://site2.com/")
 
         @site1.register(default_mode=True)
         def Main1():
@@ -210,8 +224,8 @@ class TestGetSites:
         """Test get_sites excludes sites without default_mode"""
         from resources.lib.adultsite import AdultSite
 
-        site1 = AdultSite('site1', 'Site 1', 'https://site1.com/')
-        site2 = AdultSite('site2', 'Site 2', 'https://site2.com/')
+        site1 = AdultSite("site1", "Site 1", "https://site1.com/")
+        site2 = AdultSite("site2", "Site 2", "https://site2.com/")
 
         @site1.register(default_mode=True)
         def Main1():
@@ -241,8 +255,8 @@ class TestGetInternalSites:
         """Test get_internal_sites excludes custom sites"""
         from resources.lib.adultsite import AdultSite
 
-        site1 = AdultSite('internal', 'Internal Site', 'https://internal.com/')
-        site2 = AdultSite('custom', 'Custom Site', 'https://custom.com/')
+        site1 = AdultSite("internal", "Internal Site", "https://internal.com/")
+        site2 = AdultSite("custom", "Custom Site", "https://custom.com/")
 
         @site1.register(default_mode=True)
         def Main1():
@@ -264,7 +278,7 @@ class TestGetInternalSites:
         """Test get_internal_sites requires default_mode"""
         from resources.lib.adultsite import AdultSite
 
-        _site1 = AdultSite('site1', 'Site 1', 'https://site1.com/')
+        _site1 = AdultSite("site1", "Site 1", "https://site1.com/")
 
         # No default_mode registered
 
@@ -280,13 +294,13 @@ class TestGetSiteByName:
         """Test get_site_by_name finds site by name"""
         from resources.lib.adultsite import AdultSite
 
-        site1 = AdultSite('targetsite', 'Target Site', 'https://target.com/')
+        site1 = AdultSite("targetsite", "Target Site", "https://target.com/")
 
         @site1.register(default_mode=True)
         def Main():
             pass
 
-        result = AdultSite.get_site_by_name('targetsite')
+        result = AdultSite.get_site_by_name("targetsite")
 
         assert result == site1
 
@@ -294,13 +308,13 @@ class TestGetSiteByName:
         """Test get_site_by_name returns None when not found"""
         from resources.lib.adultsite import AdultSite
 
-        site1 = AdultSite('site1', 'Site 1', 'https://site1.com/')
+        site1 = AdultSite("site1", "Site 1", "https://site1.com/")
 
         @site1.register(default_mode=True)
         def Main():
             pass
 
-        result = AdultSite.get_site_by_name('nonexistent')
+        result = AdultSite.get_site_by_name("nonexistent")
 
         assert result is None
 
@@ -308,10 +322,10 @@ class TestGetSiteByName:
         """Test get_site_by_name only finds sites with default_mode"""
         from resources.lib.adultsite import AdultSite
 
-        _site1 = AdultSite('site1', 'Site 1', 'https://site1.com/')
+        _site1 = AdultSite("site1", "Site 1", "https://site1.com/")
         # No default_mode
 
-        result = AdultSite.get_site_by_name('site1')
+        result = AdultSite.get_site_by_name("site1")
 
         assert result is None
 
@@ -323,9 +337,9 @@ class TestGetSitesByName:
         """Test get_sites_by_name finds multiple sites"""
         from resources.lib.adultsite import AdultSite
 
-        site1 = AdultSite('site1', 'Site 1', 'https://site1.com/')
-        site2 = AdultSite('site2', 'Site 2', 'https://site2.com/')
-        site3 = AdultSite('site3', 'Site 3', 'https://site3.com/')
+        site1 = AdultSite("site1", "Site 1", "https://site1.com/")
+        site2 = AdultSite("site2", "Site 2", "https://site2.com/")
+        site3 = AdultSite("site3", "Site 3", "https://site3.com/")
 
         @site1.register(default_mode=True)
         def Main1():
@@ -339,7 +353,7 @@ class TestGetSitesByName:
         def Main3():
             pass
 
-        sites = list(AdultSite.get_sites_by_name(['site1', 'site3']))
+        sites = list(AdultSite.get_sites_by_name(["site1", "site3"]))
 
         assert len(sites) == 2
         assert site1 in sites
@@ -350,13 +364,15 @@ class TestGetSitesByName:
         """Test get_sites_by_name skips nonexistent sites"""
         from resources.lib.adultsite import AdultSite
 
-        site1 = AdultSite('site1', 'Site 1', 'https://site1.com/')
+        site1 = AdultSite("site1", "Site 1", "https://site1.com/")
 
         @site1.register(default_mode=True)
         def Main():
             pass
 
-        sites = list(AdultSite.get_sites_by_name(['site1', 'nonexistent', 'alsononexistent']))
+        sites = list(
+            AdultSite.get_sites_by_name(["site1", "nonexistent", "alsononexistent"])
+        )
 
         assert len(sites) == 1
         assert site1 in sites
@@ -377,8 +393,8 @@ class TestGetCustomSites:
         """Test get_custom_sites returns only custom sites"""
         from resources.lib.adultsite import AdultSite
 
-        site1 = AdultSite('internal', 'Internal Site', 'https://internal.com/')
-        site2 = AdultSite('custom', 'Custom Site', 'https://custom.com/')
+        site1 = AdultSite("internal", "Internal Site", "https://internal.com/")
+        site2 = AdultSite("custom", "Custom Site", "https://custom.com/")
 
         @site1.register(default_mode=True)
         def Main1():
@@ -400,7 +416,7 @@ class TestGetCustomSites:
         """Test get_custom_sites requires default_mode"""
         from resources.lib.adultsite import AdultSite
 
-        site1 = AdultSite('custom', 'Custom Site', 'https://custom.com/')
+        site1 = AdultSite("custom", "Custom Site", "https://custom.com/")
         site1.custom = True
         # No default_mode
 
@@ -412,7 +428,7 @@ class TestGetCustomSites:
         """Test get_custom_sites returns empty when no custom sites"""
         from resources.lib.adultsite import AdultSite
 
-        site1 = AdultSite('site1', 'Site 1', 'https://site1.com/')
+        site1 = AdultSite("site1", "Site 1", "https://site1.com/")
 
         @site1.register(default_mode=True)
         def Main():

@@ -7,11 +7,13 @@ from constants import *
 from astypes import MalformedFLV
 from astypes import get_script_data_variable, make_script_data_variable
 
-log = logging.getLogger('flvlib.tags')
+log = logging.getLogger("flvlib.tags")
 
 STRICT_PARSING = False
+
+
 def strict_parser():
-    return globals()['STRICT_PARSING']
+    return globals()["STRICT_PARSING"]
 
 
 class EndOfTags(Exception):
@@ -25,11 +27,10 @@ def ensure(value, expected, error_msg):
     if strict_parser():
         raise MalformedFLV(error_msg)
     else:
-        log.warning('Skipping non-conformant value in FLV file')
+        log.warning("Skipping non-conformant value in FLV file")
 
 
 class Tag(object):
-
     def __init__(self, parent_flv, f):
         self.f = f
         self.parent_flv = parent_flv
@@ -49,8 +50,11 @@ class Tag(object):
         self.timestamp = get_si32_extended(f)
 
         if self.timestamp < 0:
-            log.warning("The tag at offset 0x%08X has negative timestamp: %d",
-                        self.offset, self.timestamp)
+            log.warning(
+                "The tag at offset 0x%08X has negative timestamp: %d",
+                self.offset,
+                self.timestamp,
+            )
 
         # StreamID
         stream_id = get_ui24(f)
@@ -61,11 +65,13 @@ class Tag(object):
         self.parse_tag_content()
 
         previous_tag_size = get_ui32(f)
-        ensure(previous_tag_size, self.size + 11,
-               "PreviousTagSize of %d (0x%08X) "
-               "not equal to actual tag size of %d (0x%08X)" %
-               (previous_tag_size, previous_tag_size,
-                self.size + 11, self.size + 11))
+        ensure(
+            previous_tag_size,
+            self.size + 11,
+            "PreviousTagSize of %d (0x%08X) "
+            "not equal to actual tag size of %d (0x%08X)"
+            % (previous_tag_size, previous_tag_size, self.size + 11, self.size + 11),
+        )
 
     def parse_tag_content(self):
         # By default just seek past the tag content
@@ -73,7 +79,6 @@ class Tag(object):
 
 
 class AudioTag(Tag):
-
     def __init__(self, parent_flv, f):
         Tag.__init__(self, parent_flv, f)
         self.sound_format = None
@@ -100,26 +105,30 @@ class AudioTag(Tag):
             self.aac_packet_type = get_ui8(f)
             read_bytes += 1
             # AAC always has sampling rate of 44 kHz
-            ensure(self.sound_rate, SOUND_RATE_44_KHZ,
-                   "AAC sound format with incorrect sound rate: %d" %
-                   self.sound_rate)
+            ensure(
+                self.sound_rate,
+                SOUND_RATE_44_KHZ,
+                "AAC sound format with incorrect sound rate: %d" % self.sound_rate,
+            )
             # AAC is always stereo
-            ensure(self.sound_type, SOUND_TYPE_STEREO,
-                   "AAC sound format with incorrect sound type: %d" %
-                   self.sound_type)
+            ensure(
+                self.sound_type,
+                SOUND_TYPE_STEREO,
+                "AAC sound format with incorrect sound type: %d" % self.sound_type,
+            )
 
         if strict_parser():
             try:
                 sound_format_to_string[self.sound_format]
             except KeyError:
-                raise MalformedFLV("Invalid sound format: %d",
-                                   self.sound_format)
+                raise MalformedFLV("Invalid sound format: %d", self.sound_format)
             try:
-                (self.aac_packet_type and
-                 aac_packet_type_to_string[self.aac_packet_type])
+                (
+                    self.aac_packet_type
+                    and aac_packet_type_to_string[self.aac_packet_type]
+                )
             except KeyError:
-                raise MalformedFLV("Invalid AAC packet type: %d",
-                                   self.aac_packet_type)
+                raise MalformedFLV("Invalid AAC packet type: %d", self.aac_packet_type)
 
         f.seek(self.size - read_bytes, os.SEEK_CUR)
 
@@ -127,23 +136,28 @@ class AudioTag(Tag):
         if self.offset is None:
             return "<AudioTag unparsed>"
         elif self.aac_packet_type is None:
-            return ("<AudioTag at offset 0x%08X, time %d, size %d, %s>" %
-                    (self.offset, self.timestamp, self.size,
-                     sound_format_to_string.get(self.sound_format, '?')))
+            return "<AudioTag at offset 0x%08X, time %d, size %d, %s>" % (
+                self.offset,
+                self.timestamp,
+                self.size,
+                sound_format_to_string.get(self.sound_format, "?"),
+            )
         else:
-            return ("<AudioTag at offset 0x%08X, time %d, size %d, %s, %s>" %
-                    (self.offset, self.timestamp, self.size,
-                     sound_format_to_string.get(self.sound_format, '?'),
-                     aac_packet_type_to_string.get(self.aac_packet_type, '?')))
+            return "<AudioTag at offset 0x%08X, time %d, size %d, %s, %s>" % (
+                self.offset,
+                self.timestamp,
+                self.size,
+                sound_format_to_string.get(self.sound_format, "?"),
+                aac_packet_type_to_string.get(self.aac_packet_type, "?"),
+            )
 
 
 class VideoTag(Tag):
-
     def __init__(self, parent_flv, f):
         Tag.__init__(self, parent_flv, f)
         self.frame_type = None
         self.codec_id = None
-        self.h264_packet_type = None # Always None for non-H.264 tags
+        self.h264_packet_type = None  # Always None for non-H.264 tags
 
     def parse_tag_content(self):
         f = self.f
@@ -170,11 +184,14 @@ class VideoTag(Tag):
             except KeyError:
                 raise MalformedFLV("Invalid codec ID: %d", self.codec_id)
             try:
-                (self.h264_packet_type and
-                 h264_packet_type_to_string[self.h264_packet_type])
+                (
+                    self.h264_packet_type
+                    and h264_packet_type_to_string[self.h264_packet_type]
+                )
             except KeyError:
-                raise MalformedFLV("Invalid H.264 packet type: %d",
-                                   self.h264_packet_type)
+                raise MalformedFLV(
+                    "Invalid H.264 packet type: %d", self.h264_packet_type
+                )
 
         f.seek(self.size - read_bytes, os.SEEK_CUR)
 
@@ -182,22 +199,25 @@ class VideoTag(Tag):
         if self.offset is None:
             return "<VideoTag unparsed>"
         elif self.h264_packet_type is None:
-            return ("<VideoTag at offset 0x%08X, time %d, size %d, %s (%s)>" %
-                    (self.offset, self.timestamp, self.size,
-                     codec_id_to_string.get(self.codec_id, '?'),
-                     frame_type_to_string.get(self.frame_type, '?')))
+            return "<VideoTag at offset 0x%08X, time %d, size %d, %s (%s)>" % (
+                self.offset,
+                self.timestamp,
+                self.size,
+                codec_id_to_string.get(self.codec_id, "?"),
+                frame_type_to_string.get(self.frame_type, "?"),
+            )
         else:
-            return ("<VideoTag at offset 0x%08X, "
-                    "time %d, size %d, %s (%s), %s>" %
-                    (self.offset, self.timestamp, self.size,
-                     codec_id_to_string.get(self.codec_id, '?'),
-                     frame_type_to_string.get(self.frame_type, '?'),
-                     h264_packet_type_to_string.get(
-                        self.h264_packet_type, '?')))
+            return "<VideoTag at offset 0x%08X, time %d, size %d, %s (%s), %s>" % (
+                self.offset,
+                self.timestamp,
+                self.size,
+                codec_id_to_string.get(self.codec_id, "?"),
+                frame_type_to_string.get(self.frame_type, "?"),
+                h264_packet_type_to_string.get(self.h264_packet_type, "?"),
+            )
 
 
 class ScriptTag(Tag):
-
     def __init__(self, parent_flv, f):
         Tag.__init__(self, parent_flv, f)
         self.name = None
@@ -225,28 +245,31 @@ class ScriptTag(Tag):
             tag_end = self.offset + 11 + self.size
             log.debug("max offset is 0x%08X", tag_end)
 
-        self.name, self.variable = \
-                   get_script_data_variable(f, max_offset=tag_end)
-        log.debug("A script tag with a name of %s and value of %r",
-                  self.name, self.variable)
+        self.name, self.variable = get_script_data_variable(f, max_offset=tag_end)
+        log.debug(
+            "A script tag with a name of %s and value of %r", self.name, self.variable
+        )
 
     def __repr__(self):
         if self.offset is None:
             return "<ScriptTag unparsed>"
         else:
-            return ("<ScriptTag %s at offset 0x%08X, time %d, size %d>" %
-                    (self.name, self.offset, self.timestamp, self.size))
+            return "<ScriptTag %s at offset 0x%08X, time %d, size %d>" % (
+                self.name,
+                self.offset,
+                self.timestamp,
+                self.size,
+            )
 
 
 tag_to_class = {
     TAG_TYPE_AUDIO: AudioTag,
     TAG_TYPE_VIDEO: VideoTag,
-    TAG_TYPE_SCRIPT: ScriptTag
+    TAG_TYPE_SCRIPT: ScriptTag,
 }
 
 
 class FLV(object):
-
     def __init__(self, f):
         self.f = f
         self.version = None
@@ -265,8 +288,10 @@ class FLV(object):
 
         # Do this irrelevant of STRICT_PARSING, to catch bogus files
         if header != "FLV":
-            raise MalformedFLV("File signature is incorrect: 0x%X 0x%X 0x%X" %
-                               struct.unpack("3B", header))
+            raise MalformedFLV(
+                "File signature is incorrect: 0x%X 0x%X 0x%X"
+                % struct.unpack("3B", header)
+            )
 
         # File version
         self.version = get_ui8(f)
@@ -275,10 +300,16 @@ class FLV(object):
         # TypeFlags
         flags = get_ui8(f)
 
-        ensure(flags & 0xF8, 0,
-               "First TypeFlagsReserved field non zero: 0x%X" % (flags & 0xF8))
-        ensure(flags & 0x2, 0,
-               "Second TypeFlagsReserved field non zero: 0x%X" % (flags & 0x2))
+        ensure(
+            flags & 0xF8,
+            0,
+            "First TypeFlagsReserved field non zero: 0x%X" % (flags & 0xF8),
+        )
+        ensure(
+            flags & 0x2,
+            0,
+            "Second TypeFlagsReserved field non zero: 0x%X" % (flags & 0x2),
+        )
 
         self.has_audio = False
         self.has_video = False
@@ -286,10 +317,8 @@ class FLV(object):
             self.has_audio = True
         if flags & 0x1:
             self.has_video = True
-        log.debug("File %s audio",
-                  (self.has_audio and "has") or "does not have")
-        log.debug("File %s video",
-                  (self.has_video and "has") or "does not have")
+        log.debug("File %s audio", (self.has_audio and "has") or "does not have")
+        log.debug("File %s video", (self.has_video and "has") or "does not have")
 
         header_size = get_ui32(f)
         log.debug("Header size is %d bytes", header_size)
@@ -341,8 +370,16 @@ def create_flv_tag(type, data, timestamp=0):
     data_size = len(data)
     tag_size = data_size + 11
 
-    return ''.join([tag_type, make_ui24(data_size), timestamp, stream_id,
-                    data, make_ui32(tag_size)])
+    return "".join(
+        [
+            tag_type,
+            make_ui24(data_size),
+            timestamp,
+            stream_id,
+            data,
+            make_ui32(tag_size),
+        ]
+    )
 
 
 def create_script_tag(name, data, timestamp=0):
@@ -356,5 +393,6 @@ def create_flv_header(has_audio=True, has_video=True):
         type_flags = type_flags | 0x1
     if has_audio:
         type_flags = type_flags | 0x4
-    return ''.join(['FLV', make_ui8(1), make_ui8(type_flags), make_ui32(9),
-                    make_ui32(0)])
+    return "".join(
+        ["FLV", make_ui8(1), make_ui8(type_flags), make_ui32(9), make_ui32(0)]
+    )

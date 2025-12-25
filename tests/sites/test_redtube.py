@@ -1,4 +1,5 @@
 """Tests for RedTube site implementation using BeautifulSoup parsing."""
+
 from pathlib import Path
 
 from resources.lib.sites import redtube
@@ -17,23 +18,40 @@ def test_list_parses_videos(monkeypatch):
     downloads = []
     dirs = []
 
-    monkeypatch.setattr(redtube.utils, "getHtml", lambda url, referer=None, headers=None: html_data)
-    monkeypatch.setattr(redtube.site, "add_download_link", lambda *args, **kwargs: downloads.append({
-        "name": args[0],
-        "url": args[1],
-        "mode": args[2],
-        "icon": args[3],
-        "duration": kwargs.get("duration", ""),
-    }))
-    monkeypatch.setattr(redtube.site, "add_dir", lambda *args, **kwargs: dirs.append({
-        "name": args[0],
-        "url": args[1],
-    }))
+    monkeypatch.setattr(
+        redtube.utils, "getHtml", lambda url, referer=None, headers=None: html_data
+    )
+    monkeypatch.setattr(
+        redtube.site,
+        "add_download_link",
+        lambda *args, **kwargs: downloads.append(
+            {
+                "name": args[0],
+                "url": args[1],
+                "mode": args[2],
+                "icon": args[3],
+                "duration": kwargs.get("duration", ""),
+            }
+        ),
+    )
+    monkeypatch.setattr(
+        redtube.site,
+        "add_dir",
+        lambda *args, **kwargs: dirs.append(
+            {
+                "name": args[0],
+                "url": args[1],
+            }
+        ),
+    )
     monkeypatch.setattr(redtube.utils, "eod", lambda: None)
 
     redtube.List("https://www.redtube.com/")
 
-    assert [item["name"] for item in downloads] == ["First Video Title", "Second Video Title"]
+    assert [item["name"] for item in downloads] == [
+        "First Video Title",
+        "Second Video Title",
+    ]
     assert downloads[0]["url"] == "https://www.redtube.com/123456/video/first-video"
     assert downloads[1]["url"] == "https://www.redtube.com/7891011/video/second-video"
     assert downloads[0]["duration"] == "10:12"
@@ -53,11 +71,19 @@ def test_categories_parses_and_sorts(monkeypatch):
 
     dirs = []
 
-    monkeypatch.setattr(redtube.utils, "getHtml", lambda url, referer=None, headers=None: html_data)
-    monkeypatch.setattr(redtube.site, "add_dir", lambda *args, **kwargs: dirs.append({
-        "name": args[0],
-        "url": args[1],
-    }))
+    monkeypatch.setattr(
+        redtube.utils, "getHtml", lambda url, referer=None, headers=None: html_data
+    )
+    monkeypatch.setattr(
+        redtube.site,
+        "add_dir",
+        lambda *args, **kwargs: dirs.append(
+            {
+                "name": args[0],
+                "url": args[1],
+            }
+        ),
+    )
     monkeypatch.setattr(redtube.utils, "eod", lambda: None)
 
     redtube.Categories("https://www.redtube.com/categories")

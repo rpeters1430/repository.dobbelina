@@ -1,4 +1,5 @@
 """Comprehensive tests for aagmaal.gay site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import aagmaal
@@ -23,19 +24,23 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(aagmaal.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(aagmaal.site, "add_download_link", fake_add_download_link)
@@ -59,7 +64,9 @@ def test_list_parses_video_items(monkeypatch):
 
     # Check third video (uses data-original and post-title)
     assert downloads[2]["name"] == "Punjabi Girl Bathroom Video"
-    assert downloads[2]["url"] == "https://aagmaal.gay/video/punjabi-girl-bathroom-video/"
+    assert (
+        downloads[2]["url"] == "https://aagmaal.gay/video/punjabi-girl-bathroom-video/"
+    )
     assert downloads[2]["icon"] == "https://aagmaal.gay/wp-content/uploads/thumb3.jpg"
 
     # Should have pagination
@@ -88,7 +95,9 @@ def test_list_handles_no_pagination(monkeypatch):
         return html
 
     monkeypatch.setattr(aagmaal.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(aagmaal.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        aagmaal.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(aagmaal.site, "add_dir", lambda *a, **k: dirs.append(a[0]))
     monkeypatch.setattr(aagmaal.utils, "eod", lambda: None)
 
@@ -110,11 +119,13 @@ def test_categories_parses_tag_links(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(aagmaal.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(aagmaal.site, "add_dir", fake_add_dir)
@@ -168,7 +179,9 @@ def test_list2_parses_article_items(monkeypatch):
         return html
 
     monkeypatch.setattr(aagmaal.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(aagmaal.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        aagmaal.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(aagmaal.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(aagmaal.utils, "eod", lambda: None)
 

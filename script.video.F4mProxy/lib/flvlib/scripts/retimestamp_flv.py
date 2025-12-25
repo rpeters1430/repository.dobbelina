@@ -15,13 +15,13 @@ from flvlib.astypes import MalformedFLV
 from flvlib.tags import FLV, EndOfFile, AudioTag, VideoTag, ScriptTag
 from flvlib.helpers import force_remove
 
-log = logging.getLogger('flvlib.retimestamp-flv')
+log = logging.getLogger("flvlib.retimestamp-flv")
 
 
 class_to_tag = {
     AudioTag: TAG_TYPE_AUDIO,
     VideoTag: TAG_TYPE_VIDEO,
-    ScriptTag: TAG_TYPE_SCRIPT
+    ScriptTag: TAG_TYPE_SCRIPT,
 }
 
 
@@ -71,8 +71,8 @@ def retimestamp_tags_inplace(f, fu):
 
 def retimestamp_file_inplace(inpath):
     try:
-        f = open(inpath, 'rb')
-        fu = open(inpath, 'rb+')
+        f = open(inpath, "rb")
+        fu = open(inpath, "rb+")
     except IOError, (errno, strerror):
         log.error("Failed to open `%s': %s", inpath, strerror)
         return False
@@ -98,14 +98,14 @@ def retimestamp_file_inplace(inpath):
 
 def retimestamp_file_atomically(inpath, outpath):
     try:
-        f = open(inpath, 'rb')
+        f = open(inpath, "rb")
     except IOError, (errno, strerror):
         log.error("Failed to open `%s': %s", inpath, strerror)
         return False
 
     if outpath:
         try:
-            fo = open(outpath, 'w+b')
+            fo = open(outpath, "w+b")
         except IOError, (errno, strerror):
             log.error("Failed to open `%s': %s", outpath, strerror)
             return False
@@ -114,7 +114,7 @@ def retimestamp_file_atomically(inpath, outpath):
             fd, temppath = tempfile.mkstemp()
             # preserve the permission bits
             shutil.copymode(inpath, temppath)
-            fo = os.fdopen(fd, 'wb')
+            fo = os.fdopen(fd, "wb")
         except EnvironmentError, (errno, strerror):
             log.error("Failed to create temporary file: %s", strerror)
             return False
@@ -157,8 +157,10 @@ def retimestamp_file_atomically(inpath, outpath):
         try:
             shutil.move(temppath, inpath)
         except EnvironmentError, (errno, strerror):
-            log.error("Failed to overwrite the original file "
-                      "with the indexed version: %s", strerror)
+            log.error(
+                "Failed to overwrite the original file with the indexed version: %s",
+                strerror,
+            )
             return False
 
     return True
@@ -178,43 +180,61 @@ def retimestamp_file(inpath, outpath=None, inplace=False):
 
 def process_options():
     usage = "%prog [-i] [-U] file [outfile|file2 file3 ...]"
-    description = (
-"""Rewrites timestamps in FLV files making by the first media tag timestamped
+    description = """Rewrites timestamps in FLV files making by the first media tag timestamped
     with 0. The rest of the tags is retimestamped relatively. With the -i
     (inplace) option modifies the files without creating temporary copies. With
     the -U (update) option operates on all parameters, updating the files in
     place. Without the -U option accepts one input and one output file path.
-""")
+"""
     version = "%%prog flvlib %s" % __versionstr__
-    parser = OptionParser(usage=usage, description=description,
-                          version=version)
-    parser.add_option("-i", "--inplace", action="store_true",
-                      help=("inplace mode, does not create temporary files, but "
-                            "risks corruption in case of errors"))
-    parser.add_option("-U", "--update", action="store_true",
-                      help=("update mode, overwrites the given files "
-                            "instead of writing to outfile"))
-    parser.add_option("-v", "--verbose", action="count",
-                      default=0, dest="verbosity",
-                      help="be more verbose, each -v increases verbosity")
+    parser = OptionParser(usage=usage, description=description, version=version)
+    parser.add_option(
+        "-i",
+        "--inplace",
+        action="store_true",
+        help=(
+            "inplace mode, does not create temporary files, but "
+            "risks corruption in case of errors"
+        ),
+    )
+    parser.add_option(
+        "-U",
+        "--update",
+        action="store_true",
+        help=("update mode, overwrites the given files instead of writing to outfile"),
+    )
+    parser.add_option(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        dest="verbosity",
+        help="be more verbose, each -v increases verbosity",
+    )
     options, args = parser.parse_args(sys.argv)
 
     if len(args) < 2:
         parser.error("You have to provide at least one file path")
 
     if not options.update and options.inplace:
-        parser.error("You need to use the update mode if you are updating "
-                     "files in place")
+        parser.error(
+            "You need to use the update mode if you are updating files in place"
+        )
 
     if not options.update and len(args) != 3:
-        parser.error("You need to provide one infile and one outfile "
-                     "when not using the update mode")
+        parser.error(
+            "You need to provide one infile and one outfile "
+            "when not using the update mode"
+        )
 
     if options.verbosity > 3:
         options.verbosity = 3
 
-    log.setLevel({0: logging.ERROR, 1: logging.WARNING,
-                  2: logging.INFO, 3: logging.DEBUG}[options.verbosity])
+    log.setLevel(
+        {0: logging.ERROR, 1: logging.WARNING, 2: logging.INFO, 3: logging.DEBUG}[
+            options.verbosity
+        ]
+    )
 
     return options, args
 
@@ -243,7 +263,7 @@ def main():
         sys.exit(128 + 2)
     except EnvironmentError, (errno, strerror):
         try:
-            print >>sys.stderr, strerror
+            print >> sys.stderr, strerror
         except StandardError:
             pass
         sys.exit(2)

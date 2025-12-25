@@ -1,4 +1,5 @@
 """Tests for YouPorn site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import youporn
@@ -22,13 +23,15 @@ def test_list_parses_videos(monkeypatch):
         return html_data
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
         dirs.append({"name": name, "url": url})
@@ -91,11 +94,13 @@ def test_categories_parses_and_sorts(monkeypatch):
         return html_data
 
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(youporn.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(youporn.site, "add_dir", fake_add_dir)

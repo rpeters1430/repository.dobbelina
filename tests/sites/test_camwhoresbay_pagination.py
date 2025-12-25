@@ -1,7 +1,7 @@
 from resources.lib.sites import camwhoresbay
 
 
-def _sample_page(current_page='1', last_page='10'):
+def _sample_page(current_page="1", last_page="10"):
     return f"""
     <html>
     <body>
@@ -23,55 +23,61 @@ def _sample_page(current_page='1', last_page='10'):
 
 
 def test_list_builds_async_next_page(monkeypatch):
-    html = _sample_page(current_page='1', last_page='10')
+    html = _sample_page(current_page="1", last_page="10")
     captured_downloads = []
     captured_dirs = []
 
-    monkeypatch.setattr(camwhoresbay.utils, 'getHtml', lambda url, ref=None, headers=None: html)
-    monkeypatch.setattr(camwhoresbay.utils, 'eod', lambda *args, **kwargs: None)
-    monkeypatch.setattr(camwhoresbay.time, 'time', lambda: 1234.0)
+    monkeypatch.setattr(
+        camwhoresbay.utils, "getHtml", lambda url, ref=None, headers=None: html
+    )
+    monkeypatch.setattr(camwhoresbay.utils, "eod", lambda *args, **kwargs: None)
+    monkeypatch.setattr(camwhoresbay.time, "time", lambda: 1234.0)
 
-    def add_download(name, url, mode, iconimage, desc='', *args, **kwargs):
-        captured_downloads.append({
-            'name': name,
-            'url': url,
-            'mode': camwhoresbay.site.get_full_mode(mode),
-            'icon': iconimage,
-            'duration': kwargs.get('duration'),
-            'quality': kwargs.get('quality'),
-        })
+    def add_download(name, url, mode, iconimage, desc="", *args, **kwargs):
+        captured_downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": camwhoresbay.site.get_full_mode(mode),
+                "icon": iconimage,
+                "duration": kwargs.get("duration"),
+                "quality": kwargs.get("quality"),
+            }
+        )
 
     def add_dir(name, url, mode, *args, **kwargs):
-        captured_dirs.append({
-            'name': name,
-            'url': url,
-            'mode': camwhoresbay.site.get_full_mode(mode),
-            'context': kwargs.get('contextm'),
-        })
+        captured_dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": camwhoresbay.site.get_full_mode(mode),
+                "context": kwargs.get("contextm"),
+            }
+        )
 
-    monkeypatch.setattr(camwhoresbay.site, 'add_download_link', add_download)
-    monkeypatch.setattr(camwhoresbay.site, 'add_dir', add_dir)
+    monkeypatch.setattr(camwhoresbay.site, "add_download_link", add_download)
+    monkeypatch.setattr(camwhoresbay.site, "add_dir", add_dir)
 
-    camwhoresbay.List('https://www.camwhoresbay.com/latest-updates/', page=1)
+    camwhoresbay.List("https://www.camwhoresbay.com/latest-updates/", page=1)
 
     assert captured_downloads == [
         {
-            'name': 'Sample Video',
-            'url': 'https://www.camwhoresbay.com/video/123',
-            'mode': 'camwhoresbay.Playvid',
-            'icon': 'https://cdn.camwhoresbay.com/thumb.jpg',
-            'duration': '08:00',
-            'quality': 'HD',
+            "name": "Sample Video",
+            "url": "https://www.camwhoresbay.com/video/123",
+            "mode": "camwhoresbay.Playvid",
+            "icon": "https://cdn.camwhoresbay.com/thumb.jpg",
+            "duration": "08:00",
+            "quality": "HD",
         }
     ]
 
     assert len(captured_dirs) == 1
     next_entry = captured_dirs[0]
-    assert next_entry['name'].startswith('[COLOR hotpink]Next Page...[/COLOR] (2')
-    assert 'from_videos=2' in next_entry['url']
-    assert '_=1234000' in next_entry['url']
-    assert next_entry['mode'] == 'camwhoresbay.List'
-    assert next_entry['context'][0][0].startswith('[COLOR violet]Goto Page #')
+    assert next_entry["name"].startswith("[COLOR hotpink]Next Page...[/COLOR] (2")
+    assert "from_videos=2" in next_entry["url"]
+    assert "_=1234000" in next_entry["url"]
+    assert next_entry["mode"] == "camwhoresbay.List"
+    assert next_entry["context"][0][0].startswith("[COLOR violet]Goto Page #")
 
 
 def test_gotopage_updates_page_param(monkeypatch):
@@ -80,20 +86,22 @@ def test_gotopage_updates_page_param(monkeypatch):
 
     class DummyDialog:
         def numeric(self, *_args, **_kwargs):
-            return '5'
+            return "5"
 
-    monkeypatch.setattr(camwhoresbay.xbmcgui, 'Dialog', DummyDialog)
-    monkeypatch.setattr(camwhoresbay.xbmc, 'executebuiltin', lambda cmd: commands.append(cmd))
+    monkeypatch.setattr(camwhoresbay.xbmcgui, "Dialog", DummyDialog)
+    monkeypatch.setattr(
+        camwhoresbay.xbmc, "executebuiltin", lambda cmd: commands.append(cmd)
+    )
 
     camwhoresbay.GotoPage(
-        url='https://www.camwhoresbay.com/latest-updates/?mode=async&function=get_block&block_id=list_videos&from_videos=2&_=1234000',
-        np='2',
-        lp='10',
+        url="https://www.camwhoresbay.com/latest-updates/?mode=async&function=get_block&block_id=list_videos&from_videos=2&_=1234000",
+        np="2",
+        lp="10",
     )
 
     assert commands
     decoded = urllib.parse.unquote(commands[0])
-    assert 'from_videos=5' in decoded
+    assert "from_videos=5" in decoded
 
 
 def test_playvid_decodes_and_plays(monkeypatch):
@@ -110,21 +118,28 @@ def test_playvid_decodes_and_plays(monkeypatch):
         def __init__(self, name, download):
             self.name = name
             self.download = download
-            self.progress = type('P', (), {'update': lambda *a, **k: None})
+            self.progress = type("P", (), {"update": lambda *a, **k: None})
 
         def play_from_direct_link(self, url):
-            played['url'] = url
+            played["url"] = url
 
-    monkeypatch.setattr(camwhoresbay.utils, 'getHtml', lambda url, ref=None, headers=None: html)
-    monkeypatch.setattr(camwhoresbay.utils, 'VideoPlayer', DummyVP)
-    monkeypatch.setattr(camwhoresbay, 'kvs_decode', lambda surl, lic: f"decoded:{surl}:{lic}")
+    monkeypatch.setattr(
+        camwhoresbay.utils, "getHtml", lambda url, ref=None, headers=None: html
+    )
+    monkeypatch.setattr(camwhoresbay.utils, "VideoPlayer", DummyVP)
+    monkeypatch.setattr(
+        camwhoresbay, "kvs_decode", lambda surl, lic: f"decoded:{surl}:{lic}"
+    )
 
     def select(prompt, sources, **kwargs):
         # Should choose highest quality (720p) by default
-        return sources['720p']
+        return sources["720p"]
 
-    monkeypatch.setattr(camwhoresbay.utils, 'selector', select)
+    monkeypatch.setattr(camwhoresbay.utils, "selector", select)
 
-    camwhoresbay.Playvid('https://www.camwhoresbay.com/video/123', 'Sample Video')
+    camwhoresbay.Playvid("https://www.camwhoresbay.com/video/123", "Sample Video")
 
-    assert played['url'] == 'decoded:ENC720:LIC123|Referer=https://www.camwhoresbay.com/video/123'
+    assert (
+        played["url"]
+        == "decoded:ENC720:LIC123|Referer=https://www.camwhoresbay.com/video/123"
+    )

@@ -8,7 +8,7 @@ if str(PLUGIN_ROOT) not in sys.path:
     sys.path.insert(0, str(PLUGIN_ROOT))
 
 if len(sys.argv) < 3 or not str(sys.argv[1]).isdigit():
-    sys.argv = ['plugin.video.cumination', '1', '']
+    sys.argv = ["plugin.video.cumination", "1", ""]
 
 MODULE_PATH = PLUGIN_ROOT / "resources" / "lib" / "sites" / "animeidhentai.py"
 spec = importlib.util.spec_from_file_location("animeidhentai", MODULE_PATH)
@@ -18,7 +18,10 @@ if spec and spec.loader:
     sys.modules["animeidhentai"] = animeidhentai
 
 
-FIXTURE_BASE = Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "animeidhentai"
+FIXTURE_BASE = (
+    Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "animeidhentai"
+)
+
 
 def load_fixture(name: str) -> str:
     return (FIXTURE_BASE / name).read_text(encoding="utf-8")
@@ -33,14 +36,16 @@ def test_list_uses_beautifulsoup(monkeypatch):
     monkeypatch.setattr(animeidhentai.utils, "eod", lambda: None)
 
     def record_download(name, url, mode, thumb, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "thumb": thumb,
-            "desc": desc,
-            "quality": kwargs.get("quality"),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "thumb": thumb,
+                "desc": desc,
+                "quality": kwargs.get("quality"),
+            }
+        )
 
     monkeypatch.setattr(animeidhentai.site, "add_download_link", record_download)
     monkeypatch.setattr(animeidhentai.site, "add_dir", lambda *a, **k: dirs.append(a))
@@ -90,7 +95,9 @@ def test_years_uses_selector(monkeypatch):
         return "2022"
 
     monkeypatch.setattr(animeidhentai.utils, "selector", fake_selector)
-    monkeypatch.setattr(animeidhentai, "animeidhentai_list", lambda url: called_urls.append(url))
+    monkeypatch.setattr(
+        animeidhentai, "animeidhentai_list", lambda url: called_urls.append(url)
+    )
 
     animeidhentai.Years("https://animeidhentai.com/?s=")
 
@@ -113,10 +120,14 @@ def test_play_prefers_nhplayer_sources(monkeypatch):
 
     class DummyVP:
         def __init__(self, name, download=None):
-            self.progress = type("P", (), {
-                "update": lambda *a, **k: None,
-                "close": lambda *a, **k: captured.setdefault("closed", True),
-            })()
+            self.progress = type(
+                "P",
+                (),
+                {
+                    "update": lambda *a, **k: None,
+                    "close": lambda *a, **k: captured.setdefault("closed", True),
+                },
+            )()
             self.direct_regex = None
 
         def __setattr__(self, name, value):
@@ -132,7 +143,11 @@ def test_play_prefers_nhplayer_sources(monkeypatch):
 
     monkeypatch.setattr(animeidhentai.utils, "VideoPlayer", DummyVP)
     monkeypatch.setattr(animeidhentai.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(animeidhentai.utils, "notify", lambda *a, **k: captured.setdefault("notified", True))
+    monkeypatch.setattr(
+        animeidhentai.utils,
+        "notify",
+        lambda *a, **k: captured.setdefault("notified", True),
+    )
 
     animeidhentai.animeidhentai_play("https://animeidhentai.com/watch/video", "Sample")
 

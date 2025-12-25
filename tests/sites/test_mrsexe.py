@@ -1,4 +1,5 @@
 """Tests for MrSexe BeautifulSoup migration."""
+
 from pathlib import Path
 
 from resources.lib.sites import mrsexe
@@ -16,10 +17,19 @@ def test_list_parses_videos_and_next(monkeypatch):
     downloads = []
     dirs = []
 
-    monkeypatch.setattr(mrsexe.utils, "getHtml", lambda url, ref='': html)
+    monkeypatch.setattr(mrsexe.utils, "getHtml", lambda url, ref="": html)
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({"name": name, "url": url, "mode": mode, "img": iconimage, "duration": kwargs.get("duration"), "quality": kwargs.get("quality")})
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "img": iconimage,
+                "duration": kwargs.get("duration"),
+                "quality": kwargs.get("quality"),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
         dirs.append({"name": name, "url": url, "mode": mode})
@@ -47,7 +57,11 @@ def test_playvid_uses_clic_and_plays(monkeypatch):
         return video_page
 
     monkeypatch.setattr(mrsexe.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(mrsexe.utils, "playvid", lambda url, name, download=None: play_calls.append((url, name, download)))
+    monkeypatch.setattr(
+        mrsexe.utils,
+        "playvid",
+        lambda url, name, download=None: play_calls.append((url, name, download)),
+    )
 
     mrsexe.Playvid("https://www.mrsexe.com/video-1", "Sample Video")
 

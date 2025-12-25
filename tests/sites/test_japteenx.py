@@ -1,4 +1,5 @@
 """Comprehensive tests for japteenx.com site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import japteenx
@@ -23,21 +24,25 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration"),
-            "quality": kwargs.get("quality"),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration"),
+                "quality": kwargs.get("quality"),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(japteenx.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(japteenx.site, "add_download_link", fake_add_download_link)
@@ -152,7 +157,9 @@ def test_search_url_encoding(monkeypatch):
 
     monkeypatch.setattr(japteenx, "List", fake_list)
 
-    japteenx.Search("https://www.japteenx.com/search/videos?search_query=", keyword="test query")
+    japteenx.Search(
+        "https://www.japteenx.com/search/videos?search_query=", keyword="test query"
+    )
 
     assert len(list_calls) == 1
     assert "test+query" in list_calls[0]

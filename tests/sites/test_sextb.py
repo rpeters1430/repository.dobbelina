@@ -1,4 +1,5 @@
 """Comprehensive tests for sextb.net site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import sextb
@@ -23,20 +24,24 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration"),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration"),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(sextb.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(sextb.site, "add_download_link", fake_add_download_link)

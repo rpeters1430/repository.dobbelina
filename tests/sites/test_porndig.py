@@ -1,4 +1,5 @@
 """Tests for porndig.com site implementation."""
+
 from pathlib import Path
 import json
 
@@ -27,21 +28,25 @@ def test_list_parses_video_items(monkeypatch):
         return json_response
 
     def fake_add_download_link(name, url, mode, iconimage, desc, **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration", ""),
-            "quality": kwargs.get("quality", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration", ""),
+                "quality": kwargs.get("quality", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(porndig.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(porndig.site, "add_download_link", fake_add_download_link)
@@ -83,11 +88,13 @@ def test_categories_parses_categories(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage, page, channel, section):
-        dirs.append({
-            "name": name,
-            "channel": channel,
-            "section": section,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "channel": channel,
+                "section": section,
+            }
+        )
 
     monkeypatch.setattr(porndig.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(porndig.site, "add_dir", fake_add_dir)
@@ -96,7 +103,7 @@ def test_categories_parses_categories(monkeypatch):
     # Mock addon settings
     class FakeAddon:
         def getSetting(self, key):
-            return '0'  # Professional section
+            return "0"  # Professional section
 
     monkeypatch.setattr(porndig, "addon", FakeAddon())
 
@@ -140,10 +147,12 @@ def test_list_handles_pagination(monkeypatch):
         return json_response
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(porndig.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(porndig.site, "add_download_link", lambda *a, **k: None)
@@ -167,7 +176,9 @@ def test_list_handles_empty_results(monkeypatch):
         return json_response
 
     monkeypatch.setattr(porndig.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(porndig.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        porndig.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(porndig.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(porndig.utils, "eod", lambda: None)
 

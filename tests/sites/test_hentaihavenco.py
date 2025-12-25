@@ -15,7 +15,10 @@ if spec and spec.loader:
     sys.modules["hentaihavenco"] = hentaihavenco
 
 
-FIXTURE_BASE = Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "hentaihavenco"
+FIXTURE_BASE = (
+    Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "hentaihavenco"
+)
+
 
 def load_fixture(name: str) -> str:
     return (FIXTURE_BASE / name).read_text(encoding="utf-8")
@@ -29,7 +32,9 @@ def test_list_uses_soup_spec_and_pagination(monkeypatch):
     monkeypatch.setattr(hentaihavenco.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(hentaihavenco.utils, "eod", lambda: None)
 
-    monkeypatch.setattr(hentaihavenco.site, "add_download_link", lambda *a, **k: downloads.append(a))
+    monkeypatch.setattr(
+        hentaihavenco.site, "add_download_link", lambda *a, **k: downloads.append(a)
+    )
     monkeypatch.setattr(hentaihavenco.site, "add_dir", lambda *a, **k: dirs.append(a))
 
     hentaihavenco.List("https://hentaihaven.co/")

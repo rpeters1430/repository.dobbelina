@@ -1,4 +1,5 @@
 """Tests for javhdporn.net site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import javhdporn
@@ -23,21 +24,25 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration"),
-            "quality": kwargs.get("quality"),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration"),
+                "quality": kwargs.get("quality"),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(javhdporn.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(javhdporn.site, "add_download_link", fake_add_download_link)
@@ -80,11 +85,13 @@ def test_list_pagination(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(javhdporn.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(javhdporn.site, "add_download_link", lambda *a, **k: None)

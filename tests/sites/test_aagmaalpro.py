@@ -1,4 +1,5 @@
 """Comprehensive tests for aagmaal.delhi.in (aagmaalpro) site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import aagmaalpro
@@ -23,20 +24,24 @@ def test_list_parses_article_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(aagmaalpro.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(aagmaalpro.site, "add_download_link", fake_add_download_link)
@@ -50,7 +55,10 @@ def test_list_parses_article_items(monkeypatch):
 
     # Check first video (name from header span, src attribute)
     assert downloads[0]["name"] == "Hot Desi Girl Strip Show"
-    assert downloads[0]["url"] == "https://aagmaal.delhi.in/video/hot-desi-girl-strip-show/"
+    assert (
+        downloads[0]["url"]
+        == "https://aagmaal.delhi.in/video/hot-desi-girl-strip-show/"
+    )
     assert downloads[0]["icon"] == "https://aagmaal.delhi.in/thumbs/thumb1.jpg"
     assert downloads[0]["duration"] == "18:25"
 
@@ -166,12 +174,14 @@ def test_categories_parses_and_collects_across_pages(monkeypatch):
             """
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+            }
+        )
 
     monkeypatch.setattr(aagmaalpro.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(aagmaalpro.site, "add_dir", fake_add_dir)
@@ -221,7 +231,9 @@ def test_list2_parses_title_div(monkeypatch):
         return html
 
     monkeypatch.setattr(aagmaalpro.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(aagmaalpro.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        aagmaalpro.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(aagmaalpro.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(aagmaalpro.utils, "eod", lambda: None)
 

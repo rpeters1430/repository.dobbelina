@@ -17,14 +17,20 @@ def test_list_uses_soup_and_pagination(monkeypatch):
 
     monkeypatch.setattr(viralvideosporno.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(viralvideosporno.utils, "eod", lambda: None)
-    monkeypatch.setattr(viralvideosporno.site, "add_download_link",
-                        lambda name, url, mode, iconimage, desc='', **kwargs: downloads.append(
-                            {"name": name, "url": url, "mode": mode, "icon": iconimage, "desc": desc}
-                        ))
-    monkeypatch.setattr(viralvideosporno.site, "add_dir",
-                        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
-                            {"name": name, "url": url, "mode": mode}
-                        ))
+    monkeypatch.setattr(
+        viralvideosporno.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append(
+            {"name": name, "url": url, "mode": mode, "icon": iconimage, "desc": desc}
+        ),
+    )
+    monkeypatch.setattr(
+        viralvideosporno.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
 
     viralvideosporno.List("https://www.viralvideosporno.com/")
 
@@ -45,10 +51,13 @@ def test_categories_skip_first_and_parse(monkeypatch):
 
     monkeypatch.setattr(viralvideosporno.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(viralvideosporno.utils, "eod", lambda: None)
-    monkeypatch.setattr(viralvideosporno.site, "add_dir",
-                        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
-                            {"name": name, "url": url, "mode": mode}
-                        ))
+    monkeypatch.setattr(
+        viralvideosporno.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
 
     viralvideosporno.Categories("https://www.viralvideosporno.com/")
 
@@ -66,14 +75,20 @@ def test_mlist_parses_movies_and_next(monkeypatch):
 
     monkeypatch.setattr(viralvideosporno.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(viralvideosporno.utils, "eod", lambda: None)
-    monkeypatch.setattr(viralvideosporno.site, "add_download_link",
-                        lambda name, url, mode, iconimage, desc='', **kwargs: downloads.append(
-                            {"name": name, "url": url, "mode": mode, "icon": iconimage}
-                        ))
-    monkeypatch.setattr(viralvideosporno.site, "add_dir",
-                        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
-                            {"name": name, "url": url, "mode": mode}
-                        ))
+    monkeypatch.setattr(
+        viralvideosporno.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append(
+            {"name": name, "url": url, "mode": mode, "icon": iconimage}
+        ),
+    )
+    monkeypatch.setattr(
+        viralvideosporno.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
 
     viralvideosporno.MList("https://www.viralvideosporno.com/peliculas/amateur")
 
@@ -83,4 +98,6 @@ def test_mlist_parses_movies_and_next(monkeypatch):
     assert downloads[1]["icon"].endswith("pel2.jpg")
 
     assert len(dirs) == 1
-    assert dirs[0]["url"] == "https://www.viralvideosporno.com/peliculas/peliculas_3.html"
+    assert (
+        dirs[0]["url"] == "https://www.viralvideosporno.com/peliculas/peliculas_3.html"
+    )

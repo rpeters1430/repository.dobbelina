@@ -1,4 +1,5 @@
 """Tests for peachurnet.com site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import peachurnet
@@ -22,27 +23,27 @@ def test_cache_homepage_metadata_extracts_navigation(monkeypatch):
     monkeypatch.setattr(peachurnet.utils, "getHtml", fake_get_html)
 
     # Clear cache before test
-    peachurnet.HOME_CACHE['sections'] = None
-    peachurnet.HOME_CACHE['search'] = None
+    peachurnet.HOME_CACHE["sections"] = None
+    peachurnet.HOME_CACHE["search"] = None
 
     peachurnet._cache_homepage_metadata()
 
     # Check that sections were extracted
-    sections = peachurnet.HOME_CACHE['sections']
+    sections = peachurnet.HOME_CACHE["sections"]
     assert sections is not None
     assert len(sections) >= 3
 
     # Check that common navigation items are captured
     section_labels = [label for label, url in sections]
-    assert any('Amateur' in label for label in section_labels)
-    assert any('MILF' in label for label in section_labels)
-    assert any('Teen' in label for label in section_labels)
+    assert any("Amateur" in label for label in section_labels)
+    assert any("MILF" in label for label in section_labels)
+    assert any("Teen" in label for label in section_labels)
 
     # Check search endpoint was discovered
-    search_url = peachurnet.HOME_CACHE['search']
+    search_url = peachurnet.HOME_CACHE["search"]
     assert search_url is not None
-    assert 'search' in search_url
-    assert 'q=' in search_url
+    assert "search" in search_url
+    assert "q=" in search_url
 
 
 def test_list_parses_video_cards(monkeypatch):
@@ -56,20 +57,24 @@ def test_list_parses_video_cards(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "desc": desc,
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "desc": desc,
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(peachurnet.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(peachurnet.site, "add_download_link", fake_add_download_link)
@@ -112,7 +117,9 @@ def test_list_handles_empty_results(monkeypatch):
         notified.append(msg)
 
     monkeypatch.setattr(peachurnet.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(peachurnet.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        peachurnet.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(peachurnet.utils, "notify", fake_notify)
     monkeypatch.setattr(peachurnet.utils, "eod", lambda: None)
 
@@ -143,7 +150,7 @@ def test_parse_video_cards_deduplicates(monkeypatch):
 
     # Should only have 2 unique videos
     assert len(cards) == 2
-    urls = [card['url'] for card in cards]
+    urls = [card["url"] for card in cards]
     assert len(set(urls)) == 2  # All unique
 
 
@@ -151,14 +158,16 @@ def test_gather_video_sources_finds_multiple_sources(monkeypatch):
     """Test that _gather_video_sources extracts all available sources."""
     html = load_fixture("video_page.html")
 
-    sources = peachurnet._gather_video_sources(html, "https://peachurnet.com/en/video/sample")
+    sources = peachurnet._gather_video_sources(
+        html, "https://peachurnet.com/en/video/sample"
+    )
 
     # Should find multiple video sources
     assert len(sources) > 0
 
     # Check that it found MP4 sources (M3U8 may be in JS, not always in HTML tags)
     all_urls = list(sources.values())
-    assert any('.mp4' in url.lower() or '.m3u8' in url.lower() for url in all_urls)
+    assert any(".mp4" in url.lower() or ".m3u8" in url.lower() for url in all_urls)
 
 
 def test_extract_thumbnail_with_fallbacks():
@@ -166,21 +175,21 @@ def test_extract_thumbnail_with_fallbacks():
     # Test with data-src
     html1 = '<a><img data-src="https://example.com/thumb1.jpg" /></a>'
     soup1 = peachurnet.utils.parse_html(html1)
-    link1 = soup1.select_one('a')
+    link1 = soup1.select_one("a")
     thumb1 = peachurnet._extract_thumbnail(link1)
     assert thumb1 == "https://example.com/thumb1.jpg"
 
     # Test with regular src
     html2 = '<a><img src="https://example.com/thumb2.jpg" /></a>'
     soup2 = peachurnet.utils.parse_html(html2)
-    link2 = soup2.select_one('a')
+    link2 = soup2.select_one("a")
     thumb2 = peachurnet._extract_thumbnail(link2)
     assert thumb2 == "https://example.com/thumb2.jpg"
 
     # Test with style background
     html3 = '<a style="background-image: url(https://example.com/thumb3.jpg)"></a>'
     soup3 = peachurnet.utils.parse_html(html3)
-    link3 = soup3.select_one('a')
+    link3 = soup3.select_one("a")
     thumb3 = peachurnet._extract_thumbnail(link3)
     assert thumb3 == "https://example.com/thumb3.jpg"
 
@@ -190,14 +199,14 @@ def test_extract_duration_from_various_sources():
     # Test with data-duration attribute
     html1 = '<a data-duration="12:34"><div class="title">Video</div></a>'
     soup1 = peachurnet.utils.parse_html(html1)
-    link1 = soup1.select_one('a')
+    link1 = soup1.select_one("a")
     duration1 = peachurnet._extract_duration(link1)
     assert duration1 == "12:34"
 
     # Test with duration class
     html2 = '<a><div class="title">Video</div><span class="duration">25:45</span></a>'
     soup2 = peachurnet.utils.parse_html(html2)
-    link2 = soup2.select_one('a')
+    link2 = soup2.select_one("a")
     duration2 = peachurnet._extract_duration(link2)
     assert duration2 == "25:45"
 
@@ -226,8 +235,8 @@ def test_find_next_page_with_various_selectors():
 def test_search_builds_search_url(monkeypatch):
     """Test that Search builds correct search URL."""
     # Pre-populate cache to avoid HTTP call
-    peachurnet.HOME_CACHE['search'] = 'https://peachurnet.com/en/search?q='
-    peachurnet.HOME_CACHE['sections'] = []
+    peachurnet.HOME_CACHE["search"] = "https://peachurnet.com/en/search?q="
+    peachurnet.HOME_CACHE["sections"] = []
 
     called_urls = []
 
@@ -245,14 +254,20 @@ def test_search_builds_search_url(monkeypatch):
 def test_absolute_url_normalization():
     """Test _absolute_url handles various URL formats."""
     # Protocol-relative URL
-    assert peachurnet._absolute_url('//cdn.example.com/video.mp4') == 'https://cdn.example.com/video.mp4'
+    assert (
+        peachurnet._absolute_url("//cdn.example.com/video.mp4")
+        == "https://cdn.example.com/video.mp4"
+    )
 
     # Absolute URL (no change)
-    assert peachurnet._absolute_url('https://example.com/video') == 'https://example.com/video'
+    assert (
+        peachurnet._absolute_url("https://example.com/video")
+        == "https://example.com/video"
+    )
 
     # Relative URL
-    result = peachurnet._absolute_url('/videos/123', 'https://peachurnet.com/')
-    assert result == 'https://peachurnet.com/videos/123'
+    result = peachurnet._absolute_url("/videos/123", "https://peachurnet.com/")
+    assert result == "https://peachurnet.com/videos/123"
 
     # Empty URL
-    assert peachurnet._absolute_url('') == ''
+    assert peachurnet._absolute_url("") == ""

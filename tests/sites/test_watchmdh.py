@@ -18,16 +18,28 @@ def test_list_parses_items_and_pagination(monkeypatch):
     monkeypatch.setattr(watchmdh.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(watchmdh.utils, "eod", lambda: None)
 
-    def fake_add_download_link(name, url, mode, iconimage, desc='', duration='', quality='', contextm=None, **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": duration,
-            "quality": quality,
-            "contextm": contextm
-        })
+    def fake_add_download_link(
+        name,
+        url,
+        mode,
+        iconimage,
+        desc="",
+        duration="",
+        quality="",
+        contextm=None,
+        **kwargs,
+    ):
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": duration,
+                "quality": quality,
+                "contextm": contextm,
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, contextm=None, **kwargs):
         dirs.append({"name": name, "url": url, "mode": mode, "contextm": contextm})

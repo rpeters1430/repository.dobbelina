@@ -222,7 +222,9 @@ def test_migrated_site_listing_parses_videos(
         return html
 
     def capture_video(name, url, mode, iconimage, desc="", *_, **extra):
-        captured_videos.append({"title": name, "url": url, "thumb": iconimage, "extra": extra})
+        captured_videos.append(
+            {"title": name, "url": url, "thumb": iconimage, "extra": extra}
+        )
 
     def capture_dir(name, url, mode, *args, **kwargs):
         captured_dirs.append({"label": name, "url": url, "mode": mode})

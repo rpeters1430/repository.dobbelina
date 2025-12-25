@@ -1,4 +1,5 @@
 """Comprehensive tests for supjav site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import supjav
@@ -26,19 +27,23 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, desc="", **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(supjav.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(supjav.site, "add_download_link", fake_add_download_link)
@@ -89,7 +94,9 @@ def test_list_handles_empty_results(monkeypatch):
         return html
 
     monkeypatch.setattr(supjav.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(supjav.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        supjav.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(supjav.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(supjav.utils, "eod", lambda: None)
 
@@ -109,11 +116,13 @@ def test_cat_parses_categories(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, desc=""):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(supjav.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(supjav.site, "add_dir", fake_add_dir)
@@ -174,10 +183,12 @@ def test_list_pagination_with_page_numbers(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+            }
+        )
 
     monkeypatch.setattr(supjav.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(supjav.site, "add_download_link", lambda *a, **k: None)

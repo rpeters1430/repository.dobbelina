@@ -38,7 +38,7 @@ def test_hanime_play_extracts_video_sources(monkeypatch):
         # Store the sources that were passed to prefquality
         sources_selected.update(sources)
         # Return the highest quality
-        return sources.get('1080', sources.get('720', sources.get('480', None)))
+        return sources.get("1080", sources.get("720", sources.get("480", None)))
 
     # Mock VideoPlayer
     mock_vp = MagicMock()
@@ -49,7 +49,7 @@ def test_hanime_play_extracts_video_sources(monkeypatch):
 
     def fake_play_from_direct_link(url):
         play_called[0] = True
-        assert url == 'https://hanime.tv/videos/1080p.mp4'
+        assert url == "https://hanime.tv/videos/1080p.mp4"
 
     mock_vp.play_from_direct_link = fake_play_from_direct_link
 
@@ -58,13 +58,13 @@ def test_hanime_play_extracts_video_sources(monkeypatch):
     monkeypatch.setattr(hanime.utils, "VideoPlayer", fake_video_player)
 
     # Call hanime_play
-    hanime.hanime_play('sample-video-slug', 'Sample Video')
+    hanime.hanime_play("sample-video-slug", "Sample Video")
 
     # Verify sources were extracted
     assert len(sources_selected) == 3
-    assert sources_selected['1080'] == 'https://hanime.tv/videos/1080p.mp4'
-    assert sources_selected['720'] == 'https://hanime.tv/videos/720p.mp4'
-    assert sources_selected['480'] == 'https://hanime.tv/videos/480p.mp4'
+    assert sources_selected["1080"] == "https://hanime.tv/videos/1080p.mp4"
+    assert sources_selected["720"] == "https://hanime.tv/videos/720p.mp4"
+    assert sources_selected["480"] == "https://hanime.tv/videos/480p.mp4"
 
     # Verify play was called
     assert play_called[0]
@@ -99,7 +99,7 @@ def test_hanime_play_handles_empty_sources(monkeypatch):
     monkeypatch.setattr(hanime.utils, "VideoPlayer", fake_video_player)
 
     # Should not crash
-    hanime.hanime_play('sample-video-slug', 'Sample Video')
+    hanime.hanime_play("sample-video-slug", "Sample Video")
 
     # Play should not be called when no sources
     assert not play_called[0]
@@ -119,16 +119,12 @@ def test_hanime_list_parses_json_results(monkeypatch):
         return json_response
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            'name': name,
-            'url': url,
-            'mode': mode,
-            'icon': iconimage,
-            'desc': desc
-        })
+        downloads.append(
+            {"name": name, "url": url, "mode": mode, "icon": iconimage, "desc": desc}
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
-        dirs.append({'name': name, 'url': url, 'mode': mode})
+        dirs.append({"name": name, "url": url, "mode": mode})
 
     monkeypatch.setattr(hanime.utils, "postHtml", fake_post_html)
     monkeypatch.setattr(hanime.site, "add_download_link", fake_add_download_link)
@@ -136,17 +132,17 @@ def test_hanime_list_parses_json_results(monkeypatch):
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
     # Call hanime_list
-    hanime.hanime_list('', '', 0)
+    hanime.hanime_list("", "", 0)
 
     # Verify we got 1 video
     assert len(downloads) == 1
-    assert 'Sample Hentai 1' in downloads[0]['name']
-    assert 'Uncensored' in downloads[0]['name']  # Because is_censored is false
-    assert downloads[0]['url'] == 'sample-1'
-    assert downloads[0]['mode'] == 'hanime_play_combined'
+    assert "Sample Hentai 1" in downloads[0]["name"]
+    assert "Uncensored" in downloads[0]["name"]  # Because is_censored is false
+    assert downloads[0]["url"] == "sample-1"
+    assert downloads[0]["mode"] == "hanime_play_combined"
 
     # Verify pagination was added (nbPages = 5, we're on page 0)
-    next_pages = [d for d in dirs if 'Next Page' in d['name']]
+    next_pages = [d for d in dirs if "Next Page" in d["name"]]
     assert len(next_pages) == 1
 
 
@@ -157,9 +153,9 @@ def test_hanime_search_without_keyword_shows_dialog(monkeypatch):
     def fake_search_dir(*args):
         search_dir_called[0] = True
 
-    monkeypatch.setattr(hanime.site, 'search_dir', fake_search_dir)
+    monkeypatch.setattr(hanime.site, "search_dir", fake_search_dir)
 
-    hanime.hanime_search('https://hanime.tv')
+    hanime.hanime_search("https://hanime.tv")
 
     assert search_dir_called[0]
 
@@ -169,18 +165,18 @@ def test_hanime_search_with_keyword_calls_list(monkeypatch):
     list_called_with = {}
 
     def fake_list(url, search, page):
-        list_called_with['url'] = url
-        list_called_with['search'] = search
-        list_called_with['page'] = page
+        list_called_with["url"] = url
+        list_called_with["search"] = search
+        list_called_with["page"] = page
 
-    monkeypatch.setattr(hanime, 'hanime_list', fake_list)
+    monkeypatch.setattr(hanime, "hanime_list", fake_list)
 
-    hanime.hanime_search('https://hanime.tv', keyword='sample search')
+    hanime.hanime_search("https://hanime.tv", keyword="sample search")
 
     # Verify hanime_list was called with search keyword
-    assert 'search' in list_called_with
-    assert list_called_with['search'] == 'sample search'
-    assert list_called_with['page'] == 0
+    assert "search" in list_called_with
+    assert list_called_with["search"] == "sample search"
+    assert list_called_with["page"] == 0
 
 
 def test_hanime_filter_creates_tag_filter(monkeypatch):
@@ -194,22 +190,22 @@ def test_hanime_filter_creates_tag_filter(monkeypatch):
             return [0, 2]
 
     def fake_list(url, search, page):
-        list_called_with['url'] = url
-        list_called_with['search'] = search
-        list_called_with['page'] = page
+        list_called_with["url"] = url
+        list_called_with["search"] = search
+        list_called_with["page"] = page
 
     # Replace utils.dialog with our mock
-    monkeypatch.setattr(hanime.utils, 'dialog', MockDialog())
-    monkeypatch.setattr(hanime, 'hanime_list', fake_list)
+    monkeypatch.setattr(hanime.utils, "dialog", MockDialog())
+    monkeypatch.setattr(hanime, "hanime_list", fake_list)
 
     hanime.hanime_filter()
 
     # Verify hanime_list was called with tag filter
-    assert 'url' in list_called_with
+    assert "url" in list_called_with
     # Should be "3d|anal" (indices 0 and 2 from tags list, lowercased)
-    assert list_called_with['url'] == '3d|anal'
-    assert list_called_with['search'] == ''
-    assert list_called_with['page'] == 0
+    assert list_called_with["url"] == "3d|anal"
+    assert list_called_with["search"] == ""
+    assert list_called_with["page"] == 0
 
 
 # Additional comprehensive tests using new fixtures
@@ -219,23 +215,37 @@ def test_hanime_list_with_api_list_fixture(monkeypatch):
     """Test hanime_list with api_list.json fixture - comprehensive parsing."""
     api_response = load_fixture("api_list.json")
 
-    monkeypatch.setattr(hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response)
+    monkeypatch.setattr(
+        hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response
+    )
 
     downloads = []
     dirs = []
 
-    def fake_add_download_link(name, url, mode, iconimage, desc="", stream=None, fav='add',
-                                noDownload=False, contextm=None, fanart=None):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "desc": desc,
-            "noDownload": noDownload,
-            "contextm": contextm,
-            "fanart": fanart
-        })
+    def fake_add_download_link(
+        name,
+        url,
+        mode,
+        iconimage,
+        desc="",
+        stream=None,
+        fav="add",
+        noDownload=False,
+        contextm=None,
+        fanart=None,
+    ):
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "desc": desc,
+                "noDownload": noDownload,
+                "contextm": contextm,
+                "fanart": fanart,
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
         dirs.append({"name": name, "url": url, "mode": mode, "icon": iconimage})
@@ -244,7 +254,7 @@ def test_hanime_list_with_api_list_fixture(monkeypatch):
     monkeypatch.setattr(hanime.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
-    hanime.hanime_list('', '', 0)
+    hanime.hanime_list("", "", 0)
 
     # Should parse 2 videos
     assert len(downloads) == 2
@@ -274,7 +284,9 @@ def test_hanime_list_last_page_no_pagination(monkeypatch):
     """Test that last page doesn't add pagination link."""
     api_response = load_fixture("api_last_page.json")
 
-    monkeypatch.setattr(hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response)
+    monkeypatch.setattr(
+        hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response
+    )
 
     dirs = []
 
@@ -288,7 +300,7 @@ def test_hanime_list_last_page_no_pagination(monkeypatch):
     monkeypatch.setattr(hanime.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
-    hanime.hanime_list('', '', 4)  # Page 4 (last page)
+    hanime.hanime_list("", "", 4)  # Page 4 (last page)
 
     # No Next Page link
     next_pages = [d for d in dirs if "Next Page" in d["name"]]
@@ -299,7 +311,9 @@ def test_hanime_list_empty_results(monkeypatch):
     """Test that empty results don't crash."""
     api_response = load_fixture("api_empty.json")
 
-    monkeypatch.setattr(hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response)
+    monkeypatch.setattr(
+        hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response
+    )
 
     downloads = []
     dirs = []
@@ -314,7 +328,7 @@ def test_hanime_list_empty_results(monkeypatch):
     monkeypatch.setattr(hanime.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
-    hanime.hanime_list('', '', 0)
+    hanime.hanime_list("", "", 0)
 
     assert len(downloads) == 0
     assert len(dirs) == 0
@@ -335,9 +349,9 @@ def test_hanime_list_tag_filtering_single_tag(monkeypatch):
     monkeypatch.setattr(hanime.site, "add_dir", lambda *args, **kwargs: None)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
-    hanime.hanime_list('uncensored', '', 0)
+    hanime.hanime_list("uncensored", "", 0)
 
-    assert post_calls[-1]["tags"] == ['uncensored']
+    assert post_calls[-1]["tags"] == ["uncensored"]
     assert post_calls[-1]["tags_mode"] == "OR"
 
 
@@ -356,9 +370,9 @@ def test_hanime_list_tag_filtering_multiple_tags(monkeypatch):
     monkeypatch.setattr(hanime.site, "add_dir", lambda *args, **kwargs: None)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
-    hanime.hanime_list('uncensored|vanilla|hd', '', 0)
+    hanime.hanime_list("uncensored|vanilla|hd", "", 0)
 
-    assert post_calls[-1]["tags"] == ['uncensored', 'vanilla', 'hd']
+    assert post_calls[-1]["tags"] == ["uncensored", "vanilla", "hd"]
     assert post_calls[-1]["tags_mode"] == "AND"
 
 
@@ -377,16 +391,18 @@ def test_hanime_list_search_query(monkeypatch):
     monkeypatch.setattr(hanime.site, "add_dir", lambda *args, **kwargs: None)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
-    hanime.hanime_list('', 'test search', 0)
+    hanime.hanime_list("", "test search", 0)
 
-    assert post_calls[-1]["search_text"] == 'test search'
+    assert post_calls[-1]["search_text"] == "test search"
 
 
 def test_hanime_list_cdn_replacement(monkeypatch):
     """Test CDN URL replacement from highwinds-cdn.com to droidbuzz.top."""
     api_response = load_fixture("api_list.json")
 
-    monkeypatch.setattr(hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response)
+    monkeypatch.setattr(
+        hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response
+    )
 
     downloads = []
 
@@ -397,7 +413,7 @@ def test_hanime_list_cdn_replacement(monkeypatch):
     monkeypatch.setattr(hanime.site, "add_dir", lambda *args, **kwargs: None)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
-    hanime.hanime_list('', '', 0)
+    hanime.hanime_list("", "", 0)
 
     assert "droidbuzz.top" in downloads[0]["icon"]
     assert "highwinds-cdn.com" not in downloads[0]["icon"]
@@ -408,7 +424,9 @@ def test_hanime_list_description_html_stripping(monkeypatch):
     """Test that HTML tags are stripped from description."""
     api_response = load_fixture("api_list.json")
 
-    monkeypatch.setattr(hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response)
+    monkeypatch.setattr(
+        hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response
+    )
 
     downloads = []
 
@@ -419,7 +437,7 @@ def test_hanime_list_description_html_stripping(monkeypatch):
     monkeypatch.setattr(hanime.site, "add_dir", lambda *args, **kwargs: None)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
-    hanime.hanime_list('', '', 0)
+    hanime.hanime_list("", "", 0)
 
     assert "<p>" not in downloads[0]["desc"]
     assert "</p>" not in downloads[0]["desc"]
@@ -455,8 +473,14 @@ def test_hanime_eps_parses_episodes(monkeypatch):
 
     # Check uncensored tags
     episode_names = list(selector_calls[0]["options"].keys())
-    assert any("[COLOR hotpink][I]Uncensored[/I][/COLOR]" in name and "Episode 1" in name for name in episode_names)
-    assert any("Episode 2" in name and "[COLOR hotpink][I]Uncensored[/I][/COLOR]" not in name for name in episode_names)
+    assert any(
+        "[COLOR hotpink][I]Uncensored[/I][/COLOR]" in name and "Episode 1" in name
+        for name in episode_names
+    )
+    assert any(
+        "Episode 2" in name and "[COLOR hotpink][I]Uncensored[/I][/COLOR]" not in name
+        for name in episode_names
+    )
 
     # Should play selected episode
     assert len(play_calls) == 1
@@ -467,10 +491,14 @@ def test_hanime_eps_no_selection(monkeypatch):
     api_response = load_fixture("api_episodes.json")
 
     monkeypatch.setattr(hanime.utils, "getHtml", lambda url, headers=None: api_response)
-    monkeypatch.setattr(hanime.utils, "selector", lambda title, options, show_on_one=False: None)
+    monkeypatch.setattr(
+        hanime.utils, "selector", lambda title, options, show_on_one=False: None
+    )
 
     play_calls = []
-    monkeypatch.setattr(hanime, "hanime_play", lambda url, name: play_calls.append(True))
+    monkeypatch.setattr(
+        hanime, "hanime_play", lambda url, name: play_calls.append(True)
+    )
 
     result = hanime.hanime_eps("sample-hentai-1")
 
@@ -487,7 +515,9 @@ def test_hanime_eps_constructs_correct_url(monkeypatch):
         return load_fixture("api_episodes.json")
 
     monkeypatch.setattr(hanime.utils, "getHtml", fake_gethtml)
-    monkeypatch.setattr(hanime.utils, "selector", lambda title, options, show_on_one=False: None)
+    monkeypatch.setattr(
+        hanime.utils, "selector", lambda title, options, show_on_one=False: None
+    )
 
     hanime.hanime_eps("test-video-id")
 
@@ -497,11 +527,12 @@ def test_hanime_eps_constructs_correct_url(monkeypatch):
 
 def test_hanime_filter_no_selection(monkeypatch):
     """Test that filter without selection doesn't call hanime_list."""
+
     class MockDialog:
         def multiselect(self, title, options):
             return None  # User cancelled
 
-    monkeypatch.setattr(hanime.utils, 'dialog', MockDialog())
+    monkeypatch.setattr(hanime.utils, "dialog", MockDialog())
 
     list_calls = []
     monkeypatch.setattr(hanime, "hanime_list", lambda *args: list_calls.append(True))
@@ -523,7 +554,9 @@ def test_hanime_play_url_construction(monkeypatch):
 
     mock_vp = MagicMock()
     mock_vp.progress.update = MagicMock()
-    monkeypatch.setattr(hanime.utils, "VideoPlayer", lambda name, download=None: mock_vp)
+    monkeypatch.setattr(
+        hanime.utils, "VideoPlayer", lambda name, download=None: mock_vp
+    )
     monkeypatch.setattr(hanime.utils, "prefquality", lambda sources, **kwargs: None)
 
     hanime.hanime_play("test-video-slug", "Test Video")
@@ -536,8 +569,10 @@ def test_hanime_list_context_menu_structure(monkeypatch):
     """Test that video items have proper context menu entries."""
     api_response = load_fixture("api_list.json")
 
-    monkeypatch.setattr(hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response)
-    monkeypatch.setattr(hanime.utils.addon, "getSetting", lambda key: 'false')
+    monkeypatch.setattr(
+        hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response
+    )
+    monkeypatch.setattr(hanime.utils.addon, "getSetting", lambda key: "false")
 
     downloads = []
 
@@ -548,7 +583,7 @@ def test_hanime_list_context_menu_structure(monkeypatch):
     monkeypatch.setattr(hanime.site, "add_dir", lambda *args, **kwargs: None)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
-    hanime.hanime_list('', '', 0)
+    hanime.hanime_list("", "", 0)
 
     # Should have context menu with episodes option
     assert len(downloads) > 0
@@ -569,7 +604,7 @@ def test_hanime_play_handles_alternative_format(monkeypatch):
 
     def fake_prefquality(sources, **kwargs):
         sources_selected.update(sources)
-        return sources.get('1080', sources.get('720', None))
+        return sources.get("1080", sources.get("720", None))
 
     mock_vp = MagicMock()
     mock_vp.progress.update = MagicMock()
@@ -579,7 +614,7 @@ def test_hanime_play_handles_alternative_format(monkeypatch):
 
     def fake_play_from_direct_link(url):
         play_called[0] = True
-        assert 'hanime.tv/videos/alt-' in url
+        assert "hanime.tv/videos/alt-" in url
 
     mock_vp.play_from_direct_link = fake_play_from_direct_link
 
@@ -587,10 +622,10 @@ def test_hanime_play_handles_alternative_format(monkeypatch):
     monkeypatch.setattr(hanime.utils, "prefquality", fake_prefquality)
     monkeypatch.setattr(hanime.utils, "VideoPlayer", fake_video_player)
 
-    hanime.hanime_play('sample-video-slug', 'Sample Video')
+    hanime.hanime_play("sample-video-slug", "Sample Video")
 
     # Verify sources were extracted from alternative format
     assert len(sources_selected) >= 2
-    assert sources_selected.get('1080') == 'https://hanime.tv/videos/alt-1080p.mp4'
-    assert sources_selected.get('720') == 'https://hanime.tv/videos/alt-720p.mp4'
+    assert sources_selected.get("1080") == "https://hanime.tv/videos/alt-1080p.mp4"
+    assert sources_selected.get("720") == "https://hanime.tv/videos/alt-720p.mp4"
     assert play_called[0]

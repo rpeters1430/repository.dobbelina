@@ -33,7 +33,10 @@ def test_parse_query_gracefully_handles_invalid_ints():
 @pytest.mark.parametrize(
     "raw, expected",
     [
-        ("  &lt;Hello&nbsp;World&gt; &amp; other&amp;apos;s&nbsp; ", "<Hello World> & other's"),
+        (
+            "  &lt;Hello&nbsp;World&gt; &amp; other&amp;apos;s&nbsp; ",
+            "<Hello World> & other's",
+        ),
         ("&nbsp;\xa0", ""),
         ("no_entities", "no_entities"),
     ],
@@ -53,9 +56,18 @@ def test_fix_url_handles_protocol_and_baseurl():
     baseurl = "https://example.com/base/"
 
     assert utils.fix_url("/path", siteurl=siteurl) == "https://example.com/path"
-    assert utils.fix_url("?q=test", siteurl=siteurl, baseurl=baseurl) == "https://example.com/base/?q=test"
-    assert utils.fix_url("image.jpg", siteurl=siteurl, baseurl=baseurl) == "https://example.com/base/image.jpg"
-    assert utils.fix_url("//cdn.example.com/img.png", siteurl=siteurl) == "https://cdn.example.com/img.png"
+    assert (
+        utils.fix_url("?q=test", siteurl=siteurl, baseurl=baseurl)
+        == "https://example.com/base/?q=test"
+    )
+    assert (
+        utils.fix_url("image.jpg", siteurl=siteurl, baseurl=baseurl)
+        == "https://example.com/base/image.jpg"
+    )
+    assert (
+        utils.fix_url("//cdn.example.com/img.png", siteurl=siteurl)
+        == "https://cdn.example.com/img.png"
+    )
 
 
 @pytest.mark.parametrize(

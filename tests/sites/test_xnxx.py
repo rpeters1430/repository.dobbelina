@@ -1,4 +1,5 @@
 """Comprehensive tests for xnxx.com site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import xnxx
@@ -23,13 +24,15 @@ def test_list_parses_video_blocks(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "icon": iconimage,
-            "duration": kwargs.get("duration", ""),
-            "quality": kwargs.get("quality", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "icon": iconimage,
+                "duration": kwargs.get("duration", ""),
+                "quality": kwargs.get("quality", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
         dirs.append({"name": name, "url": url})

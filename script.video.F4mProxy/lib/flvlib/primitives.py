@@ -5,10 +5,23 @@ The internal FLV representations of numbers.
 """
 
 
-__all__ = ['get_ui32', 'make_ui32', 'get_si32_extended', 'make_si32_extended',
-           'get_ui24', 'make_ui24', 'get_ui16', 'make_ui16',
-           'get_si16', 'make_si16', 'get_ui8', 'make_ui8',
-           'get_double', 'make_double', 'EndOfFile']
+__all__ = [
+    "get_ui32",
+    "make_ui32",
+    "get_si32_extended",
+    "make_si32_extended",
+    "get_ui24",
+    "make_ui24",
+    "get_ui16",
+    "make_ui16",
+    "get_si16",
+    "make_si16",
+    "get_ui8",
+    "make_ui8",
+    "get_double",
+    "make_double",
+    "EndOfFile",
+]
 
 
 class EndOfFile(Exception):
@@ -22,6 +35,7 @@ def get_ui32(f):
     except struct.error:
         raise EndOfFile
     return ret
+
 
 def make_ui32(num):
     return struct.pack(">I", num)
@@ -37,6 +51,7 @@ def get_si32_extended(f):
     combined = low_high[3] + low_high[:3]
     return struct.unpack(">i", combined)[0]
 
+
 def make_si32_extended(num):
     ret = struct.pack(">i", num)
     return ret[1:] + ret[0]
@@ -51,6 +66,7 @@ def get_ui24(f):
     ret = (high << 16) + low
     return ret
 
+
 def make_ui24(num):
     ret = struct.pack(">I", num)
     return ret[1:]
@@ -64,6 +80,7 @@ def get_ui16(f):
         raise EndOfFile
     return ret
 
+
 def make_ui16(num):
     return struct.pack(">H", num)
 
@@ -75,6 +92,7 @@ def get_si16(f):
     except struct.error:
         raise EndOfFile
     return ret
+
 
 def make_si16(num):
     return struct.pack(">h", num)
@@ -88,9 +106,9 @@ def get_ui8(f):
         raise EndOfFile
     return ret
 
+
 def make_ui8(num):
     return struct.pack("B", num)
-
 
 
 # DOUBLE
@@ -101,6 +119,7 @@ def get_double(f):
     except struct.error:
         raise EndOfFile
     return ret
+
 
 def make_double(num):
     return struct.pack(">d", num)

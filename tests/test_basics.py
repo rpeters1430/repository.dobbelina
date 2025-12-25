@@ -1,6 +1,7 @@
 """
 Tests for basics.py utility functions
 """
+
 import pytest
 import os
 import tempfile
@@ -12,7 +13,7 @@ from unittest.mock import patch
 @pytest.fixture
 def temp_db():
     """Create a temporary database for testing"""
-    fd, path = tempfile.mkstemp(suffix='.db')
+    fd, path = tempfile.mkstemp(suffix=".db")
     os.close(fd)
 
     # Initialize the database schema
@@ -41,23 +42,23 @@ def mock_basics_paths(monkeypatch):
 
     # Create temp directories for testing
     temp_root = tempfile.mkdtemp()
-    temp_img = os.path.join(temp_root, 'images')
-    temp_custom = os.path.join(temp_root, 'custom_sites')
-    temp_temp = os.path.join(temp_root, 'temp')
+    temp_img = os.path.join(temp_root, "images")
+    temp_custom = os.path.join(temp_root, "custom_sites")
+    temp_temp = os.path.join(temp_root, "temp")
 
     os.makedirs(temp_img, exist_ok=True)
     os.makedirs(temp_custom, exist_ok=True)
     os.makedirs(temp_temp, exist_ok=True)
 
-    monkeypatch.setattr(basics, 'imgDir', temp_img)
-    monkeypatch.setattr(basics, 'customSitesDir', temp_custom)
-    monkeypatch.setattr(basics, 'tempDir', temp_temp)
+    monkeypatch.setattr(basics, "imgDir", temp_img)
+    monkeypatch.setattr(basics, "customSitesDir", temp_custom)
+    monkeypatch.setattr(basics, "tempDir", temp_temp)
 
     yield {
-        'root': temp_root,
-        'imgDir': temp_img,
-        'customSitesDir': temp_custom,
-        'tempDir': temp_temp
+        "root": temp_root,
+        "imgDir": temp_img,
+        "customSitesDir": temp_custom,
+        "tempDir": temp_temp,
     }
 
     # Cleanup
@@ -71,7 +72,7 @@ class TestCumImage:
         """Test that HTTP URLs are returned as-is"""
         from resources.lib import basics
 
-        url = 'https://example.com/image.jpg'
+        url = "https://example.com/image.jpg"
         result = basics.cum_image(url)
 
         assert result == url
@@ -80,7 +81,7 @@ class TestCumImage:
         """Test that HTTPS URLs are returned as-is"""
         from resources.lib import basics
 
-        url = 'https://secure.example.com/image.png'
+        url = "https://secure.example.com/image.png"
         result = basics.cum_image(url)
 
         assert result == url
@@ -89,20 +90,20 @@ class TestCumImage:
         """Test local filename returns path in imgDir"""
         from resources.lib import basics
 
-        filename = 'site_icon.png'
+        filename = "site_icon.png"
         result = basics.cum_image(filename)
 
-        assert result == os.path.join(mock_basics_paths['imgDir'], filename)
-        assert not result.startswith('http')
+        assert result == os.path.join(mock_basics_paths["imgDir"], filename)
+        assert not result.startswith("http")
 
     def test_cum_image_custom_site(self, mock_basics_paths):
         """Test custom site image returns path in customSitesDir"""
         from resources.lib import basics
 
-        filename = 'custom_icon.png'
+        filename = "custom_icon.png"
         result = basics.cum_image(filename, custom=True)
 
-        assert result == os.path.join(mock_basics_paths['customSitesDir'], filename)
+        assert result == os.path.join(mock_basics_paths["customSitesDir"], filename)
 
 
 class TestGetResolution:
@@ -112,7 +113,7 @@ class TestGetResolution:
         """Test parsing 720p quality"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('720p')
+        width, height = basics.get_resolution("720p")
 
         assert height == 720
         assert width == 1280  # 720 * 16/9
@@ -121,7 +122,7 @@ class TestGetResolution:
         """Test parsing 1080p quality"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('1080p')
+        width, height = basics.get_resolution("1080p")
 
         assert height == 1080
         assert width == 1920  # 1080 * 16/9
@@ -130,7 +131,7 @@ class TestGetResolution:
         """Test parsing 480p quality"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('480p')
+        width, height = basics.get_resolution("480p")
 
         assert height == 480
         assert width == 853  # 480 * 16/9 (rounded)
@@ -139,7 +140,7 @@ class TestGetResolution:
         """Test parsing 2160p (4K) quality"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('2160p')
+        width, height = basics.get_resolution("2160p")
 
         assert height == 2160
         assert width == 3840  # 2160 * 16/9
@@ -148,7 +149,7 @@ class TestGetResolution:
         """Test parsing quality without 'p' suffix"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('1080')
+        width, height = basics.get_resolution("1080")
 
         assert height == 1080
         assert width == 1920
@@ -157,7 +158,7 @@ class TestGetResolution:
         """Test parsing SD quality"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('SD')
+        width, height = basics.get_resolution("SD")
 
         assert width == 640
         assert height == 480
@@ -166,7 +167,7 @@ class TestGetResolution:
         """Test parsing HD quality"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('HD')
+        width, height = basics.get_resolution("HD")
 
         assert width == 1280
         assert height == 720
@@ -175,7 +176,7 @@ class TestGetResolution:
         """Test parsing FULLHD quality"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('FULLHD')
+        width, height = basics.get_resolution("FULLHD")
 
         assert width == 1920
         assert height == 1080
@@ -184,7 +185,7 @@ class TestGetResolution:
         """Test parsing FHD quality"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('FHD')
+        width, height = basics.get_resolution("FHD")
 
         assert width == 1920
         assert height == 1080
@@ -193,7 +194,7 @@ class TestGetResolution:
         """Test parsing 2K quality"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('2K')
+        width, height = basics.get_resolution("2K")
 
         assert width == 2560
         assert height == 1440
@@ -202,7 +203,7 @@ class TestGetResolution:
         """Test parsing 4K quality"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('4K')
+        width, height = basics.get_resolution("4K")
 
         assert width == 3840
         assert height == 2160
@@ -211,7 +212,7 @@ class TestGetResolution:
         """Test parsing UHD quality"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('UHD')
+        width, height = basics.get_resolution("UHD")
 
         assert width == 3840
         assert height == 2160
@@ -220,7 +221,7 @@ class TestGetResolution:
         """Test parsing 8K quality"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('8K')
+        width, height = basics.get_resolution("8K")
 
         assert width == 7680
         assert height == 4320
@@ -229,7 +230,7 @@ class TestGetResolution:
         """Test parsing lowercase quality strings"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('hd')
+        width, height = basics.get_resolution("hd")
 
         assert width == 1280
         assert height == 720
@@ -238,7 +239,7 @@ class TestGetResolution:
         """Test parsing mixed case quality strings"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('FullHD')
+        width, height = basics.get_resolution("FullHD")
 
         assert width == 1920
         assert height == 1080
@@ -247,7 +248,7 @@ class TestGetResolution:
         """Test parsing quality with whitespace"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution(' 1080p ')
+        width, height = basics.get_resolution(" 1080p ")
 
         # String operations should handle whitespace
         assert height == 1080 or (width is None and height is None)
@@ -256,7 +257,7 @@ class TestGetResolution:
         """Test parsing invalid quality returns None"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('invalid')
+        width, height = basics.get_resolution("invalid")
 
         assert width is None
         assert height is None
@@ -265,7 +266,7 @@ class TestGetResolution:
         """Test parsing empty string"""
         from resources.lib import basics
 
-        width, height = basics.get_resolution('')
+        width, height = basics.get_resolution("")
 
         assert width is None
         assert height is None
@@ -288,21 +289,21 @@ class TestCleanTemp:
         """Test cleaning temp directory"""
         from resources.lib import basics
 
-        temp_dir = mock_basics_paths['tempDir']
+        temp_dir = mock_basics_paths["tempDir"]
 
         # Create some files in temp directory
-        test_file1 = os.path.join(temp_dir, 'test1.txt')
-        test_file2 = os.path.join(temp_dir, 'test2.txt')
-        subdir = os.path.join(temp_dir, 'subdir')
+        test_file1 = os.path.join(temp_dir, "test1.txt")
+        test_file2 = os.path.join(temp_dir, "test2.txt")
+        subdir = os.path.join(temp_dir, "subdir")
 
         os.makedirs(subdir, exist_ok=True)
 
-        with open(test_file1, 'w') as f:
-            f.write('test content 1')
-        with open(test_file2, 'w') as f:
-            f.write('test content 2')
-        with open(os.path.join(subdir, 'test3.txt'), 'w') as f:
-            f.write('test content 3')
+        with open(test_file1, "w") as f:
+            f.write("test content 1")
+        with open(test_file2, "w") as f:
+            f.write("test content 2")
+        with open(os.path.join(subdir, "test3.txt"), "w") as f:
+            f.write("test content 3")
 
         # Verify files exist
         assert os.path.exists(test_file1)
@@ -324,7 +325,7 @@ class TestKeys:
         """Test keys() with empty database"""
         from resources.lib import basics
 
-        monkeypatch.setattr(basics, 'favoritesdb', temp_db)
+        monkeypatch.setattr(basics, "favoritesdb", temp_db)
 
         result = basics.keys()
 
@@ -334,157 +335,163 @@ class TestKeys:
         """Test keys() with keywords starting with same letter"""
         from resources.lib import basics
 
-        monkeypatch.setattr(basics, 'favoritesdb', temp_db)
+        monkeypatch.setattr(basics, "favoritesdb", temp_db)
 
         # Add keywords
         conn = sqlite3.connect(temp_db)
         c = conn.cursor()
-        c.execute("INSERT INTO keywords VALUES (?)", ('apple',))
-        c.execute("INSERT INTO keywords VALUES (?)", ('apricot',))
-        c.execute("INSERT INTO keywords VALUES (?)", ('avocado',))
+        c.execute("INSERT INTO keywords VALUES (?)", ("apple",))
+        c.execute("INSERT INTO keywords VALUES (?)", ("apricot",))
+        c.execute("INSERT INTO keywords VALUES (?)", ("avocado",))
         conn.commit()
         conn.close()
 
         result = basics.keys()
 
-        assert 'A' in result
-        assert result['A'] == 3
+        assert "A" in result
+        assert result["A"] == 3
 
     def test_keys_multiple_letters(self, temp_db, monkeypatch):
         """Test keys() with keywords starting with different letters"""
         from resources.lib import basics
 
-        monkeypatch.setattr(basics, 'favoritesdb', temp_db)
+        monkeypatch.setattr(basics, "favoritesdb", temp_db)
 
         # Add keywords
         conn = sqlite3.connect(temp_db)
         c = conn.cursor()
-        c.execute("INSERT INTO keywords VALUES (?)", ('apple',))
-        c.execute("INSERT INTO keywords VALUES (?)", ('banana',))
-        c.execute("INSERT INTO keywords VALUES (?)", ('cherry',))
-        c.execute("INSERT INTO keywords VALUES (?)", ('blueberry',))
+        c.execute("INSERT INTO keywords VALUES (?)", ("apple",))
+        c.execute("INSERT INTO keywords VALUES (?)", ("banana",))
+        c.execute("INSERT INTO keywords VALUES (?)", ("cherry",))
+        c.execute("INSERT INTO keywords VALUES (?)", ("blueberry",))
         conn.commit()
         conn.close()
 
         result = basics.keys()
 
-        assert 'A' in result
-        assert 'B' in result
-        assert 'C' in result
-        assert result['A'] == 1
-        assert result['B'] == 2
-        assert result['C'] == 1
+        assert "A" in result
+        assert "B" in result
+        assert "C" in result
+        assert result["A"] == 1
+        assert result["B"] == 2
+        assert result["C"] == 1
 
     def test_keys_case_insensitive(self, temp_db, monkeypatch):
         """Test keys() groups keywords case-insensitively"""
         from resources.lib import basics
 
-        monkeypatch.setattr(basics, 'favoritesdb', temp_db)
+        monkeypatch.setattr(basics, "favoritesdb", temp_db)
 
         # Add keywords with different cases
         conn = sqlite3.connect(temp_db)
         c = conn.cursor()
-        c.execute("INSERT INTO keywords VALUES (?)", ('Apple',))
-        c.execute("INSERT INTO keywords VALUES (?)", ('avocado',))
-        c.execute("INSERT INTO keywords VALUES (?)", ('APRICOT',))
+        c.execute("INSERT INTO keywords VALUES (?)", ("Apple",))
+        c.execute("INSERT INTO keywords VALUES (?)", ("avocado",))
+        c.execute("INSERT INTO keywords VALUES (?)", ("APRICOT",))
         conn.commit()
         conn.close()
 
         result = basics.keys()
 
         # Should group by uppercase letter
-        assert 'A' in result
-        assert result['A'] == 3
+        assert "A" in result
+        assert result["A"] == 3
 
 
 class TestSearchDir:
     """Test searchDir() function"""
 
-    @patch('resources.lib.basics.eod')
-    @patch('resources.lib.basics.addDir')
-    def test_searchdir_no_alphabet_no_keywords(self, mock_addDir, mock_eod, temp_db, monkeypatch):
+    @patch("resources.lib.basics.eod")
+    @patch("resources.lib.basics.addDir")
+    def test_searchdir_no_alphabet_no_keywords(
+        self, mock_addDir, mock_eod, temp_db, monkeypatch
+    ):
         """Test searchDir without alphabet filter and no keywords"""
         from resources.lib import basics
 
-        monkeypatch.setattr(basics, 'favoritesdb', temp_db)
+        monkeypatch.setattr(basics, "favoritesdb", temp_db)
 
         # Mock addon.getSetting
-        with patch.object(basics.addon, 'getSetting', return_value='false'):
-            basics.searchDir('http://example.com', 'site.Search')
+        with patch.object(basics.addon, "getSetting", return_value="false"):
+            basics.searchDir("http://example.com", "site.Search")
 
         # Should add the default search options
         assert mock_addDir.call_count >= 3  # One time search, Add Keyword, Alphabetical
         mock_eod.assert_called_once()
 
-    @patch('resources.lib.basics.eod')
-    @patch('resources.lib.basics.addDir')
+    @patch("resources.lib.basics.eod")
+    @patch("resources.lib.basics.addDir")
     def test_searchdir_with_keywords(self, mock_addDir, mock_eod, temp_db, monkeypatch):
         """Test searchDir displays saved keywords"""
         from resources.lib import basics
 
-        monkeypatch.setattr(basics, 'favoritesdb', temp_db)
+        monkeypatch.setattr(basics, "favoritesdb", temp_db)
 
         # Add some keywords
         conn = sqlite3.connect(temp_db)
         c = conn.cursor()
-        c.execute("INSERT INTO keywords VALUES (?)", ('test1',))
-        c.execute("INSERT INTO keywords VALUES (?)", ('test2',))
+        c.execute("INSERT INTO keywords VALUES (?)", ("test1",))
+        c.execute("INSERT INTO keywords VALUES (?)", ("test2",))
         conn.commit()
         conn.close()
 
         # Mock addon.getSetting
-        with patch.object(basics.addon, 'getSetting', return_value='false'):
-            basics.searchDir('http://example.com', 'site.Search')
+        with patch.object(basics.addon, "getSetting", return_value="false"):
+            basics.searchDir("http://example.com", "site.Search")
 
         # Should have added search options + 2 keywords
         assert mock_addDir.call_count >= 5
         mock_eod.assert_called_once()
 
-    @patch('resources.lib.basics.eod')
-    @patch('resources.lib.basics.addDir')
-    def test_searchdir_alphabetical_filter(self, mock_addDir, mock_eod, temp_db, monkeypatch):
+    @patch("resources.lib.basics.eod")
+    @patch("resources.lib.basics.addDir")
+    def test_searchdir_alphabetical_filter(
+        self, mock_addDir, mock_eod, temp_db, monkeypatch
+    ):
         """Test searchDir with alphabetical filter"""
         from resources.lib import basics
 
-        monkeypatch.setattr(basics, 'favoritesdb', temp_db)
+        monkeypatch.setattr(basics, "favoritesdb", temp_db)
 
         # Add keywords
         conn = sqlite3.connect(temp_db)
         c = conn.cursor()
-        c.execute("INSERT INTO keywords VALUES (?)", ('apple',))
-        c.execute("INSERT INTO keywords VALUES (?)", ('apricot',))
-        c.execute("INSERT INTO keywords VALUES (?)", ('banana',))
+        c.execute("INSERT INTO keywords VALUES (?)", ("apple",))
+        c.execute("INSERT INTO keywords VALUES (?)", ("apricot",))
+        c.execute("INSERT INTO keywords VALUES (?)", ("banana",))
         conn.commit()
         conn.close()
 
         # Search for keywords starting with 'a'
-        basics.searchDir('http://example.com', 'site.Search', alphabet='a')
+        basics.searchDir("http://example.com", "site.Search", alphabet="a")
 
         # Should only add keywords starting with 'a' (2 keywords)
         # No search options are added when alphabet is specified
         assert mock_addDir.call_count == 2
         mock_eod.assert_called_once()
 
-    @patch('resources.lib.basics.eod')
-    @patch('resources.lib.basics.addDir')
-    def test_searchdir_sorted_keywords(self, mock_addDir, mock_eod, temp_db, monkeypatch):
+    @patch("resources.lib.basics.eod")
+    @patch("resources.lib.basics.addDir")
+    def test_searchdir_sorted_keywords(
+        self, mock_addDir, mock_eod, temp_db, monkeypatch
+    ):
         """Test searchDir with sorted keywords setting"""
         from resources.lib import basics
 
-        monkeypatch.setattr(basics, 'favoritesdb', temp_db)
+        monkeypatch.setattr(basics, "favoritesdb", temp_db)
 
         # Add keywords
         conn = sqlite3.connect(temp_db)
         c = conn.cursor()
-        c.execute("INSERT INTO keywords VALUES (?)", ('zebra',))
-        c.execute("INSERT INTO keywords VALUES (?)", ('apple',))
-        c.execute("INSERT INTO keywords VALUES (?)", ('banana',))
+        c.execute("INSERT INTO keywords VALUES (?)", ("zebra",))
+        c.execute("INSERT INTO keywords VALUES (?)", ("apple",))
+        c.execute("INSERT INTO keywords VALUES (?)", ("banana",))
         conn.commit()
         conn.close()
 
         # Mock sorted setting
-        with patch.object(basics.addon, 'getSetting', return_value='true'):
-            basics.searchDir('http://example.com', 'site.Search')
+        with patch.object(basics.addon, "getSetting", return_value="true"):
+            basics.searchDir("http://example.com", "site.Search")
 
         # Should have been called (with sorted keywords)
         assert mock_addDir.call_count >= 3

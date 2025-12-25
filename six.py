@@ -31,10 +31,10 @@ def b(value):
     """Return ``bytes`` for ASCII literals (parity with six.b)."""
     if isinstance(value, bytes):
         return value
-    return value.encode('latin-1')
+    return value.encode("latin-1")
 
 
-def ensure_binary(value, encoding='utf-8', errors='strict'):
+def ensure_binary(value, encoding="utf-8", errors="strict"):
     if isinstance(value, bytes):
         return value
     if isinstance(value, str):
@@ -42,7 +42,7 @@ def ensure_binary(value, encoding='utf-8', errors='strict'):
     return bytes(value)
 
 
-def ensure_str(value, encoding='utf-8', errors='strict'):
+def ensure_str(value, encoding="utf-8", errors="strict"):
     if isinstance(value, str):
         return value
     if isinstance(value, bytes):
@@ -50,7 +50,7 @@ def ensure_str(value, encoding='utf-8', errors='strict'):
     return str(value)
 
 
-def ensure_text(value, encoding='utf-8', errors='strict'):
+def ensure_text(value, encoding="utf-8", errors="strict"):
     return ensure_str(value, encoding, errors)
 
 
@@ -62,7 +62,7 @@ def print_(*args, **kwargs):  # pragma: no cover - convenience alias
     print(*args, **kwargs)
 
 
-moves = types.ModuleType('six.moves')
+moves = types.ModuleType("six.moves")
 moves.urllib_parse = _urllib_parse
 moves.urllib_request = _urllib_request
 moves.urllib_error = _urllib_error
@@ -71,4 +71,4 @@ moves.http_cookiejar = _http_cookiejar
 moves.range = range
 moves.cStringIO = io.StringIO
 
-sys.modules.setdefault('six.moves', moves)
+sys.modules.setdefault("six.moves", moves)

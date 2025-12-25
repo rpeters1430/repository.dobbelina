@@ -3,7 +3,8 @@ import json
 import sys
 import requests
 
-COMMON_VIDEO_EXTS = ('.m3u8', '.mpd', '.mp4')
+COMMON_VIDEO_EXTS = (".m3u8", ".mpd", ".mp4")
+
 
 def fetch(url, headers=None):
     default_headers = {
@@ -30,6 +31,7 @@ def fetch(url, headers=None):
     resp.raise_for_status()
     return resp.text
 
+
 def find_urls_in_text(text):
     url_regex = r'https?://[^\s"\'<>]+'
     candidates = re.findall(url_regex, text)
@@ -41,29 +43,33 @@ def find_urls_in_text(text):
     # protocol-relative
     proto_rel = re.findall(r'//[^\s"\'<>]+', text)
     for c in proto_rel:
-        full = 'https:' + c
+        full = "https:" + c
         if full.endswith(COMMON_VIDEO_EXTS):
             results.append(full)
 
     # de-dup
     return list(dict.fromkeys(results))
 
+
 def find_embedded_json(text):
     blobs = []
-    for m in re.finditer(r'({.*?})', text, flags=re.DOTALL):
+    for m in re.finditer(r"({.*?})", text, flags=re.DOTALL):
         chunk = m.group(1)
         if 20 < len(chunk) < 20000:
             blobs.append(chunk)
     return blobs
 
+
 def main(page_url):
     try:
-      html = fetch(page_url)
+        html = fetch(page_url)
     except Exception as e:
-      print(f"[!] Could not fetch page: {e}")
-      print("[!] If you're inside a container or behind a VPN/proxy, try running this without those,")
-      print("    or remove HTTP_PROXY / HTTPS_PROXY / ALL_PROXY from your env.")
-      return
+        print(f"[!] Could not fetch page: {e}")
+        print(
+            "[!] If you're inside a container or behind a VPN/proxy, try running this without those,"
+        )
+        print("    or remove HTTP_PROXY / HTTPS_PROXY / ALL_PROXY from your env.")
+        return
 
     found = []
 
@@ -84,9 +90,9 @@ def main(page_url):
             elif isinstance(item, list):
                 stack.extend(item)
             elif isinstance(item, str):
-                if item.startswith('//'):
-                    item = 'https:' + item
-                if item.startswith('http') and item.endswith(COMMON_VIDEO_EXTS):
+                if item.startswith("//"):
+                    item = "https:" + item
+                if item.startswith("http") and item.endswith(COMMON_VIDEO_EXTS):
                     found.append(item)
 
     found = list(dict.fromkeys(found))
@@ -97,6 +103,7 @@ def main(page_url):
         print("Possible video URLs:")
         for u in found:
             print(" -", u)
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

@@ -1,4 +1,5 @@
 """Tests for Porno365 BeautifulSoup migration."""
+
 from pathlib import Path
 
 from resources.lib.sites import porno365
@@ -16,10 +17,24 @@ def test_list_parses_videos_and_next(monkeypatch):
     downloads = []
     dirs = []
 
-    monkeypatch.setattr(porno365.utils, "getHtml", lambda url, ref=None, headers=None: html)
+    monkeypatch.setattr(
+        porno365.utils, "getHtml", lambda url, ref=None, headers=None: html
+    )
 
-    monkeypatch.setattr(porno365.site, "add_download_link", lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append({"name": name, "url": url, "duration": kwargs.get("duration")}))
-    monkeypatch.setattr(porno365.site, "add_dir", lambda name, url, mode, iconimage=None, **kwargs: dirs.append({"name": name, "url": url, "mode": mode}))
+    monkeypatch.setattr(
+        porno365.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append(
+            {"name": name, "url": url, "duration": kwargs.get("duration")}
+        ),
+    )
+    monkeypatch.setattr(
+        porno365.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
 
     porno365.List("http://m.porno365.pics/")
 
@@ -33,7 +48,13 @@ def test_categories_parse(monkeypatch):
     html = load_fixture("categories.html")
     dirs = []
     monkeypatch.setattr(porno365.utils, "getHtml", lambda url, headers=None: html)
-    monkeypatch.setattr(porno365.site, "add_dir", lambda name, url, mode, iconimage=None, **kwargs: dirs.append({"name": name, "url": url}))
+    monkeypatch.setattr(
+        porno365.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url}
+        ),
+    )
 
     porno365.Categories("http://m.porno365.pics/categories")
 
@@ -46,7 +67,13 @@ def test_models_parse_next(monkeypatch):
     html = load_fixture("models.html")
     dirs = []
     monkeypatch.setattr(porno365.utils, "getHtml", lambda url, headers=None: html)
-    monkeypatch.setattr(porno365.site, "add_dir", lambda name, url, mode, iconimage=None, **kwargs: dirs.append({"name": name, "url": url, "mode": mode}))
+    monkeypatch.setattr(
+        porno365.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
 
     porno365.Models("http://m.porno365.pics/models")
 
@@ -66,7 +93,9 @@ def test_playvid_uses_videoplayer(monkeypatch):
         def play_from_html(self, page_html):
             calls.append(("play_html", page_html))
 
-    monkeypatch.setattr(porno365.utils, "getHtml", lambda url, ref=None, headers=None: html)
+    monkeypatch.setattr(
+        porno365.utils, "getHtml", lambda url, ref=None, headers=None: html
+    )
     monkeypatch.setattr(porno365.utils, "VideoPlayer", FakeVP)
 
     porno365.Playvid("http://m.porno365.pics/video", "Test Video")

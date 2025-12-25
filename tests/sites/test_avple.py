@@ -1,4 +1,5 @@
 """Comprehensive tests for avple site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import avple
@@ -23,20 +24,24 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, desc="", **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(avple.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(avple.site, "add_download_link", fake_add_download_link)
@@ -81,16 +86,20 @@ def test_list_handles_search_results_format(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+            }
+        )
 
     monkeypatch.setattr(avple.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(avple.site, "add_download_link", fake_add_download_link)
@@ -186,11 +195,13 @@ def test_cat_lists_all_tags(monkeypatch):
     dirs = []
 
     def fake_add_dir(name, url, mode, iconimage=None, desc=""):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(avple.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(avple.utils, "eod", lambda: None)
@@ -217,9 +228,11 @@ def test_list_pagination_url_handling(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "url": url,
-        })
+        dirs.append(
+            {
+                "url": url,
+            }
+        )
 
     monkeypatch.setattr(avple.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(avple.site, "add_download_link", lambda *a, **k: None)

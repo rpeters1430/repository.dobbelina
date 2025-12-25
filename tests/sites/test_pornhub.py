@@ -1,4 +1,5 @@
 """Comprehensive tests for pornhub.com site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import pornhub
@@ -23,21 +24,25 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "contextm": kwargs.get("contextm"),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "contextm": kwargs.get("contextm"),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, desc="", **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "folder": kwargs.get("Folder", True),
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "folder": kwargs.get("Folder", True),
+            }
+        )
 
     monkeypatch.setattr(pornhub.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(pornhub.site, "add_download_link", fake_add_download_link)
@@ -67,7 +72,11 @@ def test_list_parses_video_items(monkeypatch):
     # Should have pagination and filter reset
     assert len(dirs) >= 1
     # Check for "Clear all filters" or title dir
-    filter_dirs = [d for d in dirs if "Clear all filters" in d["name"] or "Latest Videos" in d["name"]]
+    filter_dirs = [
+        d
+        for d in dirs
+        if "Clear all filters" in d["name"] or "Latest Videos" in d["name"]
+    ]
     assert len(filter_dirs) > 0
 
 
@@ -85,7 +94,9 @@ def test_list_handles_empty_results(monkeypatch):
         dirs.append({"name": name, "url": url, "mode": mode})
 
     monkeypatch.setattr(pornhub.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(pornhub.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        pornhub.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(pornhub.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(pornhub.utils, "eod", lambda: None)
 
@@ -135,12 +146,14 @@ def test_categories_parses_and_sorts(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, desc=""):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+            }
+        )
 
     monkeypatch.setattr(pornhub.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(pornhub.site, "add_dir", fake_add_dir)
@@ -159,9 +172,9 @@ def test_categories_parses_and_sorts(monkeypatch):
 
     # Check video counts are displayed
     assert "(12,345 videos)" in dirs[3]["name"]  # Teen
-    assert "(8,567 videos)" in dirs[2]["name"]   # MILF
+    assert "(8,567 videos)" in dirs[2]["name"]  # MILF
     assert "(15,234 videos)" in dirs[0]["name"]  # Amateur
-    assert "(6,789 videos)" in dirs[1]["name"]   # Latina
+    assert "(6,789 videos)" in dirs[1]["name"]  # Latina
 
     # Check URLs
     assert "/categories/amateur" in dirs[0]["url"]
@@ -242,7 +255,9 @@ def test_search_url_encoding(monkeypatch):
 
     monkeypatch.setattr(pornhub, "List", fake_list)
 
-    pornhub.Search("https://www.pornhub.com/video/search?search=", keyword="test & query")
+    pornhub.Search(
+        "https://www.pornhub.com/video/search?search=", keyword="test & query"
+    )
 
     assert len(list_calls) == 1
     assert "test+%26+query" in list_calls[0] or "test+&+query" in list_calls[0]
@@ -287,11 +302,18 @@ def test_playvid_calls_video_player(monkeypatch):
 
     monkeypatch.setattr(pornhub.utils, "VideoPlayer", FakeVideoPlayer)
 
-    pornhub.Playvid("https://www.pornhub.com/view_video.php?viewkey=ph12345", "Test Video", download=None)
+    pornhub.Playvid(
+        "https://www.pornhub.com/view_video.php?viewkey=ph12345",
+        "Test Video",
+        download=None,
+    )
 
     assert len(video_player_calls) == 2
     assert video_player_calls[0] == ("init", "Test Video", None)
-    assert video_player_calls[1] == ("play", "https://www.pornhub.com/view_video.php?viewkey=ph12345")
+    assert video_player_calls[1] == (
+        "play",
+        "https://www.pornhub.com/view_video.php?viewkey=ph12345",
+    )
 
 
 def test_list_extracts_page_title(monkeypatch):

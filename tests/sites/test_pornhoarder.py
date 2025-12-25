@@ -1,4 +1,5 @@
 """Tests for pornhoarder.tv site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import pornhoarder
@@ -25,23 +26,28 @@ def test_list_parses_video_items(monkeypatch):
     def fake_head(url, allow_redirects=True):
         class Response:
             url = "https://www.pornhoarder.tv/"
+
         return Response()
 
     def fake_add_download_link(name, url, mode, iconimage, desc, **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(pornhoarder.utils, "postHtml", fake_post_html)
     monkeypatch.setattr(pornhoarder.requests, "head", fake_head)
@@ -87,12 +93,14 @@ def test_categories_parses_categories(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+            }
+        )
 
     monkeypatch.setattr(pornhoarder.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(pornhoarder.site, "add_dir", fake_add_dir)
@@ -160,11 +168,14 @@ def test_list_handles_empty_results(monkeypatch):
     def fake_head(url, allow_redirects=True):
         class Response:
             url = "https://www.pornhoarder.tv/"
+
         return Response()
 
     monkeypatch.setattr(pornhoarder.utils, "postHtml", fake_post_html)
     monkeypatch.setattr(pornhoarder.requests, "head", fake_head)
-    monkeypatch.setattr(pornhoarder.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        pornhoarder.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(pornhoarder.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(pornhoarder.utils, "eod", lambda: None)
 

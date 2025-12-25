@@ -1,4 +1,5 @@
 """Tests for jav.guru site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import javguru
@@ -23,19 +24,23 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(javguru.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(javguru.site, "add_download_link", fake_add_download_link)
@@ -72,11 +77,13 @@ def test_list_pagination(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(javguru.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(javguru.site, "add_download_link", lambda *a, **k: None)

@@ -1,9 +1,10 @@
 """Comprehensive tests for 85po.com site implementation."""
+
 from pathlib import Path
 import importlib
 
 # Import module with numeric name using importlib
-po85 = importlib.import_module('resources.lib.sites.85po')
+po85 = importlib.import_module("resources.lib.sites.85po")
 
 
 FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "85po"
@@ -25,21 +26,25 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "contextm": kwargs.get("contextm"),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "contextm": kwargs.get("contextm"),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "contextm": kwargs.get("contextm"),
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "contextm": kwargs.get("contextm"),
+            }
+        )
 
     monkeypatch.setattr(po85.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(po85.site, "add_download_link", fake_add_download_link)

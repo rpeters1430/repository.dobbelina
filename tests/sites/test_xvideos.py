@@ -1,4 +1,5 @@
 """Comprehensive tests for xvideos.com site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import xvideos
@@ -23,14 +24,16 @@ def test_list_parses_video_thumbs(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "icon": iconimage,
-            "desc": desc,
-            "duration": kwargs.get("duration", ""),
-            "quality": kwargs.get("quality", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "icon": iconimage,
+                "desc": desc,
+                "duration": kwargs.get("duration", ""),
+                "quality": kwargs.get("quality", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
         dirs.append({"name": name, "url": url})
@@ -48,7 +51,10 @@ def test_list_parses_video_thumbs(monkeypatch):
     # Check first video (with title from p.title a)
     assert downloads[0]["name"] == "Hot Teen Video"
     assert "/video12345/hot_teen_video" in downloads[0]["url"]
-    assert downloads[0]["icon"] == "https://img-hw.xvideos-cdn.com/videos/thumbs/thumb1.jpg"
+    assert (
+        downloads[0]["icon"]
+        == "https://img-hw.xvideos-cdn.com/videos/thumbs/thumb1.jpg"
+    )
     assert downloads[0]["duration"] == "12:34"
     assert downloads[0]["quality"] == "HD"
     # Metadata should not include duration (it's stripped)
@@ -57,13 +63,19 @@ def test_list_parses_video_thumbs(monkeypatch):
 
     # Check second video (data-mediumthumb)
     assert downloads[1]["name"] == "MILF Action"
-    assert downloads[1]["icon"] == "https://img-hw.xvideos-cdn.com/videos/thumbs/thumb2.jpg"
+    assert (
+        downloads[1]["icon"]
+        == "https://img-hw.xvideos-cdn.com/videos/thumbs/thumb2.jpg"
+    )
     assert downloads[1]["duration"] == "25:45"
     assert downloads[1]["quality"] == "720P"
 
     # Check third video (title from a tag, src fallback)
     assert downloads[2]["name"] == "Premium Content"
-    assert downloads[2]["icon"] == "https://img-hw.xvideos-cdn.com/videos/thumbs/thumb3.jpg"
+    assert (
+        downloads[2]["icon"]
+        == "https://img-hw.xvideos-cdn.com/videos/thumbs/thumb3.jpg"
+    )
 
 
 def test_list_pagination(monkeypatch):
@@ -108,7 +120,9 @@ def test_list_handles_no_results(monkeypatch):
         dirs.append({"name": name, "url": url, "mode": mode})
 
     monkeypatch.setattr(xvideos.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(xvideos.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        xvideos.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(xvideos.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(xvideos.utils, "eod", lambda: None)
 
@@ -155,8 +169,8 @@ def test_categories_parsing(monkeypatch):
 
     # Check that it's alphabetically sorted
     assert "Amateur" in dirs[0]["name"]  # A comes first
-    assert "MILF" in dirs[1]["name"]      # M comes second
-    assert "Teen" in dirs[2]["name"]      # T comes third
+    assert "MILF" in dirs[1]["name"]  # M comes second
+    assert "Teen" in dirs[2]["name"]  # T comes third
 
 
 def test_pornstars_parsing(monkeypatch):

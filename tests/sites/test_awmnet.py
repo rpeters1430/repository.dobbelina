@@ -1,4 +1,5 @@
 """Comprehensive tests for AWM Network site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import awmnet
@@ -23,21 +24,25 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration", ""),
-            "quality": kwargs.get("quality", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration", ""),
+                "quality": kwargs.get("quality", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(awmnet.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(awmnet.site, "add_download_link", fake_add_download_link)
@@ -57,7 +62,10 @@ def test_list_parses_video_items(monkeypatch):
     assert downloads[0]["quality"] == "HD"
 
     # Check second video (has provider but no HD, uses data-src)
-    assert downloads[1]["name"] == "[COLOR yellow][Reality Kings][/COLOR] Busty MILF Action"
+    assert (
+        downloads[1]["name"]
+        == "[COLOR yellow][Reality Kings][/COLOR] Busty MILF Action"
+    )
     assert "/videos/67890/busty-milf-action/" in downloads[1]["url"]
     assert downloads[1]["icon"] == "https://www.fuq.com/thumbs/thumb2.jpg"
     assert downloads[1]["duration"] == "22:45"
@@ -96,7 +104,9 @@ def test_list_handles_no_pagination(monkeypatch):
         return html
 
     monkeypatch.setattr(awmnet.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(awmnet.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        awmnet.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(awmnet.site, "add_dir", lambda *a, **k: dirs.append(a[0]))
     monkeypatch.setattr(awmnet.utils, "eod", lambda: None)
 
@@ -131,7 +141,9 @@ def test_list_handles_duplicate_videos(monkeypatch):
         return html
 
     monkeypatch.setattr(awmnet.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(awmnet.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        awmnet.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(awmnet.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(awmnet.utils, "eod", lambda: None)
 
@@ -151,12 +163,14 @@ def test_categories_parses_card_items(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+            }
+        )
 
     monkeypatch.setattr(awmnet.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(awmnet.site, "add_dir", fake_add_dir)
@@ -193,11 +207,13 @@ def test_tags_parses_category_items(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(awmnet.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(awmnet.site, "add_dir", fake_add_dir)
@@ -270,11 +286,13 @@ def test_main_lists_all_sites(monkeypatch):
     dirs = []
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(awmnet.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(awmnet.utils, "eod", lambda: None)
@@ -300,11 +318,13 @@ def test_sitemain_creates_menu_structure(monkeypatch):
     list_calls = []
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     def fake_list(url):
         list_calls.append(url)

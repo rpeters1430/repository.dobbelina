@@ -68,19 +68,35 @@ def test_find_next_page_handles_no_pagination():
 def test_list_integration(monkeypatch):
     """Test the full List function with mocked dependencies."""
     html = load_fixture("public_list.html")
-    monkeypatch.setattr(thothub.utils, "getHtml", lambda url, referer=None, headers=None: html)
+    monkeypatch.setattr(
+        thothub.utils, "getHtml", lambda url, referer=None, headers=None: html
+    )
 
     downloads = []
     dirs = []
 
-    def fake_add_download_link(name, url, mode, iconimage, desc="", stream=None, fav='add',
-                                noDownload=False, contextm=None, fanart=None, duration="", quality=""):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-        })
+    def fake_add_download_link(
+        name,
+        url,
+        mode,
+        iconimage,
+        desc="",
+        stream=None,
+        fav="add",
+        noDownload=False,
+        contextm=None,
+        fanart=None,
+        duration="",
+        quality="",
+    ):
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
         dirs.append({"name": name, "url": url, "mode": mode})

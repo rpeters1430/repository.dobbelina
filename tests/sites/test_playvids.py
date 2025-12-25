@@ -1,4 +1,5 @@
 """Tests for playvids.com site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import playvids
@@ -23,21 +24,25 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc, **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration", ""),
-            "quality": kwargs.get("quality", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration", ""),
+                "quality": kwargs.get("quality", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(playvids.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(playvids.site, "add_download_link", fake_add_download_link)
@@ -85,11 +90,13 @@ def test_cat_parses_categories(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(playvids.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(playvids.site, "add_dir", fake_add_dir)
@@ -159,7 +166,9 @@ def test_list_handles_missing_info_section(monkeypatch):
         return html
 
     monkeypatch.setattr(playvids.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(playvids.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        playvids.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(playvids.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(playvids.utils, "eod", lambda: None)
 

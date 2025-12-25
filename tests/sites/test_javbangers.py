@@ -1,4 +1,5 @@
 """Tests for javbangers.com site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import javbangers
@@ -23,21 +24,25 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration"),
-            "quality": kwargs.get("quality"),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration"),
+                "quality": kwargs.get("quality"),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     def fake_get_cookies():
         return "kt_tcookie=1"
@@ -78,10 +83,12 @@ def test_list_private_videos_when_logged_in(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+            }
+        )
 
     def fake_get_cookies():
         return "kt_tcookie=1; kt_member=user123"
@@ -113,19 +120,23 @@ def test_list_pagination(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     def fake_get_cookies():
         return "kt_tcookie=1"
 
     # Mock randint to return a consistent value - it's imported at module level
-    monkeypatch.setattr(javbangers, 'randint', lambda a, b: 123456789012)
+    monkeypatch.setattr(javbangers, "randint", lambda a, b: 123456789012)
     # Mock utils.addon_sys which is needed for context menu
-    monkeypatch.setattr(javbangers.utils, "addon_sys", "plugin://plugin.video.cumination")
+    monkeypatch.setattr(
+        javbangers.utils, "addon_sys", "plugin://plugin.video.cumination"
+    )
 
     monkeypatch.setattr(javbangers.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(javbangers.site, "add_download_link", lambda *a, **k: None)
@@ -138,7 +149,9 @@ def test_list_pagination(monkeypatch):
 
     # Should have next page
     next_pages = [d for d in dirs if "Next Page" in d["name"]]
-    assert len(next_pages) == 1, f"Expected 1 next page, got {len(next_pages)}. All dirs: {dirs}"
+    assert len(next_pages) == 1, (
+        f"Expected 1 next page, got {len(next_pages)}. All dirs: {dirs}"
+    )
     assert "2/15" in next_pages[0]["name"] or "(2)" in next_pages[0]["name"]
 
 

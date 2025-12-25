@@ -1,4 +1,5 @@
 """Tests for longvideos.xxx site implementation."""
+
 from pathlib import Path
 
 from resources.lib.sites import longvideos
@@ -23,21 +24,25 @@ def test_list_parses_video_items(monkeypatch):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc, **kwargs):
-        downloads.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-            "icon": iconimage,
-            "duration": kwargs.get("duration", ""),
-            "quality": kwargs.get("quality", ""),
-        })
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+                "icon": iconimage,
+                "duration": kwargs.get("duration", ""),
+                "quality": kwargs.get("quality", ""),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(longvideos.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(longvideos.site, "add_download_link", fake_add_download_link)
@@ -86,11 +91,13 @@ def test_categories_parses_categories(monkeypatch):
         return html
 
     def fake_add_dir(name, url, mode, iconimage):
-        dirs.append({
-            "name": name,
-            "url": url,
-            "mode": mode,
-        })
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
 
     monkeypatch.setattr(longvideos.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(longvideos.site, "add_dir", fake_add_dir)
@@ -136,7 +143,9 @@ def test_search_with_keyword_calls_list(monkeypatch):
 
     monkeypatch.setattr(longvideos, "List", fake_list)
 
-    longvideos.Search("https://www.longvideos.xxx/search/{}/relevance/", keyword="test query")
+    longvideos.Search(
+        "https://www.longvideos.xxx/search/{}/relevance/", keyword="test query"
+    )
 
     assert len(list_calls) == 1
     assert "test-query" in list_calls[0]
@@ -156,7 +165,9 @@ def test_list_handles_no_data(monkeypatch):
         notified.append(kwargs)
 
     monkeypatch.setattr(longvideos.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(longvideos.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        longvideos.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(longvideos.utils, "notify", fake_notify)
 
     longvideos.List("https://www.longvideos.xxx/latest-updates/")
@@ -177,7 +188,9 @@ def test_list_handles_empty_results(monkeypatch):
         return html
 
     monkeypatch.setattr(longvideos.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(longvideos.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        longvideos.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(longvideos.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(longvideos.utils, "eod", lambda: None)
     monkeypatch.setattr(longvideos.utils, "notify", lambda **k: None)

@@ -1,4 +1,5 @@
 """Tests for Porno1.hu BeautifulSoup migration."""
+
 from pathlib import Path
 
 from resources.lib.sites import porno1hu
@@ -16,10 +17,17 @@ def test_list_parses_items_and_next(monkeypatch):
     downloads = []
     dirs = []
 
-    monkeypatch.setattr(porno1hu.utils, "getHtml", lambda url, ref='': html)
+    monkeypatch.setattr(porno1hu.utils, "getHtml", lambda url, ref="": html)
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append({"name": name, "url": url, "img": iconimage, "duration": kwargs.get("duration")})
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "img": iconimage,
+                "duration": kwargs.get("duration"),
+            }
+        )
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
         dirs.append({"name": name, "url": url, "mode": mode})
@@ -39,7 +47,7 @@ def test_categories_parse_and_format(monkeypatch):
     html = load_fixture("categories.html")
     dirs = []
 
-    monkeypatch.setattr(porno1hu.utils, "getHtml", lambda url, ref='': html)
+    monkeypatch.setattr(porno1hu.utils, "getHtml", lambda url, ref="": html)
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
         dirs.append({"name": name, "url": url})
@@ -62,7 +70,14 @@ def test_playvid_decodes_kvs(monkeypatch):
         def __init__(self, name, download=None):
             self.name = name
             self.download = download
-            self.progress = type("p", (), {"update": lambda *args, **kwargs: None, "close": lambda *args, **kwargs: None})()
+            self.progress = type(
+                "p",
+                (),
+                {
+                    "update": lambda *args, **kwargs: None,
+                    "close": lambda *args, **kwargs: None,
+                },
+            )()
 
         def play_from_direct_link(self, url):
             player_calls.append(url)
@@ -74,7 +89,11 @@ def test_playvid_decodes_kvs(monkeypatch):
 
     monkeypatch.setattr(porno1hu.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(porno1hu.utils, "VideoPlayer", FakeVideoPlayer)
-    monkeypatch.setattr(porno1hu, "kvs_decode", lambda video_url, license_code: "https://cdn.example.com/decoded.mp4")
+    monkeypatch.setattr(
+        porno1hu,
+        "kvs_decode",
+        lambda video_url, license_code: "https://cdn.example.com/decoded.mp4",
+    )
 
     porno1hu.Playvid("https://porno1.hu/video/test", "Test Video")
 

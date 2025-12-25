@@ -103,7 +103,10 @@ def find_addons(base_dir: Path, filter_ids: Iterable[str] | None) -> List[Path]:
 
 def update_addons_index(addons_xml_path: Path, updated: List[Tuple[str, str]]) -> None:
     if not addons_xml_path.is_file():
-        print(f"addons.xml not found at {addons_xml_path}, skipping index update", file=sys.stderr)
+        print(
+            f"addons.xml not found at {addons_xml_path}, skipping index update",
+            file=sys.stderr,
+        )
         return
 
     tree = ET.parse(addons_xml_path)
@@ -130,10 +133,20 @@ def update_addons_index(addons_xml_path: Path, updated: List[Tuple[str, str]]) -
 
 
 def main(argv: List[str]) -> int:
-    parser = argparse.ArgumentParser(description="Build Kodi add-on ZIPs with proper structure")
-    parser.add_argument("--addons", nargs="*", help="Specific add-on IDs to build (default: all in cwd)")
-    parser.add_argument("--out", default=".", help="Output directory for ZIPs (default: current dir)")
-    parser.add_argument("--update-index", action="store_true", help="Update addons.xml and addons.xml.md5")
+    parser = argparse.ArgumentParser(
+        description="Build Kodi add-on ZIPs with proper structure"
+    )
+    parser.add_argument(
+        "--addons", nargs="*", help="Specific add-on IDs to build (default: all in cwd)"
+    )
+    parser.add_argument(
+        "--out", default=".", help="Output directory for ZIPs (default: current dir)"
+    )
+    parser.add_argument(
+        "--update-index",
+        action="store_true",
+        help="Update addons.xml and addons.xml.md5",
+    )
     args = parser.parse_args(argv)
 
     base = Path.cwd()
@@ -160,4 +173,3 @@ def main(argv: List[str]) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))
-

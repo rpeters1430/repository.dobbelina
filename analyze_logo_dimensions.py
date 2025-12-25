@@ -2,6 +2,7 @@
 """
 Analyze logo dimensions using PIL
 """
+
 import os
 from collections import Counter
 
@@ -13,6 +14,7 @@ except ImportError:
 
 IMAGES_DIR = r"C:\Users\James\Desktop\repository.dobbelina\plugin.video.cumination\resources\images"
 
+
 def analyze_dimensions():
     """Analyze all logo dimensions"""
     dimensions = []
@@ -20,10 +22,12 @@ def analyze_dimensions():
     heights = []
 
     # Skip the cum-* utility icons
-    skip_prefixes = ('cum-',)
+    skip_prefixes = ("cum-",)
 
     for filename in os.listdir(IMAGES_DIR):
-        if filename.lower().endswith(('.png', '.jpg', '.gif')) and not filename.startswith(skip_prefixes):
+        if filename.lower().endswith(
+            (".png", ".jpg", ".gif")
+        ) and not filename.startswith(skip_prefixes):
             filepath = os.path.join(IMAGES_DIR, filename)
             try:
                 with Image.open(filepath) as img:
@@ -53,15 +57,15 @@ def analyze_dimensions():
     print("Width statistics:")
     print(f"  Min:    {min(widths):4d}px")
     print(f"  Max:    {max(widths):4d}px")
-    print(f"  Average: {sum(widths)//len(widths):4d}px")
-    print(f"  Median:  {sorted(widths)[len(widths)//2]:4d}px")
+    print(f"  Average: {sum(widths) // len(widths):4d}px")
+    print(f"  Median:  {sorted(widths)[len(widths) // 2]:4d}px")
     print()
 
     print("Height statistics:")
     print(f"  Min:    {min(heights):4d}px")
     print(f"  Max:    {max(heights):4d}px")
-    print(f"  Average: {sum(heights)//len(heights):4d}px")
-    print(f"  Median:  {sorted(heights)[len(heights)//2]:4d}px")
+    print(f"  Average: {sum(heights) // len(heights):4d}px")
+    print(f"  Median:  {sorted(heights)[len(heights) // 2]:4d}px")
     print()
 
     # Common dimensions
@@ -95,5 +99,6 @@ def analyze_dimensions():
         print(f"  {ratio:5.2f}:1 - {name}")
     print()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     analyze_dimensions()
