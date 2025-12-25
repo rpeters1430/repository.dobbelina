@@ -1,4 +1,3 @@
-
 """Simple AES cipher implementation in pure Python following PEP-272 API
 
 Based on: https://bitbucket.org/intgr/pyaes/ to compatible with PEP-8.

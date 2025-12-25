@@ -687,7 +687,6 @@ def Playvid(url, name):
     else:
         m3u8stream = False
 
-
     if playmode == 0:
         if m3u8stream:
             videourl = "{0}|{1}".format(

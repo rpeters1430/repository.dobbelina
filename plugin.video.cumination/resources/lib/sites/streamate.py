@@ -130,9 +130,6 @@ def clean_database(showdialog=True):
 def Playvid(url, name):
     url, performerID = url.split("$$")
 
-
-
-
     # quitting = 0
     # i = 0
     # while quitting == 0:
@@ -151,9 +148,6 @@ def Playvid(url, name):
     #         ws.close()
     #         utils.notify('Model not in freechat')
     #         return None
-
-
-
 
     videourl = ""
     try:

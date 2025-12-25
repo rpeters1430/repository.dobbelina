@@ -167,7 +167,6 @@ def Playvid(url, name, download=None):
         part = "Part {}/{}".format(i + 1, len(videodict))
         videos.append((videourl, part))
 
-
     if not playall:
         if len(videos) > 1:
             videolist = []

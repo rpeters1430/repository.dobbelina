@@ -1,5 +1,3 @@
-
-
 import re
 from six.moves import urllib_error, urllib_parse, urllib_request
 
