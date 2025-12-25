@@ -2,7 +2,6 @@ import sys
 
 sys.path.append("plugin.video.cumination/resources/lib")
 import types
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[0]

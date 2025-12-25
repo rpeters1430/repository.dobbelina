@@ -2214,7 +2214,6 @@ def backup_keywords():
     if not path:
         return
     import datetime
-    import json
 
     progress.update(25, i18n("read_db"))
     conn = sqlite3.connect(favoritesdb)
@@ -2239,7 +2238,6 @@ def backup_keywords():
     filename = "cumination-keywords_" + time + ".bak"
     compressbackup = True if addon.getSetting("compressbackup") == "true" else False
     if compressbackup:
-        import gzip
 
         try:
             if PY3:
@@ -2289,11 +2287,9 @@ def restore_keywords():
     path = dialog.browseSingle(1, i18n("slct_file"), "")
     if not path:
         return
-    import json
 
     compressbackup = True if addon.getSetting("compressbackup") == "true" else False
     if compressbackup:
-        import gzip
 
         try:
             if PY3:

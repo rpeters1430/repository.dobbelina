@@ -427,7 +427,6 @@ class TestWrapperMethods:
         import resources.lib.url_dispatcher as url_dispatcher_module
 
         importlib.reload(url_dispatcher_module)
-        from resources.lib.url_dispatcher import URL_Dispatcher  # noqa: F811
 
         dispatcher = URL_Dispatcher("testsite")
 

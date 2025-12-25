@@ -572,8 +572,6 @@ def Playvid(url, name, download=None):
         # Custom sort function that handles various quality text formats
         def quality_sort(quality_text):
             try:
-                # Extract numeric value from quality text (e.g., "1080p" -> 1080, "720 p" -> 720)
-                import re
 
                 match = re.search(r"(\d+)", quality_text)
                 if match:

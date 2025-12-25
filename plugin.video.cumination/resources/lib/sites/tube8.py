@@ -157,7 +157,6 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        from six.moves import urllib_parse
 
         title = urllib_parse.quote_plus(keyword)
         searchUrl = searchUrl + title + "/"
