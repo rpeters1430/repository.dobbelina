@@ -846,7 +846,7 @@ def refresh():
 
 
 def playvid(videourl, name, download=None, subtitle=None, IA_check="check"):
-    videourl = videourl.replace('&amp;', '&')
+    videourl = videourl.replace("&amp;", "&")
     if download == 1:
         downloadVideo(videourl, name)
     else:
@@ -2238,7 +2238,6 @@ def backup_keywords():
     filename = "cumination-keywords_" + time + ".bak"
     compressbackup = True if addon.getSetting("compressbackup") == "true" else False
     if compressbackup:
-
         try:
             if PY3:
                 with gzip.open(path + filename, "wt", encoding="utf-8") as fav_file:
@@ -2290,7 +2289,6 @@ def restore_keywords():
 
     compressbackup = True if addon.getSetting("compressbackup") == "true" else False
     if compressbackup:
-
         try:
             if PY3:
                 with gzip.open(path, "rt", encoding="utf-8") as fav_file:

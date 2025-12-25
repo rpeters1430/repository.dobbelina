@@ -141,7 +141,6 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-
         title = urllib_parse.quote_plus(keyword)
         searchUrl = searchUrl + title + "/"
         List(searchUrl)

@@ -572,7 +572,6 @@ def Playvid(url, name, download=None):
         # Custom sort function that handles various quality text formats
         def quality_sort(quality_text):
             try:
-
                 match = re.search(r"(\d+)", quality_text)
                 if match:
                     return int(match.group(1))
