@@ -200,9 +200,7 @@ def _createPublicRSAKey(n, e, implementations=None):
     raise ValueError("No acceptable implementations")
 
 
-def _createPrivateRSAKey(
-    n, e, d, p, q, dP, dQ, qInv, implementations=None
-):
+def _createPrivateRSAKey(n, e, d, p, q, dP, dQ, qInv, implementations=None):
     if implementations is None:
         implementations = ["pycrypto", "python"]
     for implementation in implementations:
