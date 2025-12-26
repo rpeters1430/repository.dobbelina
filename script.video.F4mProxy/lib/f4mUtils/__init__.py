@@ -26,5 +26,5 @@ __all__ = [
     "rc4",
     "rijndael",
     "rsakey",
-    "tripledes"
+    "tripledes",
 ]
