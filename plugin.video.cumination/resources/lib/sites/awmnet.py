@@ -601,7 +601,7 @@ def Playvid(url, name, download=None):
             for pattern in patterns:
                 items = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(vpage)
                 for surl, qual in items:
-                    qual = "0p" if qual == "preview" or qual == "postfix" else qual
+                    qual = "0p" if qual in ("preview", "postfix") else qual
                     qual = "720p" if qual == "HD" else qual
                     if "function/0/http" in surl:
                         surl = kvs_decode(surl, license)

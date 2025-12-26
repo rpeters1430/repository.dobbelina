@@ -26,8 +26,7 @@ def get_all_sites():
     for filename in os.listdir(SITES_DIR):
         if (
             filename.endswith(".py")
-            and filename != "__init__.py"
-            and filename != "soup_spec.py"
+            and filename not in ("__init__.py", "soup_spec.py")
         ):
             filepath = os.path.join(SITES_DIR, filename)
             try:
