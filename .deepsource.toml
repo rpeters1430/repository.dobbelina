@@ -1,19 +1,10 @@
 version = 1
 
 [[analyzers]]
-name = "test-coverage"
-
-[[analyzers]]
 name = "python"
 
   [analyzers.meta]
   runtime_version = "3.x.x"
-
-[[analyzers]]
-name = "php"
-
-[[code_formatters]]
-name = "php-cs-fixer"
 
 [[code_formatters]]
 name = "ruff"
