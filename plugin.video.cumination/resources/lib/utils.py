@@ -2972,7 +2972,9 @@ class LookupInfo:
         # Default url_constructor - can be overridden in derived classes
         return "http:" + url if url.startswith("//") else self.siteurl + url
 
-    def getinfo(self, headers=base_hdrs):
+    def getinfo(self, headers=None):
+        if headers is None:
+            headers = base_hdrs
         try:
             listhtml = getHtml(self.url, headers=headers)
             if self.starthtml:
