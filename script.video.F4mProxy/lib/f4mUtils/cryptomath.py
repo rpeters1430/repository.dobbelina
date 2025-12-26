@@ -182,7 +182,6 @@ def numBits(n):
         "e": 4,
         "f": 4,
     }[s[0]]
-    return int(math.floor(math.log(n, 2)) + 1)
 
 
 def numBytes(n):
