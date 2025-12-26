@@ -70,7 +70,6 @@ def _load_crypto_libcrypto():
                 and (self._blocksize != 32)
             ):
                 raise IGNOBLEError("AES improper key used")
-                return
             key = self._key = AES_KEY()
             rv = AES_set_decrypt_key(userkey, len(userkey) * 8, key)
             if rv < 0:
