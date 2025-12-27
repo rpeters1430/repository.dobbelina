@@ -56,7 +56,8 @@ except ImportError:
 import zlib
 
 length = len(zlib.compress(os.urandom(1000)))
-assert length > 900
+if length <= 900:
+    raise AssertionError
 
 
 def getRandomBytes(howMany):

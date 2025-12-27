@@ -20,9 +20,11 @@ class TripleDES(object):
     # CBC-Mode encryption, returns ciphertext
     # WARNING: *MAY* modify the input as well
     def encrypt(self, plaintext):
-        assert len(plaintext) % 8 == 0
+        if len(plaintext) % 8 != 0:
+            raise AssertionError
 
     # CBC-Mode decryption, returns plaintext
     # WARNING: *MAY* modify the input as well
     def decrypt(self, ciphertext):
-        assert len(ciphertext) % 8 == 0
+        if len(ciphertext) % 8 != 0:
+            raise AssertionError
