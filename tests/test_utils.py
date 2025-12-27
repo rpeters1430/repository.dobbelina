@@ -527,15 +527,17 @@ def test_notify_with_default_params(monkeypatch):
     notifications = []
 
     def mock_notification(title, msg, icon, duration, sound):
-        notifications.append({
-            "title": title,
-            "msg": msg,
-            "icon": icon,
-            "duration": duration,
-            "sound": sound
-        })
+        notifications.append(
+            {
+                "title": title,
+                "msg": msg,
+                "icon": icon,
+                "duration": duration,
+                "sound": sound,
+            }
+        )
 
-    mock_dialog = type('Dialog', (), {})()
+    mock_dialog = type("Dialog", (), {})()
     mock_dialog.notification = mock_notification
     monkeypatch.setattr(utils, "dialog", mock_dialog)
 
@@ -551,13 +553,9 @@ def test_notify_with_custom_params(monkeypatch):
     notifications = []
 
     def mock_notification(title, msg, icon, duration, sound):
-        notifications.append({
-            "title": title,
-            "msg": msg,
-            "duration": duration
-        })
+        notifications.append({"title": title, "msg": msg, "duration": duration})
 
-    mock_dialog = type('Dialog', (), {})()
+    mock_dialog = type("Dialog", (), {})()
     mock_dialog.notification = mock_notification
     monkeypatch.setattr(utils, "dialog", mock_dialog)
 
@@ -655,7 +653,7 @@ def test_safe_get_text_without_strip():
     """Test safe_get_text without stripping whitespace"""
     from bs4 import BeautifulSoup
 
-    html = '<span>  Text with spaces  </span>'
+    html = "<span>  Text with spaces  </span>"
     soup = BeautifulSoup(html, "html.parser")
     span = soup.select_one("span")
 
@@ -667,7 +665,7 @@ def test_safe_get_text_with_strip():
     """Test safe_get_text with stripping whitespace"""
     from bs4 import BeautifulSoup
 
-    html = '<span>  Text with spaces  </span>'
+    html = "<span>  Text with spaces  </span>"
     soup = BeautifulSoup(html, "html.parser")
     span = soup.select_one("span")
 
@@ -682,23 +680,23 @@ def test_safe_get_text_with_strip():
 
 def test_parse_html_handles_malformed_html():
     """Test parse_html can handle malformed HTML"""
-    malformed_html = '<div><p>Unclosed paragraph<div>Another div</div>'
+    malformed_html = "<div><p>Unclosed paragraph<div>Another div</div>"
     soup = utils.parse_html(malformed_html)
 
     # BeautifulSoup should still parse it
     assert soup is not None
-    divs = soup.find_all('div')
+    divs = soup.find_all("div")
     assert len(divs) >= 1
 
 
 def test_parse_html_handles_unicode():
     """Test parse_html handles unicode characters"""
-    html = '<div>Unicode: \u00e9\u00e8\u00ea \u4e2d\u6587</div>'
+    html = "<div>Unicode: \u00e9\u00e8\u00ea \u4e2d\u6587</div>"
     soup = utils.parse_html(html)
 
-    div = soup.select_one('div')
+    div = soup.select_one("div")
     text = utils.safe_get_text(div)
-    assert '\u00e9' in text or 'é' in text
+    assert "\u00e9" in text or "é" in text
 
 
 def test_parse_html_preserves_attributes():
@@ -706,7 +704,7 @@ def test_parse_html_preserves_attributes():
     html = '<a href="/video/123" data-id="456" class="link">Video</a>'
     soup = utils.parse_html(html)
 
-    link = soup.select_one('a')
-    assert link.get('href') == '/video/123'
-    assert link.get('data-id') == '456'
-    assert 'link' in link.get('class', [])
+    link = soup.select_one("a")
+    assert link.get("href") == "/video/123"
+    assert link.get("data-id") == "456"
+    assert "link" in link.get("class", [])

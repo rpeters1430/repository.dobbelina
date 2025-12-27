@@ -1,4 +1,5 @@
 """Tests for eroticmv site module"""
+
 from resources.lib.sites import eroticmv
 from unittest.mock import patch
 
@@ -20,8 +21,10 @@ def test_list_parses_video_items():
     </div>
     """
 
-    with patch("resources.lib.utils.getHtml") as mock_gethtml, \
-         patch("resources.lib.utils.eod") as mock_eod:
+    with (
+        patch("resources.lib.utils.getHtml") as mock_gethtml,
+        patch("resources.lib.utils.eod") as mock_eod,
+    ):
         mock_gethtml.return_value = html
 
         eroticmv.List("https://eroticmv.com/")
@@ -47,8 +50,10 @@ def test_categories_parses_items():
     </div>
     """
 
-    with patch("resources.lib.utils.getHtml") as mock_gethtml, \
-         patch("resources.lib.utils.eod") as mock_eod:
+    with (
+        patch("resources.lib.utils.getHtml") as mock_gethtml,
+        patch("resources.lib.utils.eod") as mock_eod,
+    ):
         mock_gethtml.return_value = html
 
         eroticmv.Categories("https://eroticmv.com/categories/")
