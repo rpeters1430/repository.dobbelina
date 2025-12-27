@@ -24,6 +24,7 @@ from resources.lib.adultsite import AdultSite
 # Python 2/3 compatible HTML entity decoder
 try:
     import html
+
     unescape = html.unescape
 except ImportError:
     # Python 2
@@ -61,7 +62,9 @@ def List(url, page=1):
     # Match both relative (/watch/) and absolute (https://livecamsrip.com/watch/) URLs
     video_links = soup.select('a[href*="/watch/"]')
 
-    utils.kodilog("@@@@Cumination: LiveCamRips found {} video links".format(len(video_links)))
+    utils.kodilog(
+        "@@@@Cumination: LiveCamRips found {} video links".format(len(video_links))
+    )
 
     seen = set()
     for link in video_links:
@@ -103,21 +106,22 @@ def List(url, page=1):
                     name = username
 
             # Look for platform name (Stripchat, Chaturbate, etc.)
-            platform_elem = parent.select_one('small.default')
+            platform_elem = parent.select_one("small.default")
             if platform_elem:
                 platform = utils.safe_get_text(platform_elem).strip()
                 if platform:
                     name += " - " + platform
 
             # Extract timestamp (e.g., "1 day ago")
-            timestamp_elem = parent.select_one('small.muted')
+            timestamp_elem = parent.select_one("small.muted")
             if timestamp_elem:
                 timestamp = utils.safe_get_text(timestamp_elem).strip()
 
             # Extract views
             views_text = parent.get_text()
             import re
-            views_match = re.search(r'(\d+)\s+views?', views_text, re.IGNORECASE)
+
+            views_match = re.search(r"(\d+)\s+views?", views_text, re.IGNORECASE)
             if views_match:
                 views = views_match.group(1) + " views"
 
@@ -149,7 +153,7 @@ def List(url, page=1):
             if next_href:
                 nurl = urllib_parse.urljoin(url, next_href)
                 # Try to extract page number
-                page_match = re.search(r'[?&]page=(\d+)', next_href)
+                page_match = re.search(r"[?&]page=(\d+)", next_href)
                 npage = int(page_match.group(1)) if page_match else (page + 1)
                 site.add_dir(
                     "[COLOR hotpink]Next Page...[/COLOR] ({})".format(npage),
@@ -171,7 +175,7 @@ def Playvid(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
     # Extract the base64 video ID from URL (e.g., /watch/MTU2MDk3NTU=)
-    video_id_match = re.search(r'/watch/([A-Za-z0-9+/=]+)', url)
+    video_id_match = re.search(r"/watch/([A-Za-z0-9+/=]+)", url)
     if not video_id_match:
         utils.notify("Error", "Invalid video URL")
         vp.progress.close()
@@ -181,7 +185,7 @@ def Playvid(url, name, download=None):
 
     # Decode the base64 ID to get the numeric UUID
     try:
-        video_uuid = base64.b64decode(video_id_b64).decode('utf-8')
+        video_uuid = base64.b64decode(video_id_b64).decode("utf-8")
     except Exception:
         utils.notify("Error", "Could not decode video ID")
         vp.progress.close()
@@ -233,18 +237,20 @@ def Playvid(url, name, download=None):
                 "scripts": [],
                 "assets": [],
                 "errors": [],
-                "locale": "en"
+                "locale": "en",
             },
-            "checksum": "8416600b98c7bf91c789ee5a10a5e45b5ce42c90ef82908a7c421e94bd77ae56"
+            "checksum": "8416600b98c7bf91c789ee5a10a5e45b5ce42c90ef82908a7c421e94bd77ae56",
         }
 
     livewire_payload = {
         "_token": csrf_token,
-        "components": [{
-            "snapshot": json.dumps(snapshot_data),
-            "updates": {},
-            "calls": [{"path": "", "method": "updateView", "params": []}]
-        }]
+        "components": [
+            {
+                "snapshot": json.dumps(snapshot_data),
+                "updates": {},
+                "calls": [{"path": "", "method": "updateView", "params": []}],
+            }
+        ],
     }
 
     # Make POST request to /livewire/update
@@ -260,13 +266,19 @@ def Playvid(url, name, download=None):
             livewire_url,
             referer=url,
             headers=livewire_headers,
-            data=json.dumps(livewire_payload)
+            data=json.dumps(livewire_payload),
         )
 
-        utils.kodilog("@@@@Cumination: Livewire response: " + str(livewire_response[:500]))
+        utils.kodilog(
+            "@@@@Cumination: Livewire response: " + str(livewire_response[:500])
+        )
 
         # Extract myvidplay.com URL from response
-        myvidplay_match = re.search(r'(https?://(?:www\.)?myvidplay\.com/e/[a-zA-Z0-9]+)', livewire_response, re.IGNORECASE)
+        myvidplay_match = re.search(
+            r"(https?://(?:www\.)?myvidplay\.com/e/[a-zA-Z0-9]+)",
+            livewire_response,
+            re.IGNORECASE,
+        )
 
         if not myvidplay_match:
             # Try parsing as JSON
@@ -274,7 +286,11 @@ def Playvid(url, name, download=None):
                 livewire_json = json.loads(livewire_response)
                 # Search through the JSON for myvidplay URL
                 livewire_str = json.dumps(livewire_json)
-                myvidplay_match = re.search(r'(https?://(?:www\.)?myvidplay\.com/e/[a-zA-Z0-9]+)', livewire_str, re.IGNORECASE)
+                myvidplay_match = re.search(
+                    r"(https?://(?:www\.)?myvidplay\.com/e/[a-zA-Z0-9]+)",
+                    livewire_str,
+                    re.IGNORECASE,
+                )
             except Exception:
                 pass
 
@@ -287,6 +303,7 @@ def Playvid(url, name, download=None):
             # Try resolveurl with myvidplay URL
             try:
                 import resolveurl
+
                 hmf = resolveurl.HostedMediaFile(url=myvidplay_url)
                 if hmf:
                     videourl = hmf.resolve()

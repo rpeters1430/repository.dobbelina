@@ -1,4 +1,5 @@
 """Tests for justfullporn site module"""
+
 from resources.lib.sites import justfullporn
 from unittest.mock import patch
 
@@ -13,8 +14,10 @@ def test_list_parses_video_items():
     </div>
     """
 
-    with patch("resources.lib.utils.getHtml") as mock_gethtml, \
-         patch("resources.lib.utils.eod") as mock_eod:
+    with (
+        patch("resources.lib.utils.getHtml") as mock_gethtml,
+        patch("resources.lib.utils.eod") as mock_eod,
+    ):
         mock_gethtml.return_value = html
 
         justfullporn.List("https://justfullporn.com/")
