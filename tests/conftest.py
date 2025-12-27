@@ -224,9 +224,12 @@ def _ensure_kodi_stubs():
 _ensure_kodi_stubs()
 
 
-def read_fixture(filename):
+@pytest.fixture
+def read_fixture():
     """Return the contents of a fixture file from tests/fixtures."""
-    return (ROOT / "tests" / "fixtures" / filename).read_text(encoding="utf-8")
+    def _read_fixture(filename):
+        return (ROOT / "tests" / "fixtures" / filename).read_text(encoding="utf-8")
+    return _read_fixture
 
 
 @pytest.fixture(autouse=True)

@@ -84,7 +84,15 @@
       "Bash(else echo \"No venv found\")",
       "Bash(git checkout:*)",
       "Bash(.venv/Scripts/python -m pytest:*)",
-      "Bash(git merge:*)"
+      "Bash(git merge:*)",
+      "Bash(.venv/bin/python3 -m pytest:*)",
+      "WebFetch(domain:livecamrips.su)",
+      "Bash(.venvScriptspython -m pytest tests/sites/test_livecamrips.py -v)",
+      "Bash(cmd /c \"dir /B C:\\\\Users\\\\James\\\\Desktop\\\\repository.dobbelina\\\\plugin.video.cumination\\\\resources\\\\media\")",
+      "WebSearch",
+      "Bash(for domain in \"livecamrips.com\" \"livecamrips.to\" \"livecamrips.tv\")",
+      "WebFetch(domain:livecamrips.to)",
+      "WebFetch(domain:www.livecamsrip.com)"
     ],
     "deny": [],
     "ask": []

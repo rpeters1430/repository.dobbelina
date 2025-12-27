@@ -80,7 +80,10 @@ This file tracks sites identified from screenshots that are not yet implemented 
 - [ ] **HentaiCloud** (hentaicloud.com)
 
 **Cam Models**
-- [ ] **LiveCamRips** (livecamrips.su)
+- [x] **WatchErotic** (watcherotic.com) ✅ **COMPLETED**
+- [x] **VipPorns** (vipporns.com) ✅ **COMPLETED**
+- [x] **TrendyPorn** (trendyporn.com) ✅ **COMPLETED**
+- [x] **LiveCamRips** (livecamsrip.com) ✅ **COMPLETED** (Uses Livewire AJAX framework with myvidplay.com/DoodStream hosting, includes timestamp & view metadata, full test coverage)
 - [ ] **Webpussi** (webpussi.com)
 - [ ] **CamSeek.TV** (camseek.tv) (Redirects to FreePornFlix)
 - [ ] **KBJFan** (kbjfan.com)
