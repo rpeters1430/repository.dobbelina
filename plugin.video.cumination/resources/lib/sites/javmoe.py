@@ -233,7 +233,7 @@ def Playvid(url, name, download=None):
             continue
 
     sources = {
-        enames.get(ename): eurl for eurl, ename in eurls if ename in list(enames.keys())
+        enames.get(ename): eurl for eurl, ename in eurls if ename in list(enames)
     }
     eurl = utils.selector("Select Hoster", sources)
     if not eurl:

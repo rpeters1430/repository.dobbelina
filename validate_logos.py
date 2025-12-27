@@ -222,7 +222,7 @@ def main():
     print(f"{Colors.BLUE}[CHECK 3]{Colors.ENDC} Orphaned logo files...")
     referenced_logos = {config["logo_ref"] for config in sites.values()}
     orphaned = []
-    for logo_name in logos.keys():
+    for logo_name in logos:
         if logo_name.startswith("cum-"):
             continue  # Skip utility icons
         if logo_name not in referenced_logos:
@@ -289,7 +289,7 @@ def main():
     # Check 5: Filename conventions
     print(f"{Colors.BLUE}[CHECK 5]{Colors.ENDC} Logo filename conventions...")
     naming_issues = []
-    for logo_name in logos.keys():
+    for logo_name in logos:
         if logo_name.startswith("cum-"):
             continue
 

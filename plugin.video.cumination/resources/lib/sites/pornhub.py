@@ -287,7 +287,7 @@ def get_setting(x):
         "sortby": "Newest",
         "time": "All Time",
     }
-    if x in dict.keys():
+    if x in dict:
         ret = (
             utils.addon.getSetting("pornhub" + x)
             if utils.addon.getSetting("pornhub" + x)
@@ -490,7 +490,7 @@ def param(x):
         "Yearly": "t=y",
     }
     dict.update(cc)
-    if x in dict.keys():
+    if x in dict:
         ret = dict[x]
     else:
         utils.kodilog("Key error: " + str(x))
@@ -558,7 +558,7 @@ def ResetFilters():
         "sortby": "Newest",
         "time": "All Time",
     }
-    for x in dict.keys():
+    for x in dict:
         utils.addon.setSetting("pornhub" + x, dict[x])
     utils.refresh()
     return

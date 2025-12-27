@@ -114,9 +114,7 @@ def analyze():
     # Orphaned logos (not referenced by any site)
     site_logos = {info["logo"] for info in sites.values()}
     orphaned = [
-        logo
-        for logo in logos.keys()
-        if logo not in site_logos and not logo.startswith("cum-")
+        logo for logo in logos if logo not in site_logos and not logo.startswith("cum-")
     ]
 
     print(f"Orphaned logos (not referenced by any site): {len(orphaned)}")
