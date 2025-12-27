@@ -415,12 +415,12 @@ def get_resolution(quality):
             "HD": (1280, 720),
             "8K": (7680, 4320),
         }
-        for x in resolutions.keys():
+        for x in resolutions:
             if x in quality:
                 quality = x
                 break
 
-        if quality in resolutions.keys():
+        if quality in resolutions:
             resolution = resolutions[quality]
         if len(quality) > 0 and resolution == (None, None):
             xbmc.log(

@@ -639,7 +639,7 @@ def downloadVideo(url, name):
             url, uheaders = url.split("|")
             headers = dict(urllib_parse.parse_qsl(uheaders))
 
-        if "User-Agent" not in list(headers.keys()):
+        if "User-Agent" not in list(headers):
             headers.update({"User-Agent": USER_AGENT})
 
         resp = getResponse(url, headers, 0)

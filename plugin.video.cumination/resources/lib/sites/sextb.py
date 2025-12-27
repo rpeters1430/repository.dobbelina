@@ -306,7 +306,7 @@ def Playvid(url, name, download=None):
             sources.update(
                 {
                     (enames[hoster.strip()] + option)
-                    if hoster.strip() in enames.keys()
+                    if hoster.strip() in enames
                     else (hoster + option): vid + "$$" + embed
                 }
             )

@@ -193,7 +193,7 @@ def Playvid(url, name, download=None):
                     hoster = utils.safe_get_text(btn, "").strip()
                     if embed and hoster:
                         display_name = "{0} [COLOR hotpink]Part {1}[/COLOR]".format(
-                            enames[hoster] if hoster in enames.keys() else hoster, pno
+                            enames[hoster] if hoster in enames else hoster, pno
                         )
                         sources[display_name] = embed
                 pno += 1
@@ -210,7 +210,7 @@ def Playvid(url, name, download=None):
                 embed = utils.safe_get_attr(btn, "data-link")
                 hoster = utils.safe_get_text(btn, "").strip()
                 if embed and hoster:
-                    display_name = enames[hoster] if hoster in enames.keys() else hoster
+                    display_name = enames[hoster] if hoster in enames else hoster
                     sources[display_name] = embed
             except Exception as exc:
                 utils.log("supjav Playvid: Failed to parse button - {}".format(exc))

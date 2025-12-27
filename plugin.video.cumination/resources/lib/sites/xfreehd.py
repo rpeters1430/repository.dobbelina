@@ -48,7 +48,7 @@ def Main():
         "Longest": "lg",
     }
     search_order = utils.addon.getSetting("xfreeorder") or "Relevance"
-    search_order = search_order if search_order in search_orders.keys() else "Relevance"
+    search_order = search_order if search_order in search_orders else "Relevance"
     context = utils.addon_sys + "?mode=xfreehd.Sortorder"
     contextmenu = [("[COLOR orange]Search Order[/COLOR]", "RunPlugin(" + context + ")")]
 
@@ -225,7 +225,7 @@ def Search(url, keyword=None):
         }
         search_order = utils.addon.getSetting("xfreeorder") or "Relevance"
         search_order = (
-            search_order if search_order in search_orders.keys() else "Relevance"
+            search_order if search_order in search_orders else "Relevance"
         )
         url = (
             url + title + "&search_type=videos&o={}".format(search_orders[search_order])

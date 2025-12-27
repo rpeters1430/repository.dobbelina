@@ -60,7 +60,7 @@ class TestSelector:
             try:
                 result = utils.selector("Select quality", options)
                 # Should return one of the values
-                assert result in options.values() or result in options.keys()
+                assert result in options.values() or result in options
             except Exception:
                 # May fail in test environment without GUI
                 pass

@@ -251,7 +251,7 @@ def site_list():
                 "{0}: {1}".format(utils.i18n("list_custom"), x.title), xbmc.LOGDEBUG
             )
         title = x.title
-        if title in custom_listitems_dict.keys():
+        if title in custom_listitems_dict:
             title = "{} [COLOR red]{}[/COLOR]".format(
                 title, "".ljust(custom_listitems_dict[title], "*")
             )
