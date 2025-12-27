@@ -14,7 +14,7 @@ def new(key):
 class Python_RC4(RC4):
     def __init__(self, keyBytes):
         RC4.__init__(self, keyBytes, "python")
-        S = [i for i in range(256)]
+        S = list(range(256))
         j = 0
         for i in range(256):
             j = (j + S[i] + keyBytes[i % len(keyBytes)]) % 256

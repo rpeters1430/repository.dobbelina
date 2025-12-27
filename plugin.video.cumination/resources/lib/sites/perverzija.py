@@ -211,7 +211,7 @@ def Play(url, name, download=None):
             links = re.compile(
                 r"resolution=\d+x(\d+)[^\n]*\n([^\s]+)", re.IGNORECASE | re.DOTALL
             ).findall(m3u8html)
-            links = {key: value for key, value in links}
+            links = dict(links)
             videourl = utils.prefquality(links, sort_by=lambda x: int(x), reverse=True)
             vp.progress.update(75, "[CR]Loading selected quality[CR]")
             m3u8html = utils.getHtml(videourl, iframeurl)
