@@ -420,7 +420,8 @@ class _ZipDecrypter:
         plain_text = map(zd, cypher_text)
     """
 
-    def _GenerateCRCTable(self):
+    @staticmethod
+    def _GenerateCRCTable():
         """Generate a CRC-32 table.
         ZIP encryption uses the CRC32 one-byte primitive for scrambling some
         internal keys. We noticed that a direct implementation is faster than
