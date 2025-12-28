@@ -2,9 +2,7 @@
 Tests for HTML parsing and BeautifulSoup utilities in utils.py
 """
 
-import pytest
 from resources.lib import utils
-from unittest.mock import Mock, patch
 
 
 class TestParseHtml:

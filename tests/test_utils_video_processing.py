@@ -4,7 +4,7 @@ Tests for video processing utilities in utils.py
 
 import pytest
 from resources.lib import utils
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 
 class TestVideoListsLegacy:

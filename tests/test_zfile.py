@@ -2,9 +2,6 @@
 Tests for zfile.py - Custom zipfile implementation for Kodi
 """
 
-import pytest
-import os
-import tempfile
 from resources.lib import zfile
 
 
