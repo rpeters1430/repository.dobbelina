@@ -111,7 +111,7 @@ def update_addons_index(addons_xml_path: Path, updated: List[Tuple[str, str]]) -
 
     tree = ET.parse(addons_xml_path)
     root = tree.getroot()
-    updated_map = {aid: ver for aid, ver in updated}
+    updated_map = dict(updated)
     changed = False
     for addon in root.findall("addon"):
         aid = addon.get("id")

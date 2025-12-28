@@ -124,7 +124,8 @@ for i in range(4):
         t = i + 1
         while AA[t][i] == 0 and t < 4:
             t += 1
-            assert t != 4, "G matrix must be invertible"
+            if t == 4:
+                raise AssertionError("G matrix must be invertible")
             for j in range(8):
                 AA[i][j], AA[t][j] = AA[t][j], AA[i][j]
             pivot = AA[i][i]
@@ -415,7 +416,8 @@ def test():
     def t(kl, bl):
         b = "b" * bl
         r = rijndael("a" * kl, bl)
-        assert r.decrypt(r.encrypt(b)) == b
+        if r.decrypt(r.encrypt(b)) != b:
+            raise AssertionError
 
     t(16, 16)
     t(16, 24)
