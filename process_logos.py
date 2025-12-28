@@ -13,7 +13,8 @@ import re
 from pathlib import Path
 
 # Configuration
-REPO_ROOT = Path(r"C:\Users\James\Desktop\repository.dobbelina")
+# Default to the repo root based on this script's location; allow override via REPO_ROOT env var.
+REPO_ROOT = Path(os.environ.get("REPO_ROOT", Path(__file__).resolve().parent))
 IMAGES_DIR = REPO_ROOT / "plugin.video.cumination" / "resources" / "images"
 SITES_DIR = REPO_ROOT / "plugin.video.cumination" / "resources" / "lib" / "sites"
 TEMP_DIR = REPO_ROOT / "temp_logos"
@@ -24,7 +25,7 @@ MAX_FILE_SIZE_KB = 50
 OPTIMAL_FILE_SIZE_KB = (5, 30)
 
 # Ensure temp directory exists
-TEMP_DIR.mkdir(exist_ok=True)
+TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def check_imagemagick():
