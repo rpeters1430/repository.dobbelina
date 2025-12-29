@@ -86,10 +86,14 @@ def process_logo(input_path, output_path):
         cmd = [
             "magick",
             str(input_path),
-            "-background", "none",
-            "-gravity", "center",
-            "-resize", "256x256",
-            "-extent", "256x256",
+            "-background",
+            "none",
+            "-gravity",
+            "center",
+            "-resize",
+            "256x256",
+            "-extent",
+            "256x256",
             "-strip",
             str(output_path),
         ]
@@ -102,8 +106,12 @@ def process_logo(input_path, output_path):
         # Try to optimize with pngquant if available
         try:
             pngquant_cmd = [
-                "pngquant", "--quality=80-95", "--ext", ".png",
-                "--force", str(output_path)
+                "pngquant",
+                "--quality=80-95",
+                "--ext",
+                ".png",
+                "--force",
+                str(output_path),
             ]
             subprocess.run(pngquant_cmd, capture_output=True, timeout=10)
         except (FileNotFoundError, subprocess.TimeoutExpired):
@@ -129,27 +137,31 @@ def get_favicon_from_site(base_url):
         req = urllib.request.Request(base_url, headers=headers)
 
         with urllib.request.urlopen(req, timeout=10) as response:
-            html = response.read().decode('utf-8', errors='ignore')
-            soup = BeautifulSoup(html, 'html.parser')
+            html = response.read().decode("utf-8", errors="ignore")
+            soup = BeautifulSoup(html, "html.parser")
 
             # Look for various favicon/logo link tags
-            for rel in ['icon', 'shortcut icon', 'apple-touch-icon', 'logo']:
-                links = soup.find_all('link', rel=lambda x: x and rel in x.lower())
+            for rel in ["icon", "shortcut icon", "apple-touch-icon", "logo"]:
+                links = soup.find_all("link", rel=lambda x: x and rel in x.lower())
                 for link in links:
-                    href = link.get('href')
+                    href = link.get("href")
                     if href:
                         # Make absolute URL
-                        if href.startswith('//'):
-                            href = 'https:' + href
-                        elif href.startswith('/'):
+                        if href.startswith("//"):
+                            href = "https:" + href
+                        elif href.startswith("/"):
                             from urllib.parse import urljoin
+
                             href = urljoin(base_url, href)
-                        elif not href.startswith('http'):
+                        elif not href.startswith("http"):
                             from urllib.parse import urljoin
+
                             href = urljoin(base_url, href)
 
                         # Prefer PNG/JPG over ICO, and larger sizes
-                        if any(ext in href.lower() for ext in ['.png', '.jpg', '.jpeg']):
+                        if any(
+                            ext in href.lower() for ext in [".png", ".jpg", ".jpeg"]
+                        ):
                             favicon_urls.insert(0, href)
                         else:
                             favicon_urls.append(href)
@@ -157,13 +169,15 @@ def get_favicon_from_site(base_url):
             # Fallback: try standard /favicon.ico
             if not favicon_urls:
                 from urllib.parse import urljoin
-                favicon_urls.append(urljoin(base_url, '/favicon.ico'))
+
+                favicon_urls.append(urljoin(base_url, "/favicon.ico"))
 
     except Exception as e:
         print(f"    [WARNING] Could not parse {base_url}: {e}")
         # Fallback to standard favicon.ico
         from urllib.parse import urljoin
-        favicon_urls.append(urljoin(base_url, '/favicon.ico'))
+
+        favicon_urls.append(urljoin(base_url, "/favicon.ico"))
 
     return favicon_urls
 
@@ -175,12 +189,12 @@ def extract_all_sites():
     # Pattern to match AdultSite declarations
     # AdultSite('site_id', 'display', 'base_url', 'logo_file', ...)
     pattern = re.compile(
-        r'(site\d*)\s*=\s*AdultSite\s*\(\s*'
+        r"(site\d*)\s*=\s*AdultSite\s*\(\s*"
         r'["\']([^"\']+)["\']\s*,\s*'  # site_id (group 2)
-        r'["\'][^"\']*["\']\s*,\s*'     # display_name
-        r'["\']([^"\']+)["\']\s*,\s*'   # base_url (group 3)
-        r'["\']([^"\']+)["\']',          # logo_file (group 4)
-        re.MULTILINE
+        r'["\'][^"\']*["\']\s*,\s*'  # display_name
+        r'["\']([^"\']+)["\']\s*,\s*'  # base_url (group 3)
+        r'["\']([^"\']+)["\']',  # logo_file (group 4)
+        re.MULTILINE,
     )
 
     for site_file in sorted(SITES_DIR.glob("*.py")):
@@ -188,7 +202,7 @@ def extract_all_sites():
             continue
 
         try:
-            content = site_file.read_text(encoding='utf-8')
+            content = site_file.read_text(encoding="utf-8")
 
             for match in pattern.finditer(content):
                 var_name = match.group(1)
@@ -196,7 +210,9 @@ def extract_all_sites():
                 base_url = match.group(3)
                 logo_file = match.group(4)
 
-                is_remote = logo_file.startswith('http://') or logo_file.startswith('https://')
+                is_remote = logo_file.startswith("http://") or logo_file.startswith(
+                    "https://"
+                )
                 expected_filename = f"{site_id}.png"
 
                 # Check if local file exists
@@ -210,23 +226,25 @@ def extract_all_sites():
                 if not is_remote:
                     current_file_exists = (IMAGES_DIR / logo_file).exists()
                     # Check if same file exists with .png extension
-                    png_version = Path(logo_file).with_suffix('.png')
+                    png_version = Path(logo_file).with_suffix(".png")
                     if (IMAGES_DIR / png_version).exists() and not current_file_exists:
                         needs_extension_fix = True
 
-                sites.append({
-                    'site_id': site_id,
-                    'var_name': var_name,
-                    'base_url': base_url,
-                    'logo_file': logo_file,
-                    'is_remote': is_remote,
-                    'expected_filename': expected_filename,
-                    'local_exists': local_exists,
-                    'current_file_exists': current_file_exists,
-                    'needs_extension_fix': needs_extension_fix,
-                    'module': site_file.name,
-                    'module_path': site_file,
-                })
+                sites.append(
+                    {
+                        "site_id": site_id,
+                        "var_name": var_name,
+                        "base_url": base_url,
+                        "logo_file": logo_file,
+                        "is_remote": is_remote,
+                        "expected_filename": expected_filename,
+                        "local_exists": local_exists,
+                        "current_file_exists": current_file_exists,
+                        "needs_extension_fix": needs_extension_fix,
+                        "module": site_file.name,
+                        "module_path": site_file,
+                    }
+                )
 
         except Exception as e:
             print(f"[WARNING] Error reading {site_file.name}: {e}")
@@ -236,16 +254,16 @@ def extract_all_sites():
 
 def download_and_process_logo(site_info):
     """Download logo from site and process it"""
-    site_id = site_info['site_id']
-    base_url = site_info['base_url']
-    expected_filename = site_info['expected_filename']
+    site_id = site_info["site_id"]
+    base_url = site_info["base_url"]
+    expected_filename = site_info["expected_filename"]
 
     print(f"  Attempting to download logo for {site_id}...")
 
     # If there's already a remote URL, try that first
     urls_to_try = []
-    if site_info['is_remote']:
-        urls_to_try.append(site_info['logo_file'])
+    if site_info["is_remote"]:
+        urls_to_try.append(site_info["logo_file"])
 
     # Then try to find favicon from the site
     favicon_urls = get_favicon_from_site(base_url)
@@ -257,8 +275,8 @@ def download_and_process_logo(site_info):
 
         # Determine temp file extension
         ext = Path(url).suffix
-        if not ext or ext not in ['.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg']:
-            ext = '.png'
+        if not ext or ext not in [".png", ".jpg", ".jpeg", ".gif", ".ico", ".svg"]:
+            ext = ".png"
 
         temp_file = TEMP_DIR / f"{site_id}_temp{ext}"
         final_file = IMAGES_DIR / expected_filename
@@ -279,15 +297,15 @@ def download_and_process_logo(site_info):
 
 def update_site_code(site_info):
     """Update site module to use local PNG file instead of remote URL"""
-    if not site_info['is_remote']:
+    if not site_info["is_remote"]:
         return True  # Already using local file
 
-    module_path = site_info['module_path']
-    old_logo = site_info['logo_file']
-    new_logo = site_info['expected_filename']
+    module_path = site_info["module_path"]
+    old_logo = site_info["logo_file"]
+    new_logo = site_info["expected_filename"]
 
     try:
-        content = module_path.read_text(encoding='utf-8')
+        content = module_path.read_text(encoding="utf-8")
 
         # Replace the remote URL with local filename
         # Be careful to only replace within the AdultSite declaration
@@ -295,7 +313,7 @@ def update_site_code(site_info):
         updated_content = updated_content.replace(f"'{old_logo}'", f"'{new_logo}'")
 
         if updated_content != content:
-            module_path.write_text(updated_content, encoding='utf-8')
+            module_path.write_text(updated_content, encoding="utf-8")
             print(f"    [SUCCESS] Updated {module_path.name} to use {new_logo}")
             return True
         else:
@@ -311,8 +329,14 @@ def main():
     """Main execution"""
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="Fix and download missing site logos")
-    parser.add_argument('--yes', '-y', action='store_true', help='Skip confirmation prompt')
-    parser.add_argument('--dry-run', action='store_true', help='Show what would be done without making changes')
+    parser.add_argument(
+        "--yes", "-y", action="store_true", help="Skip confirmation prompt"
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would be done without making changes",
+    )
     args = parser.parse_args()
 
     print("=" * 80)
@@ -338,23 +362,25 @@ def main():
     print(f"Found {len(sites)} sites total\n")
 
     # Categorize sites
-    needs_download = []      # Local file doesn't exist
-    needs_update = []        # Using remote URL but local file exists
-    needs_extension_fix = [] # File exists but wrong extension (e.g., vvp.jpg vs vvp.png)
-    ok_sites = []            # Local file exists and code uses it
+    needs_download = []  # Local file doesn't exist
+    needs_update = []  # Using remote URL but local file exists
+    needs_extension_fix = []  # File exists but wrong extension (e.g., vvp.jpg vs vvp.png)
+    ok_sites = []  # Local file exists and code uses it
 
     for site in sites:
         # Check for extension mismatch (file exists with .png but code references .jpg)
-        if site['needs_extension_fix']:
+        if site["needs_extension_fix"]:
             needs_extension_fix.append(site)
         # Check if file doesn't exist at all (neither standard name nor referenced name)
-        elif not site['local_exists'] and not site['current_file_exists']:
+        elif not site["local_exists"] and not site["current_file_exists"]:
             needs_download.append(site)
         # Check if using remote URL but local file exists
-        elif site['is_remote'] and (site['local_exists'] or site['current_file_exists']):
+        elif site["is_remote"] and (
+            site["local_exists"] or site["current_file_exists"]
+        ):
             needs_update.append(site)
         # File exists and code references it correctly
-        elif site['current_file_exists'] or site['local_exists']:
+        elif site["current_file_exists"] or site["local_exists"]:
             ok_sites.append(site)
         else:
             # Shouldn't reach here, but add to needs_download as fallback
@@ -373,8 +399,10 @@ def main():
     if needs_extension_fix:
         print(f"\nSites needing extension fix:")
         for site in needs_extension_fix:
-            png_version = Path(site['logo_file']).with_suffix('.png')
-            print(f"  - {site['site_id']:20s} expects {site['logo_file']:15s} but have {png_version} ({site['module']})")
+            png_version = Path(site["logo_file"]).with_suffix(".png")
+            print(
+                f"  - {site['site_id']:20s} expects {site['logo_file']:15s} but have {png_version} ({site['module']})"
+            )
 
     if needs_update:
         print(f"\nSites needing code update (have local file):")
@@ -395,13 +423,17 @@ def main():
     print("\n" + "=" * 80)
 
     if args.dry_run:
-        print(f"DRY RUN: Would process {total_fixes} fixes ({len(needs_extension_fix)} extensions + {len(needs_update)} code updates + {len(needs_download)} downloads)")
+        print(
+            f"DRY RUN: Would process {total_fixes} fixes ({len(needs_extension_fix)} extensions + {len(needs_update)} code updates + {len(needs_download)} downloads)"
+        )
         print("\nRe-run without --dry-run to apply changes")
         return
 
     if not args.yes:
-        response = input(f"Process {total_fixes} fixes ({len(needs_extension_fix)} extensions + {len(needs_update)} code updates + {len(needs_download)} downloads)? (y/n): ")
-        if response.lower() != 'y':
+        response = input(
+            f"Process {total_fixes} fixes ({len(needs_extension_fix)} extensions + {len(needs_update)} code updates + {len(needs_download)} downloads)? (y/n): "
+        )
+        if response.lower() != "y":
             print("Cancelled.")
             return
 
@@ -415,18 +447,24 @@ def main():
         print(f"\n[1/3] Fixing file extensions ({len(needs_extension_fix)} sites)...")
         for i, site in enumerate(needs_extension_fix, 1):
             print(f"\n[{i}/{len(needs_extension_fix)}] {site['site_id']}")
-            png_version = Path(site['logo_file']).with_suffix('.png')
-            print(f"  Updating {site['logo_file']} -> {png_version} in {site['module']}")
+            png_version = Path(site["logo_file"]).with_suffix(".png")
+            print(
+                f"  Updating {site['logo_file']} -> {png_version} in {site['module']}"
+            )
 
             # Update the site code to use .png extension
-            module_path = site['module_path']
+            module_path = site["module_path"]
             try:
-                content = module_path.read_text(encoding='utf-8')
-                updated_content = content.replace(f'"{site["logo_file"]}"', f'"{png_version}"')
-                updated_content = updated_content.replace(f"'{site['logo_file']}'", f"'{png_version}'")
+                content = module_path.read_text(encoding="utf-8")
+                updated_content = content.replace(
+                    f'"{site["logo_file"]}"', f'"{png_version}"'
+                )
+                updated_content = updated_content.replace(
+                    f"'{site['logo_file']}'", f"'{png_version}'"
+                )
 
                 if updated_content != content:
-                    module_path.write_text(updated_content, encoding='utf-8')
+                    module_path.write_text(updated_content, encoding="utf-8")
                     print(f"  [SUCCESS] Updated {module_path.name}")
                     extension_fixes += 1
             except Exception as e:
@@ -435,7 +473,9 @@ def main():
     # Step 2: Update code for sites that have local files
     updated_count = 0
     if needs_update:
-        print(f"\n[2/3] Updating code to use local files ({len(needs_update)} sites)...")
+        print(
+            f"\n[2/3] Updating code to use local files ({len(needs_update)} sites)..."
+        )
         for i, site in enumerate(needs_update, 1):
             print(f"\n[{i}/{len(needs_update)}] {site['site_id']}")
             if update_site_code(site):
@@ -452,7 +492,7 @@ def main():
             if download_and_process_logo(site):
                 downloaded_count += 1
                 # If this was using a remote URL, update the code
-                if site['is_remote']:
+                if site["is_remote"]:
                     update_site_code(site)
             else:
                 failed_downloads.append(site)
