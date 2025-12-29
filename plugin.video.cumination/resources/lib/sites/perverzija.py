@@ -25,7 +25,7 @@ site = AdultSite(
     "perverzija",
     "[COLOR hotpink]Perverzija[/COLOR]",
     "https://tube.perverzija.com/",
-    "https://tube.perverzija.com/wp-content/uploads/2018/12/favico2.ico",
+    "perverzija.png",
     "perverzija",
 )
 

@@ -92,7 +92,13 @@
       "WebSearch",
       "Bash(for domain in \"livecamrips.com\" \"livecamrips.to\" \"livecamrips.tv\")",
       "WebFetch(domain:livecamrips.to)",
-      "WebFetch(domain:www.livecamsrip.com)"
+      "WebFetch(domain:www.livecamsrip.com)",
+      "Bash(wc:*)",
+      "Bash(for site in plugin.video.cumination/resources/lib/sites/*.py)",
+      "Bash(chmod:*)",
+      "WebFetch(domain:vjav.com)",
+      "WebFetch(domain:voyeur-house.tv)",
+      "Bash(git status:*)"
     ],
     "deny": [],
     "ask": []

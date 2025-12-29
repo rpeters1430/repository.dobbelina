@@ -26,7 +26,7 @@ site = AdultSite(
     "viralvideosporno",
     "[COLOR hotpink]Viral Videos Porno[/COLOR]",
     "https://www.viralvideosporno.com/",
-    "vvp.jpg",
+    "vvp.png",
     "viralvideosporno",
 )
 

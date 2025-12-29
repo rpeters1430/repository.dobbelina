@@ -43,7 +43,7 @@ site2 = AdultSite(
     "koreanpm",
     "[COLOR hotpink]Korean PornMovie[/COLOR]",
     "https://koreanpornmovie.com/",
-    "https://koreanpornmovie.com/wp-content/uploads/2025/01/sadasdasdasdas.png",
+    "koreanpm.png",
     "koreanpm",
 )
 

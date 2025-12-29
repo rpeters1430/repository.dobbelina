@@ -25,7 +25,7 @@ site = AdultSite(
     "vaginanl",
     "[COLOR hotpink]Vagina.nl[/COLOR] [COLOR orange](Dutch)[/COLOR]",
     "https://vagina.nl/",
-    "https://c749a9571b.mjedge.net/img/logo-default.png",
+    "vaginanl.png",
     "vaginanl",
 )
 

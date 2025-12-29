@@ -72,7 +72,7 @@ site7 = AdultSite(
     "perfectgirls",
     "[COLOR hotpink]Perfect Girls[/COLOR]",
     "https://www.perfectgirls.xxx/",
-    "https://static.perfectgirls.xxx/static/images/logo.png",
+    "perfectgirls.png",
     "perfectgirls",
 )
 

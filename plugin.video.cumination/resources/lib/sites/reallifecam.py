@@ -29,26 +29,26 @@ site = AdultSite(
     "rlc.png",
     "rlc",
 )
-# site1 = AdultSite('vh', '[COLOR hotpink]Voyeur-house.to[/COLOR]', 'https://voyeur-house.to/', 'https://voyeur-house.to/images/logo/logo.png', 'vh')
+# site1 = AdultSite('vh', '[COLOR hotpink]Voyeur-house.to[/COLOR]', 'https://voyeur-house.to/', 'vh.png', 'vh')
 site2 = AdultSite(
     "vhlife",
     "[COLOR hotpink]Voyeur-house.cc[/COLOR]",
     "https://www.voyeur-house.cc/",
-    "https://www.voyeur-house.cc/images/logo/logo.png",
+    "vhlife.png",
     "vhlife",
 )
 site3 = AdultSite(
     "vhlife1",
     "[COLOR hotpink]Reallifecams.in[/COLOR]",
     "https://www.reallifecams.in/",
-    "https://www.reallifecams.in/images/logo/logo.png",
+    "vhlife1.png",
     "vhlife1",
 )
 site4 = AdultSite(
     "camcaps",
     "[COLOR hotpink]Camcaps.to (SimpVids)[/COLOR]",
     "https://simpvids.com/",
-    "https://simpvids.com/images/logo/logo.png",
+    "camcaps.png",
     "camcapsto",
 )
 
