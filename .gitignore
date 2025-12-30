@@ -12,6 +12,7 @@ AGENTS.md
 .pytest_cache/
 .claude/
 .venv/
+.venv-win/
 
 .gemini/
 gha-creds-*.json

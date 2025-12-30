@@ -98,7 +98,11 @@
       "Bash(chmod:*)",
       "WebFetch(domain:vjav.com)",
       "WebFetch(domain:voyeur-house.tv)",
-      "Bash(git status:*)"
+      "Bash(git status:*)",
+      "Bash(pngquant:*)",
+      "Bash(if [ -d .venv-win ])",
+      "Bash(then echo \".venv-win exists\")",
+      "Bash(else echo \".venv-win does not exist\")"
     ],
     "deny": [],
     "ask": []

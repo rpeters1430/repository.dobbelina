@@ -11,9 +11,11 @@ This is a Kodi addon repository for adult content addons. The primary addon is *
 **Development Setup**:
 ```bash
 # Set up Python virtual environment
-python3 -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-# .venv\Scripts\activate    # Windows
+python3 -m venv .venv         # Linux/Mac
+python -m venv .venv          # Windows (or use .venv-win)
+
+source .venv/bin/activate     # Linux/Mac
+.venv\Scripts\activate        # Windows
 
 # Install development dependencies
 pip install -r requirements-test.txt
@@ -27,25 +29,27 @@ python build_repo_addons.py --addons plugin.video.cumination
 # Build and update repository index
 python build_repo_addons.py --update-index
 
-# Run tests
-pytest
+# Run tests (cross-platform script - detects Windows/Linux automatically)
+python run_tests.py
+python run_tests.py --coverage              # Run with coverage report
+python run_tests.py --site pornhub -v       # Run specific site test with verbose output
+python run_tests.py tests/test_utils.py     # Run specific test file
 
-# Run tests with coverage
+# Run tests directly with pytest
+pytest
 pytest --cov=plugin.video.cumination/resources/lib --cov-report=term-missing
+pytest tests/sites/test_[sitename].py -v
 
 # Lint code
 ruff check plugin.video.cumination/resources/lib/
 
 # Auto-fix linting issues
 ruff check --fix plugin.video.cumination/resources/lib/
-
-# Run specific site test
-pytest tests/sites/test_[sitename].py -v
 ```
 
 ## Repository Structure
 
-- **plugin.video.cumination/** - Main Cumination addon (current version: 1.1.196)
+- **plugin.video.cumination/** - Main Cumination addon (current version: 1.1.209)
   - `default.py` - Entry point, initializes URL dispatcher and loads sites
   - `resources/lib/adultsite.py` - Base class for all site implementations
   - `resources/lib/url_dispatcher.py` - Routing system using decorators
@@ -188,7 +192,7 @@ def Playvid(url, name):
 
 ## BeautifulSoup Migration (Active Project)
 
-**Current Status**: 65/137 sites migrated (47.4% complete)
+**Current Status**: 74/137 sites migrated (54.0% complete)
 
 The codebase is undergoing a systematic migration from regex-based HTML parsing to BeautifulSoup4. This is tracked in **MODERNIZATION.md** along with all other modernization efforts including HTTP gateway unification, test coverage expansion, repository structure improvements, and UX enhancements.
 
@@ -207,7 +211,7 @@ The codebase is undergoing a systematic migration from regex-based HTML parsing 
 3. **Phase 3: Medium Priority Sites** (20/20 completed - 100%) ✅ - All medium-priority sites migrated
 4. **Phase 4: JAV Sites** (20/20 completed - 100%) ✅ - All JAV sites migrated
 5. **Phase 5: Hentai/Anime Sites** (10/10 completed - 100%) ✅ - ALL SITES COMPLETED: hentaidude, hentaihavenco, hentai-moon, hentaistream, heroero, animeidhentai, rule34video, taboofantazy, hanime, erogarga
-6. **Phase 6: International Sites** (6/15 completed - 40%) - mrsexe, porno1hu, porno365, nltubes, vaginanl, perverzija completed
+6. **Phase 6: International Sites** (15/15 completed - 100%) ✅ - All international sites completed
 7. **Phase 7: Niche & Specialty Sites** (5/30 completed - 17%) - reallifecam, camwhoresbay, cambro, erome, thothub completed
 8. **Phase 8: Remaining Sites** (1/44 completed - 2%)
 
@@ -463,16 +467,19 @@ The project has a pytest-based test suite for parsing and utility functions:
 # Install test dependencies (in virtual environment)
 pip install -r requirements-test.txt
 
-# Run all tests
-pytest
+# Run all tests (using cross-platform script - recommended)
+python run_tests.py
 
 # Run with coverage report
+python run_tests.py --coverage
+
+# Run specific site test
+python run_tests.py --site pornhub -v
+
+# Run tests directly with pytest
+pytest
 pytest --cov=plugin.video.cumination/resources/lib --cov-report=term-missing
-
-# Run specific test file
 pytest tests/sites/test_pornkai.py
-
-# Run tests for a specific function
 pytest tests/test_utils.py::test_parse_html -v
 
 # Run linting
@@ -481,6 +488,8 @@ ruff check plugin.video.cumination/resources/lib/
 # Auto-fix linting issues
 ruff check --fix plugin.video.cumination/resources/lib/
 ```
+
+**Cross-Platform Test Runner**: The `run_tests.py` script automatically detects your platform (Windows/Linux/Mac) and runs tests with the correct Python interpreter from your virtual environment.
 
 **Test Structure**:
 - `tests/conftest.py` - Pytest fixtures and Kodi mocks (xbmc, xbmcaddon, xbmcvfs, xbmcplugin)
