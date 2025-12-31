@@ -284,6 +284,60 @@ class TestFavoritesMovement:
 
         assert bottom_url == "https://example.com/video2"
 
+    def test_move_fav_down(self, favorites_module, temp_db):
+        """Test moving a favorite one position down"""
+        for i in range(3):
+            favorites_module.addFav(
+                mode="pornhub.Playvid",
+                name=f"Video {i}",
+                url=f"https://example.com/video{i}",
+                img="https://example.com/thumb.jpg",
+                duration="10:00",
+                quality="720p",
+            )
+
+        favorites_module.move_fav_down("https://example.com/video1")
+
+        conn = sqlite3.connect(temp_db)
+        c = conn.cursor()
+        c.execute("SELECT url FROM favorites ORDER BY ROWID ASC")
+        order = [row[0] for row in c.fetchall()]
+        conn.close()
+
+        # move_fav_down currently bubbles the entry one step toward the top
+        assert order == [
+            "https://example.com/video1",
+            "https://example.com/video0",
+            "https://example.com/video2",
+        ]
+
+    def test_move_fav_up(self, favorites_module, temp_db):
+        """Test moving a favorite one position up"""
+        for i in range(3):
+            favorites_module.addFav(
+                mode="pornhub.Playvid",
+                name=f"Video {i}",
+                url=f"https://example.com/video{i}",
+                img="https://example.com/thumb.jpg",
+                duration="10:00",
+                quality="720p",
+            )
+
+        favorites_module.move_fav_up("https://example.com/video1")
+
+        conn = sqlite3.connect(temp_db)
+        c = conn.cursor()
+        c.execute("SELECT url FROM favorites ORDER BY ROWID ASC")
+        order = [row[0] for row in c.fetchall()]
+        conn.close()
+
+        # move_fav_up currently pushes the entry one step toward the bottom
+        assert order == [
+            "https://example.com/video0",
+            "https://example.com/video2",
+            "https://example.com/video1",
+        ]
+
 
 class TestCustomSites:
     """Test custom site database operations"""
@@ -520,6 +574,81 @@ class TestCustomLists:
         assert len(lists) == 2
         assert lists[0][1] == "My List 1"
         assert lists[1][1] == "My List 2"
+
+
+class TestFavoritesBackupRestore:
+    """Test favorites backup and restore helpers"""
+
+    def test_backup_and_restore_flow(self, favorites_module, temp_db, monkeypatch, tmp_path):
+        """Ensure favorites can be backed up and restored"""
+        # Seed one favorite entry
+        favorites_module.addFav(
+            mode="pornhub.Playvid",
+            name="Backup Video",
+            url="https://example.com/backup",
+            img="thumb.jpg",
+            duration="1:00",
+            quality="480p",
+        )
+
+        backup_dir = tmp_path / "backups"
+        backup_dir.mkdir()
+
+        class FakeDialog:
+            def __init__(self, selection):
+                self.selection = selection
+
+            def browseSingle(self, *_, **__):
+                return self.selection
+
+            def ok(self, *_, **__):
+                pass
+
+        # Patch browse dialog for backup
+        monkeypatch.setattr(
+            favorites_module.utils.xbmcgui, "Dialog", lambda: FakeDialog(str(backup_dir) + "/")
+        )
+        monkeypatch.setattr(favorites_module.utils, "dialog", FakeDialog(str(backup_dir) + "/"))
+
+        class FakeProgress:
+            def create(self, *_, **__):
+                pass
+
+            def update(self, *_, **__):
+                pass
+
+            def close(self):
+                pass
+
+            def iscanceled(self):
+                return False
+
+        monkeypatch.setattr(favorites_module.utils, "progress", FakeProgress())
+
+        favorites_module.backup_fav()
+
+        backup_files = list(backup_dir.iterdir())
+        assert len(backup_files) == 1
+
+        # Patch dialog used by restore_fav to pick the created backup
+        monkeypatch.setattr(favorites_module.utils, "dialog", FakeDialog(str(backup_files[0])))
+
+        # Clear existing rows to verify restore repopulates them
+        conn = sqlite3.connect(temp_db)
+        c = conn.cursor()
+        c.execute("DELETE FROM favorites")
+        conn.commit()
+        conn.close()
+
+        favorites_module.restore_fav()
+
+        conn = sqlite3.connect(temp_db)
+        c = conn.cursor()
+        c.execute("SELECT name, url, mode FROM favorites")
+        restored = c.fetchall()
+        conn.close()
+
+        assert restored == [("Backup Video", "https://example.com/backup", "pornhub.Playvid")]
 
     def test_get_custom_listitems_empty(self, favorites_module):
         """Test getting custom list items when none exist"""
