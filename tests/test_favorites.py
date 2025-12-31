@@ -579,7 +579,9 @@ class TestCustomLists:
 class TestFavoritesBackupRestore:
     """Test favorites backup and restore helpers"""
 
-    def test_backup_and_restore_flow(self, favorites_module, temp_db, monkeypatch, tmp_path):
+    def test_backup_and_restore_flow(
+        self, favorites_module, temp_db, monkeypatch, tmp_path
+    ):
         """Ensure favorites can be backed up and restored"""
         # Seed one favorite entry
         favorites_module.addFav(
@@ -606,9 +608,13 @@ class TestFavoritesBackupRestore:
 
         # Patch browse dialog for backup
         monkeypatch.setattr(
-            favorites_module.utils.xbmcgui, "Dialog", lambda: FakeDialog(str(backup_dir) + "/")
+            favorites_module.utils.xbmcgui,
+            "Dialog",
+            lambda: FakeDialog(str(backup_dir) + "/"),
         )
-        monkeypatch.setattr(favorites_module.utils, "dialog", FakeDialog(str(backup_dir) + "/"))
+        monkeypatch.setattr(
+            favorites_module.utils, "dialog", FakeDialog(str(backup_dir) + "/")
+        )
 
         class FakeProgress:
             def create(self, *_, **__):
@@ -631,7 +637,9 @@ class TestFavoritesBackupRestore:
         assert len(backup_files) == 1
 
         # Patch dialog used by restore_fav to pick the created backup
-        monkeypatch.setattr(favorites_module.utils, "dialog", FakeDialog(str(backup_files[0])))
+        monkeypatch.setattr(
+            favorites_module.utils, "dialog", FakeDialog(str(backup_files[0]))
+        )
 
         # Clear existing rows to verify restore repopulates them
         conn = sqlite3.connect(temp_db)
@@ -648,7 +656,9 @@ class TestFavoritesBackupRestore:
         restored = c.fetchall()
         conn.close()
 
-        assert restored == [("Backup Video", "https://example.com/backup", "pornhub.Playvid")]
+        assert restored == [
+            ("Backup Video", "https://example.com/backup", "pornhub.Playvid")
+        ]
 
     def test_get_custom_listitems_empty(self, favorites_module):
         """Test getting custom list items when none exist"""

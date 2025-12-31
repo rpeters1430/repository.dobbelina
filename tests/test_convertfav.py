@@ -6,9 +6,30 @@ from resources.lib import convertfav
 def test_convertfav_transforms_supported_modes():
     backup = {
         "data": [
-            {"mode": 518, "name": "Streamate", "url": "u1", "img": "", "duration": "", "quality": ""},
-            {"mode": 342, "name": "Txxx", "url": "a/b/c/d/e", "img": "", "duration": "", "quality": ""},
-            {"mode": 282, "name": "Cam4Name", "url": "ignored", "img": "", "duration": "", "quality": ""},
+            {
+                "mode": 518,
+                "name": "Streamate",
+                "url": "u1",
+                "img": "",
+                "duration": "",
+                "quality": "",
+            },
+            {
+                "mode": 342,
+                "name": "Txxx",
+                "url": "a/b/c/d/e",
+                "img": "",
+                "duration": "",
+                "quality": "",
+            },
+            {
+                "mode": 282,
+                "name": "Cam4Name",
+                "url": "ignored",
+                "img": "",
+                "duration": "",
+                "quality": "",
+            },
         ]
     }
 
@@ -43,7 +64,18 @@ def test_convertfav_transforms_supported_modes():
 
 
 def test_convertfav_skips_unknown_modes():
-    backup = {"data": [{"mode": 9999, "name": "Unknown", "url": "url", "img": "", "duration": "", "quality": ""}]}
+    backup = {
+        "data": [
+            {
+                "mode": 9999,
+                "name": "Unknown",
+                "url": "url",
+                "img": "",
+                "duration": "",
+                "quality": "",
+            }
+        ]
+    }
 
     converted = convertfav.convertfav(backup)
 
