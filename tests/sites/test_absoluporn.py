@@ -1,49 +1,71 @@
-"""Tests for absoluporn site module"""
+"""Tests for AbsoluPorn BeautifulSoup migration."""
 
-from resources.lib.sites import absoluporn
-from unittest.mock import patch
+from pathlib import Path
+import importlib
 
-
-def test_list_parses_video_items():
-    """Test that List function parses video items"""
-    html = """
-    <div class="video-item">
-        <a href="/video/test-video-1/" title="Test Video 1">
-            <img src="https://cdn.absoluporn.com/thumb1.jpg" />
-            <span class="duration">08:30</span>
-        </a>
-    </div>
-    <div class="video-item">
-        <a href="/video/test-video-2/" title="Test Video 2">
-            <img data-src="https://cdn.absoluporn.com/thumb2.jpg" />
-            <span class="duration">12:15</span>
-        </a>
-    </div>
-    """
-
-    with (
-        patch("resources.lib.utils.getHtml") as mock_gethtml,
-        patch("resources.lib.utils.eod") as mock_eod,
-    ):
-        mock_gethtml.return_value = html
-
-        absoluporn.List("https://absoluporn.com/")
-
-        assert mock_gethtml.called
-        assert mock_eod.called
+absoluporn = importlib.import_module("resources.lib.sites.absoluporn")
 
 
-def test_search_without_keyword_shows_dialog():
-    """Test that Search without keyword shows search dialog"""
-    with patch.object(absoluporn.site, "search_dir") as mock_search:
-        absoluporn.Search("https://absoluporn.com/search/")
-
-        assert mock_search.called
+FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "absoluporn"
 
 
-def test_search_with_keyword_calls_list():
-    """Test that Search with keyword calls List function"""
-    with patch("resources.lib.sites.absoluporn.List") as mock_list:
-        absoluporn.Search("https://absoluporn.com/search/", keyword="test")
+def load_fixture(name: str) -> str:
+    return (FIXTURE_DIR / name).read_text(encoding="utf-8")
 
-        assert mock_list.called
+
+def test_list_parses_videos_and_next_page(monkeypatch):
+    html = load_fixture("listing.html")
+    downloads = []
+    dirs = []
+
+    monkeypatch.setattr(absoluporn.utils, "getHtml", lambda url, ref="": html)
+    monkeypatch.setattr(
+        absoluporn.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "duration": kwargs.get("duration"),
+                "quality": kwargs.get("quality"),
+            }
+        ),
+    )
+    monkeypatch.setattr(
+        absoluporn.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url}
+        ),
+    )
+    monkeypatch.setattr(absoluporn.utils, "eod", lambda: None)
+
+    absoluporn.List("http://www.absoluporn.com/en/wall-date-1.html")
+
+    assert len(downloads) == 2
+    assert downloads[0]["name"] == "Alpha Clip"
+    assert downloads[0]["duration"] == "05:55"
+    assert downloads[0]["quality"] == "FULLHD"
+    assert downloads[1]["quality"] == "HD"
+    assert any(d["name"] == "Next Page" for d in dirs)
+
+
+def test_cat_parses_categories(monkeypatch):
+    html = load_fixture("categories.html")
+    dirs = []
+
+    monkeypatch.setattr(absoluporn.utils, "getHtml", lambda url, ref="": html)
+    monkeypatch.setattr(
+        absoluporn.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url}
+        ),
+    )
+    monkeypatch.setattr(absoluporn.utils, "eod", lambda: None)
+
+    absoluporn.Cat("http://www.absoluporn.com/en")
+
+    assert len(dirs) == 2
+    assert "Category One" in dirs[0]["name"]
+    assert dirs[0]["url"].endswith("/cat-1.html")

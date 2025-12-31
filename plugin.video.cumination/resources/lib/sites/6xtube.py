@@ -55,38 +55,99 @@ def List(url):
         utils.eod()
         return
 
-    delimiter = '<div class="well well-sm"'
-    re_videopage = 'class="video-link" href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = 'src="https:([^"]+)"'
-    re_duration = '<div class="duration">([^<]+)<'
-    re_quality = ">HD<"
-    skip = "=modelfeed"
-    utils.videos_list(
-        site,
-        "6xtube.Playvid",
-        html,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        re_duration=re_duration,
-        re_quality=re_quality,
-        contextm="6xtube.Related",
-        skip=skip,
-    )
+    soup = utils.parse_html(html)
+    if not soup:
+        utils.eod()
+        return
 
-    re_npurl = r"href='([^']+)'\s*class=\"prevnext\">Next"
-    re_npnr = r"href='page(\d+)\.html'\s*class=\"prevnext\">Next"
-    utils.next_page(
-        site,
-        "6xtube.List",
-        html,
-        re_npurl,
-        re_npnr,
-        baseurl=url.split("page")[0],
-        contextm="6xtube.GotoPage",
-    )
+    for item in soup.select("div.well.well-sm"):
+        link = item.select_one("a.video-link[href]")
+        if not link:
+            continue
+
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage or "=modelfeed" in videopage:
+            continue
+        videopage = urllib_parse.urljoin(site.url, videopage)
+
+        name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+        if not name:
+            continue
+
+        img_tag = item.select_one("img[src]")
+        img = utils.safe_get_attr(img_tag, "src", default="")
+        if img:
+            if img.startswith("//"):
+                img = "https:" + img
+            elif img.startswith("/"):
+                img = urllib_parse.urljoin(site.url, img)
+
+        duration_elem = item.select_one(".duration")
+        duration = utils.safe_get_text(duration_elem, default="")
+
+        quality = ""
+        quality_elem = item.select_one(".hd, .quality, .label-hd")
+        if quality_elem:
+            if "HD" in utils.safe_get_text(quality_elem, default="").upper():
+                quality = "HD"
+        elif "HD" in utils.safe_get_text(item, default="").upper():
+            quality = "HD"
+
+        site.add_download_link(
+            name,
+            videopage,
+            "6xtube.Playvid",
+            img,
+            name,
+            duration=duration,
+            quality=quality,
+            contextm="6xtube.Related",
+        )
+
+    next_link = None
+    for link in soup.select("a.prevnext[href]"):
+        if "Next" in utils.safe_get_text(link, default=""):
+            next_link = link
+            break
+
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, "href", default="")
+        if next_url:
+            next_url = utils.fix_url(next_url, site.url, baseurl=url.split("page")[0])
+            npnr = 0
+            np_match = re.search(r"page(\d+)\.html", next_url)
+            if np_match:
+                npnr = int(np_match.group(1))
+
+            lpnr = 0
+            for page_link in soup.select("a[href]"):
+                href = utils.safe_get_attr(page_link, "href", default="")
+                page_match = re.search(r"page(\d+)\.html", href)
+                if page_match:
+                    lpnr = max(lpnr, int(page_match.group(1)))
+
+            label = "Next Page"
+            if npnr:
+                label = "Next Page ({})".format(npnr)
+                if lpnr:
+                    label = "Next Page ({}/{})".format(npnr, lpnr)
+
+            cm = None
+            if npnr:
+                cm_page = (
+                    utils.addon_sys
+                    + "?mode=6xtube.GotoPage"
+                    + "&list_mode=6xtube.List"
+                    + "&url="
+                    + urllib_parse.quote_plus(next_url)
+                    + "&np="
+                    + str(npnr)
+                    + "&lp="
+                    + str(lpnr)
+                )
+                cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
+
+            site.add_dir(label, next_url, "6xtube.List", site.img_next, contextm=cm)
     utils.eod()
 
 
@@ -133,13 +194,32 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'class="col-sm-6.+?href="([^"]+)"\s*title="([^"]+)".+?src="([^"]+)"',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(cathtml)
-    for caturl, name, img in match:
-        name = utils.cleantext(name)
-        site.add_dir(name, caturl, "List", img)
+    soup = utils.parse_html(cathtml)
+    if not soup:
+        utils.eod()
+        return
+
+    for item in soup.select(".col-sm-6"):
+        link = item.select_one("a[href][title]")
+        if not link:
+            continue
+
+        caturl = utils.safe_get_attr(link, "href", default="")
+        if caturl:
+            caturl = urllib_parse.urljoin(site.url, caturl)
+
+        name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+
+        img_tag = link.select_one("img[src]")
+        img = utils.safe_get_attr(img_tag, "src", default="")
+        if img:
+            if img.startswith("//"):
+                img = "https:" + img
+            elif img.startswith("/"):
+                img = urllib_parse.urljoin(site.url, img)
+
+        if caturl and name:
+            site.add_dir(name, caturl, "List", img)
     utils.eod()
 
 
