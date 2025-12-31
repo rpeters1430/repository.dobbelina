@@ -175,11 +175,7 @@ def Cat(url):
             count_elem = li.find("span")
             items = utils.safe_get_text(count_elem, default="")
 
-        label = (
-            name + " [COLOR deeppink]" + items + "[/COLOR]"
-            if items
-            else name
-        )
+        label = name + " [COLOR deeppink]" + items + "[/COLOR]" if items else name
         site.add_dir(label, catpage, "List", "")
     xbmcplugin.addSortMethod(utils.addon_handle, xbmcplugin.SORT_METHOD_TITLE)
     utils.eod()

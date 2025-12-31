@@ -145,7 +145,9 @@ def List(url):
                     + "&lp="
                     + str(lpnr)
                 )
-                cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
+                cm = [
+                    ("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")
+                ]
 
             site.add_dir(label, next_url, "6xtube.List", site.img_next, contextm=cm)
     utils.eod()
