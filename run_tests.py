@@ -37,7 +37,7 @@ def safe_print(text):
         print(text)
     except UnicodeEncodeError:
         # Fallback: remove emojis and special characters
-        print(text.encode('ascii', 'replace').decode('ascii'))
+        print(text.encode("ascii", "replace").decode("ascii"))
 
 
 def find_python_executable():
@@ -79,11 +79,13 @@ def build_pytest_command(args):
 
     # Add coverage if requested
     if args.coverage:
-        cmd.extend([
-            "--cov=plugin.video.cumination/resources/lib",
-            "--cov-report=term-missing",
-            "--cov-report=html"
-        ])
+        cmd.extend(
+            [
+                "--cov=plugin.video.cumination/resources/lib",
+                "--cov-report=term-missing",
+                "--cov-report=html",
+            ]
+        )
 
     # Add specific site test if requested
     if args.site:
@@ -145,35 +147,27 @@ def main():
     parser = argparse.ArgumentParser(
         description="Run Cumination addon tests with pytest",
         epilog="Examples:\n"
-               "  python run_tests.py\n"
-               "  python run_tests.py --coverage\n"
-               "  python run_tests.py --site pornhub --verbose\n"
-               "  python run_tests.py tests/test_utils.py::test_parse_html\n",
-        formatter_class=argparse.RawDescriptionHelpFormatter
+        "  python run_tests.py\n"
+        "  python run_tests.py --coverage\n"
+        "  python run_tests.py --site pornhub --verbose\n"
+        "  python run_tests.py tests/test_utils.py::test_parse_html\n",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
     parser.add_argument(
-        "--coverage",
-        action="store_true",
-        help="Run tests with coverage report"
+        "--coverage", action="store_true", help="Run tests with coverage report"
     )
 
     parser.add_argument(
-        "--site",
-        type=str,
-        help="Run tests for a specific site (e.g., --site pornhub)"
+        "--site", type=str, help="Run tests for a specific site (e.g., --site pornhub)"
     )
 
     parser.add_argument(
-        "-v", "--verbose",
-        action="store_true",
-        help="Run tests with verbose output"
+        "-v", "--verbose", action="store_true", help="Run tests with verbose output"
     )
 
     parser.add_argument(
-        "pytest_args",
-        nargs="*",
-        help="Additional arguments to pass to pytest"
+        "pytest_args", nargs="*", help="Additional arguments to pass to pytest"
     )
 
     args = parser.parse_args()
@@ -181,7 +175,9 @@ def main():
     # Display platform information
     platform_type = get_platform_info()
     system_name = platform.system()
-    python_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    python_version = (
+        f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    )
 
     safe_print("=" * 60)
     safe_print("Cumination Test Runner")
