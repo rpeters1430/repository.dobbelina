@@ -71,7 +71,9 @@ def List(url):
     if not posts:
         return
     for post in posts:
-        tags_text = utils.safe_get_text(post.select_one(".post-author"), default="").lower()
+        tags_text = utils.safe_get_text(
+            post.select_one(".post-author"), default=""
+        ).lower()
         if any(tag in tags_text for tag in ["siterip", "onlyfans-leak"]):
             continue
         link = post.select_one("a[href]")
@@ -107,9 +109,7 @@ def List(url):
     if next_link:
         next_url = utils.safe_get_attr(next_link, "href", default="")
         page_number = next_url.split("/")[-2] if next_url else ""
-        site.add_dir(
-            "Next Page (" + page_number + ")", next_url, "List", site.img_next
-        )
+        site.add_dir("Next Page (" + page_number + ")", next_url, "List", site.img_next)
     utils.eod()
 
 

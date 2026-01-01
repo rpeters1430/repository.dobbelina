@@ -5,7 +5,9 @@ from pathlib import Path
 from resources.lib.sites import paradisehill
 
 
-FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "paradisehill"
+FIXTURE_DIR = (
+    Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "paradisehill"
+)
 
 
 def load_fixture(name: str) -> str:

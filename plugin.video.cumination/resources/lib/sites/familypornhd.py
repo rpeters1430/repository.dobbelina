@@ -173,7 +173,7 @@ def Pornstars(url):
 def Categories(url):
     cathtml = utils.getHtml(url)
     soup = utils.parse_html(cathtml)
-    for link in soup.select('a[href]'):
+    for link in soup.select("a[href]"):
         name = utils.safe_get_text(link, default="").strip()
         if not name:
             continue

@@ -157,7 +157,9 @@ def Models(url):
 
     next_link = soup.select_one(".pagination .active + li a[href]")
     if next_link:
-        nextp = urllib_parse.urljoin(site.url, utils.safe_get_attr(next_link, "href", default=""))
+        nextp = urllib_parse.urljoin(
+            site.url, utils.safe_get_attr(next_link, "href", default="")
+        )
         site.add_dir(
             "[COLOR hotpink]Next Page...[/COLOR] ({0})".format(nextp.split("/")[-2]),
             nextp,

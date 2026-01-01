@@ -66,7 +66,9 @@ def List(url):
 
     next_link = soup.select_one(".next a[href]")
     if next_link:
-        np = urllib_parse.urljoin(url, utils.safe_get_attr(next_link, "href", default=""))
+        np = urllib_parse.urljoin(
+            url, utils.safe_get_attr(next_link, "href", default="")
+        )
         curr_pg = utils.safe_get_text(soup.select_one(".current"), default="")
         last_pg = ""
         for link in soup.select(".pagination a"):

@@ -101,7 +101,9 @@ def Cat(url):
         caturl = utils.safe_get_attr(link, "href", default="")
         img_tag = item.select_one("img")
         img = utils.safe_get_attr(img_tag, "data-src", ["src"])
-        name = utils.cleantext(utils.safe_get_text(item.select_one(".title"), default=""))
+        name = utils.cleantext(
+            utils.safe_get_text(item.select_one(".title"), default="")
+        )
         count = utils.safe_get_text(item.select_one(".datas"), default="").strip()
         if not caturl or not name:
             continue
