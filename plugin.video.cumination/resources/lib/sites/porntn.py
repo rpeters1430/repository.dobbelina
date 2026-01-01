@@ -30,21 +30,18 @@ site = AdultSite(
 @site.register(default_mode=True)
 def Main(url):
     site.add_dir(
-        "[COLOR hotpink]Categories[/COLOR]",
-        site.url
-        + "new/?mode=async&function=get_block&block_id=list_categories_categories_list&sort_by=title",
-        "Categories",
-        site.img_cat,
-    )
-    site.add_dir(
         "[COLOR hotpink]Tags[/COLOR]", site.url + "tags/", "Tags", site.img_cat
     )
     site.add_dir(
-        "[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search
+        "[COLOR hotpink]Search[/COLOR]",
+        site.url
+        + "video/{0}/?mode=async&function=get_block&block_id=list_videos_videos_list_search_result&q={0}&category_ids=&sort_by=&from_videos=1",
+        "Search",
+        site.img_search,
     )
     List(
         site.url
-        + "?mode=async&function=get_block&block_id=list_videos_most_recent_videos&sort_by=post_date&from=1",
+        + "video/?mode=async&function=get_block&block_id=list_videos_videos_list_search_result&q=&category_ids=&sort_by=title&from_videos=1",
         1,
     )
     utils.eod()
@@ -218,13 +215,7 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(searchUrl, "Search")
     else:
-        title = keyword.replace(" ", "-")
-        searchUrl = (
-            searchUrl
-            + title
-            + "?mode=async&function=get_block&block_id=list_videos_videos_list_search_result&category_ids=&sort_by=&from_videos=1"
-        )
-        List(searchUrl, 1)
+        List(searchUrl.format(keyword.replace(" ", "-")), 1)
 
 
 @site.register()
