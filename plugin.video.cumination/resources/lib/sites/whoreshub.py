@@ -567,9 +567,8 @@ def Playvid(url, name, download=None):
 
     utils.kodilog("whoreshub sources found: " + str(sources))
     vp.progress.update(75, "[CR]Video found[CR]")
-
     if sources:
-        # Custom sort function that handles various quality text formats
+        # Custom sort function that handles various quality text formats.
         def quality_sort(quality_text):
             try:
                 match = re.search(r"(\d+)", quality_text)
@@ -581,7 +580,11 @@ def Playvid(url, name, download=None):
 
         videourl = utils.prefquality(sources, sort_by=quality_sort, reverse=True)
         if videourl:
-            videourl = videourl + "|Cookie=" + get_cookies()
+            headers = "Referer=" + url
+            cookie = get_cookies()
+            if cookie:
+                headers += "&Cookie=" + cookie
+            videourl = videourl + "|" + headers
             vp.play_from_direct_link(videourl)
     else:
         utils.kodilog("No video sources found for whoreshub")
