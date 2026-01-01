@@ -47,12 +47,15 @@ def Main():
     )
     site.add_dir(
         "[COLOR hotpink]Pornstars[/COLOR]",
-        site.url + "pornstars/",
+        site.url + "porn-stars/",
         "Pornstars",
         site.img_cat,
     )
     site.add_dir(
-        "[COLOR hotpink]Studios[/COLOR]", site.url + "studios/", "Studios", site.img_cat
+        "[COLOR hotpink]Studios[/COLOR]",
+        site.url + "porn-studios/",
+        "Studios",
+        site.img_cat,
     )
     site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url, "Search", site.img_search)
     List(site.url + "ajax_search.php")
