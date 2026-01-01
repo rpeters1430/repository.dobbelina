@@ -1578,48 +1578,19 @@ def parse_query(query):
 
 
 def cleantext(text):
+    text = text.strip()
+    text = re.sub(r"\\u([0-9A-Fa-f]{4})", lambda x: six.unichr(int(x.group(1), 16)), text)
+    try:
+        text = text.encode('utf-8', 'ignore').decode("utf-8")
+    except:
+        pass
+    text = six.ensure_str(text)
     if PY3:
         import html
 
         text = html.unescape(text)
     else:
-        h = html_parser.HTMLParser()
         text = h.unescape(text.decode("utf8")).encode("utf8")
-
-    replacements = {
-        "&amp;": "&",
-        "&apos;": "'",
-        "&colon;": ":",
-        "&comma;": ",",
-        "&dollar;": "$",
-        "&equals;": "=",
-        "&excl;": "!",
-        "&gt;": ">",
-        "&half;": "1/2",
-        "&lpar;": "(",
-        "&lowbar;": "_",
-        "&lsqb;": "[",
-        "&lt;": "<",
-        "&nbsp;": " ",
-        "\xa0": " ",
-        "&ntilde;": "~",
-        "&num;": "#",
-        "&OpenCurlyDoubleQuote;": '"',
-        "&period;": ".",
-        "&quest;": "?",
-        "&quot;": '"',
-        "&rpar;": ")",
-        "&rsqb;": "]",
-        "&rsquo;": "'",
-        "&ndash;": "-",
-        "&ast;": "*",
-        "&DiacriticalTilde;": "~",
-        "&CloseCurlyDoubleQuote;": '"',
-    }
-
-    for key, value in replacements.items():
-        text = text.replace(key, value)
-
     return text.strip()
 
 
@@ -2866,14 +2837,7 @@ def videos_list(
             if re_name:
                 match = re.search(re_name, video, flags=re.DOTALL | re.IGNORECASE)
                 if match:
-                    name = re.sub(
-                        r"\\u([0-9A-Fa-f]{4})",
-                        lambda x: six.unichr(int(x.group(1), 16)),
-                        match.group(1).strip(),
-                    )
-                    name = name.encode("utf-8", "ignore").decode("utf-8")
-                    name = six.ensure_str(name)
-                    name = cleantext(name)
+                    name = cleantext(match.group(1))
             img = ""
             if re_img:
                 match = re.search(re_img, video, flags=re.DOTALL | re.IGNORECASE)
