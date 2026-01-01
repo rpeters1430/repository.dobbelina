@@ -525,66 +525,67 @@ def Playvid(url, name, download=None):
         else:
             found = True
     vp.progress.update(50, "[CR]Scraping video page[CR]")
-    if not vp.resolveurl.HostedMediaFile(vlink):
+    if not vp.resolveurl.HostedMediaFile(vlink) or "zbporn" in vlink:
         if "&lander=" in vlink:
             vlink = vlink.split("&lander=")[-1]
-            vlink = urllib_parse.unquote(vlink)
+        vlink = urllib_parse.unquote(vlink)
 
         vpage = utils.getHtml(url, site.url)
 
         patterns = [
             r"""<source\s+[^>]*src=['"]([^'"]+\.mp4[^'"]*)['"]\s+[^>]*title=['"]([^'"]+)""",
             r'\{"src":"([^"]+)","desc":"([^"]+)"',
+            r'\\"url\\",\\"([^"]+)\\",\\"width\\",\d+,\\"height\\",(\d+)',
         ]
         sources = {}
         for pattern in patterns:
             match = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(vpage)
             if match:
-                sources.update({title: src for src, title in match})
-
-        if sources:
-
-            def quality_sort_key(x):
-                if x == "4k":
-                    return 2160
-                try:
-                    return int(x.replace("p", "").replace("P", ""))
-                except (ValueError, AttributeError):
-                    return 0
-
+                sources.update({title: src for src, title in match if title != "Auto"})
+        try:
             videourl = utils.prefquality(
-                sources, sort_by=quality_sort_key, reverse=True
+                sources,
+                sort_by=lambda x: 2160 if x == "4k" else int(x[:-1]),
+                reverse=True,
             )
-            if videourl:
-                videourl = videourl.replace(r"\/", "/")
-                vp.play_from_direct_link(videourl)
-                return
+        except Exception:
+            videourl = utils.selector("Select source", sources, reverse=True)
+        if videourl:
+            videourl = videourl.replace(r"\/", "/")
+            vp.play_from_direct_link(videourl)
+            return
 
         patterns = [
-            r'embed_url:\s*"([^"]+)"',
-            r"video_url:\s*'([^']+.mp4)'",
+            r'embed_url":\s*"([^"]+)"',
+            r"video_url:\s*'([^']+(?:\.m3u8|\.mp4))'",
             r'rel="video_src" href="([^"]+)"',
+            r'<source src="([^"]+(?:\.m3u8|\.mp4))"',
         ]
         sources = []
         for pattern in patterns:
             match = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(vpage)
             if match:
                 sources = sources + match
-        if sources:
-            videourl = utils.selector("Select source", sources)
-            if videourl:
-                videourl = (
-                    "https:" + videourl if videourl.startswith("//") else videourl
-                )
-                vp.play_from_direct_link(videourl)
-                return
+        videourl = utils.selector("Select source", sources)
+        if videourl:
+            videourl = "https:" + videourl if videourl.startswith("//") else videourl
+            vp.play_from_direct_link(videourl)
+            return
 
-        if "function/0/http" not in vpage and '<div class="embed-wrap"' in vpage:
+        if "function/0/http" not in vpage and (
+            '<div class="embed-wrap"' in vpage or '"embedUrl": "' in vpage
+        ):
             match = re.compile(
                 r'<div class="embed-wrap".+?src="([^"]+)"', re.DOTALL | re.IGNORECASE
             ).findall(vpage)
             if match:
                 vpage = utils.getHtml(match[0], url)
+            else:
+                match = re.compile(
+                    r'"embedUrl":\s*"([^"]+)"', re.DOTALL | re.IGNORECASE
+                ).findall(vpage)
+                if match:
+                    vpage = utils.getHtml(match[0], url)
 
         if "license_code: '" in vpage:
             sources = {}
@@ -605,9 +606,9 @@ def Playvid(url, name, download=None):
                     qual = "720p" if qual == "HD" else qual
                     if "function/0/http" in surl:
                         surl = kvs_decode(surl, license)
-
-                    surl = utils.getVideoLink(surl)
-                    surl = surl.replace("//", "/%2F").replace("https:/%2F", "https://")
+                    referer = "/".join(surl.split("/")[:3]) + "/"
+                    surl = utils.getVideoLink(surl, referer)
+                    surl = surl + "|Referer={}".format(referer)
                     if ".mp4" in surl:
                         sources.update({qual: surl})
 
