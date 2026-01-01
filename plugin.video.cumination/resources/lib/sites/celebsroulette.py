@@ -144,17 +144,22 @@ def List(url):
 @site.register()
 def GotoPage(url, np, lp=None):
     dialog = xbmcgui.Dialog()
-    pg = dialog.numeric(0, 'Enter Page number')
+    pg = dialog.numeric(0, "Enter Page number")
     if pg:
         if int(lp) > 0 and int(pg) > int(lp):
-            utils.notify(msg='Out of range!')
+            utils.notify(msg="Out of range!")
             return
-        utils.notify(msg='Going to page ' + str(pg))
-        url = url.replace('/' + np + '/', '/' + str(pg) + '/')
-        url = re.sub(r'&from([^=]*)=\d+', r'&from\1={}'.format(pg), url, re.IGNORECASE)
-        utils.notify(msg='Loading page ' + str(url))
-        contexturl = (utils.addon_sys + "?mode=" + "celebsroulette.List&url=" + urllib_parse.quote_plus(url))
-        xbmc.executebuiltin('Container.Update(' + contexturl + ')')
+        utils.notify(msg="Going to page " + str(pg))
+        url = url.replace("/" + np + "/", "/" + str(pg) + "/")
+        url = re.sub(r"&from([^=]*)=\d+", r"&from\1={}".format(pg), url, re.IGNORECASE)
+        utils.notify(msg="Loading page " + str(url))
+        contexturl = (
+            utils.addon_sys
+            + "?mode="
+            + "celebsroulette.List&url="
+            + urllib_parse.quote_plus(url)
+        )
+        xbmc.executebuiltin("Container.Update(" + contexturl + ")")
 
 
 @site.register()
@@ -289,7 +294,9 @@ def Playvid(url, name, download=None):
     surl = re.search(r"video_url:\s*'([^']+)'", html)
     referer = site.url
     if not surl:
-        match = re.compile(r'<iframe[^>]+src="([^"]+/embed/[^"]+)"', re.DOTALL | re.IGNORECASE).findall(html)
+        match = re.compile(
+            r'<iframe[^>]+src="([^"]+/embed/[^"]+)"', re.DOTALL | re.IGNORECASE
+        ).findall(html)
         if match:
             referer = match[0]
             html = utils.getHtml(match[0])

@@ -227,7 +227,7 @@ def Search(url, keyword=None):
 
 @site.register()
 def Categories(url):
-    utils.kodilog('PornHub Categories URL: ' + url)
+    utils.kodilog("PornHub Categories URL: " + url)
     cathtml = utils.getHtml(url, site.url, cookiehdr)
 
     soup = utils.parse_html(cathtml)

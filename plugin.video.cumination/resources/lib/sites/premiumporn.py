@@ -24,10 +24,11 @@ from six.moves import urllib_parse
 from resources.lib.adultsite import AdultSite
 import json
 import base64
+
 try:
     from Cryptodome.Cipher import AES
 except Exception as error:
-    utils.kodilog('Import Error Cryptodome: {}'.format(error))
+    utils.kodilog("Import Error Cryptodome: {}".format(error))
 
 site = AdultSite(
     "premiumporn",
@@ -160,8 +161,8 @@ def Search(url, keyword=None):
 def base64_url_decode(data):
     padding = 4 - (len(data) % 4)
     if padding != 4:
-        data += '=' * padding
-    data = data.replace('-', '+').replace('_', '/')
+        data += "=" * padding
+    data = data.replace("-", "+").replace("_", "/")
     return base64.b64decode(data)
 
 
@@ -169,7 +170,7 @@ def decrypt_aes_gcm(payload, key, iv):
     try:
         cipher = AES.new(key, AES.MODE_GCM, nonce=iv)
         plaintext = cipher.decrypt_and_verify(payload[:-16], payload[-16:])
-        return plaintext.decode('utf-8')
+        return plaintext.decode("utf-8")
     except Exception as e:
         return "Decryption failed: {}".format(str(e))
 
