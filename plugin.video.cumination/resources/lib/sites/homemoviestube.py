@@ -49,25 +49,30 @@ def Main():
 def List(url):
     html = utils.getHtml(url, site.url)
 
-    match = re.compile(
-        r'class="vidItem">.+?data-src="([^"]+).+?time">([^<]+).+?href="([^"]+).+?>([^<]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(html)
-    for img, duration, videopage, name in match:
-        name = utils.cleantext(name)
-        if videopage.startswith("//"):
-            videopage = "https:" + videopage
-        if img.startswith("//"):
-            img = "https:" + img.replace(" ", "%20")
+    soup = utils.parse_html(html)
+    for item in soup.select(".vidItem, .video, .video-item"):
+        link = item.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        videopage = urllib_parse.urljoin(site.url, videopage)
+        name = utils.cleantext(utils.safe_get_text(link, default=""))
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        if img:
+            img = urllib_parse.urljoin(site.url, img.replace(" ", "%20"))
+        duration = utils.safe_get_text(item.select_one(".time"), default="")
         site.add_download_link(name, videopage, "Playvid", img, name, duration=duration)
 
-    nextp = re.compile(
-        r"class='next'><a\s*href='([^']+)'>Next", re.DOTALL | re.IGNORECASE
-    ).search(html)
-    if nextp:
-        np = urllib_parse.urljoin(url, nextp.group(1))
-        curr_pg = re.findall(r"class='current'>([^<]+)", html)[0]
-        last_pg = re.findall(r"class='pagination.+?href.+?>([^<]+)", html)[0]
+    next_link = soup.select_one(".next a[href]")
+    if next_link:
+        np = urllib_parse.urljoin(url, utils.safe_get_attr(next_link, "href", default=""))
+        curr_pg = utils.safe_get_text(soup.select_one(".current"), default="")
+        last_pg = ""
+        for link in soup.select(".pagination a"):
+            text = utils.safe_get_text(link, default="")
+            if text.isdigit():
+                last_pg = text
         site.add_dir(
             "[COLOR hotpink]Next Page[/COLOR] (Currently in Page {0} of {1})".format(
                 curr_pg, last_pg
@@ -82,18 +87,22 @@ def List(url):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(
-        r'class="category-item\s.+?data-src="([^"]+).+?href="([^"]+).+?>([^<]+)',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(cathtml)
-    match = list(set(match))
-    match.sort(key=lambda x: x[2])
-    for img, caturl, name in match:
-        name = utils.cleantext(name)
-        if caturl.startswith("//"):
-            caturl = "https:" + caturl
-        if img.startswith("//"):
-            img = "https:" + img
+    soup = utils.parse_html(cathtml)
+    entries = []
+    for item in soup.select(".category-item"):
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        caturl = utils.safe_get_attr(item, "href", default="")
+        name = utils.cleantext(utils.safe_get_text(item, default=""))
+        if not caturl or not name:
+            continue
+        entries.append((img, caturl, name))
+    entries = list({(img, caturl, name) for img, caturl, name in entries})
+    entries.sort(key=lambda x: x[2])
+    for img, caturl, name in entries:
+        caturl = urllib_parse.urljoin(site.url, caturl)
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
         site.add_dir(name, caturl, "List", img)
     utils.eod()
 

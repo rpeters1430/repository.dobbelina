@@ -64,31 +64,38 @@ def List(url):
         return
 
     html = html.split(">Trending Porn<")[0]
-    delimiter = 'article class="entry-tpl-grid'
-    re_videopage = 'href="([^"]+)"><'
-    re_name = 'title="([^"]+)"'
-    re_img = ' src="([^"]+)"'
-    utils.videos_list(
-        site,
-        "familypornhd.Playvid",
-        html,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        contextm="familypornhd.Related",
-    )
+    soup = utils.parse_html(html)
 
-    re_npurl = r'href="([^"]+)">Next'
-    re_npnr = r'next" href="[^"]+/page/(\d+)'
-    utils.next_page(
-        site,
-        "familypornhd.List",
-        html,
-        re_npurl,
-        re_npnr,
-        contextm="familypornhd.GotoPage",
-    )
+    for item in soup.select("article, .entry-tpl-grid, .video-item"):
+        link = item.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        name = utils.cleantext(
+            utils.safe_get_attr(link, "title", default=utils.safe_get_text(link))
+        )
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        site.add_download_link(
+            name,
+            videopage,
+            "familypornhd.Playvid",
+            img,
+            name,
+            contextm="familypornhd.Related",
+        )
+
+    next_link = soup.select_one('a[rel="next"], a.next, .pagination a.next')
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, "href", default="")
+        if next_url:
+            site.add_dir(
+                "Next Page",
+                next_url,
+                "familypornhd.List",
+                site.img_next,
+                contextm="familypornhd.GotoPage",
+            )
     utils.eod()
 
 
@@ -126,14 +133,22 @@ def Related(url):
 @site.register()
 def Channels(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'<li>.+?href="([^"]+)"\s+style="background-image:url\(([^\)]+)\)">.+?<h4>([^<]+).+?<strong>(\d+).+?</li>',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(cathtml)
-    for caturl, img, name, count in match:
-        name = utils.cleantext(name) + "[COLOR hotpink] ({})[/COLOR]".format(
-            count.strip()
-        )
+    soup = utils.parse_html(cathtml)
+    for item in soup.select("li"):
+        link = item.select_one("a[href]")
+        caturl = utils.safe_get_attr(link, "href", default="")
+        name = utils.cleantext(utils.safe_get_text(item.select_one("h4"), default=""))
+        count = utils.safe_get_text(item.select_one("strong"), default="").strip()
+        style = utils.safe_get_attr(link, "style", default="")
+        img = ""
+        if "background-image" in style:
+            match = re.search(r"url\(([^)]+)\)", style)
+            if match:
+                img = match.group(1)
+        if not caturl or not name:
+            continue
+        if count:
+            name = name + "[COLOR hotpink] ({})[/COLOR]".format(count)
         site.add_dir(name, caturl, "List", img)
     utils.eod()
 
@@ -141,11 +156,15 @@ def Channels(url):
 @site.register()
 def Pornstars(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'class="wp-caption".+?href="([^"]+)".+? src="([^"]+)".+?wp-caption-text">([^<]+)<',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(cathtml)
-    for caturl, img, name in match:
+    soup = utils.parse_html(cathtml)
+    for item in soup.select(".wp-caption"):
+        link = item.select_one("a[href]")
+        caturl = utils.safe_get_attr(link, "href", default="")
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+        name = utils.safe_get_text(item.select_one(".wp-caption-text"), default="")
+        if not caturl or not name:
+            continue
         site.add_dir(name, caturl, "List", img)
     utils.eod()
 
@@ -153,12 +172,16 @@ def Pornstars(url):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(r'href="([^"]+)">([^<]+)<', re.IGNORECASE | re.DOTALL).findall(
-        cathtml.split('page-title">Categories<')[-1].split(
-            'class="g1-row-background-media"'
-        )[0]
-    )
-    for caturl, name in match:
+    soup = utils.parse_html(cathtml)
+    for link in soup.select('a[href]'):
+        name = utils.safe_get_text(link, default="").strip()
+        if not name:
+            continue
+        caturl = utils.safe_get_attr(link, "href", default="")
+        if not caturl:
+            continue
+        if "categories" not in caturl:
+            continue
         site.add_dir(name.title(), caturl, "List", "")
     utils.eod()
 

@@ -71,39 +71,32 @@ def List(url):
         utils.eod()
         return
 
-    delimiter = '<div class="content'
-    re_videopage = r'<a href="([^"]+)"\s*class="thumb'
-    re_name = "<strong>([^<]+)<"
-    re_img = 'data-src="([^"]+)"'
-    re_duration = 'class="duration">([^<]+)<'
-    re_quality = 'span class="([^_]+)_video"'
-    utils.videos_list(
-        site,
-        "beemtube.Playvid",
-        html,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        re_duration=re_duration,
-        re_quality=re_quality,
-    )
+    soup = utils.parse_html(html)
+    for item in soup.select(".video-block, .content"):
+        link = item.select_one("a.video-link, a.thumb, a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        name = utils.cleantext(
+            utils.safe_get_text(item.select_one("strong"), default="")
+        )
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["data-original", "src"])
+        duration = utils.safe_get_text(item.select_one(".duration"), default="")
+        quality_el = item.select_one("span[class*='_video']")
+        quality = ""
+        if quality_el:
+            class_name = " ".join(quality_el.get("class", []))
+            quality = class_name.split("_video")[0].upper() if "_video" in class_name else ""
+        site.add_download_link(
+            name, videopage, "beemtube.Playvid", img, name, duration=duration, quality=quality
+        )
 
-    re_npurl = r"""href=['"]([^'"]+)['"]>Next<"""
-    re_npnr = (
-        r"href='[^>]+page=(\d+)'>Next"
-        if "&page=" in html
-        else r'href="page(\d+).html">Next<'
-    )
-    utils.next_page(
-        site,
-        "beemtube.List",
-        html,
-        re_npurl,
-        re_npnr,
-        baseurl=url.split("page")[0],
-        contextm="beemtube.GotoPage",
-    )
+    next_link = soup.select_one("a[rel='next'], a.next")
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, "href", default="")
+        if next_url:
+            site.add_dir("Next Page", next_url, "beemtube.List", site.img_next)
     utils.eod()
 
 
@@ -130,14 +123,18 @@ def GotoPage(list_mode, url, np, lp):
 @site.register()
 def Channels(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'class="channel_item".+?href="([^"]+)" title="([^"]+)".+?data-src="([^"]+)".+?"channel_item_videos">([^<]+)<',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(cathtml)
-    for caturl, name, img, count in match:
-        name = utils.cleantext(name) + "[COLOR hotpink] ({})[/COLOR]".format(
-            count.strip()
-        )
+    soup = utils.parse_html(cathtml)
+    for item in soup.select(".channel_item"):
+        link = item.select_one("a[href]")
+        caturl = utils.safe_get_attr(link, "href", default="")
+        name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        count = utils.safe_get_text(item.select_one(".channel_item_videos"), default="").strip()
+        if not caturl or not name:
+            continue
+        if count:
+            name = name + "[COLOR hotpink] ({})[/COLOR]".format(count)
         site.add_dir(name, caturl, "List", img)
     utils.eod()
 
@@ -145,34 +142,36 @@ def Channels(url):
 @site.register()
 def Pornstars(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'class="content item actors".+?href="([^"]+)" title="([^"]+)".+?data-src="([^"]+)"',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(cathtml)
-    for caturl, name, img in match:
+    soup = utils.parse_html(cathtml)
+    for item in soup.select(".content.item.actors, .actors"):
+        link = item.select_one("a[href]")
+        caturl = utils.safe_get_attr(link, "href", default="")
+        name = utils.safe_get_attr(link, "title", default="")
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        if not caturl or not name:
+            continue
         site.add_dir(name, caturl, "List", img)
-    re_npurl = r"""href=['"]([^'"]+)['"]>Next<"""
-    re_npnr = r'href="page(\d+).html">Next<'
-    utils.next_page(
-        site,
-        "beemtube.Pornstars",
-        cathtml,
-        re_npurl,
-        re_npnr,
-        baseurl=url.split("page")[0],
-        contextm="beemtube.GotoPage",
-    )
+    next_link = soup.select_one("a[rel='next'], a.next")
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, "href", default="")
+        if next_url:
+            site.add_dir("Next Page", next_url, "beemtube.Pornstars", site.img_next)
     utils.eod()
 
 
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'class="content categor.+?href="([^"]+)".+?data-src="([^"]+)".+?strong>([^<]+)<',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(cathtml)
-    for caturl, img, name in match:
+    soup = utils.parse_html(cathtml)
+    for item in soup.select(".content.categor, .category-item"):
+        link = item.select_one("a[href]")
+        caturl = utils.safe_get_attr(link, "href", default="")
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        name = utils.safe_get_text(item.select_one("strong"), default="")
+        if not caturl or not name:
+            continue
         site.add_dir(name.title(), caturl, "List", img)
     utils.eod()
 

@@ -48,22 +48,27 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        '<img.*?src="([^"]+)".*?entry-title"><a href="([^"]+)"[^>]+>([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for img, videopage, name in match:
-        name = utils.cleantext(name)
-
+    soup = utils.parse_html(listhtml)
+    for post in soup.select(".post"):
+        link = post.select_one(".entry-title a[href]") or post.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        name = utils.cleantext(utils.safe_get_text(link, default=""))
+        img_tag = post.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
         site.add_download_link(name, videopage, "Playvid", img, name)
 
-    np = re.compile(
-        r'next\s*page-numbers"\s*href="([^"]+)"', re.DOTALL | re.IGNORECASE
-    ).search(listhtml)
-    if np:
-        np = np.group(1)
-        nextpage = re.search(r"page/(\d+)", np).group(1)
-        site.add_dir("Next Page... ({0})".format(nextpage), np, "List", site.img_next)
+    next_link = soup.select_one('a.next.page-numbers[href], a.next[href]')
+    if next_link:
+        np = utils.safe_get_attr(next_link, "href", default="")
+        nextpage = ""
+        match = re.search(r"page/(\d+)", np)
+        if match:
+            nextpage = match.group(1)
+        site.add_dir(
+            "Next Page... ({0})".format(nextpage), np, "List", site.img_next
+        )
     utils.eod()
 
 

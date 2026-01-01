@@ -1588,9 +1588,18 @@ def cleantext(text):
     if PY3:
         import html
 
-        text = html.unescape(text)
+        for _ in range(2):
+            unescaped = html.unescape(text)
+            if unescaped == text:
+                break
+            text = unescaped
     else:
-        text = h.unescape(text.decode("utf8")).encode("utf8")
+        for _ in range(2):
+            unescaped = h.unescape(text.decode("utf8")).encode("utf8")
+            if unescaped == text:
+                break
+            text = unescaped
+    text = text.replace("\xa0", " ")
     return text.strip()
 
 

@@ -72,13 +72,22 @@ def List(url, page=1):
     except Exception:
         return None
 
-    match = re.compile(
-        r'href="https://www\.theyarehuge\.com/([^"]+)"\s+title="Big\s+Boobs\s+Porn\s+Video\s+([^"]+)".*?src="([^"]+)".*?duration">([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for videopage, name, img, duration in match:
-        name = utils.cleantext(name)
-        videopage = site.url + videopage
+    soup = utils.parse_html(listhtml)
+    items = soup.select(".item, .video-item, .video")
+    for item in items:
+        link = item.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        videopage = urllib_parse.urljoin(site.url, videopage)
+        name = utils.cleantext(
+            utils.safe_get_attr(link, "title", default=utils.safe_get_text(link))
+        )
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
+        duration = utils.safe_get_text(item.select_one(".duration"), default="")
 
         contextmenu = []
         contexturl = (
@@ -101,11 +110,27 @@ def List(url, page=1):
             duration=duration,
         )
 
-    np = re.compile(
-        r'class="next">.*?;from[^\d]*:(\d+)"', re.DOTALL | re.IGNORECASE
-    ).search(listhtml)
+    np = None
+    next_el = soup.select_one(".next[data-page], .pagination .next a, a.next")
+    if next_el:
+        next_val = utils.safe_get_attr(next_el, "data-page", ["href"])
+        if next_val:
+            match = re.search(r"from(?:_videos)?=(\d+)", next_val)
+            if match:
+                np = match.group(1)
+            elif next_val.isdigit():
+                np = next_val
+
+    if not np:
+        match = re.search(
+            r'class="next">.*?;from[^\d]*:(\d+)"',
+            listhtml,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if match:
+            np = match.group(1)
+
     if np:
-        np = int(np.group(1))
         if "from_videos=" in url:
             nextp = url.replace(
                 "from_videos={}".format(page), "from_videos={}".format(np)
@@ -172,17 +197,16 @@ def Tags(url):
         taghtml = utils.getHtml(url, "")
     except Exception:
         return None
-    htmlmatch = re.compile('list-tags">(.*?)footer', re.DOTALL | re.IGNORECASE).findall(
-        taghtml
-    )
-    match = re.compile(
-        r'/(porn-video\.tags/[^"]+)">([^<]+)<', re.DOTALL | re.IGNORECASE
-    ).findall(htmlmatch[0])
-    for tagpage, name in match:
-        name = utils.cleantext(name)
+    soup = utils.parse_html(taghtml)
+    container = soup.select_one(".list-tags") or soup
+    for link in container.select('a[href*="porn-video.tags/"]'):
+        tagpage = utils.safe_get_attr(link, "href", default="")
+        name = utils.cleantext(utils.safe_get_text(link, default=""))
+        if not tagpage or not name:
+            continue
+        tagpage = urllib_parse.urljoin(site.url, tagpage)
         tagpage = (
-            site.url
-            + tagpage
+            tagpage
             + "/?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=post_date&from=1"
         )
         site.add_dir(name, tagpage, "List", "", page=1)

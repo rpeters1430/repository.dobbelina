@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 import xbmcplugin
+from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
@@ -51,27 +52,35 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(
-        r'class="item item-video item-lozad.+?href="([^"]+).+?title="([^"]+)".+?src="([^"]+).+?duration">([^<]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
+    soup = utils.parse_html(listhtml)
     thumbnails = utils.Thumbnails(site.name)
-    for videourl, name, img, duration in match:
-        img = thumbnails.fix_img(img)
-        name = utils.cleantext(name)
+    for item in soup.select(".item-video, .item, .video-item"):
+        link = item.select_one("a[href]")
+        videourl = utils.safe_get_attr(link, "href", default="")
+        if not videourl:
+            continue
+        name = utils.cleantext(
+            utils.safe_get_attr(link, "title", default=utils.safe_get_text(link))
+        )
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        img = thumbnails.fix_img(img) if img else ""
+        duration = utils.safe_get_text(item.select_one(".duration"), default="")
         site.add_download_link(name, videourl, "Playvid", img, name, duration=duration)
 
-    nextp = re.compile(
-        r'class="pagination".+?class="active">\s*\d+\s*</span>\s*</li>\s*<li>\s*<a\s*href="/([^"]+)'
-    ).search(listhtml)
-    if nextp:
-        nextp = site.url + nextp.group(1)
-        site.add_dir(
-            "[COLOR hotpink]Next Page...[/COLOR] ({0})".format(nextp.split("/")[-2]),
-            nextp,
-            "List",
-            site.img_next,
-        )
+    next_link = soup.select_one(".pagination .active + li a[href]")
+    if next_link:
+        nextp = utils.safe_get_attr(next_link, "href", default="")
+        if nextp:
+            nextp = urllib_parse.urljoin(site.url, nextp)
+            site.add_dir(
+                "[COLOR hotpink]Next Page...[/COLOR] ({0})".format(
+                    nextp.split("/")[-2]
+                ),
+                nextp,
+                "List",
+                site.img_next,
+            )
 
     utils.eod()
 
@@ -114,11 +123,15 @@ def Playvid(url, name, download=None):
 @site.register()
 def Cat(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(
-        r'class="item.+?href="([^"]+).+?(?:pan|title")>([^<]+)<.+?<span>([^<]+)'
-    ).findall(cathtml)
-    for caturl, name, items in match:
-        name += " [COLOR deeppink]" + items + " videos[/COLOR]"
+    soup = utils.parse_html(cathtml)
+    for item in soup.select(".item"):
+        link = item.select_one("a[href]")
+        caturl = utils.safe_get_attr(link, "href", default="")
+        name = utils.safe_get_text(item.select_one(".title, span, a"), default="")
+        count = utils.safe_get_text(item.select_one(".count, span"), default="")
+        if not caturl or not name:
+            continue
+        name = name + " [COLOR deeppink]" + count + " videos[/COLOR]"
         site.add_dir(name, caturl, "List", "", "")
     xbmcplugin.addSortMethod(utils.addon_handle, xbmcplugin.SORT_METHOD_TITLE)
     utils.eod()
@@ -127,21 +140,24 @@ def Cat(url):
 @site.register()
 def Models(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(
-        r'class="item\s*item-model.+?href="([^"]+).+?src="([^"]+).+?title">([^<]+).+?span>([^<]+)',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(cathtml)
-    for caturl, img, name, count in match:
-        name = utils.cleantext(name) + " [COLOR hotpink]({0} videos)[/COLOR]".format(
-            count
+    soup = utils.parse_html(cathtml)
+    for item in soup.select(".item-model, .item"):
+        link = item.select_one("a[href]")
+        caturl = utils.safe_get_attr(link, "href", default="")
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        name = utils.cleantext(
+            utils.safe_get_text(item.select_one(".title, a"), default="")
         )
+        count = utils.safe_get_text(item.select_one("span"), default="")
+        if not caturl or not name:
+            continue
+        name = name + " [COLOR hotpink]({0} videos)[/COLOR]".format(count)
         site.add_dir(name, caturl, "List", img)
 
-    nextp = re.compile(
-        r'class="pagination".+?class="active">\s*\d+\s*</span>\s*</li>\s*<li>\s*<a\s*href="/([^"]+)'
-    ).search(cathtml)
-    if nextp:
-        nextp = site.url + nextp.group(1)
+    next_link = soup.select_one(".pagination .active + li a[href]")
+    if next_link:
+        nextp = urllib_parse.urljoin(site.url, utils.safe_get_attr(next_link, "href", default=""))
         site.add_dir(
             "[COLOR hotpink]Next Page...[/COLOR] ({0})".format(nextp.split("/")[-2]),
             nextp,

@@ -66,21 +66,28 @@ def Main():
 def List(url, page=1):
     # MFC_SERVERS = getMFC()
     listhtml = utils._getHtml(url)
-    res = re.compile(
-        r"broadcaster_id:(\d+).+?avatar_border.+?src=([^\s]+).+?:19px;'>([^<]+).+?<X>(.+?)<X>",
-        re.IGNORECASE | re.DOTALL,
-    ).findall(listhtml)
+    soup = utils.parse_html(listhtml)
+    items = soup.select(".model, .room, .broadcast, .mfc-broadcaster")
+    if not items:
+        items = soup.select("img")
 
-    for model_id, pic, name, plot in res:
+    for item in items:
+        img_tag = item if item.name == "img" else item.select_one("img")
+        pic = utils.safe_get_attr(img_tag, "src", ["data-src"])
+        if not pic:
+            continue
         pic = pic.replace("100x100", "300x300")
-        # idx = random.choice(list(MFC_SERVERS['H5SERVERS'].keys()))
-        # imgserver = MFC_SERVERS.get('H5SERVERS').get(idx)[5:]
-        # img = 'https://snap.mfcimg.com/snapimg/{0}/853x480/mfc_{1}?no-cache={2}'.format(imgserver, int(model_id) + 100000000, random.random())
+        name = utils.safe_get_text(item.select_one(".name, .title"), default="")
+        if not name:
+            name = utils.safe_get_attr(img_tag, "alt", default="").strip()
+        plot = utils.safe_get_text(item.select_one(".status, .desc"), default="")
+        if not name:
+            continue
         site.add_download_link(
             name, name, "Playvid", pic, utils.cleantext(plot), noDownload=True
         )
 
-    if len(res) >= 50:
+    if len(items) >= 50:
         page += 1
         site.add_dir(
             "Next Page... [COLOR hotpink]({0})[/COLOR]".format(page),
@@ -110,10 +117,16 @@ def Tags(url):
     )
 
     page = utils._getHtml(url)
-    res = re.compile(
-        r"g_oTags.SelectTag\('selected_field','(.+?)'.+?10px.+?>(.+?)<",
-        re.IGNORECASE | re.MULTILINE | re.DOTALL,
-    ).findall(page)
+    soup = utils.parse_html(page)
+    res = []
+    for tag in soup.select("[onclick*='SelectTag']"):
+        onclick = utils.safe_get_attr(tag, "onclick", default="")
+        match = re.search(r"SelectTag\('selected_field','([^']+)'", onclick)
+        if not match:
+            continue
+        item = match.group(1)
+        models = utils.safe_get_text(tag, default="").strip()
+        res.append((item, models))
 
     for item, models in res:
         url = (
@@ -136,10 +149,12 @@ def Tags(url):
 @site.register()
 def TagsList(url):
     page = utils._getHtml(url)
-    res = re.compile(
-        r"avatar_border\s*src=([^\s]+).+?:19px;'>([^<]+)", re.IGNORECASE | re.DOTALL
-    ).findall(page)
-    for img, name in res:
+    soup = utils.parse_html(page)
+    for img_tag in soup.select("img"):
+        img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+        name = utils.safe_get_attr(img_tag, "alt", default="").strip()
+        if not img or not name:
+            continue
         img = img.replace("\\/", "/").replace("100x100", "300x300")
         site.add_download_link(name, name, "Playvid", img, name, noDownload=True)
     utils.eod()

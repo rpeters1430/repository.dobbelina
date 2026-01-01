@@ -48,16 +48,28 @@ def Main(url):
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, "")
-    match = re.compile(
-        r'href="([^"]+)">\s*?<div class="item">.*?duration">([^<]+)<.*?src="([^"]+)"\s*title="([^"]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    if not match:
+    soup = utils.parse_html(listhtml)
+    items = soup.select(".item")
+    if not items:
         return
-    for videopage, duration, img, name in match:
-        name = utils.cleantext(name)
-        duration = utils.cleantext(duration.strip())
-        videopage = site.url + videopage
+    for item in items:
+        link = item.find_parent("a") or item.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        img_tag = item.select_one("img")
+        name = utils.cleantext(
+            utils.safe_get_attr(img_tag, "alt", ["title"], default="")
+        )
+        if not name:
+            name = utils.cleantext(
+                utils.safe_get_attr(link, "title", default=utils.safe_get_text(link))
+            )
+        duration = utils.cleantext(
+            utils.safe_get_text(item.select_one(".duration"), default="").strip()
+        )
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        videopage = urllib_parse.urljoin(site.url, videopage)
 
         contexturl = (
             utils.addon_sys
@@ -80,12 +92,11 @@ def List(url):
             contextm=contextmenu,
         )
 
-    np = re.compile(
-        r'<a\s+class="page-link"\s+href="([^"]+)" class="prevnext"',
-        re.DOTALL | re.IGNORECASE,
-    ).search(listhtml)
-    if np:
-        site.add_dir("Next Page...", np.group(1), "List", site.img_next)
+    next_link = soup.select_one(".page-link[href], a.page-link[href], a.next[href]")
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, "href", default="")
+        if next_url:
+            site.add_dir("Next Page...", next_url, "List", site.img_next)
     utils.eod()
 
 
@@ -109,11 +120,16 @@ def Search(url, keyword=None):
 @site.register()
 def Tags(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(
-        'href="/search/videos/([^"]+)">([^<]+)<', re.DOTALL | re.IGNORECASE
-    ).findall(listhtml)
-    for tag, name in sorted(match):
-        name = utils.cleantext(name)
+    soup = utils.parse_html(listhtml)
+    tags = []
+    for link in soup.select('a[href*="/search/videos/"]'):
+        tag = utils.safe_get_attr(link, "href", default="")
+        name = utils.cleantext(utils.safe_get_text(link, default=""))
+        if not tag or not name:
+            continue
+        tag = tag.split("/search/videos/")[-1].strip("/")
+        tags.append((tag, name))
+    for tag, name in sorted(tags):
         site.add_dir(name, site.url + "search/videos/", "Search", "", keyword=tag)
     utils.eod()
 

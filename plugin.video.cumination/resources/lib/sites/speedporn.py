@@ -80,26 +80,19 @@ def List(url):
     except Exception:
         return None
     # utils.kodilog(listhtml)
-    if 'span class="duration">' in listhtml:
-        match = re.compile(
-            r'class="thumb" href="([^"]+)".+?src="([^"]+)".+?span class="duration">([^<]+).+?span class="title">([^<]+)',
-            re.DOTALL | re.IGNORECASE,
-        ).findall(listhtml)
-    else:
-        match = re.compile(
-            r'class="thumb" href="([^"]+)".+?src="([^"]+)".+?span class="title">([^<]+)',
-            re.DOTALL | re.IGNORECASE,
-        ).findall(listhtml)
-
-    for item in match:
-        if len(item) > 3:
-            videopage, img, duration, name = item
+    soup = utils.parse_html(listhtml)
+    for link in soup.select("a.thumb, a.thumb[href]"):
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        img_tag = link.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        name = utils.cleantext(
+            utils.safe_get_text(link.select_one(".title"), default="")
+        )
+        duration = utils.safe_get_text(link.select_one(".duration"), default="")
+        if duration:
             duration = duration.replace(" hrs.", "h").replace(" mins.", "m")
-        else:
-            videopage, img, name = item
-            duration = ""
-
-        name = utils.cleantext(name)
 
         contextmenu = []
         contexturl = (
@@ -117,15 +110,14 @@ def List(url):
             name, videopage, "Playvid", img, contextm=contextmenu, duration=duration
         )
 
-    next_page = re.compile(
-        r'class="next page-link" href="([^"]+)">&raquo;<', re.DOTALL | re.IGNORECASE
-    ).findall(listhtml)
-    if next_page:
-        next_page = next_page[0]
-        page_nr = re.findall(r"\d+", next_page)[-1]
-        site.add_dir(
-            "Next Page (" + str(page_nr) + ")", next_page, "List", site.img_next
-        )
+    next_link = soup.select_one("a.next.page-link[href]")
+    if next_link:
+        next_page = utils.safe_get_attr(next_link, "href", default="")
+        if next_page:
+            page_nr = re.findall(r"\d+", next_page)[-1] if re.findall(r"\d+", next_page) else ""
+            site.add_dir(
+                "Next Page (" + str(page_nr) + ")", next_page, "List", site.img_next
+            )
     utils.eod()
 
 

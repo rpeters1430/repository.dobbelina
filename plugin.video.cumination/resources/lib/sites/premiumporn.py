@@ -67,11 +67,7 @@ def List(url):
         utils.notify("No results found", "Try a different search term")
         return
 
-    delimiter = 'data-post-id="'
-    re_videopage = 'href="([^"]+)"'
-    re_name = '"title">([^<]+)<'
-    re_img = 'data-src="([^"]+)"'
-    re_duration = 'duration">([^<]+)<'
+    soup = utils.parse_html(listhtml)
 
     cm = []
     cm_lookupinfo = utils.addon_sys + "?mode=premiumporn.Lookupinfo&url="
@@ -83,49 +79,66 @@ def List(url):
         ("[COLOR deeppink]Related videos[/COLOR]", "RunPlugin(" + cm_related + ")")
     )
 
-    utils.videos_list(
-        site,
-        "premiumporn.Play",
-        listhtml,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        re_duration=re_duration,
-        contextm=cm,
-    )
+    for item in soup.select("[data-post-id], article, .post"):
+        link = item.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        name = utils.cleantext(
+            utils.safe_get_text(item.select_one(".title"), default="")
+        )
+        if not name:
+            name = utils.cleantext(utils.safe_get_text(link, default=""))
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src", "data-original"])
+        duration = utils.safe_get_text(item.select_one(".duration"), default="")
+        site.add_download_link(
+            name,
+            videopage,
+            "premiumporn.Play",
+            img,
+            name,
+            duration=duration,
+            contextm=cm,
+        )
 
-    re_npurl = r'class="next page-link" href="([^"]+)"'
-    re_npnr = r'class="next page-link".+?/page/(\d+)/'
-    re_lpnr = r'>(\d+)</a>\s*</li>\s*<li class="page-item ">\s*<a class="next'
-
-    utils.next_page(
-        site,
-        "premiumporn.List",
-        listhtml,
-        re_npurl,
-        re_npnr,
-        re_lpnr=re_lpnr,
-        contextm="premiumporn.GotoPage",
-    )
+    next_link = soup.select_one("a.next.page-link[href]")
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, "href", default="")
+        if next_url:
+            site.add_dir(
+                "Next Page",
+                next_url,
+                "premiumporn.List",
+                site.img_next,
+                contextm="premiumporn.GotoPage",
+            )
     utils.eod()
 
 
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(
-        r'class="thumb" href="([^"]+)" title="([^"]+)">.+?data-src="([^"]+)".+?class="video-datas">\s*(\d+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(cathtml)
-    for siteurl, name, img, videos in match:
-        name = utils.cleantext(name) + "[COLOR hotpink] (" + videos + " videos)[/COLOR]"
+    soup = utils.parse_html(cathtml)
+    for item in soup.select(".thumb, .video-block"):
+        link = item.select_one("a[href]")
+        siteurl = utils.safe_get_attr(link, "href", default="")
+        name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        videos = utils.safe_get_text(item.select_one(".video-datas"), default="").strip()
+        if not siteurl or not name:
+            continue
+        name = name + "[COLOR hotpink] (" + videos + " videos)[/COLOR]"
         site.add_dir(name, siteurl, "List", img)
-    match = re.search(
-        r'class="next page-link" href="([^"]+)"', cathtml, re.IGNORECASE | re.DOTALL
-    )
-    if match:
-        site.add_dir("Next Page", match.group(1), "Categories", site.img_next)
+    next_link = soup.select_one("a.next.page-link[href]")
+    if next_link:
+        site.add_dir(
+            "Next Page",
+            utils.safe_get_attr(next_link, "href", default=""),
+            "Categories",
+            site.img_next,
+        )
     utils.eod()
 
 
