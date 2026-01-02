@@ -52,7 +52,9 @@ def test_list_parses_json_models(monkeypatch):
     monkeypatch.setattr(chaturbate.utils, "eod", lambda: None)
     monkeypatch.setattr(chaturbate.addon, "getSetting", lambda x: "false")
 
-    chaturbate.List("https://chaturbate.com/api/ts/roomlist/room-list/?limit=100&offset=0")
+    chaturbate.List(
+        "https://chaturbate.com/api/ts/roomlist/room-list/?limit=100&offset=0"
+    )
 
     assert len(downloads) == 2
     assert "model1" in downloads[0]["name"]
@@ -89,7 +91,9 @@ def test_list_pagination(monkeypatch):
     def fake_add_dir(name, url, mode, *args, **kwargs):
         dirs.append({"name": name, "url": url})
 
-    monkeypatch.setattr(chaturbate.utils, "_getHtml", lambda *a, **k: json.dumps(json_data))
+    monkeypatch.setattr(
+        chaturbate.utils, "_getHtml", lambda *a, **k: json.dumps(json_data)
+    )
     monkeypatch.setattr(chaturbate.site, "add_download_link", lambda *a, **k: None)
     monkeypatch.setattr(chaturbate.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(chaturbate.utils, "eod", lambda: None)
@@ -129,7 +133,9 @@ def test_tags_parses_json(monkeypatch):
     def fake_add_dir(name, url, mode, iconimage, *args, **kwargs):
         dirs.append({"name": name, "url": url})
 
-    monkeypatch.setattr(chaturbate.utils, "getHtml", lambda *a, **k: json.dumps(json_data))
+    monkeypatch.setattr(
+        chaturbate.utils, "getHtml", lambda *a, **k: json.dumps(json_data)
+    )
     monkeypatch.setattr(chaturbate.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(chaturbate.utils, "eod", lambda: None)
 
@@ -154,7 +160,9 @@ def test_search_with_keyword(monkeypatch):
 
     monkeypatch.setattr(chaturbate, "SList", fake_slist)
 
-    chaturbate.Search("https://chaturbate.com/ax/search/?keywords=", keyword="test query")
+    chaturbate.Search(
+        "https://chaturbate.com/ax/search/?keywords=", keyword="test query"
+    )
 
     assert len(slist_calls) == 1
     assert "test+query" in slist_calls[0]
@@ -183,7 +191,9 @@ def test_playvid_parses_room_data(monkeypatch):
     def fake_get_html(*args, **kwargs):
         return html, False
 
-    monkeypatch.setattr(chaturbate.utils, "get_html_with_cloudflare_retry", fake_get_html)
+    monkeypatch.setattr(
+        chaturbate.utils, "get_html_with_cloudflare_retry", fake_get_html
+    )
     monkeypatch.setattr(chaturbate.utils, "VideoPlayer", FakeVideoPlayer)
     monkeypatch.setattr(chaturbate.addon, "getSetting", lambda x: "0")
 

@@ -35,7 +35,9 @@ def test_list_parses_json_models(monkeypatch):
     def fake_add_download_link(name, url, mode, iconimage, desc, **kwargs):
         downloads.append({"name": name, "url": url})
 
-    monkeypatch.setattr(stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html)
+    monkeypatch.setattr(
+        stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
+    )
     monkeypatch.setattr(stripchat.site, "add_download_link", fake_add_download_link)
     monkeypatch.setattr(stripchat.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(stripchat.utils, "eod", lambda: None)
