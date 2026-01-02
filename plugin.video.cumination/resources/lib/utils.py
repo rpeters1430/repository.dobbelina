@@ -1579,9 +1579,11 @@ def parse_query(query):
 
 def cleantext(text):
     text = text.strip()
-    text = re.sub(r"\\u([0-9A-Fa-f]{4})", lambda x: six.unichr(int(x.group(1), 16)), text)
+    text = re.sub(
+        r"\\u([0-9A-Fa-f]{4})", lambda x: six.unichr(int(x.group(1), 16)), text
+    )
     try:
-        text = text.encode('utf-8', 'ignore').decode("utf-8")
+        text = text.encode("utf-8", "ignore").decode("utf-8")
     except:
         pass
     text = six.ensure_str(text)
