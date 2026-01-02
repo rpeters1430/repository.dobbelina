@@ -55,21 +55,33 @@ def Main():
 @site.register()
 def List(url, page=1):
     videodict = {}
+    np = None
+    next_url = ""
+    visited = set()
 
     progress = utils.progress
     progress.create("SeaPorn", "Loading videos..")
 
     while len(videodict) < 40:
-        listhtml = utils.getHtml(url, "")
-        match = re.compile(
-            'entry-title"><a href="([^"]+)"[^>]+>([^<]+).*?<time[^>]+>([^<]+)<.*?src="([^"]+)"',
-            re.DOTALL | re.IGNORECASE,
-        ).findall(listhtml)
-        if not match:
+        if url in visited:
             break
-        for videopage, rlsname, posted, img in match:
-            rlsname = utils.cleantext(rlsname)
-            name = rlsname.split("– ")[:-1][0] if "– " in rlsname else rlsname
+        visited.add(url)
+        before_count = len(videodict)
+        listhtml = utils.getHtml(url, "")
+        soup = utils.parse_html(listhtml)
+        items = soup.select("article")
+        if not items:
+            break
+        for item in items:
+            link = item.select_one(".entry-title a, h2 a, a[href]")
+            videopage = utils.safe_get_attr(link, "href", default="")
+            rlsname = utils.cleantext(utils.safe_get_text(link, default=""))
+            posted = utils.safe_get_text(item.select_one("time"), default="")
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+            if not videopage or not rlsname or not img:
+                continue
+            name = rlsname.split("- ")[:-1][0] if "- " in rlsname else rlsname
             plot = "{}\n{}".format(utils.cleantext(name), utils.cleantext(posted))
 
             if "static.keep2share" in img:
@@ -84,13 +96,16 @@ def List(url, page=1):
         if progress.iscanceled():
             break
 
-        np = re.compile(
-            'page-numbers" href="([^"]+)">Next', re.DOTALL | re.IGNORECASE
-        ).search(listhtml)
-        if not np:
+        np = soup.select_one('a.page-numbers[href]')
+        next_url = ""
+        if np and "next" in utils.safe_get_text(np, "").lower():
+            next_url = utils.safe_get_attr(np, "href", default="")
+        if not next_url:
+            break
+        if len(videodict) == before_count:
             break
 
-        url = np.group(1)
+        url = next_url
         page += 1
 
     progress.close()
@@ -132,7 +147,7 @@ def List(url, page=1):
     if np:
         site.add_dir(
             "Next Page (" + str(page) + ")",
-            np.group(1),
+            next_url,
             "List",
             site.img_next,
             page=page,

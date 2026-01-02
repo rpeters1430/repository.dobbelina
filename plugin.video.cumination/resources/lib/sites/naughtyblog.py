@@ -66,19 +66,27 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, "")
-    match = re.compile(
-        'class="post-author">(.*?)post-content.*?<a href="([^"]+)"><img.*?src="([^"]+)".*?title="([^"]+)".*?<strong>([^<]+)<.*?<em>([^<]+)<.*?<p>([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    if not match:
+    soup = utils.parse_html(listhtml)
+    posts = soup.select("article, .post, .post-content")
+    if not posts:
         return
-    for tags, videopage, img, name, title, release, plot in match:
-        name = utils.cleantext(name)
+    for post in posts:
+        tags_text = utils.safe_get_text(post.select_one(".post-author"), default="").lower()
+        if any(tag in tags_text for tag in ["siterip", "onlyfans-leak"]):
+            continue
+        link = post.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        img_tag = post.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        name = utils.cleantext(
+            utils.safe_get_attr(img_tag, "title", default=utils.safe_get_text(link))
+        )
+        title = utils.safe_get_text(post.select_one("strong"), default="")
+        release = utils.safe_get_text(post.select_one("em"), default="")
+        plot = utils.safe_get_text(post.select_one("p"), default="")
         plot = "{}\n{}\n{}".format(
             utils.cleantext(title), utils.cleantext(release), utils.cleantext(plot)
         )
-        if any(tag in tags for tag in ["siterip", "onlyfans-leak"]):
-            continue
 
         contextmenu = []
         contexturl = (
@@ -95,13 +103,12 @@ def List(url):
             name, videopage, "Playvid", img, plot, contextm=contextmenu
         )
 
-    np = re.compile(
-        r'aria-label="Next Page"\s*href="([^"]+)"', re.DOTALL | re.IGNORECASE
-    ).search(listhtml)
-    if np:
-        page_number = np.group(1).split("/")[-2]
+    next_link = soup.select_one('a[aria-label="Next Page"][href], a.next[href]')
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, "href", default="")
+        page_number = next_url.split("/")[-2] if next_url else ""
         site.add_dir(
-            "Next Page (" + page_number + ")", np.group(1), "List", site.img_next
+            "Next Page (" + page_number + ")", next_url, "List", site.img_next
         )
     utils.eod()
 
@@ -149,13 +156,15 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        'href="([^"]+)"[^>]+>([^<]+)<span class="pocetvideicat">([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for catpage, name, videos in match:
-        name = utils.cleantext(name.strip())
-        name = "{0} - {1} videos".format(name, videos.strip())
+    soup = utils.parse_html(listhtml)
+    for item in soup.select(".pocetvideicat"):
+        link = item.find_previous("a")
+        catpage = utils.safe_get_attr(link, "href", default="")
+        name = utils.cleantext(utils.safe_get_text(link, default="").strip())
+        videos = utils.safe_get_text(item, default="").strip()
+        if not catpage or not name:
+            continue
+        name = "{0} - {1} videos".format(name, videos)
         site.add_dir(name, catpage, "List", "")
     utils.eod()
 

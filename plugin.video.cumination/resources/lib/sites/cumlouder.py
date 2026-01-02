@@ -64,41 +64,36 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    trim = re.compile(
-        r'class="listado-escenas"(.+?)class="(?:smt-bottom|related)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)[0]
-    match = re.compile(
-        r'class="muestra-escena"\s*href="([^"]+).+?data-src="([^"]+).+?/span>\s*([^<]+).+?minutos\s*sprite"></span>\s*([^<]+)(.*?)</a>',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(trim)
-    for videopage, img, name, duration, hd in match:
-        hd = "HD" if "hd sprite" in hd else ""
-        duration = (
-            duration.split(" ")[0]
-            if "m" in duration
-            else duration.split(" ")[0] + ":00"
-        )
-        name = utils.cleantext(name)
-        videopage = urllib_parse.urljoin(site.url, videopage)
+    soup = utils.parse_html(listhtml)
+    for item in soup.select(".muestra-escena, .scene-item, .item"):
+        link = item.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
         if img.startswith("//"):
             img = "https:" + img
+        name = utils.cleantext(
+            utils.safe_get_text(item.select_one(".titulo, .title, .name"), default="")
+        )
+        duration = utils.safe_get_text(item.select_one(".duration"), default="")
+        hd = "HD" if item.select_one(".hd") else ""
+        videopage = urllib_parse.urljoin(site.url, videopage)
         site.add_download_link(
             name, videopage, "Playvid", img, name, duration=duration, quality=hd
         )
 
-    nextp = re.compile(
-        r'class="btn-pagination"\s*itemprop="name"\s*href="([^"]+)">Next',
-        re.DOTALL | re.IGNORECASE,
-    ).search(listhtml)
-    if nextp:
-        np = nextp.group(1)
-        site.add_dir(
-            "Next Page... ({})".format(np.split("/")[-2]),
-            site.url[:-1] + np,
-            "List",
-            site.img_next,
-        )
+    next_link = soup.select_one(".btn-pagination[itemprop='name'][href]")
+    if next_link:
+        np = utils.safe_get_attr(next_link, "href", default="")
+        if np:
+            site.add_dir(
+                "Next Page... ({})".format(np.split("/")[-2]),
+                site.url[:-1] + np,
+                "List",
+                site.img_next,
+            )
 
     utils.eod()
 

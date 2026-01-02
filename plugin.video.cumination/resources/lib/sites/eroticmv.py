@@ -56,33 +56,35 @@ def List(url):
         utils.eod()
         return
 
-    delimiter = '<article id="post-'
-    re_videopage = 'data-hyperlink="([^"]+)"'
-    re_name = r'\stitle="([^"]+)"'
-    re_img = 'src="([^"]+.jpg)"'
-    utils.videos_list(
-        site,
-        "eroticmv.Playvid",
-        html,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        contextm="eroticmv.Related",
-    )
+    soup = utils.parse_html(html)
+    for item in soup.select("article, .video-item, .post"):
+        videopage = utils.safe_get_attr(item, "data-hyperlink", default="")
+        link = item.select_one("a[href]")
+        if not videopage and link:
+            videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        name = utils.cleantext(
+            utils.safe_get_attr(link, "title", default=utils.safe_get_text(link))
+        )
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        site.add_download_link(
+            name,
+            videopage,
+            "Playvid",
+            img,
+            name,
+            contextm="eroticmv.Related",
+        )
 
-    re_npurl = r'href="([^"]+)">&raquo;<'
-    re_npnr = r'href="[^"]+/page/(\d+)/[^"]*">&raquo;<'
-    re_lpnr = r"<span class='pages'>Page \d+ of (\d+)<"
-    utils.next_page(
-        site,
-        "eroticmv.List",
-        html,
-        re_npurl,
-        re_npnr,
-        re_lpnr=re_lpnr,
-        contextm="eroticmv.GotoPage",
-    )
+    next_link = soup.select_one("a[rel='next'], a.next, .pagination a.next")
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, "href", default="")
+        if next_url:
+            site.add_dir(
+                "Next Page", next_url, "eroticmv.List", site.img_next, contextm="eroticmv.GotoPage"
+            )
     utils.eod()
 
 
@@ -129,12 +131,12 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'(https://eroticmv.com/category/genre/[^"]+)">([^<]+)<',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(cathtml)
-    for caturl, name in match:
-        name = utils.cleantext(name)
+    soup = utils.parse_html(cathtml)
+    for link in soup.select('a[href*="/category/genre/"]'):
+        caturl = utils.safe_get_attr(link, "href", default="")
+        name = utils.cleantext(utils.safe_get_text(link, default=""))
+        if not caturl or not name:
+            continue
         site.add_dir(name, caturl, "List", "")
     utils.eod()
 

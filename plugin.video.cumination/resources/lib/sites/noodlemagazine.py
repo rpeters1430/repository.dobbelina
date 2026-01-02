@@ -20,6 +20,7 @@ import re
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 import json
+from six.moves import urllib_parse
 
 site = AdultSite(
     "noodlemagazine",
@@ -66,29 +67,51 @@ def List(url, page=0):
     except Exception:
         return None
 
-    match = re.compile(
-        r'class="item">\s+?<a href="/([^"]+)".*?data-src="([^"]+)".*?alt="([^"]+)">(.*?)</div>.*?</svg> ([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for videopage, img, name, hd, duration in match:
-        name = utils.cleantext(name)
-        videopage = site.url + videopage
-        hd = " [COLOR orange]HD[/COLOR]" if "hd_mark" in hd else ""
-        if "getVideoPreview" in img:
-            i1, i2 = img.split("/getVideoPreview")
-            img = "https://" + i1.split("/")[-1] + "/getVideoPreview" + i2
-        img = img.replace("&amp;", "&") + "|User-Agent=" + utils.USER_AGENT
+    soup = utils.parse_html(listhtml)
+    items = soup.select(".item")
+    for item in items:
+        link = item.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        videopage = urllib_parse.urljoin(site.url, videopage)
+
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        if img:
+            if img.startswith("//"):
+                img = "https:" + img
+            elif not img.startswith("http"):
+                img = urllib_parse.urljoin(site.url, img)
+            if "getVideoPreview" in img:
+                i1, i2 = img.split("/getVideoPreview")
+                img = "https://" + i1.split("/")[-1] + "/getVideoPreview" + i2
+            img = img.replace("&amp;", "&") + "|User-Agent=" + utils.USER_AGENT
+
+        name = utils.cleantext(
+            utils.safe_get_attr(img_tag, "alt", default=utils.safe_get_text(link))
+        )
+        hd_flag = item.select_one(".hd_mark, .hd-mark, [class*='hd_mark']")
+        hd = " [COLOR orange]HD[/COLOR]" if hd_flag else ""
+        duration = utils.safe_get_text(
+            item.select_one(".duration, .time, .video-duration"), default=""
+        )
 
         site.add_download_link(
             name, videopage, "Playvid", img, name, duration=duration, quality=hd
         )
 
-    np = re.compile(
-        'class="more" data-page="([^"]+)">', re.DOTALL | re.IGNORECASE
-    ).search(listhtml)
+    np = ""
+    next_el = soup.select_one(".more[data-page]")
+    if next_el:
+        np = utils.safe_get_attr(next_el, "data-page", default="")
     if np:
-        np = np.group(1)
-        nextp = url.replace("p=" + str(page), "p=" + np)
+        if "p=" in url:
+            nextp = re.sub(r"p=\d+", "p={}".format(np), url)
+        elif "?" in url:
+            nextp = url + "&p=" + np
+        else:
+            nextp = url + "?p=" + np
         site.add_dir("Next Page ({})".format(np), nextp, "List", site.img_next, page=np)
     utils.eod()
 

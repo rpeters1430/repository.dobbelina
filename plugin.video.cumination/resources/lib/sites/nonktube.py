@@ -56,62 +56,68 @@ def List(url):
         utils.eod()
         return
 
-    delimiter = '<div class="video-block'
-    re_videopage = '<a.+?href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = 'src="([^"]+)"'
-    re_duration = '<span class="duration">([^<]+)<'
-    utils.videos_list(
-        site,
-        "nonktube.Playvid",
-        html,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        re_duration=re_duration,
-        contextm="nonktube.Related",
-    )
+    soup = utils.parse_html(html)
+    for item in soup.select(".video-block"):
+        link = item.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        name = utils.cleantext(
+            utils.safe_get_attr(link, "title", default=utils.safe_get_text(link))
+        )
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        duration = utils.safe_get_text(item.select_one(".duration"), default="")
+        site.add_download_link(
+            name,
+            videopage,
+            "nonktube.Playvid",
+            img,
+            name,
+            duration=duration,
+            contextm="nonktube.Related",
+        )
 
-    re_npurl = r'class="page-link"\s*href="([^"]+)">&raquo;<'
-    re_npnr = r'class="page-link"\s*href="[^"]+page/(\d+).+?">&raquo;<'
-    re_lpnr = r">&hellip;<.+?href.+?>([^<]+)"
-    utils.next_page(
-        site,
-        "nonktube.List",
-        html,
-        re_npurl,
-        re_npnr,
-        re_lpnr=re_lpnr,
-        contextm="nonktube.GotoPage",
-    )
+    next_link = soup.select_one(".page-link[href]")
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, "href", default="")
+        if next_url:
+            site.add_dir(
+                "Next Page",
+                next_url,
+                "nonktube.List",
+                site.img_next,
+                contextm="nonktube.GotoPage",
+            )
     utils.eod()
 
 
 @site.register()
 def Cat(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(
-        r'<div\s*class="video-block.+?href="([^"]+).+?data-src="([^"]+).+?title">([^<]+).+?datas">\s+(\d+)',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(cathtml)
-    for caturl, img, name, count in match:
-        name = utils.cleantext(name) + " [COLOR hotpink]({0} videos)[/COLOR]".format(
-            count
-        )
+    soup = utils.parse_html(cathtml)
+    for item in soup.select(".video-block"):
+        link = item.select_one("a[href]")
+        caturl = utils.safe_get_attr(link, "href", default="")
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        name = utils.cleantext(utils.safe_get_text(item.select_one(".title"), default=""))
+        count = utils.safe_get_text(item.select_one(".datas"), default="").strip()
+        if not caturl or not name:
+            continue
+        name = name + " [COLOR hotpink]({0} videos)[/COLOR]".format(count)
         site.add_dir(name, caturl, "List", img)
 
-    nextp = re.compile(
-        r'class="page-link"\s*href="([^"]+)">&raquo;<', re.DOTALL | re.IGNORECASE
-    ).search(cathtml)
-    if nextp:
-        np = nextp.group(1)
-        next_pg = re.findall(
-            r'class="page-link"\s*href="[^"]+page/(\d+).+?">&raquo;<', cathtml
-        )[0]
-        last_pg = re.findall(r'<a\s*class="page-link".+?>(\d+)', cathtml)[-1]
+    next_link = soup.select_one(".page-link[href]")
+    if next_link and "&raquo;" in utils.safe_get_text(next_link, ""):
+        np = utils.safe_get_attr(next_link, "href", default="")
+        last_pg = ""
+        for link in soup.select(".page-link"):
+            text = utils.safe_get_text(link, default="")
+            if text.isdigit():
+                last_pg = text
         site.add_dir(
-            "[COLOR hotpink]Next Page[/COLOR] ({0}/{1})".format(next_pg, last_pg),
+            "[COLOR hotpink]Next Page[/COLOR] ({0}/{1})".format("", last_pg),
             np,
             "Cat",
             site.img_next,

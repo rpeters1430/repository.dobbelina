@@ -80,29 +80,29 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    match = re.compile(
-        r'class="item\s.+?href="([^"]+).+?src="([^"]+).+?name">([^<]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for videopage, img, name in match:
-        name = utils.cleantext(name)
-        img = site.url[:-1] + img
-        videopage = site.url[:-1] + videopage
+    soup = utils.parse_html(listhtml)
+    for item in soup.select(".item"):
+        link = item.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+        name = utils.cleantext(utils.safe_get_text(item.select_one(".name"), default=""))
+        if not videopage or not name:
+            continue
+        img = site.url[:-1] + img if img and img.startswith("/") else img
+        videopage = site.url[:-1] + videopage if videopage.startswith("/") else videopage
         site.add_download_link(name, videopage, "Playvid", img, name)
-    pagination = re.search(
-        r'(<ul\s*class="pagination".+?/ul>)', listhtml, re.DOTALL | re.IGNORECASE
-    )
+    pagination = soup.select_one("ul.pagination")
     if pagination:
-        npage = re.search(
-            r'class="next"><a\s*href="([^"]+)"\s*data-page="(\d+)"', pagination.group(1)
-        )
+        npage = pagination.select_one("li.next a[href]")
         if npage:
-            nurl = site.url[:-1] + utils.cleantext(npage.group(1))
-            lastpg = re.findall(
-                r'class="last">[^>]+data-page="(\d+)"', pagination.group(1)
-            )[0]
+            nurl = site.url[:-1] + utils.cleantext(utils.safe_get_attr(npage, "href", default=""))
+            lastpg = ""
+            last = pagination.select_one("li.last a[data-page]")
+            if last:
+                lastpg = utils.safe_get_attr(last, "data-page", default="")
             pgtxt = "Next Page (Currently in Page {} of {})".format(
-                npage.group(2), int(lastpg) + 1
+                utils.safe_get_attr(npage, "data-page", default=""), int(lastpg) + 1 if lastpg else ""
             )
             site.add_dir(pgtxt, nurl, "List", site.img_next)
     utils.eod()
@@ -111,26 +111,27 @@ def List(url):
 @site.register()
 def Cat(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(
-        r'class="item".+?href="([^"]+).+?span>([^<]+).+?src="([^"]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(cathtml)
-    for caturl, name, img in match:
-        img = site.url[:-1] + img
-        catpage = site.url[:-1] + caturl
+    soup = utils.parse_html(cathtml)
+    for item in soup.select(".item"):
+        link = item.select_one("a[href]")
+        caturl = utils.safe_get_attr(link, "href", default="")
+        name = utils.cleantext(utils.safe_get_text(item.select_one("span"), default=""))
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+        if not caturl or not name:
+            continue
+        img = site.url[:-1] + img if img and img.startswith("/") else img
+        catpage = site.url[:-1] + caturl if caturl.startswith("/") else caturl
         site.add_dir(utils.cleantext(name), catpage, "List", img)
-    npage = re.compile(
-        r'class="next"><a href="([^"]+)"\s*data-page="(\d+)"', re.DOTALL | re.IGNORECASE
-    ).findall(cathtml)
+    npage = soup.select_one("li.next a[href]")
     if npage:
-        nurl, np = npage[0]
-        nurl = site.url[:-1] + nurl.replace("&amp;", "&")
-        lp = re.compile(
-            r'class="last"><a href="[^"]+"\s*data-page="(\d+)"',
-            re.DOTALL | re.IGNORECASE,
-        ).findall(cathtml)[0]
+        nurl = site.url[:-1] + utils.safe_get_attr(npage, "href", default="").replace("&amp;", "&")
+        lp = ""
+        last = soup.select_one("li.last a[data-page]")
+        if last:
+            lp = utils.safe_get_attr(last, "data-page", default="")
         site.add_dir(
-            "Next Page (Currently in Page {} of {})".format(np, int(lp) + 1),
+            "Next Page (Currently in Page {} of {})".format(utils.safe_get_attr(npage, "data-page", default=""), int(lp) + 1 if lp else ""),
             nurl,
             "Cat",
             site.img_next,

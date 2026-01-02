@@ -1579,20 +1579,27 @@ def parse_query(query):
 
 def cleantext(text):
     text = text.strip()
-    text = re.sub(
-        r"\\u([0-9A-Fa-f]{4})", lambda x: six.unichr(int(x.group(1), 16)), text
-    )
+    text = re.sub(r"\\u([0-9A-Fa-f]{4})", lambda x: six.unichr(int(x.group(1), 16)), text)
     try:
-        text = text.encode("utf-8", "ignore").decode("utf-8")
+        text = text.encode('utf-8', 'ignore').decode("utf-8")
     except:
         pass
     text = six.ensure_str(text)
     if PY3:
         import html
 
-        text = html.unescape(text)
+        for _ in range(2):
+            unescaped = html.unescape(text)
+            if unescaped == text:
+                break
+            text = unescaped
     else:
-        text = h.unescape(text.decode("utf8")).encode("utf8")
+        for _ in range(2):
+            unescaped = h.unescape(text.decode("utf8")).encode("utf8")
+            if unescaped == text:
+                break
+            text = unescaped
+    text = text.replace("\xa0", " ")
     return text.strip()
 
 

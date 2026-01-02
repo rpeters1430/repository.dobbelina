@@ -55,38 +55,35 @@ def List(url):
         utils.eod()
         return
 
-    delimiter = '<div class="well well-sm"'
-    re_videopage = 'class="video-link" href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = 'data-original="([^"]+)"'
-    re_duration = '<div class="duration">([^<]+)<'
-    re_quality = ">HD<"
-    skip = "=modelfeed"
-    utils.videos_list(
-        site,
-        "trendyporn.Playvid",
-        html,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        re_duration=re_duration,
-        re_quality=re_quality,
-        contextm="trendyporn.Related",
-        skip=skip,
-    )
+    soup = utils.parse_html(html)
+    for item in soup.select(".well.well-sm, .video-item, .item"):
+        link = item.select_one("a.video-link, a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage or "=modelfeed" in videopage:
+            continue
+        name = utils.cleantext(
+            utils.safe_get_attr(link, "title", default=utils.safe_get_text(link))
+        )
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
+        duration = utils.safe_get_text(item.select_one(".duration"), default="")
+        quality = "HD" if item.select_one(".quality, .hd") or "HD" in item.get_text() else ""
+        site.add_download_link(
+            name,
+            videopage,
+            "trendyporn.Playvid",
+            img,
+            name,
+            duration=duration,
+            quality=quality,
+            contextm="trendyporn.Related",
+        )
 
-    re_npurl = r"href='([^']+)'\s*class=\"prevnext\">Next"
-    re_npnr = r"href='page(\d+)\.html'\s*class=\"prevnext\">Next"
-    utils.next_page(
-        site,
-        "trendyporn.List",
-        html,
-        re_npurl,
-        re_npnr,
-        baseurl=url.split("page")[0],
-        contextm="trendyporn.GotoPage",
-    )
+    next_link = soup.select_one("a.prevnext[href]")
+    if next_link and "next" in utils.safe_get_text(next_link, "").lower():
+        next_url = utils.safe_get_attr(next_link, "href", default="")
+        if next_url:
+            site.add_dir("Next Page", next_url, "trendyporn.List", site.img_next)
     utils.eod()
 
 
@@ -133,12 +130,15 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'class="col-sm-6.+?href="([^"]+)"\s*title="([^"]+)".+?src="([^"]+)"',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(cathtml)
-    for caturl, name, img in match:
-        name = utils.cleantext(name)
+    soup = utils.parse_html(cathtml)
+    for item in soup.select(".col-sm-6, .category-item"):
+        link = item.select_one("a[href]")
+        caturl = utils.safe_get_attr(link, "href", default="")
+        name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        if not caturl or not name:
+            continue
         site.add_dir(name, caturl, "List", img)
     utils.eod()
 

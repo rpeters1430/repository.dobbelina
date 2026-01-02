@@ -70,15 +70,21 @@ def List(url):
     listhtml = utils.getHtml(url)
     if "/models/" in url or "/categories/" in url or "/tags/" in url:
         listhtml = listhtml.split("New Naked Celebs Scenes")[0]
-    match = re.compile(
-        r'class="item.+?href="([^"]+)"\s+title="([^"]+)".+?data-original="([^"]+)".+?</strong>',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
+    soup = utils.parse_html(listhtml)
 
     thumbnails = utils.Thumbnails(site.name)
-    for videopage, name, img in match:
-        img = thumbnails.fix_img(img)
-        name = utils.cleantext(name)
+    for item in soup.select(".item"):
+        link = item.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        name = utils.cleantext(
+            utils.safe_get_attr(link, "title", default=utils.safe_get_text(link))
+        )
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
+        if img:
+            img = thumbnails.fix_img(img)
 
         cm = []
         cm_lookupinfo = (
@@ -104,9 +110,23 @@ def List(url):
 
         site.add_download_link(name, videopage, "Playvid", img, name, contextm=cm)
 
-    nextp = re.compile(r':(\d+)">Next', re.DOTALL | re.IGNORECASE).findall(listhtml)
+    nextp = ""
+    for anchor in soup.select("a"):
+        if "next" in utils.safe_get_text(anchor, "").lower():
+            nextp = utils.safe_get_text(anchor, "").strip()
+            next_href = utils.safe_get_attr(anchor, "href", default="")
+            if next_href:
+                match = re.search(r"(\d+)", next_href)
+                if match:
+                    nextp = match.group(1)
+            break
+
+    if not nextp:
+        nextp = re.findall(r':(\d+)">Next', listhtml, re.DOTALL | re.IGNORECASE)
+        nextp = nextp[0] if nextp else ""
+
     if nextp:
-        np = nextp[0]
+        np = nextp
         pg = int(np) - 1
         r = re.search(r"/\d+/", url)
         if r:
@@ -117,7 +137,7 @@ def List(url):
             )
         else:
             next_page = url + "{0}/".format(np)
-        lp = re.compile(r':(\d+)">Last', re.DOTALL | re.IGNORECASE).findall(listhtml)
+        lp = re.findall(r':(\d+)">Last', listhtml, re.DOTALL | re.IGNORECASE)
         lp = lp[0] if lp else ""
         cm_page = (
             utils.addon_sys
@@ -165,17 +185,26 @@ def GotoPage(url, np, lp=None):
 @site.register()
 def ListPL(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        r'class="item.+?item="([^"]+).+?original="([^"]+).+?title">\s*([^<\n]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
+    soup = utils.parse_html(listhtml)
     thumbnails = utils.Thumbnails(site.name)
-    for video, img, name in match:
-        img = thumbnails.fix_img(img)
-        name = utils.cleantext(name)
+    for item in soup.select(".item"):
+        video = utils.safe_get_attr(item, "item", default="")
+        link = item.select_one("a[href]")
+        if not video and link:
+            video = utils.safe_get_attr(link, "href", default="")
+        if not video:
+            continue
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
+        img = thumbnails.fix_img(img) if img else ""
+        name = utils.cleantext(
+            utils.safe_get_text(item.select_one(".title"), default="")
+        )
+        if not name:
+            name = utils.cleantext(utils.safe_get_text(link, default=""))
         site.add_download_link(name, video, "Playvid", img, name)
 
-    nextp = re.compile(r':(\d+)">Next', re.DOTALL | re.IGNORECASE).findall(listhtml)
+    nextp = re.findall(r':(\d+)">Next', listhtml, re.DOTALL | re.IGNORECASE)
     if nextp:
         np = nextp[0]
         pg = int(np) - 1
@@ -185,7 +214,7 @@ def ListPL(url):
             )
         else:
             next_page = url + "{0}/".format(np)
-        lp = re.compile(r':(\d+)">Last', re.DOTALL | re.IGNORECASE).findall(listhtml)
+        lp = re.findall(r':(\d+)">Last', listhtml, re.DOTALL | re.IGNORECASE)
         lp = "/" + lp[0] if lp else ""
         site.add_dir("Next Page (" + np + lp + ")", next_page, "ListPL", site.img_next)
 
@@ -195,12 +224,21 @@ def ListPL(url):
 @site.register()
 def Playlist(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        r'class="item.+?href="([^"]+).+?data-original="([^"]+).+?title">\s*([^<\n]+).+?videos">([^<]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for lpage, img, name, count in match:
-        name = utils.cleantext(name) + "[COLOR deeppink] {0}[/COLOR]".format(count)
+    soup = utils.parse_html(listhtml)
+    for item in soup.select(".item"):
+        link = item.select_one("a[href]")
+        lpage = utils.safe_get_attr(link, "href", default="")
+        if not lpage:
+            continue
+        lpage = urllib_parse.urljoin(site.url, lpage)
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
+        name = utils.cleantext(
+            utils.safe_get_text(item.select_one(".title"), default="")
+        )
+        count = utils.safe_get_text(item.select_one(".videos"), default="")
+        if count:
+            name = name + "[COLOR deeppink] {0}[/COLOR]".format(count)
         lpage += "?mode=async&function=get_block&block_id=playlist_view_playlist_view&sort_by=&from=01"
         site.add_dir(name, lpage, "ListPL", img)
 

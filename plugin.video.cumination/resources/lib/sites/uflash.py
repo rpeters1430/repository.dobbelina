@@ -50,23 +50,19 @@ def List(url):
         utils.eod()
         return
 
-    delimiter = r"<li\s+style="
-    re_videopage = 'href="([^"]+)"'
-    re_name = 'alt="([^"]+)"'
-    re_img = 'img src="([^"]+)"'
-    re_duration = r'class="duration">[\s\t]*([\d:]+)'
-    skip = "adultfriendfinder.com"
-    utils.videos_list(
-        site,
-        "uflash.Playvid",
-        html,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        re_duration=re_duration,
-        skip=skip,
-    )
+    soup = utils.parse_html(html)
+    for item in soup.select("li"):
+        link = item.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage or "adultfriendfinder.com" in videopage:
+            continue
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+        name = utils.safe_get_attr(img_tag, "alt", default=utils.safe_get_text(link))
+        duration = utils.safe_get_text(item.select_one(".duration"), default="")
+        site.add_download_link(
+            name, videopage, "uflash.Playvid", img, name, duration=duration
+        )
 
     # re_npurl = r'href="([^"]+)"\s*class="prevnext">Next'
     # re_npnr = r'(\d+)"\s*class="prevnext">Next'

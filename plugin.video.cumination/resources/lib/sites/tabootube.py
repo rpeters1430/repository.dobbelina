@@ -73,13 +73,23 @@ def List(url, page=1):
         )
         raise
 
-    match = re.compile(
-        r'class="item item-\d+\s*?">\s*<a href="https://www\.tabootube\.xxx/([^"]+)" title="([^"]+)".*?data-original="([^"]+)".*?duration">([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for videopage, name, img, duration in match:
-        name = utils.cleantext(name)
-        videopage = site.url + videopage
+    soup = utils.parse_html(listhtml)
+    items = soup.select(".item")
+    for item in items:
+        link = item.select_one("a[href]")
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+
+        videopage = urllib_parse.urljoin(site.url, videopage)
+        name = utils.cleantext(
+            utils.safe_get_attr(link, "title", default=utils.safe_get_text(link))
+        )
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
+        duration = utils.safe_get_text(item.select_one(".duration"), default="")
 
         contextmenu = []
         contexturl = (
@@ -103,12 +113,31 @@ def List(url, page=1):
             duration=duration,
         )
 
-    np = re.compile(
-        r'class="next">.*?post_date;from:(\d+)"', re.DOTALL | re.IGNORECASE
-    ).search(listhtml)
+    np = None
+    next_el = soup.select_one(".next[data-page], .pagination .next a, a.next")
+    if next_el:
+        next_val = utils.safe_get_attr(next_el, "data-page", ["href"])
+        if next_val:
+            match = re.search(r"from=(\d+)", next_val)
+            if match:
+                np = match.group(1)
+            elif next_val.isdigit():
+                np = next_val
+
+    if not np:
+        match = re.search(
+            r'class="next">.*?post_date;from:(\d+)"',
+            listhtml,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if match:
+            np = match.group(1)
+
     if np:
-        np = np.group(1)
-        nextp = url.replace("from=" + str(page), "from=" + np)
+        if "from=" in url:
+            nextp = re.sub(r"from=\d+", "from={}".format(np), url)
+        else:
+            nextp = url
         site.add_dir("Next Page ({})".format(np), nextp, "List", site.img_next, page=np)
     utils.eod()
 
@@ -149,11 +178,13 @@ def Categories(url):
     except Exception as exc:
         utils.kodilog(f"TabooTube: Failed to fetch categories: {exc}", xbmc.LOGERROR)
         raise
-    match = re.compile(
-        '<a class="item" href="([^"]+)" title="([^"]+)"', re.DOTALL | re.IGNORECASE
-    ).findall(cathtml)
-    for catpage, name in match:
-        name = utils.cleantext(name)
+    soup = utils.parse_html(cathtml)
+    for link in soup.select("a.item[href][title]"):
+        catpage = utils.safe_get_attr(link, "href", default="")
+        name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+        if not catpage or not name:
+            continue
+        catpage = urllib_parse.urljoin(site.url, catpage)
         catpage = (
             catpage
             + "?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=post_date&from=1"
@@ -175,14 +206,15 @@ def Tags(url):
     except Exception as exc:
         utils.kodilog(f"TabooTube: Failed to fetch tags: {exc}", xbmc.LOGERROR)
         raise
-    match = re.compile('/(tags/[^"]+)">([^<]+)<', re.DOTALL | re.IGNORECASE).findall(
-        taghtml
-    )
-    for tagpage, name in match:
-        name = utils.cleantext(name)
+    soup = utils.parse_html(taghtml)
+    for link in soup.select('a[href*="/tags/"], a[href*="tags/"]'):
+        tagpage = utils.safe_get_attr(link, "href", default="")
+        name = utils.cleantext(utils.safe_get_text(link, default=""))
+        if not tagpage or not name:
+            continue
+        tagpage = urllib_parse.urljoin(site.url, tagpage)
         tagpage = (
-            site.url
-            + tagpage
+            tagpage
             + "?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=post_date&from=1"
         )
         site.add_dir(name, tagpage, "List", "", page=1)
