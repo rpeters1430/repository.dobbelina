@@ -5,7 +5,9 @@ from pathlib import Path
 from resources.lib.sites import celebsroulette
 
 
-FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "celebsroulette"
+FIXTURE_DIR = (
+    Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "celebsroulette"
+)
 
 
 def load_fixture(name: str) -> str:
@@ -26,7 +28,9 @@ def test_list_parses_items(monkeypatch):
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
         dirs.append({"name": name, "url": url})
 
-    monkeypatch.setattr(celebsroulette.site, "add_download_link", fake_add_download_link)
+    monkeypatch.setattr(
+        celebsroulette.site, "add_download_link", fake_add_download_link
+    )
     monkeypatch.setattr(celebsroulette.site, "add_dir", fake_add_dir)
 
     celebsroulette.List("https://celebsroulette.com/latest-updates/")

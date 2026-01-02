@@ -21,7 +21,9 @@ def test_list_parses_items(monkeypatch):
     monkeypatch.setattr(seaporn.utils.progress, "create", lambda *a, **k: None)
     monkeypatch.setattr(seaporn.utils.progress, "update", lambda *a, **k: None)
     monkeypatch.setattr(seaporn.utils.progress, "close", lambda *a, **k: None)
-    monkeypatch.setattr(seaporn.utils.progress, "iscanceled", lambda: False, raising=False)
+    monkeypatch.setattr(
+        seaporn.utils.progress, "iscanceled", lambda: False, raising=False
+    )
     monkeypatch.setattr(seaporn.utils, "eod", lambda: None)
     monkeypatch.setattr(
         seaporn.site,

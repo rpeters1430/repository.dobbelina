@@ -36,7 +36,9 @@ def test_list_parses_items(monkeypatch):
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
         dirs.append({"name": name, "url": url, "mode": mode})
 
-    monkeypatch.setattr(noodlemagazine.site, "add_download_link", fake_add_download_link)
+    monkeypatch.setattr(
+        noodlemagazine.site, "add_download_link", fake_add_download_link
+    )
     monkeypatch.setattr(noodlemagazine.site, "add_dir", fake_add_dir)
 
     noodlemagazine.List("https://noodlemagazine.com/video/?sort=0&hd=0&len=any&p=1", 1)
@@ -54,8 +56,8 @@ def test_list_parses_items(monkeypatch):
     assert downloads[1]["url"] == "https://noodlemagazine.com/video/second-video/"
     assert downloads[1]["duration"] == "05:05"
     assert downloads[1]["quality"] == ""
-    assert "cdn.noodlemagazine.com/thumbs/second.jpg|User-Agent=" in downloads[1][
-        "icon"
-    ]
+    assert (
+        "cdn.noodlemagazine.com/thumbs/second.jpg|User-Agent=" in downloads[1]["icon"]
+    )
 
     assert any(d["name"] == "Next Page (2)" for d in dirs)

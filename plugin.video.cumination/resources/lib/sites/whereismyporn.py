@@ -59,16 +59,14 @@ def List(url):
         img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
         site.add_download_link(name, videopage, "Playvid", img, name)
 
-    next_link = soup.select_one('a.next.page-numbers[href], a.next[href]')
+    next_link = soup.select_one("a.next.page-numbers[href], a.next[href]")
     if next_link:
         np = utils.safe_get_attr(next_link, "href", default="")
         nextpage = ""
         match = re.search(r"page/(\d+)", np)
         if match:
             nextpage = match.group(1)
-        site.add_dir(
-            "Next Page... ({0})".format(nextpage), np, "List", site.img_next
-        )
+        site.add_dir("Next Page... ({0})".format(nextpage), np, "List", site.img_next)
     utils.eod()
 
 

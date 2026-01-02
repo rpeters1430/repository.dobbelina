@@ -96,7 +96,7 @@ def List(url, page=1):
         if progress.iscanceled():
             break
 
-        np = soup.select_one('a.page-numbers[href]')
+        np = soup.select_one("a.page-numbers[href]")
         next_url = ""
         if np and "next" in utils.safe_get_text(np, "").lower():
             next_url = utils.safe_get_attr(np, "href", default="")

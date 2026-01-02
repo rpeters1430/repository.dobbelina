@@ -87,9 +87,17 @@ def List(url):
         quality = ""
         if quality_el:
             class_name = " ".join(quality_el.get("class", []))
-            quality = class_name.split("_video")[0].upper() if "_video" in class_name else ""
+            quality = (
+                class_name.split("_video")[0].upper() if "_video" in class_name else ""
+            )
         site.add_download_link(
-            name, videopage, "beemtube.Playvid", img, name, duration=duration, quality=quality
+            name,
+            videopage,
+            "beemtube.Playvid",
+            img,
+            name,
+            duration=duration,
+            quality=quality,
         )
 
     next_link = soup.select_one("a[rel='next'], a.next")
@@ -130,7 +138,9 @@ def Channels(url):
         name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
         img_tag = item.select_one("img")
         img = utils.safe_get_attr(img_tag, "data-src", ["src"])
-        count = utils.safe_get_text(item.select_one(".channel_item_videos"), default="").strip()
+        count = utils.safe_get_text(
+            item.select_one(".channel_item_videos"), default=""
+        ).strip()
         if not caturl or not name:
             continue
         if count:

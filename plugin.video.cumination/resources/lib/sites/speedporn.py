@@ -114,7 +114,11 @@ def List(url):
     if next_link:
         next_page = utils.safe_get_attr(next_link, "href", default="")
         if next_page:
-            page_nr = re.findall(r"\d+", next_page)[-1] if re.findall(r"\d+", next_page) else ""
+            page_nr = (
+                re.findall(r"\d+", next_page)[-1]
+                if re.findall(r"\d+", next_page)
+                else ""
+            )
             site.add_dir(
                 "Next Page (" + str(page_nr) + ")", next_page, "List", site.img_next
             )

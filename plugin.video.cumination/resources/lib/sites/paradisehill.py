@@ -86,23 +86,30 @@ def List(url):
         videopage = utils.safe_get_attr(link, "href", default="")
         img_tag = item.select_one("img")
         img = utils.safe_get_attr(img_tag, "src", ["data-src"])
-        name = utils.cleantext(utils.safe_get_text(item.select_one(".name"), default=""))
+        name = utils.cleantext(
+            utils.safe_get_text(item.select_one(".name"), default="")
+        )
         if not videopage or not name:
             continue
         img = site.url[:-1] + img if img and img.startswith("/") else img
-        videopage = site.url[:-1] + videopage if videopage.startswith("/") else videopage
+        videopage = (
+            site.url[:-1] + videopage if videopage.startswith("/") else videopage
+        )
         site.add_download_link(name, videopage, "Playvid", img, name)
     pagination = soup.select_one("ul.pagination")
     if pagination:
         npage = pagination.select_one("li.next a[href]")
         if npage:
-            nurl = site.url[:-1] + utils.cleantext(utils.safe_get_attr(npage, "href", default=""))
+            nurl = site.url[:-1] + utils.cleantext(
+                utils.safe_get_attr(npage, "href", default="")
+            )
             lastpg = ""
             last = pagination.select_one("li.last a[data-page]")
             if last:
                 lastpg = utils.safe_get_attr(last, "data-page", default="")
             pgtxt = "Next Page (Currently in Page {} of {})".format(
-                utils.safe_get_attr(npage, "data-page", default=""), int(lastpg) + 1 if lastpg else ""
+                utils.safe_get_attr(npage, "data-page", default=""),
+                int(lastpg) + 1 if lastpg else "",
             )
             site.add_dir(pgtxt, nurl, "List", site.img_next)
     utils.eod()
@@ -125,13 +132,18 @@ def Cat(url):
         site.add_dir(utils.cleantext(name), catpage, "List", img)
     npage = soup.select_one("li.next a[href]")
     if npage:
-        nurl = site.url[:-1] + utils.safe_get_attr(npage, "href", default="").replace("&amp;", "&")
+        nurl = site.url[:-1] + utils.safe_get_attr(npage, "href", default="").replace(
+            "&amp;", "&"
+        )
         lp = ""
         last = soup.select_one("li.last a[data-page]")
         if last:
             lp = utils.safe_get_attr(last, "data-page", default="")
         site.add_dir(
-            "Next Page (Currently in Page {} of {})".format(utils.safe_get_attr(npage, "data-page", default=""), int(lp) + 1 if lp else ""),
+            "Next Page (Currently in Page {} of {})".format(
+                utils.safe_get_attr(npage, "data-page", default=""),
+                int(lp) + 1 if lp else "",
+            ),
             nurl,
             "Cat",
             site.img_next,

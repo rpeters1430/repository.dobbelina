@@ -67,7 +67,9 @@ def List(url):
         img_tag = item.select_one("img")
         img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
         duration = utils.safe_get_text(item.select_one(".duration"), default="")
-        quality = "HD" if item.select_one(".quality, .hd") or "HD" in item.get_text() else ""
+        quality = (
+            "HD" if item.select_one(".quality, .hd") or "HD" in item.get_text() else ""
+        )
         site.add_download_link(
             name,
             videopage,

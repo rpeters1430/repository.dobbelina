@@ -83,7 +83,11 @@ def List(url):
         next_url = utils.safe_get_attr(next_link, "href", default="")
         if next_url:
             site.add_dir(
-                "Next Page", next_url, "eroticmv.List", site.img_next, contextm="eroticmv.GotoPage"
+                "Next Page",
+                next_url,
+                "eroticmv.List",
+                site.img_next,
+                contextm="eroticmv.GotoPage",
             )
     utils.eod()
 
