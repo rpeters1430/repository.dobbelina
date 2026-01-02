@@ -95,7 +95,7 @@ ZIP_MAX_COMMENT = (1 << 16) - 1
 ZIP_STORED = 0
 ZIP_DEFLATED = 8
 structEndArchive = "<4s4H2LH"
-stringEndArchive = "PK\005\006"
+stringEndArchive = b"PK\005\006"
 sizeEndCentDir = struct.calcsize(structEndArchive)
 _ECD_SIGNATURE = 0
 _ECD_DISK_NUMBER = 1
@@ -108,7 +108,7 @@ _ECD_COMMENT_SIZE = 7
 _ECD_COMMENT = 8
 _ECD_LOCATION = 9
 structCentralDir = "<4s4B4HL2L5H2L"
-stringCentralDir = "PK\001\002"
+stringCentralDir = b"PK\001\002"
 sizeCentralDir = struct.calcsize(structCentralDir)
 _CD_SIGNATURE = 0
 _CD_CREATE_VERSION = 1
@@ -130,7 +130,7 @@ _CD_INTERNAL_FILE_ATTRIBUTES = 16
 _CD_EXTERNAL_FILE_ATTRIBUTES = 17
 _CD_LOCAL_HEADER_OFFSET = 18
 structFileHeader = "<4s2B4HL2L2H"
-stringFileHeader = "PK\003\004"
+stringFileHeader = b"PK\003\004"
 sizeFileHeader = struct.calcsize(structFileHeader)
 _FH_SIGNATURE = 0
 _FH_EXTRACT_VERSION = 1
@@ -145,10 +145,10 @@ _FH_UNCOMPRESSED_SIZE = 9
 _FH_FILENAME_LENGTH = 10
 _FH_EXTRA_FIELD_LENGTH = 11
 structEndArchive64Locator = "<4sLQL"
-stringEndArchive64Locator = "PK\x06\x07"
+stringEndArchive64Locator = b"PK\x06\x07"
 sizeEndCentDir64Locator = struct.calcsize(structEndArchive64Locator)
 structEndArchive64 = "<4sQ2H2L4Q"
-stringEndArchive64 = "PK\x06\x06"
+stringEndArchive64 = b"PK\x06\x06"
 sizeEndCentDir64 = struct.calcsize(structEndArchive64)
 _CD64_SIGNATURE = 0
 _CD64_DIRECTORY_RECSIZE = 1
@@ -240,7 +240,7 @@ def _EndRecData(fpin):
     ):
         endrec = struct.unpack(structEndArchive, data)
         endrec = list(endrec)
-        endrec.append("")
+        endrec.append(b"")
         endrec.append(filesize - sizeEndCentDir)
         return _EndRecData64(fpin, -sizeEndCentDir, endrec)
     maxCommentStart = max(filesize - (1 << 16) - sizeEndCentDir, 0)
@@ -287,11 +287,19 @@ class ZipInfo(object):
 
     def __init__(self, filename="NoName", date_time=(1980, 1, 1, 0, 0, 0)):
         self.orig_filename = filename
-        null_byte = filename.find(chr(0))
+        if isinstance(filename, bytes):
+            null_byte = filename.find(b"\x00")
+        else:
+            null_byte = filename.find("\x00")
         if null_byte >= 0:
             filename = filename[0:null_byte]
-        if os.sep != "/" and os.sep in filename:
-            filename = filename.replace(os.sep, "/")
+        if isinstance(filename, bytes):
+            sep = os.sep.encode()
+            if sep != b"/" and sep in filename:
+                filename = filename.replace(sep, b"/")
+        else:
+            if os.sep != "/" and os.sep in filename:
+                filename = filename.replace(os.sep, "/")
 
         self.filename = filename
         self.date_time = date_time
@@ -300,8 +308,8 @@ class ZipInfo(object):
             raise ValueError("ZIP does not support timestamps before 1980")
 
         self.compress_type = ZIP_STORED
-        self.comment = ""
-        self.extra = ""
+        self.comment = b""
+        self.extra = b""
         if sys.platform == "win32":
             self.create_system = 0
         else:
@@ -362,19 +370,19 @@ class ZipInfo(object):
         return header + filename + extra
 
     def _encodeFilenameFlags(self):
-        if isinstance(self.filename, six.text_type) and six.PY2:
+        if isinstance(self.filename, six.text_type):
             try:
                 return self.filename.encode("ascii"), self.flag_bits
             except UnicodeEncodeError:
                 return self.filename.encode("utf-8"), self.flag_bits | 0x800
-        else:
-            return self.filename, self.flag_bits
+        return self.filename, self.flag_bits
 
     def _decodeFilename(self):
-        if self.flag_bits & 0x800:
-            return self.filename.decode("utf-8")
-        else:
-            return self.filename
+        if isinstance(self.filename, bytes):
+            if self.flag_bits & 0x800:
+                return self.filename.decode("utf-8")
+            return self.filename.decode("utf-8", "replace")
+        return self.filename
 
     def _decodeExtra(self):
         extra = self.extra
@@ -518,8 +526,8 @@ class ZipExtFile(io.BufferedIOBase):
                 raise NotImplementedError(
                     "compression type %d" % (self._compress_type,)
                 )
-        self._unconsumed = ""
-        self._readbuffer = ""
+        self._unconsumed = b""
+        self._readbuffer = b""
         self._offset = 0
         self._universal = "U" in mode
         self.newlines = None
@@ -538,17 +546,17 @@ class ZipExtFile(io.BufferedIOBase):
         If limit is specified, at most limit bytes will be read.
         """
         if not self._universal and limit < 0:
-            i = self._readbuffer.find("\n", self._offset) + 1
+            i = self._readbuffer.find(b"\n", self._offset) + 1
             if i > 0:
                 line = self._readbuffer[self._offset : i]
                 self._offset = i
                 return line
         if not self._universal:
             return io.BufferedIOBase.readline(self, limit)
-        line = ""
+        line = b""
         while limit < 0 or len(line) < limit:
             readahead = self.peek(2)
-            if readahead == "":
+            if readahead == b"":
                 return line
             match = self.PATTERN.search(readahead)
             newline = match.group("newline")
@@ -558,7 +566,7 @@ class ZipExtFile(io.BufferedIOBase):
                 if newline not in self.newlines:
                     self.newlines.append(newline)
                 self._offset += len(newline)
-                return line + "\n"
+                return line + b"\n"
 
             chunk = match.group("chunk")
             if limit >= 0:
@@ -586,7 +594,7 @@ class ZipExtFile(io.BufferedIOBase):
         """Read and return up to n bytes.
         If the argument is omitted, None, or negative, data is read and returned until EOF is reached..
         """
-        buf = ""
+        buf = b""
         if n is None:
             n = -1
         while True:
@@ -700,7 +708,7 @@ class ZipFile(object):
         self.compression = compression
         self.mode = key = mode.replace("b", "")[0]
         self.pwd = None
-        self._comment = ""
+        self._comment = b""
         # FTG mod for Kodi 18
         if platform() == "android":
             file = io.FileIO(file, mode)
@@ -772,7 +780,7 @@ class ZipFile(object):
         self.start_dir = offset_cd + concat
         fp.seek(self.start_dir, 0)
         data = fp.read(size_cd)
-        fp = cStringIO(data)
+        fp = io.BytesIO(data)
         total = 0
         while total < size_cd:
             centdir = fp.read(sizeCentralDir)
@@ -875,6 +883,8 @@ class ZipFile(object):
 
     @comment.setter
     def comment(self, comment):
+        if isinstance(comment, six.text_type):
+            comment = comment.encode("utf-8")
         if len(comment) > ZIP_MAX_COMMENT:
             import warnings
 

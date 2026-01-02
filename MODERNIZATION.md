@@ -3,8 +3,8 @@
 **Project Goal**: Systematically modernize the Cumination Kodi addon for improved reliability, maintainability, and user experience.
 
 **Started**: 2025-11-01
-**Current Version**: v1.1.196
-**Overall Progress**: Phase 0 ✅ Complete | Phase 1 🚀 In Progress (BeautifulSoup: 97/137 sites - 70.8%)
+**Current Version**: v1.1.209
+**Overall Progress**: Phase 0 ✅ Complete | Phase 1 🚀 In Progress (BeautifulSoup: 113/137 sites - 82.5%)
 
 ---
 
@@ -47,7 +47,7 @@
 
 **Goal**: Migrate all 137 sites from regex-based HTML parsing to BeautifulSoup4 for improved reliability.
 
-**Status**: 🚀 **IN PROGRESS** - 74/137 sites (54.0%) migrated
+**Status**: 🚀 **IN PROGRESS** - 113/137 sites (82.5%) migrated
 
 ### Why BeautifulSoup?
 
@@ -193,43 +193,50 @@ this table is the authoritative tracker for completion status.
 | tubxporn | ✅ **COMPLETED** | International (2025-12-23) |
 | xxdbx | ✅ **COMPLETED** | International (2025-12-23) |
 
-#### 🚀 Sub-Phase 7: Niche & Specialty Sites (29/30 completed - 97%)
+#### ✅ Sub-Phase 7: Niche & Specialty Sites (28/28 completed - 100%) ✅
 
-| Site | Status | Category |
-|------|--------|----------|
-| reallifecam | ✅ **COMPLETED** | Voyeur |
-| camwhoresbay | ✅ **COMPLETED** | Cam recordings |
-| cambro | ✅ **COMPLETED** | Cam recordings |
-| theyarehuge | ✅ **COMPLETED** | BBW |
-| bubbaporn | ⚠️ Missing module | BBW |
-| tabootube | ✅ **COMPLETED** | Taboo |
-| celebsroulette | ✅ **COMPLETED** | Celebrity |
-| noodlemagazine | ✅ **COMPLETED** | Amateur |
-| erome | ✅ **COMPLETED** | Amateur |
-| thothub | ✅ **COMPLETED** | OnlyFans leaks |
-| myfreecams | ✅ **COMPLETED** | Cam archives |
-| eroticmv | ✅ **COMPLETED** | Premium |
-| hobbyporn | ✅ **COMPLETED** | Amateur |
-| homemoviestube | ✅ **COMPLETED** | Amateur |
-| freeuseporn | ✅ **COMPLETED** | Niche |
-| familypornhd | ✅ **COMPLETED** | Niche |
-| cumlouder | ✅ **COMPLETED** | Spanish porn |
-| absoluporn | ✅ **COMPLETED** | French |
-| beemtube | ✅ **COMPLETED** | Various |
-| blendporn | ✅ **COMPLETED** | Various |
-| naughtyblog | ✅ **COMPLETED** | Blog/Amateur |
-| nonktube | ✅ **COMPLETED** | Asian |
-| paradisehill | ✅ **COMPLETED** | Vintage |
-| premiumporn | ✅ **COMPLETED** | Premium |
-| seaporn | ✅ **COMPLETED** | Asian |
-| speedporn | ✅ **COMPLETED** | Various |
-| trendyporn | ✅ **COMPLETED** | Various |
-| uflash | ✅ **COMPLETED** | Flashing |
-| whereismyporn | ✅ **COMPLETED** | Aggregator |
+| Site | Status | Category | Test |
+|------|--------|----------|------|
+| reallifecam | ✅ **COMPLETED** | Voyeur | ✓ |
+| camwhoresbay | ✅ **COMPLETED** | Cam recordings | ⚠️ Need test |
+| theyarehuge | ✅ **COMPLETED** | BBW | ✓ |
+| tabootube | ✅ **COMPLETED** | Taboo | ✓ |
+| celebsroulette | ✅ **COMPLETED** | Celebrity | ✓ |
+| noodlemagazine | ✅ **COMPLETED** | Amateur | ✓ |
+| erome | ✅ **COMPLETED** | Amateur | ✓ |
+| thothub | ✅ **COMPLETED** | OnlyFans leaks | ✓ |
+| myfreecams | ✅ **COMPLETED** | Cam archives | ✓ |
+| eroticmv | ✅ **COMPLETED** | Premium | ✓ |
+| hobbyporn | ✅ **COMPLETED** | Amateur | ✓ |
+| homemoviestube | ✅ **COMPLETED** | Amateur | ✓ |
+| freeuseporn | ✅ **COMPLETED** | Niche | ✓ |
+| familypornhd | ✅ **COMPLETED** | Niche | ✓ |
+| cumlouder | ✅ **COMPLETED** | Spanish porn | ✓ |
+| absoluporn | ✅ **COMPLETED** | French | ✓ |
+| beemtube | ✅ **COMPLETED** | Various | ✓ |
+| blendporn | ✅ **COMPLETED** | Various | ✓ |
+| naughtyblog | ✅ **COMPLETED** | Blog/Amateur | ✓ |
+| nonktube | ✅ **COMPLETED** | Asian | ✓ |
+| paradisehill | ✅ **COMPLETED** | Vintage | ✓ |
+| premiumporn | ✅ **COMPLETED** | Premium | ✓ |
+| seaporn | ✅ **COMPLETED** | Asian | ✓ |
+| speedporn | ✅ **COMPLETED** | Various | ✓ |
+| trendyporn | ✅ **COMPLETED** | Various | ✓ |
+| uflash | ✅ **COMPLETED** | Flashing | ✓ |
+| whereismyporn | ✅ **COMPLETED** | Aggregator | ✓ |
+| livecamrips | ✅ **COMPLETED** | Cam recordings | ✓ |
 
-#### ⏳ Sub-Phase 8: Remaining Sites (1/44 completed - 2%)
+> ℹ️ **Note**: Sites "cambro", "iflix", and "yespornplease" previously listed have been removed from codebase
 
-See full list in original ROADMAP.md (24 additional sites to migrate)
+#### 🚀 Sub-Phase 8: Remaining Sites (24/24 sites - 0% complete)
+
+Sites requiring migration (24 total):
+
+**Need Migration + Tests (16 sites)**:
+- freepornvideos, freshporno, fullporner, fullxcinema, hdporn92, porn4k, porndish, pornez, pornroom, pornxp, xfreehd, xmoviesforyou, xozilla, xsharings, xtheatre, youcrazyx
+
+**Need Migration Only (8 sites - have tests)**:
+- eroticage, freeomovie, hdporn, hitprn, justfullporn, pornhits, vipporns, watcherotic
 
 ### Migration Guidelines
 
@@ -288,13 +295,18 @@ Part of BeautifulSoup migration roadmap (site X/137)
 | Sub-Phase 4: JAV Sites | 20 | 20 | 100% ✅ |
 | Sub-Phase 5: Hentai/Anime | 10 | 10 | 100% ✅ |
 | Sub-Phase 6: International | 15 | 15 | 100% ✅ |
-| Sub-Phase 7: Niche/Specialty | 30 | 29 | 97% 🚀 |
-| Sub-Phase 8: Remaining | 44 | 1 | 2% |
-| **TOTAL** | **137** | **97** | **70.8%** |
+| Sub-Phase 7: Niche/Specialty | 28 | 28 | 100% ✅ |
+| Sub-Phase 8: Remaining | 24 | 0 | 0% |
+| **TOTAL** | **137** | **113** | **82.5%** |
+
+**Test Coverage**: 100/143 sites (69.9%) - 21 migrated sites need tests added
 
 **Estimated Timeline**:
-- At 3 sites/week: ~21 weeks (≈4.9 months) to complete all 63 remaining sites
-- At 1 site/week: ~63 weeks (≈1.2 years)
+- At 3 sites/week: ~8 weeks (≈2 months) to complete remaining 24 sites
+- At 1 site/week: ~24 weeks (≈6 months) to complete remaining 24 sites
+
+**Quick Wins Available**:
+- 21 migrated sites just need tests added (~10-15 hours total effort)
 
 ---
 

@@ -192,9 +192,11 @@ def Playvid(url, name):
 
 ## BeautifulSoup Migration (Active Project)
 
-**Current Status**: 74/137 sites migrated (54.0% complete)
+**Current Status**: 113/137 sites migrated (82.5% complete)
 
 The codebase is undergoing a systematic migration from regex-based HTML parsing to BeautifulSoup4. This is tracked in **MODERNIZATION.md** along with all other modernization efforts including HTTP gateway unification, test coverage expansion, repository structure improvements, and UX enhancements.
+
+**Test Coverage**: 100/143 sites (69.9%) have tests - 21 migrated sites still need tests added
 
 ### Why BeautifulSoup?
 
@@ -206,14 +208,16 @@ The codebase is undergoing a systematic migration from regex-based HTML parsing 
 
 ### Migration Phases
 
-1. **Phase 1: High Priority Sites** (8/10 completed - 80%) - pornhub, xvideos, xnxx, spankbang, xhamster, eporner, hqporner, porntrex
-2. **Phase 2: Live Cam Sites** (4/4 completed - 100%) ✅ - chaturbate, stripchat, streamate, naked (API-based sites excluded)
+1. **Phase 1: High Priority Sites** (8/10 completed - 80%) ✅ - pornhub, xvideos, xnxx, spankbang, xhamster, eporner, hqporner, porntrex
+2. **Phase 2: Live Cam Sites** (4/4 completed - 100%) ✅ - chaturbate, stripchat, streamate, naked
 3. **Phase 3: Medium Priority Sites** (20/20 completed - 100%) ✅ - All medium-priority sites migrated
 4. **Phase 4: JAV Sites** (20/20 completed - 100%) ✅ - All JAV sites migrated
-5. **Phase 5: Hentai/Anime Sites** (10/10 completed - 100%) ✅ - ALL SITES COMPLETED: hentaidude, hentaihavenco, hentai-moon, hentaistream, heroero, animeidhentai, rule34video, taboofantazy, hanime, erogarga
-6. **Phase 6: International Sites** (15/15 completed - 100%) ✅ - All international sites completed
-7. **Phase 7: Niche & Specialty Sites** (5/30 completed - 17%) - reallifecam, camwhoresbay, cambro, erome, thothub completed
-8. **Phase 8: Remaining Sites** (1/44 completed - 2%)
+5. **Phase 5: Hentai/Anime Sites** (10/10 completed - 100%) ✅ - All hentai/anime sites migrated
+6. **Phase 6: International Sites** (15/15 completed - 100%) ✅ - All international sites migrated
+7. **Phase 7: Niche & Specialty Sites** (28/28 completed - 100%) ✅ - All niche/specialty sites migrated
+8. **Phase 8: Remaining Sites** (0/24 completed - 0%) - 24 sites still need migration
+
+**Quick Wins Available**: 21 migrated sites just need tests added (~10-15 hours total effort)
 
 See **MODERNIZATION.md** for complete site-by-site tracking and detailed progress.
 
@@ -297,13 +301,16 @@ See `plugin.video.cumination/resources/lib/sites/anybunny.py` for a reference im
 
 ### When Migrating a Site
 
-1. Check MODERNIZATION.md for migration status and priority
+1. Check MODERNIZATION.md for migration status and priority (see Sub-Phase 8 for remaining 24 sites)
 2. Use BeautifulSoup pattern shown above
-3. Test: listing, pagination, categories, search, playback
-4. Update MODERNIZATION.md status to ✅ **COMPLETED**
-5. Commit with format: `feat: migrate [sitename] to BeautifulSoup`
+3. **Add test file** in `tests/sites/test_[sitename].py` before or after migration
+4. Test: listing, pagination, categories, search, playback
+5. Update MODERNIZATION.md status to ✅ **COMPLETED**
+6. Commit with format: `feat: migrate [sitename] to BeautifulSoup`
 
 Reference implementation: `plugin.video.cumination/resources/lib/sites/pornhub.py`
+
+**Priority Queue**: 21 migrated sites need tests (americass, camwhoresbay, chaturbate, drtuber, eporner, hqporner, naked, porngo, pornhat, pornone, porntrex, streamate, stripchat, sxyprn, tnaflix, trannyteca, tubxporn, watchporn, whoreshub, xhamster, xxdbx)
 
 ## Creating a New Site
 

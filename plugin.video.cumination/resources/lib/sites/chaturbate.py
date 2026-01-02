@@ -670,7 +670,9 @@ def Playvid(url, name):
             script_text = script.string or script.get_text() or ""
             if "initialRoomDossier" not in script_text:
                 continue
-            match = re.search(r'initialRoomDossier\s*=\s*"([^"]+)', script_text)
+            match = re.search(
+                r'initialRoomDossier\s*=\s*"((?:\\.|[^"])*)"', script_text
+            )
             if not match:
                 continue
             data_blob = six.b(match.group(1)).decode("unicode-escape")
