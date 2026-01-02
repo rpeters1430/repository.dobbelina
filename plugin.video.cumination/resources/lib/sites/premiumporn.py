@@ -127,7 +127,9 @@ def Categories(url):
         name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
         img_tag = item.select_one("img")
         img = utils.safe_get_attr(img_tag, "data-src", ["src"])
-        videos = utils.safe_get_text(item.select_one(".video-datas"), default="").strip()
+        videos = utils.safe_get_text(
+            item.select_one(".video-datas"), default=""
+        ).strip()
         if not siteurl or not name:
             continue
         name = name + "[COLOR hotpink] (" + videos + " videos)[/COLOR]"
