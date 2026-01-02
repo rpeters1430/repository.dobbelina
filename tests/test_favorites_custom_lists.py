@@ -89,7 +89,13 @@ def test_add_listitem_inserts_new(favorites_module, temp_db, monkeypatch):
     )
     row = c.fetchone()
     conn.close()
-    assert row == ("Sample", "https://example.com/vid", "pornhub.Playvid", "thumb.jpg", str(list_id))
+    assert row == (
+        "Sample",
+        "https://example.com/vid",
+        "pornhub.Playvid",
+        "thumb.jpg",
+        str(list_id),
+    )
 
 
 def test_add_listitem_updates_existing(favorites_module, temp_db, monkeypatch):
@@ -144,25 +150,19 @@ def test_move_and_remove_listitems(favorites_module, temp_db, monkeypatch):
     conn.commit()
     conn.close()
 
-    monkeypatch.setattr(
-        favorites_module.utils, "selector", lambda *a, **k: str(list_b)
-    )
+    monkeypatch.setattr(favorites_module.utils, "selector", lambda *a, **k: str(list_b))
     favorites_module.move_listitem(item_id)
 
     conn = sqlite3.connect(temp_db)
     c = conn.cursor()
-    c.execute(
-        "SELECT list_id FROM custom_listitems WHERE rowid = ?", (item_id,)
-    )
+    c.execute("SELECT list_id FROM custom_listitems WHERE rowid = ?", (item_id,))
     assert c.fetchone()[0] == str(list_b)
     conn.close()
 
     favorites_module.remove_listitem(item_id)
     conn = sqlite3.connect(temp_db)
     c = conn.cursor()
-    c.execute(
-        "SELECT count(*) FROM custom_listitems WHERE rowid = ?", (item_id,)
-    )
+    c.execute("SELECT count(*) FROM custom_listitems WHERE rowid = ?", (item_id,))
     assert c.fetchone()[0] == 0
     conn.close()
 

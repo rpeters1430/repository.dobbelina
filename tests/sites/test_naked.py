@@ -79,7 +79,9 @@ def test_list_handles_empty_models(monkeypatch):
         pass
 
     monkeypatch.setattr(naked.utils, "_getHtml", lambda *a, **k: html)
-    monkeypatch.setattr(naked.site, "add_download_link", lambda *a, **k: downloads.append(1))
+    monkeypatch.setattr(
+        naked.site, "add_download_link", lambda *a, **k: downloads.append(1)
+    )
     monkeypatch.setattr(naked.utils, "eod", lambda: None)
     monkeypatch.setattr(naked.utils.addon, "getSetting", lambda x: "false")
     monkeypatch.setattr(naked.utils, "notify", fake_notify)

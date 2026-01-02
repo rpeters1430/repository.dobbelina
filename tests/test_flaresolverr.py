@@ -39,7 +39,9 @@ def test_init_clears_old_sessions(monkeypatch):
             return _FakeResponse({"status": "ok"})
 
     monkeypatch.setattr(flaresolverr.requests, "post", fake_post)
-    monkeypatch.setattr(flaresolverr.requests, "session", lambda: _FakeSession(), raising=False)
+    monkeypatch.setattr(
+        flaresolverr.requests, "session", lambda: _FakeSession(), raising=False
+    )
     monkeypatch.setattr(
         flaresolverr.requests,
         "exceptions",
@@ -80,7 +82,9 @@ def test_request_retries_on_timeout(monkeypatch):
         return _FakeResponse({})
 
     monkeypatch.setattr(flaresolverr.requests, "post", fake_post)
-    monkeypatch.setattr(flaresolverr.requests, "session", lambda: _FakeSession(), raising=False)
+    monkeypatch.setattr(
+        flaresolverr.requests, "session", lambda: _FakeSession(), raising=False
+    )
     monkeypatch.setattr(
         flaresolverr.requests,
         "exceptions",

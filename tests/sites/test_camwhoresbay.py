@@ -140,7 +140,9 @@ def test_search_with_keyword(monkeypatch):
 
     monkeypatch.setattr(camwhoresbay, "List", fake_list)
 
-    camwhoresbay.Search("https://www.camwhoresbay.com/search/{0}/", keyword="test query")
+    camwhoresbay.Search(
+        "https://www.camwhoresbay.com/search/{0}/", keyword="test query"
+    )
 
     assert len(list_calls) == 1
     assert "test+query" in list_calls[0]
