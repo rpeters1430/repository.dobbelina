@@ -27,11 +27,11 @@ from resources.lib.adultsite import AdultSite
 from resources.lib.decrypters.kvsplayer import kvs_decode
 
 site = AdultSite(
-    "watchmdh",
-    "[COLOR hotpink]WatchMDH[/COLOR]",
-    "https://watchdirty.is/",
-    "watchmdh.png",
-    "watchmdh",
+    "fyxxr",
+    "[COLOR hotpink]fyxXR[/COLOR]",
+    "https://fyxxr.to/",
+    "https://fyxxr.to/contents/playerother/theme/logo.png",
+    "fyxxr",
 )
 
 
@@ -61,11 +61,11 @@ def List(url):
         return
 
     cm = []
-    cm_lookupinfo = utils.addon_sys + "?mode=" + str("watchmdh.Lookupinfo") + "&url="
+    cm_lookupinfo = utils.addon_sys + "?mode=" + str("fyxxr.Lookupinfo") + "&url="
     cm.append(
         ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + cm_lookupinfo + ")")
     )
-    cm_related = utils.addon_sys + "?mode=" + str("watchmdh.Related") + "&url="
+    cm_related = utils.addon_sys + "?mode=" + str("fyxxr.Related") + "&url="
     cm.append(
         ("[COLOR deeppink]Related videos[/COLOR]", "RunPlugin(" + cm_related + ")")
     )
@@ -89,7 +89,7 @@ def List(url):
         site.add_download_link(
             name,
             videopage,
-            "watchmdh.Playvid",
+            "fyxxr.Playvid",
             thumb,
             name,
             duration=duration,
@@ -122,13 +122,13 @@ def List(url):
 
         cm_page = (
             utils.addon_sys
-            + "?mode=watchmdh.GotoPage"
+            + "?mode=fyxxr.GotoPage"
             + "&url="
             + urllib_parse.quote_plus(nurl)
             + "&np="
             + str(npage)
             + lpparam
-            + "&listmode=watchmdh.List"
+            + "&listmode=fyxxr.List"
         )
         cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
 
@@ -229,13 +229,13 @@ def Categories(url):
 
         cm_page = (
             utils.addon_sys
-            + "?mode=watchmdh.GotoPage"
+            + "?mode=fyxxr.GotoPage"
             + "&url="
             + urllib_parse.quote_plus(nurl)
             + "&np="
             + str(npage)
             + lpparam
-            + "&listmode=watchmdh.Categories"
+            + "&listmode=fyxxr.Categories"
         )
         cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
 
@@ -308,7 +308,7 @@ def Lookupinfo(url):
         utils.notify("Lookup", "No tags or models found")
         return
 
-    utils.kodiDB(lookup_items, "watchmdh.List")
+    utils.kodiDB(lookup_items, "fyxxr.List")
 
 
 @site.register()
@@ -316,7 +316,7 @@ def Related(url):
     contexturl = (
         utils.addon_sys
         + "?mode="
-        + str("watchmdh.List")
+        + str("fyxxr.List")
         + "&url="
         + urllib_parse.quote_plus(url)
     )

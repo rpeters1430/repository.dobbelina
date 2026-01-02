@@ -27,7 +27,7 @@ from resources.lib.decrypters import txxx
 
 site = AdultSite(
     "awmnet",
-    "[COLOR hotpink]AWM Network[/COLOR] - [COLOR deeppink]48 sites[/COLOR]",
+    "[COLOR hotpink]AWM Network[/COLOR] - [COLOR deeppink]49 sites[/COLOR]",
     "",
     "awmnet.png",
     "awmnet",
@@ -78,6 +78,11 @@ sitelist = [
         "Cartoon Porn Videos",
         "https://www.cartoonpornvideos.com/templates/cartoonpornvideos/images/logo.png",
         "https://www.cartoonpornvideos.com/",
+    ],
+    [
+        "CoqNu",
+        "https://www.coqnu.com/templates/coqnu/images/logo.png",
+        "https://www.coqnu.com/",
     ],
     [
         "Dino Tube",
@@ -341,6 +346,13 @@ def List(url):
             img_tag, "src", ["data-src", "data-original", "data-lazy-src", "data-lazy"]
         )
 
+        is_paid_video = False
+        for node in item.find_all(True, class_=True):
+            class_names = node.get("class", [])
+            if any("font-[100]" in class_name for class_name in class_names):
+                is_paid_video = True
+                break
+
         # Get provider info (span/div with text-xsm after the link)
         provider = ""
         provider_tag = item.find_next(class_=re.compile(r"text-xsm"))
@@ -354,6 +366,8 @@ def List(url):
             )
         else:
             name = utils.cleantext(name)
+        if is_paid_video:
+            name = "[COLOR red](Paid Video)[/COLOR] " + name
 
         # Get duration and HD info from float-right section
         info_div = item.find_next(class_="float-right")

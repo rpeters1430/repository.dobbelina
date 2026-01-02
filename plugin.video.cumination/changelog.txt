@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 [B]Version 1.1.212[/B]
 - easynews - avoid prompting for credentials on startup
 - pornhub - add headers for thumbnails (some missing images)
