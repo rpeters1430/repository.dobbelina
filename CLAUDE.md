@@ -49,12 +49,14 @@ ruff check --fix plugin.video.cumination/resources/lib/
 
 ## Repository Structure
 
-- **plugin.video.cumination/** - Main Cumination addon (current version: 1.1.209)
+- **plugin.video.cumination/** - Main Cumination addon (current version: 1.1.210)
+  - `addon.xml` - **VERSION LOCATION**: Update version attribute here when releasing
   - `default.py` - Entry point, initializes URL dispatcher and loads sites
   - `resources/lib/adultsite.py` - Base class for all site implementations
   - `resources/lib/url_dispatcher.py` - Routing system using decorators
   - `resources/lib/utils.py` - HTTP fetching, BeautifulSoup helpers, UI utilities
-  - `resources/lib/sites/` - Individual site modules (139 sites)
+  - `resources/lib/sites/` - Individual site modules (143 sites)
+  - `resources/lib/sites/__init__.py` - Exports all site modules via `__all__`
   - `resources/lib/sites/soup_spec.py` - Declarative BeautifulSoup configuration
 - **plugin.video.uwc/** - Ultimate Whitecream addon (legacy, superseded by Cumination)
 - **repository.dobbelina/** - Repository addon files
@@ -89,9 +91,14 @@ The build script:
 ### Version Updates
 
 When updating addon version:
-1. Edit `plugin.video.cumination/addon.xml` and change version attribute
-2. Run `python build_repo_addons.py --addons plugin.video.cumination --update-index`
-3. Commit changes including the new ZIP and updated `addons.xml`/`addons.xml.md5`
+1. Edit `plugin.video.cumination/addon.xml` - Change the version attribute in line 1: `<addon ... version="1.1.XXX">`
+2. Update version references in documentation if needed (CLAUDE.md, MODERNIZATION.md)
+3. Run `python build_repo_addons.py --addons plugin.video.cumination --update-index`
+4. Commit changes including:
+   - Modified `addon.xml`
+   - New ZIP file: `plugin.video.cumination-1.1.XXX.zip`
+   - Updated `addons.xml` and `addons.xml.md5`
+5. Use commit message format: `chore: bump version to 1.1.XXX` or `release: version 1.1.XXX`
 
 ## Cumination Addon Architecture
 
@@ -169,7 +176,12 @@ def Playvid(url, name):
 - Handles custom site loading via `importlib.import_module()`
 - Implements main menu (`INDEX()`) and site list (`site_list()`)
 - Sites are auto-discovered via `AdultSite.get_sites()` using WeakSet
-- **Auto-discovery mechanism**: When a site module is imported, the `site = AdultSite(...)` instantiation automatically registers the site instance in the WeakSet. No manual registration needed.
+- **Auto-discovery mechanism**:
+  1. `resources/lib/sites/__init__.py` exports all site modules in `__all__`
+  2. `from resources.lib.sites import *` imports and executes each site module
+  3. When a site module executes `site = AdultSite(...)`, the instance is automatically added to the WeakSet
+  4. No manual registration needed - just create the site instance at module level
+  5. The WeakSet allows garbage collection while maintaining a registry of active sites
 
 **Utilities** (`utils.py`):
 - HTTP requests with caching (`getHtml`)
@@ -192,11 +204,11 @@ def Playvid(url, name):
 
 ## BeautifulSoup Migration (Active Project)
 
-**Current Status**: 113/137 sites migrated (82.5% complete)
+**Current Status**: 114/143 sites migrated (79.7% complete)
 
 The codebase is undergoing a systematic migration from regex-based HTML parsing to BeautifulSoup4. This is tracked in **MODERNIZATION.md** along with all other modernization efforts including HTTP gateway unification, test coverage expansion, repository structure improvements, and UX enhancements.
 
-**Test Coverage**: 100/143 sites (69.9%) have tests - 21 migrated sites still need tests added
+**Test Coverage**: 129/143 sites (90.2%) have tests - Quick wins available: ~14 migrated sites still need tests added
 
 ### Why BeautifulSoup?
 
@@ -215,11 +227,11 @@ The codebase is undergoing a systematic migration from regex-based HTML parsing 
 5. **Phase 5: Hentai/Anime Sites** (10/10 completed - 100%) ✅ - All hentai/anime sites migrated
 6. **Phase 6: International Sites** (15/15 completed - 100%) ✅ - All international sites migrated
 7. **Phase 7: Niche & Specialty Sites** (28/28 completed - 100%) ✅ - All niche/specialty sites migrated
-8. **Phase 8: Remaining Sites** (0/24 completed - 0%) - 24 sites still need migration
+8. **Phase 8: Remaining Sites** (~29 sites still need migration)
 
-**Quick Wins Available**: 21 migrated sites just need tests added (~10-15 hours total effort)
+**Quick Wins Available**: ~14 migrated sites just need tests added
 
-See **MODERNIZATION.md** for complete site-by-site tracking and detailed progress.
+See **MODERNIZATION.md** for complete site-by-site tracking and detailed progress. Run `grep -l "parse_html\|BeautifulSoup" plugin.video.cumination/resources/lib/sites/*.py | wc -l` to get current migration count.
 
 ### Migration Pattern
 
@@ -310,7 +322,11 @@ See `plugin.video.cumination/resources/lib/sites/anybunny.py` for a reference im
 
 Reference implementation: `plugin.video.cumination/resources/lib/sites/pornhub.py`
 
-**Priority Queue**: 21 migrated sites need tests (americass, camwhoresbay, chaturbate, drtuber, eporner, hqporner, naked, porngo, pornhat, pornone, porntrex, streamate, stripchat, sxyprn, tnaflix, trannyteca, tubxporn, watchporn, whoreshub, xhamster, xxdbx)
+**Finding Sites That Need Tests**:
+```bash
+# Find sites with BeautifulSoup but no tests
+comm -23 <(grep -l "parse_html" plugin.video.cumination/resources/lib/sites/*.py | xargs -n1 basename | sed 's/.py//' | sort) <(ls tests/sites/test_*.py | xargs -n1 basename | sed 's/test_//' | sed 's/.py//' | sort)
+```
 
 ## Creating a New Site
 
@@ -447,14 +463,31 @@ def Playvid(url, name):
 
 **Site Not Appearing in List**: If a new site module doesn't appear:
 - Verify the module is in `resources/lib/sites/`
-- Ensure `site = AdultSite(...)` is instantiated at module level
+- Ensure `site = AdultSite(...)` is instantiated at module level (not inside a function)
 - Check that a function is decorated with `@site.register(default_mode=True)`
-- Verify the module is imported via `from resources.lib.sites import *`
+- Verify the module is exported in `resources/lib/sites/__init__.py` `__all__` list
+- Test import: `python -c "from plugin.video.cumination.resources.lib.sites import sitename"`
 
 **Tests Failing with Kodi Import Errors**:
 - Ensure you're running tests from repository root
+- Use `python run_tests.py` (cross-platform) instead of calling pytest directly
 - Check that `tests/conftest.py` contains Kodi mock fixtures
 - Verify `sys.path` manipulation in conftest.py includes addon paths
+- If pytest can't find tests, ensure virtual environment is activated
+
+**Site Parsing Broken After HTML Changes**:
+- If using regex: Consider migrating to BeautifulSoup (see migration pattern above)
+- If using BeautifulSoup: Check if CSS selectors need updating
+- Test with fixtures: Save current HTML to `tests/fixtures/[sitename]/` and write regression tests
+- Use browser DevTools to inspect current HTML structure
+- Check for lazy-loading attributes: `data-src`, `data-lazy`, `data-original`
+
+**Video Playback Fails**:
+- Check if site changed video player or URL format
+- Inspect network requests in browser DevTools to find new video URL pattern
+- Some sites use encrypted/obfuscated video URLs - check `resources/lib/decrypters/`
+- For M3U8/HLS streams, verify `inputstreamhelper` is installed
+- Test video URL extraction: Add debug logging to Playvid function
 
 ## Git Workflow
 
@@ -463,6 +496,40 @@ def Playvid(url, name):
 - Commit message format: `feat:`, `chore:`, `fix:` prefixes
 - Include version numbers in commit messages for addon updates
 - For pull requests from forks, see `docs/fork_pr_workflow.md`
+
+### Upstream Sync Tracking
+
+This fork maintains sync tracking with the upstream repository (dobbelina/repository.dobbelina):
+
+**Key Files**:
+- `UPSTREAM_SYNC.md` - Tracks which upstream commits have been integrated
+- `CHERRY_PICK_ANALYSIS.md` - One-time analysis of available upstream commits
+- `scripts/check_upstream_sync.sh` - Check for new upstream commits
+- `scripts/cherry_pick_with_tracking.sh` - Cherry-pick with automatic tracking
+
+**Check for new upstream commits**:
+```bash
+./scripts/check_upstream_sync.sh
+```
+
+**Cherry-pick with tracking**:
+```bash
+# Single commit
+./scripts/cherry_pick_with_tracking.sh 7bbe1c7
+
+# Multiple commits
+./scripts/cherry_pick_with_tracking.sh 7bbe1c7 004f106 d92bd04
+
+# Manual cherry-pick (always use -x flag)
+git cherry-pick -x <upstream-hash>
+```
+
+**Update tracking file** after manual cherry-pick:
+1. Get fork commit hash: `git log -1 --oneline`
+2. Add entry to `UPSTREAM_SYNC.md` table:
+   ```
+   | `<upstream-hash>` | Message | `<fork-hash>` | YYYY-MM-DD | Cherry-picked with -x |
+   ```
 
 ## Testing
 
@@ -474,19 +541,16 @@ The project has a pytest-based test suite for parsing and utility functions:
 # Install test dependencies (in virtual environment)
 pip install -r requirements-test.txt
 
-# Run all tests (using cross-platform script - recommended)
-python run_tests.py
+# Run all tests (cross-platform script - RECOMMENDED)
+python run_tests.py                          # Auto-detects OS and uses correct Python from venv
+python run_tests.py --coverage               # With coverage report
+python run_tests.py --site pornhub -v        # Specific site with verbose output
+python run_tests.py tests/test_utils.py      # Specific test file
 
-# Run with coverage report
-python run_tests.py --coverage
-
-# Run specific site test
-python run_tests.py --site pornhub -v
-
-# Run tests directly with pytest
+# Run tests directly with pytest (if run_tests.py doesn't work)
 pytest
 pytest --cov=plugin.video.cumination/resources/lib --cov-report=term-missing
-pytest tests/sites/test_pornkai.py
+pytest tests/sites/test_pornkai.py -v
 pytest tests/test_utils.py::test_parse_html -v
 
 # Run linting
