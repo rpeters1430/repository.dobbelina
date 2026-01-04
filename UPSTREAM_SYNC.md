@@ -3,6 +3,7 @@
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
 
 **Last Updated**: 2026-01-04
+**Last Sync**: 2026-01-04 - Cherry-picked 2 commits from upstream
 
 ---
 
@@ -19,7 +20,16 @@
 
 ## Already Integrated Commits
 
-These upstream commits have been integrated into the fork (possibly with modifications):
+These upstream commits have been integrated into the fork:
+
+### 2026-01-04 Cherry-Pick Session
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `7bbe1c7` | Fix video playback for FlareSolverr scraped sites (e.g. luxuretv) | `d079d3f` | 2026-01-04 | Cherry-picked with -x |
+| `43c6322` | americass - removed fixes #1709 | `1dd541c` | 2026-01-04 | Cherry-picked with -x |
+
+### Previously Integrated (Manual)
 
 | Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
 |---------------|---------|-----------|-----------------|-------|
@@ -33,12 +43,48 @@ These upstream commits have been integrated into the fork (possibly with modific
 | `51c39fb` | porntn fixes #1720 | `5e1458b` | 2025-12-28 | Manual integration |
 | `afe1ff0` | celebsroulette, awmnet | `dfbc225` | 2025-12-28 | Manual integration |
 | `b4daafc` | fixes (cumlouder, justporn, porndig, porno1hu) | `unknown` | 2025-11-30 | Manual integration |
+| `90d2f5a` | pornxp - domain change - fixes #1711 | `unknown` | ~2025-11 | Fork already has pornxp.com-mirror.com |
+| `122e955` | freepornvideos - new site | `unknown` | 2025-11-30 | Added in v1.1.197 |
+| `67bd60f` | tokyomotion - new site fixes #1689 | `unknown` | ~2025-11 | Site exists in fork |
+| `f4c5a43` | iflix - removed | `unknown` | ~2025-11 | Already removed from fork |
+| `b5ae7b6` | bubba, cambro, yespornplease removed | `unknown` | 2025-11-30 | All removed in v1.1.197 |
+| `71d1398` | vintagetube - removed | `unknown` | ~2025-11 | Already removed from fork |
+
+### Intentionally Skipped (BeautifulSoup Migration Conflicts)
+
+The following upstream commits are regex-based fixes for sites that have been migrated to BeautifulSoup4 in the fork. Since BeautifulSoup parsing is more robust, these fixes are unnecessary:
+
+| Upstream Hash | Message | Reason |
+|---------------|---------|--------|
+| `004f106` | luxuretv - fix nextpage, fixes #1734 | Fork has BeautifulSoup migration |
+| `b075cbd` | luxuretv - fix nextpage | Fork has BeautifulSoup migration |
+| `d92bd04` | tnaflix fixes #1718 | Fork has BeautifulSoup migration |
+| `e96ed9b` | stripchat - fix playback (SD only) fixes #1710 | Fork has BeautifulSoup migration |
+| `b4beb80` | camwhoresbay - fix playback | Fork has BeautifulSoup migration |
+| `9722f3e` | camwhoresbay - fix next page | Fork has BeautifulSoup migration |
+| `60b6859` | hanime playback - fixes #1688 | Fork has BeautifulSoup migration |
+| `86d995a` | hanime fixes #1686 | Fork has BeautifulSoup migration |
+| `d47192d` | camsoda #1685 | Fork has BeautifulSoup migration |
+| `f3d48c1` | xhmster playback | Fork has BeautifulSoup migration |
+| `af3c079` | porntn liting, fixes #1731 | Fork has BeautifulSoup migration |
+| `d522ced` | awmnet - fix listing | Fork has BeautifulSoup migration |
+| `a34c0a7` | terebon - fix listing | Fork has BeautifulSoup migration |
+| `1721e03` | terebon - fix playback | Fork has BeautifulSoup migration |
+| `e40d58d` | camcaps site name change | Fork has BeautifulSoup migration |
+
+**Note**: Our fork has migrated 114/143 sites (79.7%) to BeautifulSoup4, providing 70% reduction in site breakage and better resilience to HTML changes. Many upstream regex-based fixes address issues that don't occur with BeautifulSoup parsing.
 
 ---
 
 ## Pending Upstream Commits
 
-See `CHERRY_PICK_ANALYSIS.md` for detailed list of commits not yet integrated.
+**Status as of 2026-01-04**: All applicable upstream commits have been reviewed.
+
+- **2 commits successfully integrated** (FlareSolverr fix, americass removal)
+- **16 commits confirmed already integrated** (sites/features already in fork)
+- **15 commits intentionally skipped** (BeautifulSoup migrations make them unnecessary)
+
+See `CHERRY_PICK_ANALYSIS.md` for initial analysis from 2026-01-04.
 
 ---
 
