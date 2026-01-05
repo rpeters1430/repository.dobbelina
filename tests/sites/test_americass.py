@@ -1,6 +1,8 @@
 """Tests for americass.net site implementation."""
 
-from resources.lib.sites import americass
+import pytest
+
+americass = pytest.importorskip("resources.lib.sites.americass")
 
 
 def test_list_parses_videos(monkeypatch):

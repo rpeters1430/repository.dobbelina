@@ -102,7 +102,14 @@
       "Bash(pngquant:*)",
       "Bash(if [ -d .venv-win ])",
       "Bash(then echo \".venv-win exists\")",
-      "Bash(else echo \".venv-win does not exist\")"
+      "Bash(else echo \".venv-win does not exist\")",
+      "Bash(/tmp/analyze_commits.sh)",
+      "Bash(./scripts/check_upstream_sync.sh:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(git rm:*)",
+      "Bash(test:*)",
+      "Bash(for site in iflix bubbaporn cambro yespornplease vintagetube)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
