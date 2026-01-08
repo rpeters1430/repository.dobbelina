@@ -23,8 +23,8 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "luxuretv",
     "[COLOR hotpink]LuxureTV[/COLOR]",
-    "https://luxuretv.com/",
-    "luxuretv.png",
+    "https://en.luxuretv.com/",
+    "https://en.luxuretv.com/images/logo.png",
     "luxuretv",
 )
 
@@ -71,6 +71,8 @@ def List(url):
             # Get image
             img_tag = item.select_one("img[src], img[data-src]")
             img = utils.safe_get_attr(img_tag, "data-src", ["src"]) if img_tag else ""
+            if img:
+                img = img.replace(" ", "%20")
 
             # Get duration from time element
             time_tag = item.select_one(".time")
@@ -85,19 +87,19 @@ def List(url):
             utils.log("luxuretv List: Error processing video - {}".format(e))
             continue
 
-    # Pagination - find "Suivante" (Next) link
+    # Pagination - find "Suivante/Next/Siguiente" link
     pagination = soup.select_one(".pagination")
     if pagination:
         next_link = pagination.find(
-            "a", string=lambda text: text and "Suivante" in text if text else False
+            "a",
+            string=lambda text: text
+            and any(x in text for x in ("Suivante", "Next", "Siguiente")),
         )
         if next_link:
             next_href = utils.safe_get_attr(next_link, "href")
             if next_href:
-                # Build full next page URL
                 base_url = url.split("page")[0] if "page" in url else url
                 next_url = base_url + next_href
-                # Extract page number for display
                 page_num = (
                     next_url.split("page")[-1].split(".")[0]
                     if "page" in next_url
@@ -109,7 +111,6 @@ def List(url):
                     "List",
                     site.img_next,
                 )
-
     utils.eod()
 
 

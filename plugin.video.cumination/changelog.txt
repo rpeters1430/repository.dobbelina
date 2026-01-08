@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 [B]Version 1.1.211[/B]
 - americass - removed (site defunct) - cherry-picked from upstream
 - Fix video playback for FlareSolverr scraped sites (e.g. luxuretv) - cherry-picked from upstream
@@ -9,6 +10,7 @@
 - allclassic - fixes #1742
 - kissjav - fix thumbnails, playback fixes #1743
 - xxxvideo - fix pagination
+- luxuretv - fix nextpage, thumbnails
 
 [B]Version 1.1.204[/B]
 - Testing Infrastructure: Expanded test suite from 449 to 622 tests (38% increase)
