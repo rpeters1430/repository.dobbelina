@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+import html as html_lib
 import re
 from collections import OrderedDict
 from typing import Dict, Iterable, List as TList, Optional, Tuple
@@ -41,6 +42,19 @@ HOME_CACHE: Dict[str, Optional[Iterable]] = {
 
 VIDEO_HOST_PATTERN = re.compile(
     r'https?://[^"\']+?(?:m3u8|mp4|m4v|webm)', re.IGNORECASE
+)
+ESCAPED_VIDEO_PATTERN = re.compile(
+    r"https?:\\\\/\\\\/[^\"\\']+?(?:m3u8|mp4|m4v|webm)", re.IGNORECASE
+)
+RELATIVE_VIDEO_PATTERN = re.compile(
+    r"['\"](/[^\"']+?(?:m3u8|mp4|m4v|webm))['\"]", re.IGNORECASE
+)
+SCHEMELESS_VIDEO_PATTERN = re.compile(
+    r"['\"](//[^\"']+?(?:m3u8|mp4|m4v|webm))['\"]", re.IGNORECASE
+)
+KEYED_VIDEO_PATTERN = re.compile(
+    r"(?:file|src|video_url|hls|mp4)\s*[:=]\s*['\"]([^'\"]+?(?:m3u8|mp4|m4v|webm)[^'\"]*)['\"]",
+    re.IGNORECASE,
 )
 STYLE_URL_PATTERN = re.compile(r"url\(['\"]?(?P<url>[^)\'\"]+)['\"]?\)")
 DURATION_CLASSES = re.compile(r"duration|length", re.IGNORECASE)
@@ -284,6 +298,21 @@ def _find_next_page(soup, current_url: str) -> str:
     return ""
 
 
+def _collect_video_urls(text: str) -> TList[str]:
+    if not text:
+        return []
+    blob = html_lib.unescape(text)
+    urls: TList[str] = []
+    urls.extend(
+        match.replace("\\/", "/") for match in ESCAPED_VIDEO_PATTERN.findall(blob)
+    )
+    urls.extend(VIDEO_HOST_PATTERN.findall(blob))
+    urls.extend(KEYED_VIDEO_PATTERN.findall(blob))
+    urls.extend(SCHEMELESS_VIDEO_PATTERN.findall(blob))
+    urls.extend(RELATIVE_VIDEO_PATTERN.findall(blob))
+    return urls
+
+
 def _gather_video_sources(html: str, base_url: str) -> OrderedDict:
     soup = utils.parse_html(html)
     sources: OrderedDict[str, str] = OrderedDict()
@@ -309,11 +338,32 @@ def _gather_video_sources(html: str, base_url: str) -> OrderedDict:
             utils.safe_get_attr(tag, "data-src", ["data-hls", "data-mp4", "data-video"])
         )
 
+    for tag in soup.select(
+        "[data-setup], [data-options], [data-player], [data-config], [data-source]"
+    ):
+        for attr in (
+            "data-setup",
+            "data-options",
+            "data-player",
+            "data-config",
+            "data-source",
+        ):
+            raw = utils.safe_get_attr(tag, attr)
+            if not raw:
+                continue
+            for link in _collect_video_urls(raw):
+                _add_source(link)
+
     for iframe in soup.select("iframe[src]"):
         _add_source(utils.safe_get_attr(iframe, "src"))
 
-    for match in VIDEO_HOST_PATTERN.findall(html):
+    for match in _collect_video_urls(html):
         _add_source(match)
+
+    for script in soup.find_all("script"):
+        script_text = script.string or script.get_text()
+        for match in _collect_video_urls(script_text):
+            _add_source(match)
 
     return sources
 
