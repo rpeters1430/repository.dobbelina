@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+import base64
 import re
 from collections import OrderedDict
 from typing import Dict, Iterable, List as TList, Optional, Tuple
@@ -317,6 +318,50 @@ def _find_next_page(soup, current_url: str) -> str:
     return ""
 
 
+def _decode_base64_var(value: str) -> str:
+    """Decode a double base64-encoded value."""
+    if not value:
+        return ""
+    try:
+        # First decode
+        first_decode = base64.b64decode(value).decode('utf-8')
+        # Second decode
+        second_decode = base64.b64decode(first_decode).decode('utf-8')
+        return second_decode
+    except Exception:
+        return ""
+
+
+def _extract_peachurnet_video_url(html: str) -> str:
+    """
+    Extract video URL from PeachUrNet's obfuscated JavaScript variables.
+
+    The site uses double base64 encoding:
+    - var sy = base64(base64(request_url))
+    - var syt = base64(base64(path))
+    - Full URL = decoded_sy + "/" + decoded_syt
+    """
+    # Look for the JavaScript variables
+    sy_match = re.search(r'var\s+sy\s*=\s*"([^"]+)"', html)
+    syt_match = re.search(r'var\s+syt\s*=\s*"([^"]+)"', html)
+
+    if not sy_match or not syt_match:
+        return ""
+
+    # Decode the variables
+    request_url = _decode_base64_var(sy_match.group(1))
+    path_suffix = _decode_base64_var(syt_match.group(1))
+
+    if not request_url or not path_suffix:
+        utils.kodilog("peachurnet: Failed to decode video URL variables")
+        return ""
+
+    # Construct full video URL
+    video_url = "{}/{}".format(request_url, path_suffix)
+    utils.kodilog("peachurnet: Decoded video URL from JavaScript: {}".format(video_url))
+    return video_url
+
+
 def _gather_video_sources(html: str, base_url: str) -> OrderedDict:
     soup = utils.parse_html(html)
     sources: OrderedDict[str, str] = OrderedDict()
@@ -332,8 +377,17 @@ def _gather_video_sources(html: str, base_url: str) -> OrderedDict:
         # Skip invalid links
         if not link.startswith('http'):
             return
+        # Skip placeholder URLs
+        if link.endswith('/data/video.mp4') or '/data/video.mp4' in link:
+            utils.kodilog("peachurnet: Skipping placeholder URL: {}".format(link))
+            return
         host = label or utils.get_vidhost(link)
         sources[host] = link
+
+    # PRIORITY 1: Try to extract from obfuscated JavaScript variables
+    js_video_url = _extract_peachurnet_video_url(html)
+    if js_video_url:
+        _add_source(js_video_url, label="MP4")
 
     # Try video tags with source children
     for tag in soup.select("video source[src], video source[data-src]"):
@@ -355,7 +409,7 @@ def _gather_video_sources(html: str, base_url: str) -> OrderedDict:
             _add_source(iframe_src, label="Embedded Player")
 
     # Search for video URLs in JavaScript/HTML using regex
-    # Look for quoted URLs ending in video extensions
+    # Look for quoted URLs ending in video extensions (but skip placeholders)
     video_patterns = [
         r'"(https?://[^"]+\.(?:mp4|m3u8|m4v|webm)[^"]*)"',
         r"'(https?://[^']+\.(?:mp4|m3u8|m4v|webm)[^']*)'",

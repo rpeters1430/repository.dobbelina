@@ -271,3 +271,91 @@ def test_absolute_url_normalization():
 
     # Empty URL
     assert peachurnet._absolute_url("") == ""
+
+
+def test_decode_base64_var():
+    """Test double base64 decoding."""
+    # Test valid double-encoded value
+    # "test" -> base64 -> "dGVzdA==" -> base64 -> "ZEdWemRBPT0="
+    double_encoded = "ZEdWemRBPT0="
+    result = peachurnet._decode_base64_var(double_encoded)
+    assert result == "test"
+
+    # Test empty string
+    assert peachurnet._decode_base64_var("") == ""
+
+    # Test invalid base64
+    assert peachurnet._decode_base64_var("not-valid-base64!!!") == ""
+
+
+def test_extract_peachurnet_video_url():
+    """Test extraction of obfuscated video URL from JavaScript."""
+    # Create HTML with encoded video URL
+    # Encode "https://example.com/video" and "file.mp4"
+    import base64
+
+    url = "https://example.com/video"
+    path = "file.mp4"
+
+    # Double encode
+    sy_encoded = base64.b64encode(base64.b64encode(url.encode()).decode().encode()).decode()
+    syt_encoded = base64.b64encode(base64.b64encode(path.encode()).decode().encode()).decode()
+
+    html = f'<script>var sy="{sy_encoded}";var syt="{syt_encoded}";</script>'
+
+    result = peachurnet._extract_peachurnet_video_url(html)
+    assert result == "https://example.com/video/file.mp4"
+
+    # Test with missing variables
+    html_no_sy = '<script>var syt="test";</script>'
+    assert peachurnet._extract_peachurnet_video_url(html_no_sy) == ""
+
+    html_no_vars = '<script>var other="test";</script>'
+    assert peachurnet._extract_peachurnet_video_url(html_no_vars) == ""
+
+
+def test_gather_video_sources_skips_placeholder():
+    """Test that _gather_video_sources skips placeholder URLs."""
+    html = """
+    <html>
+        <video>
+            <source src="https://peachurnet.com/data/video.mp4" type="video/mp4">
+        </video>
+    </html>
+    """
+
+    sources = peachurnet._gather_video_sources(html, "https://peachurnet.com/")
+
+    # Should not include the placeholder URL
+    assert len(sources) == 0
+    assert "https://peachurnet.com/data/video.mp4" not in sources.values()
+
+
+def test_gather_video_sources_extracts_from_javascript():
+    """Test that _gather_video_sources extracts video URL from obfuscated JS."""
+    import base64
+
+    # Create a realistic peachurnet page with obfuscated video URL
+    video_url = "https://s2.hostmediaplus.com/request/abc123"
+    video_path = "video/mp4"
+
+    sy = base64.b64encode(base64.b64encode(video_url.encode()).decode().encode()).decode()
+    syt = base64.b64encode(base64.b64encode(video_path.encode()).decode().encode()).decode()
+
+    html = f"""
+    <html>
+        <script>
+            var sy="{sy}";
+            var syt="{syt}";
+        </script>
+        <video>
+            <source src="https://peachurnet.com/data/video.mp4" type="video/mp4">
+        </video>
+    </html>
+    """
+
+    sources = peachurnet._gather_video_sources(html, "https://peachurnet.com/")
+
+    # Should extract the real video URL from JavaScript, not the placeholder
+    assert len(sources) > 0
+    assert "https://s2.hostmediaplus.com/request/abc123/video/mp4" in sources.values()

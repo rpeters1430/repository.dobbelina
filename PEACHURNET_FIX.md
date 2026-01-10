@@ -20,17 +20,25 @@
 ### 2. **Video Playback Failure**
 **Symptom**: Clicking on videos throws "cannot find video url" error
 
-**Root Cause**: The `_gather_video_sources()` function wasn't comprehensive enough to handle different video player structures the site might be using.
+**Root Cause**: The site uses **double base64 encoding** to obfuscate video URLs in JavaScript variables. The code was only finding a placeholder URL (`https://peachurnet.com/data/video.mp4`) instead of the real video URL.
 
-**Fix**: Expanded video source detection with:
-- More data attribute patterns (`data-quality-src`, `data-video-src`)
-- Direct video tag `src` attributes
-- Better iframe filtering (skip ads/tracking)
-- Additional regex patterns for JavaScript-embedded video URLs:
-  - `src: "video.mp4"` patterns
-  - `file: "video.mp4"` patterns
-  - `source: "video.mp4"` patterns
-- Improved logging to help debug future issues
+**Technical Details**: PeachUrNet hides video URLs like this:
+```javascript
+var sy = base64(base64("https://s2.hostmediaplus.com/request/abc123"));
+var syt = base64(base64("video/mp4"));
+// Real URL = decoded(sy) + "/" + decoded(syt)
+```
+
+**Fix**:
+- Added `_decode_base64_var()` function to handle double base64 decoding
+- Added `_extract_peachurnet_video_url()` to find and decode JavaScript variables `sy` and `syt`
+- Modified `_gather_video_sources()` to:
+  - **PRIORITY 1**: Extract from obfuscated JavaScript variables (new!)
+  - Skip placeholder URLs (`/data/video.mp4`)
+  - Expanded data attribute patterns (`data-quality-src`, `data-video-src`)
+  - Better iframe filtering (skip ads/tracking)
+  - Additional regex patterns for JavaScript-embedded video URLs
+  - Improved logging to help debug future issues
 
 ### 3. **Added Debugging Support**
 **New Feature**: When video playback fails, the addon now:
@@ -51,7 +59,13 @@
 - Added regex filtering to skip duration patterns
 - Added logic to parse multi-line text and find the first meaningful part
 
-### `_gather_video_sources()` Function (lines 320-381)
+### New Functions
+- `_decode_base64_var()` - Handles double base64 decoding
+- `_extract_peachurnet_video_url()` - Extracts and decodes video URL from JavaScript variables
+
+### `_gather_video_sources()` Function (lines 365-435)
+- **NEW**: Priority extraction from obfuscated JavaScript variables
+- **NEW**: Filter to skip placeholder URLs
 - Expanded video tag detection
 - Added multiple JavaScript regex patterns
 - Improved iframe handling with ad filtering
@@ -65,11 +79,17 @@
 
 ## Testing
 
-All existing tests still pass:
+All tests pass including new base64 decoding tests:
 ```bash
 python run_tests.py tests/sites/test_peachurnet.py -v
-# Result: 10/10 tests PASSED ✓
+# Result: 14/14 tests PASSED ✓
 ```
+
+New tests added:
+- `test_decode_base64_var()` - Tests double base64 decoding
+- `test_extract_peachurnet_video_url()` - Tests JavaScript variable extraction
+- `test_gather_video_sources_skips_placeholder()` - Tests placeholder filtering
+- `test_gather_video_sources_extracts_from_javascript()` - Tests end-to-end extraction
 
 Code quality check:
 ```bash
