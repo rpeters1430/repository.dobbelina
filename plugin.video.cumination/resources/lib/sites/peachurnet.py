@@ -159,17 +159,50 @@ def _discover_search_endpoint(soup) -> str:
 def _extract_title(element) -> str:
     if not element:
         return ""
-    for selector in [".title", ".video-title", "h3", "h2", "h4", "p", "span"]:
+
+    # First try specific title selectors
+    for selector in [".title", ".video-title", ".name", ".video-name", "h3", "h2", "h4"]:
         node = element.select_one(selector)
         if node:
             title = utils.safe_get_text(node)
-            if title:
+            if title and len(title) > 3:  # Ensure it's not just "..." or similar
                 return title
-    title = utils.safe_get_text(element)
-    if title:
-        return title
-    parent = element.find_parent()
-    return utils.safe_get_text(parent) if parent else ""
+
+    # Try img alt attribute as fallback (common pattern)
+    img = element.select_one("img")
+    if img:
+        alt = utils.safe_get_attr(img, "alt")
+        if alt and len(alt) > 3 and not re.match(r'^\d+:\d+$', alt):  # Not a duration
+            return alt
+
+    # Try title attribute on the link itself
+    link_title = utils.safe_get_attr(element, "title")
+    if link_title and len(link_title) > 3:
+        return link_title
+
+    # Try aria-label
+    aria_label = utils.safe_get_attr(element, "aria-label")
+    if aria_label and len(aria_label) > 3:
+        return aria_label
+
+    # Last resort: get all text but filter out duration-only patterns
+    all_text = utils.safe_get_text(element)
+    if all_text:
+        # Split by newlines/spaces and find the longest meaningful text
+        parts = [p.strip() for p in re.split(r'[\n\r]+', all_text) if p.strip()]
+        for part in parts:
+            # Skip if it's just a duration (MM:SS or HH:MM:SS)
+            if re.match(r'^\d+:\d+(?::\d+)?$', part):
+                continue
+            # Skip if it's just numbers and separators
+            if re.match(r'^[\d\s\-\|:]+$', part):
+                continue
+            # Skip very short parts
+            if len(part) < 4:
+                continue
+            return part
+
+    return ""
 
 
 def _extract_thumbnail(element) -> str:
@@ -288,32 +321,62 @@ def _gather_video_sources(html: str, base_url: str) -> OrderedDict:
     soup = utils.parse_html(html)
     sources: OrderedDict[str, str] = OrderedDict()
 
-    def _add_source(src: str):
+    def _add_source(src: str, label: str = None):
         if not src:
             return
+        # Clean up the source URL
+        src = src.strip().strip('"').strip("'")
         link = _absolute_url(src, base_url)
         if not link or link in sources.values():
             return
-        host = utils.get_vidhost(link)
+        # Skip invalid links
+        if not link.startswith('http'):
+            return
+        host = label or utils.get_vidhost(link)
         sources[host] = link
 
-    for tag in soup.select(
-        "video source[src], source[data-src], source[data-hls], source[data-mp4]"
-    ):
-        _add_source(
-            utils.safe_get_attr(tag, "src", ["data-src", "data-hls", "data-mp4"])
-        )
+    # Try video tags with source children
+    for tag in soup.select("video source[src], video source[data-src]"):
+        _add_source(utils.safe_get_attr(tag, "src", ["data-src", "data-hls", "data-mp4", "data-quality-src"]))
 
-    for tag in soup.select("[data-src], [data-hls], [data-mp4], [data-video]"):
-        _add_source(
-            utils.safe_get_attr(tag, "data-src", ["data-hls", "data-mp4", "data-video"])
-        )
+    # Try video tags with src directly
+    for tag in soup.select("video[src], video[data-src]"):
+        _add_source(utils.safe_get_attr(tag, "src", ["data-src"]))
 
+    # Try data attributes on various elements
+    for tag in soup.select("[data-src], [data-hls], [data-mp4], [data-video], [data-video-src]"):
+        _add_source(utils.safe_get_attr(tag, "data-src", ["data-hls", "data-mp4", "data-video", "data-video-src"]))
+
+    # Try iframes (common for embedded players)
     for iframe in soup.select("iframe[src]"):
-        _add_source(utils.safe_get_attr(iframe, "src"))
+        iframe_src = utils.safe_get_attr(iframe, "src")
+        # Skip iframe if it looks like an ad or tracking
+        if iframe_src and not any(x in iframe_src.lower() for x in ['ads', 'analytics', 'tracking', 'doubleclick']):
+            _add_source(iframe_src, label="Embedded Player")
 
+    # Search for video URLs in JavaScript/HTML using regex
+    # Look for quoted URLs ending in video extensions
+    video_patterns = [
+        r'"(https?://[^"]+\.(?:mp4|m3u8|m4v|webm)[^"]*)"',
+        r"'(https?://[^']+\.(?:mp4|m3u8|m4v|webm)[^']*)'",
+        r'src:\s*["\']([^"\']+\.(?:mp4|m3u8))',
+        r'file:\s*["\']([^"\']+\.(?:mp4|m3u8))',
+        r'source:\s*["\']([^"\']+\.(?:mp4|m3u8))',
+    ]
+
+    for pattern in video_patterns:
+        for match in re.findall(pattern, html, re.IGNORECASE):
+            _add_source(match)
+
+    # Last resort: find any video URLs in the HTML
     for match in VIDEO_HOST_PATTERN.findall(html):
         _add_source(match)
+
+    # Log what we found for debugging
+    if sources:
+        utils.kodilog("peachurnet: Found {} video source(s)".format(len(sources)))
+    else:
+        utils.kodilog("peachurnet: No video sources found in page")
 
     return sources
 
@@ -381,35 +444,52 @@ def Search(url, keyword=None):
 @site.register()
 def Playvid(url, name, download=None):
     videopage = _absolute_url(url)
+    utils.kodilog("peachurnet: Playing video from {}".format(videopage))
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
     try:
         html = utils.getHtml(videopage, headers=_ensure_headers())
+        utils.kodilog("peachurnet: Fetched video page ({} bytes)".format(len(html)))
     except Exception as exc:  # pragma: no cover - surfaced to Kodi UI
         utils.kodilog("peachurnet Playvid load error: {}".format(exc))
         vp.progress.close()
         utils.notify("PeachUrNet", "Unable to load video page")
         return
 
+    vp.progress.update(50, "[CR]Searching for video sources[CR]")
     sources = _gather_video_sources(html, videopage)
+
     if not sources:
         vp.progress.close()
         # Check if page requires authentication
-        if "/login" in html or 'href="https://peachurnet.com/en/login"' in html:
+        if "/login" in html or 'href="https://peachurnet.com/en/login"' in html or "sign in" in html.lower():
+            utils.kodilog("PeachUrNet: Video page appears to require login")
             utils.notify(
                 "PeachUrNet",
                 "This video may require login or is unavailable",
                 time=5000,
             )
         else:
-            utils.notify("PeachUrNet", "No playable sources found")
-        utils.kodilog("PeachUrNet: No video sources found for {}".format(videopage))
+            utils.kodilog("PeachUrNet: No video sources found for {}".format(videopage))
+            # Save HTML for debugging if needed
+            import os
+            try:
+                debug_path = os.path.join(os.path.expanduser("~"), "peachurnet_debug.html")
+                with open(debug_path, 'w', encoding='utf-8') as f:
+                    f.write(html)
+                utils.kodilog("PeachUrNet: Saved debug HTML to {}".format(debug_path))
+                utils.notify("PeachUrNet", "No playable sources found - check logs", time=5000)
+            except Exception:  # pragma: no cover
+                utils.notify("PeachUrNet", "No playable sources found")
         return
+
+    utils.kodilog("peachurnet: Found {} video source(s): {}".format(len(sources), list(sources.keys())))
 
     videourl = utils.selector("Select source", sources)
     if not videourl:
         vp.progress.close()
         return
 
+    utils.kodilog("peachurnet: Selected source: {}".format(videourl))
     vp.play_from_link_to_resolve(videourl)
