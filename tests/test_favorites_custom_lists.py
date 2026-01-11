@@ -188,3 +188,145 @@ def test_remove_list_cascades_items(favorites_module, temp_db):
     c.execute("SELECT count(*) FROM custom_listitems WHERE list_id = ?", (list_id,))
     assert c.fetchone()[0] == 0
     conn.close()
+
+
+def test_moveup_and_movedown_listitems(favorites_module, temp_db):
+    conn = sqlite3.connect(temp_db)
+    c = conn.cursor()
+    c.execute("INSERT INTO custom_lists VALUES (?)", ("List A",))
+    list_id = c.lastrowid
+    items = [("First", "url1"), ("Second", "url2"), ("Third", "url3")]
+    for name, url in items:
+        c.execute(
+            "INSERT INTO custom_listitems VALUES (?,?,?,?,?)",
+            (name, url, "mode", "img", str(list_id)),
+        )
+    conn.commit()
+    c.execute("SELECT rowid FROM custom_listitems WHERE url = ?", ("url2",))
+    second_id = c.fetchone()[0]
+    conn.close()
+
+    favorites_module.moveup_listitem(second_id)
+
+    conn = sqlite3.connect(temp_db)
+    c = conn.cursor()
+    c.execute(
+        "SELECT name FROM custom_listitems WHERE list_id = ? ORDER BY rowid ASC",
+        (str(list_id),),
+    )
+    assert [row[0] for row in c.fetchall()] == ["Second", "First", "Third"]
+    c.execute("SELECT rowid FROM custom_listitems WHERE url = ?", ("url2",))
+    second_id = c.fetchone()[0]
+    conn.close()
+
+    favorites_module.movedown_listitem(second_id)
+
+    conn = sqlite3.connect(temp_db)
+    c = conn.cursor()
+    c.execute(
+        "SELECT name FROM custom_listitems WHERE list_id = ? ORDER BY rowid ASC",
+        (str(list_id),),
+    )
+    assert [row[0] for row in c.fetchall()] == ["First", "Second", "Third"]
+    conn.close()
+
+
+def test_moveup_and_movedown_lists(favorites_module, temp_db):
+    conn = sqlite3.connect(temp_db)
+    c = conn.cursor()
+    c.execute("INSERT INTO custom_lists VALUES (?)", ("List One",))
+    list_one_id = c.lastrowid
+    c.execute("INSERT INTO custom_lists VALUES (?)", ("List Two",))
+    list_two_id = c.lastrowid
+    c.execute(
+        "INSERT INTO custom_listitems VALUES (?,?,?,?,?)",
+        ("Item One", "url1", "mode", "img", str(list_one_id)),
+    )
+    c.execute(
+        "INSERT INTO custom_listitems VALUES (?,?,?,?,?)",
+        ("Item Two", "url2", "mode", "img", str(list_two_id)),
+    )
+    conn.commit()
+    conn.close()
+
+    favorites_module.moveup_list(list_two_id)
+
+    conn = sqlite3.connect(temp_db)
+    c = conn.cursor()
+    c.execute("SELECT rowid, name FROM custom_lists ORDER BY rowid ASC")
+    lists = c.fetchall()
+    assert [row[1] for row in lists] == ["List Two", "List One"]
+    c.execute(
+        "SELECT list_id FROM custom_listitems WHERE url = ?",
+        ("url2",),
+    )
+    assert c.fetchone()[0] == str(lists[0][0])
+    conn.close()
+
+    favorites_module.movedown_list(lists[0][0])
+
+    conn = sqlite3.connect(temp_db)
+    c = conn.cursor()
+    c.execute("SELECT rowid, name FROM custom_lists ORDER BY rowid ASC")
+    lists = c.fetchall()
+    assert [row[1] for row in lists] == ["List One", "List Two"]
+    c.execute(
+        "SELECT list_id FROM custom_listitems WHERE url = ?",
+        ("url2",),
+    )
+    assert c.fetchone()[0] == str(lists[1][0])
+    conn.close()
+
+
+def test_edit_list_updates_name(favorites_module, temp_db, monkeypatch):
+    conn = sqlite3.connect(temp_db)
+    c = conn.cursor()
+    c.execute("INSERT INTO custom_lists VALUES (?)", ("Old Name",))
+    rowid = c.lastrowid
+    conn.commit()
+    conn.close()
+
+    monkeypatch.setattr(
+        favorites_module.utils, "_get_keyboard", lambda **_: "New Name"
+    )
+    favorites_module.edit_list(rowid)
+
+    conn = sqlite3.connect(temp_db)
+    c = conn.cursor()
+    c.execute("SELECT name FROM custom_lists WHERE rowid = ?", (rowid,))
+    assert c.fetchone()[0] == "New Name"
+    conn.close()
+
+
+def test_load_custom_list_adds_items(favorites_module, temp_db, monkeypatch):
+    conn = sqlite3.connect(temp_db)
+    c = conn.cursor()
+    c.execute(
+        "INSERT INTO custom_listitems VALUES (?,?,?,?,?)",
+        ("Item One", "https://example.com/1", "pornhub.Playvid", "thumb.png", "main"),
+    )
+    conn.commit()
+    conn.close()
+
+    class DummySite:
+        def __init__(self):
+            self.default_mode = "pornhub.Playvid"
+            self.custom = True
+            self.about = "About"
+            self.title = "Pornhub"
+
+    captured = {}
+
+    def fake_add_dir(*args, **kwargs):
+        captured["args"] = args
+        captured["kwargs"] = kwargs
+
+    monkeypatch.setattr(favorites_module.AdultSite, "get_site_by_name", lambda *a: DummySite())
+    monkeypatch.setattr(favorites_module.basics, "addDir", fake_add_dir)
+    monkeypatch.setattr(favorites_module.basics, "cum_image", lambda *a, **k: "fixed")
+    monkeypatch.setattr(favorites_module.basics.addon, "getSetting", lambda *a, **k: "true")
+    monkeypatch.setattr(favorites_module.utils, "eod", lambda *a, **k: None)
+
+    favorites_module.load_custom_list("main")
+
+    assert captured["args"][0] == "Item One"

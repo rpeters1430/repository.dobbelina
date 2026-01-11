@@ -199,6 +199,225 @@ class TestGetResolution:
         assert width == 2560
         assert height == 1440
 
+
+class _CaptureVideoInfoTag:
+    def __init__(self):
+        self.duration = None
+        self.title = None
+        self.plot = None
+        self.plot_outline = None
+        self.media_type = None
+        self.genres = None
+        self.streams = []
+
+    def setMediaType(self, media_type):
+        self.media_type = media_type
+
+    def setTitle(self, title):
+        self.title = title
+
+    def setGenres(self, genres):
+        self.genres = genres
+
+    def setDuration(self, duration):
+        self.duration = duration
+
+    def setPlot(self, plot):
+        self.plot = plot
+
+    def setPlotOutline(self, outline):
+        self.plot_outline = outline
+
+    def addVideoStream(self, stream):
+        self.streams.append(stream)
+
+
+class _CaptureListItem:
+    def __init__(self, label=""):
+        self.label = label
+        self.art = {}
+        self.context_items = []
+        self.info = []
+        self.properties = {}
+        self.video_tag = _CaptureVideoInfoTag()
+
+    def setInfo(self, *args, **kwargs):
+        self.info.append((args, kwargs))
+
+    def setArt(self, art):
+        self.art.update(art)
+
+    def addContextMenuItems(self, items, replaceItems=False):
+        self.context_items.extend(items)
+
+    def getVideoInfoTag(self):
+        return self.video_tag
+
+    def setProperty(self, key, value):
+        self.properties[key] = value
+
+    def addStreamInfo(self, stream_type, info):
+        self.info.append((stream_type, info))
+
+
+def test_adddownlink_builds_context_menu(monkeypatch):
+    from resources.lib import basics
+
+    captured = {}
+
+    def _add_directory_item(handle, url, listitem, isFolder):
+        captured["handle"] = handle
+        captured["url"] = url
+        captured["listitem"] = listitem
+        captured["isFolder"] = isFolder
+        return True
+
+    settings = {
+        "duration_in_name": "false",
+        "quality_in_name": "false",
+        "posterfanart": "true",
+        "favorder": "date added",
+    }
+
+    monkeypatch.setattr(basics, "KODIVER", 20.0)
+    monkeypatch.setattr(basics.xbmcgui, "ListItem", _CaptureListItem)
+    monkeypatch.setattr(basics.xbmcplugin, "addDirectoryItem", _add_directory_item)
+    monkeypatch.setattr(basics.addon, "getSetting", lambda key: settings.get(key, ""))
+
+    basics.addDownLink(
+        name="Demo Video",
+        url="https://example.com/watch",
+        mode="demo.Playvid",
+        iconimage="",
+        desc="Demo Video",
+        stream=True,
+        fav="del",
+        noDownload=False,
+        contextm=[("Custom", "RunPlugin(custom)")],
+        duration="1:02",
+        quality="720p",
+    )
+
+    assert captured["isFolder"] is False
+    assert captured["listitem"].properties["IsPlayable"] == "true"
+    labels = [label for label, _ in captured["listitem"].context_items]
+    assert "[COLOR hotpink]Download Video[/COLOR]" in labels
+    assert "[COLOR hotpink]Move favorite to Top[/COLOR]" in labels
+    assert "[COLOR hotpink]Remove from favorites[/COLOR]" in labels
+
+
+def test_adddownlink_formats_name_with_tags(monkeypatch):
+    from resources.lib import basics
+
+    captured = {}
+
+    def _add_directory_item(handle, url, listitem, isFolder):
+        captured["listitem"] = listitem
+        return True
+
+    settings = {
+        "duration_in_name": "true",
+        "quality_in_name": "true",
+        "posterfanart": "false",
+        "favorder": "date added",
+    }
+
+    monkeypatch.setattr(basics, "KODIVER", 20.0)
+    monkeypatch.setattr(basics.xbmcgui, "ListItem", _CaptureListItem)
+    monkeypatch.setattr(basics.xbmcplugin, "addDirectoryItem", _add_directory_item)
+    monkeypatch.setattr(basics.addon, "getSetting", lambda key: settings.get(key, ""))
+
+    basics.addDownLink(
+        name="Tagged Video",
+        url="https://example.com/watch",
+        mode="demo.Playvid",
+        iconimage="icon.png",
+        desc="Tagged Video",
+        duration="2:34",
+        quality="HD",
+    )
+
+    assert "[COLOR deeppink]" in captured["listitem"].label
+    assert "[COLOR orange]" in captured["listitem"].label
+
+
+def test_adddir_builds_context_menu(monkeypatch):
+    from resources.lib import basics
+
+    captured = {}
+
+    def _add_directory_item(handle, url, listitem, isFolder):
+        captured["url"] = url
+        captured["listitem"] = listitem
+        captured["isFolder"] = isFolder
+        return True
+
+    settings = {"posterfanart": "true"}
+
+    monkeypatch.setattr(basics, "KODIVER", 20.0)
+    monkeypatch.setattr(basics.xbmcgui, "ListItem", _CaptureListItem)
+    monkeypatch.setattr(basics.xbmcplugin, "addDirectoryItem", _add_directory_item)
+    monkeypatch.setattr(basics.addon, "getSetting", lambda key: settings.get(key, ""))
+
+    basics.addDir(
+        name="Demo Folder",
+        url="https://example.com/list",
+        mode="demo.List",
+        iconimage="icon.png",
+        page=2,
+        channel="ch",
+        section="sec",
+        keyword="alpha",
+        Folder=True,
+        about="Info",
+        custom=True,
+        list_avail=True,
+        listitem_id=5,
+        custom_list=True,
+        contextm=[("Extra", "RunPlugin(extra)")],
+        desc="Example description",
+    )
+
+    assert captured["isFolder"] is True
+    labels = [label for label, _ in captured["listitem"].context_items]
+    assert "[COLOR hotpink]Remove keyword[/COLOR]" in labels
+    assert "[COLOR hotpink]Add item to ...[/COLOR]" in labels
+    assert "[COLOR hotpink]Remove list[/COLOR]" in labels
+
+
+def test_searchdir_keys_and_clean_temp(monkeypatch, temp_db, mock_basics_paths):
+    from resources.lib import basics
+
+    conn = sqlite3.connect(temp_db)
+    c = conn.cursor()
+    c.execute("INSERT INTO keywords(keyword) VALUES(?)", ("alpha",))
+    c.execute("INSERT INTO keywords(keyword) VALUES(?)", ("beta",))
+    conn.commit()
+    conn.close()
+
+    calls = []
+
+    monkeypatch.setattr(basics, "favoritesdb", temp_db)
+    monkeypatch.setattr(basics, "tempDir", mock_basics_paths["tempDir"])
+    monkeypatch.setattr(basics, "addDir", lambda *args, **kwargs: calls.append(args))
+    monkeypatch.setattr(basics, "eod", lambda *args, **kwargs: None)
+    monkeypatch.setattr(
+        basics.addon, "getSetting", lambda key: "true" if key == "keywords_sorted" else ""
+    )
+
+    basics.searchDir("https://example.com", "demo.Search", page=1, alphabet="a")
+    basics.searchDir("https://example.com", "demo.Search", page=1)
+
+    keys = basics.keys()
+    assert keys["A"] == 1
+    assert keys["B"] == 1
+
+    with open(os.path.join(mock_basics_paths["tempDir"], "temp.txt"), "w") as handle:
+        handle.write("data")
+
+    basics.clean_temp()
+    assert os.path.exists(mock_basics_paths["tempDir"])
+
     def test_get_resolution_4k(self):
         """Test parsing 4K quality"""
         from resources.lib import basics

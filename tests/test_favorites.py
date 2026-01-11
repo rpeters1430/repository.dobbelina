@@ -339,6 +339,202 @@ class TestFavoritesMovement:
         ]
 
 
+class TestFavoritesClear:
+    """Test clearing favorites."""
+
+    def test_clear_fav_confirmed(self, favorites_module, temp_db, monkeypatch):
+        favorites_module.addFav(
+            mode="pornhub.Playvid",
+            name="Will Clear",
+            url="https://example.com/clear",
+            img="https://example.com/thumb.jpg",
+            duration="1:00",
+            quality="720p",
+        )
+
+        class FakeDialog:
+            def yesno(self, *args, **kwargs):
+                return True
+
+            def notification(self, *args, **kwargs):
+                pass
+
+        monkeypatch.setattr(favorites_module.utils, "dialog", FakeDialog())
+
+        favorites_module.clear_fav()
+
+        conn = sqlite3.connect(temp_db)
+        c = conn.cursor()
+        c.execute("SELECT COUNT(*) FROM favorites")
+        assert c.fetchone()[0] == 0
+        conn.close()
+
+    def test_clear_fav_cancelled(self, favorites_module, temp_db, monkeypatch):
+        favorites_module.addFav(
+            mode="pornhub.Playvid",
+            name="Will Stay",
+            url="https://example.com/stay",
+            img="https://example.com/thumb.jpg",
+            duration="1:00",
+            quality="720p",
+        )
+
+        class FakeDialog:
+            def yesno(self, *args, **kwargs):
+                return False
+
+            def notification(self, *args, **kwargs):
+                pass
+
+        monkeypatch.setattr(favorites_module.utils, "dialog", FakeDialog())
+
+        favorites_module.clear_fav()
+
+        conn = sqlite3.connect(temp_db)
+        c = conn.cursor()
+        c.execute("SELECT COUNT(*) FROM favorites")
+        assert c.fetchone()[0] == 1
+        conn.close()
+
+
+class TestFavoritesListing:
+    """Test favorites listing helpers."""
+
+    def _seed_favorites(self, favorites_module):
+        favorites_module.addFav(
+            mode="pornhub.Playvid",
+            name="Video One",
+            url="https://example.com/video1",
+            img="https://example.com/thumb1.jpg",
+            duration="",
+            quality="",
+        )
+        favorites_module.addFav(
+            mode="xvideos.Playvid",
+            name="Video Two",
+            url="https://example.net/video2",
+            img="https://example.net/thumb2.jpg",
+            duration="",
+            quality="",
+        )
+
+    def test_list_folder_view_and_pagination(self, favorites_module, monkeypatch):
+        self._seed_favorites(favorites_module)
+
+        calls = {"addDir": [], "addDownLink": []}
+
+        def fake_add_dir(*args, **kwargs):
+            calls["addDir"].append((args, kwargs))
+            return True
+
+        def fake_add_downlink(*args, **kwargs):
+            calls["addDownLink"].append((args, kwargs))
+            return True
+
+        class DummySite:
+            def __init__(self, name, url, title):
+                self.name = name
+                self.url = url
+                self.title = title
+
+        monkeypatch.setattr(favorites_module.basics, "addDir", fake_add_dir)
+        monkeypatch.setattr(favorites_module.basics, "addDownLink", fake_add_downlink)
+        monkeypatch.setattr(favorites_module.utils, "eod", lambda *args, **kwargs: None)
+        monkeypatch.setattr(
+            favorites_module.AdultSite,
+            "get_sites",
+            lambda: [DummySite("pornhub", "https://example.com", "Example")],
+        )
+        monkeypatch.setattr(favorites_module.AdultSite, "clean_functions", [])
+
+        favorites_module.utils.addon._settings = {
+            **favorites_module.utils.addon._settings,
+            "item.limit": "1",
+            "favorder": "site & name, in folders",
+            "custom_sites": "false",
+            "chaturbate": "false",
+        }
+        favorites_module.basics.addon._settings = (
+            favorites_module.utils.addon._settings
+        )
+
+        favorites_module.List("1")
+
+        assert any(
+            "Next Page" in call[0][0] for call in calls["addDir"]
+        ), "expected pagination link"
+        assert calls["addDownLink"] == []
+
+    def test_list_non_folder_view(self, favorites_module, monkeypatch):
+        self._seed_favorites(favorites_module)
+
+        calls = {"addDir": [], "addDownLink": []}
+
+        def fake_add_dir(*args, **kwargs):
+            calls["addDir"].append((args, kwargs))
+            return True
+
+        def fake_add_downlink(*args, **kwargs):
+            calls["addDownLink"].append((args, kwargs))
+            return True
+
+        monkeypatch.setattr(favorites_module.basics, "addDir", fake_add_dir)
+        monkeypatch.setattr(favorites_module.basics, "addDownLink", fake_add_downlink)
+        monkeypatch.setattr(favorites_module.utils, "eod", lambda *args, **kwargs: None)
+        monkeypatch.setattr(favorites_module.AdultSite, "get_sites", lambda: [])
+        monkeypatch.setattr(favorites_module.AdultSite, "clean_functions", [])
+
+        favorites_module.utils.addon._settings = {
+            **favorites_module.utils.addon._settings,
+            "item.limit": "1",
+            "favorder": "date added",
+            "custom_sites": "false",
+            "chaturbate": "false",
+        }
+        favorites_module.basics.addon._settings = (
+            favorites_module.utils.addon._settings
+        )
+
+        favorites_module.List("1")
+
+        assert calls["addDownLink"]
+        assert any(
+            "Next Page" in call[0][0] for call in calls["addDir"]
+        ), "expected pagination link"
+
+    def test_fav_list_site(self, favorites_module, monkeypatch):
+        self._seed_favorites(favorites_module)
+
+        calls = {"addDir": [], "addDownLink": []}
+
+        def fake_add_dir(*args, **kwargs):
+            calls["addDir"].append((args, kwargs))
+            return True
+
+        def fake_add_downlink(*args, **kwargs):
+            calls["addDownLink"].append((args, kwargs))
+            return True
+
+        monkeypatch.setattr(favorites_module.basics, "addDir", fake_add_dir)
+        monkeypatch.setattr(favorites_module.basics, "addDownLink", fake_add_downlink)
+        monkeypatch.setattr(favorites_module.utils, "eod", lambda *args, **kwargs: None)
+        monkeypatch.setattr(favorites_module.AdultSite, "clean_functions", [])
+
+        favorites_module.utils.addon._settings = {
+            **favorites_module.utils.addon._settings,
+            "item.limit": "1",
+            "favorder": "date added",
+            "custom_sites": "false",
+            "chaturbate": "false",
+        }
+        favorites_module.basics.addon._settings = (
+            favorites_module.utils.addon._settings
+        )
+
+        favorites_module.List("1")
+        favorites_module.FavListSite("pornhub.Playvid@example.com", page=1)
+
+        assert calls["addDownLink"]
 class TestCustomSites:
     """Test custom site database operations"""
 
