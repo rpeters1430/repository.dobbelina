@@ -9,7 +9,9 @@ def test_setpin_updates_settings(monkeypatch):
     monkeypatch.setattr(pin.xbmcgui, "ALPHANUM_HIDE_INPUT", 0, raising=False)
     monkeypatch.setattr(pin.dialog, "select", lambda *a, **k: 0, raising=False)
     monkeypatch.setattr(pin.dialog, "input", lambda *a, **k: "1234", raising=False)
-    monkeypatch.setattr(pin.addon, "setSetting", lambda key, value: settings.update({key: value}))
+    monkeypatch.setattr(
+        pin.addon, "setSetting", lambda key, value: settings.update({key: value})
+    )
 
     pin.SetPin()
     assert settings["pincode"]
@@ -22,7 +24,9 @@ def test_setpin_remove_pin(monkeypatch):
     settings = {}
 
     monkeypatch.setattr(pin.dialog, "select", lambda *a, **k: 1, raising=False)
-    monkeypatch.setattr(pin.addon, "setSetting", lambda key, value: settings.update({key: value}))
+    monkeypatch.setattr(
+        pin.addon, "setSetting", lambda key, value: settings.update({key: value})
+    )
 
     pin.SetPin()
     assert settings["pincode"] == ""
@@ -48,7 +52,9 @@ def test_checkpin_matches_hash(monkeypatch):
     settings = {"pincode": expected, "logintime": "0"}
     monkeypatch.setattr(time, "time", lambda: now)
     monkeypatch.setattr(pin.addon, "getSetting", lambda key: settings.get(key, ""))
-    monkeypatch.setattr(pin.addon, "setSetting", lambda key, value: settings.update({key: value}))
+    monkeypatch.setattr(
+        pin.addon, "setSetting", lambda key, value: settings.update({key: value})
+    )
     monkeypatch.setattr(pin, "AskPin", lambda: expected)
 
     assert pin.CheckPin() is True

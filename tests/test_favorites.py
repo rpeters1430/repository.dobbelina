@@ -454,15 +454,13 @@ class TestFavoritesListing:
             "custom_sites": "false",
             "chaturbate": "false",
         }
-        favorites_module.basics.addon._settings = (
-            favorites_module.utils.addon._settings
-        )
+        favorites_module.basics.addon._settings = favorites_module.utils.addon._settings
 
         favorites_module.List("1")
 
-        assert any(
-            "Next Page" in call[0][0] for call in calls["addDir"]
-        ), "expected pagination link"
+        assert any("Next Page" in call[0][0] for call in calls["addDir"]), (
+            "expected pagination link"
+        )
         assert calls["addDownLink"] == []
 
     def test_list_non_folder_view(self, favorites_module, monkeypatch):
@@ -491,16 +489,14 @@ class TestFavoritesListing:
             "custom_sites": "false",
             "chaturbate": "false",
         }
-        favorites_module.basics.addon._settings = (
-            favorites_module.utils.addon._settings
-        )
+        favorites_module.basics.addon._settings = favorites_module.utils.addon._settings
 
         favorites_module.List("1")
 
         assert calls["addDownLink"]
-        assert any(
-            "Next Page" in call[0][0] for call in calls["addDir"]
-        ), "expected pagination link"
+        assert any("Next Page" in call[0][0] for call in calls["addDir"]), (
+            "expected pagination link"
+        )
 
     def test_fav_list_site(self, favorites_module, monkeypatch):
         self._seed_favorites(favorites_module)
@@ -527,14 +523,14 @@ class TestFavoritesListing:
             "custom_sites": "false",
             "chaturbate": "false",
         }
-        favorites_module.basics.addon._settings = (
-            favorites_module.utils.addon._settings
-        )
+        favorites_module.basics.addon._settings = favorites_module.utils.addon._settings
 
         favorites_module.List("1")
         favorites_module.FavListSite("pornhub.Playvid@example.com", page=1)
 
         assert calls["addDownLink"]
+
+
 class TestCustomSites:
     """Test custom site database operations"""
 

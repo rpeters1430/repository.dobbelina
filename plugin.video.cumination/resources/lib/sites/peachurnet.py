@@ -162,7 +162,15 @@ def _extract_title(element) -> str:
         return ""
 
     # First try specific title selectors
-    for selector in [".title", ".video-title", ".name", ".video-name", "h3", "h2", "h4"]:
+    for selector in [
+        ".title",
+        ".video-title",
+        ".name",
+        ".video-name",
+        "h3",
+        "h2",
+        "h4",
+    ]:
         node = element.select_one(selector)
         if node:
             title = utils.safe_get_text(node)
@@ -173,7 +181,7 @@ def _extract_title(element) -> str:
     img = element.select_one("img")
     if img:
         alt = utils.safe_get_attr(img, "alt")
-        if alt and len(alt) > 3 and not re.match(r'^\d+:\d+$', alt):  # Not a duration
+        if alt and len(alt) > 3 and not re.match(r"^\d+:\d+$", alt):  # Not a duration
             return alt
 
     # Try title attribute on the link itself
@@ -190,13 +198,13 @@ def _extract_title(element) -> str:
     all_text = utils.safe_get_text(element)
     if all_text:
         # Split by newlines/spaces and find the longest meaningful text
-        parts = [p.strip() for p in re.split(r'[\n\r]+', all_text) if p.strip()]
+        parts = [p.strip() for p in re.split(r"[\n\r]+", all_text) if p.strip()]
         for part in parts:
             # Skip if it's just a duration (MM:SS or HH:MM:SS)
-            if re.match(r'^\d+:\d+(?::\d+)?$', part):
+            if re.match(r"^\d+:\d+(?::\d+)?$", part):
                 continue
             # Skip if it's just numbers and separators
-            if re.match(r'^[\d\s\-\|:]+$', part):
+            if re.match(r"^[\d\s\-\|:]+$", part):
                 continue
             # Skip very short parts
             if len(part) < 4:
@@ -324,9 +332,9 @@ def _decode_base64_var(value: str) -> str:
         return ""
     try:
         # First decode
-        first_decode = base64.b64decode(value).decode('utf-8')
+        first_decode = base64.b64decode(value).decode("utf-8")
         # Second decode
-        second_decode = base64.b64decode(first_decode).decode('utf-8')
+        second_decode = base64.b64decode(first_decode).decode("utf-8")
         return second_decode
     except Exception:
         return ""
@@ -375,10 +383,10 @@ def _gather_video_sources(html: str, base_url: str) -> OrderedDict:
         if not link or link in sources.values():
             return
         # Skip invalid links
-        if not link.startswith('http'):
+        if not link.startswith("http"):
             return
         # Skip placeholder URLs
-        if link.endswith('/data/video.mp4') or '/data/video.mp4' in link:
+        if link.endswith("/data/video.mp4") or "/data/video.mp4" in link:
             utils.kodilog("peachurnet: Skipping placeholder URL: {}".format(link))
             return
         host = label or utils.get_vidhost(link)
@@ -391,21 +399,36 @@ def _gather_video_sources(html: str, base_url: str) -> OrderedDict:
 
     # Try video tags with source children
     for tag in soup.select("video source[src], video source[data-src]"):
-        _add_source(utils.safe_get_attr(tag, "src", ["data-src", "data-hls", "data-mp4", "data-quality-src"]))
+        _add_source(
+            utils.safe_get_attr(
+                tag, "src", ["data-src", "data-hls", "data-mp4", "data-quality-src"]
+            )
+        )
 
     # Try video tags with src directly
     for tag in soup.select("video[src], video[data-src]"):
         _add_source(utils.safe_get_attr(tag, "src", ["data-src"]))
 
     # Try data attributes on various elements
-    for tag in soup.select("[data-src], [data-hls], [data-mp4], [data-video], [data-video-src]"):
-        _add_source(utils.safe_get_attr(tag, "data-src", ["data-hls", "data-mp4", "data-video", "data-video-src"]))
+    for tag in soup.select(
+        "[data-src], [data-hls], [data-mp4], [data-video], [data-video-src]"
+    ):
+        _add_source(
+            utils.safe_get_attr(
+                tag,
+                "data-src",
+                ["data-hls", "data-mp4", "data-video", "data-video-src"],
+            )
+        )
 
     # Try iframes (common for embedded players)
     for iframe in soup.select("iframe[src]"):
         iframe_src = utils.safe_get_attr(iframe, "src")
         # Skip iframe if it looks like an ad or tracking
-        if iframe_src and not any(x in iframe_src.lower() for x in ['ads', 'analytics', 'tracking', 'doubleclick']):
+        if iframe_src and not any(
+            x in iframe_src.lower()
+            for x in ["ads", "analytics", "tracking", "doubleclick"]
+        ):
             _add_source(iframe_src, label="Embedded Player")
 
     # Search for video URLs in JavaScript/HTML using regex
@@ -517,7 +540,11 @@ def Playvid(url, name, download=None):
     if not sources:
         vp.progress.close()
         # Check if page requires authentication
-        if "/login" in html or 'href="https://peachurnet.com/en/login"' in html or "sign in" in html.lower():
+        if (
+            "/login" in html
+            or 'href="https://peachurnet.com/en/login"' in html
+            or "sign in" in html.lower()
+        ):
             utils.kodilog("PeachUrNet: Video page appears to require login")
             utils.notify(
                 "PeachUrNet",
@@ -528,17 +555,26 @@ def Playvid(url, name, download=None):
             utils.kodilog("PeachUrNet: No video sources found for {}".format(videopage))
             # Save HTML for debugging if needed
             import os
+
             try:
-                debug_path = os.path.join(os.path.expanduser("~"), "peachurnet_debug.html")
-                with open(debug_path, 'w', encoding='utf-8') as f:
+                debug_path = os.path.join(
+                    os.path.expanduser("~"), "peachurnet_debug.html"
+                )
+                with open(debug_path, "w", encoding="utf-8") as f:
                     f.write(html)
                 utils.kodilog("PeachUrNet: Saved debug HTML to {}".format(debug_path))
-                utils.notify("PeachUrNet", "No playable sources found - check logs", time=5000)
+                utils.notify(
+                    "PeachUrNet", "No playable sources found - check logs", time=5000
+                )
             except Exception:  # pragma: no cover
                 utils.notify("PeachUrNet", "No playable sources found")
         return
 
-    utils.kodilog("peachurnet: Found {} video source(s): {}".format(len(sources), list(sources.keys())))
+    utils.kodilog(
+        "peachurnet: Found {} video source(s): {}".format(
+            len(sources), list(sources.keys())
+        )
+    )
 
     videourl = utils.selector("Select source", sources)
     if not videourl:

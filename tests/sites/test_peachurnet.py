@@ -298,8 +298,12 @@ def test_extract_peachurnet_video_url():
     path = "file.mp4"
 
     # Double encode
-    sy_encoded = base64.b64encode(base64.b64encode(url.encode()).decode().encode()).decode()
-    syt_encoded = base64.b64encode(base64.b64encode(path.encode()).decode().encode()).decode()
+    sy_encoded = base64.b64encode(
+        base64.b64encode(url.encode()).decode().encode()
+    ).decode()
+    syt_encoded = base64.b64encode(
+        base64.b64encode(path.encode()).decode().encode()
+    ).decode()
 
     html = f'<script>var sy="{sy_encoded}";var syt="{syt_encoded}";</script>'
 
@@ -339,8 +343,12 @@ def test_gather_video_sources_extracts_from_javascript():
     video_url = "https://s2.hostmediaplus.com/request/abc123"
     video_path = "video/mp4"
 
-    sy = base64.b64encode(base64.b64encode(video_url.encode()).decode().encode()).decode()
-    syt = base64.b64encode(base64.b64encode(video_path.encode()).decode().encode()).decode()
+    sy = base64.b64encode(
+        base64.b64encode(video_url.encode()).decode().encode()
+    ).decode()
+    syt = base64.b64encode(
+        base64.b64encode(video_path.encode()).decode().encode()
+    ).decode()
 
     html = f"""
     <html>

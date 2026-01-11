@@ -136,8 +136,7 @@ def test_pyzipfile_writepy_adds_compiled_file(tmp_path):
     with zfile.ZipFile(str(zip_path), "r") as zf:
         names = zf.namelist()
         assert any(
-            name.endswith("module.pyc") or name.endswith("module.pyo")
-            for name in names
+            name.endswith("module.pyc") or name.endswith("module.pyo") for name in names
         )
 
 

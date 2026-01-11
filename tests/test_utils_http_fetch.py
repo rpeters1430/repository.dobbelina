@@ -78,7 +78,9 @@ def test_getvideolink_uses_redirect_location(monkeypatch):
         def open(self, req, timeout=30):
             return FakeResponse(b"", headers={"location": "https://cdn.example.com"})
 
-    monkeypatch.setattr(utils.urllib_request, "build_opener", lambda *a, **k: FakeOpener())
+    monkeypatch.setattr(
+        utils.urllib_request, "build_opener", lambda *a, **k: FakeOpener()
+    )
 
     result = utils.getVideoLink("https://example.com/video")
     assert result == "https://cdn.example.com"

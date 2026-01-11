@@ -286,9 +286,7 @@ def test_edit_list_updates_name(favorites_module, temp_db, monkeypatch):
     conn.commit()
     conn.close()
 
-    monkeypatch.setattr(
-        favorites_module.utils, "_get_keyboard", lambda **_: "New Name"
-    )
+    monkeypatch.setattr(favorites_module.utils, "_get_keyboard", lambda **_: "New Name")
     favorites_module.edit_list(rowid)
 
     conn = sqlite3.connect(temp_db)
@@ -321,10 +319,14 @@ def test_load_custom_list_adds_items(favorites_module, temp_db, monkeypatch):
         captured["args"] = args
         captured["kwargs"] = kwargs
 
-    monkeypatch.setattr(favorites_module.AdultSite, "get_site_by_name", lambda *a: DummySite())
+    monkeypatch.setattr(
+        favorites_module.AdultSite, "get_site_by_name", lambda *a: DummySite()
+    )
     monkeypatch.setattr(favorites_module.basics, "addDir", fake_add_dir)
     monkeypatch.setattr(favorites_module.basics, "cum_image", lambda *a, **k: "fixed")
-    monkeypatch.setattr(favorites_module.basics.addon, "getSetting", lambda *a, **k: "true")
+    monkeypatch.setattr(
+        favorites_module.basics.addon, "getSetting", lambda *a, **k: "true"
+    )
     monkeypatch.setattr(favorites_module.utils, "eod", lambda *a, **k: None)
 
     favorites_module.load_custom_list("main")
