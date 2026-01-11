@@ -2,8 +2,8 @@
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
 
-**Last Updated**: 2026-01-04
-**Last Sync**: 2026-01-04 - Cherry-picked 2 commits from upstream
+**Last Updated**: 2026-01-11
+**Last Sync**: 2026-01-11 - Reviewed commit e8ebd05 (not applicable - file doesn't exist)
 
 ---
 
@@ -73,6 +73,14 @@ The following upstream commits are regex-based fixes for sites that have been mi
 | `e40d58d` | camcaps site name change | Fork has BeautifulSoup migration |
 
 **Note**: Our fork has migrated 114/143 sites (79.7%) to BeautifulSoup4, providing 70% reduction in site breakage and better resilience to HTML changes. Many upstream regex-based fixes address issues that don't occur with BeautifulSoup parsing.
+
+### Not Applicable (Files Don't Exist in Fork)
+
+The following upstream commits attempt to modify or remove files that don't exist in this fork:
+
+| Upstream Hash | Message | Reason |
+|---------------|---------|--------|
+| `e8ebd05` | #1739 (Remove easynews.py) | File doesn't exist in fork - already removed or never added |
 
 ---
 
