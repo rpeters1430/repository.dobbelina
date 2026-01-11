@@ -49,7 +49,9 @@ def favorites_module(temp_db, monkeypatch):
     basics.favoritesdb = original_favdb
 
 
-def test_process_custom_site_zip_installs_files(favorites_module, tmp_path, monkeypatch):
+def test_process_custom_site_zip_installs_files(
+    favorites_module, tmp_path, monkeypatch
+):
     temp_dir = tmp_path / "temp"
     custom_dir = tmp_path / "custom"
     temp_dir.mkdir()

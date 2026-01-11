@@ -402,7 +402,9 @@ def test_searchdir_keys_and_clean_temp(monkeypatch, temp_db, mock_basics_paths):
     monkeypatch.setattr(basics, "addDir", lambda *args, **kwargs: calls.append(args))
     monkeypatch.setattr(basics, "eod", lambda *args, **kwargs: None)
     monkeypatch.setattr(
-        basics.addon, "getSetting", lambda key: "true" if key == "keywords_sorted" else ""
+        basics.addon,
+        "getSetting",
+        lambda key: "true" if key == "keywords_sorted" else "",
     )
 
     basics.searchDir("https://example.com", "demo.Search", page=1, alphabet="a")

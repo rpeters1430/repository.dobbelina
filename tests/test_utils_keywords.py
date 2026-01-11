@@ -187,7 +187,9 @@ def test_new_search_adds_or_updates(utils_module, monkeypatch):
     monkeypatch.setattr(utils_module, "_get_keyboard", lambda **k: "newterm")
     calls = {"add": 0, "update": 0}
 
-    monkeypatch.setattr(utils_module, "addKeyword", lambda *a, **k: calls.update(add=calls["add"] + 1))
+    monkeypatch.setattr(
+        utils_module, "addKeyword", lambda *a, **k: calls.update(add=calls["add"] + 1)
+    )
     monkeypatch.setattr(
         utils_module,
         "updateKeyword",
@@ -205,7 +207,9 @@ def test_new_search_adds_or_updates(utils_module, monkeypatch):
 def test_copy_search_always_adds(utils_module, monkeypatch):
     monkeypatch.setattr(utils_module, "_get_keyboard", lambda **k: "copyterm")
     calls = {"add": 0}
-    monkeypatch.setattr(utils_module, "addKeyword", lambda *a, **k: calls.update(add=calls["add"] + 1))
+    monkeypatch.setattr(
+        utils_module, "addKeyword", lambda *a, **k: calls.update(add=calls["add"] + 1)
+    )
     monkeypatch.setattr(utils_module.xbmc, "executebuiltin", lambda *a, **k: None)
 
     utils_module.copySearch(keyword="existing")
@@ -215,7 +219,9 @@ def test_copy_search_always_adds(utils_module, monkeypatch):
 
 def test_clear_search_calls_delall(utils_module, monkeypatch):
     called = {}
-    monkeypatch.setattr(utils_module, "delallKeyword", lambda *a, **k: called.update(done=True))
+    monkeypatch.setattr(
+        utils_module, "delallKeyword", lambda *a, **k: called.update(done=True)
+    )
     monkeypatch.setattr(utils_module.xbmc, "executebuiltin", lambda *a, **k: None)
 
     utils_module.clearSearch()

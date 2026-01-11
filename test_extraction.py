@@ -4,18 +4,20 @@
 import base64
 import re
 
+
 def _decode_base64_var(value):
     """Decode a double base64-encoded value."""
     if not value:
         return ""
     try:
         # First decode
-        first_decode = base64.b64decode(value).decode('utf-8')
+        first_decode = base64.b64decode(value).decode("utf-8")
         # Second decode
-        second_decode = base64.b64decode(first_decode).decode('utf-8')
+        second_decode = base64.b64decode(first_decode).decode("utf-8")
         return second_decode
     except Exception:
         return ""
+
 
 def _extract_peachurnet_video_url(html):
     """
@@ -41,8 +43,9 @@ def _extract_peachurnet_video_url(html):
     print("Decoded video URL from JavaScript: {}".format(video_url))
     return video_url
 
+
 # Test with the saved HTML
-with open('/tmp/peachurnet_video.html', 'r', encoding='utf-8') as f:
+with open("/tmp/peachurnet_video.html", "r", encoding="utf-8") as f:
     html = f.read()
 
 print("Testing video URL extraction...")

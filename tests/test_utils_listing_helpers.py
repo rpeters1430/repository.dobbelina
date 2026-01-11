@@ -16,12 +16,12 @@ class DummySite:
 def test_videos_list_parses_entries():
     site = DummySite("demo", "https://example.com/")
     html = (
-        "DELIM <a href=\"/video1\">Video One</a>"
-        "<img src=\"//img1\" />"
-        "<span class=\"dur\">1:00</span>"
-        "DELIM <a href=\"video2\">Video Two</a>"
-        "<img src=\"/img2\" />"
-        "<span class=\"dur\">2:00</span>"
+        'DELIM <a href="/video1">Video One</a>'
+        '<img src="//img1" />'
+        '<span class="dur">1:00</span>'
+        'DELIM <a href="video2">Video Two</a>'
+        '<img src="/img2" />'
+        '<span class="dur">2:00</span>'
     )
 
     utils.videos_list(
@@ -29,10 +29,10 @@ def test_videos_list_parses_entries():
         playvid="demo.Playvid",
         html=html,
         delimiter="DELIM",
-        re_videopage=r'href=\"([^\"]+)\"',
-        re_name=r'>([^<]+)</a>',
-        re_img=r'src=\"([^\"]+)\"',
-        re_duration=r'class=\"dur\">([^<]+)',
+        re_videopage=r"href=\"([^\"]+)\"",
+        re_name=r">([^<]+)</a>",
+        re_img=r"src=\"([^\"]+)\"",
+        re_duration=r"class=\"dur\">([^<]+)",
         contextm="demo.Related",
     )
 
@@ -43,7 +43,7 @@ def test_videos_list_parses_entries():
 
 
 def test_lookupinfo_getinfo_extracts_items(monkeypatch):
-    html = "<section>START<a href=\"/a\">Alpha</a>END</section>"
+    html = '<section>START<a href="/a">Alpha</a>END</section>'
     calls = []
 
     monkeypatch.setattr(utils, "getHtml", lambda *a, **k: html)
@@ -56,7 +56,7 @@ def test_lookupinfo_getinfo_extracts_items(monkeypatch):
         siteurl="https://example.com",
         url="https://example.com/list",
         default_mode="demo.Playvid",
-        lookup_list=[("Item", r'href=\"([^\"]+)\">([^<]+)', None)],
+        lookup_list=[("Item", r"href=\"([^\"]+)\">([^<]+)", None)],
         starthtml="START",
         stophtml="END",
     )
