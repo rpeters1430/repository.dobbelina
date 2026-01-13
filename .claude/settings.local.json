@@ -110,7 +110,8 @@
       "Bash(test:*)",
       "Bash(for site in iflix bubbaporn cambro yespornplease vintagetube)",
       "Bash(git push:*)",
-      "WebFetch(domain:peachurnet.com)"
+      "WebFetch(domain:peachurnet.com)",
+      "Bash(git stash show:*)"
     ],
     "deny": [],
     "ask": []

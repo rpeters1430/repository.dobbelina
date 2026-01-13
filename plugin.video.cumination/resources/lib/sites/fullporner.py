@@ -56,26 +56,51 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, "")
-    match = re.compile(
-        r'<article.+?href="([^"]+)"\s*title="([^"]+).+?(?:poster|src)="([^"]+)"[^>]+>.*?</i>([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    if not match:
+    soup = utils.parse_html(listhtml)
+    
+    video_items = soup.select("article")
+    if not video_items:
         return
-    for videopage, name, img, duration in match:
-        name = utils.cleantext(name)
+        
+    for item in video_items:
+        try:
+            link = item.select_one("a[href]")
+            if not link:
+                continue
+                
+            videopage = utils.safe_get_attr(link, "href")
+            name = utils.safe_get_attr(link, "title")
+            
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "poster", ["src"])
+            
+            # Look for duration in various places
+            duration_tag = item.select_one("i")
+            duration = utils.safe_get_text(duration_tag) if duration_tag else ""
+            
+            if not videopage or not name:
+                continue
+                
+            name = utils.cleantext(name)
+            site.add_download_link(name, videopage, "Playvid", img, name, duration=duration)
+            
+        except Exception as e:
+            utils.kodilog("Error parsing video item: " + str(e))
+            continue
 
-        site.add_download_link(name, videopage, "Playvid", img, name, duration=duration)
-
-    np = re.compile(
-        r'class="pagination".+?class="current">\d+</a></li><li><a\s*href="([^"]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).search(listhtml)
-    if np:
-        page_number = np.group(1).split("/")[-2]
-        site.add_dir(
-            "Next Page (" + page_number + ")", np.group(1), "List", site.img_next
-        )
+    # Handle pagination
+    pagination = soup.select_one(".pagination")
+    if pagination:
+        current = pagination.select_one(".current")
+        if current:
+            next_link = current.find_next("a")
+            if next_link and next_link.get("href"):
+                next_url = next_link.get("href")
+                page_number = next_url.split("/")[-2] if "/" in next_url else ""
+                site.add_dir(
+                    "Next Page (" + page_number + ")", next_url, "List", site.img_next
+                )
+    
     utils.eod()
 
 
@@ -99,35 +124,83 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        '<article.+?href="([^&]+)&.+?src="([^"]+)"[^>]+>.*?cat-title">([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for catpage, img, name in sorted(match, key=lambda x: x[1].strip().lower()):
-        name = utils.cleantext(name.strip())
-        site.add_dir(name, catpage + "&filter=latest", "List", img)
+    soup = utils.parse_html(listhtml)
+    
+    categories = []
+    articles = soup.select("article")
+    for article in articles:
+        try:
+            link = article.select_one("a[href]")
+            if not link:
+                continue
+                
+            catpage = utils.safe_get_attr(link, "href")
+            if not catpage:
+                continue
+                
+            img_tag = article.select_one("img")
+            img = utils.safe_get_attr(img_tag, "src")
+            
+            title_tag = article.select_one(".cat-title")
+            name = utils.safe_get_text(title_tag) if title_tag else ""
+            
+            if name and catpage:
+                name = utils.cleantext(name.strip())
+                categories.append((name, catpage + "&filter=latest", img))
+                
+        except Exception as e:
+            utils.kodilog("Error parsing category: " + str(e))
+            continue
+    
+    # Sort by name and add directories
+    for name, catpage, img in sorted(categories, key=lambda x: x[0].lower()):
+        site.add_dir(name, catpage, "List", img)
+        
     utils.eod()
 
 
 @site.register()
 def Actors(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        r'<article.+?href="([^"]+)"\s*title="([^"]+).+?src="([^"]+)"[^>]+>',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for catpage, name, img in sorted(match, key=lambda x: x[1].strip().lower()):
-        name = utils.cleantext(name.strip())
+    soup = utils.parse_html(listhtml)
+    
+    actors = []
+    articles = soup.select("article")
+    for article in articles:
+        try:
+            link = article.select_one("a[href]")
+            if not link:
+                continue
+                
+            catpage = utils.safe_get_attr(link, "href")
+            name = utils.safe_get_attr(link, "title")
+            
+            img_tag = article.select_one("img")
+            img = utils.safe_get_attr(img_tag, "src")
+            
+            if name and catpage:
+                name = utils.cleantext(name.strip())
+                actors.append((name, catpage, img))
+                
+        except Exception as e:
+            utils.kodilog("Error parsing actor: " + str(e))
+            continue
+    
+    # Sort by name and add directories
+    for name, catpage, img in sorted(actors, key=lambda x: x[0].lower()):
         site.add_dir(name, catpage, "List", img)
 
-    np = re.compile(
-        r'class="pagination".+?class="current">\d+</a></li><li><a\s*href="([^"]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).search(listhtml)
-    if np:
-        page_number = np.group(1).split("/")[-2]
-        site.add_dir(
-            "Next Page (" + page_number + ")", np.group(1), "Actors", site.img_next
-        )
+    # Handle pagination for actors
+    pagination = soup.select_one(".pagination")
+    if pagination:
+        current = pagination.select_one(".current")
+        if current:
+            next_link = current.find_next("a")
+            if next_link and next_link.get("href"):
+                next_url = next_link.get("href")
+                page_number = next_url.split("/")[-2] if "/" in next_url else ""
+                site.add_dir(
+                    "Next Page (" + page_number + ")", next_url, "Actors", site.img_next
+                )
 
     utils.eod()

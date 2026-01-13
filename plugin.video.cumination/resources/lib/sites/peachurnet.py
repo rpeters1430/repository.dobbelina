@@ -582,4 +582,6 @@ def Playvid(url, name, download=None):
         return
 
     utils.kodilog("peachurnet: Selected source: {}".format(videourl))
-    vp.play_from_link_to_resolve(videourl)
+    # Use play_from_direct_link for direct MP4 URLs instead of play_from_link_to_resolve
+    # since hostmediaplus.com is not a recognized host in resolveurl
+    vp.play_from_direct_link(videourl + "|Referer=" + videopage)

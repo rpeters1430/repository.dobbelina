@@ -52,14 +52,10 @@ def List(url):
         utils.notify(msg="No videos found!")
         return
     listhtml = listhtml.replace('<div class="k4">', '<div class="FHD">')
-
-    delimiter = r'<div class="item">\s*?<a'
-    re_videopage = 'href="([^"]+)" target'
-    re_name = 'title="([^"]+)"'
-    re_img = r'src="([^"]+\.jpg)"'
-    re_duration = r'class="duration">\D*([^<]+)<'
-    re_quality = '<div class="(FHD)">'
-
+    
+    soup = utils.parse_html(listhtml)
+    video_items = soup.select("div.item")
+    
     cm = []
     cm_lookupinfo = (
         utils.addon_sys + "?mode=" + str("freepornvideos.Lookupinfo") + "&url="
@@ -72,31 +68,78 @@ def List(url):
         ("[COLOR deeppink]Related videos[/COLOR]", "RunPlugin(" + cm_related + ")")
     )
 
-    utils.videos_list(
-        site,
-        "freepornvideos.Playvid",
-        listhtml,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        re_duration=re_duration,
-        re_quality=re_quality,
-        contextm=cm,
-    )
+    for item in video_items:
+        try:
+            link = item.select_one("a[href]")
+            if not link:
+                continue
+                
+            videopage = utils.safe_get_attr(link, "href")
+            if not videopage:
+                continue
+                
+            name = utils.safe_get_attr(link, "title")
+            if not name:
+                continue
+                
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "src")
+            if not img:
+                continue
+                
+            name = utils.cleantext(name)
+            
+            # Get duration
+            duration_tag = item.select_one(".duration")
+            duration = utils.safe_get_text(duration_tag) if duration_tag else ""
+            
+            # Get quality
+            quality_tag = item.select_one(".FHD")
+            quality = "FHD" if quality_tag else ""
+            
+            site.add_download_link(
+                name, videopage, "Playvid", img, name, duration=duration, quality=quality, contextm=cm
+            )
+            
+        except Exception as e:
+            utils.kodilog("Error parsing video item: " + str(e))
+            continue
 
-    re_npurl = r'class="page-current">.+?class="page"><a href="([^"]+)">\d+<'
-    re_npnr = r'class="page-current">.+?class="page"><a href="[^"]+">(\d+)<'
-    re_lpnr = r'/(\d+)/">Last<'
-    utils.next_page(
-        site,
-        "freepornvideos.List",
-        listhtml,
-        re_npurl,
-        re_npnr,
-        re_lpnr=re_lpnr,
-        contextm="freepornvideos.GotoPage",
-    )
+    # Handle pagination
+    next_link = soup.select_one("a.page[href]:not(.page-current)")
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, "href")
+        if next_url:
+            # Extract page numbers
+            page_match = re.search(r'/(\d+)/', next_url)
+            np = page_match.group(1) if page_match else ""
+            
+            # Find last page
+            last_link = soup.select_one("a.page[href*='Last']")
+            lp = ""
+            if last_link:
+                last_match = re.search(r'/(\d+)/">Last', str(last_link))
+                lp = last_match.group(1) if last_match else ""
+            
+            page_label = "Next Page"
+            if np:
+                page_label += " ({})".format(np)
+                if lp:
+                    page_label += "/{}".format(lp)
+            
+            cm_page = (
+                utils.addon_sys
+                + "?mode=freepornvideos.GotoPage&list_mode=freepornvideos.List&url="
+                + urllib_parse.quote_plus(next_url)
+                + "&np="
+                + str(np)
+                + "&lp="
+                + str(lp)
+            )
+            cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
+            
+            site.add_dir(page_label, next_url, "List", site.img_next, contextm=cm)
+    
     utils.eod()
 
 

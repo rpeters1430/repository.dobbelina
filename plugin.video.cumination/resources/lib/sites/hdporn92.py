@@ -63,41 +63,60 @@ def List(url):
         utils.notify(msg="Nothing found")
         utils.eod()
         return
+    
+    soup = utils.parse_html(listhtml)
+    video_items = soup.select("article")
+    
+    for item in video_items:
+        try:
+            link = item.select_one("a[href]")
+            if not link:
+                continue
+                
+            videopage = utils.safe_get_attr(link, "href")
+            name = utils.safe_get_attr(link, "title")
+            
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "poster", ["src"])
+            
+            if not videopage or not name:
+                continue
+                
+            name = utils.cleantext(name)
+            
+            contextmenu = []
+            contexturl = (
+                utils.addon_sys
+                + "?mode="
+                + str("hdporn92.Lookupinfo")
+                + "&url="
+                + urllib_parse.quote_plus(videopage)
+            )
+            contextmenu.append(
+                ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
+            )
 
-    match = re.compile(
-        r'<article.+?href="([^"]+)"\s*title="([^"]+).+?(?:poster|src)="([^"]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    if not match:
-        return
-    for videopage, name, img in match:
-        name = utils.cleantext(name)
+            site.add_download_link(
+                name, videopage, "Playvid", img, name, contextm=contextmenu
+            )
+            
+        except Exception as e:
+            utils.kodilog("Error parsing video item: " + str(e))
+            continue
 
-        contextmenu = []
-        contexturl = (
-            utils.addon_sys
-            + "?mode="
-            + str("hdporn92.Lookupinfo")
-            + "&url="
-            + urllib_parse.quote_plus(videopage)
-        )
-        contextmenu.append(
-            ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
-        )
-
-        site.add_download_link(
-            name, videopage, "Playvid", img, name, contextm=contextmenu
-        )
-
-    np = re.compile(
-        r'class="pagination".+?class="current">\d+</a></li><li><a\s*href="([^"]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).search(listhtml)
-    if np:
-        page_number = np.group(1).split("/")[-2]
-        site.add_dir(
-            "Next Page (" + page_number + ")", np.group(1), "List", site.img_next
-        )
+    # Handle pagination
+    pagination = soup.select_one(".pagination")
+    if pagination:
+        current = pagination.select_one(".current")
+        if current:
+            next_link = current.find_next("a")
+            if next_link and next_link.get("href"):
+                next_url = next_link.get("href")
+                page_number = next_url.split("/")[-2] if "/" in next_url else ""
+                site.add_dir(
+                    "Next Page (" + page_number + ")", next_url, "List", site.img_next
+                )
+    
     utils.eod()
 
 
@@ -142,23 +161,46 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        r'<article.+?href="([^"]+)"\s*title="([^"]+).+?(?:poster|src)="([^"]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for catpage, name, img in sorted(match, key=lambda x: x[1].strip().lower()):
-        name = utils.cleantext(name.strip())
-        site.add_dir(name, catpage + "?filter=latest", "List", img)
+    soup = utils.parse_html(listhtml)
+    
+    categories = []
+    articles = soup.select("article")
+    for article in articles:
+        try:
+            link = article.select_one("a[href]")
+            if not link:
+                continue
+                
+            catpage = utils.safe_get_attr(link, "href")
+            name = utils.safe_get_attr(link, "title")
+            
+            img_tag = article.select_one("img")
+            img = utils.safe_get_attr(img_tag, "poster", ["src"])
+            
+            if name and catpage:
+                name = utils.cleantext(name.strip())
+                categories.append((name, catpage + "?filter=latest", img))
+                
+        except Exception as e:
+            utils.kodilog("Error parsing category: " + str(e))
+            continue
+    
+    # Sort by name and add directories
+    for name, catpage, img in sorted(categories, key=lambda x: x[0].lower()):
+        site.add_dir(name, catpage, "List", img)
 
-    np = re.compile(
-        r'class="pagination".+?class="current">\d+</a></li><li><a\s*href="([^"]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).search(listhtml)
-    if np:
-        page_number = np.group(1).split("/")[-2]
-        site.add_dir(
-            "Next Page (" + page_number + ")", np.group(1), "Categories", site.img_next
-        )
+    # Handle pagination for categories
+    pagination = soup.select_one(".pagination")
+    if pagination:
+        current = pagination.select_one(".current")
+        if current:
+            next_link = current.find_next("a")
+            if next_link and next_link.get("href"):
+                next_url = next_link.get("href")
+                page_number = next_url.split("/")[-2] if "/" in next_url else ""
+                site.add_dir(
+                    "Next Page (" + page_number + ")", next_url, "Categories", site.img_next
+                )
 
     utils.eod()
 
@@ -166,12 +208,25 @@ def Categories(url):
 @site.register()
 def Tags(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        'com/(tag/[^"]+)".*?aria-label="([^"]+)"', re.DOTALL | re.IGNORECASE
-    ).findall(listhtml)
-    for tagpage, name in match:
-        name = utils.cleantext(name.strip())
-        site.add_dir(name, site.url + tagpage + "?filter=latest", "List", "")
+    soup = utils.parse_html(listhtml)
+    
+    # Look for tag links with aria-label
+    tag_links = soup.select('a[href*="/tag/"][aria-label]')
+    for link in tag_links:
+        try:
+            href = utils.safe_get_attr(link, "href")
+            name = utils.safe_get_attr(link, "aria-label")
+            
+            if href and name:
+                # Extract the tag part from the full URL
+                if '/tag/' in href:
+                    tag_part = href[href.find('/tag/'):]
+                    name = utils.cleantext(name.strip())
+                    site.add_dir(name, site.url + tag_part + "?filter=latest", "List", "")
+                    
+        except Exception as e:
+            utils.kodilog("Error parsing tag: " + str(e))
+            continue
 
     utils.eod()
 

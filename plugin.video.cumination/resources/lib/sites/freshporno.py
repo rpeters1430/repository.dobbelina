@@ -55,42 +55,60 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, "")
-    match = re.compile(
-        r'thumbs-inner">.*?href="([^"]+)"\s*title="([^"]+)".*?data-original="([^"]+)"',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    if not match:
+    soup = utils.parse_html(listhtml)
+    
+    video_items = soup.select(".thumbs-inner")
+    if not video_items:
         return
-    for videopage, name, img in match:
-        name = utils.cleantext(name)
+        
+    for item in video_items:
+        try:
+            link = item.select_one("a[href]")
+            if not link:
+                continue
+                
+            videopage = utils.safe_get_attr(link, "href")
+            name = utils.safe_get_attr(link, "title")
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "data-original")
+            
+            if not videopage or not name or not img:
+                continue
+                
+            name = utils.cleantext(name)
 
-        contextmenu = []
-        contexturl = (
-            utils.addon_sys
-            + "?mode="
-            + str("freshporno.Lookupinfo")
-            + "&url="
-            + urllib_parse.quote_plus(videopage)
-        )
-        contextmenu.append(
-            ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
-        )
+            contextmenu = []
+            contexturl = (
+                utils.addon_sys
+                + "?mode="
+                + str("freshporno.Lookupinfo")
+                + "&url="
+                + urllib_parse.quote_plus(videopage)
+            )
+            contextmenu.append(
+                ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
+            )
 
-        site.add_download_link(
-            name, videopage, "Playvid", img, name, contextm=contextmenu
-        )
+            site.add_download_link(
+                name, videopage, "Playvid", img, name, contextm=contextmenu
+            )
+            
+        except Exception as e:
+            utils.kodilog("Error parsing video item: " + str(e))
+            continue
 
-    np = re.compile(r'next"><a\s*href="([^"]+)"', re.DOTALL | re.IGNORECASE).search(
-        listhtml
-    )
-    if np:
-        page_number = np.group(1).split("/")[-2]
-        site.add_dir(
-            "Next Page (" + page_number + ")",
-            site.url + np.group(1),
-            "List",
-            site.img_next,
-        )
+    # Handle pagination
+    next_link = soup.select_one("a.next[href]")
+    if next_link:
+        next_href = utils.safe_get_attr(next_link, "href")
+        if next_href:
+            page_number = next_href.split("/")[-2]
+            site.add_dir(
+                "Next Page (" + page_number + ")",
+                site.url + next_href,
+                "List",
+                site.img_next,
+            )
     utils.eod()
 
 
@@ -158,12 +176,24 @@ def Search(url, keyword=None):
 @site.register()
 def Tags(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        '/(tags/[^"]+)+"><i class="fa fa-tag"></i>([^<]+)<', re.DOTALL | re.IGNORECASE
-    ).findall(listhtml)
-    for tagpage, name in match:
-        name = utils.cleantext(name.strip())
-        site.add_dir(name, site.url + tagpage, "List", "")
+    soup = utils.parse_html(listhtml)
+    
+    tag_links = soup.select('a[href*="/tags/"]')
+    for link in tag_links:
+        try:
+            tagpage = utils.safe_get_attr(link, "href")
+            icon = link.select_one("i.fa-tag")
+            if not icon:
+                continue
+                
+            name = utils.safe_get_text(link).replace("icon", "").strip()
+            name = utils.cleantext(name)
+            
+            if name and tagpage:
+                site.add_dir(name, site.url + tagpage, "List", "")
+        except Exception as e:
+            utils.kodilog("Error parsing tag: " + str(e))
+            continue
 
     utils.eod()
 
@@ -171,21 +201,47 @@ def Tags(url):
 @site.register()
 def Channels(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        r'content-wrapper">.*?title="([^"]+)"\s*href="([^"]+)"(.*?)</i>([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for name, channelpage, img, videos in match:
-        name = "{} - {}".format(utils.cleantext(name.strip()), videos)
-
-        if "no image" in img:
+    soup = utils.parse_html(listhtml)
+    
+    content_wrapper = soup.select_one(".content-wrapper")
+    if not content_wrapper:
+        utils.eod()
+        return
+        
+    channel_links = content_wrapper.select("a[href]")
+    for link in channel_links:
+        try:
+            channelpage = utils.safe_get_attr(link, "href")
+            name = utils.safe_get_attr(link, "title")
+            
+            if not name or not channelpage:
+                continue
+                
+            # Extract video count from the link content
+            link_text = utils.safe_get_text(link)
+            videos = ""
+            if link_text:
+                # Extract number from text like "123 videos"
+                import re
+                video_match = re.search(r'(\d+)', link_text)
+                if video_match:
+                    videos = video_match.group(1)
+            
+            name = "{} - {}".format(utils.cleantext(name.strip()), videos)
+            
+            # Handle image extraction
             img = ""
-        elif "data-original" in img:
-            img = re.search(
-                'data-original="([^"]+)"', img, re.IGNORECASE | re.DOTALL
-            ).group(1)
+            parent_html = str(link.parent)
+            if "no image" not in parent_html:
+                img_match = re.search(r'data-original="([^"]+)"', parent_html)
+                if img_match:
+                    img = img_match.group(1)
 
-        site.add_dir(name, channelpage, "List", img)
+            site.add_dir(name, channelpage, "List", img)
+            
+        except Exception as e:
+            utils.kodilog("Error parsing channel: " + str(e))
+            continue
 
     utils.eod()
 
@@ -193,33 +249,60 @@ def Channels(url):
 @site.register()
 def Models(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        r'content-wrapper">.*?title="([^"]+)"\s*href="([^"]+)"(.*?)</i>([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for name, modelpage, img, videos in match:
-        name = "{} - {}".format(utils.cleantext(name.strip()), videos)
-
-        if "no image" in img:
+    soup = utils.parse_html(listhtml)
+    
+    content_wrapper = soup.select_one(".content-wrapper")
+    if not content_wrapper:
+        utils.eod()
+        return
+        
+    model_links = content_wrapper.select("a[href]")
+    for link in model_links:
+        try:
+            modelpage = utils.safe_get_attr(link, "href")
+            name = utils.safe_get_attr(link, "title")
+            
+            if not name or not modelpage:
+                continue
+                
+            # Extract video count from the link content
+            link_text = utils.safe_get_text(link)
+            videos = ""
+            if link_text:
+                # Extract number from text like "123 videos"
+                import re
+                video_match = re.search(r'(\d+)', link_text)
+                if video_match:
+                    videos = video_match.group(1)
+            
+            name = "{} - {}".format(utils.cleantext(name.strip()), videos)
+            
+            # Handle image extraction
             img = ""
-        elif "data-original" in img:
-            img = re.search(
-                'data-original="([^"]+)"', img, re.IGNORECASE | re.DOTALL
-            ).group(1)
+            parent_html = str(link.parent)
+            if "no image" not in parent_html:
+                img_match = re.search(r'data-original="([^"]+)"', parent_html)
+                if img_match:
+                    img = img_match.group(1)
 
-        site.add_dir(name, modelpage, "List", img)
+            site.add_dir(name, modelpage, "List", img)
+            
+        except Exception as e:
+            utils.kodilog("Error parsing model: " + str(e))
+            continue
 
-    np = re.compile(r'next"><a\s*href="([^"]+)"', re.DOTALL | re.IGNORECASE).search(
-        listhtml
-    )
-    if np:
-        page_number = np.group(1).split("/")[-2]
-        site.add_dir(
-            "Next Page (" + page_number + ")",
-            site.url + np.group(1),
-            "Models",
-            site.img_next,
-        )
+    # Handle pagination for models
+    next_link = soup.select_one("a.next[href]")
+    if next_link:
+        next_href = utils.safe_get_attr(next_link, "href")
+        if next_href:
+            page_number = next_href.split("/")[-2]
+            site.add_dir(
+                "Next Page (" + page_number + ")",
+                site.url + next_href,
+                "Models",
+                site.img_next,
+            )
 
     utils.eod()
 
