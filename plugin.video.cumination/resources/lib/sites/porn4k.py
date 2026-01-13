@@ -52,23 +52,23 @@ def Main():
 def List(url):
     listhtml = utils.getHtml(url, "")
     soup = utils.parse_html(listhtml)
-    
+
     video_items = soup.select("article")
     for item in video_items:
         try:
             link = item.select_one("a[href]")
             if not link:
                 continue
-                
+
             videopage = utils.safe_get_attr(link, "href")
             name = utils.safe_get_attr(link, "title")
-            
+
             img_tag = item.select_one("img")
             img = utils.safe_get_attr(img_tag, "src")
-            
+
             if not videopage or not name:
                 continue
-                
+
             name = utils.cleantext(name)
             contexturl = (
                 utils.addon_sys
@@ -82,7 +82,7 @@ def List(url):
             site.add_download_link(
                 name, videopage, "Playvid", img, name, contextm=contextmenu
             )
-            
+
         except Exception as e:
             utils.kodilog("Error parsing video item: " + str(e))
             continue
@@ -92,10 +92,8 @@ def List(url):
     if next_link and next_link.get("href"):
         next_url = next_link.get("href")
         page_number = next_url.split("/")[-2] if "/" in next_url else ""
-        site.add_dir(
-            "Next Page (" + page_number + ")", next_url, "List", site.img_next
-        )
-    
+        site.add_dir("Next Page (" + page_number + ")", next_url, "List", site.img_next)
+
     utils.eod()
 
 
@@ -137,27 +135,27 @@ def Search(url, keyword=None):
 def Categories(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-    
-    category_items = soup.select('li.cat-item')
+
+    category_items = soup.select("li.cat-item")
     for item in category_items:
         try:
             link = item.select_one("a[href]")
             if not link:
                 continue
-                
+
             catpage = utils.safe_get_attr(link, "href")
             name = utils.safe_get_text(link)
-            
+
             if not catpage or not name:
                 continue
-                
+
             name = utils.cleantext(name.strip())
             site.add_dir(name, catpage, "List", "")
-            
+
         except Exception as e:
             utils.kodilog("Error parsing category: " + str(e))
             continue
-    
+
     utils.eod()
 
 
@@ -165,7 +163,7 @@ def Categories(url):
 def Everything(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-    
+
     # Look for list items with links
     movie_items = soup.select("li")
     for item in movie_items:
@@ -173,20 +171,20 @@ def Everything(url):
             link = item.select_one("a[href]")
             if not link:
                 continue
-                
+
             movielink = utils.safe_get_attr(link, "href")
             name = utils.safe_get_text(link)
-            
+
             if not movielink or not name:
                 continue
-                
+
             name = utils.cleantext(name.strip())
             site.add_download_link(name, movielink, "Playvid", "", name)
-            
+
         except Exception as e:
             utils.kodilog("Error parsing movie item: " + str(e))
             continue
-    
+
     utils.eod()
 
 

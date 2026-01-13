@@ -63,27 +63,27 @@ def List(url):
         utils.notify(msg="Nothing found")
         utils.eod()
         return
-    
+
     soup = utils.parse_html(listhtml)
     video_items = soup.select("article")
-    
+
     for item in video_items:
         try:
             link = item.select_one("a[href]")
             if not link:
                 continue
-                
+
             videopage = utils.safe_get_attr(link, "href")
             name = utils.safe_get_attr(link, "title")
-            
+
             img_tag = item.select_one("img")
             img = utils.safe_get_attr(img_tag, "poster", ["src"])
-            
+
             if not videopage or not name:
                 continue
-                
+
             name = utils.cleantext(name)
-            
+
             contextmenu = []
             contexturl = (
                 utils.addon_sys
@@ -99,7 +99,7 @@ def List(url):
             site.add_download_link(
                 name, videopage, "Playvid", img, name, contextm=contextmenu
             )
-            
+
         except Exception as e:
             utils.kodilog("Error parsing video item: " + str(e))
             continue
@@ -116,7 +116,7 @@ def List(url):
                 site.add_dir(
                     "Next Page (" + page_number + ")", next_url, "List", site.img_next
                 )
-    
+
     utils.eod()
 
 
@@ -162,7 +162,7 @@ def Search(url, keyword=None):
 def Categories(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-    
+
     categories = []
     articles = soup.select("article")
     for article in articles:
@@ -170,21 +170,21 @@ def Categories(url):
             link = article.select_one("a[href]")
             if not link:
                 continue
-                
+
             catpage = utils.safe_get_attr(link, "href")
             name = utils.safe_get_attr(link, "title")
-            
+
             img_tag = article.select_one("img")
             img = utils.safe_get_attr(img_tag, "poster", ["src"])
-            
+
             if name and catpage:
                 name = utils.cleantext(name.strip())
                 categories.append((name, catpage + "?filter=latest", img))
-                
+
         except Exception as e:
             utils.kodilog("Error parsing category: " + str(e))
             continue
-    
+
     # Sort by name and add directories
     for name, catpage, img in sorted(categories, key=lambda x: x[0].lower()):
         site.add_dir(name, catpage, "List", img)
@@ -199,7 +199,10 @@ def Categories(url):
                 next_url = next_link.get("href")
                 page_number = next_url.split("/")[-2] if "/" in next_url else ""
                 site.add_dir(
-                    "Next Page (" + page_number + ")", next_url, "Categories", site.img_next
+                    "Next Page (" + page_number + ")",
+                    next_url,
+                    "Categories",
+                    site.img_next,
                 )
 
     utils.eod()
@@ -209,21 +212,23 @@ def Categories(url):
 def Tags(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-    
+
     # Look for tag links with aria-label
     tag_links = soup.select('a[href*="/tag/"][aria-label]')
     for link in tag_links:
         try:
             href = utils.safe_get_attr(link, "href")
             name = utils.safe_get_attr(link, "aria-label")
-            
+
             if href and name:
                 # Extract the tag part from the full URL
-                if '/tag/' in href:
-                    tag_part = href[href.find('/tag/'):]
+                if "/tag/" in href:
+                    tag_part = href[href.find("/tag/") :]
                     name = utils.cleantext(name.strip())
-                    site.add_dir(name, site.url + tag_part + "?filter=latest", "List", "")
-                    
+                    site.add_dir(
+                        name, site.url + tag_part + "?filter=latest", "List", ""
+                    )
+
         except Exception as e:
             utils.kodilog("Error parsing tag: " + str(e))
             continue

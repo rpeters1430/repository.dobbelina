@@ -52,10 +52,10 @@ def List(url):
         utils.notify(msg="No videos found!")
         return
     listhtml = listhtml.replace('<div class="k4">', '<div class="FHD">')
-    
+
     soup = utils.parse_html(listhtml)
     video_items = soup.select("div.item")
-    
+
     cm = []
     cm_lookupinfo = (
         utils.addon_sys + "?mode=" + str("freepornvideos.Lookupinfo") + "&url="
@@ -73,34 +73,41 @@ def List(url):
             link = item.select_one("a[href]")
             if not link:
                 continue
-                
+
             videopage = utils.safe_get_attr(link, "href")
             if not videopage:
                 continue
-                
+
             name = utils.safe_get_attr(link, "title")
             if not name:
                 continue
-                
+
             img_tag = item.select_one("img")
             img = utils.safe_get_attr(img_tag, "src")
             if not img:
                 continue
-                
+
             name = utils.cleantext(name)
-            
+
             # Get duration
             duration_tag = item.select_one(".duration")
             duration = utils.safe_get_text(duration_tag) if duration_tag else ""
-            
+
             # Get quality
             quality_tag = item.select_one(".FHD")
             quality = "FHD" if quality_tag else ""
-            
+
             site.add_download_link(
-                name, videopage, "Playvid", img, name, duration=duration, quality=quality, contextm=cm
+                name,
+                videopage,
+                "Playvid",
+                img,
+                name,
+                duration=duration,
+                quality=quality,
+                contextm=cm,
             )
-            
+
         except Exception as e:
             utils.kodilog("Error parsing video item: " + str(e))
             continue
@@ -111,22 +118,22 @@ def List(url):
         next_url = utils.safe_get_attr(next_link, "href")
         if next_url:
             # Extract page numbers
-            page_match = re.search(r'/(\d+)/', next_url)
+            page_match = re.search(r"/(\d+)/", next_url)
             np = page_match.group(1) if page_match else ""
-            
+
             # Find last page
             last_link = soup.select_one("a.page[href*='Last']")
             lp = ""
             if last_link:
                 last_match = re.search(r'/(\d+)/">Last', str(last_link))
                 lp = last_match.group(1) if last_match else ""
-            
+
             page_label = "Next Page"
             if np:
                 page_label += " ({})".format(np)
                 if lp:
                     page_label += "/{}".format(lp)
-            
+
             cm_page = (
                 utils.addon_sys
                 + "?mode=freepornvideos.GotoPage&list_mode=freepornvideos.List&url="
@@ -137,9 +144,9 @@ def List(url):
                 + str(lp)
             )
             cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
-            
+
             site.add_dir(page_label, next_url, "List", site.img_next, contextm=cm)
-    
+
     utils.eod()
 
 
