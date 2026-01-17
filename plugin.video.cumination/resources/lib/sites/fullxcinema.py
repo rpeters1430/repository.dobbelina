@@ -49,10 +49,10 @@ def List(url):
         html = listhtml.split(">SHOULD WATCH<")[0]
     else:
         html = listhtml
-    
+
     soup = utils.parse_html(html)
     video_items = soup.select("article[data-video-id]")
-    
+
     cm = []
     cm_lookupinfo = utils.addon_sys + "?mode=" + str("fullxcinema.Lookupinfo") + "&url="
     cm.append(
@@ -62,30 +62,30 @@ def List(url):
     cm.append(
         ("[COLOR deeppink]Related videos[/COLOR]", "RunPlugin(" + cm_related + ")")
     )
-    
+
     for item in video_items:
         try:
             link = item.select_one("a[href]")
             if not link:
                 continue
-                
+
             videopage = utils.safe_get_attr(link, "href")
             name = utils.safe_get_attr(link, "title")
-            
+
             img = utils.safe_get_attr(item, "data-main-thumb")
-            
+
             # Look for duration
             duration_tag = item.select_one("i.fa-clock-o")
             duration = utils.safe_get_text(duration_tag) if duration_tag else ""
-            
+
             if not videopage or not name:
                 continue
-                
+
             name = utils.cleantext(name)
             site.add_download_link(
                 name, videopage, "Play", img, name, duration=duration, contextm=cm
             )
-            
+
         except Exception as e:
             utils.kodilog("Error parsing video item: " + str(e))
             continue
@@ -100,14 +100,14 @@ def List(url):
             next_link = current.find_next("a")
         else:
             next_link = None
-    
+
     if next_link and next_link.get("href"):
         next_url = next_link.get("href")
-        
+
         # Extract page numbers
         page_match = re.search(r"/page/(\d+)", next_url)
         np = page_match.group(1) if page_match else ""
-        
+
         # Try to find last page
         if ">Last" in html:
             last_link = soup.select_one('a[href*="Last"]')
@@ -123,13 +123,13 @@ def List(url):
                 if match:
                     page_numbers.append(int(match.group(1)))
             lp = str(max(page_numbers)) if page_numbers else ""
-        
+
         page_label = "Next Page"
         if np:
             page_label += " ({})".format(np)
             if lp:
                 page_label += "/{}".format(lp)
-        
+
         cm_page = (
             utils.addon_sys
             + "?mode=fullxcinema.GotoPage&list_mode=fullxcinema.List&url="
@@ -140,9 +140,9 @@ def List(url):
             + str(lp)
         )
         cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
-        
+
         site.add_dir(page_label, next_url, "List", site.img_next, contextm=cm)
-    
+
     utils.eod()
 
 
@@ -173,25 +173,25 @@ def Cat(url):
         tags_section = cathtml.split('title">Tags<')[-1].split("/section>")[0]
     else:
         tags_section = cathtml
-    
+
     soup = utils.parse_html(tags_section)
-    category_links = soup.select('a[href][aria-label]')
-    
+    category_links = soup.select("a[href][aria-label]")
+
     for link in category_links:
         try:
             caturl = utils.safe_get_attr(link, "href")
             name = utils.safe_get_attr(link, "aria-label")
-            
+
             if not caturl or not name:
                 continue
-                
+
             name = utils.cleantext(name)
             site.add_dir(name, caturl, "List", "")
-            
+
         except Exception as e:
             utils.kodilog("Error parsing category: " + str(e))
             continue
-    
+
     utils.eod()
 
 

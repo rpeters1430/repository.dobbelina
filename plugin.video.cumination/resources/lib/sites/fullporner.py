@@ -57,33 +57,35 @@ def Main():
 def List(url):
     listhtml = utils.getHtml(url, "")
     soup = utils.parse_html(listhtml)
-    
+
     video_items = soup.select("article")
     if not video_items:
         return
-        
+
     for item in video_items:
         try:
             link = item.select_one("a[href]")
             if not link:
                 continue
-                
+
             videopage = utils.safe_get_attr(link, "href")
             name = utils.safe_get_attr(link, "title")
-            
+
             img_tag = item.select_one("img")
             img = utils.safe_get_attr(img_tag, "poster", ["src"])
-            
+
             # Look for duration in various places
             duration_tag = item.select_one("i")
             duration = utils.safe_get_text(duration_tag) if duration_tag else ""
-            
+
             if not videopage or not name:
                 continue
-                
+
             name = utils.cleantext(name)
-            site.add_download_link(name, videopage, "Playvid", img, name, duration=duration)
-            
+            site.add_download_link(
+                name, videopage, "Playvid", img, name, duration=duration
+            )
+
         except Exception as e:
             utils.kodilog("Error parsing video item: " + str(e))
             continue
@@ -100,7 +102,7 @@ def List(url):
                 site.add_dir(
                     "Next Page (" + page_number + ")", next_url, "List", site.img_next
                 )
-    
+
     utils.eod()
 
 
@@ -125,7 +127,7 @@ def Search(url, keyword=None):
 def Categories(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-    
+
     categories = []
     articles = soup.select("article")
     for article in articles:
@@ -133,29 +135,29 @@ def Categories(url):
             link = article.select_one("a[href]")
             if not link:
                 continue
-                
+
             catpage = utils.safe_get_attr(link, "href")
             if not catpage:
                 continue
-                
+
             img_tag = article.select_one("img")
             img = utils.safe_get_attr(img_tag, "src")
-            
+
             title_tag = article.select_one(".cat-title")
             name = utils.safe_get_text(title_tag) if title_tag else ""
-            
+
             if name and catpage:
                 name = utils.cleantext(name.strip())
                 categories.append((name, catpage + "&filter=latest", img))
-                
+
         except Exception as e:
             utils.kodilog("Error parsing category: " + str(e))
             continue
-    
+
     # Sort by name and add directories
     for name, catpage, img in sorted(categories, key=lambda x: x[0].lower()):
         site.add_dir(name, catpage, "List", img)
-        
+
     utils.eod()
 
 
@@ -163,7 +165,7 @@ def Categories(url):
 def Actors(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-    
+
     actors = []
     articles = soup.select("article")
     for article in articles:
@@ -171,21 +173,21 @@ def Actors(url):
             link = article.select_one("a[href]")
             if not link:
                 continue
-                
+
             catpage = utils.safe_get_attr(link, "href")
             name = utils.safe_get_attr(link, "title")
-            
+
             img_tag = article.select_one("img")
             img = utils.safe_get_attr(img_tag, "src")
-            
+
             if name and catpage:
                 name = utils.cleantext(name.strip())
                 actors.append((name, catpage, img))
-                
+
         except Exception as e:
             utils.kodilog("Error parsing actor: " + str(e))
             continue
-    
+
     # Sort by name and add directories
     for name, catpage, img in sorted(actors, key=lambda x: x[0].lower()):
         site.add_dir(name, catpage, "List", img)

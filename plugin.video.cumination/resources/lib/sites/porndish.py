@@ -39,7 +39,7 @@ def Main():
 def List(url):
     listhtml = utils.getHtml(url, "")
     soup = utils.parse_html(listhtml)
-    
+
     # Handle first page differently - split at "More Porn Videos"
     if "/page/1/" in url:
         # Look for "New Porn Videos" section
@@ -56,25 +56,25 @@ def List(url):
                             break
                         new_videos_section = next_element
                         next_element = next_element.find_next()
-        
+
         if new_videos_section:
             # Parse videos from the new videos section
-            video_links = new_videos_section.find_all('a[title][href]')
+            video_links = new_videos_section.find_all("a[title][href]")
             for link in video_links:
                 try:
                     name = utils.safe_get_attr(link, "title")
                     videopage = utils.safe_get_attr(link, "href")
                     img_tag = link.find("img") or link.find_next("img")
                     img = utils.safe_get_attr(img_tag, "data-src") if img_tag else ""
-                    
+
                     if name and videopage:
                         name = utils.cleantext(name)
                         site.add_download_link(name, videopage, "Playvid", img, name)
-                        
+
                 except Exception as e:
                     utils.kodilog("Error parsing new video: " + str(e))
                     continue
-    
+
     # Look for "More Porn Videos" section
     more_videos_section = None
     headings = soup.find_all(text=lambda text: text and "More Porn Videos" in text)
@@ -85,7 +85,11 @@ def List(url):
                 # Find the next elements until "g1-pagination-end"
                 next_element = parent.find_next()
                 while next_element:
-                    if "g1-pagination-end" in next_element.get_text() or next_element.get('class') and 'pagination' in str(next_element.get('class')):
+                    if (
+                        "g1-pagination-end" in next_element.get_text()
+                        or next_element.get("class")
+                        and "pagination" in str(next_element.get("class"))
+                    ):
                         break
                     if more_videos_section is None:
                         more_videos_section = next_element
@@ -93,25 +97,25 @@ def List(url):
                         # Append to existing section
                         more_videos_section.append(next_element)
                     next_element = next_element.find_next()
-    
+
     if more_videos_section:
         # Parse videos from the more videos section
-        video_links = more_videos_section.find_all('a[title][href]')
+        video_links = more_videos_section.find_all("a[title][href]")
         for link in video_links:
             try:
                 name = utils.safe_get_attr(link, "title")
                 videopage = utils.safe_get_attr(link, "href")
                 img_tag = link.find("img") or link.find_next("img")
                 img = utils.safe_get_attr(img_tag, "data-src") if img_tag else ""
-                
+
                 if name and videopage:
                     name = utils.cleantext(name)
                     site.add_download_link(name, videopage, "Playvid", img, name)
-                    
+
             except Exception as e:
                 utils.kodilog("Error parsing video: " + str(e))
                 continue
-    
+
     # Handle pagination
     next_link = soup.select_one('a[rel="next"]')
     if next_link and next_link.get("href"):

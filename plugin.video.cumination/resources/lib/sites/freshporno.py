@@ -56,25 +56,25 @@ def Main():
 def List(url):
     listhtml = utils.getHtml(url, "")
     soup = utils.parse_html(listhtml)
-    
+
     video_items = soup.select(".thumbs-inner")
     if not video_items:
         return
-        
+
     for item in video_items:
         try:
             link = item.select_one("a[href]")
             if not link:
                 continue
-                
+
             videopage = utils.safe_get_attr(link, "href")
             name = utils.safe_get_attr(link, "title")
             img_tag = item.select_one("img")
             img = utils.safe_get_attr(img_tag, "data-original")
-            
+
             if not videopage or not name or not img:
                 continue
-                
+
             name = utils.cleantext(name)
 
             contextmenu = []
@@ -92,7 +92,7 @@ def List(url):
             site.add_download_link(
                 name, videopage, "Playvid", img, name, contextm=contextmenu
             )
-            
+
         except Exception as e:
             utils.kodilog("Error parsing video item: " + str(e))
             continue
@@ -177,7 +177,7 @@ def Search(url, keyword=None):
 def Tags(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-    
+
     tag_links = soup.select('a[href*="/tags/"]')
     for link in tag_links:
         try:
@@ -185,10 +185,10 @@ def Tags(url):
             icon = link.select_one("i.fa-tag")
             if not icon:
                 continue
-                
+
             name = utils.safe_get_text(link).replace("icon", "").strip()
             name = utils.cleantext(name)
-            
+
             if name and tagpage:
                 site.add_dir(name, site.url + tagpage, "List", "")
         except Exception as e:
@@ -202,33 +202,34 @@ def Tags(url):
 def Channels(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-    
+
     content_wrapper = soup.select_one(".content-wrapper")
     if not content_wrapper:
         utils.eod()
         return
-        
+
     channel_links = content_wrapper.select("a[href]")
     for link in channel_links:
         try:
             channelpage = utils.safe_get_attr(link, "href")
             name = utils.safe_get_attr(link, "title")
-            
+
             if not name or not channelpage:
                 continue
-                
+
             # Extract video count from the link content
             link_text = utils.safe_get_text(link)
             videos = ""
             if link_text:
                 # Extract number from text like "123 videos"
                 import re
-                video_match = re.search(r'(\d+)', link_text)
+
+                video_match = re.search(r"(\d+)", link_text)
                 if video_match:
                     videos = video_match.group(1)
-            
+
             name = "{} - {}".format(utils.cleantext(name.strip()), videos)
-            
+
             # Handle image extraction
             img = ""
             parent_html = str(link.parent)
@@ -238,7 +239,7 @@ def Channels(url):
                     img = img_match.group(1)
 
             site.add_dir(name, channelpage, "List", img)
-            
+
         except Exception as e:
             utils.kodilog("Error parsing channel: " + str(e))
             continue
@@ -250,33 +251,34 @@ def Channels(url):
 def Models(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-    
+
     content_wrapper = soup.select_one(".content-wrapper")
     if not content_wrapper:
         utils.eod()
         return
-        
+
     model_links = content_wrapper.select("a[href]")
     for link in model_links:
         try:
             modelpage = utils.safe_get_attr(link, "href")
             name = utils.safe_get_attr(link, "title")
-            
+
             if not name or not modelpage:
                 continue
-                
+
             # Extract video count from the link content
             link_text = utils.safe_get_text(link)
             videos = ""
             if link_text:
                 # Extract number from text like "123 videos"
                 import re
-                video_match = re.search(r'(\d+)', link_text)
+
+                video_match = re.search(r"(\d+)", link_text)
                 if video_match:
                     videos = video_match.group(1)
-            
+
             name = "{} - {}".format(utils.cleantext(name.strip()), videos)
-            
+
             # Handle image extraction
             img = ""
             parent_html = str(link.parent)
@@ -286,7 +288,7 @@ def Models(url):
                     img = img_match.group(1)
 
             site.add_dir(name, modelpage, "List", img)
-            
+
         except Exception as e:
             utils.kodilog("Error parsing model: " + str(e))
             continue
