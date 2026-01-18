@@ -2,8 +2,8 @@
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
 
-**Last Updated**: 2026-01-11
-**Last Sync**: 2026-01-11 - Reviewed commit e8ebd05 (not applicable - file doesn't exist)
+**Last Updated**: 2026-01-17
+**Last Sync**: 2026-01-17 - Cherry-picked commit 1270357 (new site fixes #1735)
 
 ---
 
@@ -28,6 +28,12 @@ These upstream commits have been integrated into the fork:
 |---------------|---------|-----------|-----------------|-------|
 | `7bbe1c7` | Fix video playback for FlareSolverr scraped sites (e.g. luxuretv) | `d079d3f` | 2026-01-04 | Cherry-picked with -x |
 | `43c6322` | americass - removed fixes #1709 | `1dd541c` | 2026-01-04 | Cherry-picked with -x |
+
+### 2026-01-17 Cherry-Pick Session
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `1270357` | new site fixes #1735 | `0fa653b` | 2026-01-17 | Cherry-picked with -x |
 
 ### Previously Integrated (Manual)
 
