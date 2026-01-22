@@ -88,7 +88,7 @@ def List(url):
                     if (
                         "g1-pagination-end" in next_element.get_text()
                         or next_element.get("class")
-                        and 'pagination' in str(next_element.get("class"))
+                        and "pagination" in str(next_element.get("class"))
                     ):
                         break
                     if more_videos_section is None:
