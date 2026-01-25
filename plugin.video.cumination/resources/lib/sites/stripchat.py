@@ -217,7 +217,9 @@ def Playvid(url, name):
         ]
         for endpoint in endpoints:
             try:
-                utils.kodilog("Stripchat: Trying endpoint: {}".format(endpoint.format(model_name)))
+                utils.kodilog(
+                    "Stripchat: Trying endpoint: {}".format(endpoint.format(model_name))
+                )
                 response, _ = utils.get_html_with_cloudflare_retry(
                     endpoint.format(model_name),
                     site.url,
@@ -238,7 +240,9 @@ def Playvid(url, name):
                 utils.kodilog("Stripchat: JSON decode error: {}".format(str(e)))
                 continue
             except Exception as e:
-                utils.kodilog("Stripchat: Error loading model details: {}".format(str(e)))
+                utils.kodilog(
+                    "Stripchat: Error loading model details: {}".format(str(e))
+                )
                 continue
         return None
 
@@ -266,16 +270,26 @@ def Playvid(url, name):
                             if isinstance(stream_url, str) and stream_url.startswith(
                                 "http"
                             ):
-                                utils.kodilog("Stripchat: Found stream candidate: {} - {}".format(quality_label, stream_url[:80]))
+                                utils.kodilog(
+                                    "Stripchat: Found stream candidate: {} - {}".format(
+                                        quality_label, stream_url[:80]
+                                    )
+                                )
                                 candidates.append((quality_label, stream_url))
                                 break
                     elif isinstance(data, str) and data.startswith("http"):
-                        utils.kodilog("Stripchat: Found stream candidate: {} - {}".format(quality_label, data[:80]))
+                        utils.kodilog(
+                            "Stripchat: Found stream candidate: {} - {}".format(
+                                quality_label, data[:80]
+                            )
+                        )
                         candidates.append((quality_label, data))
             # Some responses keep direct URL on stream['url']
             stream_url = stream_info.get("url")
             if isinstance(stream_url, str) and stream_url.startswith("http"):
-                utils.kodilog("Stripchat: Found direct stream URL: {}".format(stream_url[:80]))
+                utils.kodilog(
+                    "Stripchat: Found direct stream URL: {}".format(stream_url[:80])
+                )
                 candidates.append(("direct", stream_url))
         # Legacy field on model root
         if model_data and isinstance(model_data.get("hlsPlaylist"), str):
@@ -310,12 +324,18 @@ def Playvid(url, name):
         )
         selected_url = candidates_sorted[0][1]
         selected_label = candidates_sorted[0][0]
-        utils.kodilog("Stripchat: Selected stream: {} - {}".format(selected_label, selected_url[:80]))
+        utils.kodilog(
+            "Stripchat: Selected stream: {} - {}".format(
+                selected_label, selected_url[:80]
+            )
+        )
 
         # Don't try to parse master playlists - just use the selected URL directly
         # The master playlist URL is already the correct stream to use
         # Parsing it and selecting variants often picks the wrong quality or causes auth failures
-        utils.kodilog("Stripchat: Using selected stream URL directly without master playlist parsing")
+        utils.kodilog(
+            "Stripchat: Using selected stream URL directly without master playlist parsing"
+        )
 
         return selected_url
 
@@ -356,12 +376,19 @@ def Playvid(url, name):
     # The check_inputstream() call will offer to install if missing
     try:
         from inputstreamhelper import Helper
-        is_helper = Helper('hls')
+
+        is_helper = Helper("hls")
         vp.progress.update(90, "[CR]Checking inputstream.adaptive[CR]")
         if not is_helper.check_inputstream():
             vp.progress.close()
-            utils.kodilog("Stripchat: inputstream.adaptive check failed - HLS streams require it")
-            utils.notify("Stripchat", "inputstream.adaptive is required. Please install it from Kodi settings.", duration=8000)
+            utils.kodilog(
+                "Stripchat: inputstream.adaptive check failed - HLS streams require it"
+            )
+            utils.notify(
+                "Stripchat",
+                "inputstream.adaptive is required. Please install it from Kodi settings.",
+                duration=8000,
+            )
             return
     except Exception as e:
         utils.kodilog("Stripchat: Error checking inputstream: {}".format(str(e)))

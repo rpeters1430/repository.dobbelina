@@ -745,7 +745,10 @@ def Playvid(url, name, download=None):
         # If we found an M3U8 stream, we need to use inputstream.adaptive
         # Re-initialize VideoPlayer with IA_check="IA" for HLS streams
         if video_url and ".m3u8" in video_url.lower():
-            utils.kodilog("ThotHub: M3U8 stream detected, using inputstream.adaptive", xbmc.LOGDEBUG)
+            utils.kodilog(
+                "ThotHub: M3U8 stream detected, using inputstream.adaptive",
+                xbmc.LOGDEBUG,
+            )
             vp.progress.close()
             vp = utils.VideoPlayer(name, download, IA_check="IA")
             vp.progress.update(75, "[CR]Playing video[CR]")

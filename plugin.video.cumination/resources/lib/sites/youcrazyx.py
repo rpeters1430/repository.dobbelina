@@ -122,7 +122,9 @@ def List(url):
                     + "&lp="
                     + "0"
                 )
-                cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
+                cm = [
+                    ("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")
+                ]
             site.add_dir(label, next_url, "List", site.img_next, contextm=cm)
     utils.eod()
 

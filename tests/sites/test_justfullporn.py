@@ -33,7 +33,9 @@ def test_list_parses_videos_and_pagination(monkeypatch):
     recorder = _Recorder()
 
     fixture_mapped_get_html(
-        monkeypatch, justfullporn, {"justfullporn.net/": "sites/justfullporn/listing.html"}
+        monkeypatch,
+        justfullporn,
+        {"justfullporn.net/": "sites/justfullporn/listing.html"},
     )
     monkeypatch.setattr(justfullporn.site, "add_download_link", recorder.add_download)
     monkeypatch.setattr(justfullporn.site, "add_dir", recorder.add_dir)
