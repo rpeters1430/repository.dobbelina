@@ -217,23 +217,42 @@ def Playvid(url, name):
         ]
         for endpoint in endpoints:
             try:
+                utils.kodilog("Stripchat: Trying endpoint: {}".format(endpoint.format(model_name)))
                 response, _ = utils.get_html_with_cloudflare_retry(
                     endpoint.format(model_name),
                     site.url,
                     headers=headers,
                     retry_on_empty=True,
                 )
+                if not response:
+                    utils.kodilog("Stripchat: Empty response from endpoint")
+                    continue
                 payload = json.loads(response)
                 models = payload.get("models") if isinstance(payload, dict) else None
-                if models:
+                if models and len(models) > 0:
+                    utils.kodilog("Stripchat: Successfully loaded model details")
                     return models[0]
-            except Exception:
+                else:
+                    utils.kodilog("Stripchat: No models in response")
+            except json.JSONDecodeError as e:
+                utils.kodilog("Stripchat: JSON decode error: {}".format(str(e)))
+                continue
+            except Exception as e:
+                utils.kodilog("Stripchat: Error loading model details: {}".format(str(e)))
                 continue
         return None
 
     def _pick_stream(model_data, fallback_url):
         candidates = []
         stream_info = model_data.get("stream") if model_data else None
+
+        # Check if model is actually online
+        if model_data:
+            is_online = model_data.get("isOnline") or model_data.get("isBroadcasting")
+            if is_online == False:
+                utils.kodilog("Stripchat: Model {} is offline".format(name))
+                return None
+
         if isinstance(stream_info, dict):
             # Explicit urls map (new API structure)
             urls_map = stream_info.get("urls") or stream_info.get("files") or {}
@@ -247,20 +266,28 @@ def Playvid(url, name):
                             if isinstance(stream_url, str) and stream_url.startswith(
                                 "http"
                             ):
+                                utils.kodilog("Stripchat: Found stream candidate: {} - {}".format(quality_label, stream_url[:80]))
                                 candidates.append((quality_label, stream_url))
                                 break
                     elif isinstance(data, str) and data.startswith("http"):
+                        utils.kodilog("Stripchat: Found stream candidate: {} - {}".format(quality_label, data[:80]))
                         candidates.append((quality_label, data))
             # Some responses keep direct URL on stream['url']
             stream_url = stream_info.get("url")
             if isinstance(stream_url, str) and stream_url.startswith("http"):
+                utils.kodilog("Stripchat: Found direct stream URL: {}".format(stream_url[:80]))
                 candidates.append(("direct", stream_url))
         # Legacy field on model root
         if model_data and isinstance(model_data.get("hlsPlaylist"), str):
-            candidates.append(("playlist", model_data["hlsPlaylist"]))
+            hls_url = model_data["hlsPlaylist"]
+            utils.kodilog("Stripchat: Found hlsPlaylist: {}".format(hls_url[:80]))
+            candidates.append(("playlist", hls_url))
         if isinstance(fallback_url, str) and fallback_url.startswith("http"):
+            utils.kodilog("Stripchat: Using fallback URL: {}".format(fallback_url[:80]))
             candidates.append(("fallback", fallback_url))
+
         if not candidates:
+            utils.kodilog("Stripchat: No stream candidates found")
             return None
 
         def quality_score(label):
@@ -277,68 +304,70 @@ def Playvid(url, name):
                     return -1
             return 0
 
-        force_best = utils.addon.getSetting("stripchat_best") == "true"
         # sort candidates: highest score first, keep stable order otherwise
         candidates_sorted = sorted(
             candidates, key=lambda item: quality_score(item[0]), reverse=True
         )
         selected_url = candidates_sorted[0][1]
+        selected_label = candidates_sorted[0][0]
+        utils.kodilog("Stripchat: Selected stream: {} - {}".format(selected_label, selected_url[:80]))
 
-        if force_best:
-            top_label = candidates_sorted[0][0]
-            # If highest ranked is not "source", probe master playlist for any better variant
-            if "source" not in top_label:
-                try:
-                    master_headers = {
-                        "User-Agent": utils.USER_AGENT,
-                        "Origin": "https://stripchat.com",
-                        "Referer": "https://stripchat.com/{0}".format(name),
-                    }
-                    master_txt, _ = utils.get_html_with_cloudflare_retry(
-                        selected_url,
-                        site.url,
-                        headers=master_headers,
-                        retry_on_empty=True,
-                    )
-                    best_pixels = -1
-                    best_url = None
-                    lines = master_txt.splitlines()
-                    for i, line in enumerate(lines):
-                        if line.startswith("#EXT-X-STREAM-INF:") and i + 1 < len(lines):
-                            info = line
-                            next_url = lines[i + 1].strip()
-                            if not next_url:
-                                continue
-                            stream_variant = urllib_parse.urljoin(
-                                selected_url, next_url
-                            )
-                            if 'NAME="source"' in info or "NAME=source" in info:
-                                best_url = stream_variant
-                                best_pixels = 10**9
-                                break
-                            match = re.search(r"RESOLUTION=(\d+)x(\d+)", info)
-                            if match:
-                                pixels = int(match.group(1)) * int(match.group(2))
-                                if pixels > best_pixels:
-                                    best_pixels = pixels
-                                    best_url = stream_variant
-                    if best_url:
-                        selected_url = best_url
-                except Exception:
-                    pass
+        # Don't try to parse master playlists - just use the selected URL directly
+        # The master playlist URL is already the correct stream to use
+        # Parsing it and selecting variants often picks the wrong quality or causes auth failures
+        utils.kodilog("Stripchat: Using selected stream URL directly without master playlist parsing")
 
         return selected_url
 
+    # Load current model details
+    utils.kodilog("Stripchat: Loading details for model: {}".format(name))
     model_data = _load_model_details(name)
+
+    if not model_data:
+        vp.progress.close()
+        utils.kodilog("Stripchat: Failed to load model details")
+        utils.notify("Stripchat", "Model not found or offline")
+        return
+
+    # Pick best stream URL
     stream_url = _pick_stream(model_data, url)
     if not stream_url:
         vp.progress.close()
-        utils.notify("Stripchat", "Unable to locate stream URL")
+        utils.kodilog("Stripchat: No stream URL available")
+        # Check if model is actually online
+        is_online = model_data.get("isOnline") or model_data.get("isBroadcasting")
+        if is_online == False:
+            utils.notify("Stripchat", "Model is offline")
+        else:
+            utils.notify("Stripchat", "Unable to locate stream URL")
         return
 
-    stream_url = re.sub(r"_\d+p\.", ".", stream_url)
+    # Validate stream URL
+    if not stream_url.startswith("http"):
+        vp.progress.close()
+        utils.kodilog("Stripchat: Invalid stream URL: {}".format(stream_url))
+        utils.notify("Stripchat", "Invalid stream URL")
+        return
+
+    utils.kodilog("Stripchat: Final stream URL: {}".format(stream_url[:100]))
     vp.progress.update(85, "[CR]Found Stream[CR]")
 
+    # Verify inputstream.adaptive is available for HLS streams
+    # The check_inputstream() call will offer to install if missing
+    try:
+        from inputstreamhelper import Helper
+        is_helper = Helper('hls')
+        vp.progress.update(90, "[CR]Checking inputstream.adaptive[CR]")
+        if not is_helper.check_inputstream():
+            vp.progress.close()
+            utils.kodilog("Stripchat: inputstream.adaptive check failed - HLS streams require it")
+            utils.notify("Stripchat", "inputstream.adaptive is required. Please install it from Kodi settings.", duration=8000)
+            return
+    except Exception as e:
+        utils.kodilog("Stripchat: Error checking inputstream: {}".format(str(e)))
+        # Continue anyway - let utils.playvid handle it
+
+    # Build headers for HLS stream
     ua = urllib_parse.quote(utils.USER_AGENT, safe="")
     origin_enc = urllib_parse.quote("https://stripchat.com", safe="")
     referer_enc = urllib_parse.quote("https://stripchat.com/{0}".format(name), safe="")
@@ -350,6 +379,7 @@ def Playvid(url, name):
         )
     )
 
+    utils.kodilog("Stripchat: Starting playback")
     vp.play_from_direct_link(stream_url + "|" + ia_headers)
 
 

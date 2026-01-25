@@ -63,12 +63,6 @@ def List(url):
         utils.notify("No results found", "Try a different search term")
         return
 
-    delimiter = 'data-post-id="'
-    re_videopage = 'href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = 'data-src="([^"]+)"'
-    re_duration = 'clock-o"></i>([^<]+)<'
-
     cm = []
     cm_lookupinfo = utils.addon_sys + "?mode=xsharings.Lookupinfo&url="
     cm.append(
@@ -79,50 +73,121 @@ def List(url):
         ("[COLOR deeppink]Related videos[/COLOR]", "RunPlugin(" + cm_related + ")")
     )
 
-    utils.videos_list(
-        site,
-        "xsharings.Play",
-        listhtml,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        re_duration=re_duration,
-        contextm=cm,
-    )
+    soup = utils.parse_html(listhtml)
+    items = soup.select("[data-post-id]")
+    for item in items:
+        link = item.find("a", href=True, title=True) or item.find("a", href=True)
+        if not link:
+            continue
+        videopage = utils.safe_get_attr(link, "href")
+        if not videopage:
+            continue
+        videopage = urllib_parse.urljoin(site.url, videopage)
+        name = utils.safe_get_attr(link, "title") or utils.safe_get_text(link)
+        name = utils.cleantext(name)
+        if not name:
+            continue
+        img_tag = item.find("img")
+        img = utils.safe_get_attr(
+            img_tag, "data-src", ["src", "data-original", "data-lazy"]
+        )
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
+        duration = ""
+        clock = item.select_one(".fa-clock-o")
+        if clock:
+            duration = utils.cleantext(utils.safe_get_text(clock.parent))
+        site.add_download_link(
+            name,
+            videopage,
+            "xsharings.Play",
+            img or site.image,
+            name,
+            contextm=cm,
+            duration=duration,
+        )
 
-    re_npurl = r'aria-current="page">\d+</a></li><li><a href="([^"]+)"'
-    re_npnr = r'aria-current="page">\d+.+?>(\d+)</a>'
-    re_lpnr = r"/page/(\d+)/[^']*'>Last<"
-    utils.next_page(
-        site,
-        "xsharings.List",
-        listhtml,
-        re_npurl,
-        re_npnr,
-        re_lpnr=re_lpnr,
-        contextm="xsharings.GotoPage",
-    )
+    next_link = None
+    active = soup.select_one('a[aria-current="page"]')
+    if active:
+        next_li = active.find_parent("li")
+        if next_li:
+            next_li = next_li.find_next_sibling("li")
+            if next_li:
+                next_link = next_li.find("a", href=True)
+    if next_link:
+        href = utils.safe_get_attr(next_link, "href")
+        if href:
+            next_url = urllib_parse.urljoin(site.url, href)
+            npnr = utils.safe_get_text(next_link)
+            npnr = npnr if npnr.isdigit() else ""
+            lpnr = ""
+            page_numbers = []
+            for anchor in soup.select("ul.pagination a"):
+                text = utils.safe_get_text(anchor)
+                if text.isdigit():
+                    page_numbers.append(int(text))
+            if page_numbers:
+                lpnr = str(max(page_numbers))
+            label = "Next Page"
+            if npnr:
+                label = "Next Page ({})".format(npnr)
+                if lpnr:
+                    label = "Next Page ({}/{})".format(npnr, lpnr)
+            cm_page = (
+                utils.addon_sys
+                + "?mode="
+                + "xsharings.GotoPage"
+                + "&list_mode="
+                + "xsharings.List"
+                + "&url="
+                + urllib_parse.quote_plus(next_url)
+                + "&np="
+                + str(npnr)
+                + "&lp="
+                + str(lpnr or 0)
+            )
+            cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
+            site.add_dir(label, next_url, "List", site.img_next, contextm=cm)
     utils.eod()
 
 
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(
-        r'article id="post.+?href="([^"]+)" title="([^"]+)">.+?(?:img src|data-src)="([^"]+)"',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(cathtml)
-    for siteurl, name, img in match:
+    soup = utils.parse_html(cathtml)
+    for article in soup.select('article[id^="post"]'):
+        link = article.find("a", href=True)
+        if not link:
+            continue
+        name = utils.safe_get_attr(link, "title") or utils.safe_get_text(link)
         name = utils.cleantext(name)
-        site.add_dir(name, siteurl, "List", img)
-    match = re.search(
-        r'aria-current="page">\d+</a></li><li><a href="([^"]+)"',
-        cathtml,
-        re.IGNORECASE | re.DOTALL,
-    )
-    if match:
-        site.add_dir("Next Page", match.group(1), "Categories", site.img_next)
+        if not name:
+            continue
+        img_tag = article.find("img")
+        img = utils.safe_get_attr(
+            img_tag, "data-src", ["src", "data-original", "data-lazy"]
+        )
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
+        site.add_dir(name, urllib_parse.urljoin(site.url, link["href"]), "List", img)
+    next_link = None
+    active = soup.select_one('a[aria-current="page"]')
+    if active:
+        next_li = active.find_parent("li")
+        if next_li:
+            next_li = next_li.find_next_sibling("li")
+            if next_li:
+                next_link = next_li.find("a", href=True)
+    if next_link:
+        href = utils.safe_get_attr(next_link, "href")
+        if href:
+            site.add_dir(
+                "Next Page",
+                urllib_parse.urljoin(site.url, href),
+                "Categories",
+                site.img_next,
+            )
     utils.eod()
 
 

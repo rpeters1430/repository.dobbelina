@@ -65,12 +65,6 @@ def List(url):
         listhtml = listhtml.split("Related Videos")[-1].split(
             '<div class="thumb-slider">'
         )[0]
-    delimiter = '<article class="item">'
-    re_videopage = 'a href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = 'data-original="([^"]+)"'
-    re_duration = 'duration">([^<]+)<'
-
     cm = []
     cm_lookupinfo = utils.addon_sys + "?mode=pornhits.Lookupinfo&url="
     cm.append(
@@ -81,46 +75,82 @@ def List(url):
         ("[COLOR deeppink]Related videos[/COLOR]", "RunPlugin(" + cm_related + ")")
     )
 
-    utils.videos_list(
-        site,
-        "pornhits.Playvid",
-        listhtml,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        re_duration=re_duration,
-        contextm=cm,
-    )
+    soup = utils.parse_html(listhtml)
 
-    match = re.compile(
-        r'class="pagination.+?data-page="(\d+)"\s+data-count="(\d+)"\s+data-total="(\d+)"',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(listhtml)
-    if match:
-        cp, count, total = match[0]
-        np_url = re.sub(r"\?p=\d+", "?p={}".format(int(cp) + 1), url)
-        np = str(int(cp) + 1)
-        lp = str(ceil(int(total) / int(count)))
-        if int(np) <= int(float(lp)):
-            cm_page = (
-                utils.addon_sys
-                + "?mode=pornhits.GotoPage"
-                + "&url="
-                + urllib_parse.quote_plus(np_url)
-                + "&np="
-                + np
-                + "&lp="
-                + lp
+    def _context_menu(videopage):
+        return [
+            (
+                label,
+                action.replace(
+                    "&url=", "&url=" + urllib_parse.quote_plus(videopage)
+                ),
             )
-            cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
-            site.add_dir(
-                "Next Page ({}/{})".format(np, lp),
-                np_url,
-                "List",
-                site.img_next,
-                contextm=cm,
-            )
+            for label, action in cm
+        ]
+
+    for item in soup.select("article.item"):
+        link = item.find("a", href=True)
+        if not link:
+            continue
+        videopage = urllib_parse.urljoin(site.url, link["href"])
+        name = utils.safe_get_attr(link, "title")
+        if not name:
+            img_tag = item.find("img")
+            name = utils.safe_get_attr(img_tag, "alt") if img_tag else ""
+        if not name:
+            name = utils.safe_get_text(link)
+        name = utils.cleantext(name)
+        if not name:
+            continue
+        img_tag = item.find("img")
+        img = utils.safe_get_attr(
+            img_tag, "data-original", ["data-src", "data-lazy", "src"]
+        )
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
+        duration = utils.cleantext(
+            utils.safe_get_text(item.select_one(".duration"))
+        )
+        site.add_download_link(
+            name,
+            videopage,
+            "pornhits.Playvid",
+            img or site.image,
+            name,
+            duration=duration,
+            contextm=_context_menu(videopage),
+        )
+
+    pagination = soup.select_one("[data-page][data-count][data-total]")
+    if pagination:
+        cp = pagination.get("data-page")
+        count = pagination.get("data-count")
+        total = pagination.get("data-total")
+        if cp and count and total:
+            np_url = re.sub(r"\?p=\d+", "?p={}".format(int(cp) + 1), url)
+            np = str(int(cp) + 1)
+            lp = str(ceil(int(total) / int(count)))
+            if int(np) <= int(float(lp)):
+                cm_page = (
+                    utils.addon_sys
+                    + "?mode=pornhits.GotoPage"
+                    + "&url="
+                    + urllib_parse.quote_plus(np_url)
+                    + "&np="
+                    + np
+                    + "&lp="
+                    + lp
+                )
+                cm_page = [
+                    ("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")
+                ]
+                site.add_dir(
+                    "Next Page ({}/{})".format(np, lp),
+                    np_url,
+                    "List",
+                    site.img_next,
+                    contextm=cm_page,
+                )
     utils.eod()
 
 
@@ -148,10 +178,12 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'class="item" href="([^"]+)" title="([^"]+)"', re.IGNORECASE | re.DOTALL
-    ).findall(cathtml)
-    for caturl, name in match:
+    soup = utils.parse_html(cathtml)
+    for link in soup.select('a.item[href][title]'):
+        caturl = utils.safe_get_attr(link, "href")
+        name = utils.safe_get_attr(link, "title")
+        if not caturl or not name:
+            continue
         site.add_dir(name.replace(" porn videos", ""), caturl, "List", "")
     xbmcplugin.addSortMethod(utils.addon_handle, xbmcplugin.SORT_METHOD_TITLE)
     utils.eod()

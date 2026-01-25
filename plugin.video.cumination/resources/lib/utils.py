@@ -918,9 +918,11 @@ def inputstream_check(url, listitem, IA_check):
         if "|" in url:
             url, strhdr = url.split("|")
             listitem.setProperty("inputstream.adaptive.stream_headers", strhdr)
-            if KODIVER > 21.8:
+            # Also set common_headers for Kodi 21+ to ensure headers are applied to init segments
+            if KODIVER > 19.8:
                 listitem.setProperty("inputstream.adaptive.common_headers", strhdr)
-            elif KODIVER > 19.8:
+            # For Kodi 20-21, also set manifest_headers for compatibility
+            if KODIVER > 19.8 and KODIVER <= 21.8:
                 listitem.setProperty("inputstream.adaptive.manifest_headers", strhdr)
                 listitem.setProperty("inputstream.adaptive.stream_params", strhdr)
 

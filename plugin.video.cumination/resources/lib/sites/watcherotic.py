@@ -49,12 +49,6 @@ def List(url):
         utils.notify(msg="No data found")
         return
 
-    delimiter = '<div class="thumb thumb_rel item'
-    re_videopage = 'href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = 'data-original="([^"]+)"'
-    re_duration = 'class="time">([^<]+)<'
-    re_quality = 'class="quality">(HD)<'
     skip = "(Magazine)"
 
     cm = []
@@ -66,58 +60,99 @@ def List(url):
     cm.append(
         ("[COLOR deeppink]Related videos[/COLOR]", "RunPlugin(" + cm_related + ")")
     )
-    thumbnails = "watcherotic" in site.url
-    utils.videos_list(
-        site,
-        "watcherotic.Play",
-        html,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        re_duration=re_duration,
-        re_quality=re_quality,
-        contextm=cm,
-        skip=skip,
-        thumbnails=thumbnails,
+
+    soup = utils.parse_html(html)
+    thumbnails = utils.Thumbnails(site.name) if "watcherotic" in site.url else None
+
+    def _context_menu(videopage):
+        return [
+            (
+                label,
+                action.replace(
+                    "&url=", "&url=" + urllib_parse.quote_plus(videopage)
+                ),
+            )
+            for label, action in cm
+        ]
+
+    for item in soup.select(".thumb.thumb_rel.item"):
+        link = item.find("a", href=True)
+        if not link:
+            continue
+        videopage = urllib_parse.urljoin(site.url, link["href"])
+        name = utils.safe_get_attr(link, "title")
+        if not name:
+            name = utils.safe_get_text(link)
+        name = utils.cleantext(name)
+        if not name or (skip and skip in name):
+            continue
+        img_tag = item.find("img")
+        img = utils.safe_get_attr(
+            img_tag, "data-original", ["data-src", "data-lazy", "src"]
+        )
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
+            if thumbnails:
+                img = thumbnails.fix_img(img)
+        duration = utils.cleantext(
+            utils.safe_get_text(item.select_one(".time"))
+        )
+        quality = utils.cleantext(
+            utils.safe_get_text(item.select_one(".quality"))
+        )
+        site.add_download_link(
+            name,
+            videopage,
+            "watcherotic.Play",
+            img or site.image,
+            name,
+            duration=duration,
+            quality=quality,
+            contextm=_context_menu(videopage),
+        )
+
+    pagination_soup = utils.parse_html(listhtml)
+    next_link = pagination_soup.find(
+        "a", class_="next", attrs={"data-action": "ajax"}
     )
-
-    match = re.search(
-        r"""class="active[^>]+>([^<]+)<.+?class='next' href=\S+\sdata-action="ajax" data-container-id="[^"]+"\s+data-block-id="([^"]+)"\s+data-parameters="([^"]+)">""",
-        listhtml,
-        re.DOTALL | re.IGNORECASE,
-    )
-    if match:
-        npage = int(match.group(1)) + 1
-        block_id = match.group(2)
-        params = match.group(3).replace(";", "&").replace(":", "=")
-        tm = int(time.time() * 1000)
-        nurl = url.split("?")[
-            0
-        ] + "?mode=async&function=get_block&block_id={0}&{1}&_={2}".format(
-            block_id, params, str(tm)
+    if next_link:
+        block_id = next_link.get("data-block-id")
+        params = next_link.get("data-parameters", "")
+        active = pagination_soup.select_one(".pagination .active") or pagination_soup.select_one(
+            ".active"
         )
-        nurl = nurl.replace("+from_albums", "")
-        nurl = re.sub(r"&from([^=]*)=\d+", r"&from\1={}".format(npage), nurl)
+        current = utils.safe_get_text(active).strip() if active else ""
+        if block_id and params and current.isdigit():
+            npage = int(current) + 1
+            params = params.replace(";", "&").replace(":", "=")
+            tm = int(time.time() * 1000)
+            nurl = (
+                url.split("?")[0]
+                + "?mode=async&function=get_block&block_id={0}&{1}&_={2}".format(
+                    block_id, params, str(tm)
+                )
+            )
+            nurl = nurl.replace("+from_albums", "")
+            nurl = re.sub(r"&from([^=]*)=\d+", r"&from\1={}".format(npage), nurl)
 
-        cm_page = (
-            utils.addon_sys
-            + "?mode=watcherotic.GotoPage"
-            + "&url="
-            + urllib_parse.quote_plus(nurl)
-            + "&np="
-            + str(npage)
-            + "&list_mode=watcherotic.List"
-        )
-        cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
+            cm_page = (
+                utils.addon_sys
+                + "?mode=watcherotic.GotoPage"
+                + "&url="
+                + urllib_parse.quote_plus(nurl)
+                + "&np="
+                + str(npage)
+                + "&list_mode=watcherotic.List"
+            )
+            cm_page = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
 
-        site.add_dir(
-            "[COLOR hotpink]Next Page...[/COLOR] (" + str(npage) + ")",
-            nurl,
-            "List",
-            site.img_next,
-            contextm=cm,
-        )
+            site.add_dir(
+                "[COLOR hotpink]Next Page...[/COLOR] (" + str(npage) + ")",
+                nurl,
+                "List",
+                site.img_next,
+                contextm=cm_page,
+            )
     utils.eod()
 
 
@@ -144,12 +179,13 @@ def GotoPage(list_mode, url, np, lp=0):
 @site.register()
 def Cat(url):
     cathtml = utils.getHtml(url, site.url)
-    cathtml = cathtml.split('class="wp-block-tag-cloud"')[-1].split("/section>")[0]
-    match = re.compile(
-        r'<a href="([^"]+)".+?aria-label="([^"]+)"', re.DOTALL | re.IGNORECASE
-    ).findall(cathtml)
-    for caturl, name in match:
-        name = utils.cleantext(name)
+    soup = utils.parse_html(cathtml)
+    tag_cloud = soup.select_one(".wp-block-tag-cloud") or soup
+    for link in tag_cloud.select("a[aria-label][href]"):
+        name = utils.cleantext(utils.safe_get_attr(link, "aria-label"))
+        caturl = utils.safe_get_attr(link, "href")
+        if not name or not caturl:
+            continue
         site.add_dir(name, caturl, "List", "")
     utils.eod()
 

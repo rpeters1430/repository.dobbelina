@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
 import xbmc
 import xbmcgui
 from six.moves import urllib_parse
@@ -53,40 +52,86 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, "")
-
-    delimiter = 'data-post-id="'
-    re_videopage = 'href="([^"]+)"'
-    re_name = 'alt="([^"]+)"'
-    re_img = 'data-src="([^"]+)"'
+    soup = utils.parse_html(listhtml)
 
     contexturl = utils.addon_sys + "?mode=justfullporn.Lookupinfo&url="
     contextmenu = [
         ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
     ]
-    utils.videos_list(
-        site,
-        "justfullporn.Playvid",
-        listhtml,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        contextm=contextmenu,
-    )
 
-    re_npurl = r'class="page-link current".+?href="([^"]+)"'
-    re_npnr = r'class="page-link current".+?href="[^"]+">([\d,]+)<'
-    re_lpnr = r'>([\d,]+)<\D+class="next page-link"'
+    def _context_menu(videopage):
+        return [
+            (
+                label,
+                action.replace(
+                    "&url=", "&url=" + urllib_parse.quote_plus(videopage)
+                ),
+            )
+            for label, action in contextmenu
+        ]
 
-    utils.next_page(
-        site,
-        "justfullporn.List",
-        listhtml,
-        re_npurl,
-        re_npnr,
-        re_lpnr=re_lpnr,
-        contextm="justfullporn.GotoPage",
+    for item in soup.select("[data-post-id]"):
+        link = item.find("a", href=True)
+        if not link:
+            continue
+        videopage = urllib_parse.urljoin(site.url, link["href"])
+        img_tag = item.find("img")
+        name = utils.safe_get_attr(img_tag, "alt")
+        if not name:
+            name = utils.safe_get_attr(link, "title") or utils.safe_get_text(link)
+        name = utils.cleantext(name)
+        if not name:
+            continue
+        img = utils.safe_get_attr(
+            img_tag, "data-src", ["src", "data-original", "data-lazy"]
+        )
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
+        site.add_download_link(
+            name,
+            videopage,
+            "justfullporn.Playvid",
+            img or site.image,
+            name,
+            contextm=_context_menu(videopage),
+        )
+
+    current = soup.select_one("a.page-link.current")
+    next_link = soup.select_one("a.next.page-link") or soup.select_one(
+        "a.page-link.next"
     )
+    if next_link:
+        next_url = urllib_parse.urljoin(site.url, next_link.get("href", ""))
+        npnr = utils.safe_get_text(next_link).strip()
+        if not npnr.isdigit():
+            current_nr = utils.safe_get_text(current).strip() if current else ""
+            if current_nr.isdigit():
+                npnr = str(int(current_nr) + 1)
+            else:
+                npnr = ""
+        page_numbers = []
+        for anchor in soup.select("a.page-link"):
+            text = utils.safe_get_text(anchor).strip()
+            if text.isdigit():
+                page_numbers.append(int(text))
+        lpnr = str(max(page_numbers)) if page_numbers else ""
+        label = "Next Page"
+        if npnr:
+            label = "Next Page ({})".format(npnr)
+            if lpnr:
+                label = "Next Page ({}/{})".format(npnr, lpnr)
+        cm_page = (
+            utils.addon_sys
+            + "?mode=justfullporn.GotoPage"
+            + "&url="
+            + urllib_parse.quote_plus(next_url)
+            + "&np="
+            + str(npnr)
+            + "&lp="
+            + str(lpnr or 0)
+        )
+        cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
+        site.add_dir(label, next_url, "List", contextm=cm)
     utils.eod()
 
 
@@ -127,27 +172,35 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        r'video-block-cat.+?href="([^"]+)"\s*title="([^"]+).+?(?:poster|src)="([^"]+).+?class="video-datas">([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for (
-        catpage,
-        name,
-        img,
-        videos,
-    ) in match:  # in sorted(match, key=lambda x: x[1].strip().lower()):
-        name = utils.cleantext(name.strip())
-        name += " [COLOR blue]" + videos.strip() + "[/COLOR]"
-        site.add_dir(name, catpage, "List", img)
+    soup = utils.parse_html(listhtml)
+    for block in soup.select(".video-block-cat"):
+        link = block.find("a", href=True)
+        if not link:
+            continue
+        name = utils.safe_get_attr(link, "title") or utils.safe_get_text(link)
+        name = utils.cleantext(name)
+        if not name:
+            continue
+        img_tag = block.find("img")
+        img = utils.safe_get_attr(
+            img_tag, "poster", ["src", "data-src", "data-original"]
+        )
+        videos = utils.cleantext(utils.safe_get_text(block.select_one(".video-datas")))
+        if videos:
+            name += " [COLOR blue]{}[/COLOR]".format(videos)
+        catpage = urllib_parse.urljoin(site.url, link["href"])
+        site.add_dir(name, catpage, "List", img or "")
 
-    np = re.compile(
-        r'class="next page-link" href="([^"]+)', re.DOTALL | re.IGNORECASE
-    ).search(listhtml)
-    if np:
-        page_number = np.group(1).split("/")[-1]
+    next_link = soup.select_one("a.next.page-link") or soup.select_one(
+        "a.page-link.next"
+    )
+    if next_link and next_link.get("href"):
+        page_number = next_link.get("href", "").rstrip("/").split("/")[-1]
         site.add_dir(
-            "Next Page (" + page_number + ")", np.group(1), "Categories", site.img_next
+            "Next Page (" + page_number + ")",
+            next_link.get("href"),
+            "Categories",
+            site.img_next,
         )
 
     utils.eod()
@@ -156,13 +209,12 @@ def Categories(url):
 @site.register()
 def Tags(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        'class="tag-item"><a href="([^"]+)" title="[^"]+">([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for tagpage, name in match:
-        name = utils.cleantext(name.strip())
-        site.add_dir(name, tagpage, "List", "")
+    soup = utils.parse_html(listhtml)
+    for link in soup.select(".tag-item a[href]"):
+        name = utils.cleantext(utils.safe_get_text(link))
+        tagpage = utils.safe_get_attr(link, "href")
+        if name and tagpage:
+            site.add_dir(name, tagpage, "List", "")
 
     utils.eod()
 

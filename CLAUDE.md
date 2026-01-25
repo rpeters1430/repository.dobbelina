@@ -49,13 +49,13 @@ ruff check --fix plugin.video.cumination/resources/lib/
 
 ## Repository Structure
 
-- **plugin.video.cumination/** - Main Cumination addon (current version: 1.1.210)
+- **plugin.video.cumination/** - Main Cumination addon (current version: 1.1.211)
   - `addon.xml` - **VERSION LOCATION**: Update version attribute here when releasing
   - `default.py` - Entry point, initializes URL dispatcher and loads sites
   - `resources/lib/adultsite.py` - Base class for all site implementations
   - `resources/lib/url_dispatcher.py` - Routing system using decorators
   - `resources/lib/utils.py` - HTTP fetching, BeautifulSoup helpers, UI utilities
-  - `resources/lib/sites/` - Individual site modules (143 sites)
+  - `resources/lib/sites/` - Individual site modules (145 sites)
   - `resources/lib/sites/__init__.py` - Exports all site modules via `__all__`
   - `resources/lib/sites/soup_spec.py` - Declarative BeautifulSoup configuration
 - **plugin.video.uwc/** - Ultimate Whitecream addon (legacy, superseded by Cumination)
@@ -204,11 +204,11 @@ def Playvid(url, name):
 
 ## BeautifulSoup Migration (Active Project)
 
-**Current Status**: 114/143 sites migrated (79.7% complete)
+**Current Status**: 126/145 sites migrated (86.9% complete)
 
 The codebase is undergoing a systematic migration from regex-based HTML parsing to BeautifulSoup4. This is tracked in **MODERNIZATION.md** along with all other modernization efforts including HTTP gateway unification, test coverage expansion, repository structure improvements, and UX enhancements.
 
-**Test Coverage**: 129/143 sites (90.2%) have tests - Quick wins available: ~14 migrated sites still need tests added
+**Test Coverage**: 139/145 sites (95.9%) have tests - Quick wins available: ~6 sites still need tests added
 
 ### Why BeautifulSoup?
 
@@ -227,9 +227,9 @@ The codebase is undergoing a systematic migration from regex-based HTML parsing 
 5. **Phase 5: Hentai/Anime Sites** (10/10 completed - 100%) ✅ - All hentai/anime sites migrated
 6. **Phase 6: International Sites** (15/15 completed - 100%) ✅ - All international sites migrated
 7. **Phase 7: Niche & Specialty Sites** (28/28 completed - 100%) ✅ - All niche/specialty sites migrated
-8. **Phase 8: Remaining Sites** (~29 sites still need migration)
+8. **Phase 8: Remaining Sites** (~19 sites still need migration)
 
-**Quick Wins Available**: ~14 migrated sites just need tests added
+**Quick Wins Available**: ~6 migrated sites just need tests added
 
 See **MODERNIZATION.md** for complete site-by-site tracking and detailed progress. Run `grep -l "parse_html\|BeautifulSoup" plugin.video.cumination/resources/lib/sites/*.py | wc -l` to get current migration count.
 
@@ -313,7 +313,7 @@ See `plugin.video.cumination/resources/lib/sites/anybunny.py` for a reference im
 
 ### When Migrating a Site
 
-1. Check MODERNIZATION.md for migration status and priority (see Sub-Phase 8 for remaining 24 sites)
+1. Check MODERNIZATION.md for migration status and priority (see Sub-Phase 8 for remaining ~19 sites)
 2. Use BeautifulSoup pattern shown above
 3. **Add test file** in `tests/sites/test_[sitename].py` before or after migration
 4. Test: listing, pagination, categories, search, playback
@@ -486,7 +486,12 @@ def Playvid(url, name):
 - Check if site changed video player or URL format
 - Inspect network requests in browser DevTools to find new video URL pattern
 - Some sites use encrypted/obfuscated video URLs - check `resources/lib/decrypters/`
-- For M3U8/HLS streams, verify `inputstreamhelper` is installed
+- For M3U8/HLS streams, verify `inputstream.adaptive` is installed:
+  - **Linux (Fedora/DNF)**: Often NOT included by default - install separately via Kodi's Add-on Browser
+  - **Linux (Ubuntu/APT)**: May be packaged separately as `kodi-inputstream-adaptive`
+  - **Windows/Android**: Usually bundled with Kodi
+  - Check: Settings → Add-ons → My add-ons → VideoPlayer InputStream → InputStream Adaptive
+  - Install: Settings → Add-ons → Install from repository → Kodi Add-on repository → VideoPlayer InputStream → InputStream Adaptive
 - Test video URL extraction: Add debug logging to Playvid function
 
 ## Git Workflow

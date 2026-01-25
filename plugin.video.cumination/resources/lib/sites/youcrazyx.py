@@ -55,38 +55,75 @@ def List(url):
         utils.eod()
         return
 
-    delimiter = '<div class="well well-sm"'
-    re_videopage = 'class="video-link" href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = 'data-original="([^"]+)"'
-    re_duration = '<div class="duration">([^<]+)<'
-    re_quality = ">HD<"
-    skip = "=modelfeed"
-    utils.videos_list(
-        site,
-        "youcrazyx.Playvid",
-        html,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        re_duration=re_duration,
-        re_quality=re_quality,
-        contextm="youcrazyx.Related",
-        skip=skip,
-    )
+    soup = utils.parse_html(html)
+    items = soup.select("div.well.well-sm")
+    for item in items:
+        link = item.select_one("a.video-link[href]")
+        if not link:
+            continue
+        videopage = utils.safe_get_attr(link, "href")
+        if not videopage:
+            continue
+        videopage = urllib_parse.urljoin(site.url, videopage)
+        if "modelfeed" in videopage:
+            continue
+        name = utils.safe_get_attr(link, "title") or utils.safe_get_text(link)
+        name = utils.cleantext(name)
+        if not name:
+            continue
+        img_tag = item.find("img")
+        img = utils.safe_get_attr(
+            img_tag, "data-original", ["data-src", "data-lazy", "src"]
+        )
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
+        duration_tag = item.select_one(".duration")
+        duration = utils.cleantext(utils.safe_get_text(duration_tag))
+        quality = "HD" if "HD" in item.get_text() else ""
+        site.add_download_link(
+            name,
+            videopage,
+            "Playvid",
+            img or site.image,
+            name,
+            contextm="youcrazyx.Related",
+            duration=duration,
+            quality=quality,
+        )
 
-    re_npurl = r"href='([^']+)'\s*class=\"prevnext\">Next"
-    re_npnr = r"href='page(\d+)\.html'\s*class=\"prevnext\">Next"
-    utils.next_page(
-        site,
-        "youcrazyx.List",
-        html,
-        re_npurl,
-        re_npnr,
-        baseurl=url.split("page")[0],
-        contextm="youcrazyx.GotoPage",
-    )
+    next_link = None
+    for link in soup.select("a.prevnext"):
+        if "next" in utils.safe_get_text(link).lower():
+            next_link = link
+            break
+    if next_link:
+        href = utils.safe_get_attr(next_link, "href")
+        if href:
+            npnr = ""
+            match = re.search(r"page(\d+)\.html", href)
+            if match:
+                npnr = match.group(1)
+            next_url = urllib_parse.urljoin(url, href)
+            label = "Next Page"
+            if npnr:
+                label = "Next Page ({})".format(npnr)
+            cm = None
+            if npnr:
+                cm_page = (
+                    utils.addon_sys
+                    + "?mode="
+                    + "youcrazyx.GotoPage"
+                    + "&list_mode="
+                    + "youcrazyx.List"
+                    + "&url="
+                    + urllib_parse.quote_plus(next_url)
+                    + "&np="
+                    + str(npnr)
+                    + "&lp="
+                    + "0"
+                )
+                cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
+            site.add_dir(label, next_url, "List", site.img_next, contextm=cm)
     utils.eod()
 
 
@@ -133,12 +170,13 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'<a href="([^"]+)" title="([^"]+)">', re.IGNORECASE | re.DOTALL
-    ).findall(cathtml)
-    for caturl, name in match:
-        name = utils.cleantext(name)
-        site.add_dir(name, caturl, "List", "")
+    soup = utils.parse_html(cathtml)
+    for link in soup.select("a[title][href]"):
+        caturl = utils.safe_get_attr(link, "href")
+        name = utils.cleantext(utils.safe_get_attr(link, "title"))
+        if not caturl or not name:
+            continue
+        site.add_dir(name, urllib_parse.urljoin(site.url, caturl), "List", "")
     utils.eod()
 
 

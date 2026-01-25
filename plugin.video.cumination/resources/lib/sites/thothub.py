@@ -741,6 +741,15 @@ def Playvid(url, name, download=None):
                 video_url = _clean_media_url(re.sub(r"^function/\d+/", "", video_url))
         else:
             video_url = _clean_media_url(video_url)
+
+        # If we found an M3U8 stream, we need to use inputstream.adaptive
+        # Re-initialize VideoPlayer with IA_check="IA" for HLS streams
+        if video_url and ".m3u8" in video_url.lower():
+            utils.kodilog("ThotHub: M3U8 stream detected, using inputstream.adaptive", xbmc.LOGDEBUG)
+            vp.progress.close()
+            vp = utils.VideoPlayer(name, download, IA_check="IA")
+            vp.progress.update(75, "[CR]Playing video[CR]")
+
         play_url = video_url if "|" in video_url else video_url + VIDEO_HEADER_SUFFIX
         vp.progress.update(75, "[CR]Playing video[CR]")
         vp.play_from_direct_link(play_url)
