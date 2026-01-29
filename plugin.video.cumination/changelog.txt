@@ -1,10 +1,10 @@
-<<<<<<< HEAD
 [B]Version 1.1.211[/B]
 - americass - removed (site defunct) - cherry-picked from upstream
 - Fix video playback for FlareSolverr scraped sites (e.g. luxuretv) - cherry-picked from upstream
 - Add upstream sync tracking system with automated scripts
 - xxxtube - new site - cherry-picked from upstream
 - sxyprn - fix search
+- allclassic - fixes #1742
 
 [B]Version 1.1.204[/B]
 - Testing Infrastructure: Expanded test suite from 449 to 622 tests (38% increase)
