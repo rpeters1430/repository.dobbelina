@@ -68,9 +68,7 @@ def List(url):
         return [
             (
                 label,
-                action.replace(
-                    "&url=", "&url=" + urllib_parse.quote_plus(videopage)
-                ),
+                action.replace("&url=", "&url=" + urllib_parse.quote_plus(videopage)),
             )
             for label, action in cm
         ]
@@ -94,12 +92,8 @@ def List(url):
             img = urllib_parse.urljoin(site.url, img)
             if thumbnails:
                 img = thumbnails.fix_img(img)
-        duration = utils.cleantext(
-            utils.safe_get_text(item.select_one(".time"))
-        )
-        quality = utils.cleantext(
-            utils.safe_get_text(item.select_one(".quality"))
-        )
+        duration = utils.cleantext(utils.safe_get_text(item.select_one(".time")))
+        quality = utils.cleantext(utils.safe_get_text(item.select_one(".quality")))
         site.add_download_link(
             name,
             videopage,
@@ -112,25 +106,22 @@ def List(url):
         )
 
     pagination_soup = utils.parse_html(listhtml)
-    next_link = pagination_soup.find(
-        "a", class_="next", attrs={"data-action": "ajax"}
-    )
+    next_link = pagination_soup.find("a", class_="next", attrs={"data-action": "ajax"})
     if next_link:
         block_id = next_link.get("data-block-id")
         params = next_link.get("data-parameters", "")
-        active = pagination_soup.select_one(".pagination .active") or pagination_soup.select_one(
-            ".active"
-        )
+        active = pagination_soup.select_one(
+            ".pagination .active"
+        ) or pagination_soup.select_one(".active")
         current = utils.safe_get_text(active).strip() if active else ""
         if block_id and params and current.isdigit():
             npage = int(current) + 1
             params = params.replace(";", "&").replace(":", "=")
             tm = int(time.time() * 1000)
-            nurl = (
-                url.split("?")[0]
-                + "?mode=async&function=get_block&block_id={0}&{1}&_={2}".format(
-                    block_id, params, str(tm)
-                )
+            nurl = url.split("?")[
+                0
+            ] + "?mode=async&function=get_block&block_id={0}&{1}&_={2}".format(
+                block_id, params, str(tm)
             )
             nurl = nurl.replace("+from_albums", "")
             nurl = re.sub(r"&from([^=]*)=\d+", r"&from\1={}".format(npage), nurl)
@@ -144,7 +135,9 @@ def List(url):
                 + str(npage)
                 + "&list_mode=watcherotic.List"
             )
-            cm_page = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
+            cm_page = [
+                ("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")
+            ]
 
             site.add_dir(
                 "[COLOR hotpink]Next Page...[/COLOR] (" + str(npage) + ")",

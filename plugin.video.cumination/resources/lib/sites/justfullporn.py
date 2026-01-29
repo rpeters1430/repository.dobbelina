@@ -63,9 +63,7 @@ def List(url):
         return [
             (
                 label,
-                action.replace(
-                    "&url=", "&url=" + urllib_parse.quote_plus(videopage)
-                ),
+                action.replace("&url=", "&url=" + urllib_parse.quote_plus(videopage)),
             )
             for label, action in contextmenu
         ]

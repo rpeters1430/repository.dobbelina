@@ -81,9 +81,7 @@ def List(url):
         return [
             (
                 label,
-                action.replace(
-                    "&url=", "&url=" + urllib_parse.quote_plus(videopage)
-                ),
+                action.replace("&url=", "&url=" + urllib_parse.quote_plus(videopage)),
             )
             for label, action in cm
         ]
@@ -108,9 +106,7 @@ def List(url):
         )
         if img:
             img = urllib_parse.urljoin(site.url, img)
-        duration = utils.cleantext(
-            utils.safe_get_text(item.select_one(".duration"))
-        )
+        duration = utils.cleantext(utils.safe_get_text(item.select_one(".duration")))
         site.add_download_link(
             name,
             videopage,
@@ -179,7 +175,7 @@ def Search(url, keyword=None):
 def Categories(url):
     cathtml = utils.getHtml(url)
     soup = utils.parse_html(cathtml)
-    for link in soup.select('a.item[href][title]'):
+    for link in soup.select("a.item[href][title]"):
         caturl = utils.safe_get_attr(link, "href")
         name = utils.safe_get_attr(link, "title")
         if not caturl or not name:
