@@ -66,7 +66,9 @@ def List(url):
             img_tag = card.select_one("img[data-original], img[src]")
             if not img_tag:
                 continue
-            img = utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
+            img = utils.safe_get_attr(
+                img_tag, "data-webp", ["data-original", "data-src", "src"]
+            )
 
             title_elem = card.select_one("a[title], .title, img[alt]")
             name = ""
@@ -299,6 +301,8 @@ def Playvid(url, name, download=None):
         if surl.startswith("function/"):
             license = re.findall(r"license_code:\s*'([^']+)", html)[0]
             surl = kvs_decode(surl, license)
+        elif not surl.startswith('http'):
+            surl = utils._bdecode(surl)
     else:
         vp.progress.close()
         return
