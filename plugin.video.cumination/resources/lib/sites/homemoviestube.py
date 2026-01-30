@@ -99,7 +99,7 @@ def Categories(url):
         if not caturl or not name:
             continue
         entries.append((img, caturl, name))
-    entries = list({(img, caturl, name) for img, caturl, name in entries})
+    entries = list(set(entries))
     entries.sort(key=lambda x: x[2])
     for img, caturl, name in entries:
         caturl = urllib_parse.urljoin(site.url, caturl)
