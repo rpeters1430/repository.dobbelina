@@ -193,7 +193,6 @@ def Playvid(url, name, download=None):
         vp.play_from_html(embedhtml)
 
 
-
 @site.register()
 def Lookupinfo(url):
     # Fetch page and parse with BeautifulSoup

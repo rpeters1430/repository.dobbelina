@@ -404,17 +404,12 @@ def hanime_play_combined(url, name, download=None, only_m3u8=False):
     hanime_play(url, name, download)
 
 
-
-
-
 #         for resolution, url in free_videos.items():
 #             videos[resolution] = videos.get(resolution, [])  # This will be a list if it exists
 #             videos[resolution].append(url)
 #     except Exception as e:
 #         utils.notify('Notify', str(e))
 #         return
-
-
 
 
 #             vp.name = "{} [{}]".format(name, 'M3U8' if '.m3u8' in play_video else 'MP4')
