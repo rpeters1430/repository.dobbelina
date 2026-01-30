@@ -91,6 +91,7 @@ handlers = [
     urllib_request.HTTPSHandler(),
 ]
 ssl_context = ssl._create_unverified_context()
+ssl_context.check_hostname = True
 ssl._create_default_https_context = ssl._create_unverified_context
 handlers.append(urllib_request.HTTPSHandler(context=ssl_context))
 
