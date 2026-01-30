@@ -467,7 +467,6 @@ def Playvid(url, name, download=None):
     if not videourl:
         vp.progress.close()
         return
-    # videourl = utils.getVideoLink(videourl, url)
     vp.play_from_direct_link(videourl)
 
 

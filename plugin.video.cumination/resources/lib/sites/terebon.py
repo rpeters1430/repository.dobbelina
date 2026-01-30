@@ -219,10 +219,6 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videopage = utils.getHtml(url, site.url)
-    # match = re.compile(r'<iframe[^>]+src="([^"]+)"', re.DOTALL | re.IGNORECASE).search(videopage)
-    # if match:
-    #     vp.progress.update(50, "[CR]Loading video[CR]")
-    #     iframehtml = utils.getHtml(match.group(1), url, ignoreCertificateErrors=True)
 
     iframehtml = videopage
 

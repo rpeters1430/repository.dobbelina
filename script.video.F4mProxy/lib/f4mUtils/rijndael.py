@@ -1,9 +1,3 @@
-# Authors:
-#   Bram Cohen
-#   Trevor Perrin - various changes
-#
-# See the LICENSE file for legal information regarding use of this file.
-# Also see Bram Cohen's statement below
 
 """
 A pure python (slow) implementation of rijndael with a decent interface
@@ -42,7 +36,6 @@ shifts = [
     [[0, 0], [1, 7], [3, 5], [4, 4]],
 ]
 
-# [keysize][block_size]
 num_rounds = {
     16: {16: 10, 24: 12, 32: 14},
     24: {16: 12, 24: 12, 32: 14},

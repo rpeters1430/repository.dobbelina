@@ -118,10 +118,8 @@ def has_addon(addonid):
     """Checks if selected add-on is installed."""
     data = jsonrpc(method="Addons.GetAddonDetails", params={"addonid": addonid})
     if "error" in data:
-        # log(3, '{addon} is not installed.', addon=addonid)
         return False
 
-    # log(0, '{addon} is installed.', addon=addonid)
     return True
 
 
@@ -132,10 +130,8 @@ def addon_enabled(addonid):
         params={"addonid": addonid, "properties": ["enabled"]},
     )
     if data.get("result", {}).get("addon", {}).get("enabled"):
-        # log(0, '{addon} {version} is enabled.', addon=addonid)
         return True
 
-    # log(3, '{addon} is disabled.', addon=addonid)
     return False
 
 

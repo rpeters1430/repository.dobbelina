@@ -1465,14 +1465,6 @@ def _postHtml(
         notify(i18n("oh_oh"), i18n("slow_site"))
         xbmc.log(str(e), xbmc.LOGDEBUG)
         raise
-    # except Exception as e:
-    #     if 'SSL23_GET_SERVER_HELLO' in str(e):
-    #         notify(i18n('oh_oh'), i18n('python_old'))
-    #         raise
-    #     else:
-    #         notify(i18n('oh_oh'), i18n('site_down'))
-    #         raise
-    #     return None
 
     if response.info().get("Content-Encoding", "").lower() == "gzip":
         buf = six.BytesIO(response.read())

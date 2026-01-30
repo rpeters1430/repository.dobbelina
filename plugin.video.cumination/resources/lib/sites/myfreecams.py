@@ -64,7 +64,6 @@ def Main():
 
 @site.register()
 def List(url, page=1):
-    # MFC_SERVERS = getMFC()
     listhtml = utils._getHtml(url)
     soup = utils.parse_html(listhtml)
     items = soup.select(".model, .room, .broadcast, .mfc-broadcaster")
@@ -195,11 +194,6 @@ def read_model_data(m, MFC_SERVERS):
 
     usr = ""
     msg = fc_decode_json(m)
-    # try:
-    #     sid = msg['sid']
-    #     level = msg['lv']
-    # except Exception:
-    #     return
 
     vs = msg["vs"]
 
@@ -259,7 +253,6 @@ def myfreecam_start(url):
     MFC_SERVERS = getMFC()
 
     try:
-        # host = "ws://{0}.myfreecams.com:8080/fcsl".format(random.choice(MFC_SERVERS['CHATSERVERS']))
         host = "wss://{0}.myfreecams.com/fcsl".format(
             random.choice(MFC_SERVERS["CHATSERVERS"])
         )

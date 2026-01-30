@@ -562,10 +562,6 @@ def update_url(url):
 
     length = get_setting("length")
 
-    # if 'max-duration=10' in url:
-    #     old_length = '0-10 min'
-    # elif 'max-duration=40' in url:
-    #     old_length = '10-40 min'
 
     if "min-duration=30" in url:
         old_length = "30+ min"
@@ -577,12 +573,6 @@ def update_url(url):
         url = re.sub(r"newest/\d+", "newest", url)
         url = re.sub(r"[\?&]min-duration=[^\?&]+", "", url)
 
-        #     url = re.sub(r'[\?&]max-duration=[^\?&]+', '', url)
-        #     if length == '0-10 min':
-        #         url += '&max-duration=10' if '?' in url else '?max-duration=10'
-        #     elif length == '10-40 min':
-        #         url += '&min-duration=10' if '?' in url else '?min-duration=10'
-        #         url += '&max-duration=40'
 
         if length == "30+ min":
             url += "&min-duration=30" if "?" in url else "?min-duration=30"

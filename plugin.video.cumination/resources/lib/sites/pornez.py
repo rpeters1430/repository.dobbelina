@@ -144,10 +144,6 @@ def Play(url, name, download=None):
         match = re.compile(r'source src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(
             playerhtml
         )
-        # videos = {}
-        # for m in match:
-        #     videos[m[1]] = m[0]
-        # videourl = utils.prefquality(videos, sort_by=lambda x: int(x[:-1]), reverse=True)
         videourl = match[0]
         if videourl:
             vp.play_from_direct_link(videourl)

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 """Simple AES cipher implementation in pure Python following PEP-272 API
 
@@ -56,7 +54,6 @@ from array import array
 # http://www.python.org/dev/peps/pep-0272/
 MODE_ECB = 1
 MODE_CBC = 2
-# MODE_CTR = 6
 
 block_size = 16
 # variable length key: 16, 24 or 32 bytes
@@ -405,7 +402,6 @@ class CBCMode(object):
             data[offset : offset + block_size] = block
 
             IV = ctext
-            # data[offset : offset+block_size] = block
 
         self.IV = IV
         return data.tostring()

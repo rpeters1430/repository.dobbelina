@@ -180,7 +180,6 @@ def Main():
     site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]", site.url, "Categories", site.img_search
     )
-    # site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'search/', 'Search', site.img_search)
     List(site.url + "video-list?lang=en&page=1")
     utils.eod()
 
