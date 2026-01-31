@@ -180,9 +180,6 @@ def Playvid(url, name, download=None):
         part = "Part {}/{}".format(i + 1, len(videodict))
         videos.append((videourl, part))
 
-    # if len(videos) < 1:
-    #    videos = re.compile(r'<source[^\n]+src="([^"]+)">([^<]+)', re.DOTALL | re.IGNORECASE).findall(videopage)
-
     if not playall:
         if len(videos) > 1:
             videolist = []

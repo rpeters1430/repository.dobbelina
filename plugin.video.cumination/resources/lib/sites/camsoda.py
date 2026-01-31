@@ -136,11 +136,9 @@ def List(url, page):
                 camgirl.get("status")
             )
         subject = subject if utils.PY3 else subject.encode("utf8")
-        # cid = camgirl.get('id')
         username = camgirl.get("username")
         img = camgirl.get("thumbUrl")
         fanart = camgirl.get("offlinePictureUrl")
-        # videourl = '{0}/api/v1/video/vtoken/{1}'.format(site.url, cid)
         videourl = "{0}/api/v1/chat/react/{1}".format(site.url, username)
         site.add_download_link(
             name, videourl, "Playvid", img, subject, noDownload=True, fanart=fanart

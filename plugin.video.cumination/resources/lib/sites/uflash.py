@@ -35,8 +35,6 @@ site = AdultSite(
 
 @site.register(default_mode=True)
 def Main():
-    # site.add_dir('[COLOR hotpink]Categories[/COLOR]', site.url, 'Categories', site.img_cat)
-    # site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'search?search_type=videos&search_query=', 'Search', site.img_search)
     List(site.url)
     utils.eod()
 
@@ -64,10 +62,6 @@ def List(url):
             name, videopage, "uflash.Playvid", img, name, duration=duration
         )
 
-    # re_npurl = r'href="([^"]+)"\s*class="prevnext">Next'
-    # re_npnr = r'(\d+)"\s*class="prevnext">Next'
-    # re_lpnr = r'>(\d+)</a></li><li><a[^>]+Next'
-    # utils.next_page(site, 'uflash.List', html, re_npurl, re_npnr, re_lpnr=re_lpnr, contextm='uflash.GotoPage')
     site.add_dir("[COLOR hotpink]Show More...[/COLOR]", site.url, "List", site.img_next)
 
     utils.eod()

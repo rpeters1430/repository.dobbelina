@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
 
-# import random
 import re
 
 import xbmc
@@ -146,13 +145,6 @@ def List(url):
 
 @site.register()
 def Cat(url):
-    # tags = {}
-    # for i in range(0, 134):
-    #     caturl = 'tags/{}/1/date'.format(i)
-    #     cathtml = utils.getHtml(site.url + caturl)
-    #     name = cathtml.split('MuiTypography-gutterBottom">')[-1].split('<')[0]
-    #     tags[name] = caturl
-    # utils.kodilog(tags)
     tags = {
         "Rainy day": "tags/109/1/date",
         "Anchor Tanhua": "tags/132/1/date",

@@ -404,21 +404,6 @@ def hanime_play_combined(url, name, download=None, only_m3u8=False):
     hanime_play(url, name, download)
 
 
-# @site.register()
-# def hanime_play_combined(url, name, download=None, only_m3u8=False):
-#     htvlogged = utils.addon.getSetting('htvlogged') == 'true'
-#     videos = {}
-#     member_videos = None
-
-#     try:
-#         if htvlogged and hanime_login(action='refresh'):
-#             member_videos = get_videos(url, member=True)
-#         free_videos = get_videos(url)
-
-#         if member_videos:
-#             for resolution, url in member_videos.items():
-#                 videos[resolution] = [url]  # Ensure that we're always starting with a list
-
 #         for resolution, url in free_videos.items():
 #             videos[resolution] = videos.get(resolution, [])  # This will be a list if it exists
 #             videos[resolution].append(url)
@@ -426,23 +411,6 @@ def hanime_play_combined(url, name, download=None, only_m3u8=False):
 #         utils.notify('Notify', str(e))
 #         return
 
-#     if videos:
-#         vp = utils.VideoPlayer(name, download=download)
-#         videourl = utils.selector('Select quality', videos, setting_valid='qualityask', sort_by=lambda x: int(x), reverse=True)
-#         if videourl:
-#             member_video = getVideoLink(videourl, 'member')
-#             free_video = getVideoLink(videourl, 'free')
-
-#             if member_video:
-#                 member_video = member_video + '|verifypeer=false'
-#                 if vp.resolveurl.HostedMediaFile(member_video).valid_url():
-#                     try:
-#                         member_video = vp.resolveurl.HostedMediaFile(member_video).resolve()
-#                     except Exception:
-#                         member_video = None
-
-#             free_video = free_video + '|User-Agent:' + ua
-#             play_video = free_video if only_m3u8 else member_video or free_video
 
 #             vp.name = "{} [{}]".format(name, 'M3U8' if '.m3u8' in play_video else 'MP4')
 #             if '.m3u' in play_video and download:

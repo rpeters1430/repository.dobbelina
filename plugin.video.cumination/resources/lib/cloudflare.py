@@ -1,26 +1,3 @@
-#
-#      Copyright (C) 2015 tknorris (Derived from Mikey1234's & Lambda's)
-#
-#  This Program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2, or (at your option)
-#  any later version.
-#
-#  This Program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with XBMC; see the file COPYING.  If not, write to
-#  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
-#  http://www.gnu.org/copyleft/gpl.html
-#
-#  This code is a derivative of the YouTube plugin for XBMC and associated works
-#  released under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; version 3
-
-
 import re
 from six.moves import urllib_error, urllib_parse, urllib_request
 
@@ -99,7 +76,6 @@ def solve(url, cj, user_agent=None, wait=True):
         vc = vc_match.group(1)
         password = pass_match.group(1)
 
-        # log_utils.log("VC is: %s" % (vc), xbmc.LOGDEBUG, COMPONENT)
         varname = (init_dict, init_var)
         result = int(solve_equation(init_equation.rstrip()))
         xbmc.log("Initial value: |%s| Result: |%s|" % (init_equation, result))
@@ -114,7 +90,6 @@ def solve(url, cj, user_agent=None, wait=True):
             expression = equation[2:]
             operator = equation[0]
             if operator not in ["+", "-", "*", "/"]:
-                # log_utils.log('Unknown operator: |%s|' % (equation), log_utils.LOGWARNING, COMPONENT)
                 continue
 
             # SECURITY FIX: Replaced eval() with safe arithmetic operations
@@ -128,15 +103,12 @@ def solve(url, cj, user_agent=None, wait=True):
             elif operator == "/":
                 result = result // expr_value  # Integer division
             result = int(result)
-            # log_utils.log('intermediate: %s = %s' % (equation, result), log_utils.LOGDEBUG, COMPONENT)
 
         scheme = urllib_parse.urlparse(url).scheme
         domain = urllib_parse.urlparse(url).hostname
         result += len(domain)
-        # log_utils.log('Final Result: |%s|' % (result), log_utils.LOGDEBUG, COMPONENT)
 
         if wait:
-            # log_utils.log('Sleeping for 5 Seconds', log_utils.LOGDEBUG, COMPONENT)
             xbmc.sleep(5000)
 
         url = "%s://%s/cdn-cgi/l/chk_jschl?jschl_vc=%s&jschl_answer=%s&pass=%s" % (
@@ -146,7 +118,6 @@ def solve(url, cj, user_agent=None, wait=True):
             result,
             urllib_parse.quote(password),
         )
-        # log_utils.log('url: %s' % (url), log_utils.LOGDEBUG, COMPONENT)
         request = urllib_request.Request(url)
         for key in headers:
             request.add_header(key, headers[key])
@@ -172,16 +143,13 @@ def solve(url, cj, user_agent=None, wait=True):
                 response = urllib_request.urlopen(request)
             final = response.read()
             if "cf-browser-verification" in final:
-                # log_utils.log('CF Failure: html: %s url: %s' % (html, url), log_utils.LOGWARNING, COMPONENT)
                 tries += 1
                 html = final
             else:
                 break
         except urllib_error.HTTPError:
-            # log_utils.log('CloudFlare HTTP Error: %s on url: %s' % (e.code, url), log_utils.LOGWARNING, COMPONENT)
             return False
         except urllib_error.URLError:
-            # log_utils.log('CloudFlare URLError Error: %s on url: %s' % (e, url), log_utils.LOGWARNING, COMPONENT)
             return False
 
     if cj is not None:

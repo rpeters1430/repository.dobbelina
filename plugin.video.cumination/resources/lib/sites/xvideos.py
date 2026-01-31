@@ -410,7 +410,6 @@ def PSList(url):
     videos = jdata["nb_videos"]
     videospp = jdata["nb_per_page"]
     cp = jdata["current_page"]
-    # page = page if page else 0
     np = int(cp) + 1
     npage = url + "/1" if cp == 0 else url.replace("/" + str(cp), "/" + str(np))
     lp = int(int(videos) / float(videospp)) + 1

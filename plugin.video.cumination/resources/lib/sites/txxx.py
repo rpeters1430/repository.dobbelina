@@ -65,7 +65,6 @@ site7 = AdultSite(
     "upornia.png",
     "upornia",
 )
-# site8 = AdultSite('pornzog', '[COLOR hotpink]Pornzog[/COLOR]', 'https://pornzog.com/', 'pornzog.png', 'pornzog')
 site9 = AdultSite(
     "manysex",
     "[COLOR hotpink]Manysex[/COLOR]",
@@ -80,8 +79,6 @@ site10 = AdultSite(
     "hotmovs.png",
     "hotmovs",
 )
-# site11 = AdultSite('tporn', '[COLOR hotpink]TPorn[/COLOR]', 'https://tporn.xxx/', 'tporn.png', 'tporn')
-# site12 = AdultSite('seexxx', '[COLOR hotpink]See XXX[/COLOR]', 'https://see.xxx/', 'seexxx.png', 'seexxx')
 site13 = AdultSite(
     "thegay",
     "[COLOR hotpink]The Gay[/COLOR]",
@@ -122,16 +119,10 @@ def getBaselink(url):
         siteurl = site6.url
     elif "upornia.com" in url:
         siteurl = site7.url
-    # elif 'pornzog.com' in url:
-    #     siteurl = site8.url
     elif "manysex.com" in url:
         siteurl = site9.url
     elif "hotmovs.com" in url:
         siteurl = site10.url
-    # elif 'tporn.xxx' in url:
-    #     siteurl = site11.url
-    # elif 'see.xxx' in url:
-    #     siteurl = site12.url
     elif "thegay.com" in url:
         siteurl = site13.url
     elif "inporn.com" in url:
@@ -149,11 +140,8 @@ def getBaselink(url):
 @site5.register(default_mode=True)
 @site6.register(default_mode=True)
 @site7.register(default_mode=True)
-# @site8.register(default_mode=True)
 @site9.register(default_mode=True)
 @site10.register(default_mode=True)
-# @site11.register(default_mode=True)
-# @site12.register(default_mode=True)
 @site13.register(default_mode=True)
 @site14.register(default_mode=True)
 @site15.register(default_mode=True)

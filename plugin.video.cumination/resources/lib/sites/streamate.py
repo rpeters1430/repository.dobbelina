@@ -19,7 +19,6 @@ import os
 import sqlite3
 import json
 
-# import websocket
 import math
 from resources.lib import utils
 from resources.lib import favorites
@@ -131,15 +130,6 @@ def clean_database(showdialog=True):
 def Playvid(url, name):
     url, performerID = url.split("$$")
 
-    # response = utils._getHtml("https://streamate.com/ajax/config/?name=" + url + "&sakey=&sk=streamate.com&userid=0&version=2.2.0&ajax=1")
-    # data = json.loads(response)
-
-    # host = data['liveservices']['host'] + "/socket.io/?puserid=" + performerID + "&EIO=3&transport=websocket"
-    # ws = websocket.WebSocket()
-    # ws = websocket.create_connection(host)
-
-    # ws.send('40/live')
-
     # quitting = 0
     # i = 0
     # while quitting == 0:
@@ -158,21 +148,6 @@ def Playvid(url, name):
     #         ws.close()
     #         utils.notify('Model not in freechat')
     #         return None
-
-    #     if message == '40/live':
-    #         ws.close()
-    #         quitting = 1
-    #         playmode = int(utils.addon.getSetting('chatplay'))
-    #         videourl = ''
-    #         response = utils._getHtml("https://manifest-server.naiadsystems.com/live/s:{0}.json?last=load&format=mp4-hls".format(url))
-    #         data = json.loads(response).get('formats')
-
-    #         if playmode == 0:
-    #             videourl = data.get('mp4-hls').get('manifest')
-
-    #         elif playmode == 1:
-    #             sources = {'{0}p'.format(item['videoHeight']): item['location'] for item in data.get('mp4-rtmp').get('encodings')}
-    #             videourl = utils.prefquality(sources, sort_by=lambda x: int(''.join([y for y in x if y.isdigit()])), reverse=True)
 
     videourl = ""
     try:

@@ -1,7 +1,3 @@
-# Copyright 2021 Sidney Markowitz All Rights Reserved.
-# Distributed under MIT license.
-# See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
-
 import os
 from resources.lib.basics import resDir
 
@@ -71,5 +67,4 @@ class BrotliDictionary:
     minDictionaryWordLength = 4
     maxDictionaryWordLength = 24
 
-    # dictionary = pkgutil.get_data('brotlidecpy', 'brotli-dict')
     dictionary = open(os.path.join(resDir, "lib/brotlidecpy/brotli-dict"), "rb").read()

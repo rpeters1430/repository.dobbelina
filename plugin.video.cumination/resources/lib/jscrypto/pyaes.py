@@ -55,7 +55,6 @@ import codecs
 # http://www.python.org/dev/peps/pep-0272/
 MODE_ECB = 1
 MODE_CBC = 2
-# MODE_CTR = 6
 
 block_size = 16
 key_size = None
@@ -225,7 +224,6 @@ class AES(object):
         for i in range(4):
             col = i * 4
 
-            # v0, v1, v2, v3 = block[col : col+4]
             v0, v1, v2, v3 = (
                 block[col],
                 block[col + 1],
@@ -260,7 +258,6 @@ class AES(object):
                 block[col + 2],
                 block[col + 3],
             )
-            # v0, v1, v2, v3 = block[col:col+4]
 
             block[col] = mul_14[v0] ^ mul_9[v3] ^ mul_13[v2] ^ mul_11[v1]
             block[col + 1] = mul_14[v1] ^ mul_9[v0] ^ mul_13[v3] ^ mul_11[v2]
@@ -413,7 +410,6 @@ class CBCMode(object):
             data[offset : offset + block_size] = block
 
             IV = ctext
-            # data[offset : offset+block_size] = block
 
         self.IV = IV
         return data.tostring()
