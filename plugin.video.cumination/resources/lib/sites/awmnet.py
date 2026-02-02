@@ -337,7 +337,7 @@ def List(url):
         seen.add(videourl)
 
         img_tag = item.select_one("img")
-        thumb = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        thumb = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original", "data-lazy-src", "data-lazy"])
 
         # Get provider info (span/div with text-xsm after the link)
         provider = ""
@@ -484,7 +484,7 @@ def Categories(url):
             continue
 
         img_tag = item.select_one("img")
-        image = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        image = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original", "data-lazy-src", "data-lazy"])
 
         # Get video count
         count_tag = item.select_one("span, div")
@@ -648,14 +648,12 @@ def Playvid(url, name, download=None):
                     videourl = host + txxx.Tdecode(r.group(1))
                     vp.play_from_direct_link(videourl)
                     return
+                else:
+                    utils.kodilog("AWM: API returned no video_url, trying resolveurl fallback")
             except Exception as e:
                 utils.kodilog("Error getting video from API: " + str(e))
-                utils.kodilog(vlink)
-        else:
-            utils.notify("Oh Oh", "No Videos found")
-            vp.progress.close()
-            utils.kodilog(vlink)
-            return
+                utils.kodilog("AWM: Trying resolveurl fallback for: " + vlink)
+                # Continue to try resolveurl fallback
 
     if "xhamster" in vlink:
         from resources.lib.sites.xhamster import Playvid as xhamsterPlayvid
