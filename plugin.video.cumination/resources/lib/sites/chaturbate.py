@@ -869,6 +869,7 @@ def onlineFav(url):
                 image,
                 utils.cleantext(subject),
                 noDownload=True,
+                fav="del",
             )
     utils.eod()
 
