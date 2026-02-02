@@ -83,7 +83,9 @@ def List(url):
                 continue
 
             img_tag = item.select_one("img")
-            img = utils.safe_get_attr(img_tag, "src")
+            img = utils.safe_get_attr(
+                img_tag, "src", ["data-src", "data-lazy-src", "data-original"]
+            )
             if not img:
                 continue
 

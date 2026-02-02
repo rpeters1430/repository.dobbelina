@@ -157,7 +157,9 @@ def List(url):
             # Extract thumbnail image
             img_tag = item.select_one("img")
             img = utils.safe_get_attr(
-                img_tag, "data-mediumthumb", ["data-thumb-url", "data-src", "src"]
+                img_tag,
+                "data-mediumthumb",
+                ["data-thumb-url", "data-src", "data-lazy-src", "data-img", "src"],
             )
 
             # Extract duration
@@ -251,7 +253,7 @@ def Categories(url):
                 name_tag = category.select_one(".title, .categoryName")
                 name = utils.safe_get_text(name_tag) if name_tag else "Category"
             img_tag = category.select_one("img")
-            img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+            img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-lazy-src"])
             count_tag = category.select_one("var, .videoCount")
             video_count = utils.safe_get_text(count_tag)
             if video_count:
