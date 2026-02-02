@@ -157,7 +157,9 @@ def List(url):
             # Extract thumbnail image
             img_tag = item.select_one("img")
             img = utils.safe_get_attr(
-                img_tag, "data-mediumthumb", ["data-thumb-url", "data-src", "data-lazy-src", "data-img", "src"]
+                img_tag,
+                "data-mediumthumb",
+                ["data-thumb-url", "data-src", "data-lazy-src", "data-img", "src"],
             )
 
             # Extract duration
