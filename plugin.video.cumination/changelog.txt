@@ -1,8 +1,10 @@
+<<<<<<< HEAD
 [B]Version 1.1.211[/B]
 - americass - removed (site defunct) - cherry-picked from upstream
 - Fix video playback for FlareSolverr scraped sites (e.g. luxuretv) - cherry-picked from upstream
 - Add upstream sync tracking system with automated scripts
 - xxxtube - new site - cherry-picked from upstream
+- sxyprn - fix search
 
 [B]Version 1.1.204[/B]
 - Testing Infrastructure: Expanded test suite from 449 to 622 tests (38% increase)
@@ -102,15 +104,3 @@
 - youporn, youjizz, tube8, redtube: fix playback by extracting direct sources and setting referer
 - youporn: remove duplicate listings
 - motherless: load Recent by default, de-dupe listings, and play direct sources
-=======
-[B]Version 1.1.163[/B]
-- stripchat - fix playback (SD only)
-- americass - removed
-Fix video playback for FlareSolverr scraped sites (e.g. luxuretv)
-
->>>>>>> 7bbe1c7 (Fix video playback for FlareSolverr scraped sites (e.g. luxuretv))
-=======
-[B]Version 1.1.163[/B]
-- stripchat - fix playback (SD only)
-- americass - removed
->>>>>>> 43c6322 (americass - removed fixes #1709)
