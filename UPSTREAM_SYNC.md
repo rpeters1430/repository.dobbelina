@@ -35,6 +35,17 @@ These upstream commits have been integrated into the fork:
 |---------------|---------|-----------|-----------------|-------|
 | `1270357` | new site fixes #1735 | `0fa653b` | 2026-01-17 | Cherry-picked with -x |
 
+### 2026-02-05 Cherry-Pick Session
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `8b2cd89` | sxyprn - fix search fixes #1277 | `25c2afb` | 2026-02-05 | Cherry-picked with -x |
+| `63348e8` | chaturbate favorites - fixes #1745 | `6137f6f` | 2026-02-05 | Cherry-picked with -x |
+| `9ac3255` | allclassic - fixes #1742 | `8e5b74a` | 2026-02-05 | Cherry-picked with -x |
+| `a4e50af` | kissjav - fix thumbnails, playback fixes #1743 | `732cab5` | 2026-02-05 | Cherry-picked with -x |
+| `99dd004` | fix pagination | `c4c3c72` | 2026-02-05 | Cherry-picked with -x |
+| `beb5b9d` | luxuretv - fix nextpage, thumbnails | `95f32d6` | 2026-02-05 | Cherry-picked with -x |
+
 ### Previously Integrated (Manual)
 
 | Upstream Hash | Message | Fork Hash | Date Integrated | Notes |

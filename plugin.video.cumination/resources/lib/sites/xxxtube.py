@@ -105,18 +105,48 @@ def List(url):
             duration=duration,
         )
 
-    re_npurl = 'class="item active">.+?href="/([^"]+)"'
-    re_npnr = r'class="item active">.+?href="[^"]+">(\d+)<'
-    re_lpnr = r'>(\d+)</a>\s+</li>\s+<li class="item pager">'
-    utils.next_page(
-        site,
-        "xxxtube.List",
-        listhtml,
-        re_npurl,
-        re_npnr,
-        re_lpnr=re_lpnr,
-        contextm="xxxtube.GotoPage",
-    )
+    next_link = None
+    active = soup.select_one("li.item.active")
+    if active:
+        next_li = active.find_next_sibling("li")
+        if next_li:
+            next_link = next_li.find("a", href=True)
+    if next_link:
+        href = utils.safe_get_attr(next_link, "href")
+        if href:
+            next_url = urllib_parse.urljoin(site.url, href)
+            npnr = utils.safe_get_text(next_link)
+            if not npnr.isdigit():
+                match = re.search(r"/(\\d+)/", href)
+                npnr = match.group(1) if match else ""
+            lpnr = ""
+            page_numbers = []
+            for anchor in soup.select("li.item a"):
+                text = utils.safe_get_text(anchor)
+                if text.isdigit():
+                    page_numbers.append(int(text))
+            if page_numbers:
+                lpnr = str(max(page_numbers))
+            label = "Next Page"
+            if npnr:
+                label = "Next Page ({})".format(npnr)
+                if lpnr:
+                    label = "Next Page ({}/{})".format(npnr, lpnr)
+            cm_page = (
+                utils.addon_sys
+                + "?mode="
+                + "xxxtube.GotoPage"
+                + "&list_mode="
+                + "xxxtube.List"
+                + "&url="
+                + urllib_parse.quote_plus(next_url)
+                + "&np="
+                + str(npnr)
+                + "&lp="
+                + str(lpnr or 0)
+            )
+            cm = [("[COLOR violet]Goto Page #[/COLOR]", "RunPlugin(" + cm_page + ")")]
+            site.add_dir(label, next_url, "List", contextm=cm)
     utils.eod()
 
 
