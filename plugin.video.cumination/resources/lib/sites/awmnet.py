@@ -526,9 +526,7 @@ def Playvid(url, name, download=None):
             videourl = "https:" + videourl
         if not videourl.startswith("http"):
             return videourl
-        return "{}|Referer={}&User-Agent={}".format(
-            videourl, referer, utils.USER_AGENT
-        )
+        return "{}|Referer={}&User-Agent={}".format(videourl, referer, utils.USER_AGENT)
 
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")

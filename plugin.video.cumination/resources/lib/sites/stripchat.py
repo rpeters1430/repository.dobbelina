@@ -232,12 +232,24 @@ def Playvid(url, name):
                     # Validate that the returned model matches the requested one
                     for model in models:
                         if model.get("username", "").lower() == model_name.lower():
-                            utils.kodilog("Stripchat: Successfully loaded model details for {}".format(model_name))
+                            utils.kodilog(
+                                "Stripchat: Successfully loaded model details for {}".format(
+                                    model_name
+                                )
+                            )
                             return model
-                    
-                    utils.kodilog("Stripchat: API returned models but none matched {}".format(model_name))
+
+                    utils.kodilog(
+                        "Stripchat: API returned models but none matched {}".format(
+                            model_name
+                        )
+                    )
                     if models:
-                        utils.kodilog("Stripchat: First returned model was: {}".format(models[0].get("username")))
+                        utils.kodilog(
+                            "Stripchat: First returned model was: {}".format(
+                                models[0].get("username")
+                            )
+                        )
                 else:
                     utils.kodilog("Stripchat: No models in response")
             except json.JSONDecodeError as e:
