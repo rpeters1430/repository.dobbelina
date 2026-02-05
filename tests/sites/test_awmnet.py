@@ -346,7 +346,6 @@ def test_sitemain_creates_menu_structure(monkeypatch):
     assert len(list_calls) == 1
     assert "new?pricing=free" in list_calls[0]
 
-
     def test_playvid_uses_vlink_referer(monkeypatch):
         """Test that Playvid uses the video page URL as Referer, not the API URL."""
         # This simulates 4tube redirecting to fapnfuck CDN, but requiring 4tube Referer
@@ -364,7 +363,7 @@ def test_sitemain_creates_menu_structure(monkeypatch):
         """
 
         played_urls = []
-    
+
         def fake_get_html(url, referer=None, headers=None):
             return html
 
@@ -385,7 +384,7 @@ def test_sitemain_creates_menu_structure(monkeypatch):
 
             def play_from_direct_link(self, url):
                 played_urls.append(url)
-                
+
             def play_from_link_to_resolve(self, url):
                 pass
 
@@ -407,11 +406,12 @@ def test_sitemain_creates_menu_structure(monkeypatch):
         # We need to mock awmnet.MagicMock because it's not defined in the module but I used it in FakeVideoPlayer
         # Actually, I should use unittest.mock.MagicMock
         from unittest.mock import MagicMock
+
         awmnet.MagicMock = MagicMock
 
         # Call Playvid
         # site.url is initially empty, but Playvid might use it.
-        # awmnet.site.url is irrelevant for this specific logic path as vlink is derived from url passed  
+        # awmnet.site.url is irrelevant for this specific logic path as vlink is derived from url passed
         awmnet.Playvid(vlink_url, "Test Video")
 
         assert len(played_urls) == 1

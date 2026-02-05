@@ -175,19 +175,17 @@ def test_playvid_validates_returned_model_name(monkeypatch):
     If Stripchat API returns a different model (e.g. recommendation), we should not play it.
     """
     notifications = []
-    
+
     # We request "requested_model" but API returns "random_other_model"
     requested_name = "requested_model"
     returned_name = "random_other_model"
-    
+
     model_data = {
         "username": returned_name,
         "isOnline": True,
         "isBroadcasting": True,
         "hlsPlaylist": "https://stream.stripchat.com/random.m3u8",
-        "stream": {
-            "url": "https://stream.stripchat.com/random.m3u8"
-        }
+        "stream": {"url": "https://stream.stripchat.com/random.m3u8"},
     }
 
     def fake_notify(title, message, **kwargs):
@@ -199,36 +197,49 @@ def test_playvid_validates_returned_model_name(monkeypatch):
 
     # Mock dependencies
     class FakeHelper:
-        def __init__(self, adaptive_type): pass
-        def check_inputstream(self): return True
+        def __init__(self, adaptive_type):
+            pass
+
+        def check_inputstream(self):
+            return True
 
     class FakeProgress:
-        def update(self, percent, message): pass
-        def close(self): pass
+        def update(self, percent, message):
+            pass
+
+        def close(self):
+            pass
 
     class FakeVideoPlayer:
         def __init__(self, name, **kwargs):
             self.name = name
             self.progress = FakeProgress()
+
         def play_from_direct_link(self, link):
             # If we get here, the code accepted the wrong model!
             pytest.fail(f"VideoPlayer started playing wrong model: {self.name}")
 
     import sys
     import types
+
     fake_inputstreamhelper = types.ModuleType("inputstreamhelper")
     fake_inputstreamhelper.Helper = FakeHelper
     sys.modules["inputstreamhelper"] = fake_inputstreamhelper
 
     monkeypatch.setattr(stripchat.utils, "notify", fake_notify)
     monkeypatch.setattr(stripchat.utils, "kodilog", lambda x: None)
-    monkeypatch.setattr(stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html)
+    monkeypatch.setattr(
+        stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
+    )
     monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
 
     # Action: Try to play "requested_model"
     stripchat.Playvid("http://fake", requested_name)
-    
+
     # Assert that we got a notification about model not found/offline
     # because the name check failed, so it treated it as no model data
     assert len(notifications) > 0
-    assert any("not found" in n["message"].lower() or "offline" in n["message"].lower() for n in notifications)
+    assert any(
+        "not found" in n["message"].lower() or "offline" in n["message"].lower()
+        for n in notifications
+    )
