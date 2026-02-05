@@ -217,4 +217,4 @@ class TestPornDish:
         source = inspect.getsource(porndish.List)
 
         # Should detect pagination by class
-        assert "'pagination'" in source
+        assert '"pagination"' in source

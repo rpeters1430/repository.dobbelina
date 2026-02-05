@@ -345,3 +345,80 @@ def test_sitemain_creates_menu_structure(monkeypatch):
     # Should call List with new videos
     assert len(list_calls) == 1
     assert "new?pricing=free" in list_calls[0]
+
+
+    def test_playvid_uses_vlink_referer(monkeypatch):
+        """Test that Playvid uses the video page URL as Referer, not the API URL."""
+        # This simulates 4tube redirecting to fapnfuck CDN, but requiring 4tube Referer
+        vlink_url = "https://www.4tube.com/videos/123/test-video"
+        api_url = "https://fapnfuck.com/get_file/123/mp4/"
+
+        html = f"""
+        <html>
+        <script>
+            var license_code: '12345';
+            var video_url: '{api_url}'
+            var video_url_text: '720p';
+        </script>
+        </html>
+        """
+
+        played_urls = []
+    
+        def fake_get_html(url, referer=None, headers=None):
+            return html
+
+        def fake_get_video_link(url, referer=None):
+            return url
+
+        def fake_hosted_media_file(url):
+            return False
+
+        def fake_kvs_decode(url, license):
+            return url
+
+        class FakeVideoPlayer:
+            def __init__(self, *args, **kwargs):
+                self.resolveurl = awmnet.MagicMock()
+                self.resolveurl.HostedMediaFile = fake_hosted_media_file
+                self.progress = awmnet.MagicMock()
+
+            def play_from_direct_link(self, url):
+                played_urls.append(url)
+                
+            def play_from_link_to_resolve(self, url):
+                pass
+
+        def fake_selector(title, sources, **kwargs):
+            if not sources:
+                return None
+            if isinstance(sources, dict):
+                return list(sources.values())[0]
+            return sources[0]
+
+        # Mock dependencies
+        monkeypatch.setattr(awmnet.utils, "getHtml", fake_get_html)
+        monkeypatch.setattr(awmnet.utils, "getVideoLink", fake_get_video_link)
+        monkeypatch.setattr(awmnet.utils, "VideoPlayer", FakeVideoPlayer)
+        monkeypatch.setattr(awmnet, "kvs_decode", fake_kvs_decode)
+        monkeypatch.setattr(awmnet.utils, "prefquality", lambda *a, **k: None)
+        monkeypatch.setattr(awmnet.utils, "selector", fake_selector)
+
+        # We need to mock awmnet.MagicMock because it's not defined in the module but I used it in FakeVideoPlayer
+        # Actually, I should use unittest.mock.MagicMock
+        from unittest.mock import MagicMock
+        awmnet.MagicMock = MagicMock
+
+        # Call Playvid
+        # site.url is initially empty, but Playvid might use it.
+        # awmnet.site.url is irrelevant for this specific logic path as vlink is derived from url passed  
+        awmnet.Playvid(vlink_url, "Test Video")
+
+        assert len(played_urls) == 1
+        final_url = played_urls[0]
+
+        # Verify Referer
+        assert "Referer=https://www.4tube.com/" in final_url
+        assert "Referer=https://fapnfuck.com/" not in final_url
+        # Verify User-Agent
+        assert "User-Agent=" in final_url

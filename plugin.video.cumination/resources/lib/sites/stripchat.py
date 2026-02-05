@@ -229,8 +229,15 @@ def Playvid(url, name):
                 payload = json.loads(response)
                 models = payload.get("models") if isinstance(payload, dict) else None
                 if models and len(models) > 0:
-                    utils.kodilog("Stripchat: Successfully loaded model details")
-                    return models[0]
+                    # Validate that the returned model matches the requested one
+                    for model in models:
+                        if model.get("username", "").lower() == model_name.lower():
+                            utils.kodilog("Stripchat: Successfully loaded model details for {}".format(model_name))
+                            return model
+                    
+                    utils.kodilog("Stripchat: API returned models but none matched {}".format(model_name))
+                    if models:
+                        utils.kodilog("Stripchat: First returned model was: {}".format(models[0].get("username")))
                 else:
                     utils.kodilog("Stripchat: No models in response")
             except json.JSONDecodeError as e:

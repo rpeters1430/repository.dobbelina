@@ -47,6 +47,21 @@ def Main():
 
 @site.register()
 def List(url):
+    def add_img_headers(img_url):
+        if not img_url:
+            return img_url
+        if "|" in img_url:
+            return img_url
+        if img_url.startswith("//"):
+            img_url = "https:" + img_url
+        if not img_url.startswith("http"):
+            return img_url
+        if "freepornvideos" in img_url:
+            return "{}|Referer={}&User-Agent={}".format(
+                img_url, site.url, utils.USER_AGENT
+            )
+        return img_url
+
     listhtml = utils.getHtml(url)
     if "There is no data in this list." in listhtml:
         utils.notify(msg="No videos found!")
@@ -84,8 +99,9 @@ def List(url):
 
             img_tag = item.select_one("img")
             img = utils.safe_get_attr(
-                img_tag, "src", ["data-src", "data-lazy-src", "data-original"]
+                img_tag, "data-src", ["data-lazy-src", "data-original", "src"]
             )
+            img = add_img_headers(img)
             if not img:
                 continue
 

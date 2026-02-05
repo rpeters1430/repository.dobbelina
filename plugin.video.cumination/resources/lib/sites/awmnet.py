@@ -517,6 +517,19 @@ def Categories(url):
 
 @site.register()
 def Playvid(url, name, download=None):
+    def add_video_headers(videourl, referer):
+        if not videourl:
+            return videourl
+        if "|" in videourl:
+            return videourl
+        if videourl.startswith("//"):
+            videourl = "https:" + videourl
+        if not videourl.startswith("http"):
+            return videourl
+        return "{}|Referer={}&User-Agent={}".format(
+            videourl, referer, utils.USER_AGENT
+        )
+
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     found = False
@@ -533,6 +546,7 @@ def Playvid(url, name, download=None):
         if "&lander=" in vlink:
             vlink = vlink.split("&lander=")[-1]
         vlink = urllib_parse.unquote(vlink)
+        referer = "/".join(vlink.split("/")[:3]) + "/"
 
         vpage = utils.getHtml(url, site.url)
 
@@ -556,6 +570,7 @@ def Playvid(url, name, download=None):
             videourl = utils.selector("Select source", sources, reverse=True)
         if videourl:
             videourl = videourl.replace(r"\/", "/")
+            videourl = add_video_headers(videourl, referer)
             vp.play_from_direct_link(videourl)
             return
 
@@ -573,6 +588,7 @@ def Playvid(url, name, download=None):
         videourl = utils.selector("Select source", sources)
         if videourl:
             videourl = "https:" + videourl if videourl.startswith("//") else videourl
+            videourl = add_video_headers(videourl, referer)
             vp.play_from_direct_link(videourl)
             return
 
@@ -610,9 +626,12 @@ def Playvid(url, name, download=None):
                     qual = "720p" if qual == "HD" else qual
                     if "function/0/http" in surl:
                         surl = kvs_decode(surl, license)
-                    referer = "/".join(surl.split("/")[:3]) + "/"
+                    # Use the video page URL base as referer, not the API URL base
+                    referer = "/".join(vlink.split("/")[:3]) + "/"
                     surl = utils.getVideoLink(surl, referer)
-                    surl = surl + "|Referer={}".format(referer)
+                    surl = surl + "|Referer={}&User-Agent={}".format(
+                        referer, utils.USER_AGENT
+                    )
                     if ".mp4" in surl:
                         sources.update({qual: surl})
 
@@ -650,6 +669,7 @@ def Playvid(url, name, download=None):
                 r = re.search('video_url":"([^"]+)', jsondata)
                 if r:
                     videourl = host + txxx.Tdecode(r.group(1))
+                    videourl = add_video_headers(videourl, referer)
                     vp.play_from_direct_link(videourl)
                     return
                 else:

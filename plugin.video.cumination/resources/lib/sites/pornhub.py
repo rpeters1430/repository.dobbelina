@@ -52,6 +52,21 @@ def Main():
 def List(url):
     url = update_url(url)
 
+    def add_img_headers(img_url):
+        if not img_url:
+            return img_url
+        if "|" in img_url:
+            return img_url
+        if img_url.startswith("//"):
+            img_url = "https:" + img_url
+        if not img_url.startswith("http"):
+            return img_url
+        if "phncdn.com" in img_url or "ttcache.com" in img_url:
+            return "{}|Referer={}&User-Agent={}".format(
+                img_url, site.url, utils.USER_AGENT
+            )
+        return img_url
+
     cm_production = utils.addon_sys + "?mode=" + str("pornhub.ContextProduction")
     cm_min_length = utils.addon_sys + "?mode=" + str("pornhub.ContextMinLength")
     cm_max_length = utils.addon_sys + "?mode=" + str("pornhub.ContextMaxLength")
@@ -158,9 +173,22 @@ def List(url):
             img_tag = item.select_one("img")
             img = utils.safe_get_attr(
                 img_tag,
-                "data-mediumthumb",
-                ["data-thumb-url", "data-src", "data-lazy-src", "data-img", "src"],
+                "data-thumb-url",
+                ["data-mediumthumb", "data-src", "data-lazy-src", "data-img", "src"],
             )
+            if not img:
+                img = utils.safe_get_attr(
+                    item,
+                    "data-thumb-url",
+                    ["data-mediumthumb", "data-img", "data-src", "data-lazy-src"],
+                )
+            if not img and link:
+                img = utils.safe_get_attr(
+                    link,
+                    "data-thumb-url",
+                    ["data-mediumthumb", "data-img", "data-src", "data-lazy-src"],
+                )
+            img = add_img_headers(img)
 
             # Extract duration
             duration_tag = item.select_one('.duration, [data-title="Video Duration"]')
