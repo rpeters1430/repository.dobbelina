@@ -1,6 +1,18 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+[B]Version 1.1.212[/B]
+- easynews - avoid prompting for credentials on startup
+- pornhub - add headers for thumbnails (some missing images)
+- freepornvideos - improve thumbnail selection and add headers
+- awmnet - add headers for direct video playback
+- kissjav - fix thumbnails, playback fixes #1743
+- allclassic - fixes #1742
+- chaturbate favorites - fixes #1745
+- sxyprn - fix search fixes #1277
+- luxuretv - fix nextpage, thumbnails
+- xxxtube - fix pagination
+
 [B]Version 1.1.211[/B]
 - americass - removed (site defunct) - cherry-picked from upstream
 - Fix video playback for FlareSolverr scraped sites (e.g. luxuretv) - cherry-picked from upstream
