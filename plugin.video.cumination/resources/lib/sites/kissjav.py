@@ -301,7 +301,7 @@ def Playvid(url, name, download=None):
         if surl.startswith("function/"):
             license = re.findall(r"license_code:\s*'([^']+)", html)[0]
             surl = kvs_decode(surl, license)
-        elif not surl.startswith('http'):
+        elif not surl.startswith("http"):
             surl = utils._bdecode(surl)
     else:
         vp.progress.close()
