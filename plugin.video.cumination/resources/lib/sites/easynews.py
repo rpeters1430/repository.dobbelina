@@ -24,7 +24,13 @@ from resources.lib.adultsite import AdultSite
 # from providerModules.a4kNewsgroups import common
 
 
-site = AdultSite('easynew', '[COLOR hotpink]EasyNews[/COLOR]', 'https://members.easynews.com/', 'easynews.png', 'easynews')
+site = AdultSite(
+    "easynew",
+    "[COLOR hotpink]EasyNews[/COLOR]",
+    "https://members.easynews.com/",
+    "easynews.png",
+    "easynews",
+)
 
 
 def _get_auth():
@@ -33,8 +39,12 @@ def _get_auth():
         username = utils.addon.getSetting("easynews.username") or ""
         password = utils.addon.getSetting("easynews.password") or ""
         if username == "" or password == "":
-            username = utils._get_keyboard(default='', heading='Input your Chaturbate username')
-            password = utils._get_keyboard(default='', heading='Input your Chaturbate password', hidden=True)
+            username = utils._get_keyboard(
+                default="", heading="Input your Chaturbate username"
+            )
+            password = utils._get_keyboard(
+                default="", heading="Input your Chaturbate password", hidden=True
+            )
             if username != "" and password != "":
                 utils.addon.setSetting("easynews.username", username)
                 utils.addon.setSetting("easynews.password", password)
@@ -53,23 +63,47 @@ auth = _get_auth()
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir('[COLOR hotpink]Configuration[/COLOR]', '', 'Config', '')
-    site.add_dir('[COLOR hotpink]Search[/COLOR]', f'{site.url}2.0/search/solr-search/advanced', 'Search', site.img_search)
+    site.add_dir("[COLOR hotpink]Configuration[/COLOR]", "", "Config", "")
+    site.add_dir(
+        "[COLOR hotpink]Search[/COLOR]",
+        f"{site.url}2.0/search/solr-search/advanced",
+        "Search",
+        site.img_search,
+    )
     utils.eod()
 
 
 @site.register()
 def Config():
-    site.add_dir('[COLOR hotpink]Username[/COLOR]', '{0}my/subscriptions/?mode=async&function=get_block&block_id=list_videos_videos_from_my_subscriptions&sort_by=&from_my_subscriptions_videos=1'.format(site.url), 'PTList', page=1)
-    site.add_dir('[COLOR hotpink]Password[/COLOR]', '{0}my/subscriptions/?mode=async&function=get_block&block_id=list_members_subscriptions_my_subscriptions&sort_by=added_date&from_my_subscriptions=1'.format(site.url), 'PTSubscriptions')
-    site.add_dir('[COLOR hotpink]PT Favorites[/COLOR]', site.url + 'my/favourites/videos/?mode=async&function=get_block&block_id=list_videos_my_favourite_videos&fav_type=0&playlist_id=0&sort_by=&from_my_fav_videos=1', 'PTList', site.img_cat)
+    site.add_dir(
+        "[COLOR hotpink]Username[/COLOR]",
+        "{0}my/subscriptions/?mode=async&function=get_block&block_id=list_videos_videos_from_my_subscriptions&sort_by=&from_my_subscriptions_videos=1".format(
+            site.url
+        ),
+        "PTList",
+        page=1,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Password[/COLOR]",
+        "{0}my/subscriptions/?mode=async&function=get_block&block_id=list_members_subscriptions_my_subscriptions&sort_by=added_date&from_my_subscriptions=1".format(
+            site.url
+        ),
+        "PTSubscriptions",
+    )
+    site.add_dir(
+        "[COLOR hotpink]PT Favorites[/COLOR]",
+        site.url
+        + "my/favourites/videos/?mode=async&function=get_block&block_id=list_videos_my_favourite_videos&fav_type=0&playlist_id=0&sort_by=&from_my_fav_videos=1",
+        "PTList",
+        site.img_cat,
+    )
     utils.eod()
 
 
 @site.register()
 def Search(url, keyword=None):
     if not keyword:
-        site.search_dir(url, 'Search')
+        site.search_dir(url, "Search")
     else:
         search_params = {
             "st": "adv",
@@ -83,7 +117,9 @@ def Search(url, keyword=None):
         utils.kodilog(f"Easynews: searching for {keyword}")
         utils.kodilog(auth)
         utils.kodilog(url)
-        results = requests.get(url, params=search_params, headers=auth, timeout=20).json()
+        results = requests.get(
+            url, params=search_params, headers=auth, timeout=20
+        ).json()
         List(keyword, results)
 
 
@@ -116,7 +152,9 @@ def List(title, results):
         # if _check_exclusions(cleaned):
         #     return
 
-        stream_url = down_url + quote(f"/{dl_farm}/{dl_port}/{post_hash}{ext}/{post_title}{ext}")
+        stream_url = down_url + quote(
+            f"/{dl_farm}/{dl_port}/{post_hash}{ext}/{post_title}{ext}"
+        )
         file_dl = f"{stream_url}|Authorization={quote(auth['Authorization'])}"
         return file_dl
 
@@ -126,14 +164,16 @@ def List(title, results):
         ext = item["11"]
         size = item["4"]
 
-        img = f'https://th.easynews.com/thumbnails-{post_hash[:3]}/th-{post_hash}.jpg'
+        img = f"https://th.easynews.com/thumbnails-{post_hash[:3]}/th-{post_hash}.jpg"
         videourl = _process_item(item, down_url, dl_farm, dl_port, title)
         if not videourl:
             continue
 
         utils.kodilog(f"Easynews: adding {post_title} ({size})")
         utils.kodilog(videourl)
-        site.add_download_link(post_title, videourl, 'Playvid', img)  # , 'info', duration=None, quality=None)
+        site.add_download_link(
+            post_title, videourl, "Playvid", img
+        )  # , 'info', duration=None, quality=None)
 
     utils.kodilog(items[0])
 
@@ -425,5 +465,3 @@ def title_check(post_title, simple_info):
 @site.register()
 def _check_exclusions(clean_title):
     return any([i in clean_title for i in _exclusions])
-
-

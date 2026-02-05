@@ -60,17 +60,26 @@ def test_list_parses_video_items(monkeypatch):
     # Check first video
     assert downloads[0]["name"] == "Hot Teen Gets Drilled Hard"
     assert "/view_video.php?viewkey=ph12345abcde" in downloads[0]["url"]
-    assert _base_icon(downloads[0]["icon"]) == "https://ci.phncdn.com/videos/202411/thumb1.jpg"
+    assert (
+        _base_icon(downloads[0]["icon"])
+        == "https://ci.phncdn.com/videos/202411/thumb1.jpg"
+    )
     assert downloads[0]["contextm"] is not None  # Should have context menu
 
     # Check second video (uses data-thumb-url)
     assert downloads[1]["name"] == "MILF Seduces Young Stud"
     assert "/view_video.php?viewkey=ph67890fghij" in downloads[1]["url"]
-    assert _base_icon(downloads[1]["icon"]) == "https://ci.phncdn.com/videos/202411/thumb2.jpg"
+    assert (
+        _base_icon(downloads[1]["icon"])
+        == "https://ci.phncdn.com/videos/202411/thumb2.jpg"
+    )
 
     # Check third video (uses data-src fallback)
     assert downloads[2]["name"] == "Premium HD Video Quality"
-    assert _base_icon(downloads[2]["icon"]) == "https://ci.phncdn.com/videos/202411/thumb3.jpg"
+    assert (
+        _base_icon(downloads[2]["icon"])
+        == "https://ci.phncdn.com/videos/202411/thumb3.jpg"
+    )
 
     # Should have pagination and filter reset
     assert len(dirs) >= 1
