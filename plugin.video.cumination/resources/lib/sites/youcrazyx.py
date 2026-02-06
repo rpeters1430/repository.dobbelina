@@ -82,7 +82,9 @@ def List(url):
             + "?mode=youcrazyx.Related&url="
             + urllib_parse.quote_plus(item_url)
         )
-        return [("[COLOR deeppink]Related videos[/COLOR]", "RunPlugin(" + contexturl + ")")]
+        return [
+            ("[COLOR deeppink]Related videos[/COLOR]", "RunPlugin(" + contexturl + ")")
+        ]
 
     VIDEO_LIST_SPEC.run(site, soup, contextm=context_menu_builder)
     utils.eod()
@@ -125,9 +127,8 @@ def Search(url, keyword=None):
 @site.register()
 def Related(url):
     contexturl = (
-        utils.addon_sys
-        + "?mode=youcrazyx.List&url="
-        + urllib_parse.quote_plus(url)
+        utils.addon_sys + "?mode=youcrazyx.List&url=" + urllib_parse.quote_plus(url)
     )
     import xbmc
+
     xbmc.executebuiltin("Container.Update(" + contexturl + ")")

@@ -90,7 +90,7 @@ def Playvid(url, name, download=None):
 
     videourl = None
     sources = {}
-    
+
     license_match = re.search(r"license_code:\s*'([^']+)", vpage, re.IGNORECASE)
     if not license_match:
         # Fallback to download button search if no license found (likely different player)
@@ -101,7 +101,7 @@ def Playvid(url, name, download=None):
             videourl = match.group(1)
             vp.play_from_direct_link(videourl)
             return
-        
+
         vp.progress.close()
         utils.notify("Oh Oh", "No license or video found")
         return
@@ -314,7 +314,10 @@ def Lookupinfo(url):
             href = utils.safe_get_attr(link, "href")
             if title and href:
                 name = "Tag - {}".format(utils.cleantext(title))
-                infodict[name] = (urllib_parse.urljoin(site.url, href), "freshporno.List")
+                infodict[name] = (
+                    urllib_parse.urljoin(site.url, href),
+                    "freshporno.List",
+                )
 
     # Models
     for link in soup.select('a[href*="/models/"]'):

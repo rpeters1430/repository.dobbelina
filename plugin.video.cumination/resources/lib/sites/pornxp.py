@@ -83,7 +83,9 @@ def List(url):
             + "?mode=pornxp.Lookupinfo&url="
             + urllib_parse.quote_plus(item_url)
         )
-        return [("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")]
+        return [
+            ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
+        ]
 
     VIDEO_LIST_SPEC.run(site, soup, contextm=context_menu_builder)
     utils.eod()
@@ -146,7 +148,9 @@ def Tags(url):
             name = utils.cleantext(utils.safe_get_text(anchor))
             href = utils.safe_get_attr(anchor, "href")
             if name and href:
-                site.add_dir(name, site.url + href.lstrip("/") + "?sort=new", "List", "")
+                site.add_dir(
+                    name, site.url + href.lstrip("/") + "?sort=new", "List", ""
+                )
 
     utils.eod()
 

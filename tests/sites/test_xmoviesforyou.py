@@ -31,7 +31,9 @@ def test_list_populates_download_links(monkeypatch):
     recorder = _Recorder()
 
     fixture_mapped_get_html(
-        monkeypatch, xmoviesforyou, {"xmoviesforyou.com/": "sites/xmoviesforyou/list.html"}
+        monkeypatch,
+        xmoviesforyou,
+        {"xmoviesforyou.com/": "sites/xmoviesforyou/list.html"},
     )
     monkeypatch.setattr(xmoviesforyou.site, "add_download_link", recorder.add_download)
     monkeypatch.setattr(xmoviesforyou.site, "add_dir", recorder.add_dir)
@@ -41,8 +43,11 @@ def test_list_populates_download_links(monkeypatch):
 
     # Check first item and title formatting
     assert recorder.downloads[0]["name"].startswith("[COLOR pink]DaughterSwap[/COLOR]")
-    assert recorder.downloads[0]["url"] == "https://xmoviesforyou.com/2026/02/daughterswap-scarlett-rosewood-lilibet-saunders-am-i-as-good-as-mom-their-wives-cancelled-but-the-couples-trip-is-still-on.html"
-    
+    assert (
+        recorder.downloads[0]["url"]
+        == "https://xmoviesforyou.com/2026/02/daughterswap-scarlett-rosewood-lilibet-saunders-am-i-as-good-as-mom-their-wives-cancelled-but-the-couples-trip-is-still-on.html"
+    )
+
     # Check pagination
     assert recorder.dirs == [
         {

@@ -38,7 +38,9 @@ def test_list_populates_cams(monkeypatch):
     monkeypatch.setattr(chaturbate.site, "add_dir", recorder.add_dir)
     monkeypatch.setattr(chaturbate.utils, "eod", lambda *args, **kwargs: None)
 
-    chaturbate.List("https://chaturbate.com/api/ts/roomlist/room-list/?limit=10&offset=0")
+    chaturbate.List(
+        "https://chaturbate.com/api/ts/roomlist/room-list/?limit=10&offset=0"
+    )
 
     assert len(recorder.downloads) > 0
     # Check that first item is from the JSON
