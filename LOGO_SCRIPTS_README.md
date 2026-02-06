@@ -226,7 +226,7 @@ python process_logos.py
 - Extracts URLs from site modules
 - Downloads each logo
 - Processes to 256x256 PNG
-- Shows progress for all 50 sites
+- **NEW:** Automatically creates a placeholder logo if download/processing fails
 
 **Option 2: Convert formats**
 - Finds all JPG/GIF logos
@@ -246,7 +246,14 @@ python process_logos.py
 **Option 5: Run all**
 - Executes options 1, 2, 3, 4 in sequence
 - Fully automated standardization
-- **Recommended for first-time use**
+
+**Option 6: Test a logo source**
+- **NEW:** Test any URL or local file to see how it will be processed
+- Saves to `[site_id].png` and opens it for preview (Windows only)
+
+**Option 7: Create placeholder logo manually**
+- **NEW:** Generate a standardized placeholder logo by entering a site name
+- Useful for new sites where a high-quality logo isn't available
 
 **Processing logic:**
 ```
@@ -257,7 +264,8 @@ For each logo:
 4. Add transparent padding to reach exactly 256x256
 5. Strip metadata
 6. Optimize with pngquant (if available)
-7. Validate final size
+7. Fallback: Create placeholder if any step fails
+8. Validate final size
 ```
 
 **Temporary files:**

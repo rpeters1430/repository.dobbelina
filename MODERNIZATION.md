@@ -4,7 +4,7 @@
 
 **Started**: 2025-11-01
 **Current Version**: v1.1.209
-**Overall Progress**: Phase 0 ✅ Complete | Phase 1 🚀 In Progress (BeautifulSoup: 113/137 sites - 82.5%)
+**Overall Progress**: Phase 0 ✅ Complete | Phase 1 🚀 In Progress (BeautifulSoup: 116/137 sites - 84.7%)
 
 ---
 
@@ -228,12 +228,15 @@ this table is the authoritative tracker for completion status.
 
 > ℹ️ **Note**: Sites "cambro", "iflix", and "yespornplease" previously listed have been removed from codebase
 
-#### 🚀 Sub-Phase 8: Remaining Sites (24/24 sites - 0% complete)
+#### 🚀 Sub-Phase 8: Remaining Sites (3/24 sites - 12.5%)
 
 Sites requiring migration (24 total):
 
-**Need Migration + Tests (16 sites)**:
-- freepornvideos, freshporno, fullporner, fullxcinema, hdporn92, porn4k, porndish, pornez, pornroom, pornxp, xfreehd, xmoviesforyou, xozilla, xsharings, xtheatre, youcrazyx
+**Need Migration + Tests (12 sites remaining)**:
+- freepornvideos, fullporner, fullxcinema, hdporn92, porn4k, porndish, pornez, pornroom, xfreehd, xozilla, xsharings, xtheatre
+
+**COMPLETED in this sub-phase**:
+- pornxp, xmoviesforyou, youcrazyx, freshporno
 
 **Need Migration Only (8 sites - have tests)**:
 - eroticage, freeomovie, hdporn, hitprn, justfullporn, pornhits, vipporns, watcherotic
@@ -296,8 +299,8 @@ Part of BeautifulSoup migration roadmap (site X/137)
 | Sub-Phase 5: Hentai/Anime | 10 | 10 | 100% ✅ |
 | Sub-Phase 6: International | 15 | 15 | 100% ✅ |
 | Sub-Phase 7: Niche/Specialty | 28 | 28 | 100% ✅ |
-| Sub-Phase 8: Remaining | 24 | 0 | 0% |
-| **TOTAL** | **137** | **113** | **82.5%** |
+| Sub-Phase 8: Remaining | 24 | 3 | 12.5% |
+| **TOTAL** | **137** | **116** | **84.7%** |
 
 **Test Coverage**: 100/143 sites (69.9%) - 21 migrated sites need tests added
 

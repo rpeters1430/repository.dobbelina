@@ -46,15 +46,19 @@ Run the sync checker to verify:
 
 ---
 
-## Category 3: Recommended Workflow (PowerShell)
+## Category 3: Recommended Workflow
 
-```powershell
-# Fetch and list upstream deltas (excluding version bumps)
-.\scripts\check_upstream_sync.ps1
-
-# Cherry-pick with tracking (prompts per commit)
-.\scripts\cherry_pick_with_tracking.ps1 <hash> [<hash> ...]
+```bash
+# Run the automated sync manager
+python scripts/sync_manager.py
 ```
+
+The script automates:
+- Fetching upstream
+- Identifying new commits not in fork
+- Auto-skipping BS4-migrated sites
+- Cherry-picking with tracking
+- Updating `UPSTREAM_SYNC.md`
 
 ---
 

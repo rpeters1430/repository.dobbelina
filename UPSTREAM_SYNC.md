@@ -161,6 +161,20 @@ git log --all --grep='cherry picked from commit <hash>'
 
 **Recommended workflow:**
 
+Use the automated Sync Manager:
+```bash
+python scripts/sync_manager.py
+```
+
+This script will:
+1. Fetch latest from upstream
+2. Identify new commits
+3. Auto-skip fixes for sites already migrated to BeautifulSoup4
+4. Prompt for cherry-picking remaining commits
+5. Automatically update this file (`UPSTREAM_SYNC.md`)
+
+**Manual workflow (if needed):**
+
 1. **Weekly/Monthly sync check**:
    ```bash
    git fetch upstream

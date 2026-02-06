@@ -16,11 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
 import json
 from six.moves import urllib_parse
+
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
+from resources.lib.sites.soup_spec import SoupSiteSpec
 
 site = AdultSite(
     "xmoviesforyou",
@@ -28,6 +29,16 @@ site = AdultSite(
     "https://xmoviesforyou.com/",
     "xmoviesforyou.png",
     "xmoviesforyou",
+)
+
+VIDEO_LIST_SPEC = SoupSiteSpec(
+    selectors={
+        "items": ".grid-box-img",
+        "url": {"selector": "a", "attr": "href"},
+        "title": {"selector": "a", "attr": "title", "clean": True},
+        "thumbnail": {"selector": "img", "attr": "src"},
+        "pagination": {"selector": "a.next.page-numbers", "attr": "href"},
+    }
 )
 
 
@@ -48,43 +59,34 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, "")
-    match = re.compile(
-        r'class="grid-box-img"><a href="([^"]+)" rel="bookmark" title="([^"]+)">.+?src="([^"]+)"',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    if not match:
+    listhtml = utils.getHtml(url, site.url)
+    if not listhtml:
+        utils.eod()
         return
-    for videopage, name, img in match:
-        name = name.replace("[", "[COLOR pink]").replace("] ", "[/COLOR] ")
-        name = utils.cleantext(name)
 
-        contextmenu = []
+    soup = utils.parse_html(listhtml)
+
+    def context_menu_builder(item_url, item_title):
         contexturl = (
             utils.addon_sys
-            + "?mode="
-            + str("xmoviesforyou.Lookupinfo")
-            + "&url="
-            + urllib_parse.quote_plus(videopage)
+            + "?mode=xmoviesforyou.Lookupinfo&url="
+            + urllib_parse.quote_plus(item_url)
         )
-        contextmenu.append(
-            ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
-        )
+        return [("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")]
 
-        site.add_download_link(
-            name, videopage, "Playvid", img, name, contextm=contextmenu
-        )
-    nextp = re.compile(
-        r'class="next page-numbers"\s*href="([^"]+)">Next', re.DOTALL | re.IGNORECASE
-    ).findall(listhtml)
-    if nextp:
-        np = nextp[0]
-        npage = re.findall(r"\d+", np)[-1]
-        lastp = re.compile(
-            r'>([^<]+)<[^"]+class="next page-numbers"', re.DOTALL | re.IGNORECASE
-        ).findall(listhtml)
-        lpage = "/" + lastp[0] if lastp else ""
-        site.add_dir("Next Page ({}{})".format(npage, lpage), np, "List", site.img_next)
+    # Custom title formatting from original site
+    # name = name.replace("[", "[COLOR pink]").replace("] ", "[/COLOR] ")
+    def title_transform(title, item):
+        if title:
+            return title.replace("[", "[COLOR pink]").replace("] ", "[/COLOR] ")
+        return title
+
+    # Update selectors for this run to include the transform
+    selectors = VIDEO_LIST_SPEC.selectors.copy()
+    selectors["title"] = selectors["title"].copy()
+    selectors["title"]["transform"] = title_transform
+
+    VIDEO_LIST_SPEC.run(site, soup, selectors=selectors, contextm=context_menu_builder)
     utils.eod()
 
 
@@ -108,16 +110,31 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url, "")
+    if not cathtml:
+        utils.eod()
+        return
     catjson = json.loads(cathtml)
     jdata = []
     i = 0
+    # The original loop seems to try to fetch multiple pages of categories
     while i < 10 and len(catjson) > 0:
         i += 1
         jdata += catjson
-        url = url.split("?page=")
-        url[1] = str(int(url[1]) + 1)
-        url = "?page=".join(url)
+        # Parse current page and increment
+        parsed_url = urllib_parse.urlparse(url)
+        params = urllib_parse.parse_qs(parsed_url.query)
+        current_page = int(params.get("page", [1])[0])
+        next_page = current_page + 1
+        
+        # Build next URL
+        query = params.copy()
+        query["page"] = [str(next_page)]
+        new_query = urllib_parse.urlencode(query, doseq=True)
+        url = urllib_parse.urlunparse(parsed_url._replace(query=new_query))
+        
         cathtml = utils.getHtml(url, "")
+        if not cathtml:
+            break
         catjson = json.loads(cathtml)
 
     for category in jdata:

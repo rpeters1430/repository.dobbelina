@@ -304,4 +304,6 @@ def fixture_mapped_get_html(monkeypatch, module, url_map):
         raise AssertionError(f"No fixture mapped for URL: {url}")
 
     monkeypatch.setattr(module.utils, "getHtml", _fake_get_html)
+    if hasattr(module.utils, "_getHtml"):
+        monkeypatch.setattr(module.utils, "_getHtml", _fake_get_html)
     return _fake_get_html

@@ -25,7 +25,7 @@ from resources.lib.decrypters.kvsplayer import kvs_decode
 site = AdultSite(
     "freshporno",
     "[COLOR hotpink]FreshPorno[/COLOR]",
-    "https://freshporno.net/",
+    "https://freshporno.org/",
     "freshporno.png",
     "freshporno",
 )
@@ -57,58 +57,27 @@ def List(url):
     listhtml = utils.getHtml(url, "")
     soup = utils.parse_html(listhtml)
 
-    video_items = soup.select(".thumbs-inner")
-    if not video_items:
-        return
+    def context_menu_builder(item_url, item_title):
+        contexturl = (
+            utils.addon_sys
+            + "?mode="
+            + str("freshporno.Lookupinfo")
+            + "&url="
+            + urllib_parse.quote_plus(item_url)
+        )
+        return [
+            ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
+        ]
 
-    for item in video_items:
-        try:
-            link = item.select_one("a[href]")
-            if not link:
-                continue
+    spec = {
+        "items": ".thumbs-inner",
+        "url": {"selector": "a[href]", "attr": "href"},
+        "title": {"selector": "a[title]", "attr": "title"},
+        "thumbnail": {"selector": "img", "attr": "data-original"},
+        "pagination": {"selector": "a.next[href]", "attr": "href"},
+    }
 
-            videopage = utils.safe_get_attr(link, "href")
-            name = utils.safe_get_attr(link, "title")
-            img_tag = item.select_one("img")
-            img = utils.safe_get_attr(img_tag, "data-original")
-
-            if not videopage or not name or not img:
-                continue
-
-            name = utils.cleantext(name)
-
-            contextmenu = []
-            contexturl = (
-                utils.addon_sys
-                + "?mode="
-                + str("freshporno.Lookupinfo")
-                + "&url="
-                + urllib_parse.quote_plus(videopage)
-            )
-            contextmenu.append(
-                ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
-            )
-
-            site.add_download_link(
-                name, videopage, "Playvid", img, name, contextm=contextmenu
-            )
-
-        except Exception as e:
-            utils.kodilog("Error parsing video item: " + str(e))
-            continue
-
-    # Handle pagination
-    next_link = soup.select_one("a.next[href]")
-    if next_link:
-        next_href = utils.safe_get_attr(next_link, "href")
-        if next_href:
-            page_number = next_href.split("/")[-2]
-            site.add_dir(
-                "Next Page (" + page_number + ")",
-                site.url + next_href,
-                "List",
-                site.img_next,
-            )
+    utils.soup_videos_list(site, soup, spec, contextm=context_menu_builder)
     utils.eod()
 
 
@@ -121,9 +90,23 @@ def Playvid(url, name, download=None):
 
     videourl = None
     sources = {}
-    license = re.compile(
-        r"license_code:\s*'([^']+)", re.DOTALL | re.IGNORECASE
-    ).findall(vpage)[0]
+    
+    license_match = re.search(r"license_code:\s*'([^']+)", vpage, re.IGNORECASE)
+    if not license_match:
+        # Fallback to download button search if no license found (likely different player)
+        match = re.search(
+            r'href="([^"]+)"\s*class="btn-download"', vpage, re.IGNORECASE | re.DOTALL
+        )
+        if match:
+            videourl = match.group(1)
+            vp.play_from_direct_link(videourl)
+            return
+        
+        vp.progress.close()
+        utils.notify("Oh Oh", "No license or video found")
+        return
+
+    license = license_match.group(1)
     patterns = [
         r"video_url:\s*'([^']+)[^;]+?video_url_text:\s*'([^']+)",
         r"video_alt_url:\s*'([^']+)[^;]+?video_alt_url_text:\s*'([^']+)",
@@ -311,11 +294,46 @@ def Models(url):
 
 @site.register()
 def Lookupinfo(url):
-    lookup_list = [
-        ("Channel", '/(channels/[^"]+)">([^<]+)<', ""),
-        ("Tag", '/(tags[^"]+)">[^<]+<[^<]+</i>([^<]+)<', ""),
-        ("Actor", '/(models/[^"]+)">([^<]+)<', ""),
-    ]
+    listhtml = utils.getHtml(url)
+    soup = utils.parse_html(listhtml)
 
-    lookupinfo = utils.LookupInfo(site.url, url, "freshporno.List", lookup_list)
-    lookupinfo.getinfo()
+    infodict = {}
+
+    # Channels
+    for link in soup.select('a[href*="/channels/"]'):
+        title = utils.safe_get_attr(link, "title") or utils.safe_get_text(link)
+        href = utils.safe_get_attr(link, "href")
+        if title and href:
+            name = "Channel - {}".format(utils.cleantext(title))
+            infodict[name] = (urllib_parse.urljoin(site.url, href), "freshporno.List")
+
+    # Tags
+    for link in soup.select('a[href*="/tags/"]'):
+        if link.select_one("i.fa-tag"):
+            title = utils.safe_get_text(link).replace("icon", "").strip()
+            href = utils.safe_get_attr(link, "href")
+            if title and href:
+                name = "Tag - {}".format(utils.cleantext(title))
+                infodict[name] = (urllib_parse.urljoin(site.url, href), "freshporno.List")
+
+    # Models
+    for link in soup.select('a[href*="/models/"]'):
+        title = utils.safe_get_attr(link, "title") or utils.safe_get_text(link)
+        href = utils.safe_get_attr(link, "href")
+        if title and href:
+            name = "Actor - {}".format(utils.cleantext(title))
+            infodict[name] = (urllib_parse.urljoin(site.url, href), "freshporno.List")
+
+    if infodict:
+        selected_item = utils.selector("Choose item", infodict, show_on_one=True)
+        if selected_item:
+            contexturl = (
+                utils.addon_sys
+                + "?mode="
+                + selected_item[1]
+                + "&url="
+                + urllib_parse.quote_plus(selected_item[0])
+            )
+            utils.xbmc.executebuiltin("Container.Update(" + contexturl + ")")
+    else:
+        utils.notify("Oh Oh", "No info found")

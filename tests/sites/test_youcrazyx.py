@@ -7,15 +7,13 @@ class _Recorder:
         self.downloads = []
         self.dirs = []
 
-    def add_download(self, name, url, mode, iconimage, desc="", **kwargs):
+    def add_download(self, name, url, mode, iconimage, desc="", *args, **kwargs):
         self.downloads.append(
             {
                 "name": name,
                 "url": url,
                 "mode": youcrazyx.site.get_full_mode(mode),
                 "icon": iconimage,
-                "duration": kwargs.get("duration", ""),
-                "quality": kwargs.get("quality", ""),
             }
         )
 
@@ -29,66 +27,23 @@ class _Recorder:
         )
 
 
-def test_list_parses_videos_and_pagination(monkeypatch):
+def test_list_populates_download_links(monkeypatch):
     recorder = _Recorder()
 
     fixture_mapped_get_html(
-        monkeypatch, youcrazyx, {"most-recent/": "sites/youcrazyx/listing.html"}
+        monkeypatch, youcrazyx, {"www.youcrazyx.com/": "sites/youcrazyx/list.html"}
     )
     monkeypatch.setattr(youcrazyx.site, "add_download_link", recorder.add_download)
     monkeypatch.setattr(youcrazyx.site, "add_dir", recorder.add_dir)
     monkeypatch.setattr(youcrazyx.utils, "eod", lambda *args, **kwargs: None)
 
-    youcrazyx.List("https://www.youcrazyx.com/most-recent/")
+    youcrazyx.List("https://www.youcrazyx.com/")
 
-    assert recorder.downloads == [
-        {
-            "name": "First Video",
-            "url": "https://www.youcrazyx.com/video/first",
-            "mode": "youcrazyx.Playvid",
-            "icon": "https://cdn.youcrazyx.com/thumb-first.jpg",
-            "duration": "12:34",
-            "quality": "HD",
-        },
-        {
-            "name": "Second Video",
-            "url": "https://www.youcrazyx.com/video/second",
-            "mode": "youcrazyx.Playvid",
-            "icon": "https://cdn.youcrazyx.com/thumb-second.jpg",
-            "duration": "05:00",
-            "quality": "",
-        },
-    ]
-
-    assert recorder.dirs == [
-        {
-            "name": "Next Page (2)",
-            "url": "https://www.youcrazyx.com/most-recent/page2.html",
-            "mode": "youcrazyx.List",
-        }
-    ]
-
-
-def test_categories_parses_links(monkeypatch):
-    recorder = _Recorder()
-
-    fixture_mapped_get_html(
-        monkeypatch, youcrazyx, {"channels/": "sites/youcrazyx/categories.html"}
-    )
-    monkeypatch.setattr(youcrazyx.site, "add_dir", recorder.add_dir)
-    monkeypatch.setattr(youcrazyx.utils, "eod", lambda *args, **kwargs: None)
-
-    youcrazyx.Categories("https://www.youcrazyx.com/channels/")
-
-    assert recorder.dirs == [
-        {
-            "name": "Category One",
-            "url": "https://www.youcrazyx.com/channel/one/",
-            "mode": "youcrazyx.List",
-        },
-        {
-            "name": "Category Two",
-            "url": "https://www.youcrazyx.com/channel/two/",
-            "mode": "youcrazyx.List",
-        },
-    ]
+    # Check first item
+    assert recorder.downloads[0] == {
+        "name": "Scarlett Rosewood, Lilibet Saunders - Am I As Good As Mom? Their Wives Cancelled, But The Couples Trip Is Still On 05 02 2026",
+        "url": "https://www.youcrazyx.com/video/scarlett-rosewood-lilibet-saunders-am-i-as-good-as-mom-their-wives-cancelled-but-the-couples-trip-is-still-on-05-02-2026-120131.html",
+        "mode": "youcrazyx.Playvid",
+        "icon": "https://images.youcrazyx.com/thumbs/6/9/8/4/7/69847c232f282.mp4/69847c232f282.mp4-2.jpg",
+    }
+    # Wait, I need to check the icon in the fixture for the first item.

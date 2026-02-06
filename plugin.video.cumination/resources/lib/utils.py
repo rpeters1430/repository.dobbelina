@@ -456,13 +456,17 @@ def soup_videos_list(
                 else static_description
             )
 
+        item_contextm = contextm
+        if callable(contextm):
+            item_contextm = contextm(video_url, name)
+
         site.add_download_link(
             name,
             video_url,
             play_mode,
             thumb,
             desc=desc_value or "",
-            contextm=contextm,
+            contextm=item_contextm,
             fanart=fanart,
             duration=duration,
             quality=quality,

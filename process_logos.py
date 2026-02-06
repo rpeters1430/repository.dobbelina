@@ -145,6 +145,50 @@ def process_logo(input_path, output_path, site_id):
         return False
 
 
+def create_placeholder_logo(display_name, output_path, bg_color="hotpink"):
+    """Create a placeholder logo with the site name"""
+    try:
+        # Clean up display name (remove Kodi color tags)
+        clean_name = re.sub(r"\[COLOR.*?\]|\[/COLOR\]", "", display_name)
+
+        print(f"  Creating placeholder logo for: {clean_name}")
+
+        cmd = [
+            "magick",
+            "-size",
+            "256x256",
+            f"canvas:{bg_color}",
+            "-fill",
+            "white",
+            "-gravity",
+            "center",
+            "-font",
+            "Arial",
+            "-pointsize",
+            "40",
+            f"caption:{clean_name}",
+            str(output_path),
+        ]
+
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode == 0:
+            print(f"  [SUCCESS] Created placeholder: {output_path.name}")
+            return True
+        else:
+            # Try without specific font if Arial fails
+            cmd.pop(cmd.index("-font") + 1)
+            cmd.pop(cmd.index("-font"))
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode == 0:
+                print(f"  [SUCCESS] Created placeholder (default font): {output_path.name}")
+                return True
+            print(f"  [ERROR] Placeholder creation failed: {result.stderr}")
+            return False
+    except Exception as e:
+        print(f"  [ERROR] Placeholder creation failed: {e}")
+        return False
+
+
 def get_sites_needing_logos():
     """Extract all sites that need local logos"""
     sites_needing_logos = []
@@ -153,9 +197,9 @@ def get_sites_needing_logos():
     remote_url_pattern = re.compile(
         r"site\s*=\s*AdultSite\s*\(\s*"
         r"['\"]([^'\"]+)['\"]"  # site_id (group 1)
-        r"\s*,\s*['\"][^'\"]*['\"]"  # display_name
+        r"\s*,\s*['\"]([^'\"]+)['\"]"  # display_name (group 2)
         r"\s*,\s*['\"][^'\"]*['\"]"  # base_url
-        r"\s*,\s*['\"]((https?://|http://)[^'\"]+)['\"]",  # logo_url (group 2, starts with http)
+        r"\s*,\s*['\"]((https?://|http://)[^'\"]+)['\"]",  # logo_url (group 3, starts with http)
         re.DOTALL,
     )
 
@@ -170,10 +214,12 @@ def get_sites_needing_logos():
 
             if match:
                 site_id = match.group(1)
-                logo_url = match.group(2)
+                display_name = match.group(2)
+                logo_url = match.group(3)
                 sites_needing_logos.append(
                     {
                         "site_id": site_id,
+                        "display_name": display_name,
                         "logo_url": logo_url,
                         "module": site_file.name,
                         "expected_filename": f"{site_id}.png",
@@ -195,6 +241,7 @@ def download_and_process_missing_logos():
     print(f"Found {len(sites)} sites with remote logo URLs\n")
 
     success_count = 0
+    placeholder_count = 0
     failed = []
 
     for i, site in enumerate(sites, 1):
@@ -211,9 +258,17 @@ def download_and_process_missing_logos():
                 # Clean up temp file
                 temp_file.unlink(missing_ok=True)
             else:
-                failed.append(site)
+                # Fallback to placeholder if processing failed
+                if create_placeholder_logo(site["display_name"], final_file):
+                    placeholder_count += 1
+                else:
+                    failed.append(site)
         else:
-            failed.append(site)
+            # Fallback to placeholder if download failed
+            if create_placeholder_logo(site["display_name"], final_file):
+                placeholder_count += 1
+            else:
+                failed.append(site)
 
         print()
 
@@ -221,6 +276,8 @@ def download_and_process_missing_logos():
     print(f"SUMMARY")
     print(f"{'=' * 80}")
     print(f"Successfully processed: {success_count}/{len(sites)}")
+    print(f"Placeholders created:  {placeholder_count}")
+    print(f"Total successful:      {success_count + placeholder_count}/{len(sites)}")
     print(f"Failed: {len(failed)}")
 
     if failed:
@@ -324,6 +381,77 @@ def validate_all_logos():
     return len(issues) == 0
 
 
+def test_logo_source():
+    """Test a logo from a URL or local file"""
+    print(f"\n{'=' * 80}")
+    print(f"TEST LOGO SOURCE")
+    print(f"{'=' * 80}\n")
+
+    source = input("Enter logo URL or path to local file: ").strip()
+    if not source:
+        return
+
+    site_id = input("Enter site ID (for filename): ").strip()
+    if not site_id:
+        site_id = "test_logo"
+
+    temp_file = TEMP_DIR / f"test_temp{Path(source).suffix if 'http' in source else Path(source).suffix}"
+    final_file = IMAGES_DIR / f"{site_id}.png"
+
+    if source.startswith("http"):
+        if not download_logo(source, temp_file):
+            print("[ERROR] Download failed")
+            return
+        input_path = temp_file
+    else:
+        input_path = Path(source)
+        if not input_path.exists():
+            print(f"[ERROR] Local file not found: {input_path}")
+            return
+
+    if process_logo(input_path, final_file, site_id):
+        print(f"\n[SUCCESS] Logo processed and saved to: {final_file}")
+        # On Windows, try to open the file
+        if sys.platform == "win32":
+            try:
+                os.startfile(final_file)
+            except Exception:
+                pass
+    else:
+        print("\n[ERROR] Logo processing failed")
+
+    # Clean up temp
+    if temp_file.exists():
+        temp_file.unlink()
+
+
+def manual_placeholder():
+    """Manually create a placeholder logo"""
+    print(f"\n{'=' * 80}")
+    print(f"CREATE PLACEHOLDER LOGO")
+    print(f"{'=' * 80}\n")
+
+    display_name = input("Enter site display name: ").strip()
+    if not display_name:
+        return
+
+    site_id = input("Enter site ID (for filename): ").strip()
+    if not site_id:
+        site_id = display_name.lower().replace(" ", "_")
+
+    final_file = IMAGES_DIR / f"{site_id}.png"
+
+    if create_placeholder_logo(display_name, final_file):
+        print(f"\n[SUCCESS] Placeholder created and saved to: {final_file}")
+        if sys.platform == "win32":
+            try:
+                os.startfile(final_file)
+            except Exception:
+                pass
+    else:
+        print("\n[ERROR] Placeholder creation failed")
+
+
 def main():
     """Main execution"""
     print("Cumination Logo Processing Script")
@@ -340,14 +468,16 @@ def main():
 
     # Menu
     print(f"\nOptions:")
-    print("  1. Download and process all missing logos (48 sites)")
+    print("  1. Download and process all missing logos")
     print("  2. Convert existing JPG/GIF logos to PNG")
     print("  3. Resize all existing logos to 256x256")
     print("  4. Validate all logos")
     print("  5. Run all tasks (full standardization)")
-    print("  6. Exit")
+    print("  6. Test a logo source (URL or file)")
+    print("  7. Create placeholder logo manually")
+    print("  8. Exit")
 
-    choice = input("\nSelect option (1-6): ").strip()
+    choice = input("\nSelect option (1-8): ").strip()
 
     if choice == "1":
         download_and_process_missing_logos()
@@ -362,6 +492,10 @@ def main():
         convert_existing_logos()
         validate_all_logos()
     elif choice == "6":
+        test_logo_source()
+    elif choice == "7":
+        manual_placeholder()
+    elif choice == "8":
         print("Exiting...")
         sys.exit(0)
     else:

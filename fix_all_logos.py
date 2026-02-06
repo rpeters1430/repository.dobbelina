@@ -182,6 +182,46 @@ def get_favicon_from_site(base_url):
     return favicon_urls
 
 
+def create_placeholder_logo(display_name, output_path):
+    """Create a placeholder logo with the site name"""
+    try:
+        # Clean up display name (remove Kodi color tags)
+        clean_name = re.sub(r"\[COLOR.*?\]|\[/COLOR\]", "", display_name)
+
+        print(f"    Creating placeholder logo for: {clean_name}")
+
+        cmd = [
+            "magick",
+            "-size",
+            "256x256",
+            "canvas:hotpink",
+            "-fill",
+            "white",
+            "-gravity",
+            "center",
+            "-font",
+            "Arial",
+            "-pointsize",
+            "40",
+            f"caption:{clean_name}",
+            str(output_path),
+        ]
+
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode == 0:
+            print(f"    [SUCCESS] Created placeholder: {output_path.name}")
+            return True
+        else:
+            # Try without specific font
+            cmd.pop(cmd.index("-font") + 1)
+            cmd.pop(cmd.index("-font"))
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            return result.returncode == 0
+    except Exception as e:
+        print(f"    [ERROR] Placeholder creation failed: {e}")
+        return False
+
+
 def extract_all_sites():
     """Extract all site configurations from site modules"""
     sites = []
@@ -191,9 +231,9 @@ def extract_all_sites():
     pattern = re.compile(
         r"(site\d*)\s*=\s*AdultSite\s*\(\s*"
         r'["\']([^"\']+)["\']\s*,\s*'  # site_id (group 2)
-        r'["\'][^"\']*["\']\s*,\s*'  # display_name
-        r'["\']([^"\']+)["\']\s*,\s*'  # base_url (group 3)
-        r'["\']([^"\']+)["\']',  # logo_file (group 4)
+        r'["\']([^"\']+)["\']\s*,\s*'  # display_name (group 3)
+        r'["\']([^"\']+)["\']\s*,\s*'  # base_url (group 4)
+        r'["\']([^"\']+)["\']',  # logo_file (group 5)
         re.MULTILINE,
     )
 
@@ -207,8 +247,9 @@ def extract_all_sites():
             for match in pattern.finditer(content):
                 var_name = match.group(1)
                 site_id = match.group(2)
-                base_url = match.group(3)
-                logo_file = match.group(4)
+                display_name = match.group(3)
+                base_url = match.group(4)
+                logo_file = match.group(5)
 
                 is_remote = logo_file.startswith("http://") or logo_file.startswith(
                     "https://"
@@ -216,16 +257,12 @@ def extract_all_sites():
                 expected_filename = f"{site_id}.png"
 
                 # Check if local file exists
-                # First check the convention (site_id.png)
                 local_exists = (IMAGES_DIR / expected_filename).exists()
 
-                # If not remote and doesn't exist, check if the referenced file exists
-                # (e.g., vvp.jpg when we expect viralvideosporno.png)
                 current_file_exists = False
                 needs_extension_fix = False
                 if not is_remote:
                     current_file_exists = (IMAGES_DIR / logo_file).exists()
-                    # Check if same file exists with .png extension
                     png_version = Path(logo_file).with_suffix(".png")
                     if (IMAGES_DIR / png_version).exists() and not current_file_exists:
                         needs_extension_fix = True
@@ -233,6 +270,7 @@ def extract_all_sites():
                 sites.append(
                     {
                         "site_id": site_id,
+                        "display_name": display_name,
                         "var_name": var_name,
                         "base_url": base_url,
                         "logo_file": logo_file,
@@ -257,6 +295,7 @@ def download_and_process_logo(site_info):
     site_id = site_info["site_id"]
     base_url = site_info["base_url"]
     expected_filename = site_info["expected_filename"]
+    display_name = site_info["display_name"]
 
     print(f"  Attempting to download logo for {site_id}...")
 
@@ -273,7 +312,6 @@ def download_and_process_logo(site_info):
     for url in urls_to_try:
         print(f"    Trying: {url}")
 
-        # Determine temp file extension
         ext = Path(url).suffix
         if not ext or ext not in [".png", ".jpg", ".jpeg", ".gif", ".ico", ".svg"]:
             ext = ".png"
@@ -290,9 +328,10 @@ def download_and_process_logo(site_info):
         else:
             print(f"    Download failed, trying next URL...")
 
-        time.sleep(0.5)  # Be polite
+        time.sleep(0.5)
 
-    return False
+    # Final fallback: create placeholder
+    return create_placeholder_logo(display_name, IMAGES_DIR / expected_filename)
 
 
 def update_site_code(site_info):

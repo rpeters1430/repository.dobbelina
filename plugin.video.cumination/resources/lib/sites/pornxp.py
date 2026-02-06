@@ -16,10 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
 from six.moves import urllib_parse
+
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
+from resources.lib.sites.soup_spec import SoupSiteSpec
 
 site = AdultSite(
     "pornxp",
@@ -27,6 +28,24 @@ site = AdultSite(
     "https://pornxp.com-mirror.com/",
     "pornxp.png",
     "pornxp",
+)
+
+VIDEO_LIST_SPEC = SoupSiteSpec(
+    selectors={
+        "items": ".item_cont",
+        "url": {"selector": 'a[href*="/videos/"]', "attr": "href"},
+        "title": {"selector": ".item_title", "text": True},
+        "thumbnail": {
+            "selector": "img.item_img",
+            "attr": "data-src",
+            "fallback_attrs": ["src"],
+        },
+        "duration": {"selector": ".item_dur", "text": True},
+        "pagination": {
+            "selector": '#pages span:has(a.chosen) + span a, #pages a:-soup-contains(">")',
+            "attr": "href",
+        },
+    }
 )
 
 
@@ -51,51 +70,22 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, "")
-    match = re.compile(
-        'item_cont">.*?href="/([^"]+)".*?(?:data-)*src="([^"]+jpg)".*?dur">([^<]+)<.*?item_title">([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    if not match:
+    listhtml = utils.getHtml(url, site.url)
+    if not listhtml:
+        utils.eod()
         return
-    for videopage, img, duration, name in match:
-        name = utils.cleantext(name)
-        img = "https:" + img if img.startswith("//") else img
-        videopage = site.url + videopage
 
-        contextmenu = []
+    soup = utils.parse_html(listhtml)
+
+    def context_menu_builder(item_url, item_title):
         contexturl = (
             utils.addon_sys
-            + "?mode="
-            + str("pornxp.Lookupinfo")
-            + "&url="
-            + urllib_parse.quote_plus(videopage)
+            + "?mode=pornxp.Lookupinfo&url="
+            + urllib_parse.quote_plus(item_url)
         )
-        contextmenu.append(
-            ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
-        )
+        return [("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")]
 
-        site.add_download_link(
-            name,
-            videopage,
-            "Playvid",
-            img,
-            name,
-            contextm=contextmenu,
-            duration=duration,
-        )
-
-    np = re.compile(
-        r'"chosen">\d*<.*?href="/([^"]+)"[^>]+>(\d+?)<', re.DOTALL | re.IGNORECASE
-    ).search(listhtml)
-    if np:
-        page_number = np.group(2)
-        site.add_dir(
-            "Next Page (" + page_number + ")",
-            site.url + np.group(1),
-            "List",
-            site.img_next,
-        )
+    VIDEO_LIST_SPEC.run(site, soup, contextm=context_menu_builder)
     utils.eod()
 
 
@@ -105,22 +95,31 @@ def Playvid(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
     videopage = utils.getHtml(url, site.url, ignoreCertificateErrors=True)
+    if not videopage:
+        vp.progress.close()
+        return
 
+    soup = utils.parse_html(videopage)
     sources = {}
-    srcs = re.compile(
-        r'source\s*src="([^"]+)"\s*title="([^"]+)"', re.DOTALL | re.IGNORECASE
-    ).findall(videopage)
-    for src, quality in srcs:
-        sources[quality] = src
+    for source in soup.select("video source"):
+        src = utils.safe_get_attr(source, "src")
+        quality = utils.safe_get_attr(source, "title")
+        if src and quality:
+            sources[quality] = src
+
     videourl = utils.prefquality(
         sources,
-        sort_by=lambda x: int("".join([y for y in x if y.isdigit()])),
+        sort_by=lambda x: int("".join([y for y in x if y.isdigit() or "0"]))
+        if any(c.isdigit() for c in x)
+        else 0,
         reverse=True,
     )
+
     if not videourl:
         vp.progress.close()
         return
-    videourl = "https:" + videourl if videourl.startswith("//") else videourl
+
+    videourl = urllib_parse.urljoin(site.url, videourl)
     vp.progress.update(75, "[CR]Video found[CR]")
     vp.play_from_direct_link(videourl)
 
@@ -137,16 +136,17 @@ def Search(url, keyword=None):
 @site.register()
 def Tags(url):
     listhtml = utils.getHtml(url)
-    tagpart = re.compile('class="tags">(.*?)</div', re.DOTALL | re.IGNORECASE).findall(
-        listhtml
-    )
-    for tags in tagpart:
-        match = re.compile(
-            'href="/([^"]+)">([^<]+)<', re.DOTALL | re.IGNORECASE
-        ).findall(tags)
-        for tagpage, name in match:
-            name = utils.cleantext(name.strip())
-            site.add_dir(name, site.url + tagpage + "?sort=new", "List", "")
+    if not listhtml:
+        utils.eod()
+        return
+
+    soup = utils.parse_html(listhtml)
+    for tag_container in soup.select(".tags"):
+        for anchor in tag_container.select("a"):
+            name = utils.cleantext(utils.safe_get_text(anchor))
+            href = utils.safe_get_attr(anchor, "href")
+            if name and href:
+                site.add_dir(name, site.url + href.lstrip("/") + "?sort=new", "List", "")
 
     utils.eod()
 

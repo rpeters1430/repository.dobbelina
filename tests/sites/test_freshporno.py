@@ -14,7 +14,7 @@ class TestFreshPorno:
         """Test that the site is properly initialized"""
         assert freshporno.site.name == "freshporno"
         assert "[COLOR hotpink]FreshPorno[/COLOR]" in freshporno.site.title
-        assert freshporno.site.url == "https://freshporno.net/"
+        assert freshporno.site.url == "https://freshporno.org/"
         assert "freshporno.png" in freshporno.site.image
 
     def test_main_function_structure(self):
@@ -76,18 +76,18 @@ class TestFreshPorno:
         assert callable(func)
 
     def test_bs4_usage_in_list_function(self):
-        """Test that List function uses BeautifulSoup instead of regex"""
+        """Test that List function uses BeautifulSoup or soup_videos_list"""
         import inspect
 
         source = inspect.getsource(freshporno.List)
 
-        # Should use BeautifulSoup
+        # Should use BeautifulSoup or helper
         assert "utils.parse_html" in source
-        assert "soup.select" in source
+        assert "soup.select" in source or "utils.soup_videos_list" in source
 
         # Should not use old regex patterns
         assert "re.compile" not in source
-        assert "thumbs-inner" not in source or "soup.select" in source
+        assert "thumbs-inner" in source  # It's okay to have it in the spec now
 
     def test_bs4_usage_in_tags_function(self):
         """Test that Tags function uses BeautifulSoup"""
@@ -123,15 +123,13 @@ class TestFreshPorno:
         assert "content-wrapper" in source
 
     def test_error_handling_in_list_function(self):
-        """Test that List function has proper error handling"""
+        """Test that List function has proper error handling (via helper)"""
         import inspect
 
         source = inspect.getsource(freshporno.List)
 
-        # Should have try-except blocks
-        assert "try:" in source
-        assert "except" in source
-        assert "utils.kodilog" in source
+        # Should have try-except blocks or use helper which has them
+        assert "try:" in source or "utils.soup_videos_list" in source
 
     def test_error_handling_in_tags_function(self):
         """Test that Tags function has proper error handling"""
@@ -167,25 +165,23 @@ class TestFreshPorno:
         assert "utils.kodilog" in source
 
     def test_video_item_parsing_logic(self):
-        """Test that video item parsing uses bs4 methods"""
+        """Test that video item parsing uses bs4 methods or helper"""
         import inspect
 
         source = inspect.getsource(freshporno.List)
 
-        # Should use bs4 selectors
+        # Should use bs4 selectors or helper
         assert ".thumbs-inner" in source
-        assert "select_one" in source
-        assert "safe_get_attr" in source
-        assert "data-original" in source
+        assert "select_one" in source or "utils.soup_videos_list" in source
 
     def test_pagination_handling_in_list(self):
-        """Test that pagination is handled with bs4 in List function"""
+        """Test that pagination is handled with bs4 or helper"""
         import inspect
 
         source = inspect.getsource(freshporno.List)
 
-        # Should use bs4 for pagination
-        assert "soup.select_one" in source
+        # Should use bs4 for pagination or helper
+        assert "soup.select_one" in source or "utils.soup_videos_list" in source
         assert "a.next" in source
 
     def test_pagination_handling_in_models(self):
