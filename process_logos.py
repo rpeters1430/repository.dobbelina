@@ -180,7 +180,9 @@ def create_placeholder_logo(display_name, output_path, bg_color="hotpink"):
             cmd.pop(cmd.index("-font"))
             result = subprocess.run(cmd, capture_output=True, text=True)
             if result.returncode == 0:
-                print(f"  [SUCCESS] Created placeholder (default font): {output_path.name}")
+                print(
+                    f"  [SUCCESS] Created placeholder (default font): {output_path.name}"
+                )
                 return True
             print(f"  [ERROR] Placeholder creation failed: {result.stderr}")
             return False
@@ -395,7 +397,10 @@ def test_logo_source():
     if not site_id:
         site_id = "test_logo"
 
-    temp_file = TEMP_DIR / f"test_temp{Path(source).suffix if 'http' in source else Path(source).suffix}"
+    temp_file = (
+        TEMP_DIR
+        / f"test_temp{Path(source).suffix if 'http' in source else Path(source).suffix}"
+    )
     final_file = IMAGES_DIR / f"{site_id}.png"
 
     if source.startswith("http"):

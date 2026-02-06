@@ -72,7 +72,9 @@ def List(url):
             + "?mode=xmoviesforyou.Lookupinfo&url="
             + urllib_parse.quote_plus(item_url)
         )
-        return [("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")]
+        return [
+            ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
+        ]
 
     # Custom title formatting from original site
     # name = name.replace("[", "[COLOR pink]").replace("] ", "[/COLOR] ")
@@ -125,13 +127,13 @@ def Categories(url):
         params = urllib_parse.parse_qs(parsed_url.query)
         current_page = int(params.get("page", [1])[0])
         next_page = current_page + 1
-        
+
         # Build next URL
         query = params.copy()
         query["page"] = [str(next_page)]
         new_query = urllib_parse.urlencode(query, doseq=True)
         url = urllib_parse.urlunparse(parsed_url._replace(query=new_query))
-        
+
         cathtml = utils.getHtml(url, "")
         if not cathtml:
             break
