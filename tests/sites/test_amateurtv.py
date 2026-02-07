@@ -18,10 +18,10 @@ def test_list_parses_json(monkeypatch):
                     "country": "ES",
                     "quality": "1080p",
                     "topic": {"text": "Topic 1"},
-                    "isInPrivateExclusive": False
+                    "isInPrivateExclusive": False,
                 }
             ],
-            "totalCount": 300
+            "totalCount": 300,
         }
     }
 
@@ -60,20 +60,23 @@ def test_list_parses_json(monkeypatch):
 def test_playvid_parses_json(monkeypatch):
     """Test that Playvid correctly parses video source JSON."""
     mock_play_data = {
-        "videoTechnologies": {
-            "fmp4-hls": "https://stream.amateur.tv/playlist.m3u8"
-        }
+        "videoTechnologies": {"fmp4-hls": "https://stream.amateur.tv/playlist.m3u8"}
     }
 
     play_calls = []
 
     class FakeVideoPlayer:
         def __init__(self, name):
-            self.progress = type('obj', (object,), {'update': lambda *a: None, 'close': lambda *a: None})
+            self.progress = type(
+                "obj", (object,), {"update": lambda *a: None, "close": lambda *a: None}
+            )
+
         def play_from_direct_link(self, url):
             play_calls.append(url)
 
-    monkeypatch.setattr(amateurtv.utils, "_getHtml", lambda *a, **k: json.dumps(mock_play_data))
+    monkeypatch.setattr(
+        amateurtv.utils, "_getHtml", lambda *a, **k: json.dumps(mock_play_data)
+    )
     monkeypatch.setattr(amateurtv.utils, "VideoPlayer", FakeVideoPlayer)
 
     amateurtv.Playvid("Model1", "Model1")

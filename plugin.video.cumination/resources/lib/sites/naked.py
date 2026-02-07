@@ -221,7 +221,7 @@ def clean_database(showdialog=True):
             if showdialog:
                 utils.notify("Finished", "naked.com images cleared")
     except Exception as e:
-            utils.kodilog("@@@@Cumination: Silent failure in naked: " + str(e))
+        utils.kodilog("@@@@Cumination: Silent failure in naked: " + str(e))
 
 
 @site.register()

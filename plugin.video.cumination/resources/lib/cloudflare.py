@@ -43,7 +43,10 @@ def solve(url, cj, user_agent=None, wait=True):
         try:
             cj.load(ignore_discard=True)
         except Exception as e:
-            xbmc.log("@@@@Cumination: Error loading cookies in cloudflare.solve: " + str(e), xbmc.LOGDEBUG)
+            xbmc.log(
+                "@@@@Cumination: Error loading cookies in cloudflare.solve: " + str(e),
+                xbmc.LOGDEBUG,
+            )
         opener = urllib_request.build_opener(urllib_request.HTTPCookieProcessor(cj))
         urllib_request.install_opener(opener)
 

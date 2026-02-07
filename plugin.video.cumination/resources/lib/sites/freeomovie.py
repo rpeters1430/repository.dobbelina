@@ -47,21 +47,23 @@ def Main():
 def List(url):
     listhtml = utils.getHtml(url, "")
     soup = utils.parse_html(listhtml)
-    
-    video_items = soup.select('.thumi')
+
+    video_items = soup.select(".thumi")
     for item in video_items:
         try:
-            link = item.select_one('a[href]')
-            if not link: continue
-            
-            videopage = utils.safe_get_attr(link, 'href')
-            name = utils.safe_get_attr(link, 'title') or utils.safe_get_text(link)
-            
-            img_tag = item.select_one('img')
-            img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
-            
-            if not videopage or not name: continue
-            
+            link = item.select_one("a[href]")
+            if not link:
+                continue
+
+            videopage = utils.safe_get_attr(link, "href")
+            name = utils.safe_get_attr(link, "title") or utils.safe_get_text(link)
+
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+
+            if not videopage or not name:
+                continue
+
             name = utils.cleantext(name)
 
             contextmenu = []
@@ -85,7 +87,7 @@ def List(url):
 
     next_page_tag = soup.select_one('a[rel="next"]')
     if next_page_tag:
-        next_url = utils.safe_get_attr(next_page_tag, 'href')
+        next_url = utils.safe_get_attr(next_page_tag, "href")
         if next_url:
             page_num = next_url.split("/")[-2] if "/" in next_url else "Next"
             site.add_dir(
@@ -113,16 +115,17 @@ def Search(url, keyword=None):
 def Cat(url):
     listhtml = utils.getHtml(url, "")
     soup = utils.parse_html(listhtml)
-    
-    cat_items = soup.select('.cat-item')
+
+    cat_items = soup.select(".cat-item")
     for item in cat_items:
         try:
-            link = item.select_one('a[href]')
-            if not link: continue
-            
-            catpage = utils.safe_get_attr(link, 'href')
+            link = item.select_one("a[href]")
+            if not link:
+                continue
+
+            catpage = utils.safe_get_attr(link, "href")
             name = utils.safe_get_text(link)
-            
+
             if name and catpage:
                 name = utils.cleantext(name)
                 site.add_dir(name, catpage, "List", "")

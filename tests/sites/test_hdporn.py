@@ -25,7 +25,9 @@ def test_list_parses_videos(monkeypatch):
     dirs = []
 
     monkeypatch.setattr(hdporn.utils, "getHtml", lambda *a, **k: html)
-    monkeypatch.setattr(hdporn.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        hdporn.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(hdporn.site, "add_dir", lambda *a, **k: dirs.append(a[0]))
     monkeypatch.setattr(hdporn.utils, "eod", lambda: None)
 
@@ -33,7 +35,7 @@ def test_list_parses_videos(monkeypatch):
 
     assert len(downloads) == 1
     assert downloads[0] == "Hot Video Title"
-    
+
     assert len(dirs) == 1
     assert "Next Page (2)" in dirs[0]
 

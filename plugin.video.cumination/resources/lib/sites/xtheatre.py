@@ -157,7 +157,7 @@ def XTVideo(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     videohtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(videohtml)
-    iframe = soup.select_one('.player iframe[src], iframe[src]')
+    iframe = soup.select_one(".player iframe[src], iframe[src]")
     embedurl = utils.safe_get_attr(iframe, "src", default="")
     if embedurl:
         if "streamup" in embedurl or "strmup" in embedurl:

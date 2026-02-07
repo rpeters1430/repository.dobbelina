@@ -178,7 +178,7 @@ def List(url):
         showing_text = soup.select_one(".pagination-wrapper, .pagination-info")
         pages = None
         last_page = ""
-        
+
         # Try to find total pages from "Showing ... of Z videos"
         showing_info = utils.safe_get_text(showing_text)
         lp_match = re.search(r"of (\d+) videos", showing_info)
@@ -225,32 +225,33 @@ def Related(url):
 def Cat(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-    
+
     # Selector based on regex: class="col-xs-6\s*col-sm-4\scol
     cat_items = soup.select('div[class*="col-xs-6"][class*="col-sm-4"]')
-    
+
     for item in cat_items:
-        link = item.select_one('a[href]')
-        if not link: continue
-        
-        catpage = utils.safe_get_attr(link, 'href')
+        link = item.select_one("a[href]")
+        if not link:
+            continue
+
+        catpage = utils.safe_get_attr(link, "href")
         caturl = site.url[:-1] + catpage if catpage.startswith("/") else catpage
-        
-        img_tag = item.select_one('img')
-        img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
-        if img and not img.startswith('http'):
+
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        if img and not img.startswith("http"):
             img = site.url[:-1] + img
-            
-        name_tag = item.select_one('h3, .title, a[title]')
-        name = utils.safe_get_attr(link, 'title') or utils.safe_get_text(name_tag)
-        
-        count_tag = item.select_one('.badge')
+
+        name_tag = item.select_one("h3, .title, a[title]")
+        name = utils.safe_get_attr(link, "title") or utils.safe_get_text(name_tag)
+
+        count_tag = item.select_one(".badge")
         videos = utils.safe_get_text(count_tag)
-        
+
         display_name = utils.cleantext(name)
         if videos:
             display_name += " [COLOR hotpink]%s Videos[/COLOR]" % videos
-            
+
         site.add_dir(display_name, caturl, "List", img)
     utils.eod()
 

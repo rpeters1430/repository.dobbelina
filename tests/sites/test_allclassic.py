@@ -86,8 +86,12 @@ def test_gotopage_valid_and_out_of_range(monkeypatch):
         def numeric(self, *_a, **_k):
             return self._value
 
-    monkeypatch.setattr(allclassic.utils, "notify", lambda msg=None: notify_calls.append(msg))
-    monkeypatch.setattr(allclassic.xbmc, "executebuiltin", lambda cmd: builtins.append(cmd))
+    monkeypatch.setattr(
+        allclassic.utils, "notify", lambda msg=None: notify_calls.append(msg)
+    )
+    monkeypatch.setattr(
+        allclassic.xbmc, "executebuiltin", lambda cmd: builtins.append(cmd)
+    )
     monkeypatch.setattr(allclassic.xbmcgui, "Dialog", lambda: _Dialog("2"))
     allclassic.GotoPage("https://allclassic.porn/page/1/", "1", "5")
 
@@ -125,8 +129,12 @@ def test_playvid_quality_paths(monkeypatch):
 
     monkeypatch.setattr(allclassic.utils, "VideoPlayer", _Player)
     monkeypatch.setattr(allclassic.utils, "getHtml", lambda *a, **k: page)
-    monkeypatch.setattr(allclassic.utils, "prefquality", lambda *a, **k: "function/0/encrypted")
-    monkeypatch.setattr(allclassic, "kvs_decode", lambda url, license: "https://decoded/video.mp4")
+    monkeypatch.setattr(
+        allclassic.utils, "prefquality", lambda *a, **k: "function/0/encrypted"
+    )
+    monkeypatch.setattr(
+        allclassic, "kvs_decode", lambda url, license: "https://decoded/video.mp4"
+    )
 
     allclassic.Playvid("https://allclassic.porn/watch/1", "Name")
 
@@ -140,8 +148,12 @@ def test_playvid_quality_paths(monkeypatch):
     )
     allclassic.Playvid("https://allclassic.porn/watch/2", "Name")
 
-    assert played[0] == "https://decoded/video.mp4|Referer=https://allclassic.porn/watch/1"
-    assert played[1] == "https://cdn/fallback.mp4|Referer=https://allclassic.porn/watch/2"
+    assert (
+        played[0] == "https://decoded/video.mp4|Referer=https://allclassic.porn/watch/1"
+    )
+    assert (
+        played[1] == "https://cdn/fallback.mp4|Referer=https://allclassic.porn/watch/2"
+    )
 
 
 def test_search_categories_lookup_related(monkeypatch):
@@ -153,7 +165,9 @@ def test_search_categories_lookup_related(monkeypatch):
 
     monkeypatch.setattr(allclassic, "List", lambda url: list_calls.append(url))
     monkeypatch.setattr(
-        allclassic.site, "search_dir", lambda url, mode: search_calls.append((url, mode))
+        allclassic.site,
+        "search_dir",
+        lambda url, mode: search_calls.append((url, mode)),
     )
     monkeypatch.setattr(
         allclassic.utils,
@@ -171,7 +185,9 @@ def test_search_categories_lookup_related(monkeypatch):
             {"name": name, "url": url}
         ),
     )
-    monkeypatch.setattr(allclassic.xbmc, "executebuiltin", lambda cmd: builtins.append(cmd))
+    monkeypatch.setattr(
+        allclassic.xbmc, "executebuiltin", lambda cmd: builtins.append(cmd)
+    )
 
     class _LookupInfo:
         def __init__(self, site_url, url, mode, lookup_list):

@@ -20,15 +20,19 @@ def test_list_parses_videos(monkeypatch):
     dirs = []
 
     monkeypatch.setattr(celebsroulette.utils, "getHtml", lambda *a, **k: html)
-    monkeypatch.setattr(celebsroulette.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
-    monkeypatch.setattr(celebsroulette.site, "add_dir", lambda *a, **k: dirs.append(a[0]))
+    monkeypatch.setattr(
+        celebsroulette.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
+    monkeypatch.setattr(
+        celebsroulette.site, "add_dir", lambda *a, **k: dirs.append(a[0])
+    )
     monkeypatch.setattr(celebsroulette.utils, "eod", lambda: None)
 
     celebsroulette.List("https://celebsroulette.com/latest-updates/")
 
     assert len(downloads) == 1
     assert downloads[0] == "Hot Video Title"
-    
+
     assert len(dirs) == 1
     assert "Next Page (2)" in dirs[0]
 
@@ -47,7 +51,9 @@ def test_categories_parses_categories(monkeypatch):
     dirs = []
 
     monkeypatch.setattr(celebsroulette.utils, "getHtml", lambda *a, **k: html)
-    monkeypatch.setattr(celebsroulette.site, "add_dir", lambda *a, **k: dirs.append(a[0]))
+    monkeypatch.setattr(
+        celebsroulette.site, "add_dir", lambda *a, **k: dirs.append(a[0])
+    )
     monkeypatch.setattr(celebsroulette.utils, "eod", lambda: None)
 
     celebsroulette.Categories("https://celebsroulette.com/categories/")

@@ -193,14 +193,16 @@ def clean_database(showdialog=True):
                 try:
                     os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
                 except Exception as e:
-                    utils.kodilog("@@@@Cumination: Silent failure in bongacams: " + str(e))
+                    utils.kodilog(
+                        "@@@@Cumination: Silent failure in bongacams: " + str(e)
+                    )
             conn.execute(
                 "DELETE FROM texture WHERE url LIKE ?;", ("%" + "bongacams.com" + "%",)
             )
             if showdialog:
                 utils.notify("Finished", "bongacams.com images cleared")
     except Exception as e:
-            utils.kodilog("@@@@Cumination: Silent failure in bongacams: " + str(e))
+        utils.kodilog("@@@@Cumination: Silent failure in bongacams: " + str(e))
 
 
 @site.register()

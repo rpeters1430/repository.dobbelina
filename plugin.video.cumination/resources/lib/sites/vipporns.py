@@ -53,35 +53,41 @@ def Main():
 def List(url):
     listhtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(listhtml)
-    
+
     # Try to find the main container to narrow down listing
-    container = soup.select_one('.list-albums, .box.tag, #list_videos_common_videos_list')
+    container = soup.select_one(
+        ".list-albums, .box.tag, #list_videos_common_videos_list"
+    )
     if container:
-        video_items = container.select('.item')
+        video_items = container.select(".item")
     else:
-        video_items = soup.select('.item')
+        video_items = soup.select(".item")
 
     for item in video_items:
         try:
-            link = item.select_one('a[href]')
-            if not link: continue
-            
-            videopage = utils.safe_get_attr(link, 'href')
-            img_tag = item.select_one('img')
-            img = utils.safe_get_attr(img_tag, 'data-original', ['src'])
-            
-            name = utils.safe_get_attr(link, 'title')
+            link = item.select_one("a[href]")
+            if not link:
+                continue
+
+            videopage = utils.safe_get_attr(link, "href")
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "data-original", ["src"])
+
+            name = utils.safe_get_attr(link, "title")
             if not name:
-                name_tag = item.select_one('.title, .le')
+                name_tag = item.select_one(".title, .le")
                 name = utils.safe_get_text(name_tag)
-            
-            duration_tag = item.select_one('.duration, .on')
+
+            duration_tag = item.select_one(".duration, .on")
             duration = utils.safe_get_text(duration_tag)
-            
-            if not videopage or not name: continue
-            
+
+            if not videopage or not name:
+                continue
+
             name = utils.cleantext(name.strip())
-            site.add_download_link(name, videopage, "Playvid", img, name, duration=duration)
+            site.add_download_link(
+                name, videopage, "Playvid", img, name, duration=duration
+            )
         except Exception as e:
             utils.kodilog("Error parsing video item in vipporns: " + str(e))
             continue
@@ -125,24 +131,29 @@ def Search(url, keyword=None):
 def Cat(url):
     cathtml = utils.getHtml(url, "")
     soup = utils.parse_html(cathtml)
-    
+
     categories = []
-    cat_items = soup.select('.item')
+    cat_items = soup.select(".item")
     for item in cat_items:
         try:
-            link = item.select_one('a[href]')
-            if not link: continue
-            
-            catpage = utils.safe_get_attr(link, 'href')
-            name_tag = item.select_one('.title')
+            link = item.select_one("a[href]")
+            if not link:
+                continue
+
+            catpage = utils.safe_get_attr(link, "href")
+            name_tag = item.select_one(".title")
             name = utils.safe_get_text(name_tag)
-            
-            count_tag = item.select_one('.videos')
+
+            count_tag = item.select_one(".videos")
             videos = utils.safe_get_text(count_tag)
-            
-            img_tag = item.select_one('img')
-            img = utils.safe_get_attr(img_tag, 'src') if "no image" not in str(item) else ""
-            
+
+            img_tag = item.select_one("img")
+            img = (
+                utils.safe_get_attr(img_tag, "src")
+                if "no image" not in str(item)
+                else ""
+            )
+
             if name and catpage:
                 display_name = "{0} [COLOR deeppink][I]({1})[/I][/COLOR]".format(
                     utils.cleantext(name.strip()), videos
@@ -151,7 +162,7 @@ def Cat(url):
         except Exception as e:
             utils.kodilog("Error parsing category in vipporns: " + str(e))
             continue
-            
+
     for display_name, catpage, img, _ in sorted(categories, key=lambda x: x[3]):
         site.add_dir(display_name, catpage, "List", img)
     utils.eod()

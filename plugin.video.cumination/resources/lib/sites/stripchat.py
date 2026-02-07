@@ -186,14 +186,16 @@ def clean_database(showdialog=True):
                 try:
                     os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
                 except Exception as e:
-                    utils.kodilog("@@@@Cumination: Silent failure in stripchat: " + str(e))
+                    utils.kodilog(
+                        "@@@@Cumination: Silent failure in stripchat: " + str(e)
+                    )
             conn.execute(
                 "DELETE FROM texture WHERE url LIKE ?;", ("%" + ".strpst.com" + "%",)
             )
             if showdialog:
                 utils.notify("Finished", "Stripchat images cleared")
     except Exception as e:
-            utils.kodilog("@@@@Cumination: Silent failure in stripchat: " + str(e))
+        utils.kodilog("@@@@Cumination: Silent failure in stripchat: " + str(e))
 
 
 @site.register()
