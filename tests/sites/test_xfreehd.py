@@ -56,7 +56,7 @@ def test_list_parses_videos(monkeypatch):
     monkeypatch.setattr(xfreehd.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(xfreehd.utils, "eod", lambda: None)
     monkeypatch.setattr(xfreehd, "get_cookies", lambda: "")
-    monkeypatch.setattr(xfreehd, "xflogged", True) # Set to True to see Private videos
+    monkeypatch.setattr(xfreehd, "xflogged", True)  # Set to True to see Private videos
 
     xfreehd.List("https://beta.xfreehd.com/videos")
 
@@ -74,7 +74,9 @@ def test_list_parses_videos(monkeypatch):
     next_pages = [d for d in dirs if "Next Page" in d["name"]]
     assert len(next_pages) == 1
     assert "page=2" in next_pages[0]["url"]
-    assert "(2/5)" in next_pages[0]["name"] # 120 / 30 = 4, but 120//30 + 1 = 5 pages in logic
+    assert (
+        "(2/5)" in next_pages[0]["name"]
+    )  # 120 / 30 = 4, but 120//30 + 1 = 5 pages in logic
 
 
 def test_cat_parses_categories(monkeypatch):

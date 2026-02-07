@@ -89,7 +89,10 @@ def Refresh_images():
                     try:
                         os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
                     except Exception as e:
-                        xbmc.log("@@@@Cumination: Error removing thumbnail: " + str(e), xbmc.LOGDEBUG)
+                        xbmc.log(
+                            "@@@@Cumination: Error removing thumbnail: " + str(e),
+                            xbmc.LOGDEBUG,
+                        )
                 conn.execute(
                     "DELETE FROM texture WHERE url LIKE ?;",
                     ("%" + ".highwebmedia.com" + "%",),

@@ -62,7 +62,11 @@ def test_bgcat_parses_json(monkeypatch):
     """Test that BGCat correctly parses category API data."""
     mock_cat_data = {
         "other": [
-            {"tg_name": "Category 1", "tg_slug": "cat1", "thumbs": [{"id": "t1", "crops": [{"id": "c1"}]}]}
+            {
+                "tg_name": "Category 1",
+                "tg_slug": "cat1",
+                "thumbs": [{"id": "t1", "crops": [{"id": "c1"}]}],
+            }
         ]
     }
 

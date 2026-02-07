@@ -19,7 +19,7 @@ def test_list_parses_json(monkeypatch):
                 "resolution": "1080p",
                 "sexPreference": "Guys",
                 "statusMessage": "Status 1",
-                "showTags": ["Tag1", "Tag2"]
+                "showTags": ["Tag1", "Tag2"],
             }
         ]
     }
@@ -34,7 +34,9 @@ def test_list_parses_json(monkeypatch):
     monkeypatch.setattr(cam4.utils, "eod", lambda: None)
     monkeypatch.setattr(cam4.utils.addon, "getSetting", lambda x: "false")
     monkeypatch.setattr(cam4.utils, "get_country", lambda x: "Spain")
-    monkeypatch.setattr(cam4.utils, "get_language", lambda x: "Spanish" if x == "es" else "English")
+    monkeypatch.setattr(
+        cam4.utils, "get_language", lambda x: "Spanish" if x == "es" else "English"
+    )
 
     cam4.List("gender=female", page=1)
 
@@ -47,19 +49,20 @@ def test_list_parses_json(monkeypatch):
 
 def test_playvid_parses_json(monkeypatch):
     """Test that Playvid correctly parses stream info JSON."""
-    mock_play_data = {
-        "cdnURL": "https://stream.cam4.com/playlist.m3u8"
-    }
+    mock_play_data = {"cdnURL": "https://stream.cam4.com/playlist.m3u8"}
 
     play_calls = []
 
     class FakeVideoPlayer:
         def __init__(self, name):
             pass
+
         def play_from_direct_link(self, url):
             play_calls.append(url)
 
-    monkeypatch.setattr(cam4.utils, "_getHtml", lambda *a, **k: json.dumps(mock_play_data))
+    monkeypatch.setattr(
+        cam4.utils, "_getHtml", lambda *a, **k: json.dumps(mock_play_data)
+    )
     monkeypatch.setattr(cam4.utils, "VideoPlayer", FakeVideoPlayer)
 
     cam4.Playvid("Model1", "Model1")

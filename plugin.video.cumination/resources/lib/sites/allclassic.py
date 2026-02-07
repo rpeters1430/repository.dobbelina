@@ -66,9 +66,7 @@ def List(url):
         return
 
     soup = utils.parse_html(listhtml)
-    cm_lookupinfo = (
-        utils.addon_sys + "?mode=" + str("allclassic.Lookupinfo") + "&url="
-    )
+    cm_lookupinfo = utils.addon_sys + "?mode=" + str("allclassic.Lookupinfo") + "&url="
     cm_related = utils.addon_sys + "?mode=" + str("allclassic.Related") + "&url="
 
     for card in soup.select("a.th.item[href]"):
@@ -221,7 +219,7 @@ def Search(url, keyword=None):
 def Categories(url):
     cathtml = utils.getHtml(url)
     soup = utils.parse_html(cathtml)
-    for anchor in soup.select('a.th[href]'):
+    for anchor in soup.select("a.th[href]"):
         caturl = utils.safe_get_attr(anchor, "href", default="")
         img = utils.safe_get_attr(
             anchor.select_one("img"), "src", ["data-src", "data-original"]

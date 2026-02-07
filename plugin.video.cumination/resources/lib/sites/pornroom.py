@@ -91,9 +91,7 @@ def pornroom_list(url):
             if next_link:
                 next_url = utils.safe_get_attr(next_link, "href")
                 if next_url:
-                    page_number = (
-                        next_url.split("/")[-2] if "/" in next_url else "Next"
-                    )
+                    page_number = next_url.split("/")[-2] if "/" in next_url else "Next"
                     site.add_dir(
                         "Next Page (" + page_number + ")",
                         next_url,

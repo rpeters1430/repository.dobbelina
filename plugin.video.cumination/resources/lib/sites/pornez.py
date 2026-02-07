@@ -44,7 +44,7 @@ def Main():
 def List(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-    for item in soup.select('[data-post-id], article, .video-item, .item'):
+    for item in soup.select("[data-post-id], article, .video-item, .item"):
         link = item.select_one("a[href]")
         videourl = utils.safe_get_attr(link, "href", default="")
         if not videourl:
@@ -80,7 +80,9 @@ def List(url):
     for a in soup.select("a[href]"):
         href = utils.safe_get_attr(a, "href", default="")
         text = utils.safe_get_text(a, default="")
-        if "/page/" in href and ("\xbb" in text or "»" in text or "next" in text.lower()):
+        if "/page/" in href and (
+            "\xbb" in text or "»" in text or "next" in text.lower()
+        ):
             npage = href
             m = re.search(r"/page/(\d+)", href)
             np = m.group(1) if m else ""

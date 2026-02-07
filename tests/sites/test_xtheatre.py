@@ -141,7 +141,11 @@ def test_xtvideo_direct_and_fallback(monkeypatch):
         lambda url, *a, **k: (
             '<div class="player"><iframe src="https://streamup.example/embed/abc"></iframe></div>'
             if "watch/ok" in url
-            else ('streaming_url:"https://cdn.example/hls.m3u8"' if "streamup" in url else "")
+            else (
+                'streaming_url:"https://cdn.example/hls.m3u8"'
+                if "streamup" in url
+                else ""
+            )
         ),
     )
     xtheatre.XTVideo("https://pornxtheatre.com/watch/ok", "Name")
@@ -149,13 +153,17 @@ def test_xtvideo_direct_and_fallback(monkeypatch):
     monkeypatch.setattr(
         xtheatre.utils,
         "getHtml",
-        lambda *_a, **_k: '<div class="player"><iframe src="https://other.example/embed/xyz"></iframe></div>',
+        lambda *_a,
+        **_k: '<div class="player"><iframe src="https://other.example/embed/xyz"></iframe></div>',
     )
     xtheatre.XTVideo("https://pornxtheatre.com/watch/fallback", "Name")
 
     assert direct_calls and "referer=https://streamup.example/" in direct_calls[0]
     assert fallback_calls == [
-        ("https://pornxtheatre.com/watch/fallback", "https://pornxtheatre.com/watch/fallback")
+        (
+            "https://pornxtheatre.com/watch/fallback",
+            "https://pornxtheatre.com/watch/fallback",
+        )
     ]
 
 

@@ -57,18 +57,19 @@ def Main():
 def List(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-    
-    video_items = soup.select('.clip-link')
+
+    video_items = soup.select(".clip-link")
     for item in video_items:
         try:
-            videopage = utils.safe_get_attr(item, 'href')
-            name = utils.safe_get_attr(item, 'title')
-            
-            img_tag = item.select_one('img')
-            img = utils.safe_get_attr(img_tag, 'src', ['data-original', 'data-src'])
-            
-            if not videopage or not name: continue
-            
+            videopage = utils.safe_get_attr(item, "href")
+            name = utils.safe_get_attr(item, "title")
+
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "src", ["data-original", "data-src"])
+
+            if not videopage or not name:
+                continue
+
             name = utils.cleantext(name)
 
             contexturl = (
@@ -81,14 +82,16 @@ def List(url):
                 ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
             ]
 
-            site.add_download_link(name, videopage, "Play", img, name, contextm=contextmenu)
+            site.add_download_link(
+                name, videopage, "Play", img, name, contextm=contextmenu
+            )
         except Exception as e:
             utils.kodilog("Error parsing video item in hitprn: " + str(e))
             continue
 
     next_page_tag = soup.select_one('a[title*="Next page"]')
     if next_page_tag:
-        next_url = utils.safe_get_attr(next_page_tag, 'href')
+        next_url = utils.safe_get_attr(next_page_tag, "href")
         if next_url:
             page_num = next_url.split("/")[-2] if "/" in next_url else "Next"
             site.add_dir(
@@ -104,15 +107,17 @@ def List(url):
 def Sites(url):
     siteshtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(siteshtml)
-    
+
     # Based on regex: class="level-\d+" value="([^"]+)">([^<]+)</option
     options = soup.select('option[class^="level-"]')
     for option in options:
         try:
-            sitepage = utils.safe_get_attr(option, 'value')
+            sitepage = utils.safe_get_attr(option, "value")
             name = utils.safe_get_text(option, strip=False)
             if sitepage and name:
-                name = name.replace("\xa0\xa0\xa0", "- ").replace("&nbsp;&nbsp;&nbsp;", "- ")
+                name = name.replace("\xa0\xa0\xa0", "- ").replace(
+                    "&nbsp;&nbsp;&nbsp;", "- "
+                )
                 name = utils.cleantext(name)
                 siteurl = site.url + "?cat=" + sitepage
                 site.add_dir(name, siteurl, "List")

@@ -632,7 +632,9 @@ def clean_database(showdialog=True):
                 try:
                     os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
                 except Exception as e:
-                    utils.kodilog("@@@@Cumination: Silent failure in chaturbate: " + str(e))
+                    utils.kodilog(
+                        "@@@@Cumination: Silent failure in chaturbate: " + str(e)
+                    )
             conn.execute(
                 "DELETE FROM texture WHERE url LIKE ?;",
                 ("%" + ".live.mmcdn.com" + "%",),
@@ -640,7 +642,7 @@ def clean_database(showdialog=True):
             if showdialog:
                 utils.notify("Finished", "Chaturbate images cleared")
     except Exception as e:
-            utils.kodilog("@@@@Cumination: Silent failure in chaturbate: " + str(e))
+        utils.kodilog("@@@@Cumination: Silent failure in chaturbate: " + str(e))
 
 
 @site.register()

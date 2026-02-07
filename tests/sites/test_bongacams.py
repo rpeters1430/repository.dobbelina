@@ -26,14 +26,18 @@ def test_list_parses_json(monkeypatch):
             "vibratoy": True,
             "turns_on": "Likes",
             "turns_off": "Dislikes",
-            "tags": ["Tag1", "Tag2"]
+            "tags": ["Tag1", "Tag2"],
         }
     ]
 
     downloads = []
 
-    monkeypatch.setattr(bongacams.utils, "_getHtml", lambda *a, **k: json.dumps(mock_data))
-    monkeypatch.setattr(bongacams.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(
+        bongacams.utils, "_getHtml", lambda *a, **k: json.dumps(mock_data)
+    )
+    monkeypatch.setattr(
+        bongacams.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
     monkeypatch.setattr(bongacams.utils, "eod", lambda: None)
     monkeypatch.setattr(bongacams.utils.addon, "getSetting", lambda x: "false")
 
@@ -50,19 +54,26 @@ def test_playvid_parses_json(monkeypatch):
     mock_amf_data = {
         "status": "success",
         "performerData": {"showType": "public"},
-        "localData": {"videoServerUrl": "//server.com"}
+        "localData": {"videoServerUrl": "//server.com"},
     }
 
     play_calls = []
 
     class FakeVideoPlayer:
         def __init__(self, name):
-            self.progress = type('obj', (object,), {'update': lambda *a: None, 'close': lambda *a: None})
+            self.progress = type(
+                "obj", (object,), {"update": lambda *a: None, "close": lambda *a: None}
+            )
+
         def play_from_direct_link(self, url):
             play_calls.append(url)
 
-    monkeypatch.setattr(bongacams.utils, "_postHtml", lambda *a, **k: json.dumps(mock_amf_data))
-    monkeypatch.setattr(bongacams.utils, "_getHtml", lambda *a, **k: "dummy m3u8 content")
+    monkeypatch.setattr(
+        bongacams.utils, "_postHtml", lambda *a, **k: json.dumps(mock_amf_data)
+    )
+    monkeypatch.setattr(
+        bongacams.utils, "_getHtml", lambda *a, **k: "dummy m3u8 content"
+    )
     monkeypatch.setattr(bongacams.utils, "VideoPlayer", FakeVideoPlayer)
 
     bongacams.Playvid("Model1", "Model1")

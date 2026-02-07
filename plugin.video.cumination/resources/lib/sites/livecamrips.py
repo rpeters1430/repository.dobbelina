@@ -294,7 +294,9 @@ def Playvid(url, name, download=None):
                     re.IGNORECASE,
                 )
             except Exception as e:
-                utils.kodilog("@@@@Cumination: Silent failure in livecamrips: " + str(e))
+                utils.kodilog(
+                    "@@@@Cumination: Silent failure in livecamrips: " + str(e)
+                )
         if myvidplay_match:
             myvidplay_url = myvidplay_match.group(1)
             utils.kodilog("@@@@Cumination: Found myvidplay.com URL: " + myvidplay_url)

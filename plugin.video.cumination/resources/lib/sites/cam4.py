@@ -96,7 +96,7 @@ def clean_database(showdialog=True):
             if showdialog:
                 utils.notify("Finished", "Cam4 images cleared")
     except Exception as e:
-            utils.kodilog("@@@@Cumination: Silent failure in cam4: " + str(e))
+        utils.kodilog("@@@@Cumination: Silent failure in cam4: " + str(e))
 
 
 @site.register()

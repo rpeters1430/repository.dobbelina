@@ -117,14 +117,16 @@ def clean_database(showdialog=True):
                 try:
                     os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
                 except Exception as e:
-                    utils.kodilog("@@@@Cumination: Silent failure in streamate: " + str(e))
+                    utils.kodilog(
+                        "@@@@Cumination: Silent failure in streamate: " + str(e)
+                    )
             conn.execute(
                 "DELETE FROM texture WHERE url LIKE ?;", ("%" + "m1.nsimg.net" + "%",)
             )
             if showdialog:
                 utils.notify("Finished", "streamate.com images cleared")
     except Exception as e:
-            utils.kodilog("@@@@Cumination: Silent failure in streamate: " + str(e))
+        utils.kodilog("@@@@Cumination: Silent failure in streamate: " + str(e))
 
 
 @site.register()
