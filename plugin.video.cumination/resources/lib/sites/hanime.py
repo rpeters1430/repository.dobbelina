@@ -377,8 +377,8 @@ def hanime_play(url, name, download=None):
                         try:
                             if "\\u" in videourl or "\\x" in videourl:
                                 videourl = videourl.encode().decode("unicode-escape")
-                        except Exception:
-                            pass
+                        except Exception as e:
+                            utils.kodilog("@@@@Cumination: Silent failure in hanime: " + str(e))
 
                         if videourl.startswith("http"):
                             sources[height] = videourl
@@ -444,7 +444,8 @@ def hanime_eps(url):
         hanime_play(
             selected_episode, [x for x, y in eps.items() if y is selected_episode][0]
         )
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in hanime: " + str(e))
         utils.notify("Notify", "No other episodes found")
 
 

@@ -84,7 +84,8 @@ def List(url):
     )
     try:
         listhtml = utils.getHtml(url, headers=hdr)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in xvideos: " + str(e))
         return None
 
     cm_sortby = utils.addon_sys + "?mode=" + str("xvideos.ContextSortbyFilter")
@@ -366,7 +367,8 @@ def PSList(url):
     )
     try:
         listhtml = utils.getHtml(url, headers=hdr)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in xvideos: " + str(e))
         return None
     jdata = json.loads(listhtml)
     for video in jdata["videos"]:
@@ -423,7 +425,8 @@ def PSList(url):
 def Pornstars(url):
     try:
         cathtml = utils.getHtml(url)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in xvideos: " + str(e))
         return None
     match = re.compile(
         r'div id="profile.+?src="([^"]+)".+?href="([^"]+)">([^<]+)<\/a><\/p>.+?(\d+ videos)',
@@ -454,7 +457,8 @@ def Tags(url):
     category = get_setting("category")
     try:
         cathtml = utils.getHtml(url)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in xvideos: " + str(e))
         return None
     match = re.compile(
         r'href="([^"]+)"><b>([^<]+)</b>.+?>([^<]+)<', re.DOTALL | re.IGNORECASE

@@ -69,15 +69,15 @@ def clean_database(showdialog=True):
                 conn.execute("DELETE FROM sizes WHERE idtexture = ?;", (row[0],))
                 try:
                     os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
-                except Exception:
-                    pass
+                except Exception as e:
+                    utils.kodilog("@@@@Cumination: Silent failure in amateurtv: " + str(e))
             conn.execute(
                 "DELETE FROM texture WHERE url LIKE ?;", ("%" + ".amateur.tv" + "%",)
             )
             if showdialog:
                 utils.notify("Finished", "Cam4 images cleared")
-    except Exception:
-        pass
+    except Exception as e:
+            utils.kodilog("@@@@Cumination: Silent failure in amateurtv: " + str(e))
 
 
 @site.register()

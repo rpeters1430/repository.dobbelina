@@ -1,41 +1,62 @@
-"""Tests for eroticage site module"""
+"""Tests for eroticage.net site implementation."""
 
 from resources.lib.sites import eroticage
-from unittest.mock import patch
 
 
-def test_list_parses_video_items():
-    """Test that List function parses video items"""
+def test_list_parses_videos(monkeypatch):
+    """Test that List correctly parses video items."""
     html = """
-    <article class="video">
-        <a href="/vid/test-video-1/" class="video-link">
-            <img src="https://cdn.eroticage.com/thumb1.jpg" alt="Test Video 1" />
-            <time>10:30</time>
+    <html>
+    <article data-video-id="123">
+        <a href="/video/hot-video/" title="Hot Video Title">
+            <img data-src="/thumbs/1.jpg" />
         </a>
     </article>
-    <article class="video">
-        <a href="/vid/test-video-2/" class="video-link">
-            <img src="https://cdn.eroticage.com/thumb2.jpg" alt="Test Video 2" />
-            <time>15:20</time>
-        </a>
-    </article>
+    <div class="pagination">
+        <span class="current">1</span>
+        <a href="/page/2/" class="next">Next</a>
+        <a href="/page/10/" class="last">Last</a>
+    </div>
+    </html>
     """
 
-    with (
-        patch("resources.lib.utils.getHtml") as mock_gethtml,
-        patch("resources.lib.utils.eod") as mock_eod,
-    ):
-        mock_gethtml.return_value = html
+    downloads = []
+    dirs = []
 
-        eroticage.List("https://eroticage.com/")
+    monkeypatch.setattr(eroticage.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(eroticage.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(eroticage.site, "add_dir", lambda *a, **k: dirs.append(a[0]))
+    monkeypatch.setattr(eroticage.utils, "eod", lambda: None)
 
-        assert mock_gethtml.called
-        assert mock_eod.called
+    eroticage.List("https://www.eroticage.net/")
+
+    assert len(downloads) == 1
+    assert downloads[0] == "Hot Video Title"
+    
+    assert len(dirs) == 1
+    assert "Next Page (2/10)" in dirs[0]
 
 
-def test_search_without_keyword():
-    """Test that Search without keyword shows search dialog"""
-    with patch.object(eroticage.site, "search_dir") as mock_search:
-        eroticage.Search("https://eroticage.com/search/")
+def test_categories_parses_categories(monkeypatch):
+    """Test that Categories correctly parses categories."""
+    html = """
+    <html>
+    <article id="post-1">
+        <a href="/categories/milf/">
+            <img src="/thumbs/milf.jpg" />
+            <div class="cat-title">MILF</div>
+        </a>
+    </article>
+    </html>
+    """
 
-        assert mock_search.called
+    dirs = []
+
+    monkeypatch.setattr(eroticage.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(eroticage.site, "add_dir", lambda *a, **k: dirs.append(a[0]))
+    monkeypatch.setattr(eroticage.utils, "eod", lambda: None)
+
+    eroticage.Categories("https://www.eroticage.net/categories/")
+
+    assert len(dirs) == 1
+    assert "MILF" in dirs[0]

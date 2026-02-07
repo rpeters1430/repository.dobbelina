@@ -77,7 +77,8 @@ def Main():
 def List(url):
     try:
         listhtml = utils.getHtml(url)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in speedporn: " + str(e))
         return None
     # utils.kodilog(listhtml)
     soup = utils.parse_html(listhtml)
@@ -169,7 +170,8 @@ def List_all(url):
                     url = next_page[0]
             else:
                 nextpg = False
-        except Exception:
+        except Exception as e:
+            utils.kodilog("@@@@Cumination: failure in speedporn: " + str(e))
             nextpg = False
     utils.eod()
 
@@ -234,7 +236,8 @@ def Categories_all(url):
                     url = next_page[0]
             else:
                 nextpg = False
-        except Exception:
+        except Exception as e:
+            utils.kodilog("@@@@Cumination: failure in speedporn: " + str(e))
             nextpg = False
     utils.eod()
 

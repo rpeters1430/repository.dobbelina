@@ -60,45 +60,72 @@ def Main():
 def List(url):
     try:
         listhtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in xozilla: " + str(e))
         return None
-    match = re.compile(
-        r'<a href="([^"]+)" class="item.+?vthumb=.+?thumb="([^"]+)".+?"duration">([^<]+)</div>.+?class="title">([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for videopage, img, duration, name in match:
-        name = utils.cleantext(name)
-        site.add_download_link(name, videopage, "Playvid", img, name, duration=duration)
 
-    nextp = re.compile(
-        r'class="next"><a href="([^"]+)"', re.DOTALL | re.IGNORECASE
-    ).findall(listhtml)
-    if nextp:
-        np = re.compile(r':(\d+)">Next', re.DOTALL | re.IGNORECASE).findall(listhtml)
-        if np:
-            np = np[0]
-        else:
-            np = ""
-        lp = re.compile(r':(\d+)">Last', re.DOTALL | re.IGNORECASE).findall(listhtml)
-        if lp:
-            lp = "/" + lp[0]
-        else:
-            lp = ""
-        nextp = nextp[0]
-        if nextp.startswith("/"):
-            nextp = site.url[:-1] + nextp
-        else:
-            match = re.compile(
-                r'class="next">.+?data-block-id="([^"]+)"\s+data-parameters="([^"]+)">Next<',
-                re.DOTALL | re.IGNORECASE,
-            ).findall(listhtml)
-            if match:
-                dbi, dp = match[0]
-                dp = dp.replace(":", "=").replace(";", "&").replace("+from_albums", "")
-            nextp = "{0}?mode=async&function=get_block&block_id={1}&{2}".format(
-                url.split("?mode")[0], dbi, dp
+    soup = utils.parse_html(listhtml)
+    video_items = soup.select("a.item")
+
+    for item in video_items:
+        try:
+            videopage = utils.safe_get_attr(item, "href")
+            img = utils.safe_get_attr(item, "thumb", ["data-original", "src"])
+
+            duration_tag = item.select_one(".duration")
+            duration = utils.safe_get_text(duration_tag)
+
+            title_tag = item.select_one(".title")
+            name = utils.safe_get_text(title_tag)
+
+            if not videopage or not name:
+                continue
+
+            if not videopage.startswith("http"):
+                videopage = site.url[:-1] + videopage
+
+            name = utils.cleantext(name)
+            site.add_download_link(
+                name, videopage, "Playvid", img, name, duration=duration
             )
-        site.add_dir("Next Page ({}{})".format(np, lp), nextp, "List", site.img_next)
+        except Exception as e:
+            utils.kodilog("Error parsing video item in xozilla: " + str(e))
+            continue
+
+    next_tag = soup.select_one(".next a")
+    if next_tag:
+        next_url = utils.safe_get_attr(next_tag, "href")
+        if next_url and next_url != "#":
+            if next_url.startswith("/"):
+                next_url = site.url[:-1] + next_url
+
+            # Extract page info for display
+            page_num = ""
+            lp = ""
+            next_link_text = utils.safe_get_text(next_tag)
+            if ":" in next_link_text:
+                page_num = next_link_text.split(":")[-1]
+
+            last_tag = soup.select_one('.last a, a[title*="Last"]')
+            if last_tag:
+                last_text = utils.safe_get_text(last_tag)
+                if ":" in last_text:
+                    lp = "/" + last_text.split(":")[-1]
+
+            site.add_dir(
+                "Next Page ({}{})".format(page_num, lp), next_url, "List", site.img_next
+            )
+        else:
+            # Handle async pagination if href is #
+            dbi = utils.safe_get_attr(next_tag, "data-block-id")
+            dp = utils.safe_get_attr(next_tag, "data-parameters")
+            if dbi and dp:
+                dp = dp.replace(":", "=").replace(";", "&").replace("+from_albums", "")
+                next_url = "{0}?mode=async&function=get_block&block_id={1}&{2}".format(
+                    url.split("?mode")[0], dbi, dp
+                )
+                site.add_dir("Next Page", next_url, "List", site.img_next)
+
     utils.eod()
 
 
@@ -106,12 +133,22 @@ def List(url):
 def Categories(url):
     try:
         cathtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in xozilla: " + str(e))
         return None
-    match = re.compile(
-        'a href="([^"]+)">([^<]+)<span class="rating">', re.DOTALL | re.IGNORECASE
-    ).findall(cathtml)
-    for catpage, name in sorted(match, key=lambda x: x[1]):
+
+    soup = utils.parse_html(cathtml)
+    categories = []
+    # Based on regex: a href="([^"]+)">([^<]+)<span class="rating">
+    links = soup.select('a[href*="/categories/"]')
+    for link in links:
+        if link.select_one(".rating"):
+            catpage = utils.safe_get_attr(link, "href")
+            name = utils.safe_get_text(link).split("<span")[0].strip()
+            if name and catpage:
+                categories.append((utils.cleantext(name), catpage))
+
+    for name, catpage in sorted(categories, key=lambda x: x[0].lower()):
         site.add_dir(name, catpage, "List", "")
     utils.eod()
 
@@ -120,14 +157,35 @@ def Categories(url):
 def CategoriesTR(url):
     try:
         cathtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in xozilla: " + str(e))
         return None
-    match = re.compile(
-        '"item" href="([^"]+)" title="([^"]+)".+?src="([^"]+)".+?i>([^<]+)videos<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(cathtml)
-    for catpage, name, img, count in sorted(match, key=lambda x: x[1]):
-        name = utils.cleantext(name) + "[COLOR deeppink] " + count + "[/COLOR]"
+
+    soup = utils.parse_html(cathtml)
+    categories = []
+    # Based on regex: "item" href="([^"]+)" title="([^"]+)".+?src="([^"]+)".+?i>([^<]+)videos<
+    items = soup.select(".item")
+    for item in items:
+        link = item if item.name == "a" else item.select_one("a")
+        if not link:
+            continue
+
+        catpage = utils.safe_get_attr(link, "href")
+        name = utils.safe_get_attr(link, "title")
+
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src")
+
+        count_tag = item.select_one("i")
+        count = utils.safe_get_text(count_tag)
+
+        if name and catpage:
+            display_name = (
+                utils.cleantext(name) + "[COLOR deeppink] " + count + "[/COLOR]"
+            )
+            categories.append((display_name, catpage, img))
+
+    for name, catpage, img in sorted(categories, key=lambda x: x[0].lower()):
         site.add_dir(name, catpage, "List", img)
     utils.eod()
 
@@ -136,14 +194,29 @@ def CategoriesTR(url):
 def Channels(url):
     try:
         cathtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in xozilla: " + str(e))
         return None
-    match = re.compile(
-        '"item" href="([^"]+)" title="([^"]+)".+?src="([^"]+)"',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(cathtml)
-    for catpage, name, img in sorted(match, key=lambda x: x[1]):
-        name = utils.cleantext(name)
+
+    soup = utils.parse_html(cathtml)
+    channels = []
+    # Based on regex: "item" href="([^"]+)" title="([^"]+)".+?src="([^"]+)"
+    items = soup.select(".item")
+    for item in items:
+        link = item if item.name == "a" else item.select_one("a")
+        if not link:
+            continue
+
+        catpage = utils.safe_get_attr(link, "href")
+        name = utils.safe_get_attr(link, "title")
+
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src")
+
+        if name and catpage:
+            channels.append((utils.cleantext(name), catpage, img))
+
+    for name, catpage, img in sorted(channels, key=lambda x: x[0].lower()):
         site.add_dir(name, catpage, "List", img)
     utils.eod()
 

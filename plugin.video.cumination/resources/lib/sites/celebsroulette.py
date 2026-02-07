@@ -188,35 +188,44 @@ def ListPL(url):
     soup = utils.parse_html(listhtml)
     thumbnails = utils.Thumbnails(site.name)
     for item in soup.select(".item"):
-        video = utils.safe_get_attr(item, "item", default="")
-        link = item.select_one("a[href]")
-        if not video and link:
-            video = utils.safe_get_attr(link, "href", default="")
-        if not video:
+        try:
+            video = utils.safe_get_attr(item, "item", default="")
+            link = item.select_one("a[href]")
+            if not video and link:
+                video = utils.safe_get_attr(link, "href", default="")
+            if not video:
+                continue
+            
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
+            img = thumbnails.fix_img(img) if img else ""
+            
+            name_tag = item.select_one(".title")
+            name = utils.safe_get_text(name_tag) or utils.safe_get_text(link)
+            
+            if name:
+                name = utils.cleantext(name)
+                site.add_download_link(name, video, "Playvid", img, name)
+        except Exception as e:
+            utils.kodilog("Error parsing video item in ListPL: " + str(e))
             continue
-        img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
-        img = thumbnails.fix_img(img) if img else ""
-        name = utils.cleantext(
-            utils.safe_get_text(item.select_one(".title"), default="")
-        )
-        if not name:
-            name = utils.cleantext(utils.safe_get_text(link, default=""))
-        site.add_download_link(name, video, "Playvid", img, name)
 
-    nextp = re.findall(r':(\d+)">Next', listhtml, re.DOTALL | re.IGNORECASE)
-    if nextp:
-        np = nextp[0]
-        pg = int(np) - 1
-        if "from={0:02d}".format(pg) in url:
-            next_page = url.replace(
-                "from={0:02d}".format(pg), "from={0:02d}".format(int(np))
-            )
-        else:
-            next_page = url + "{0}/".format(np)
-        lp = re.findall(r':(\d+)">Last', listhtml, re.DOTALL | re.IGNORECASE)
-        lp = "/" + lp[0] if lp else ""
-        site.add_dir("Next Page (" + np + lp + ")", next_page, "ListPL", site.img_next)
+    next_tag = soup.select_one('.pagination a:-soup-contains("Next")')
+    if next_tag:
+        next_url = utils.safe_get_attr(next_tag, "href")
+        if next_url:
+            # Handle page numbers
+            np = ""
+            m = re.search(r":(\d+)", utils.safe_get_text(next_tag))
+            if m: np = m.group(1)
+            
+            lp = ""
+            last_tag = soup.select_one('.pagination a:-soup-contains("Last")')
+            if last_tag:
+                m_last = re.search(r":(\d+)", utils.safe_get_text(last_tag))
+                if m_last: lp = "/" + m_last.group(1)
+                
+            site.add_dir("Next Page ({}{})".format(np, lp), next_url, "ListPL", site.img_next)
 
     utils.eod()
 
@@ -226,37 +235,49 @@ def Playlist(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
     for item in soup.select(".item"):
-        link = item.select_one("a[href]")
-        lpage = utils.safe_get_attr(link, "href", default="")
-        if not lpage:
+        try:
+            link = item.select_one("a[href]")
+            if not link: continue
+            
+            lpage = utils.safe_get_attr(link, "href", default="")
+            if not lpage:
+                continue
+            lpage = urllib_parse.urljoin(site.url, lpage)
+            
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
+            
+            name_tag = item.select_one(".title")
+            name = utils.safe_get_text(name_tag) or utils.safe_get_text(link)
+            
+            count_tag = item.select_one(".videos")
+            count = utils.safe_get_text(count_tag)
+            
+            if name:
+                name = utils.cleantext(name)
+                if count:
+                    name = name + "[COLOR deeppink] {0}[/COLOR]".format(count)
+                lpage += "?mode=async&function=get_block&block_id=playlist_view_playlist_view&sort_by=&from=01"
+                site.add_dir(name, lpage, "ListPL", img)
+        except Exception as e:
+            utils.kodilog("Error parsing playlist item: " + str(e))
             continue
-        lpage = urllib_parse.urljoin(site.url, lpage)
-        img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
-        name = utils.cleantext(
-            utils.safe_get_text(item.select_one(".title"), default="")
-        )
-        count = utils.safe_get_text(item.select_one(".videos"), default="")
-        if count:
-            name = name + "[COLOR deeppink] {0}[/COLOR]".format(count)
-        lpage += "?mode=async&function=get_block&block_id=playlist_view_playlist_view&sort_by=&from=01"
-        site.add_dir(name, lpage, "ListPL", img)
 
-    nextp = re.compile(r':(\d+)">Next', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    if nextp:
-        np = nextp[0]
-        pg = int(np) - 1
-        if "from={0:02d}".format(pg) in url:
-            next_page = url.replace(
-                "from={0:02d}".format(pg), "from={0:02d}".format(int(np))
-            )
-        else:
-            next_page = url + "{0}/".format(np)
-        lp = re.compile(r':(\d+)">Last', re.DOTALL | re.IGNORECASE).findall(listhtml)
-        lp = "/" + lp[0] if lp else ""
-        site.add_dir(
-            "Next Page (" + np + lp + ")", next_page, "Playlist", site.img_next
-        )
+    next_tag = soup.select_one('.pagination a:-soup-contains("Next")')
+    if next_tag:
+        next_url = utils.safe_get_attr(next_tag, "href")
+        if next_url:
+            np = ""
+            m = re.search(r":(\d+)", utils.safe_get_text(next_tag))
+            if m: np = m.group(1)
+            
+            lp = ""
+            last_tag = soup.select_one('.pagination a:-soup-contains("Last")')
+            if last_tag:
+                m_last = re.search(r":(\d+)", utils.safe_get_text(last_tag))
+                if m_last: lp = "/" + m_last.group(1)
+                
+            site.add_dir("Next Page ({}{})".format(np, lp), next_url, "Playlist", site.img_next)
 
     utils.eod()
 
@@ -275,51 +296,76 @@ def Search(url, keyword=None):
 @site.register()
 def Tags(url):
     html = utils.getHtml(url)
-    match = re.compile(
-        r'<li>\s*<a\s*href="([^"]+)">([^<]+)</a>\s*</li>', re.DOTALL | re.IGNORECASE
-    ).findall(html)
-    for tagpage, name in match:
-        name = utils.cleantext(name)
-        site.add_dir(name, tagpage, "List")
+    soup = utils.parse_html(html)
+    for link in soup.select('li a[href*="/tags/"]'):
+        tagpage = utils.safe_get_attr(link, "href")
+        name = utils.safe_get_text(link)
+        if name and tagpage:
+            name = utils.cleantext(name)
+            site.add_dir(name, tagpage, "List")
     utils.eod()
 
 
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'<a\s*class="item"\s*href="([^"]+)"\s*title="([^"]+)">.+?src="([^"]+)".+?class="videos">([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(cathtml)
-    for catpage, name, img, videos in match:
-        name = utils.cleantext(name) + " [COLOR deeppink]" + videos + "[/COLOR]"
-        site.add_dir(name, catpage, "List", img)
+    soup = utils.parse_html(cathtml)
+    for item in soup.select('a.item[href*="/categories/"]'):
+        catpage = utils.safe_get_attr(item, "href")
+        name = utils.safe_get_attr(item, "title")
+        count_tag = item.select_one(".videos")
+        videos = utils.safe_get_text(count_tag)
+        
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src")
+        
+        if name and catpage:
+            name = utils.cleantext(name) + " [COLOR deeppink]" + videos + "[/COLOR]"
+            site.add_dir(name, catpage, "List", img)
     utils.eod()
 
 
 @site.register()
 def Models(url):
     html = utils.getHtml(url)
-    match = re.compile(
-        r'class="item"\s*href="([^"]+)".+?(?:src="([^"]+)"|>no image<).+?class="title">([^<]+)<.+?"videos">([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(html)
-    for murl, img, name, videos in match:
-        name = utils.cleantext(name) + " [COLOR deeppink]" + videos + "[/COLOR]"
-        site.add_dir(name, murl, "List", img)
+    soup = utils.parse_html(html)
+    for item in soup.select('.item'):
+        link = item if item.name == 'a' else item.select_one('a[href*="/models/"]')
+        if not link: continue
+        
+        murl = utils.safe_get_attr(link, "href")
+        name_tag = item.select_one(".title")
+        name = utils.safe_get_text(name_tag)
+        
+        count_tag = item.select_one(".videos")
+        videos = utils.safe_get_text(count_tag)
+        
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src")
+        
+        if name and murl:
+            name = utils.cleantext(name) + " [COLOR deeppink]" + videos + "[/COLOR]"
+            site.add_dir(name, murl, "List", img)
 
-    nextp = re.compile(
-        r'class="pagination".+?next".+?(\d+)"', re.DOTALL | re.IGNORECASE
-    ).search(html)
-    if nextp:
-        np = nextp.group(1)
-        next_page = re.sub(r"/\d+/", "/{0}/".format(np), url)
-        lp = re.compile(
-            r'class="pagination".+?last".+?(\d+)"', re.DOTALL | re.IGNORECASE
-        ).findall(html)[0]
-        site.add_dir(
-            "Next Page ( " + np + " / " + lp + " )", next_page, "Models", site.img_next
-        )
+    pagination = soup.select_one(".pagination")
+    if pagination:
+        next_tag = pagination.select_one(".next a")
+        if next_tag:
+            next_href = utils.safe_get_attr(next_tag, "href")
+            np = ""
+            m = re.search(r"/(\d+)/", next_href)
+            if m: np = m.group(1)
+            
+            lp = ""
+            last_tag = pagination.select_one(".last a")
+            if last_tag:
+                m_last = re.search(r"/(\d+)/", utils.safe_get_attr(last_tag, "href", ""))
+                if m_last: lp = m_last.group(1)
+                
+            next_page = re.sub(r"/\d+/", "/{0}/".format(np), url) if np else next_href
+            site.add_dir(
+                "Next Page ( " + np + " / " + lp + " )", next_page, "Models", site.img_next
+            )
 
     utils.eod()
 

@@ -52,45 +52,86 @@ def List(url):
         utils.notify(msg="Nothing found")
         utils.eod()
         return
-    html = html.split('class="site-footer"')
-    match = re.compile(
-        r'<article data-video-id=.+?a href="([^"]+)"\s*title="([^"]+)".+?(?:poster|data-src|img src)="([^"]+)"',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(html[0])
-    for videopage, name, img in match:
-        name = utils.cleantext(name)
-        site.add_download_link(name, videopage, "Playvid", img, name)
-    nextp = re.compile(r'href="([^"]+)">Next<', re.DOTALL | re.IGNORECASE).findall(
-        html[0]
-    )
-    if nextp:
-        np = nextp[0]
-        npage = re.findall(r"/\d+/", np)[-1].replace("/", "")
-        lp = re.compile(r"/(\d+)/\D*?>Last<", re.DOTALL | re.IGNORECASE).findall(
-            html[0]
-        )
-        lp = "/" + lp[-1] if lp else ""
-        site.add_dir("Next Page ({}{})".format(npage, lp), np, "List", site.img_next)
-    else:
-        nextp = re.compile(
-            r'class="current">.+?href="([^"]+)"[^>]+>(\d+)<', re.DOTALL | re.IGNORECASE
-        ).findall(html[0])
-        if nextp:
-            np, npage = nextp[0]
-            site.add_dir("Next Page ({})".format(npage), np, "List", site.img_next)
+    
+    soup = utils.parse_html(html)
+    video_items = soup.select("article[data-video-id]")
+
+    for item in video_items:
+        try:
+            link = item.select_one("a[href]")
+            if not link: continue
+            
+            videopage = utils.safe_get_attr(link, "href")
+            name = utils.safe_get_attr(link, "title") or utils.safe_get_text(link)
+            
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "data-src", ["src", "poster"])
+            
+            if not videopage or not name: continue
+            
+            name = utils.cleantext(name)
+            site.add_download_link(name, videopage, "Playvid", img, name)
+        except Exception as e:
+            utils.kodilog("Error parsing video item in eroticage: " + str(e))
+            continue
+
+    # Handle pagination
+    pagination = soup.select_one(".pagination")
+    if pagination:
+        next_tag = pagination.select_one("a.next, a:-soup-contains('Next')")
+        if next_tag:
+            next_url = utils.safe_get_attr(next_tag, "href")
+            if next_url:
+                # Extract page numbers
+                page_num = ""
+                m = re.search(r"/(\d+)/", next_url)
+                if m: page_num = m.group(1)
+                
+                lp = ""
+                last_tag = pagination.select_one("a.last, a:-soup-contains('Last')")
+                if last_tag:
+                    m_last = re.search(r"/(\d+)/", utils.safe_get_attr(last_tag, "href", ""))
+                    if m_last: lp = "/" + m_last.group(1)
+                
+                site.add_dir("Next Page ({}{})".format(page_num, lp), next_url, "List", site.img_next)
+        else:
+            # Fallback for some page layouts
+            current = pagination.select_one(".current")
+            if current:
+                next_node = current.find_next("a")
+                if next_node:
+                    next_url = utils.safe_get_attr(next_node, "href")
+                    if next_url:
+                        site.add_dir("Next Page", next_url, "List", site.img_next)
+
     utils.eod()
 
 
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'<article id=.+?href="([^"]+)".+?src="([^"]+)".+?class="cat-title">([^<]+)<',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(cathtml)
-    for caturl, img, name in match:
-        name = utils.cleantext(name)
-        site.add_dir(name, caturl, "List", img)
+    soup = utils.parse_html(cathtml)
+    
+    cat_items = soup.select('article[id^="post"]')
+    for item in cat_items:
+        try:
+            link = item.select_one("a[href]")
+            if not link: continue
+            
+            caturl = utils.safe_get_attr(link, "href")
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+            
+            name_tag = item.select_one(".cat-title")
+            name = utils.safe_get_text(name_tag) or utils.safe_get_attr(link, "title")
+            
+            if name and caturl:
+                name = utils.cleantext(name)
+                site.add_dir(name, caturl, "List", img)
+        except Exception as e:
+            utils.kodilog("Error parsing category in eroticage: " + str(e))
+            continue
+            
     utils.eod()
 
 

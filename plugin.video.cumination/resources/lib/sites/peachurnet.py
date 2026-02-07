@@ -336,7 +336,8 @@ def _decode_base64_var(value: str) -> str:
         # Second decode
         second_decode = base64.b64decode(first_decode).decode("utf-8")
         return second_decode
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in peachurnet: " + str(e))
         return ""
 
 
@@ -566,7 +567,8 @@ def Playvid(url, name, download=None):
                 utils.notify(
                     "PeachUrNet", "No playable sources found - check logs", time=5000
                 )
-            except Exception:  # pragma: no cover
+            except Exception as e:  # pragma: no cover
+                utils.kodilog("@@@@Cumination: failure in peachurnet: " + str(e))
                 utils.notify("PeachUrNet", "No playable sources found")
         return
 

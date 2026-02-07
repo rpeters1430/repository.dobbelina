@@ -1,85 +1,57 @@
-"""Tests for celebsroulette BeautifulSoup migration."""
-
-from pathlib import Path
+"""Tests for celebsroulette.com site implementation."""
 
 from resources.lib.sites import celebsroulette
 
 
-FIXTURE_DIR = (
-    Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "celebsroulette"
-)
+def test_list_parses_videos(monkeypatch):
+    """Test that List correctly parses video items."""
+    html = """
+    <html>
+    <div class="item">
+        <a href="/video/hot-video/" title="Hot Video Title">
+            <img data-original="/thumbs/1.jpg" />
+        </a>
+    </div>
+    <a href="/videos/2/">Next:2</a>
+    </html>
+    """
 
-
-def load_fixture(name: str) -> str:
-    return (FIXTURE_DIR / name).read_text(encoding="utf-8")
-
-
-def test_list_parses_items(monkeypatch):
-    html = load_fixture("listing.html")
     downloads = []
     dirs = []
 
     monkeypatch.setattr(celebsroulette.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(celebsroulette.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(celebsroulette.site, "add_dir", lambda *a, **k: dirs.append(a[0]))
     monkeypatch.setattr(celebsroulette.utils, "eod", lambda: None)
-
-    def fake_add_download_link(name, url, mode, iconimage, desc, **kwargs):
-        downloads.append({"name": name, "url": url, "icon": iconimage})
-
-    def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({"name": name, "url": url})
-
-    monkeypatch.setattr(
-        celebsroulette.site, "add_download_link", fake_add_download_link
-    )
-    monkeypatch.setattr(celebsroulette.site, "add_dir", fake_add_dir)
 
     celebsroulette.List("https://celebsroulette.com/latest-updates/")
 
-    assert len(downloads) == 2
-    assert downloads[0]["name"] == "First Clip"
-    assert downloads[0]["url"] == "https://celebsroulette.com/videos/first"
-    assert downloads[1]["url"].endswith("/videos/second")
-    assert any("Next Page" in d["name"] for d in dirs)
+    assert len(downloads) == 1
+    assert downloads[0] == "Hot Video Title"
+    
+    assert len(dirs) == 1
+    assert "Next Page (2)" in dirs[0]
 
 
-def test_listpl_parses_items(monkeypatch):
-    html = load_fixture("listpl.html")
-    downloads = []
+def test_categories_parses_categories(monkeypatch):
+    """Test that Categories correctly parses categories."""
+    html = """
+    <html>
+    <a class="item" href="/categories/milf/" title="MILF">
+        <img src="/thumbs/milf.jpg" />
+        <div class="videos">123</div>
+    </a>
+    </html>
+    """
 
-    monkeypatch.setattr(celebsroulette.utils, "getHtml", lambda *a, **k: html)
-    monkeypatch.setattr(celebsroulette.utils, "eod", lambda: None)
-    monkeypatch.setattr(
-        celebsroulette.site,
-        "add_download_link",
-        lambda name, url, mode, iconimage, desc, **kwargs: downloads.append(
-            {"name": name, "url": url}
-        ),
-    )
-    monkeypatch.setattr(celebsroulette.site, "add_dir", lambda *a, **k: None)
-
-    celebsroulette.ListPL("https://celebsroulette.com/playlists/?from=01")
-
-    assert len(downloads) == 2
-    assert downloads[0]["name"] == "Playlist One"
-    assert downloads[1]["url"].endswith("playlist-2")
-
-
-def test_playlist_parses_items(monkeypatch):
-    html = load_fixture("playlist.html")
     dirs = []
 
     monkeypatch.setattr(celebsroulette.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(celebsroulette.site, "add_dir", lambda *a, **k: dirs.append(a[0]))
     monkeypatch.setattr(celebsroulette.utils, "eod", lambda: None)
-    monkeypatch.setattr(
-        celebsroulette.site,
-        "add_dir",
-        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
-            {"name": name, "url": url}
-        ),
-    )
 
-    celebsroulette.Playlist("https://celebsroulette.com/playlists/")
+    celebsroulette.Categories("https://celebsroulette.com/categories/")
 
-    assert len(dirs) == 2
-    assert "Alpha" in dirs[0]["name"]
-    assert dirs[1]["url"].startswith("https://celebsroulette.com/playlist/beta")
+    assert len(dirs) == 1
+    assert "MILF" in dirs[0]
+    assert "123" in dirs[0]

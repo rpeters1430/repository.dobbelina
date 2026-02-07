@@ -1158,8 +1158,8 @@ def _getHtml(
         # Cope with problematic timestamp values on RPi on OpenElec 4.2.1
         try:
             cj.save(cookiePath, ignore_discard=True)
-        except Exception:
-            pass
+        except Exception as e:
+            kodilog("Cookie save error: " + str(e), xbmc.LOGDEBUG)
     response.close()
 
     if "sucuri_cloudproxy_js" in result:
@@ -1583,8 +1583,8 @@ def cleantext(text):
     )
     try:
         text = text.encode("utf-8", "ignore").decode("utf-8")
-    except:
-        pass
+    except Exception as e:
+        kodilog("Encoding error: " + str(e), xbmc.LOGDEBUG)
     text = six.ensure_str(text)
     if PY3:
         import html

@@ -52,7 +52,8 @@ def Main():
 def List(url):
     try:
         listhtml = utils.getHtml(url)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in supjav: " + str(e))
         return None
 
     soup = utils.parse_html(listhtml)

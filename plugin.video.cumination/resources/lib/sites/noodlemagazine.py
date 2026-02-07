@@ -64,7 +64,8 @@ def Main(url):
 def List(url, page=0):
     try:
         listhtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in noodlemagazine: " + str(e))
         return None
 
     soup = utils.parse_html(listhtml)
@@ -154,7 +155,8 @@ def Search(url, keyword=None):
 def Babepedia(url):
     try:
         listhtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in noodlemagazine: " + str(e))
         return None
 
     match = re.compile(

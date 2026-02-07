@@ -56,49 +56,69 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        r'class="clip-link" data-id="\d+" title="([^"]+)" href="([^"]+)".*?src="([^"]+)"',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for name, videopage, img in match:
-        name = utils.cleantext(name)
+    soup = utils.parse_html(listhtml)
+    
+    video_items = soup.select('.clip-link')
+    for item in video_items:
+        try:
+            videopage = utils.safe_get_attr(item, 'href')
+            name = utils.safe_get_attr(item, 'title')
+            
+            img_tag = item.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-original', 'data-src'])
+            
+            if not videopage or not name: continue
+            
+            name = utils.cleantext(name)
 
-        contexturl = (
-            utils.addon_sys
-            + "?mode=hitprn.Lookupinfo"
-            + "&url="
-            + urllib_parse.quote_plus(videopage)
-        )
-        contextmenu = [
-            ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
-        ]
+            contexturl = (
+                utils.addon_sys
+                + "?mode=hitprn.Lookupinfo"
+                + "&url="
+                + urllib_parse.quote_plus(videopage)
+            )
+            contextmenu = [
+                ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
+            ]
 
-        site.add_download_link(name, videopage, "Play", img, name, contextm=contextmenu)
+            site.add_download_link(name, videopage, "Play", img, name, contextm=contextmenu)
+        except Exception as e:
+            utils.kodilog("Error parsing video item in hitprn: " + str(e))
+            continue
 
-    np = re.compile('Next page" href="([^"]+)"', re.DOTALL | re.IGNORECASE).search(
-        listhtml
-    )
-    if np:
-        site.add_dir(
-            "Next Page... ({0})".format(np.group(1).split("/")[-2]),
-            np.group(1),
-            "List",
-            site.img_next,
-        )
+    next_page_tag = soup.select_one('a[title*="Next page"]')
+    if next_page_tag:
+        next_url = utils.safe_get_attr(next_page_tag, 'href')
+        if next_url:
+            page_num = next_url.split("/")[-2] if "/" in next_url else "Next"
+            site.add_dir(
+                "Next Page... ({0})".format(page_num),
+                next_url,
+                "List",
+                site.img_next,
+            )
     utils.eod()
 
 
 @site.register()
 def Sites(url):
     siteshtml = utils.getHtml(url, site.url)
-    match = re.compile(
-        r'class="level-\d+" value="([^"]+)">([^<]+)</option', re.DOTALL | re.IGNORECASE
-    ).findall(siteshtml)
-    for sitepage, name in match:
-        name = name.replace("&nbsp;&nbsp;&nbsp;", "- ")
-        name = utils.cleantext(name)
-        siteurl = site.url + "?cat=" + sitepage
-        site.add_dir(name, siteurl, "List")
+    soup = utils.parse_html(siteshtml)
+    
+    # Based on regex: class="level-\d+" value="([^"]+)">([^<]+)</option
+    options = soup.select('option[class^="level-"]')
+    for option in options:
+        try:
+            sitepage = utils.safe_get_attr(option, 'value')
+            name = utils.safe_get_text(option, strip=False)
+            if sitepage and name:
+                name = name.replace("\xa0\xa0\xa0", "- ").replace("&nbsp;&nbsp;&nbsp;", "- ")
+                name = utils.cleantext(name)
+                siteurl = site.url + "?cat=" + sitepage
+                site.add_dir(name, siteurl, "List")
+        except Exception as e:
+            utils.kodilog("Error parsing site option in hitprn: " + str(e))
+            continue
     utils.eod()
 
 

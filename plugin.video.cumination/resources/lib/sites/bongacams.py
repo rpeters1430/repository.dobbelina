@@ -192,15 +192,15 @@ def clean_database(showdialog=True):
                 conn.execute("DELETE FROM sizes WHERE idtexture = ?;", (row[0],))
                 try:
                     os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
-                except Exception:
-                    pass
+                except Exception as e:
+                    utils.kodilog("@@@@Cumination: Silent failure in bongacams: " + str(e))
             conn.execute(
                 "DELETE FROM texture WHERE url LIKE ?;", ("%" + "bongacams.com" + "%",)
             )
             if showdialog:
                 utils.notify("Finished", "bongacams.com images cleared")
-    except Exception:
-        pass
+    except Exception as e:
+            utils.kodilog("@@@@Cumination: Silent failure in bongacams: " + str(e))
 
 
 @site.register()
@@ -222,7 +222,8 @@ def Playvid(url, name):
             headers=hdr,
             compression=False,
         )
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in bongacams: " + str(e))
         utils.notify("Oh oh", "Couldn't find a playable webcam link", icon="thumb")
         return None
 

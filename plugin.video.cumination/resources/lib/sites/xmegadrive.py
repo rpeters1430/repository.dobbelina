@@ -87,7 +87,8 @@ def _extract_video_url(html):
         if video_url.startswith("function/") and license_code:
             try:
                 video_url = kvs_decode(video_url, license_code)
-            except Exception:
+            except Exception as e:
+                utils.kodilog("@@@@Cumination: failure in xmegadrive: " + str(e))
                 video_url = re.sub(r"^function/\d+/", "", video_url)
         else:
             video_url = re.sub(r"^function/\d+/", "", video_url)
@@ -269,7 +270,8 @@ def Playvid(url, name, download=None):
 
     try:
         html = utils.getHtml(url, site.url)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in xmegadrive: " + str(e))
         utils.notify("Error", "Could not load video page")
         return
 

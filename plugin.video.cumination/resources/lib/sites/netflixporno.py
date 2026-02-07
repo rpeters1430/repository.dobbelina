@@ -189,7 +189,8 @@ def url_decode(str):
     else:
         try:
             result = url_decode(base64.b64decode(re.search("/goto/(.+)", str).group(1)))
-        except Exception:
+        except Exception as e:
+            utils.kodilog("@@@@Cumination: failure in netflixporno: " + str(e))
             result = str
     return result
 

@@ -64,8 +64,8 @@ try:
         c.execute(addColumn)
         addColumn = "ALTER TABLE favorites ADD COLUMN quality"
         c.execute(addColumn)
-except Exception:
-    pass
+except Exception as e:
+    xbmc.log("@@@@Cumination: Error creating tables: " + str(e), xbmc.LOGERROR)
 conn.close()
 
 
@@ -88,14 +88,14 @@ def Refresh_images():
                     conn.execute("DELETE FROM sizes WHERE idtexture = ?;", (row[0],))
                     try:
                         os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        xbmc.log("@@@@Cumination: Error removing thumbnail: " + str(e), xbmc.LOGDEBUG)
                 conn.execute(
                     "DELETE FROM texture WHERE url LIKE ?;",
                     ("%" + ".highwebmedia.com" + "%",),
                 )
-        except Exception:
-            pass
+        except Exception as e:
+            xbmc.log("@@@@Cumination: Error refreshing image: " + str(e), xbmc.LOGERROR)
     xbmc.executebuiltin("Container.Refresh")
 
 

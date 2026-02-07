@@ -1,34 +1,55 @@
-"""Tests for freeomovie site module"""
+"""Tests for freeomovie.to site implementation."""
 
 from resources.lib.sites import freeomovie
-from unittest.mock import patch
 
 
-def test_list_parses_video_items():
-    """Test that List function parses video items"""
+def test_list_parses_videos(monkeypatch):
+    """Test that List correctly parses video items."""
     html = """
-    <div class="video">
-        <a href="/watch/test-video-1/">
-            <img src="https://cdn.freeomovie.com/thumb1.jpg" />
+    <html>
+    <div class="thumi">
+        <a href="/video/hot-video/" title="Hot Video Title">
+            <img src="/thumbs/1.jpg" />
         </a>
     </div>
+    <a rel="next" href="/page/2/">Next</a>
+    </html>
     """
 
-    with (
-        patch("resources.lib.utils.getHtml") as mock_gethtml,
-        patch("resources.lib.utils.eod") as mock_eod,
-    ):
-        mock_gethtml.return_value = html
+    downloads = []
+    dirs = []
 
-        freeomovie.List("https://freeomovie.com/")
+    monkeypatch.setattr(freeomovie.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(freeomovie.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(freeomovie.site, "add_dir", lambda *a, **k: dirs.append(a[0]))
+    monkeypatch.setattr(freeomovie.utils, "eod", lambda: None)
 
-        assert mock_gethtml.called
-        assert mock_eod.called
+    freeomovie.List("https://www.freeomovie.to/")
+
+    assert len(downloads) == 1
+    assert downloads[0] == "Hot Video Title"
+    
+    assert len(dirs) == 1
+    assert "Next Page... (2)" in dirs[0]
 
 
-def test_search_without_keyword():
-    """Test that Search without keyword shows search dialog"""
-    with patch.object(freeomovie.site, "search_dir") as mock_search:
-        freeomovie.Search("https://freeomovie.com/search/")
+def test_cat_parses_categories(monkeypatch):
+    """Test that Cat correctly parses categories."""
+    html = """
+    <html>
+    <li class="cat-item">
+        <a href="/categories/milf/">MILF</a>
+    </li>
+    </html>
+    """
 
-        assert mock_search.called
+    dirs = []
+
+    monkeypatch.setattr(freeomovie.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(freeomovie.site, "add_dir", lambda *a, **k: dirs.append(a[0]))
+    monkeypatch.setattr(freeomovie.utils, "eod", lambda: None)
+
+    freeomovie.Cat("https://www.freeomovie.to/")
+
+    assert len(dirs) == 1
+    assert "MILF" in dirs[0]

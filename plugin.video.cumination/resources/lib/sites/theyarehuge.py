@@ -69,7 +69,8 @@ def Main():
 def List(url, page=1):
     try:
         listhtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in theyarehuge: " + str(e))
         return None
 
     soup = utils.parse_html(listhtml)
@@ -195,7 +196,8 @@ def Playvid(url, name, download=None):
 def Tags(url):
     try:
         taghtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in theyarehuge: " + str(e))
         return None
     soup = utils.parse_html(taghtml)
     container = soup.select_one(".list-tags") or soup

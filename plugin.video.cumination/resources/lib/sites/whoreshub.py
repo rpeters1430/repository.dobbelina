@@ -575,7 +575,8 @@ def Playvid(url, name, download=None):
                 if match:
                     return int(match.group(1))
                 return 0
-            except Exception:
+            except Exception as e:
+                utils.kodilog("@@@@Cumination: failure in whoreshub: " + str(e))
                 return 0
 
         videourl = utils.prefquality(sources, sort_by=quality_sort, reverse=True)

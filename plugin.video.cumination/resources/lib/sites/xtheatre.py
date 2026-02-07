@@ -67,21 +67,31 @@ def XTSort():
 @site.register()
 def XTCat(url):
     nextpg = True
+    visited = set()
     while nextpg:
+        if url in visited:
+            break
+        visited.add(url)
         cathtml = utils.getHtml(url, "")
-        match = re.compile(
-            r'<article.+?href="([^"]+)"\s*title="([^"]+).+?src="([^"]+)',
-            re.DOTALL | re.IGNORECASE,
-        ).findall(cathtml)
-        for catpage, name, img in match:
+        soup = utils.parse_html(cathtml)
+        for article in soup.select("article"):
+            link = article.select_one("a[href]") or article
+            catpage = utils.safe_get_attr(link, "href", default="")
+            name = utils.safe_get_attr(link, "title", default="")
+            if not name:
+                name = utils.safe_get_text(article.select_one(".title"), default="")
+            img_tag = article.select_one("img")
+            img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+            if not catpage:
+                continue
             catpage = (
                 catpage + "page/1/" if catpage.endswith("/") else catpage + "/page/1/"
             )
             site.add_dir(name, catpage, "XTList", img, 1)
-        pagination = re.findall('class="pagination">(.+?</ul>)', cathtml)[0]
-        np = re.search('class="current".+?href="([^"]+)', pagination)
+        np = soup.select_one(".pagination .current a[href]")
         if np:
-            url = np.group(1)
+            url = utils.safe_get_attr(np, "href", default="")
+            nextpg = bool(url)
         else:
             nextpg = False
     utils.eod()
@@ -107,22 +117,38 @@ def XTList(url, page=1):
         url = url + "?filter=" + sort
 
     listhtml = utils.getHtml(url, "")
-    match = re.compile(
-        r'<article.+?href="([^"]+)"\s*title="([^"]+).+?src="([^"]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for videopage, name, img in match:
+    soup = utils.parse_html(listhtml)
+    for article in soup.select("article"):
+        link = article.select_one("a[href]") or article
+        videopage = utils.safe_get_attr(link, "href", default="")
+        if not videopage:
+            continue
+        name = utils.safe_get_attr(link, "title", default="")
+        if not name:
+            name = utils.safe_get_text(article.select_one(".title"), default="")
+        img_tag = article.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
         name = utils.cleantext(name)
         site.add_download_link(name, videopage, "XTVideo", img, name)
 
-    npage = re.search('href="([^"]+)">Next', listhtml, re.DOTALL | re.IGNORECASE)
+    npage = soup.find("a", string=re.compile(r"Next", re.IGNORECASE))
     if npage:
-        site.add_dir("Next Page ...", npage.group(1), "XTList", site.img_next, npage)
+        site.add_dir(
+            "Next Page ...",
+            utils.safe_get_attr(npage, "href", default=""),
+            "XTList",
+            site.img_next,
+            npage,
+        )
     else:
-        pagination = re.findall('class="pagination">(.+?</ul>)', listhtml)[0]
-        np = re.search('class="current".+?href="([^"]+)', pagination)
+        np = soup.select_one(".pagination .current a[href]")
         if np:
-            site.add_dir("Next Page ...", np.group(1), "XTList", site.img_next)
+            site.add_dir(
+                "Next Page ...",
+                utils.safe_get_attr(np, "href", default=""),
+                "XTList",
+                site.img_next,
+            )
     utils.eod()
 
 
@@ -130,11 +156,10 @@ def XTList(url, page=1):
 def XTVideo(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     videohtml = utils.getHtml(url, site.url)
-    match = re.search(
-        r'player"><iframe.+?src="([^"]+)', videohtml, re.DOTALL | re.IGNORECASE
-    )
-    if match:
-        embedurl = match.group(1)
+    soup = utils.parse_html(videohtml)
+    iframe = soup.select_one('.player iframe[src], iframe[src]')
+    embedurl = utils.safe_get_attr(iframe, "src", default="")
+    if embedurl:
         if "streamup" in embedurl or "strmup" in embedurl:
             embedhtml = utils.getHtml(embedurl, site.url)
             match = re.search(

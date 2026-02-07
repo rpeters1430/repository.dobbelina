@@ -54,7 +54,8 @@ def Main():
 def List(url):
     try:
         html = utils.getHtml(url, site.url)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in tubxporn: " + str(e))
         html = utils._getHtml(
             str(url) + "?label_W9dmamG9w9zZg45g93FnLAVbSyd0bBDv=1", site.url
         )
@@ -224,7 +225,8 @@ def Playvid(url, name, download=None):
 
     try:
         videohtml = utils.getHtml(url, site.url)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in tubxporn: " + str(e))
         videohtml = utils._getHtml(
             url + "?label_W9dmamG9w9zZg45g93FnLAVbSyd0bBDv=1", site.url
         )

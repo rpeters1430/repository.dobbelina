@@ -217,7 +217,8 @@ def Playvid(url, name, download=None):
             sort_by=lambda x: 2160 if x == "4k" else int(x[:-1]),
             reverse=True,
         )
-    except:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in xxxtube: " + str(e))
         enc_videourl = utils.selector("Select quality", sources, reverse=True)
 
     if enc_videourl:

@@ -564,7 +564,8 @@ def Playvid(url, name, download=None):
                 sort_by=lambda x: 2160 if x == "4k" else int(x[:-1]),
                 reverse=True,
             )
-        except Exception:
+        except Exception as e:
+            utils.kodilog("@@@@Cumination: failure in awmnet: " + str(e))
             videourl = utils.selector("Select source", sources, reverse=True)
         if videourl:
             videourl = videourl.replace(r"\/", "/")

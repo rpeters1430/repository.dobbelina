@@ -52,18 +52,39 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    r = re.compile(
-        r'<title>.+?(?:"list-albums"|"box\stag)', re.DOTALL | re.IGNORECASE
-    ).search(listhtml)
-    if r:
-        listhtml = r.group(0)
-    match = re.compile(
-        r'class="item.+?href="([^"]+).+?nal="([^"]+).+?le">\s*([^<]+).+?on">([^<]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for videopage, img, name, duration in match:
-        name = utils.cleantext(name.strip())
-        site.add_download_link(name, videopage, "Playvid", img, name, duration=duration)
+    soup = utils.parse_html(listhtml)
+    
+    # Try to find the main container to narrow down listing
+    container = soup.select_one('.list-albums, .box.tag, #list_videos_common_videos_list')
+    if container:
+        video_items = container.select('.item')
+    else:
+        video_items = soup.select('.item')
+
+    for item in video_items:
+        try:
+            link = item.select_one('a[href]')
+            if not link: continue
+            
+            videopage = utils.safe_get_attr(link, 'href')
+            img_tag = item.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'data-original', ['src'])
+            
+            name = utils.safe_get_attr(link, 'title')
+            if not name:
+                name_tag = item.select_one('.title, .le')
+                name = utils.safe_get_text(name_tag)
+            
+            duration_tag = item.select_one('.duration, .on')
+            duration = utils.safe_get_text(duration_tag)
+            
+            if not videopage or not name: continue
+            
+            name = utils.cleantext(name.strip())
+            site.add_download_link(name, videopage, "Playvid", img, name, duration=duration)
+        except Exception as e:
+            utils.kodilog("Error parsing video item in vipporns: " + str(e))
+            continue
 
     match = re.search(
         r'class="next">.+?data-block-id="([^"]+)" data-parameters="([^"]+)"',
@@ -103,16 +124,36 @@ def Search(url, keyword=None):
 @site.register()
 def Cat(url):
     cathtml = utils.getHtml(url, "")
-    items = re.compile('class="item.+?</a>', re.DOTALL | re.IGNORECASE).findall(cathtml)
-    for item in sorted(items):
-        catpage = re.compile('href="([^"]+)').findall(item)[0]
-        name = re.compile('title">([^<]+)').findall(item)[0]
-        videos = re.compile('videos">([^<]+)').findall(item)[0]
-        name = "{0} [COLOR deeppink][I]({1})[/I][/COLOR]".format(
-            utils.cleantext(name.strip()), videos
-        )
-        img = "" if "no image" in item else re.compile('src="([^"]+)').findall(item)[0]
-        site.add_dir(name, catpage, "List", img)
+    soup = utils.parse_html(cathtml)
+    
+    categories = []
+    cat_items = soup.select('.item')
+    for item in cat_items:
+        try:
+            link = item.select_one('a[href]')
+            if not link: continue
+            
+            catpage = utils.safe_get_attr(link, 'href')
+            name_tag = item.select_one('.title')
+            name = utils.safe_get_text(name_tag)
+            
+            count_tag = item.select_one('.videos')
+            videos = utils.safe_get_text(count_tag)
+            
+            img_tag = item.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'src') if "no image" not in str(item) else ""
+            
+            if name and catpage:
+                display_name = "{0} [COLOR deeppink][I]({1})[/I][/COLOR]".format(
+                    utils.cleantext(name.strip()), videos
+                )
+                categories.append((display_name, catpage, img, name.lower()))
+        except Exception as e:
+            utils.kodilog("Error parsing category in vipporns: " + str(e))
+            continue
+            
+    for display_name, catpage, img, _ in sorted(categories, key=lambda x: x[3]):
+        site.add_dir(display_name, catpage, "List", img)
     utils.eod()
 
 

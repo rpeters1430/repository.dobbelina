@@ -69,7 +69,9 @@ class FlareSolverrManager:
                                 json=session_destroy_request,
                                 timeout=5,
                             )
-        except Exception:
+        except Exception as e:
+            from kodi_six import xbmc
+            xbmc.log("@@@@Cumination: Error clearing FlareSolverr sessions: " + str(e), xbmc.LOGDEBUG)
             # If clearing fails, continue anyway - not critical
             pass
 

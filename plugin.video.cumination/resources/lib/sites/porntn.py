@@ -51,7 +51,8 @@ def Main(url):
 def List(url, page=1):
     try:
         listhtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in porntn: " + str(e))
         return None
 
     soup = utils.parse_html(listhtml)
@@ -160,7 +161,8 @@ def Playvid(url, name, download=None):
 def Categories(url):
     try:
         cathtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in porntn: " + str(e))
         return None
     soup = utils.parse_html(cathtml)
     if not soup:
@@ -187,7 +189,8 @@ def Categories(url):
 def Tags(url):
     try:
         taghtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in porntn: " + str(e))
         return None
     soup = utils.parse_html(taghtml)
     if not soup:

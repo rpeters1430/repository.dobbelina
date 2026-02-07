@@ -1,34 +1,66 @@
-"""Tests for vipporns site module"""
+"""Tests for vipporns.com site implementation."""
 
 from resources.lib.sites import vipporns
-from unittest.mock import patch
 
 
-def test_list_parses_video_items():
-    """Test that List function parses video items"""
+def test_list_parses_videos(monkeypatch):
+    """Test that List correctly parses video items."""
     html = """
-    <div class="video">
-        <a href="/video/test/">
-            <img src="https://cdn.vipporns.com/thumb1.jpg" />
-        </a>
+    <html>
+    <div id="list_videos_common_videos_list">
+        <div class="item">
+            <a href="/video/hot-video/" title="Hot Video Title">
+                <img data-original="/thumbs/1.jpg" />
+                <span class="duration">10:00</span>
+            </a>
+        </div>
     </div>
+    <li class="next">
+        <a href="#" data-block-id="1" data-parameters="p1:v1;page:2">Next</a>
+    </li>
+    </html>
     """
 
-    with (
-        patch("resources.lib.utils.getHtml") as mock_gethtml,
-        patch("resources.lib.utils.eod") as mock_eod,
-    ):
-        mock_gethtml.return_value = html
+    downloads = []
+    dirs = []
 
-        vipporns.List("https://vipporns.com/")
+    monkeypatch.setattr(vipporns.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(vipporns.site, "add_download_link", lambda *a, **k: downloads.append(a[0]))
+    monkeypatch.setattr(vipporns.site, "add_dir", lambda *a, **k: dirs.append(a[0]))
+    monkeypatch.setattr(vipporns.utils, "eod", lambda: None)
 
-        assert mock_gethtml.called
-        assert mock_eod.called
+    vipporns.List("https://www.vipporns.com/new-porn-video/")
+
+    assert len(downloads) == 1
+    assert downloads[0] == "Hot Video Title"
+    
+    assert len(dirs) == 1
+    assert "Next Page..." in dirs[0]
+    assert "(2)" in dirs[0]
 
 
-def test_search_without_keyword():
-    """Test that Search without keyword shows search dialog"""
-    with patch.object(vipporns.site, "search_dir") as mock_search:
-        vipporns.Search("https://vipporns.com/search/")
+def test_cat_parses_categories(monkeypatch):
+    """Test that Cat correctly parses categories."""
+    html = """
+    <html>
+    <div class="item">
+        <a href="/categories/milf/">
+            <img src="/thumbs/milf.jpg" />
+            <div class="title">MILF</div>
+            <div class="videos">123</div>
+        </a>
+    </div>
+    </html>
+    """
 
-        assert mock_search.called
+    dirs = []
+
+    monkeypatch.setattr(vipporns.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(vipporns.site, "add_dir", lambda *a, **k: dirs.append(a[0]))
+    monkeypatch.setattr(vipporns.utils, "eod", lambda: None)
+
+    vipporns.Cat("https://www.vipporns.com/categories/")
+
+    assert len(dirs) == 1
+    assert "MILF" in dirs[0]
+    assert "(123)" in dirs[0]

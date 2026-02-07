@@ -57,42 +57,65 @@ def Main():
 def List(url):
     try:
         listhtml = utils.getHtml(url)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in allclassic: " + str(e))
         utils.notify(msg="No videos found!")
         return
     if "No videos found " in listhtml:
         utils.notify(msg="No videos found!")
         return
 
-    delimiter = r'<a class="th item"'
-    re_videopage = 'href="([^"]+)"'
-    re_name = 'class="th-description">([^<]+)<'
-    re_img = r'img src="([^"]+)"'
-    re_duration = r'la-clock-o"></i>([\d:]+)<'
-    skip = 'class="th-title"'
-
-    cm = []
-    cm_lookupinfo = utils.addon_sys + "?mode=" + str("allclassic.Lookupinfo") + "&url="
-    cm.append(
-        ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + cm_lookupinfo + ")")
+    soup = utils.parse_html(listhtml)
+    cm_lookupinfo = (
+        utils.addon_sys + "?mode=" + str("allclassic.Lookupinfo") + "&url="
     )
     cm_related = utils.addon_sys + "?mode=" + str("allclassic.Related") + "&url="
-    cm.append(
-        ("[COLOR deeppink]Related videos[/COLOR]", "RunPlugin(" + cm_related + ")")
-    )
 
-    utils.videos_list(
-        site,
-        "allclassic.Playvid",
-        listhtml,
-        delimiter,
-        re_videopage,
-        re_name,
-        re_img,
-        re_duration=re_duration,
-        skip=skip,
-        contextm=cm,
-    )
+    for card in soup.select("a.th.item[href]"):
+        if card.select_one(".th-title"):
+            continue
+        videopage = utils.safe_get_attr(card, "href", default="")
+        if not videopage:
+            continue
+        videopage = utils.fix_url(videopage, site.url)
+
+        name = utils.cleantext(
+            utils.safe_get_text(card.select_one(".th-description"), default="")
+        )
+        if not name:
+            name = utils.cleantext(utils.safe_get_attr(card, "title", default=""))
+
+        img_tag = card.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        img = utils.fix_url(img.replace("&amp;", "&"), site.url) if img else ""
+
+        duration = ""
+        duration_icon = card.select_one("i.la-clock-o")
+        if duration_icon and duration_icon.parent:
+            duration = utils.safe_get_text(duration_icon.parent, default="")
+            duration = re.sub(r"[^0-9:]", "", duration)
+
+        quoted_url = urllib_parse.quote_plus(videopage)
+        cm = [
+            (
+                "[COLOR deeppink]Lookup info[/COLOR]",
+                "RunPlugin(" + cm_lookupinfo + quoted_url + ")",
+            ),
+            (
+                "[COLOR deeppink]Related videos[/COLOR]",
+                "RunPlugin(" + cm_related + quoted_url + ")",
+            ),
+        ]
+
+        site.add_download_link(
+            name,
+            videopage,
+            "allclassic.Playvid",
+            img,
+            name,
+            duration=duration,
+            contextm=cm,
+        )
 
     re_npurl = 'class="active">.+?href="/([^"]+)"'
     re_npnr = r'class="active">.+?href="[^"]+">0*(\d+)<'
@@ -173,7 +196,8 @@ def Playvid(url, name, download=None):
             sort_by=lambda x: 2160 if x == "4k" else int(x[:-1]),
             reverse=True,
         )
-    except:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in allclassic: " + str(e))
         enc_videourl = utils.selector("Select quality", sources, reverse=True)
 
     if enc_videourl:
@@ -196,11 +220,15 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'class="th" href="([^"]+)".+?img src="([^"]+)" alt="([^"]+)"',
-        re.IGNORECASE | re.DOTALL,
-    ).findall(cathtml)
-    for caturl, img, name in match:
+    soup = utils.parse_html(cathtml)
+    for anchor in soup.select('a.th[href]'):
+        caturl = utils.safe_get_attr(anchor, "href", default="")
+        img = utils.safe_get_attr(
+            anchor.select_one("img"), "src", ["data-src", "data-original"]
+        )
+        name = utils.safe_get_attr(anchor.select_one("img"), "alt", default="")
+        if not (caturl and name):
+            continue
         name = utils.cleantext(name)
         site.add_dir(name, caturl, "List", img)
     utils.eod()

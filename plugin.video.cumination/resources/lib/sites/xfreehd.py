@@ -85,27 +85,54 @@ def List(url):
     hdr["Cookie"] = get_cookies()
     try:
         listhtml = utils.getHtml(url, site.url, headers=hdr)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in xfreehd: " + str(e))
         return None
 
     if xflogged and '"/user">My Profile<' not in listhtml:
         Login()
         hdr["Cookie"] = get_cookies()
-        listhtml = utils._getHtml(url, site.url, headers=hdr)
+        listhtml = utils.getHtml(url, site.url, headers=hdr)
 
-    match = re.compile(
-        r"""class="well\s*well-sm.+?href="([^"]+).+?src="(.+?).\s*title[^>]+>(.+?)duration-new">\s*([^\s]+).+?title-new.+?>([^<]+)""",
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for video, img, hd, duration, name in match:
-        if ">PRIVATE<" in hd:
+    soup = utils.parse_html(listhtml)
+    video_items = soup.select(".well.well-sm")
+
+    for item in video_items:
+        link = item.select_one('a[href*="/video/"]')
+        if not link:
+            continue
+
+        videourl = utils.safe_get_attr(link, "href")
+        if not videourl.startswith("http"):
+            videourl = site.url[:-1] + videourl
+
+        title_tag = item.select_one(".title-new")
+        name = utils.cleantext(utils.safe_get_text(title_tag))
+
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        if img and not img.startswith("http"):
+            img = site.url[:-1] + img
+
+        duration_tag = item.select_one(".duration-new")
+        duration = utils.safe_get_text(duration_tag)
+
+        # HD and Private status are often in badges or labels
+        badges = item.select(".badge, span[class*='label']")
+        hd = ""
+        is_private = False
+        for badge in badges:
+            text = utils.safe_get_text(badge).upper()
+            if "HD" in text:
+                hd = "HD"
+            if "PRIVATE" in text:
+                is_private = True
+
+        if is_private:
             if xflogged:
-                name = "[COLOR blue][PV][/COLOR] " + utils.cleantext(name)
+                name = "[COLOR blue][PV][/COLOR] " + name
             else:
                 continue
-        hd = "HD" if ">HD<" in hd else ""
-        img = img.split('data-src="')[1] if "data-src" in img else site.url[:-1] + img
-        videourl = video if video.startswith("http") else site.url[:-1] + video
 
         cm = []
         cm_lookupinfo = (
@@ -140,22 +167,25 @@ def List(url):
             contextm=cm,
         )
 
-    match = re.compile(
-        r'''<li><a\s*href="([^"]+)"\s*class="prevnext"''', re.DOTALL | re.IGNORECASE
-    ).search(listhtml)
-    if match and not url.startswith(site.url + "video/"):
-        lp = re.compile(
-            r"Showing.+?>\d+<.+?>\d+<.+?>(\d+)</span>\s*videos",
-            re.DOTALL | re.IGNORECASE,
-        ).findall(listhtml)
-        if lp:
-            pages = int(lp[0]) // 30 + 1
-            last_page = "/" + str(pages) if lp else ""
-        else:
-            pages = None
-            last_page = ""
-        next_page = match.group(1).replace("&amp;", "&")
+    next_page_tag = soup.select_one('a.prevnext[href*="page="]')
+    if next_page_tag and not url.startswith(site.url + "video/"):
+        next_page = utils.safe_get_attr(next_page_tag, "href")
+        if not next_page.startswith("http"):
+            next_page = site.url[:-1] + next_page
+
+        # Extract page info
         page_number = "".join([nr for nr in next_page.split("=")[-1] if nr.isdigit()])
+        showing_text = soup.select_one(".pagination-wrapper, .pagination-info")
+        pages = None
+        last_page = ""
+        
+        # Try to find total pages from "Showing ... of Z videos"
+        showing_info = utils.safe_get_text(showing_text)
+        lp_match = re.search(r"of (\d+) videos", showing_info)
+        if lp_match:
+            total_videos = int(lp_match.group(1))
+            pages = total_videos // 30 + 1
+            last_page = "/" + str(pages)
 
         cm_page = (
             utils.addon_sys
@@ -194,16 +224,34 @@ def Related(url):
 @site.register()
 def Cat(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        r"""class="col-xs-6\s*col-sm-4\scol.+?href="([^"]+).+?data-src="([^"]+)"\s*title="([^"]+).+?badge">([^<]+)""",
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for catpage, img, name, videos in match:
-        name = (
-            utils.cleantext(name.strip()) + " [COLOR hotpink]%s Videos[/COLOR]" % videos
-        )
+    soup = utils.parse_html(listhtml)
+    
+    # Selector based on regex: class="col-xs-6\s*col-sm-4\scol
+    cat_items = soup.select('div[class*="col-xs-6"][class*="col-sm-4"]')
+    
+    for item in cat_items:
+        link = item.select_one('a[href]')
+        if not link: continue
+        
+        catpage = utils.safe_get_attr(link, 'href')
         caturl = site.url[:-1] + catpage if catpage.startswith("/") else catpage
-        site.add_dir(name, caturl, "List", site.url[:-1] + img)
+        
+        img_tag = item.select_one('img')
+        img = utils.safe_get_attr(img_tag, 'data-src', ['src'])
+        if img and not img.startswith('http'):
+            img = site.url[:-1] + img
+            
+        name_tag = item.select_one('h3, .title, a[title]')
+        name = utils.safe_get_attr(link, 'title') or utils.safe_get_text(name_tag)
+        
+        count_tag = item.select_one('.badge')
+        videos = utils.safe_get_text(count_tag)
+        
+        display_name = utils.cleantext(name)
+        if videos:
+            display_name += " [COLOR hotpink]%s Videos[/COLOR]" % videos
+            
+        site.add_dir(display_name, caturl, "List", img)
     utils.eod()
 
 

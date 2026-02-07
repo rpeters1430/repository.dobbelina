@@ -738,8 +738,8 @@ def searchDir(url, mode, page=None, alphabet=None):
             addDir(
                 name, url, mode, cum_image("cum-search.png"), page=page, keyword=keyword
             )
-    except Exception:
-        pass
+    except Exception as e:
+        xbmc.log("@@@@Cumination: Error in searchDir: " + str(e), xbmc.LOGERROR)
     conn.close()
     eod()
 
@@ -754,8 +754,8 @@ def keys():
                      ORDER BY keyword""")
         for letter, count in c.fetchall():
             ret[letter] = count
-    except Exception:
-        pass
+    except Exception as e:
+        xbmc.log("@@@@Cumination: Error in keys(): " + str(e), xbmc.LOGERROR)
     conn.close()
     return ret
 

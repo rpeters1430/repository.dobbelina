@@ -68,7 +68,8 @@ def List(url, page=1):
             "User-Agent": utils.USER_AGENT,
         }
         data = utils._getHtml(url, headers=headers)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in streamate: " + str(e))
         return None
     model_list = json.loads(data)
     total_models = model_list.get("totalResultCount")
@@ -115,15 +116,15 @@ def clean_database(showdialog=True):
                 conn.execute("DELETE FROM sizes WHERE idtexture = ?;", (row[0],))
                 try:
                     os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
-                except Exception:
-                    pass
+                except Exception as e:
+                    utils.kodilog("@@@@Cumination: Silent failure in streamate: " + str(e))
             conn.execute(
                 "DELETE FROM texture WHERE url LIKE ?;", ("%" + "m1.nsimg.net" + "%",)
             )
             if showdialog:
                 utils.notify("Finished", "streamate.com images cleared")
-    except Exception:
-        pass
+    except Exception as e:
+            utils.kodilog("@@@@Cumination: Silent failure in streamate: " + str(e))
 
 
 @site.register()
@@ -157,7 +158,8 @@ def Playvid(url, name):
             )
         )
         data = json.loads(response).get("formats")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in streamate: " + str(e))
         utils.notify("Oh oh", "Couldn't find a playable webcam link")
         return
 
@@ -190,7 +192,8 @@ def Search(url):
         return False, 0
     try:
         response = utils.getHtml(url + keyword)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in streamate: " + str(e))
         utils.notify("Model not found - try again")
         return None
 

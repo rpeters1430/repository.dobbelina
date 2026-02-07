@@ -95,7 +95,8 @@ def List(url):
 
     try:
         response = utils.getHtml(url, site.url)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in xhamster: " + str(e))
         site.add_dir(
             "No videos found. [COLOR hotpink]Clear all filters.[/COLOR]",
             "",
@@ -624,7 +625,8 @@ def _load_initials_json(html, soup=None):
     if not soup:
         try:
             soup = utils.parse_html(html)
-        except Exception:
+        except Exception as e:
+            utils.kodilog("@@@@Cumination: failure in xhamster: " + str(e))
             soup = None
     if soup:
         script = soup.find("script", id=lambda value: value and "initials" in value)
@@ -646,7 +648,8 @@ def _load_initials_json(html, soup=None):
     script_text = script_text.rstrip(";")
     try:
         return json.loads(script_text)
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in xhamster: " + str(e))
         return {}
 
 

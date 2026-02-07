@@ -69,7 +69,8 @@ def List(url):
     while items < 36 and url:
         try:
             listhtml = utils.getHtml(url, site.url)
-        except Exception:
+        except Exception as e:
+            utils.kodilog("@@@@Cumination: failure in javmoe: " + str(e))
             return None
 
         soup = utils.parse_html(listhtml)
@@ -229,7 +230,8 @@ def Playvid(url, name, download=None):
             ename = utils.safe_get_text(link, "").strip()
             if eurl and ename:
                 eurls.append((eurl, ename))
-        except Exception:
+        except Exception as e:
+            utils.kodilog("@@@@Cumination: failure in javmoe: " + str(e))
             continue
 
     sources = {

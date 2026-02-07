@@ -43,47 +43,57 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url)
-    videos = listhtml.split('data-post-id="')
-    videos.pop(0)
-    for video in videos:
-        match = re.compile(
-            r'data-src="([^"]+)".+?href="([^"]+)"\s*title="([^"]+).+?"duration">([^<]+)<',
-            re.DOTALL | re.IGNORECASE,
-        ).findall(video)
-        if match:
-            img, videourl, name, duration = match[0]
-            name = utils.cleantext(name)
-            if name == "Live Cams":
-                continue
-            cm_related = (
-                utils.addon_sys
-                + "?mode="
-                + str("pornez.ContextRelated")
-                + "&url="
-                + urllib_parse.quote_plus(videourl)
-            )
-            cm = [
-                (
-                    "[COLOR violet]Related videos[/COLOR]",
-                    "RunPlugin(" + cm_related + ")",
-                )
-            ]
+    soup = utils.parse_html(listhtml)
+    for item in soup.select('[data-post-id], article, .video-item, .item'):
+        link = item.select_one("a[href]")
+        videourl = utils.safe_get_attr(link, "href", default="")
+        if not videourl:
+            continue
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src", "data-original"])
+        name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+        if not name:
+            name = utils.cleantext(utils.safe_get_text(link, default=""))
+        if not name or name == "Live Cams":
+            continue
+        duration = utils.safe_get_text(item.select_one(".duration"), default="")
 
-            site.add_download_link(
-                name, videourl, "Play", img, name, duration=duration, contextm=cm
+        cm_related = (
+            utils.addon_sys
+            + "?mode="
+            + str("pornez.ContextRelated")
+            + "&url="
+            + urllib_parse.quote_plus(videourl)
+        )
+        cm = [
+            (
+                "[COLOR violet]Related videos[/COLOR]",
+                "RunPlugin(" + cm_related + ")",
             )
+        ]
+        site.add_download_link(
+            name, videourl, "Play", img, name, duration=duration, contextm=cm
+        )
 
-    match = re.compile(
-        r'href="([^"]+page/(\d+)[^"]*)">&raquo;<', re.DOTALL | re.IGNORECASE
-    ).findall(videos[-1])
-    if match:
-        npage, np = match[0]
-        matchlp = re.compile(
-            r'"page-link"\s*href="[^"]+">([\d,]+)<', re.DOTALL | re.IGNORECASE
-        ).findall(videos[-1])
+    npage = ""
+    np = ""
+    for a in soup.select("a[href]"):
+        href = utils.safe_get_attr(a, "href", default="")
+        text = utils.safe_get_text(a, default="")
+        if "/page/" in href and ("\xbb" in text or "»" in text or "next" in text.lower()):
+            npage = href
+            m = re.search(r"/page/(\d+)", href)
+            np = m.group(1) if m else ""
+            break
+    if npage:
         lp = ""
-        if matchlp:
-            lp = "/" + matchlp[-1]
+        page_links = []
+        for a in soup.select("a.page-link[href]"):
+            page_text = utils.safe_get_text(a, default="").replace(",", "")
+            if page_text.isdigit():
+                page_links.append(page_text)
+        if page_links:
+            lp = "/" + page_links[-1]
         site.add_dir(
             "[COLOR hotpink]Next Page...[/COLOR] ({0}{1})".format(np, lp),
             npage,
@@ -96,11 +106,15 @@ def List(url):
 @site.register()
 def Cat(url):
     cathtml = utils.getHtml(url)
-    match = re.compile(
-        r'class="btn btn-grey" href="([^"]+)"\s*>([^<]+)<', re.DOTALL | re.IGNORECASE
-    ).findall(cathtml)
-    match = match[:-1]
-    for caturl, name in match:
+    soup = utils.parse_html(cathtml)
+    matches = []
+    for link in soup.select("a.btn.btn-grey[href]"):
+        caturl = utils.safe_get_attr(link, "href", default="")
+        name = utils.safe_get_text(link, default="")
+        if caturl and name:
+            matches.append((caturl, name))
+    matches = matches[:-1]
+    for caturl, name in matches:
         name = utils.cleantext(name)
         site.add_dir(name, caturl, "List", "")
     utils.eod()
@@ -131,19 +145,17 @@ def ContextRelated(url):
 def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download)
     videohtml = utils.getHtml(url)
-    match = re.compile(r'<iframe[^>]+src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(
-        videohtml
-    )
-    if not match:
+    soup = utils.parse_html(videohtml)
+    playerurl = utils.safe_get_attr(soup.select_one("iframe[src]"), "src", default="")
+    if not playerurl:
         return
-    playerurl = match[0]
     if vp.resolveurl.HostedMediaFile(playerurl):
         vp.play_from_link_to_resolve(playerurl)
     else:
         playerhtml = utils.getHtml(playerurl, url)
-        match = re.compile(r'source src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(
-            playerhtml
+        player_soup = utils.parse_html(playerhtml)
+        videourl = utils.safe_get_attr(
+            player_soup.select_one("source[src]"), "src", default=""
         )
-        videourl = match[0]
         if videourl:
             vp.play_from_direct_link(videourl)

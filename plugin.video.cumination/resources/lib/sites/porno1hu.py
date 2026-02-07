@@ -56,7 +56,8 @@ def Main(url):
 def List(url, page=1):
     try:
         listhtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in porno1hu: " + str(e))
         return None
 
     soup = utils.parse_html(listhtml)
@@ -162,7 +163,8 @@ def Playvid(url, name, download=None):
 def Categories(url):
     try:
         cathtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in porno1hu: " + str(e))
         return None
     soup = utils.parse_html(cathtml)
     for item in soup.select("a.item[href][title]"):

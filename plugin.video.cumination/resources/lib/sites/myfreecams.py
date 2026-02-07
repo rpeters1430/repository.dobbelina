@@ -179,7 +179,8 @@ def fc_decode_json(m):
             if utils.PY2
             else m[m.find("{") :]
         )
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in myfreecams: " + str(e))
         return {"lv": 0}
 
 

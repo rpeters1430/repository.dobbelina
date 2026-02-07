@@ -46,40 +46,54 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, "")
-    match = re.compile(
-        'class="thumi">.+?href="([^"]+).+?title="([^"]+).+?src="([^"]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for videopage, name, img in match:
-        name = utils.cleantext(name)
+    soup = utils.parse_html(listhtml)
+    
+    video_items = soup.select('.thumi')
+    for item in video_items:
+        try:
+            link = item.select_one('a[href]')
+            if not link: continue
+            
+            videopage = utils.safe_get_attr(link, 'href')
+            name = utils.safe_get_attr(link, 'title') or utils.safe_get_text(link)
+            
+            img_tag = item.select_one('img')
+            img = utils.safe_get_attr(img_tag, 'src', ['data-src', 'data-original'])
+            
+            if not videopage or not name: continue
+            
+            name = utils.cleantext(name)
 
-        contextmenu = []
-        contexturl = (
-            utils.addon_sys
-            + "?mode="
-            + str("freeomovie.Lookupinfo")
-            + "&url="
-            + urllib_parse.quote_plus(videopage)
-        )
-        contextmenu.append(
-            ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
-        )
+            contextmenu = []
+            contexturl = (
+                utils.addon_sys
+                + "?mode="
+                + str("freeomovie.Lookupinfo")
+                + "&url="
+                + urllib_parse.quote_plus(videopage)
+            )
+            contextmenu.append(
+                ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
+            )
 
-        site.add_download_link(
-            name, videopage, "Playvid", img, name, contextm=contextmenu
-        )
+            site.add_download_link(
+                name, videopage, "Playvid", img, name, contextm=contextmenu
+            )
+        except Exception as e:
+            utils.kodilog("Error parsing video item in freeomovie: " + str(e))
+            continue
 
-    nextp = re.compile('rel="next" href="([^"]+)"', re.DOTALL | re.IGNORECASE).search(
-        listhtml
-    )
-    if nextp:
-        nextp = nextp.group(1)
-        site.add_dir(
-            "Next Page... ({0})".format(nextp.split("/")[-2]),
-            nextp,
-            "List",
-            site.img_next,
-        )
+    next_page_tag = soup.select_one('a[rel="next"]')
+    if next_page_tag:
+        next_url = utils.safe_get_attr(next_page_tag, 'href')
+        if next_url:
+            page_num = next_url.split("/")[-2] if "/" in next_url else "Next"
+            site.add_dir(
+                "Next Page... ({0})".format(page_num),
+                next_url,
+                "List",
+                site.img_next,
+            )
 
     utils.eod()
 
@@ -98,13 +112,23 @@ def Search(url, keyword=None):
 @site.register()
 def Cat(url):
     listhtml = utils.getHtml(url, "")
-    match = re.compile(
-        r'<li class="cat-item">.+?<a href="([^"]+)"[^>]?>([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for catpage, name in match:
-        name = utils.cleantext(name)
-        site.add_dir(name, catpage, "List", "", "")
+    soup = utils.parse_html(listhtml)
+    
+    cat_items = soup.select('.cat-item')
+    for item in cat_items:
+        try:
+            link = item.select_one('a[href]')
+            if not link: continue
+            
+            catpage = utils.safe_get_attr(link, 'href')
+            name = utils.safe_get_text(link)
+            
+            if name and catpage:
+                name = utils.cleantext(name)
+                site.add_dir(name, catpage, "List", "")
+        except Exception as e:
+            utils.kodilog("Error parsing category in freeomovie: " + str(e))
+            continue
     utils.eod()
 
 

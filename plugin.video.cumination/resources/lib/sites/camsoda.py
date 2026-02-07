@@ -170,15 +170,15 @@ def clean_database(showdialog=True):
                 conn.execute("DELETE FROM sizes WHERE idtexture = ?;", (row[0],))
                 try:
                     os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
-                except Exception:
-                    pass
+                except Exception as e:
+                    utils.kodilog("@@@@Cumination: Silent failure in camsoda: " + str(e))
             conn.execute(
                 "DELETE FROM texture WHERE url LIKE ?;", ("%" + ".camsoda.com" + "%",)
             )
             if showdialog:
                 utils.notify("Finished", "Camsoda images cleared")
-    except Exception:
-        pass
+    except Exception as e:
+            utils.kodilog("@@@@Cumination: Silent failure in camsoda: " + str(e))
 
 
 @site.register()

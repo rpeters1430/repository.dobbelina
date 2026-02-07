@@ -186,7 +186,8 @@ def Playvid(url, name, download=None):
     # Decode the base64 ID to get the numeric UUID
     try:
         video_uuid = base64.b64decode(video_id_b64).decode("utf-8")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in livecamrips: " + str(e))
         utils.notify("Error", "Could not decode video ID")
         vp.progress.close()
         return
@@ -216,7 +217,8 @@ def Playvid(url, name, download=None):
         snapshot_encoded = unescape(snapshot_match.group(1))
         try:
             snapshot_data = json.loads(snapshot_encoded)
-        except Exception:
+        except Exception as e:
+            utils.kodilog("@@@@Cumination: failure in livecamrips: " + str(e))
             snapshot_data = None
     else:
         snapshot_data = None
@@ -291,9 +293,8 @@ def Playvid(url, name, download=None):
                     livewire_str,
                     re.IGNORECASE,
                 )
-            except Exception:
-                pass
-
+            except Exception as e:
+                utils.kodilog("@@@@Cumination: Silent failure in livecamrips: " + str(e))
         if myvidplay_match:
             myvidplay_url = myvidplay_match.group(1)
             utils.kodilog("@@@@Cumination: Found myvidplay.com URL: " + myvidplay_url)

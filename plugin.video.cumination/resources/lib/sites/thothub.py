@@ -715,7 +715,8 @@ def Playvid(url, name, download=None):
             embed_html = None
             try:
                 embed_html = utils.getHtml(embed_url, url, headers=headers)
-            except Exception:
+            except Exception as e:
+                utils.kodilog("@@@@Cumination: failure in thothub: " + str(e))
                 embed_html = None
             if embed_html:
                 embed_vars = _parse_flashvars(embed_html)

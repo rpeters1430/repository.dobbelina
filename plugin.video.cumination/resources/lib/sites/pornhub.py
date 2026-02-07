@@ -149,7 +149,19 @@ def List(url):
     # Extract video items
     # PornHub uses class="pcVideoListItem" for video cards
     # For search pages, also require "videoBoxesSearch" class to exclude recommended videos
-    video_items = soup.select('[class*="pcVideoListItem"]')
+    if "search?" in url:
+        search_container = soup.select_one("#videoSearchWrapper, #videoBoxesSearch, .videoBoxesSearch")
+        if search_container:
+            video_items = search_container.select('[class*="pcVideoListItem"]')
+        else:
+            # Fallback to main content area if search container not found
+            main_content = soup.select_one("#searchPageVideoList, #videoSearchResult")
+            if main_content:
+                video_items = main_content.select('[class*="pcVideoListItem"]')
+            else:
+                video_items = soup.select('[class*="pcVideoListItem"]')
+    else:
+        video_items = soup.select('[class*="pcVideoListItem"]')
 
     for item in video_items:
         try:
@@ -168,6 +180,12 @@ def List(url):
                 video_url = site.url[:-1] + video_url
 
             title = utils.safe_get_attr(link, "title")
+            if not title:
+                title_tag = item.select_one(".title")
+                title = utils.safe_get_text(title_tag)
+            if not title:
+                img_tag = item.select_one("img")
+                title = utils.safe_get_attr(img_tag, "alt")
 
             # Extract thumbnail image
             img_tag = item.select_one("img")

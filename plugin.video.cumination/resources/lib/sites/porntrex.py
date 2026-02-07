@@ -496,7 +496,8 @@ def PTSubscribe_pornstar(url, id=None, what="subscribe"):
         url2 = url.split("?")[0]
         try:
             modelhtml = utils.getHtml(url2)
-        except Exception:
+        except Exception as e:
+            utils.kodilog("@@@@Cumination: failure in porntrex: " + str(e))
             return None
         id = re.findall(
             r'data-subscribe-to="model"\s*data-id="(\d+)"', modelhtml, re.DOTALL

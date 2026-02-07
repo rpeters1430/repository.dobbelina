@@ -57,7 +57,8 @@ def Main():
 def List(url):
     try:
         listhtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in eporner: " + str(e))
         return None
     soup = utils.parse_html(listhtml)
     video_items = soup.select("div.mb[data-vp]")
@@ -103,7 +104,8 @@ def Playvid(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
     try:
         listhtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in eporner: " + str(e))
         return None
     embed = re.compile(
         "vid = '(.+?)'.+?hash = '(.+?)'", re.DOTALL | re.IGNORECASE
@@ -139,7 +141,8 @@ def Playvid(url, name, download=None):
 def Categories(url):
     try:
         cathtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in eporner: " + str(e))
         return None
     soup = utils.parse_html(cathtml)
     categories = []
@@ -164,7 +167,8 @@ def Categories(url):
 def Pornstars(url):
     try:
         cathtml = utils.getHtml(url, "")
-    except Exception:
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in eporner: " + str(e))
         return None
     soup = utils.parse_html(cathtml)
     profiles = soup.select(".mbprofile")
