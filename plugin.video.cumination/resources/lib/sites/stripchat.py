@@ -271,7 +271,7 @@ def Playvid(url, name):
         # Check if model is actually online
         if model_data:
             is_online = model_data.get("isOnline") or model_data.get("isBroadcasting")
-            if is_online == False:
+            if not is_online:
                 utils.kodilog("Stripchat: Model {} is offline".format(name))
                 return None
 
@@ -374,7 +374,7 @@ def Playvid(url, name):
         utils.kodilog("Stripchat: No stream URL available")
         # Check if model is actually online
         is_online = model_data.get("isOnline") or model_data.get("isBroadcasting")
-        if is_online == False:
+        if not is_online:
             utils.notify("Stripchat", "Model is offline")
         else:
             utils.notify("Stripchat", "Unable to locate stream URL")

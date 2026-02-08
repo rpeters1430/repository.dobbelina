@@ -1595,6 +1595,7 @@ def cleantext(text):
                 break
             text = unescaped
     else:
+        h = html_parser.HTMLParser()
         for _ in range(2):
             unescaped = h.unescape(text.decode("utf8")).encode("utf8")
             if unescaped == text:

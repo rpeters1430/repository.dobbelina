@@ -5,7 +5,6 @@ import sys
 import shutil
 import binascii
 import six
-from six.moves import cStringIO
 import stat
 import io
 import re

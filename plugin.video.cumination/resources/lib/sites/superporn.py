@@ -171,7 +171,7 @@ def Playvid(url, name, download=None):
             best_q = sorted(sources.keys(), reverse=True)[0]
             vp.play_from_direct_link(sources[best_q] + "|Referer=" + url)
             return
-        except:
+        except Exception:
             pass
 
     vp.play_from_link_to_resolve(url)

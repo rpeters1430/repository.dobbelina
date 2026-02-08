@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from __future__ import annotations
 
 import re
-import json
 from six.moves import urllib_parse
 
 from resources.lib import utils
@@ -27,24 +26,20 @@ from resources.lib.adultsite import AdultSite
 from resources.lib.sites.soup_spec import SoupSiteSpec
 
 site = AdultSite(
-    "playhdporn",
-    "[COLOR hotpink]PlayHDPorn[/COLOR]",
-    "https://playhdporn.com/",
-    "playhdporn.png",
-    "playhdporn",
+    "okxxx",
+    "[COLOR hotpink]OK.XXX[/COLOR]",
+    "https://ok.xxx/",
+    "okxxx.png",
+    "okxxx",
 )
 
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
         "items": ".item",
-        "url": {"selector": "a", "attr": "href"},
-        "title": {"selector": "strong.title", "text": True, "clean": True},
-        "thumbnail": {
-            "selector": "img.thumb",
-            "attr": "data-original",
-            "fallback_attrs": ["src"],
-        },
-        "duration": {"selector": ".duration", "text": True},
+        "url": {"selector": ".thumb a", "attr": "href"},
+        "title": {"selector": ".thumb a", "attr": "title", "clean": True},
+        "thumbnail": {"selector": "img", "attr": "data-original", "fallback_attrs": ["src"]},
+        "duration": {"selector": ".video-meta li:first-child span", "text": True},
         "pagination": {
             "selector": ".pagination a",
             "text_matches": ["next", "»"],
@@ -57,34 +52,13 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir(
-        "[COLOR hotpink]Latest Updates[/COLOR]",
-        site.url + "latest-updates/",
-        "List",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Top Rated[/COLOR]",
-        site.url + "top-rated/",
-        "List",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Most Viewed[/COLOR]",
-        site.url + "most-popular/",
-        "List",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Categories[/COLOR]",
-        site.url + "categories/",
-        "Categories",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search
-    )
-    List(site.url)
+    site.add_dir("[COLOR hotpink]Trending[/COLOR]", site.url + "trending/", "List", site.img_cat)
+    site.add_dir("[COLOR hotpink]Newest[/COLOR]", site.url + "latest-updates/", "List", site.img_cat)
+    site.add_dir("[COLOR hotpink]Top Rated[/COLOR]", site.url + "top-rated/", "List", site.img_cat)
+    site.add_dir("[COLOR hotpink]Most Viewed[/COLOR]", site.url + "most-popular/", "List", site.img_cat)
+    site.add_dir("[COLOR hotpink]Categories[/COLOR]", site.url + "categories/", "Categories", site.img_cat)
+    site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search)
+    List(site.url + "trending/")
     utils.eod()
 
 
@@ -105,7 +79,7 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        # PlayHDPorn uses /search/%QUERY%/ or ?q=
+        # OK.XXX uses /search/%QUERY%/
         search_url = site.url + "search/" + urllib_parse.quote_plus(keyword) + "/"
         List(search_url)
 
@@ -118,42 +92,33 @@ def Categories(url):
         return
 
     soup = utils.parse_html(html)
-    # Categories are usually in .list-categories .item
     cat_items = soup.select(".list-categories .item, .list-categories a")
-
+    
     entries = []
-    for item in cat_items:
-        # If item is already the anchor
-        if item.name == "a":
-            anchor = item
-        else:
-            anchor = item.select_one("a")
-
+    for anchor in cat_items:
+        if anchor.name != "a":
+            anchor = anchor.select_one("a")
         if not anchor:
             continue
-
+            
         href = utils.safe_get_attr(anchor, "href")
         if not href:
             continue
-
-        title_tag = anchor.select_one(".title, strong")
-        name = (
-            utils.safe_get_text(title_tag) if title_tag else utils.safe_get_text(anchor)
-        )
+            
+        name = utils.safe_get_text(anchor)
         if not name:
             name = utils.safe_get_attr(anchor, "title")
-
         if not name:
             continue
-
+            
         img_tag = anchor.select_one("img")
-        img = utils.safe_get_attr(img_tag, "src", ["data-original", "data-src"])
-
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        
         entries.append((name, urllib_parse.urljoin(site.url, href), img))
 
     for name, cat_url, img in sorted(entries):
         site.add_dir(name, cat_url, "List", img)
-
+        
     utils.eod()
 
 
@@ -165,29 +130,10 @@ def Playvid(url, name, download=None):
         vp.play_from_link_to_resolve(url)
         return
 
-    # Look for flashvars or video sources
-    # Common pattern in KVS: flashvars.video_url
-    match = re.search(r"video_url:\s*'([^']+)'", html)
+    # KVS Player logic
+    match = re.search(r"video_url:\s*[\"']([^\"']+)[\"']", html)
     if match:
-        video_url = match.group(1)
-        vp.play_from_direct_link(video_url + "|Referer=" + url)
+        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
         return
-
-    # Alternative: check for quality-based sources in script
-    # var video_sources = { "720p": "...", "480p": "..." }
-    match = re.search(r"video_sources\s*=\s*({[^}]+})", html)
-    if match:
-        try:
-            sources = json.loads(match.group(1).replace("'", '"'))
-            # Get best quality
-            best_q = sorted(sources.keys(), reverse=True)[0]
-            vp.play_from_direct_link(sources[best_q] + "|Referer=" + url)
-            return
-        except Exception:
-            pass
-
-    # Standard KVS license/player URL
-    # flashvars.license_code = ...
-    # flashvars.video_url = ...
 
     vp.play_from_link_to_resolve(url)

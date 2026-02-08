@@ -134,7 +134,7 @@ def Playvid(url, name, download=None):
                 if best_url:
                     vp.play_from_direct_link(best_url + "|Referer=" + url)
                     return
-        except:
+        except Exception:
             pass
 
     # Alternative: check for direct MP4 links in HTML

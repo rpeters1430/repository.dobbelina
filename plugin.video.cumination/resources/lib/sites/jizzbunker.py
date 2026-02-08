@@ -26,27 +26,23 @@ from resources.lib.adultsite import AdultSite
 from resources.lib.sites.soup_spec import SoupSiteSpec
 
 site = AdultSite(
-    "neporn",
-    "[COLOR hotpink]Neporn[/COLOR]",
-    "https://neporn.com/",
-    "neporn.png",
-    "neporn",
+    "jizzbunker",
+    "[COLOR hotpink]Jizzbunker[/COLOR]",
+    "https://jizzbunker.com/",
+    "jizzbunker.png",
+    "jizzbunker",
 )
 
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
-        "items": ".item",
-        "url": {"selector": 'a[href*="/video/"]', "attr": "href"},
-        "title": {"selector": "strong.title", "text": True, "clean": True},
-        "thumbnail": {
-            "selector": "img",
-            "attr": "src",
-            "fallback_attrs": ["data-src", "data-original"],
-        },
-        "duration": {"selector": ".duracion, .duration", "text": True},
+        "items": "figure",
+        "url": {"selector": "figcaption a", "attr": "href"},
+        "title": {"selector": "figcaption a", "text": True, "clean": True},
+        "thumbnail": {"selector": "a.img img", "attr": "data-original", "fallback_attrs": ["src"]},
+        "duration": {"selector": "li.dur time", "text": True},
         "pagination": {
             "selector": ".pagination a",
-            "text_matches": ["next", "»"],
+            "text_matches": ["next", "→"],
             "attr": "href",
             "mode": "List",
         },
@@ -56,34 +52,12 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir(
-        "[COLOR hotpink]Latest Videos[/COLOR]",
-        site.url + "latest-updates/",
-        "List",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Popular[/COLOR]",
-        site.url + "most-popular/",
-        "List",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Top Rated[/COLOR]",
-        site.url + "top-rated/",
-        "List",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Categories[/COLOR]",
-        site.url + "categories/",
-        "Categories",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search
-    )
-    List(site.url)
+    site.add_dir("[COLOR hotpink]Trending[/COLOR]", site.url + "straight/trending", "List", site.img_cat)
+    site.add_dir("[COLOR hotpink]Newest[/COLOR]", site.url + "straight/latest", "List", site.img_cat)
+    site.add_dir("[COLOR hotpink]Top Rated[/COLOR]", site.url + "straight/top-rated", "List", site.img_cat)
+    site.add_dir("[COLOR hotpink]Categories[/COLOR]", site.url + "straight/categories", "Categories", site.img_cat)
+    site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "searching/", "Search", site.img_search)
+    List(site.url + "straight/trending")
     utils.eod()
 
 
@@ -104,7 +78,8 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        search_url = site.url + "search/" + urllib_parse.quote_plus(keyword) + "/"
+        # Jizzbunker uses /searching/?queryString=%QUERY%
+        search_url = site.url + "searching/?queryString=" + urllib_parse.quote_plus(keyword)
         List(search_url)
 
 
@@ -116,33 +91,33 @@ def Categories(url):
         return
 
     soup = utils.parse_html(html)
-    cat_items = soup.select(".list-categories .item, .list-categories a")
-
+    cat_items = soup.select(".category-item, a[href*='/category/']")
+    
     entries = []
     for anchor in cat_items:
         if anchor.name != "a":
             anchor = anchor.select_one("a")
         if not anchor:
             continue
-
+            
         href = utils.safe_get_attr(anchor, "href")
         if not href:
             continue
-
+            
         name = utils.safe_get_text(anchor)
         if not name:
             name = utils.safe_get_attr(anchor, "title")
         if not name:
             continue
-
+            
         img_tag = anchor.select_one("img")
-        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
-
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        
         entries.append((name, urllib_parse.urljoin(site.url, href), img))
 
     for name, cat_url, img in sorted(entries):
         site.add_dir(name, cat_url, "List", img)
-
+        
     utils.eod()
 
 
@@ -154,8 +129,14 @@ def Playvid(url, name, download=None):
         vp.play_from_link_to_resolve(url)
         return
 
-    # KVS Player logic
+    # Check for direct MP4 links or quality sources in script
     match = re.search(r"video_url:\s*[\"']([^\"']+)[\"']", html)
+    if match:
+        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        return
+
+    # Look for HLS sources
+    match = re.search(r"video_url_hls:\s*[\"']([^\"']+)[\"']", html)
     if match:
         vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
         return

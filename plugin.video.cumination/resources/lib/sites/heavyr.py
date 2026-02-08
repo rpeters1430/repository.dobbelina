@@ -26,24 +26,19 @@ from resources.lib.adultsite import AdultSite
 from resources.lib.sites.soup_spec import SoupSiteSpec
 
 site = AdultSite(
-    "neporn",
-    "[COLOR hotpink]Neporn[/COLOR]",
-    "https://neporn.com/",
-    "neporn.png",
-    "neporn",
+    "heavyr",
+    "[COLOR hotpink]Heavy-R[/COLOR]",
+    "https://www.heavy-r.com/",
+    "heavyr.png",
+    "heavyr",
 )
 
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
         "items": ".item",
-        "url": {"selector": 'a[href*="/video/"]', "attr": "href"},
-        "title": {"selector": "strong.title", "text": True, "clean": True},
-        "thumbnail": {
-            "selector": "img",
-            "attr": "src",
-            "fallback_attrs": ["data-src", "data-original"],
-        },
-        "duration": {"selector": ".duracion, .duration", "text": True},
+        "url": {"attr": "href"},
+        "title": {"selector": ".title", "text": True, "clean": True},
+        "thumbnail": {"selector": "img", "attr": "src", "fallback_attrs": ["data-src"]},
         "pagination": {
             "selector": ".pagination a",
             "text_matches": ["next", "»"],
@@ -56,35 +51,11 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir(
-        "[COLOR hotpink]Latest Videos[/COLOR]",
-        site.url + "latest-updates/",
-        "List",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Popular[/COLOR]",
-        site.url + "most-popular/",
-        "List",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Top Rated[/COLOR]",
-        site.url + "top-rated/",
-        "List",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Categories[/COLOR]",
-        site.url + "categories/",
-        "Categories",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search
-    )
-    List(site.url)
-    utils.eod()
+	site.add_dir("[COLOR hotpink]Videos[/COLOR]", site.url + "videos/", "List", site.img_cat)
+	site.add_dir("[COLOR hotpink]Categories[/COLOR]", site.url + "categories/", "Categories", site.img_cat)
+	site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "index.php?page=videos&section=search", "Search", site.img_search)
+	List(site.url)
+	utils.eod()
 
 
 @site.register()
@@ -104,7 +75,8 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        search_url = site.url + "search/" + urllib_parse.quote_plus(keyword) + "/"
+        # Heavy-R uses a POST search or query param
+        search_url = site.url + "index.php?page=videos&section=search&query=" + urllib_parse.quote_plus(keyword)
         List(search_url)
 
 
@@ -116,33 +88,26 @@ def Categories(url):
         return
 
     soup = utils.parse_html(html)
-    cat_items = soup.select(".list-categories .item, .list-categories a")
-
+    # Categories are in .tags or similar lists
+    cat_items = soup.select(".tags a, .categories-list a, a[href*='/free_porn/']")
+    
     entries = []
     for anchor in cat_items:
-        if anchor.name != "a":
-            anchor = anchor.select_one("a")
-        if not anchor:
-            continue
-
         href = utils.safe_get_attr(anchor, "href")
         if not href:
             continue
-
-        name = utils.safe_get_text(anchor)
+            
+        name = utils.safe_get_text(anchor).replace("#", "")
         if not name:
             name = utils.safe_get_attr(anchor, "title")
         if not name:
             continue
+            
+        entries.append((name, urllib_parse.urljoin(site.url, href)))
 
-        img_tag = anchor.select_one("img")
-        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
-
-        entries.append((name, urllib_parse.urljoin(site.url, href), img))
-
-    for name, cat_url, img in sorted(entries):
-        site.add_dir(name, cat_url, "List", img)
-
+    for name, cat_url in sorted(entries):
+        site.add_dir(name, cat_url, "List", "")
+        
     utils.eod()
 
 
@@ -154,8 +119,15 @@ def Playvid(url, name, download=None):
         vp.play_from_link_to_resolve(url)
         return
 
-    # KVS Player logic
-    match = re.search(r"video_url:\s*[\"']([^\"']+)[\"']", html)
+    # Check for direct sources in script
+    # var video_url = "..."
+    match = re.search(r"video_url\s*[:=]\s*[\"']([^\"']+)[\"']", html)
+    if match:
+        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        return
+
+    # Look for fluidplayer or similar
+    match = re.search(r"src\s*:\s*[\"']([^\"']+\.mp4[^\"']*)[\"']", html)
     if match:
         vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
         return
