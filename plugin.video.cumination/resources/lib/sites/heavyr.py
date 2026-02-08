@@ -51,11 +51,23 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 
 @site.register(default_mode=True)
 def Main():
-	site.add_dir("[COLOR hotpink]Videos[/COLOR]", site.url + "videos/", "List", site.img_cat)
-	site.add_dir("[COLOR hotpink]Categories[/COLOR]", site.url + "categories/", "Categories", site.img_cat)
-	site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "index.php?page=videos&section=search", "Search", site.img_search)
-	List(site.url)
-	utils.eod()
+    site.add_dir(
+        "[COLOR hotpink]Videos[/COLOR]", site.url + "videos/", "List", site.img_cat
+    )
+    site.add_dir(
+        "[COLOR hotpink]Categories[/COLOR]",
+        site.url + "categories/",
+        "Categories",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Search[/COLOR]",
+        site.url + "index.php?page=videos&section=search",
+        "Search",
+        site.img_search,
+    )
+    List(site.url)
+    utils.eod()
 
 
 @site.register()
@@ -76,7 +88,11 @@ def Search(url, keyword=None):
         site.search_dir(url, "Search")
     else:
         # Heavy-R uses a POST search or query param
-        search_url = site.url + "index.php?page=videos&section=search&query=" + urllib_parse.quote_plus(keyword)
+        search_url = (
+            site.url
+            + "index.php?page=videos&section=search&query="
+            + urllib_parse.quote_plus(keyword)
+        )
         List(search_url)
 
 
@@ -90,24 +106,24 @@ def Categories(url):
     soup = utils.parse_html(html)
     # Categories are in .tags or similar lists
     cat_items = soup.select(".tags a, .categories-list a, a[href*='/free_porn/']")
-    
+
     entries = []
     for anchor in cat_items:
         href = utils.safe_get_attr(anchor, "href")
         if not href:
             continue
-            
+
         name = utils.safe_get_text(anchor).replace("#", "")
         if not name:
             name = utils.safe_get_attr(anchor, "title")
         if not name:
             continue
-            
+
         entries.append((name, urllib_parse.urljoin(site.url, href)))
 
     for name, cat_url in sorted(entries):
         site.add_dir(name, cat_url, "List", "")
-        
+
     utils.eod()
 
 
