@@ -38,7 +38,11 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
         "items": ".thumb-video",
         "url": {"selector": "a.thumb-video__description", "attr": "href"},
-        "title": {"selector": "a.thumb-video__description", "text": True, "clean": True},
+        "title": {
+            "selector": "a.thumb-video__description",
+            "text": True,
+            "clean": True,
+        },
         "thumbnail": {"selector": "img", "attr": "data-src", "fallback_attrs": ["src"]},
         "duration": {"selector": ".duracion", "text": True},
         "pagination": {
@@ -53,11 +57,30 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir("[COLOR hotpink]Latest Videos[/COLOR]", site.url + "latest", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Popular[/COLOR]", site.url + "most-popular", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Top Rated[/COLOR]", site.url + "top-rated", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Categories[/COLOR]", site.url + "categories", "Categories", site.img_cat)
-    site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "search", "Search", site.img_search)
+    site.add_dir(
+        "[COLOR hotpink]Latest Videos[/COLOR]",
+        site.url + "latest",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Popular[/COLOR]",
+        site.url + "most-popular",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Top Rated[/COLOR]", site.url + "top-rated", "List", site.img_cat
+    )
+    site.add_dir(
+        "[COLOR hotpink]Categories[/COLOR]",
+        site.url + "categories",
+        "Categories",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Search[/COLOR]", site.url + "search", "Search", site.img_search
+    )
     List(site.url)
     utils.eod()
 
@@ -93,33 +116,35 @@ def Categories(url):
 
     soup = utils.parse_html(html)
     # Categories are in .list-categories-item or similar
-    cat_items = soup.select(".list-categories__item, .category-item, a[href*='/category/']")
-    
+    cat_items = soup.select(
+        ".list-categories__item, .category-item, a[href*='/category/']"
+    )
+
     entries = []
     for anchor in cat_items:
         if anchor.name != "a":
             anchor = anchor.select_one("a")
         if not anchor:
             continue
-            
+
         href = utils.safe_get_attr(anchor, "href")
         if not href:
             continue
-            
+
         name = utils.safe_get_text(anchor)
         if not name:
             name = utils.safe_get_attr(anchor, "title")
         if not name:
             continue
-            
+
         img_tag = anchor.select_one("img")
         img = utils.safe_get_attr(img_tag, "data-src", ["src"])
-        
+
         entries.append((name, urllib_parse.urljoin(site.url, href), img))
 
     for name, cat_url, img in sorted(entries):
         site.add_dir(name, cat_url, "List", img)
-        
+
     utils.eod()
 
 
@@ -139,7 +164,7 @@ def Playvid(url, name, download=None):
         return
 
     # Alternative sources dictionary
-    match = re.search(r'video_sources\s*:\s*({[^}]+})', html)
+    match = re.search(r"video_sources\s*:\s*({[^}]+})", html)
     if match:
         try:
             sources = json.loads(match.group(1).replace("'", '"'))
