@@ -1,203 +1,166 @@
-# New Sites to Implement
+# New Sites to Implement (Updated from Fluffle.cc)
 
-This file tracks sites identified from screenshots that are not yet implemented in the Cumination addon.
+This file tracks sites identified for potential implementation in the Cumination addon.
 
 ## 🔥 Tier 1 - Major Tube Sites (Highest Priority)
 
-- [x] **YouPorn** - Major tube site (MindGeek/Aylo network) ✅ **COMPLETED**
-- [x] **RedTube** - Major tube site (MindGeek/Aylo network) ✅ **COMPLETED**
-- [x] **Tube8** - Major tube site (MindGeek/Aylo network) ✅ **COMPLETED**
-- [x] **YouJizz** - Popular tube site ✅ **COMPLETED**
-- [x] **Motherless** - User-generated content site ✅ **COMPLETED**
+| Site | Category | Difficulty | Status | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **YouPorn** | Tube | Easy | ✅ | MindGeek/Aylo network |
+| **RedTube** | Tube | Easy | ✅ | MindGeek/Aylo network |
+| **Tube8** | Tube | Easy | ✅ | MindGeek/Aylo network |
+| **YouJizz** | Tube | Easy | ✅ | Popular tube site |
+| **Motherless** | Tube | Easy | ✅ | User-generated content |
+| **XVideos** | Tube | Easy | ✅ | Massive traffic |
+| **xHamster** | Tube | Medium/Hard | ✅ | Cloudflare protected |
+| **EPorner** | Tube | Easy | ✅ | Clean structure, high quality |
+| **SpankBang** | Tube | Medium/Hard | ✅ | Cloudflare protected |
+| **PornHub** | Tube | Easy | ✅ | Core site |
+| **XNXX** | Tube | Easy | ✅ | |
 
 ## ⭐ Tier 2 - Popular Sites
 
-- [x] **SexyPorn**
-- [ ] **Porninja**
-- [ ] **PlayHDPorn**
-- [ ] **PornHD3x**
-- [ ] **SuperPorn**
-- [ ] **OnlinePornHub**
+| Site | Category | Difficulty | Status | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **SexyPorn** | Tube | Easy | ✅ | |
+| **Beeg** | Tube | Easy | ✅ | |
+| **txxx** | Tube | Easy | ✅ | |
+| **DrTuber** | Tube | Easy | ✅ | |
+| **TNAFlix** | Tube | Easy | ✅ | |
+| **PlayHDPorn** | Tube | Easy | ✅ | |
+| **PornHD3x** | Tube | Easy | ✅ | |
+| **SuperPorn** | Tube | Easy | ✅ | |
+| **Porninja** | Tube | Easy | [ ] | Domain Parked? |
+| **OnlinePornHub** | Tube | Easy | [ ] | 403 Forbidden |
 
 ## 📊 Tier 3 - Medium Traffic Sites
 
-- [ ] **neporn**
-- [ ] **FreePornVideos**
-- [ ] **StreamPorn** (variants: 2, 3)
-- [ ] **BananaMovies**
-- [ ] **ShyFap**
-- [ ] **PornLay**
-- [ ] **SomePorn**
-- [ ] **wapbold**
-- [ ] **5MoviesPorn**
-- [ ] **TopVid**
-- [ ] **OK.XXX**
-- [ ] **Hotmovix**
-- [ ] **iPornTV**
-- [ ] **PornoBae**
-- [ ] **Jizzbunker**
-- [ ] **10HitMovies**
-- [ ] **pornken**
-- [ ] **Heavy-R**
-- [ ] **ThePornArea**
-- [ ] **Analdin**
-- [ ] **SU1**
-- [ ] **Porndoe**
-- [ ] **Intporn**
-- [ ] **Siska**
-- [ ] **PornXpert**
-- [ ] **Ask4Porn**
-- [ ] **ClipHunter**
-- [ ] **xGoMovies**
-- [ ] **Vid123**
+| Site | Category | Difficulty | Status | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **HQPorner** | Tube | Medium | ✅ | |
+| **PornHoarder** | Tube | Medium | ✅ | |
+| **Noodlemagazine**| Tube | Medium | ✅ | |
+| **PornTrex** | Tube | Easy | ✅ | |
+| **FreePornVideos** | Tube | Easy | ✅ | |
+| **Xozilla** | Tube | Easy | ✅ | |
+| **xxdbx** | Tube | Easy | ✅ | |
+| **Porndig** | Tube | Easy | ✅ | |
+| **Porndish** | Tube | Easy | ✅ | |
+| **neporn** | Tube | Easy | ✅ | |
+| **iXXX** | Aggregator | Medium | ❌ | Links to external sites |
+| **StreamPorn** | Tube | Easy | [ ] | |
+| **BananaMovies** | Tube | Easy | [ ] | |
+| **ShyFap** | Tube | Easy | [ ] | |
+| **PornLay** | Tube | Easy | [ ] | |
+| **SomePorn** | Tube | Easy | [ ] | |
+| **5MoviesPorn** | Tube | Easy | [ ] | |
+| **TopVid** | Tube | Easy | [ ] | |
+| **OK.XXX** | Tube | Easy | [ ] | |
+| **Hotmovix** | Tube | Easy | [ ] | |
+| **iPornTV** | Tube | Easy | [ ] | |
+| **PornoBae** | Tube | Easy | [ ] | |
+| **Jizzbunker** | Tube | Easy | [ ] | |
+| **Heavy-R** | Tube | Easy | [ ] | |
+| **Analdin** | Tube | Easy | [ ] | |
+| **Porndoe** | Tube | Easy | [ ] | |
+| **Intporn** | Tube | Easy | [ ] | |
+| **Siska** | Tube | Easy | [ ] | |
+| **PornXpert** | Tube | Easy | [ ] | |
+| **Ask4Porn** | Tube | Easy | [ ] | |
+| **ClipHunter** | Tube | Easy | [ ] | |
+| **xGoMovies** | Tube | Easy | [ ] | |
 
-## 🌍 Tier 4 - International/Niche
+## 🎥 Adult Movies / Grindhouse
+
+| Site | Category | Difficulty | Status | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **EroticMV** | Movies | Medium | ✅ | |
+| **Paradisehill** | Movies | Medium | ✅ | |
+| **EroticAge** | Movies | Medium | ✅ | |
+| **EroGarga** | Movies | Medium | ✅ | |
+| **RareLust** | Movies | Medium | [ ] | |
+| **PandaMovies** | Movies | Medium | [ ] | |
+| **Film1k** | Movies | Hard | [ ] | Cloudflare/403 |
+| **MangoPorn** | Movies | Medium | [ ] | |
+| **Film-Adult** | Movies | Medium | [ ] | |
+| **Cat3Film** | Movies | Medium | [ ] | |
+| **Sex Film** | Movies | Medium | [ ] | |
+| **AdultLoad** | Movies | Medium | [ ] | |
+| **WIPFilms** | Movies | Medium | [ ] | |
+| **TubePornClassic**| Movies | Easy | [ ] | |
+| **Pinkueiga** | Movies | Medium | [ ] | |
+
+## 🌏 Asian / JAV
+
+| Site | Category | Difficulty | Status | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **SupJav** | JAV | Hard | ✅ | |
+| **JAVGG** | JAV | Medium | ✅ | |
+| **JavGuru** | JAV | Medium | ✅ | |
+| **SexTB** | JAV | Medium | ✅ | |
+| **missav** | JAV | Medium | ✅ | |
+| **JavHDPorn** | JAV | Medium | ✅ | |
+| **JAVSeen** | JAV | Hard | [ ] | |
+| **Javtiful** | JAV | Medium | [ ] | |
+| **nJAV** | JAV | Medium | [ ] | |
+| **KRX18** | JAV | Medium | [ ] | |
+| **Senzuri Tube** | JAV | Easy | [ ] | |
+| **avjoy** | JAV | Easy | [ ] | |
+| **HighPorn** | JAV | Hard | [ ] | 403 Blocked |
+
+## 🐙 Hentai Anime
+
+| Site | Category | Difficulty | Status | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **Hentai Haven** | Hentai | Medium | ✅ | |
+| **Hentai Moon** | Hentai | Medium | ✅ | |
+| **HentaiStream** | Hentai | Medium | ✅ | |
+| **AnimeIDHentai** | Hentai | Medium | ✅ | |
+| **HentaiDude** | Hentai | Medium | ✅ | |
+| **Oppai.Stream** | Hentai | Medium | [ ] | |
+| **hstream.moe** | Hentai | Medium | [ ] | |
+| **Hanime.tv** | Hentai | Medium | [ ] | Cloudflare |
+| **HentaiWorld** | Hentai | Medium | [ ] | |
+| **HentaiCity** | Hentai | Medium | [ ] | |
+| **HentaiMama** | Hentai | Medium | [ ] | |
+| **AniPorn** | Hentai | Easy | [ ] | |
+| **hentaigasm** | Hentai | Easy | [ ] | |
+| **HentaiCloud** | Hentai | Easy | [ ] | |
+
+## 📸 Cam Models
+
+| Site | Category | Difficulty | Status | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **WatchErotic** | Cam | Easy | ✅ | |
+| **VipPorns** | Cam | Easy | ✅ | |
+| **TrendyPorn** | Cam | Easy | ✅ | |
+| **LiveCamRips** | Cam | Easy | ✅ | |
+| **Peachurbate** | Cam | Medium | ✅ | |
+| **Camwhores Bay** | Cam | Medium | ✅ | |
+| **Archivebate** | Cam | Medium | [ ] | |
+| **CamCaps** | Cam | Hard | [ ] | Cloudflare |
+| **Curbate** | Cam | Medium | [ ] | |
+| **Webpussi** | Cam | Easy | [ ] | |
+
+## 📋 Niche / International
 
 - [ ] **anysex.com**
 - [ ] **Kojka**
 - [ ] **Sex-Empire**
 - [ ] **ifugyou**
-- [ ] **xxxgr** (Greek porn)
-
-## 📋 Fluffle.cc Candidates (Untiered)
-
-### 🟢 Easy / High Priority (No Cloudflare Detected)
-*These sites responded to standard requests and are likely easiest to implement.*
-
-**General & Movies**
-- [ ] **SUJ** (pc.suj.mobi)
-- [x] **xMegaDrive** (xmegadrive.com)
-- [ ] **TubePornClassic** (tubepornclassic.com)
-- [ ] **chuyenphim18** (chuyenphim18.site)
-
-**Asian / JAV**
-- [ ] **Senzuri Tube** (senzuri.tube)
-- [ ] **avjoy** (avjoy.me)
-
-**Hentai**
-- [ ] **AniPorn** (aniporn.com)
-- [ ] **hentaigasm** (hentaigasm.com)
-- [ ] **HentaiCloud** (hentaicloud.com)
-
-**Cam Models**
-- [x] **WatchErotic** (watcherotic.com) ✅ **COMPLETED**
-- [x] **VipPorns** (vipporns.com) ✅ **COMPLETED**
-- [x] **TrendyPorn** (trendyporn.com) ✅ **COMPLETED**
-- [x] **LiveCamRips** (livecamsrip.com) ✅ **COMPLETED** (Uses Livewire AJAX framework with myvidplay.com/DoodStream hosting, includes timestamp & view metadata, full test coverage)
-- [ ] **Webpussi** (webpussi.com)
-- [ ] **CamSeek.TV** (camseek.tv) (Redirects to FreePornFlix)
-- [ ] **KBJFan** (kbjfan.com)
-
-### ⚠️ Medium / Hard (Cloudflare Detected)
-*These sites returned Cloudflare headers or 403 errors. May require `cfscrape`, `flaresolverr`, or advanced header spoofing.*
-
-**General & Movies**
-- [ ] **Film1k** (film1k.com)
-- [ ] **MangoPorn** (mangoporn.net)
-- [ ] **Film-Adult** (hd.film-adult.com)
-- [ ] **Cat3Film** (cat3film.com)
-- [ ] **Sex Film** (en.sex-film.biz)
-- [ ] **Cat3Movies** (cat3movie.org)
-- [ ] **AdultLoad** (adultload.ws)
-- [ ] **Pinkueiga** (pinkueiga.net)
-- [ ] **EroticMovies** (eroticmoviesonline.me) 🔴 403 Blocked
-
-**Asian / JAV**
-- [ ] **JAVSeen** (javseen.tv)
-- [ ] **Javtiful** (javtiful.com)
-- [ ] **nJAV** (123av.com)
-- [ ] **KRX18** (krx18.com)
-- [ ] **JavFan** (javfan.one)
-- [ ] **rou.video**
-- [ ] **AsianGirl** (asiangirl.porn)
-- [ ] **javdoe** (javdoe.sh)
-- [ ] **playav** (playav.tv)
-- [ ] **dnaav** (dnaav.com)
-- [ ] **JAVMost** (www5.javmost.com)
-- [ ] **WatchFreeJAV** (watchfreejavonline.co)
-- [ ] **91Porna** (91porna.com)
-- [ ] **91rb** (91rb.net)
-- [ ] **JavFun** (javfun.me)
-- [ ] **JavEnglish** (javenglish.cc)
-- [ ] **7MMTV** (7mmtv.sx)
-- [ ] **TopDrama** (topdrama.net)
-- [ ] **Jav-angel** (jav-angel.net)
-- [ ] **KoreanPornMovies** (koreanpornmovie.com)
-- [ ] **HighPorn** (highporn.net) 🔴 403 Blocked
-
-**Hentai**
-- [ ] **Oppai.Stream**
-- [ ] **hstream.moe**
-- [ ] **HentaiWorld** (hentaiworld.tv)
-- [ ] **Hentai.tv**
-- [ ] **HentaiFox.tv**
-- [ ] **HentaiMama** (hentaimama.io)
-- [ ] **HentaiPlay** (hentaiplay.net)
-- [ ] **HentaiSea** (hentaisea.com)
-- [ ] **Hentaini** (hentaini.com)
-- [ ] **MioHentai** (miohentai.com)
-- [ ] **Uncensored Hentai** (uncensoredhentai.xxx)
-- [ ] **HentaiFreak** (hentaifreak.org)
-- [ ] **Haho** (haho.moe)
-- [ ] **HentaiYes** (hentaiyes.com)
-- [ ] **HentaiVideos.net**
-- [ ] **UnderHentai** (underhentai.net)
-- [ ] **HentaiPRN** (hentaiprn.com)
-- [ ] **XAnimePorn** (xanimeporn.com)
-- [ ] **HentaiTube.online**
-- [ ] **HentaisTube** (hentaistube.com)
-- [ ] **Watch Hentai** (watchhentai.net)
-- [ ] **HAnime** (hanime1.me)
-- [ ] **LatestHentai** (latesthentai.com)
-- [ ] **CartoonPornVideos** (cartoonpornvideos.com)
-- [ ] **Hentai2w** (hentai2w.com)
-- [ ] **Ohentai** (ohentai.org) 🔴 403 Blocked
-- [ ] **MuchoHentai** (muchohentai.com) 🔴 403 Blocked
-
-**Cam Models**
-- [ ] **CamCaps** (camcaps.ac)
-- [ ] **Curbate** (curbate.tv)
-- [ ] **eCamRips** (ecamrips.com)
-- [ ] **Chaturflix** (chaturflix.cam)
-- [ ] **Bestcam** (bestcam.tv)
-- [ ] **OnScreens** (onscreens.me)
-- [ ] **Cloudbate** (cloudbate.com)
-- [ ] **CamSeek.TV** (camseek.tv)
-- [ ] **camsho.ws** (camsho.ws)
-- [ ] **WebcamRips** (webcamrips.to)
-- [ ] **StripHub** (striphub.cam)
-- [ ] **SexKbj** (sexkbj.com)
-- [ ] **Korean BJ** (koreanbj.club)
-- [ ] **Recurbate** (recu.me) 🔴 403 Blocked
-- [ ] **ShowCamRips** (showcamrips.com) 🔴 403 Blocked
-- [ ] **CumCams** (cumcams.cc) 🔴 403 Blocked
-- [ ] **sexbjcam** (sexbjcam.com) 🔴 403 Blocked
-- [ ] **KBJFree** (kbjfree.com) 🔴 403 Blocked
+- [ ] **xxxgr** (Greek)
 
 ## 📝 Sites Excluded (Not Applicable)
 
-These sites were identified but won't be implemented:
 - ❌ **CUMS** - Aggregator/search engine
-- ❌ **PHPremium** - Premium content (may require auth)
-- ❌ **LPSG** - Forum (not video site)
-- ❌ **Adult TV Channels** - Live streams (different architecture)
-- ❌ **Porn Randomizer** - Aggregator
-- ❌ **Porn App/NsfwBox** - Android apps (not applicable)
-- ❌ **Full Length Porn CSE** - Search engine
-- ❌ **DXXX/NSFWBase/PornMD** - Aggregators
+- ❌ **NSFW Subreddits** - Too complex for single site module
+- ❌ **LPSG** - Forum
+- ❌ **Adult TV Channels** - Live streams
+- ❌ **Download Sites (DDL/Torrents)** - Not streaming
+- ❌ **Image/Leak Sites** - Not primarily video
 
-## Implementation Notes
+## Difficulty Key
 
-**Recommended Order:**
-1. **Phase 1:** YouPorn, RedTube, Tube8 (Same network as PornHub)
-2. **Phase 2:** YouJizz, Motherless, SexyPorn, PlayHDPorn
-3. **Phase 3:** Rest of Tier 2 and Tier 3 as needed
-
-**When implementing a site:**
-1. Check this list and mark with `[x]` when started
-2. Create site implementation in `plugin.video.cumination/resources/lib/sites/[sitename].py`
-3. Use BeautifulSoup pattern (preferred over regex)
-4. Create test fixtures in `tests/fixtures/[sitename]/`
-5. Create tests in `tests/sites/test_[sitename].py`
-6. Test functionality: listing, pagination, categories, search, playback
-7. Mark as complete in this file when working and tested
+- **Easy:** No Cloudflare, standard HTML structure, standard video tags.
+- **Medium:** Light Cloudflare, some JS obfuscation, or AJAX-based listings.
+- **Hard:** Heavy Cloudflare (403/Challenges), highly obfuscated JS, or complex player handshakes.

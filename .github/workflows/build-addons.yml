@@ -13,6 +13,8 @@ jobs:
   build:
     if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Check out repository
@@ -53,3 +55,9 @@ jobs:
           path: upload
           if-no-files-found: error
           retention-days: 7
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: upload
+          branch: gh-pages

@@ -73,6 +73,10 @@ The following upstream commits are regex-based fixes for sites that have been mi
 
 | Upstream Hash | Message | Reason |
 |---------------|---------|--------|
+| `0d683b2` | freshporno - fix domain fixes #1748 | Fork has BeautifulSoup migration |
+| `8ff6fe1` | allclassic, watchporn playback, fixes #1751 | Fork has BeautifulSoup migration |
+| `6f3103a` | javguru - fix playback, thumbnails - fixes #1749 | Fork has BeautifulSoup migration |
+| `3e995d9` | hentaidude - fix listing - fixes #1750 | Fork has BeautifulSoup migration |
 | `004f106` | luxuretv - fix nextpage, fixes #1734 | Fork has BeautifulSoup migration |
 | `b075cbd` | luxuretv - fix nextpage | Fork has BeautifulSoup migration |
 | `d92bd04` | tnaflix fixes #1718 | Fork has BeautifulSoup migration |
