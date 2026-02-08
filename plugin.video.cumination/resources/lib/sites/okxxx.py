@@ -38,7 +38,11 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
         "items": ".item",
         "url": {"selector": ".thumb a", "attr": "href"},
         "title": {"selector": ".thumb a", "attr": "title", "clean": True},
-        "thumbnail": {"selector": "img", "attr": "data-original", "fallback_attrs": ["src"]},
+        "thumbnail": {
+            "selector": "img",
+            "attr": "data-original",
+            "fallback_attrs": ["src"],
+        },
         "duration": {"selector": ".video-meta li:first-child span", "text": True},
         "pagination": {
             "selector": ".pagination a",
@@ -52,12 +56,36 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir("[COLOR hotpink]Trending[/COLOR]", site.url + "trending/", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Newest[/COLOR]", site.url + "latest-updates/", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Top Rated[/COLOR]", site.url + "top-rated/", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Most Viewed[/COLOR]", site.url + "most-popular/", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Categories[/COLOR]", site.url + "categories/", "Categories", site.img_cat)
-    site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search)
+    site.add_dir(
+        "[COLOR hotpink]Trending[/COLOR]", site.url + "trending/", "List", site.img_cat
+    )
+    site.add_dir(
+        "[COLOR hotpink]Newest[/COLOR]",
+        site.url + "latest-updates/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Top Rated[/COLOR]",
+        site.url + "top-rated/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Most Viewed[/COLOR]",
+        site.url + "most-popular/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Categories[/COLOR]",
+        site.url + "categories/",
+        "Categories",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search
+    )
     List(site.url + "trending/")
     utils.eod()
 
@@ -93,32 +121,32 @@ def Categories(url):
 
     soup = utils.parse_html(html)
     cat_items = soup.select(".list-categories .item, .list-categories a")
-    
+
     entries = []
     for anchor in cat_items:
         if anchor.name != "a":
             anchor = anchor.select_one("a")
         if not anchor:
             continue
-            
+
         href = utils.safe_get_attr(anchor, "href")
         if not href:
             continue
-            
+
         name = utils.safe_get_text(anchor)
         if not name:
             name = utils.safe_get_attr(anchor, "title")
         if not name:
             continue
-            
+
         img_tag = anchor.select_one("img")
         img = utils.safe_get_attr(img_tag, "data-src", ["src"])
-        
+
         entries.append((name, urllib_parse.urljoin(site.url, href), img))
 
     for name, cat_url, img in sorted(entries):
         site.add_dir(name, cat_url, "List", img)
-        
+
     utils.eod()
 
 
