@@ -39,7 +39,11 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
         "items": ".item",
         "url": {"selector": "a", "attr": "href"},
         "title": {"selector": "strong.title", "text": True, "clean": True},
-        "thumbnail": {"selector": "img.thumb", "attr": "data-original", "fallback_attrs": ["src"]},
+        "thumbnail": {
+            "selector": "img.thumb",
+            "attr": "data-original",
+            "fallback_attrs": ["src"],
+        },
         "duration": {"selector": ".duration", "text": True},
         "pagination": {
             "selector": ".pagination a",
@@ -53,11 +57,33 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir("[COLOR hotpink]Latest Updates[/COLOR]", site.url + "latest-updates/", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Top Rated[/COLOR]", site.url + "top-rated/", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Most Viewed[/COLOR]", site.url + "most-popular/", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Categories[/COLOR]", site.url + "categories/", "Categories", site.img_cat)
-    site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search)
+    site.add_dir(
+        "[COLOR hotpink]Latest Updates[/COLOR]",
+        site.url + "latest-updates/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Top Rated[/COLOR]",
+        site.url + "top-rated/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Most Viewed[/COLOR]",
+        site.url + "most-popular/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Categories[/COLOR]",
+        site.url + "categories/",
+        "Categories",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search
+    )
     List(site.url)
     utils.eod()
 
@@ -94,7 +120,7 @@ def Categories(url):
     soup = utils.parse_html(html)
     # Categories are usually in .list-categories .item
     cat_items = soup.select(".list-categories .item, .list-categories a")
-    
+
     entries = []
     for item in cat_items:
         # If item is already the anchor
@@ -102,30 +128,32 @@ def Categories(url):
             anchor = item
         else:
             anchor = item.select_one("a")
-            
+
         if not anchor:
             continue
-            
+
         href = utils.safe_get_attr(anchor, "href")
         if not href:
             continue
-            
+
         title_tag = anchor.select_one(".title, strong")
-        name = utils.safe_get_text(title_tag) if title_tag else utils.safe_get_text(anchor)
+        name = (
+            utils.safe_get_text(title_tag) if title_tag else utils.safe_get_text(anchor)
+        )
         if not name:
             name = utils.safe_get_attr(anchor, "title")
-            
+
         if not name:
             continue
-            
+
         img_tag = anchor.select_one("img")
         img = utils.safe_get_attr(img_tag, "src", ["data-original", "data-src"])
-        
+
         entries.append((name, urllib_parse.urljoin(site.url, href), img))
 
     for name, cat_url, img in sorted(entries):
         site.add_dir(name, cat_url, "List", img)
-        
+
     utils.eod()
 
 
@@ -147,7 +175,7 @@ def Playvid(url, name, download=None):
 
     # Alternative: check for quality-based sources in script
     # var video_sources = { "720p": "...", "480p": "..." }
-    match = re.search(r'video_sources\s*=\s*({[^}]+})', html)
+    match = re.search(r"video_sources\s*=\s*({[^}]+})", html)
     if match:
         try:
             sources = json.loads(match.group(1).replace("'", '"'))
@@ -161,5 +189,5 @@ def Playvid(url, name, download=None):
     # Standard KVS license/player URL
     # flashvars.license_code = ...
     # flashvars.video_url = ...
-    
+
     vp.play_from_link_to_resolve(url)

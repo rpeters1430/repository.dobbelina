@@ -39,7 +39,11 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
         "items": ".ml-item.item",
         "url": {"selector": "a.ml-mask", "attr": "href"},
         "title": {"selector": "h2", "text": True, "clean": True},
-        "thumbnail": {"selector": "img", "attr": "data-original", "fallback_attrs": ["src"]},
+        "thumbnail": {
+            "selector": "img",
+            "attr": "data-original",
+            "fallback_attrs": ["src"],
+        },
         "quality": {"selector": ".mli-quality", "text": True},
         "pagination": {
             "selector": ".pagination a",
@@ -53,11 +57,33 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir("[COLOR hotpink]Movies[/COLOR]", site.url + "porn-hd-free-full-1080p", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]RealityKings[/COLOR]", site.url + "studio/realitykings", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]NaughtyAmerica[/COLOR]", site.url + "studio/naughtyamerica", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Brazzers[/COLOR]", site.url + "studio/brazzers", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search)
+    site.add_dir(
+        "[COLOR hotpink]Movies[/COLOR]",
+        site.url + "porn-hd-free-full-1080p",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]RealityKings[/COLOR]",
+        site.url + "studio/realitykings",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]NaughtyAmerica[/COLOR]",
+        site.url + "studio/naughtyamerica",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Brazzers[/COLOR]",
+        site.url + "studio/brazzers",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search
+    )
     List(site.url)
     utils.eod()
 
@@ -94,11 +120,15 @@ def Playvid(url, name, download=None):
 
     # Check for sources in script
     # var sources = [{"file":"...","label":"720p"}]
-    match = re.search(r'sources\s*:\s*(\[[^\]]+\])', html)
+    match = re.search(r"sources\s*:\s*(\[[^\]]+\])", html)
     if match:
         try:
             sources_list = json.loads(match.group(1))
-            sources = {s.get("label", "Video"): s.get("file") for s in sources_list if s.get("file")}
+            sources = {
+                s.get("label", "Video"): s.get("file")
+                for s in sources_list
+                if s.get("file")
+            }
             if sources:
                 best_url = utils.selector("Select quality", sources)
                 if best_url:
