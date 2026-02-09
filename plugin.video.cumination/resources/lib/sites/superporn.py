@@ -198,7 +198,7 @@ def Playvid(url, name, download=None):
     match = re.search(r"file:\s*[\"']([^\"']+)[\"']", html)
     if match:
         video_url = match.group(1)
-        if video_url and not video_url.endswith(('.jpg', '.png', '.gif')):
+        if video_url and not video_url.endswith((".jpg", ".png", ".gif")):
             vp.play_from_direct_link(video_url + "|Referer=" + url)
             return
 
