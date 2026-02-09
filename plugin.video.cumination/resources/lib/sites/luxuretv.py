@@ -24,7 +24,7 @@ site = AdultSite(
     "luxuretv",
     "[COLOR hotpink]LuxureTV[/COLOR]",
     "https://en.luxuretv.com/",
-    "https://en.luxuretv.com/images/logo.png",
+    "luxuretv.png",
     "luxuretv",
 )
 

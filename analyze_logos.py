@@ -8,7 +8,7 @@ import re
 import json
 from collections import defaultdict
 
-REPO_ROOT = r"C:\Users\James\Desktop\repository.dobbelina"
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 SITES_DIR = os.path.join(
     REPO_ROOT, "plugin.video.cumination", "resources", "lib", "sites"
 )

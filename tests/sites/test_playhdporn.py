@@ -3,16 +3,6 @@ import sys
 import os
 from unittest.mock import MagicMock, patch
 
-# Mock kodi-specific imports and others causing issues
-sys.modules["xbmc"] = MagicMock()
-sys.modules["xbmcgui"] = MagicMock()
-sys.modules["xbmcplugin"] = MagicMock()
-sys.modules["xbmcvfs"] = MagicMock()
-sys.modules["xbmcaddon"] = MagicMock()
-sys.modules["StorageServer"] = MagicMock()
-sys.modules["kodi_six"] = MagicMock()
-sys.modules["resources.lib.brotlidecpy"] = MagicMock()
-
 # Add plugin path to sys.path
 plugin_path = os.path.join(os.getcwd(), "plugin.video.cumination")
 if plugin_path not in sys.path:

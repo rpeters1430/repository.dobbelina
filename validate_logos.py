@@ -11,7 +11,7 @@ from pathlib import Path
 from collections import defaultdict
 
 # Configuration
-REPO_ROOT = Path(r"C:\Users\James\Desktop\repository.dobbelina")
+REPO_ROOT = Path(__file__).resolve().parent
 IMAGES_DIR = REPO_ROOT / "plugin.video.cumination" / "resources" / "images"
 SITES_DIR = REPO_ROOT / "plugin.video.cumination" / "resources" / "lib" / "sites"
 
