@@ -156,22 +156,66 @@ def Playvid(url, name, download=None):
         vp.play_from_link_to_resolve(url)
         return
 
-    # SuperPorn (TechPump) often uses direct MP4s in JS
-    # Look for "video_url" or quality sources
-    match = re.search(r"video_url\s*:\s*[\"']([^\"']+)[\"']", html)
+    # Pattern 1: video_url with colon or equals
+    match = re.search(r"video_url\s*[:=]\s*[\"']([^\"']+)[\"']", html)
     if match:
         vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
         return
 
-    # Alternative sources dictionary
-    match = re.search(r"video_sources\s*:\s*({[^}]+})", html)
+    # Pattern 2: video_sources dictionary
+    match = re.search(r"video_sources\s*[:=]\s*({[^}]+})", html)
     if match:
         try:
-            sources = json.loads(match.group(1).replace("'", '"'))
-            best_q = sorted(sources.keys(), reverse=True)[0]
-            vp.play_from_direct_link(sources[best_q] + "|Referer=" + url)
-            return
+            sources_str = match.group(1).replace("'", '"')
+            sources = json.loads(sources_str)
+            if sources:
+                # Get highest quality
+                best_q = sorted(sources.keys(), reverse=True)[0]
+                vp.play_from_direct_link(sources[best_q] + "|Referer=" + url)
+                return
         except Exception:
             pass
+
+    # Pattern 3: sources array with quality levels
+    match = re.search(r"sources\s*:\s*(\[[^\]]+\])", html)
+    if match:
+        try:
+            sources_list = json.loads(match.group(1))
+            sources = {
+                s.get("label", s.get("quality", "Video")): s.get("file", s.get("src"))
+                for s in sources_list
+                if s.get("file") or s.get("src")
+            }
+            if sources:
+                best_url = utils.selector("Select quality", sources)
+                if best_url:
+                    vp.play_from_direct_link(best_url + "|Referer=" + url)
+                    return
+        except Exception:
+            pass
+
+    # Pattern 4: Direct file: pattern
+    match = re.search(r"file:\s*[\"']([^\"']+)[\"']", html)
+    if match:
+        video_url = match.group(1)
+        if video_url and not video_url.endswith(('.jpg', '.png', '.gif')):
+            vp.play_from_direct_link(video_url + "|Referer=" + url)
+            return
+
+    # Pattern 5: Check for video tag
+    soup = utils.parse_html(html)
+    video_tag = soup.find("video")
+    if video_tag:
+        source = video_tag.find("source")
+        if source and source.get("src"):
+            vp.play_from_direct_link(source["src"] + "|Referer=" + url)
+            return
+
+    # Pattern 6: Check for iframes (embedded players)
+    iframe = soup.find("iframe")
+    if iframe and iframe.get("src"):
+        iframe_url = urllib_parse.urljoin(url, iframe["src"])
+        vp.play_from_link_to_resolve(iframe_url)
+        return
 
     vp.play_from_link_to_resolve(url)

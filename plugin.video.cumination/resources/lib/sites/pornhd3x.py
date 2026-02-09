@@ -42,7 +42,7 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
         "thumbnail": {
             "selector": "img",
             "attr": "data-original",
-            "fallback_attrs": ["src"],
+            "fallback_attrs": ["data-src", "src"],
         },
         "quality": {"selector": ".mli-quality", "text": True},
         "pagination": {
@@ -118,7 +118,7 @@ def Playvid(url, name, download=None):
         vp.play_from_link_to_resolve(url)
         return
 
-    # Check for sources in script
+    # Check for sources array in script
     # var sources = [{"file":"...","label":"720p"}]
     match = re.search(r"sources\s*:\s*(\[[^\]]+\])", html)
     if match:
@@ -137,10 +137,32 @@ def Playvid(url, name, download=None):
         except Exception:
             pass
 
-    # Alternative: check for direct MP4 links in HTML
+    # Check for direct file: pattern with MP4
     match = re.search(r"file:\s*[\"']([^\"']+\.mp4[^\"']*)[\"']", html)
     if match:
         vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        return
+
+    # Check for video_url pattern (common in KVS-based sites)
+    match = re.search(r"video_url\s*[:=]\s*[\"']([^\"']+)[\"']", html)
+    if match:
+        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        return
+
+    # Check for video tag source
+    soup = utils.parse_html(html)
+    video_tag = soup.find("video")
+    if video_tag:
+        source = video_tag.find("source")
+        if source and source.get("src"):
+            vp.play_from_direct_link(source["src"] + "|Referer=" + url)
+            return
+
+    # Check for iframes (embedded players)
+    iframe = soup.find("iframe")
+    if iframe and iframe.get("src"):
+        iframe_url = urllib_parse.urljoin(url, iframe["src"])
+        vp.play_from_link_to_resolve(iframe_url)
         return
 
     vp.play_from_link_to_resolve(url)

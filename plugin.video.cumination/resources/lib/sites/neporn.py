@@ -154,10 +154,63 @@ def Playvid(url, name, download=None):
         vp.play_from_link_to_resolve(url)
         return
 
-    # KVS Player logic
+    # Pattern 1: KVS Player - video_url with colon
     match = re.search(r"video_url:\s*[\"']([^\"']+)[\"']", html)
     if match:
         vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        return
+
+    # Pattern 2: KVS Player - video_url with equals
+    match = re.search(r"video_url\s*=\s*[\"']([^\"']+)[\"']", html)
+    if match:
+        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        return
+
+    # Pattern 3: flashvars.video_url (common KVS pattern)
+    match = re.search(r"flashvars\.video_url\s*=\s*[\"']([^\"']+)[\"']", html)
+    if match:
+        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        return
+
+    # Pattern 4: video_alt_url (KVS alternative quality)
+    match = re.search(r"video_alt_url:\s*[\"']([^\"']+)[\"']", html)
+    if match:
+        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        return
+
+    # Pattern 5: Check for sources array
+    match = re.search(r"sources\s*:\s*(\[[^\]]+\])", html)
+    if match:
+        try:
+            import json
+            sources_list = json.loads(match.group(1))
+            sources = {
+                s.get("label", s.get("quality", "Video")): s.get("file", s.get("src"))
+                for s in sources_list
+                if s.get("file") or s.get("src")
+            }
+            if sources:
+                best_url = utils.selector("Select quality", sources)
+                if best_url:
+                    vp.play_from_direct_link(best_url + "|Referer=" + url)
+                    return
+        except Exception:
+            pass
+
+    # Pattern 6: Check for video tag
+    soup = utils.parse_html(html)
+    video_tag = soup.find("video")
+    if video_tag:
+        source = video_tag.find("source")
+        if source and source.get("src"):
+            vp.play_from_direct_link(source["src"] + "|Referer=" + url)
+            return
+
+    # Pattern 7: Check for iframes (embedded players)
+    iframe = soup.find("iframe")
+    if iframe and iframe.get("src"):
+        iframe_url = urllib_parse.urljoin(url, iframe["src"])
+        vp.play_from_link_to_resolve(iframe_url)
         return
 
     vp.play_from_link_to_resolve(url)
