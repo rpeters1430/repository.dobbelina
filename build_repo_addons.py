@@ -61,8 +61,10 @@ def read_addon_meta(addon_dir: Path) -> Tuple[str, str]:
 
 def build_zip(addon_dir: Path, out_dir: Path) -> Path:
     addon_id, version = read_addon_meta(addon_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    zip_path = out_dir / f"{addon_id}-{version}.zip"
+    # Create subdirectory for this addon (Kodi repository structure)
+    addon_out_dir = out_dir / addon_id
+    addon_out_dir.mkdir(parents=True, exist_ok=True)
+    zip_path = addon_out_dir / f"{addon_id}-{version}.zip"
 
     # Create zip with normalized forward-slash entries under '<addon_id>/'
     with zipfile.ZipFile(zip_path, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:

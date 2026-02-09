@@ -47,7 +47,7 @@ jobs:
         run: |
           mkdir -p upload
           cp addons.xml addons.xml.md5 upload/
-          cp build/addons/*.zip upload/
+          cp -r build/addons/*/ upload/
 
       - name: Upload packages artifact
         uses: actions/upload-artifact@v4
