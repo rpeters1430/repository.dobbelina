@@ -2,17 +2,18 @@ import os
 import re
 from pathlib import Path
 
+
 def find_missing_logos():
     project_root = Path.cwd()
     sites_dir = project_root / "plugin.video.cumination" / "resources" / "lib" / "sites"
     images_dir = project_root / "plugin.video.cumination" / "resources" / "images"
-    
+
     # Get all existing image filenames
     existing_images = {f.name for f in images_dir.iterdir() if f.is_file()}
-    
+
     missing_logos = []
     found_sites = 0
-    
+
     # site = AdultSite("name", "title", "url", "logo.png", ...)
     # Improved regex to handle various quote types and potentially escaped quotes
     logo_pattern = r'AdultSite\s*\(\s*[^,]+,\s*[^,]+,\s*[^,]+,\s*["\']([^"\']+)["\']'
@@ -20,10 +21,10 @@ def find_missing_logos():
     for site_file in sites_dir.glob("*.py"):
         if site_file.name == "__init__.py" or site_file.name == "soup_spec.py":
             continue
-            
+
         found_sites += 1
         content = site_file.read_text(encoding="utf-8")
-        
+
         matches = re.findall(logo_pattern, content)
         if matches:
             for logo_file in matches:
@@ -45,6 +46,7 @@ def find_missing_logos():
             print(f"  - {site}: {logo}")
     else:
         print("No missing logos found!")
+
 
 if __name__ == "__main__":
     find_missing_logos()
