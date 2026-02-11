@@ -54,10 +54,19 @@ jobs:
                   text=True,
               ).splitlines()
           else:
-              changed = subprocess.check_output(
-                  ["git", "diff", "--name-only", before, after],
-                  text=True,
-              ).splitlines()
+              try:
+                  changed = subprocess.check_output(
+                      ["git", "diff", "--name-only", before, after],
+                      text=True,
+                      stderr=subprocess.PIPE,
+                  ).splitlines()
+              except subprocess.CalledProcessError:
+                  # Fallback if before commit is not available (e.g., shallow clone)
+                  print(f"Warning: Could not diff {before}..{after}, using current commit only")
+                  changed = subprocess.check_output(
+                      ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", after],
+                      text=True,
+                  ).splitlines()
           changed_set = set(changed)
 
           addon_dirs = set()
