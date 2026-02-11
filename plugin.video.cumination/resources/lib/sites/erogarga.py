@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 import json
+import sys
 import xbmc
 import xbmcgui
 from six.moves import urllib_parse
@@ -476,4 +477,4 @@ def Related(url):
         + "&url="
         + urllib_parse.quote_plus(url)
     )
-    xbmc.executebuiltin("Container.Update(" + contexturl + ")")
+    sys.modules.get("xbmc", xbmc).executebuiltin("Container.Update(" + contexturl + ")")

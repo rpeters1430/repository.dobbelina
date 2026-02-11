@@ -55,12 +55,12 @@ This file tracks sites identified for potential implementation in the Cumination
 | **SomePorn** | Tube | Easy | [ ] | |
 | **5MoviesPorn** | Tube | Easy | [ ] | |
 | **TopVid** | Tube | Easy | [ ] | |
-| **OK.XXX** | Tube | Easy | [ ] | |
+| **OK.XXX** | Tube | Easy | ✅ | |
 | **Hotmovix** | Tube | Easy | [ ] | |
 | **iPornTV** | Tube | Easy | [ ] | |
 | **PornoBae** | Tube | Easy | [ ] | |
-| **Jizzbunker** | Tube | Easy | [ ] | |
-| **Heavy-R** | Tube | Easy | [ ] | |
+| **Jizzbunker** | Tube | Easy | ✅ | |
+| **Heavy-R** | Tube | Easy | ✅ | |
 | **Analdin** | Tube | Easy | [ ] | |
 | **Porndoe** | Tube | Easy | [ ] | |
 | **Intporn** | Tube | Easy | [ ] | |

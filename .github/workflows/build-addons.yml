@@ -25,6 +25,86 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Auto-bump changed add-on versions
+        if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
+        id: bump_versions
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import os
+          import pathlib
+          import subprocess
+          import xml.etree.ElementTree as ET
+
+          def bump_version(version: str) -> str:
+              parts = version.split(".")
+              for i in range(len(parts) - 1, -1, -1):
+                  if parts[i].isdigit():
+                      parts[i] = str(int(parts[i]) + 1)
+                      return ".".join(parts)
+              return version + ".1"
+
+          before = os.environ.get("BEFORE_SHA", "").strip()
+          after = os.environ.get("AFTER_SHA", "").strip()
+          if not before or set(before) == {"0"}:
+              changed = subprocess.check_output(
+                  ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", after],
+                  text=True,
+              ).splitlines()
+          else:
+              changed = subprocess.check_output(
+                  ["git", "diff", "--name-only", before, after],
+                  text=True,
+              ).splitlines()
+          changed_set = set(changed)
+
+          addon_dirs = set()
+          for raw_path in changed:
+              path = pathlib.Path(raw_path)
+              if not path.parts:
+                  continue
+              top = pathlib.Path(path.parts[0])
+              if (top / "addon.xml").is_file():
+                  addon_dirs.add(top)
+
+          bumped = []
+          for addon_dir in sorted(addon_dirs):
+              addon_xml_rel = f"{addon_dir.as_posix()}/addon.xml"
+              if addon_xml_rel in changed_set:
+                  print(f"Skipping {addon_dir}: addon.xml already changed in commit.")
+                  continue
+              addon_xml = addon_dir / "addon.xml"
+              tree = ET.parse(addon_xml)
+              root = tree.getroot()
+              current = root.get("version")
+              if not current:
+                  continue
+              new_version = bump_version(current)
+              root.set("version", new_version)
+              tree.write(addon_xml, encoding="utf-8", xml_declaration=True)
+              bumped.append((str(addon_dir), current, new_version))
+
+          for addon_dir, current, new_version in bumped:
+              print(f"Bumped {addon_dir}: {current} -> {new_version}")
+          if not bumped:
+              print("No add-on directories changed; no version bump needed.")
+          PY
+
+      - name: Commit version bumps
+        if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add */addon.xml
+          if git diff --cached --quiet; then
+            echo "No version bump changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: auto-bump addon versions [skip ci]"
+          git push
+
       - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip

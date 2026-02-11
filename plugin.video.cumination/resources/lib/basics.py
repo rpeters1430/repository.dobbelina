@@ -61,16 +61,18 @@ def cum_image(filename, custom=False):
 
 
 def eod(handle=addon_handle, cache=True):
+    kodi_xbmc = sys.modules.get("xbmc", xbmc)
+    kodi_xbmcplugin = sys.modules.get("xbmcplugin", xbmcplugin)
     if addon.getSetting("customview") == "true":
-        skin = xbmc.getSkinDir().lower()
+        skin = kodi_xbmc.getSkinDir().lower()
         viewtype = 55 if "estuary" in skin else 50
         setview = addon.getSetting("setview")
         if ";" in setview:
             currentskin, viewno = setview.split(";")
             if currentskin == skin:
                 viewtype = viewno
-        xbmc.executebuiltin("Container.SetViewMode(%s)" % str(viewtype))
-    xbmcplugin.endOfDirectory(handle, cacheToDisc=cache)
+        kodi_xbmc.executebuiltin("Container.SetViewMode(%s)" % str(viewtype))
+    kodi_xbmcplugin.endOfDirectory(handle, cacheToDisc=cache)
 
 
 def addImgLink(name, url, mode):
