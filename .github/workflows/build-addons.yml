@@ -133,7 +133,7 @@ jobs:
 
       - name: Build add-on archives
         run: |
-          python build_repo_addons.py --out build/addons --update-index
+          python build_repo_addons.py --addons plugin.video.cumination repository.dobbelina --out build/addons --update-index
 
       - name: Collect build artifacts
         run: |

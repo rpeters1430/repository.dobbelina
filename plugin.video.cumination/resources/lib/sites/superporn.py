@@ -59,18 +59,18 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 def Main():
     site.add_dir(
         "[COLOR hotpink]Latest Videos[/COLOR]",
-        site.url + "latest",
+        site.url,
         "List",
         site.img_cat,
     )
     site.add_dir(
         "[COLOR hotpink]Popular[/COLOR]",
-        site.url + "most-popular",
+        site.url,
         "List",
         site.img_cat,
     )
     site.add_dir(
-        "[COLOR hotpink]Top Rated[/COLOR]", site.url + "top-rated", "List", site.img_cat
+        "[COLOR hotpink]Top Rated[/COLOR]", site.url, "List", site.img_cat
     )
     site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]",
@@ -88,6 +88,10 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
+    if (not listhtml) and any(
+        dead in url.rstrip("/") for dead in ("/latest", "/most-popular", "/top-rated")
+    ):
+        listhtml = utils.getHtml(site.url, site.url)
     if not listhtml:
         utils.eod()
         return

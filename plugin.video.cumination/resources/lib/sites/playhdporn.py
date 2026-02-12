@@ -165,7 +165,20 @@ def Playvid(url, name, download=None):
         vp.play_from_link_to_resolve(url)
         return
 
-    # Pattern 1: JSON-LD contentUrl.
+    def _with_headers(stream_url):
+        if not stream_url:
+            return stream_url
+        return "{}|Referer={}&User-Agent={}&Origin={}".format(
+            stream_url, url, utils.USER_AGENT, site.url.rstrip("/")
+        )
+
+    # Pattern 1: Prefer signed player URLs (contains v-acctoken).
+    match = re.search(r"video_url\s*:\s*'([^']+)'", html)
+    if match:
+        vp.play_from_direct_link(_with_headers(match.group(1)))
+        return
+
+    # Pattern 2: JSON-LD contentUrl fallback.
     ld_json = re.search(
         r'<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
         html,
@@ -177,43 +190,42 @@ def Playvid(url, name, download=None):
             if isinstance(payload, dict):
                 content_url = payload.get("contentUrl")
                 if content_url:
-                    vp.play_from_direct_link(content_url + "|Referer=" + url)
+                    vp.play_from_direct_link(_with_headers(content_url))
                     return
         except Exception:
             pass
 
-    # Pattern 2: Common KVS video_url.
+    # Pattern 3: Common KVS video_url.
     match = re.search(r"video_url\s*[:=]\s*'([^']+)'", html)
     if match:
-        video_url = match.group(1)
-        vp.play_from_direct_link(video_url + "|Referer=" + url)
+        vp.play_from_direct_link(_with_headers(match.group(1)))
         return
 
-    # Pattern 3: quality-based source map.
+    # Pattern 4: quality-based source map.
     match = re.search(r"video_sources\s*=\s*({[^}]+})", html)
     if match:
         try:
             sources = json.loads(match.group(1).replace("'", '"'))
             # Get best quality
             best_q = sorted(sources.keys(), reverse=True)[0]
-            vp.play_from_direct_link(sources[best_q] + "|Referer=" + url)
+            vp.play_from_direct_link(_with_headers(sources[best_q]))
             return
         except Exception:
             pass
 
-    # Pattern 4: explicit media URLs in markup/scripts.
+    # Pattern 5: explicit media URLs in markup/scripts.
     match = re.search(r"(https?://[^\"'<>\\s]+\\.(?:mp4|m3u8)[^\"'<>\\s]*)", html)
     if match:
-        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        vp.play_from_direct_link(_with_headers(match.group(1)))
         return
 
-    # Pattern 5: video tag source.
+    # Pattern 6: video tag source.
     soup = utils.parse_html(html)
     video_tag = soup.find("video")
     if video_tag:
         source = video_tag.find("source")
         if source and source.get("src"):
-            vp.play_from_direct_link(source["src"] + "|Referer=" + url)
+            vp.play_from_direct_link(_with_headers(source["src"]))
             return
 
     vp.play_from_link_to_resolve(url)
