@@ -62,9 +62,9 @@ Metadata refreshed for Matrix/Nexus/Omega compatibility
 <datadir zip="true">https://raw.githubusercontent.com/Gujal00/smrzips/master/zips/</datadir>
 </dir>
 <dir>
-<info compressed="false">https://raw.githubusercontent.com/dobbelina/repository.dobbelina/master/addons.xml</info>
-<checksum>https://raw.githubusercontent.com/dobbelina/repository.dobbelina/master/addons.xml.md5</checksum>
-<datadir zip="true">https://raw.githubusercontent.com/dobbelina/repository.dobbelina/master/</datadir>
+<info compressed="false">https://rpeters1430.github.io/repository.dobbelina/addons.xml</info>
+<checksum>https://rpeters1430.github.io/repository.dobbelina/addons.xml.md5</checksum>
+<datadir zip="true">https://rpeters1430.github.io/repository.dobbelina/</datadir>
 </dir>
 </extension>
 <extension point="xbmc.addon.metadata">

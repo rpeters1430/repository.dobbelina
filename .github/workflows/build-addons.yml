@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -112,7 +115,7 @@ jobs:
             exit 0
           fi
           git commit -m "chore: auto-bump addon versions [skip ci]"
-          git push
+          git push origin "HEAD:${GITHUB_REF_NAME}"
 
       - name: Install build dependencies
         run: |

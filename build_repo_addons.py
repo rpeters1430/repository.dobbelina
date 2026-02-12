@@ -20,11 +20,10 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import os
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Iterable, List, Tuple
+from typing import Dict, Iterable, List, Tuple
 import zipfile
 
 
@@ -103,7 +102,23 @@ def find_addons(base_dir: Path, filter_ids: Iterable[str] | None) -> List[Path]:
     return candidates
 
 
-def update_addons_index(addons_xml_path: Path, updated: List[Tuple[str, str]]) -> None:
+def _load_addon_xml_roots(addon_dirs: Iterable[Path]) -> Dict[str, ET.Element]:
+    roots: Dict[str, ET.Element] = {}
+    for addon_dir in addon_dirs:
+        addon_xml = addon_dir / "addon.xml"
+        if not addon_xml.is_file():
+            continue
+        tree = ET.parse(addon_xml)
+        root = tree.getroot()
+        addon_id = root.get("id")
+        if addon_id:
+            roots[addon_id] = root
+    return roots
+
+
+def update_addons_index(
+    addons_xml_path: Path, updated: List[Tuple[str, str]], addon_dirs: List[Path]
+) -> None:
     if not addons_xml_path.is_file():
         print(
             f"addons.xml not found at {addons_xml_path}, skipping index update",
@@ -114,14 +129,31 @@ def update_addons_index(addons_xml_path: Path, updated: List[Tuple[str, str]]) -
     tree = ET.parse(addons_xml_path)
     root = tree.getroot()
     updated_map = dict(updated)
+    source_roots = _load_addon_xml_roots(addon_dirs)
+    existing = root.findall("addon")
+    existing_idx = {addon.get("id"): i for i, addon in enumerate(existing)}
     changed = False
-    for addon in root.findall("addon"):
-        aid = addon.get("id")
-        if aid in updated_map:
-            new_ver = updated_map[aid]
-            if addon.get("version") != new_ver:
-                addon.set("version", new_ver)
-                changed = True
+    for aid, new_ver in updated_map.items():
+        source_root = source_roots.get(aid)
+        if source_root is None:
+            continue
+
+        new_addon = ET.fromstring(ET.tostring(source_root, encoding="unicode"))
+        new_addon.set("version", new_ver)
+        new_text = ET.tostring(new_addon, encoding="unicode")
+
+        idx = existing_idx.get(aid)
+        if idx is None:
+            root.append(new_addon)
+            changed = True
+            continue
+
+        current = existing[idx]
+        current_text = ET.tostring(current, encoding="unicode")
+        if current_text != new_text:
+            root.remove(current)
+            root.insert(idx, new_addon)
+            changed = True
 
     if changed:
         # Write compact XML similar to input
@@ -167,7 +199,7 @@ def main(argv: List[str]) -> int:
         print(f"Built {zip_path}")
 
     if args.update_index:
-        update_addons_index(base / "addons.xml", built)
+        update_addons_index(base / "addons.xml", built, addon_dirs)
         print("Updated addons.xml and addons.xml.md5")
 
     return 0
