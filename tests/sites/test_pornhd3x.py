@@ -53,3 +53,12 @@ def test_playvid(mock_site):
             mock_vp.play_from_direct_link.called
             or mock_vp.play_from_link_to_resolve.called
         )
+
+
+def test_thumb_transform_falls_back_for_cms_images(mock_site):
+    mock_site.image = "special://home/addons/plugin.video.cumination/icon.png"
+    result = pornhd3x._thumb_with_headers(
+        "https://www9.pornhd3x.tv/Cms_Data/Contents/admin/Media/images/test.jpg",
+        None,
+    )
+    assert result == mock_site.image

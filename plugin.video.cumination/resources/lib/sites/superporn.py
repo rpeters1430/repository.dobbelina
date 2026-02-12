@@ -59,18 +59,18 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 def Main():
     site.add_dir(
         "[COLOR hotpink]Latest Videos[/COLOR]",
-        site.url,
+        site.url + "videos/latest",
         "List",
         site.img_cat,
     )
     site.add_dir(
         "[COLOR hotpink]Popular[/COLOR]",
-        site.url,
+        site.url + "videos/popular",
         "List",
         site.img_cat,
     )
     site.add_dir(
-        "[COLOR hotpink]Top Rated[/COLOR]", site.url, "List", site.img_cat
+        "[COLOR hotpink]Top Rated[/COLOR]", site.url + "videos", "List", site.img_cat
     )
     site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]",

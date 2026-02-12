@@ -50,3 +50,18 @@ def test_playvid(mock_site):
         assert mock_vp.play_from_direct_link.called
         call_args = mock_vp.play_from_direct_link.call_args[0][0]
         assert "video.mp4" in call_args
+
+
+def test_main_uses_distinct_video_routes(mock_site):
+    with (
+        patch("resources.lib.sites.superporn.List"),
+        patch("resources.lib.utils.eod"),
+    ):
+        superporn.Main()
+
+    menu_urls = [call.args[1] for call in mock_site.add_dir.call_args_list[:3]]
+    assert menu_urls == [
+        "https://www.superporn.com/videos/latest",
+        "https://www.superporn.com/videos/popular",
+        "https://www.superporn.com/videos",
+    ]
