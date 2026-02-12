@@ -282,7 +282,7 @@ def test_getbaselink_extracts_site_url(monkeypatch):
 
 
 def test_main_lists_all_sites(monkeypatch):
-    """Test that Main correctly lists all 48 AWM Network sites."""
+    """Test that Main correctly lists all 49 AWM Network sites."""
     dirs = []
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
@@ -299,8 +299,8 @@ def test_main_lists_all_sites(monkeypatch):
 
     awmnet.Main()
 
-    # Should have 48 sites
-    assert len(dirs) == 48
+    # Should have 49 sites
+    assert len(dirs) == 49
 
     # Check that sites are sorted alphabetically
     names = [d["name"] for d in dirs]

@@ -2,8 +2,8 @@
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
 
-**Last Updated**: 2026-01-17
-**Last Sync**: 2026-01-17 - Cherry-picked commit 1270357 (new site fixes #1735)
+**Last Updated**: 2026-02-12
+**Last Sync**: 2026-02-12 - Cherry-picked commit af3c079 (porntn liting, fixes #1731)
 
 ---
 
@@ -46,6 +46,12 @@ These upstream commits have been integrated into the fork:
 | `99dd004` | fix pagination | `c4c3c72` | 2026-02-05 | Cherry-picked with -x |
 | `beb5b9d` | luxuretv - fix nextpage, thumbnails | `95f32d6` | 2026-02-05 | Cherry-picked with -x |
 
+### 2026-02-12 Cherry-Pick Session
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `af3c079` | porntn liting, fixes #1731 | `3ccc67f` | 2026-02-12 | Cherry-picked with manual conflict resolution (preserved BS4 parsers) |
+
 ### Previously Integrated (Manual)
 
 | Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
@@ -73,6 +79,38 @@ The following upstream commits are regex-based fixes for sites that have been mi
 
 | Upstream Hash | Message | Reason |
 |---------------|---------|--------|
+| `f3d48c1b` | xhmster playback | Fork has BeautifulSoup migration |
+| `1721e034` | terebon - fix playback | Fork has BeautifulSoup migration |
+| `d47192d5` | camsoda #1685 | Fork has BeautifulSoup migration |
+| `86d995a6` | hanime fixes #1686 | Fork has BeautifulSoup migration |
+| `60b6859a` | hanime playback - fixes #1688 | Fork has BeautifulSoup migration |
+| `9722f3eb` | camwhoresbay - fix next page | Fork has BeautifulSoup migration |
+| `67bd60fe` | tokyomotion - new site fixes #1689 | Fork has BeautifulSoup migration |
+| `a34c0a78` | terebon - fix listing | Fork has BeautifulSoup migration |
+| `e40d58df` | camcaps site name change | Fork has BeautifulSoup migration |
+| `122e9555` | freepornvideos - new site | Fork has BeautifulSoup migration |
+| `d522cedb` | awmnet - fix listing | Fork has BeautifulSoup migration |
+| `b4beb803` | camwhoresbay - fix playback | Fork has BeautifulSoup migration |
+| `b4daafcf` | fixes | Fork has BeautifulSoup migration |
+| `e96ed9b6` | stripchat - fix playback (SD only) fixes #1710 | Fork has BeautifulSoup migration |
+| `90d2f5af` | pornxp - domain change - fixes #1711 | Fork has BeautifulSoup migration |
+| `afe1ff04` | celebsroulette, awmnet | Fork has BeautifulSoup migration |
+| `51c39fb2` | porntn fixes #1720 | Fork has BeautifulSoup migration |
+| `0509d5b0` | premiumporn - fixes #1714 | Fork has BeautifulSoup migration |
+| `d92bd04d` | tnaflix fixes #1718 | Fork has BeautifulSoup migration |
+| `53a9dfe3` | whoreshub fixes #1715 | Fork has BeautifulSoup migration |
+| `31644dcc` | pornhub fixes #1712 | Fork has BeautifulSoup migration |
+| `c11caeb6` | pornhoarder fixes #1713 | Fork has BeautifulSoup migration |
+| `3a98f37d` | Python 2 fixes #1722 fixes #1663 | Fork has BeautifulSoup migration |
+| `8eae561a` | fullxcinema | Fork has BeautifulSoup migration |
+| `673fe9b8` | fix module load error on TvOS #1724 | Fork has BeautifulSoup migration |
+| `004f106f` | luxuretv - fix nextpage, fixes #1734 | Fork has BeautifulSoup migration |
+| `b075cbdf` | luxuretv - fix nextpage | Fork has BeautifulSoup migration |
+| `0d683b26` | freshporno - fix domain fixes #1748 | Fork has BeautifulSoup migration |
+| `8ff6fe1f` | allclassic, watchporn playback, fixes #1751 | Fork has BeautifulSoup migration |
+| `6f3103ab` | javguru - fix playback, thumbnails - fixes #1749 | Fork has BeautifulSoup migration |
+| `3e995d97` | hentaidude - fix listing - fixes #1750 | Fork has BeautifulSoup migration |
+| `2ad68a13` | simpvids - name chaged to camcaps - fixes #1757 | Fork has BeautifulSoup migration |
 | `0d683b2` | freshporno - fix domain fixes #1748 | Fork has BeautifulSoup migration |
 | `8ff6fe1` | allclassic, watchporn playback, fixes #1751 | Fork has BeautifulSoup migration |
 | `6f3103a` | javguru - fix playback, thumbnails - fixes #1749 | Fork has BeautifulSoup migration |
@@ -87,7 +125,6 @@ The following upstream commits are regex-based fixes for sites that have been mi
 | `86d995a` | hanime fixes #1686 | Fork has BeautifulSoup migration |
 | `d47192d` | camsoda #1685 | Fork has BeautifulSoup migration |
 | `f3d48c1` | xhmster playback | Fork has BeautifulSoup migration |
-| `af3c079` | porntn liting, fixes #1731 | Fork has BeautifulSoup migration |
 | `d522ced` | awmnet - fix listing | Fork has BeautifulSoup migration |
 | `a34c0a7` | terebon - fix listing | Fork has BeautifulSoup migration |
 | `1721e03` | terebon - fix playback | Fork has BeautifulSoup migration |
