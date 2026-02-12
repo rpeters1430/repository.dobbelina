@@ -165,16 +165,31 @@ def Playvid(url, name, download=None):
         vp.play_from_link_to_resolve(url)
         return
 
-    # Look for flashvars or video sources
-    # Common pattern in KVS: flashvars.video_url
-    match = re.search(r"video_url:\s*'([^']+)'", html)
+    # Pattern 1: JSON-LD contentUrl.
+    ld_json = re.search(
+        r'<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
+        html,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if ld_json:
+        try:
+            payload = json.loads(ld_json.group(1).strip())
+            if isinstance(payload, dict):
+                content_url = payload.get("contentUrl")
+                if content_url:
+                    vp.play_from_direct_link(content_url + "|Referer=" + url)
+                    return
+        except Exception:
+            pass
+
+    # Pattern 2: Common KVS video_url.
+    match = re.search(r"video_url\s*[:=]\s*'([^']+)'", html)
     if match:
         video_url = match.group(1)
         vp.play_from_direct_link(video_url + "|Referer=" + url)
         return
 
-    # Alternative: check for quality-based sources in script
-    # var video_sources = { "720p": "...", "480p": "..." }
+    # Pattern 3: quality-based source map.
     match = re.search(r"video_sources\s*=\s*({[^}]+})", html)
     if match:
         try:
@@ -186,8 +201,19 @@ def Playvid(url, name, download=None):
         except Exception:
             pass
 
-    # Standard KVS license/player URL
-    # flashvars.license_code = ...
-    # flashvars.video_url = ...
+    # Pattern 4: explicit media URLs in markup/scripts.
+    match = re.search(r"(https?://[^\"'<>\\s]+\\.(?:mp4|m3u8)[^\"'<>\\s]*)", html)
+    if match:
+        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        return
+
+    # Pattern 5: video tag source.
+    soup = utils.parse_html(html)
+    video_tag = soup.find("video")
+    if video_tag:
+        source = video_tag.find("source")
+        if source and source.get("src"):
+            vp.play_from_direct_link(source["src"] + "|Referer=" + url)
+            return
 
     vp.play_from_link_to_resolve(url)

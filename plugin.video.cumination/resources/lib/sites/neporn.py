@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from __future__ import annotations
 
 import re
+import json
 from six.moves import urllib_parse
 
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
+from resources.lib.decrypters.kvsplayer import kvs_decode
 from resources.lib.sites.soup_spec import SoupSiteSpec
 
 site = AdultSite(
@@ -154,36 +156,64 @@ def Playvid(url, name, download=None):
         vp.play_from_link_to_resolve(url)
         return
 
-    # Pattern 1: KVS Player - video_url with colon
-    match = re.search(r"video_url:\s*[\"']([^\"']+)[\"']", html)
+    # Pattern 1: JSON-LD contentUrl.
+    ld_json = re.search(
+        r'<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
+        html,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if ld_json:
+        try:
+            payload = json.loads(ld_json.group(1).strip())
+            if isinstance(payload, dict):
+                content_url = payload.get("contentUrl")
+                if content_url:
+                    vp.play_from_direct_link(content_url + "|Referer=" + url)
+                    return
+        except Exception:
+            pass
+
+    # Pattern 2: KVS flashvars with license decoding support.
+    license_match = re.search(
+        r"license_code:\s*[\"']([^\"']+)[\"']", html, re.IGNORECASE
+    )
+    license_code = license_match.group(1) if license_match else ""
+    sources = {}
+    for pattern in (
+        r"video_url\s*[:=]\s*[\"']([^\"']+)[\"']",
+        r"video_alt_url\d*\s*[:=]\s*[\"']([^\"']+)[\"']",
+    ):
+        for idx, raw_url in enumerate(
+            re.findall(pattern, html, re.IGNORECASE | re.DOTALL), start=1
+        ):
+            stream_url = raw_url
+            if stream_url.startswith("function/"):
+                if license_code:
+                    try:
+                        stream_url = kvs_decode(stream_url, license_code)
+                    except Exception:
+                        stream_url = re.sub(r"^function/\d+/", "", stream_url)
+                else:
+                    stream_url = re.sub(r"^function/\d+/", "", stream_url)
+            if stream_url:
+                sources["Source {}".format(idx)] = stream_url
+
+    if sources:
+        stream_url = utils.selector("Select quality", sources) if len(sources) > 1 else next(iter(sources.values()))
+        if stream_url:
+            vp.play_from_direct_link(stream_url + "|Referer=" + url)
+            return
+
+    # Pattern 3: fallback direct MP4/m3u8.
+    match = re.search(r"(https?://[^\"'<>\\s]+\\.(?:mp4|m3u8)[^\"'<>\\s]*)", html)
     if match:
         vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
         return
 
-    # Pattern 2: KVS Player - video_url with equals
-    match = re.search(r"video_url\s*=\s*[\"']([^\"']+)[\"']", html)
-    if match:
-        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
-        return
-
-    # Pattern 3: flashvars.video_url (common KVS pattern)
-    match = re.search(r"flashvars\.video_url\s*=\s*[\"']([^\"']+)[\"']", html)
-    if match:
-        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
-        return
-
-    # Pattern 4: video_alt_url (KVS alternative quality)
-    match = re.search(r"video_alt_url:\s*[\"']([^\"']+)[\"']", html)
-    if match:
-        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
-        return
-
-    # Pattern 5: Check for sources array
+    # Pattern 4: Check for sources array.
     match = re.search(r"sources\s*:\s*(\[[^\]]+\])", html)
     if match:
         try:
-            import json
-
             sources_list = json.loads(match.group(1))
             sources = {
                 s.get("label", s.get("quality", "Video")): s.get("file", s.get("src"))
@@ -198,7 +228,7 @@ def Playvid(url, name, download=None):
         except Exception:
             pass
 
-    # Pattern 6: Check for video tag
+    # Pattern 5: Check for video tag.
     soup = utils.parse_html(html)
     video_tag = soup.find("video")
     if video_tag:
@@ -207,7 +237,7 @@ def Playvid(url, name, download=None):
             vp.play_from_direct_link(source["src"] + "|Referer=" + url)
             return
 
-    # Pattern 7: Check for iframes (embedded players)
+    # Pattern 6: Check for iframes (embedded players).
     iframe = soup.find("iframe")
     if iframe and iframe.get("src"):
         iframe_url = urllib_parse.urljoin(url, iframe["src"])

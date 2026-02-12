@@ -20,6 +20,9 @@ from __future__ import annotations
 
 import re
 import json
+import hashlib
+import random
+import string
 from six.moves import urllib_parse
 
 from resources.lib import utils
@@ -34,6 +37,20 @@ site = AdultSite(
     "pornhd3x",
 )
 
+_SOURCE_SECRET = "98126avrbi6m49vd7shxkn985"
+_TOKEN_SEED = (
+    "n1sqcua67bcq9826avrbi6m49vd7shxkn985mhodk06twz87wwxtp3dqiicks2dfy"
+    "ud213k6ygiomq01s94e4tr9v0k887bkyud213k6ygiomq01s94e4tr9v0k887bkqocxzw"
+    "39esdyfhvtkpzq9n4e7at4kc6k8sxom08bl4dukp16h09oplu7zov4m5f8"
+)
+
+
+def _thumb_with_headers(value, _item):
+    if not value or "|" in value:
+        return value
+    return "{}|Referer={}&User-Agent={}".format(value, site.url, utils.USER_AGENT)
+
+
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
         "items": ".ml-item.item",
@@ -43,6 +60,7 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
             "selector": "img",
             "attr": "data-original",
             "fallback_attrs": ["data-src", "src"],
+            "transform": _thumb_with_headers,
         },
         "quality": {"selector": ".mli-quality", "text": True},
         "pagination": {
@@ -118,8 +136,53 @@ def Playvid(url, name, download=None):
         vp.play_from_link_to_resolve(url)
         return
 
-    # Check for sources array in script
-    # var sources = [{"file":"...","label":"720p"}]
+    # Pattern 1: dynamic source API.
+    soup = utils.parse_html(html)
+    episode = soup.select_one("a[episode-id]")
+    episode_id = utils.safe_get_attr(episode, "episode-id")
+    if episode_id:
+        seed = "".join(
+            random.choice(string.ascii_lowercase + string.digits) for _ in range(6)
+        )
+        token = hashlib.md5(
+            (episode_id + seed + _SOURCE_SECRET).encode("utf-8")
+        ).hexdigest()
+        cookie_name = "{}{}{}".format(
+            _TOKEN_SEED[13:37], episode_id, _TOKEN_SEED[40:64]
+        )
+        ajax_url = "{}ajax/get_sources/{}/{}?count=1&mobile=false".format(
+            site.url, episode_id, token
+        )
+        headers = {
+            "User-Agent": utils.USER_AGENT,
+            "X-Requested-With": "XMLHttpRequest",
+            "Cookie": "{}={}".format(cookie_name, seed),
+        }
+        payload = utils.getHtml(ajax_url, url, headers=headers)
+        if payload:
+            try:
+                source_json = json.loads(payload)
+                sources = {}
+                for item in source_json.get("playlist", []):
+                    for source in item.get("sources", []):
+                        source_url = source.get("file")
+                        if not source_url:
+                            continue
+                        label = source.get("label") or source.get("type") or "Video"
+                        sources[label] = source_url
+                if sources:
+                    stream_url = (
+                        utils.selector("Select quality", sources)
+                        if len(sources) > 1
+                        else next(iter(sources.values()))
+                    )
+                    if stream_url:
+                        vp.play_from_direct_link(stream_url + "|Referer=" + url)
+                        return
+            except Exception:
+                pass
+
+    # Pattern 2: inline sources array.
     match = re.search(r"sources\s*:\s*(\[[^\]]+\])", html)
     if match:
         try:
@@ -137,20 +200,19 @@ def Playvid(url, name, download=None):
         except Exception:
             pass
 
-    # Check for direct file: pattern with MP4
-    match = re.search(r"file:\s*[\"']([^\"']+\.mp4[^\"']*)[\"']", html)
+    # Pattern 3: direct file pattern.
+    match = re.search(r"file:\s*[\"']([^\"']+\.(?:mp4|m3u8)[^\"']*)[\"']", html)
     if match:
         vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
         return
 
-    # Check for video_url pattern (common in KVS-based sites)
+    # Pattern 4: KVS-like video_url.
     match = re.search(r"video_url\s*[:=]\s*[\"']([^\"']+)[\"']", html)
     if match:
         vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
         return
 
-    # Check for video tag source
-    soup = utils.parse_html(html)
+    # Pattern 5: video tag source.
     video_tag = soup.find("video")
     if video_tag:
         source = video_tag.find("source")
@@ -158,7 +220,7 @@ def Playvid(url, name, download=None):
             vp.play_from_direct_link(source["src"] + "|Referer=" + url)
             return
 
-    # Check for iframes (embedded players)
+    # Pattern 6: iframe fallback.
     iframe = soup.find("iframe")
     if iframe and iframe.get("src"):
         iframe_url = urllib_parse.urljoin(url, iframe["src"])

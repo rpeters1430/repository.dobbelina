@@ -115,12 +115,12 @@ def Categories(url):
         return
 
     soup = utils.parse_html(html)
-    # Categories are in .list-categories-item or similar
-    cat_items = soup.select(
-        ".list-categories__item, .category-item, a[href*='/category/']"
-    )
+    cat_items = soup.select("a.thumb-duracion.icon-category")
+    if not cat_items:
+        cat_items = soup.select("a.dropdown__item[href]")
 
     entries = []
+    seen = set()
     for anchor in cat_items:
         if anchor.name != "a":
             anchor = anchor.select_one("a")
@@ -131,16 +131,22 @@ def Categories(url):
         if not href:
             continue
 
-        name = utils.safe_get_text(anchor)
+        name_tag = anchor.select_one(".category__name, h3, span")
+        name = utils.safe_get_text(name_tag) if name_tag else utils.safe_get_text(anchor)
         if not name:
             name = utils.safe_get_attr(anchor, "title")
         if not name:
             continue
 
         img_tag = anchor.select_one("img")
-        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        img = utils.safe_get_attr(img_tag, "data-src", ["src", "data-original"])
+        cat_url = urllib_parse.urljoin(site.url, href)
+        key = (name.lower(), cat_url)
+        if key in seen:
+            continue
+        seen.add(key)
 
-        entries.append((name, urllib_parse.urljoin(site.url, href), img))
+        entries.append((name, cat_url, img))
 
     for name, cat_url, img in sorted(entries):
         site.add_dir(name, cat_url, "List", img)
