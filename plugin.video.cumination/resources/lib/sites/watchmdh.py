@@ -50,7 +50,9 @@ def List(url):
             continue
         video_url = urllib_parse.urljoin(site.url, video_url)
 
-        name = utils.cleantext(utils.safe_get_attr(link, "title") or utils.safe_get_text(link))
+        name = utils.cleantext(
+            utils.safe_get_attr(link, "title") or utils.safe_get_text(link)
+        )
         if not name:
             continue
 
@@ -92,13 +94,11 @@ def List(url):
                 lambda m: "from_videos={}".format(int(m.group(1)) + 1),
                 params_qs,
             )
-            next_url = (
-                "{}?mode=async&function=get_block&block_id={}&{}&_={}".format(
-                    site.url + "latest-updates/",
-                    block_id,
-                    params_qs,
-                    int(time.time() * 1000),
-                )
+            next_url = "{}?mode=async&function=get_block&block_id={}&{}&_={}".format(
+                site.url + "latest-updates/",
+                block_id,
+                params_qs,
+                int(time.time() * 1000),
             )
         else:
             href = utils.safe_get_attr(next_link, "href")
@@ -114,7 +114,12 @@ def List(url):
                     ),
                 )
             ]
-            site.add_dir("[COLOR hotpink]Next Page...[/COLOR]", next_url, "List", site.img_next, contextm=contextm)
+            site.add_dir(
+                "[COLOR hotpink]Next Page...[/COLOR]",
+                next_url,
+                "List",
+                site.img_next,
+                contextm=contextm,
+            )
 
     utils.eod()
-

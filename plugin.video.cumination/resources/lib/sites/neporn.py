@@ -199,7 +199,11 @@ def Playvid(url, name, download=None):
                 sources["Source {}".format(idx)] = stream_url
 
     if sources:
-        stream_url = utils.selector("Select quality", sources) if len(sources) > 1 else next(iter(sources.values()))
+        stream_url = (
+            utils.selector("Select quality", sources)
+            if len(sources) > 1
+            else next(iter(sources.values()))
+        )
         if stream_url:
             vp.play_from_direct_link(stream_url + "|Referer=" + url)
             return

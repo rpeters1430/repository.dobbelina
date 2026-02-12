@@ -132,7 +132,9 @@ def Categories(url):
             continue
 
         name_tag = anchor.select_one(".category__name, h3, span")
-        name = utils.safe_get_text(name_tag) if name_tag else utils.safe_get_text(anchor)
+        name = (
+            utils.safe_get_text(name_tag) if name_tag else utils.safe_get_text(anchor)
+        )
         if not name:
             name = utils.safe_get_attr(anchor, "title")
         if not name:
