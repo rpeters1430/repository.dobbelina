@@ -178,13 +178,11 @@ class SyncManager:
         pending = []
         for c in new_commits:
             sha = c["sha"]
-            # Check tracking file (full hash or short hash)
-            if sha in self.tracked_hashes or any(sha in h for h in self.tracked_hashes):
+            # Check tracking file (handle varying SHA lengths)
+            if any(sha.startswith(h) or h.startswith(sha) for h in self.tracked_hashes):
                 continue
             # Check git history
-            if sha in self.integrated_in_git or any(
-                sha in h for h in self.integrated_in_git
-            ):
+            if any(sha.startswith(h) or h.startswith(sha) for h in self.integrated_in_git):
                 continue
             pending.append(c)
 
