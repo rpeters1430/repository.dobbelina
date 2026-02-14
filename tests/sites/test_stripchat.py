@@ -100,6 +100,7 @@ def test_playvid_requires_inputstreamadaptive(monkeypatch):
     monkeypatch.setattr(
         stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
     )
+    monkeypatch.setattr(stripchat.utils, "_getHtml", lambda *a, **k: "")
     monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
 
     # Call Playvid - it should abort with notification
@@ -158,6 +159,7 @@ def test_playvid_detects_offline_model(monkeypatch):
     monkeypatch.setattr(
         stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
     )
+    monkeypatch.setattr(stripchat.utils, "_getHtml", lambda *a, **k: "")
     monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
 
     # Call Playvid with offline model and no valid stream URL
@@ -218,6 +220,7 @@ def test_playvid_uses_fallback_stream_when_api_reports_offline(monkeypatch):
     monkeypatch.setattr(
         stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
     )
+    monkeypatch.setattr(stripchat.utils, "_getHtml", lambda *a, **k: "")
     monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
 
     stripchat.Playvid("https://stream.stripchat.com/test_fallback.m3u8", "testmodel")
@@ -356,6 +359,91 @@ def test_playvid_prefers_higher_quality_url_over_generic_label(monkeypatch):
     assert played_urls[0].startswith(
         "https://edge-hls.doppiocdn.com/hls/100/master/100_480p.m3u8|"
     )
+
+
+def test_playvid_avoids_ad_only_manifests(monkeypatch):
+    """Reject ad-only VOD manifests and pick a non-ad candidate."""
+    played_urls = []
+    model_data = {
+        "username": "testmodel",
+        "isOnline": True,
+        "isBroadcasting": True,
+        "stream": {
+            "url": "https://edge-hls.saawsedge.com/hls/200/master/200_480p.m3u8",
+        },
+    }
+
+    doppi_source = "https://edge-hls.doppiocdn.com/hls/200/master/200.m3u8"
+    doppi_child = "https://media-hls.doppiocdn.com/b-hls-03/200/200.m3u8"
+    saaws_480 = "https://edge-hls.saawsedge.com/hls/200/master/200_480p.m3u8"
+    saaws_480_child = "https://media-hls.saawsedge.com/b-hls-03/200/200_480p.m3u8"
+
+    def fake_get_html(url, *args, **kwargs):
+        if "api/external/v4/widget" in url or "api/front/models" in url:
+            return json.dumps({"models": [model_data]}), False
+        return "", False
+
+    def fake__get_html(url, *args, **kwargs):
+        if url == doppi_source:
+            return '#EXTM3U\n#EXT-X-STREAM-INF:NAME="source"\n{}'.format(doppi_child)
+        if url == doppi_child:
+            return (
+                "#EXTM3U\n#EXT-X-MOUFLON-ADVERT\n#EXT-X-PLAYLIST-TYPE:VOD\n"
+                "#EXTINF:4.0,\nhttps://media-hls.doppiocdn.com/b-hls-03/cpa/v2/chunk_000.m4s\n"
+                "#EXT-X-ENDLIST"
+            )
+        if url == saaws_480:
+            return '#EXTM3U\n#EXT-X-STREAM-INF:NAME="480p"\n{}'.format(saaws_480_child)
+        if url == saaws_480_child:
+            return (
+                "#EXTM3U\n#EXT-X-VERSION:6\n#EXT-X-TARGETDURATION:8\n"
+                "#EXTINF:8.333,\nhttps://media-hls.saawsedge.com/b-hls-03/200/seg_1.mp4\n"
+            )
+        return ""
+
+    class FakeHelper:
+        def __init__(self, adaptive_type):
+            pass
+
+        def check_inputstream(self):
+            return True
+
+    class FakeProgress:
+        def update(self, percent, message):
+            pass
+
+        def close(self):
+            pass
+
+    class FakeVideoPlayer:
+        def __init__(self, name, **kwargs):
+            self.name = name
+            self.progress = FakeProgress()
+
+        def play_from_direct_link(self, link):
+            played_urls.append(link)
+
+    import sys
+    import types
+
+    fake_inputstreamhelper = types.ModuleType("inputstreamhelper")
+    fake_inputstreamhelper.Helper = FakeHelper
+    sys.modules["inputstreamhelper"] = fake_inputstreamhelper
+
+    monkeypatch.setattr(stripchat.utils, "notify", lambda *a, **k: None)
+    monkeypatch.setattr(stripchat.utils, "kodilog", lambda x: None)
+    monkeypatch.setattr(
+        stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
+    )
+    monkeypatch.setattr(stripchat.utils, "_getHtml", fake__get_html)
+    monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
+
+    stripchat.Playvid(
+        "https://edge-hls.doppiocdn.com/hls/200/master/200_240p.m3u8", "testmodel"
+    )
+
+    assert played_urls
+    assert played_urls[0].startswith(saaws_480 + "|")
 
 
 def test_playvid_validates_returned_model_name(monkeypatch):

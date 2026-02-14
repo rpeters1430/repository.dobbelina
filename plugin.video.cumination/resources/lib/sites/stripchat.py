@@ -268,6 +268,7 @@ def Playvid(url, name):
         candidates = []
         stream_info = model_data.get("stream") if model_data else None
         is_online_flag = None
+        manifest_probe_cache = {}
 
         # Treat online flags as advisory only; keep stream candidates if present.
         if model_data:
@@ -374,6 +375,67 @@ def Playvid(url, name):
                 )
             return None
 
+        def _fetch_manifest_text(manifest_url):
+            if not isinstance(manifest_url, str) or ".m3u8" not in manifest_url:
+                return ""
+            if manifest_url in manifest_probe_cache:
+                return manifest_probe_cache[manifest_url]
+            try:
+                headers = {
+                    "User-Agent": utils.USER_AGENT,
+                    "Origin": "https://stripchat.com",
+                    "Referer": "https://stripchat.com/{0}".format(name),
+                    "Accept": "application/x-mpegURL,application/vnd.apple.mpegurl,*/*",
+                }
+                text = utils._getHtml(
+                    manifest_url,
+                    "https://stripchat.com/{0}".format(name),
+                    headers=headers,
+                )
+            except Exception as e:
+                utils.kodilog(
+                    "Stripchat: Manifest probe failed for {}: {}".format(
+                        manifest_url[:80], str(e)
+                    )
+                )
+                text = ""
+            manifest_probe_cache[manifest_url] = text if isinstance(text, str) else ""
+            return manifest_probe_cache[manifest_url]
+
+        def _is_ad_or_stub_manifest(manifest_text):
+            if not isinstance(manifest_text, str) or "#EXTM3U" not in manifest_text:
+                return False
+            lower = manifest_text.lower()
+            if "#ext-x-mouflon-advert" in lower:
+                return True
+            if "/cpa/v2/" in lower:
+                return True
+            # Treat short VOD endlists as non-live/ad stubs for cam playback.
+            if "#ext-x-playlist-type:vod" in lower and "#ext-x-endlist" in lower:
+                return True
+            return False
+
+        def _candidate_is_ad_path(candidate_url):
+            master_text = _fetch_manifest_text(candidate_url)
+            if not master_text or "#EXTM3U" not in master_text:
+                return False
+
+            # If this manifest itself is an ad/stub, reject immediately.
+            if _is_ad_or_stub_manifest(master_text):
+                return True
+
+            # If this is a master playlist, inspect child playlists as well.
+            child_urls = [
+                line.strip()
+                for line in master_text.splitlines()
+                if line.strip() and not line.startswith("#")
+            ]
+            for child_url in child_urls[:2]:
+                child_text = _fetch_manifest_text(child_url)
+                if _is_ad_or_stub_manifest(child_text):
+                    return True
+            return False
+
         promoted = []
         for _, candidate_url in list(candidates):
             source_url = _promote_variant_to_source_url(candidate_url)
@@ -415,6 +477,7 @@ def Playvid(url, name):
         candidates_sorted = sorted(
             candidates,
             key=lambda item: (
+                -1 if _candidate_is_ad_path(item[1]) else 0,
                 quality_score(item[0], item[1]),
                 1 if "doppiocdn.com" in item[1] else 0,
             ),
