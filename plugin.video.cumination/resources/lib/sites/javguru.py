@@ -378,6 +378,8 @@ def Play(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
     sources = []
     videohtml = utils.getHtml(url)
+    
+    # Try current JSON-based approach
     match = re.compile('iframe_url":"([^"]+)"', re.DOTALL | re.IGNORECASE).findall(
         videohtml
     )
@@ -387,37 +389,56 @@ def Play(url, name, download=None):
             vp.progress.update(
                 25 + (i * 5), "[CR]Loading streaming link {0} page[CR]".format(i + 1)
             )
-            streamhtml = utils.getHtml(link, url, error="raise")
-            match = re.compile(
-                r"""var OLID = '([^']+)'.+?src="([^']+)""", re.DOTALL | re.IGNORECASE
-            ).findall(streamhtml)
-            if match:
-                (olid, vurl) = match[0]
-                olid = olid[::-1]
-            else:
+            try:
+                streamhtml = utils.getHtml(link, url, error="raise")
+                match_stream = re.compile(
+                    r"""var OLID = '([^']+)'.+?src="([^']+)""", re.DOTALL | re.IGNORECASE
+                ).findall(streamhtml)
+                if match_stream:
+                    (olid, vurl) = match_stream[0]
+                    olid = olid[::-1]
+                    src = vurl + olid
+                    src = utils.getVideoLink(src, link)
+                    sources.append('"{}"'.format(src))
+            except Exception:
                 continue
-            src = vurl + olid
-            src = utils.getVideoLink(src, link)
-            sources.append('"{}"'.format(src))
-    match = re.compile(r"window\.open\('([^']+)'", re.DOTALL | re.IGNORECASE).findall(
+
+    # Try BeautifulSoup iframe detection as fallback
+    if not sources:
+        soup = utils.parse_html(videohtml)
+        if soup:
+            iframes = soup.select('iframe[src*="embed"], iframe[src*="player"]')
+            for iframe in iframes:
+                src = utils.safe_get_attr(iframe, "src")
+                if src:
+                    src = "https:" + src if src.startswith("//") else src
+                    sources.append('"{}"'.format(src))
+
+    # Try window.open patterns
+    match_open = re.compile(r"window\.open\('([^']+)'", re.DOTALL | re.IGNORECASE).findall(
         videohtml
     )
-    if match:
-        for i, dllink in enumerate(match):
+    if match_open:
+        for i, dllink in enumerate(match_open):
             vp.progress.update(
                 60 + (i * 5), "[CR]Loading download link {0} page[CR]".format(i + 1)
             )
-            dllink = utils.getHtml(dllink)
-            match = re.compile('URL=([^"]+)"', re.DOTALL | re.IGNORECASE).findall(
-                dllink
-            )
-            if match:
-                sources.append('"{}"'.format(match[0]))
+            try:
+                dl_html = utils.getHtml(dllink)
+                match_dl = re.compile('URL=([^"]+)"', re.DOTALL | re.IGNORECASE).findall(
+                    dl_html
+                )
+                if match_dl:
+                    sources.append('"{}"'.format(match_dl[0]))
+            except Exception:
+                continue
+
     if sources:
         vp.progress.update(75, "[CR]Loading video page[CR]")
         vp.play_from_html(", ".join(sources))
     else:
-        return
+        vp.progress.close()
+        utils.notify("Oh oh", "Couldn't find any playable sources")
 
 
 @site.register()

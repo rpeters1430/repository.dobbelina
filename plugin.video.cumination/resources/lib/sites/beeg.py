@@ -198,7 +198,7 @@ def BGPlayvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     listjson = base64.b64decode(url)
-    jdata = json.loads(listjson.decode())
+    jdata = json.loads(listjson.decode('utf-8', 'ignore'))
 
     fc_facts = jdata["fc_facts"]
     if len(fc_facts) == 1:
@@ -288,7 +288,19 @@ def BGCat(url):
         site.url,
     )
     jdata = json.loads(listjson)
-    jdata = jdata[url]
+    
+    # Handle cases where url is a full URL or contains the site URL
+    key = url
+    if site.url in key:
+        key = key.replace(site.url, "")
+    key = key.strip("/")
+    
+    if key not in jdata:
+        utils.kodilog("beeg: Key '{}' not found in category data. Available keys: {}".format(key, list(jdata.keys())))
+        utils.eod()
+        return
+
+    jdata = jdata[key]
     for cat in sorted(jdata, key=lambda x: x["tg_name"]):
         name = cat["tg_name"]
         slug = cat["tg_slug"]

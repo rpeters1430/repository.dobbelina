@@ -46,24 +46,24 @@ def make_netflav_headers():
 def Main():
     site.add_dir(
         "[COLOR hotpink]Censored[/COLOR]",
-        site.url + "censored?page=1",
+        site.url + "censored",
         "List",
         site.img_cat,
         section="censored",
     )
     site.add_dir(
+        "[COLOR hotpink]Trending[/COLOR]",
+        site.url + "trending",
+        "List",
+        site.img_cat,
+        section="trending",
+    )
+    site.add_dir(
         "[COLOR hotpink]Uncensored[/COLOR]",
-        site.url + "uncensored?page=1",
+        site.url + "uncensored",
         "List",
         site.img_cat,
         section="uncensored",
-    )
-    site.add_dir(
-        "[COLOR hotpink]Chinese Sub[/COLOR]",
-        site.url + "chinese-sub?page=1",
-        "List",
-        site.img_cat,
-        section="chinese-sub",
     )
     site.add_dir(
         "[COLOR hotpink]Genres[/COLOR]", site.url + "genre", "Genres", site.img_cat
@@ -75,16 +75,23 @@ def Main():
         site.img_search,
         section="search",
     )
-    List(site.url + "all?page=1", "all")
     utils.eod()
 
 
 @site.register()
 def List(url, section="all"):
     try:
-        listhtml = utils.getHtml(url, headers=make_netflav_headers(), timeout=30)
+        listhtml, _ = utils.get_html_with_cloudflare_retry(
+            url, referer=site.url, headers=make_netflav_headers()
+        )
     except Exception as e:
         utils.kodilog("netflav List error: {}".format(str(e)))
+        utils.eod()
+        return
+
+    stripped = listhtml.strip()
+    if not stripped or stripped in {"0", "1"} or len(stripped) < 16:
+        utils.notify("Netflav", "Access blocked/challenged")
         utils.eod()
         return
 
@@ -110,11 +117,22 @@ def List(url, section="all"):
                 utils.eod()
                 return
 
-            jdata = json.loads(jdata_text).get("props").get("initialState").get(section)
+            initial_state = json.loads(jdata_text).get("props", {}).get("initialState", {})
+            jdata = initial_state.get(section)
+            if not isinstance(jdata, dict) or not jdata.get("docs"):
+                for key in ("censored", "trending", "all", "browse"):
+                    if isinstance(initial_state.get(key), dict) and initial_state.get(key).get("docs"):
+                        jdata = initial_state.get(key)
+                        section = key
+                        break
+            if not isinstance(jdata, dict):
+                utils.notify("Error", "Unable to parse page data")
+                utils.eod()
+                return
 
         page = jdata.get("page")
         pages = jdata.get("pages")
-        videos = jdata.get("docs")
+        videos = jdata.get("docs") or []
 
         for video in videos:
             name = video["title_en"] if utils.PY3 else video["title_en"].encode("utf-8")
@@ -141,7 +159,7 @@ def List(url, section="all"):
                 name, videopage, "Playvid", img, plot, contextm=contextmenu
             )
 
-        if page < pages:
+        if page and pages and page < pages and "page=" in url:
             if "page=" in url:
                 npurl = url.replace("page={}".format(page), "page={}".format(page + 1))
             else:

@@ -53,7 +53,16 @@ def test_hanime_play_extracts_video_sources(monkeypatch):
 
     mock_vp.play_from_direct_link = fake_play_from_direct_link
 
-    monkeypatch.setattr(hanime.utils, "getHtml", fake_get_html)
+    def fake_get_video_api(url, member=False, premium_member=False):
+        # Return something based on url if needed, or generic
+        val = "alt-" if "alt" in str(html) else ""
+        return {"videos_manifest": {"servers": [{"streams": [
+            {"height": "1080", "url": "https://hanime.tv/videos/{}1080p.mp4".format(val)},
+            {"height": "720", "url": "https://hanime.tv/videos/{}720p.mp4".format(val)},
+            {"height": "480", "url": "https://hanime.tv/videos/{}480p.mp4".format(val)}
+        ]}]}}
+
+    monkeypatch.setattr(hanime, "get_video_api", fake_get_video_api)
     monkeypatch.setattr(hanime.utils, "prefquality", fake_prefquality)
     monkeypatch.setattr(hanime.utils, "VideoPlayer", fake_video_player)
 
@@ -94,7 +103,7 @@ def test_hanime_play_handles_empty_sources(monkeypatch):
 
     mock_vp.play_from_direct_link = fake_play_from_direct_link
 
-    monkeypatch.setattr(hanime.utils, "getHtml", lambda *a, **k: empty_html)
+    monkeypatch.setattr(hanime, "get_video_api", lambda *a, **k: {})
     monkeypatch.setattr(hanime.utils, "prefquality", fake_prefquality)
     monkeypatch.setattr(hanime.utils, "VideoPlayer", fake_video_player)
 
@@ -544,13 +553,13 @@ def test_hanime_filter_no_selection(monkeypatch):
 
 def test_hanime_play_url_construction(monkeypatch):
     """Test that video page URL is correctly constructed."""
-    gethtml_calls = []
+    api_calls = []
 
-    def fake_gethtml(url):
-        gethtml_calls.append(url)
-        return "<html><body></body></html>"
+    def fake_get_video_api(url, member=False, premium_member=False):
+        api_calls.append(url)
+        return {}
 
-    monkeypatch.setattr(hanime.utils, "getHtml", fake_gethtml)
+    monkeypatch.setattr(hanime, "get_video_api", fake_get_video_api)
 
     mock_vp = MagicMock()
     mock_vp.progress.update = MagicMock()
@@ -561,8 +570,8 @@ def test_hanime_play_url_construction(monkeypatch):
 
     hanime.hanime_play("test-video-slug", "Test Video")
 
-    assert len(gethtml_calls) == 1
-    assert gethtml_calls[0] == "https://hanime.tv/videos/hentai/test-video-slug"
+    assert len(api_calls) == 2
+    assert api_calls[0] == "test-video-slug"
 
 
 def test_hanime_list_context_menu_structure(monkeypatch):
@@ -618,7 +627,16 @@ def test_hanime_play_handles_alternative_format(monkeypatch):
 
     mock_vp.play_from_direct_link = fake_play_from_direct_link
 
-    monkeypatch.setattr(hanime.utils, "getHtml", fake_get_html)
+    def fake_get_video_api(url, member=False, premium_member=False):
+        # Return something based on url if needed, or generic
+        val = "alt-" if "alt" in str(html) else ""
+        return {"videos_manifest": {"servers": [{"streams": [
+            {"height": "1080", "url": "https://hanime.tv/videos/{}1080p.mp4".format(val)},
+            {"height": "720", "url": "https://hanime.tv/videos/{}720p.mp4".format(val)},
+            {"height": "480", "url": "https://hanime.tv/videos/{}480p.mp4".format(val)}
+        ]}]}}
+
+    monkeypatch.setattr(hanime, "get_video_api", fake_get_video_api)
     monkeypatch.setattr(hanime.utils, "prefquality", fake_prefquality)
     monkeypatch.setattr(hanime.utils, "VideoPlayer", fake_video_player)
 

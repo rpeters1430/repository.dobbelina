@@ -92,18 +92,24 @@ def List(url):
     soup = utils.parse_html(listhtml)
 
     items = []
-    for anchor in soup.select('a[href*="/videos/"]'):
+    for anchor in soup.select('a.nuyrfe[href], a[href*="/view/"], a[href*="/videos/"]'):
         href = utils.safe_get_attr(anchor, "href")
-        if not href or "/videos/" not in href:
+        if not href or ("/videos/" not in href and "/view/" not in href):
             continue
         video_url = urllib_parse.urljoin(site.url, href)
         img_tag = anchor.find("img")
         thumb = utils.safe_get_attr(
             img_tag, "src", ["data-src", "data-lazy", "data-original"]
         )
-        title = utils.cleantext(
-            utils.safe_get_attr(img_tag, "alt") or utils.safe_get_text(anchor)
-        )
+        title = utils.cleantext(utils.safe_get_attr(img_tag, "alt"))
+        if not title:
+            parent = anchor.find_parent("li")
+            if parent:
+                title = utils.cleantext(utils.safe_get_text(parent.select_one("p.clip")))
+        if not title:
+            title = utils.cleantext(
+                utils.safe_get_attr(anchor, "title") or utils.safe_get_text(anchor)
+            )
         if not title:
             continue
         items.append(

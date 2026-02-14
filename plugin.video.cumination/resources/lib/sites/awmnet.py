@@ -28,7 +28,7 @@ from resources.lib.decrypters import txxx
 site = AdultSite(
     "awmnet",
     "[COLOR hotpink]AWM Network[/COLOR] - [COLOR deeppink]49 sites[/COLOR]",
-    "",
+    "https://www.4tube.com/",
     "awmnet.png",
     "awmnet",
 )
@@ -283,12 +283,16 @@ sitelist = [
 
 
 def getBaselink(url):
+    if not url:
+        return sitelist[0][2]
     for pornsite in sitelist:
         domain = urllib_parse.urlparse(pornsite[2]).netloc
         if domain in url:
-            siteurl = pornsite[2]
-            break
-    return siteurl
+            return pornsite[2]
+    parsed = urllib_parse.urlparse(url)
+    if parsed.scheme and parsed.netloc:
+        return "{0}://{1}/".format(parsed.scheme, parsed.netloc)
+    return sitelist[0][2]
 
 
 @site.register(default_mode=True)
@@ -416,12 +420,19 @@ def List(url):
 
 @site.register()
 def Search(url, keyword=None):
-    searchUrl = url
     if not keyword:
         site.search_dir(url, "Search")
     else:
+        # Ensure url ends with slash if it doesn't have query params
+        base_search = url
+        if "?" not in base_search and not base_search.endswith("/"):
+            base_search += "/"
+            
         title = keyword.replace(" ", "%20")
-        searchUrl = searchUrl + title + "?pricing=free"
+        if "?" in base_search:
+            searchUrl = base_search + title
+        else:
+            searchUrl = base_search + title + "?pricing=free"
         List(searchUrl)
 
 

@@ -122,23 +122,57 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     html = utils.getHtml(url, site.url)
+    
+    sources = {}
+    
+    # Try finding the playlist JS variable
     p = re.compile(r"window.playlist\s*=\s*([^;]+);", re.DOTALL | re.IGNORECASE).search(
         html
     )
     if p:
-        js = json.loads(p.group(1))
-        src = js["sources"]
-        sources = {x["label"]: x["file"] for x in src}
+        try:
+            js = json.loads(p.group(1))
+            src = js.get("sources", [])
+            for x in src:
+                label = x.get("label", "Unknown")
+                file_url = x.get("file")
+                if file_url:
+                    sources[label] = file_url
+        except Exception as e:
+            utils.kodilog("noodlemagazine: Error parsing playlist JSON: {}".format(e))
+
+    # Fallback to general HTML source searching if playlist JS not found or failed
+    if not sources:
+        soup = utils.parse_html(html)
+        if soup:
+            # Look for common video sources
+            video_tags = soup.find_all("video")
+            for video in video_tags:
+                src_tags = video.find_all("source")
+                for src in src_tags:
+                    label = utils.safe_get_attr(src, "label") or utils.safe_get_attr(src, "title") or "HD"
+                    file_url = utils.safe_get_attr(src, "src")
+                    if file_url:
+                        sources[label] = file_url
+            
+            # If still nothing, try the VideoPlayer's built-in html scanner
+            if not sources:
+                vp.play_from_html(html)
+                return
+
+    if sources:
         videourl = utils.prefquality(
             sources,
-            sort_by=lambda x: int("".join([y for y in x if y.isdigit()])),
+            sort_by=lambda x: int("".join([y for y in x if y.isdigit()])) if any(y.isdigit() for y in x) else 0,
             reverse=True,
         )
-        videourl = videourl + "|Referer=" + site.url
-        vp.play_from_direct_link(videourl)
-    else:
-        utils.notify("Oh oh", "No video found")
-        return
+        if videourl:
+            videourl = videourl + "|Referer=" + site.url
+            vp.play_from_direct_link(videourl)
+            return
+
+    vp.progress.close()
+    utils.notify("Oh oh", "No playable video source found")
 
 
 @site.register()

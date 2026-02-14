@@ -15,7 +15,7 @@ def test_list_parses_videos_and_next_page(monkeypatch):
     downloads = []
     dirs = []
 
-    monkeypatch.setattr(netflav.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(netflav.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (html, 200))
     monkeypatch.setattr(netflav.utils, "eod", lambda *a, **k: None)
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):

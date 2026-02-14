@@ -58,15 +58,22 @@ def Main():
 @site.register()
 def List(url):
     try:
-        listhtml = utils.getHtml(url, "", timeout=30)
+        listhtml, _ = utils.get_html_with_cloudflare_retry(
+            url, referer=site.url
+        )
     except Exception as e:
         utils.kodilog("hpjav List error: {}".format(str(e)))
         utils.eod()
         return
 
+    if not listhtml or len(listhtml.strip()) < 32:
+        utils.notify("HPJav", "Access blocked/challenged")
+        utils.eod()
+        return
+
     soup = utils.parse_html(listhtml)
 
-    # Find all video links
+    # Find all video links on listing cards.
     video_links = soup.select(
         'a[href*="/censored/"], a[href*="/uncensored/"], a[href*="/amature/"], a[href*="/fc2ppv/"], a[href*="/vr/"]'
     )
@@ -77,7 +84,7 @@ def List(url):
             continue
 
         # Get image
-        img_tag = link.select_one(".post-list-image img")
+        img_tag = link.select_one("img")
         img = utils.safe_get_attr(img_tag, "src")
 
         # Get duration
@@ -87,9 +94,13 @@ def List(url):
         if duration and duration.endswith("min."):
             duration = duration[:-4].strip()
 
-        # Get title from span
+        # Get title from span/alt/text
         title_tag = link.select_one("span")
         name = utils.safe_get_text(title_tag, "")
+        if not name:
+            name = utils.safe_get_attr(img_tag, "alt", default="")
+        if not name:
+            name = utils.safe_get_text(link, "")
         name = utils.cleantext(name)
 
         if name and videopage:

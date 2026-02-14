@@ -70,13 +70,19 @@ def List(url):
     video_items = soup.select("div.post_el_small")
 
     for item in video_items:
-        link = item.select_one("a[href]")
+        link = item.select_one('a[href*="/blog/"]') or item.select_one("a[href]")
         if not link:
             continue
 
         href = utils.safe_get_attr(link, "href")
         title = utils.safe_get_attr(link, "title")
-        if not href or not title:
+        if not href:
+            continue
+        if not title:
+            title = utils.safe_get_text(item.select_one(".post_text"))
+        if not title:
+            title = utils.safe_get_attr(item.select_one("img"), "alt", default="")
+        if not title:
             continue
 
         videopage = urllib_parse.urljoin(site.url, href)
@@ -271,11 +277,14 @@ def Playvid(url, name, download=None):
         videourl = utils.selector("Select link", links)
     else:
         videopage = utils.getHtml(url, site.url)
-        videourl = (
-            re.compile('''data-vnfo='{".+?":"(.+?)"''', re.DOTALL | re.IGNORECASE)
-            .findall(videopage)[0]
-            .replace(r"\/", "/")
-        )
+        match = re.compile(
+            '''data-vnfo='{".+?":"(.+?)"''', re.DOTALL | re.IGNORECASE
+        ).findall(videopage)
+        if not match:
+            utils.notify("Oh Oh", "No Videos found")
+            vp.progress.close()
+            return
+        videourl = match[0].replace(r"\/", "/")
         tmpfile = videourl.split("/")
         tmpfile[5] = str(int(tmpfile[5]) - ssut51(tmpfile[6]) - ssut51(tmpfile[7]))
         videourl = "/".join(tmpfile)

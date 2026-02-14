@@ -188,8 +188,12 @@ def animeidhentai_play(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videopage = utils.getHtml(url, site.url)
     soup = utils.parse_html(videopage)
+    if not soup:
+        vp.progress.close()
+        utils.notify("Oh oh", "Couldn't parse video page")
+        return
 
-    iframe = soup.select_one("iframe[src]") if soup else None
+    iframe = soup.select_one("iframe[src]")
     if iframe:
         videourl = utils.safe_get_attr(iframe, "src", default="")
         if "nhplayer.com" in videourl:
@@ -197,20 +201,22 @@ def animeidhentai_play(url, name, download=None):
             inner_soup = utils.parse_html(videopage)
             if inner_soup:
                 source = inner_soup.select_one("li[data-id]")
-                videourl = utils.safe_get_attr(source, "data-id", default="")
-                if videourl and videourl.startswith("/"):
-                    videourl = "https://nhplayer.com" + videourl
-                    videohtml = utils.getHtml(videourl, site.url)
-                    vp.direct_regex = r'file:\s*"([^"]+)"'
-                    vp.play_from_html(videohtml)
-                    vp.progress.close()
-                    return
+                if source:
+                    surl = utils.safe_get_attr(source, "data-id", default="")
+                    if surl.startswith("/"):
+                        surl = "https://nhplayer.com" + surl
+                    videohtml = utils.getHtml(surl, site.url)
+                    match = re.search(r'file:\s*"([^"]+)"', videohtml or "")
+                    if match:
+                        vp.play_from_direct_link(match.group(1))
+                        vp.progress.close()
+                        return
             vp.progress.close()
-            utils.notify("Oh oh", "Couldn't find a playable link")
+            utils.notify("Oh oh", "Couldn't find a playable link on nhplayer")
             return
 
         vp.play_from_link_to_resolve(videourl)
         return
 
     vp.progress.close()
-    utils.notify("Oh oh", "Couldn't find a playable link")
+    utils.notify("Oh oh", "Couldn't find an iframe with video")

@@ -148,24 +148,21 @@ def Categories(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(
-        name, download, direct_regex=r'(?:src:|source src=)\s*"([^"]+)"'
+        name, download, direct_regex=r'(?:src:|source src=)\s*["\']([^"\']+)["\']'
     )
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
     videohtml = utils.getHtml(url, site.url, ignoreCertificateErrors=True)
-    match = re.compile(
-        r'iframe scrolling="no" src="([^"]+)"', re.IGNORECASE | re.DOTALL
-    ).findall(videohtml)
-    embedlink = None
-    if match:
-        embedlink = match[0]
-    else:
-        match = re.compile(r"iframe src='([^']+)'", re.IGNORECASE | re.DOTALL).findall(
-            videohtml
-        )
-        if match:
-            embedlink = match[0]
+    soup = utils.parse_html(videohtml)
+    
+    iframe = soup.select_one('iframe[src*="embed"]') or soup.select_one('iframe')
+    if iframe:
+        embedlink = utils.safe_get_attr(iframe, "src")
+        if embedlink:
+            embedlink = "https:" + embedlink if embedlink.startswith("//") else embedlink
+            embedhtml = utils.getHtml(embedlink, url, ignoreCertificateErrors=True)
+            vp.play_from_html(embedhtml)
+            return
 
-    if embedlink:
-        embedhtml = utils.getHtml(embedlink, url, ignoreCertificateErrors=True)
-        vp.play_from_html(embedhtml)
+    # Fallback
+    vp.play_from_html(videohtml)

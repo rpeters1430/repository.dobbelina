@@ -18,6 +18,7 @@ import re
 import os
 import sqlite3
 import json
+from six.moves import urllib_parse
 
 import math
 from resources.lib import utils
@@ -49,10 +50,33 @@ def Main():
         "Search",
         site.img_search,
     )
-    List(
-        "https://member.naiadsystems.com/search/v3/performers?domain=streamate.com&from=0&size=100&filters=gender:f,ff,mf,tm2f,g%3Bonline:true&genderSetting=f"
+    site.add_dir(
+        "Live Models",
+        "https://member.naiadsystems.com/search/v3/performers?domain=streamate.com&from=0&size=100&filters=gender:f,ff,mf,tm2f,g%3Bonline:true&genderSetting=f",
+        "List",
+        "",
     )
     utils.eod()
+
+
+def _loads_json(data):
+    if not data:
+        return None
+    payload = data.strip()
+    if not payload:
+        return None
+
+    # Remove common XSSI protection prefix.
+    if payload.startswith(")]}',"):
+        payload = payload.split("\n", 1)[-1].strip()
+
+    try:
+        return json.loads(payload)
+    except Exception:
+        match = re.search(r"(\{.*\}|\[.*\])", payload, re.DOTALL)
+        if not match:
+            return None
+        return json.loads(match.group(1))
 
 
 @site.register()
@@ -71,9 +95,13 @@ def List(url, page=1):
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in streamate: " + str(e))
         return None
-    model_list = json.loads(data)
-    total_models = model_list.get("totalResultCount")
-    for camgirl in model_list["performers"]:
+    model_list = _loads_json(data)
+    if not isinstance(model_list, dict):
+        utils.notify(site.name, "No models available")
+        utils.eod()
+        return
+    total_models = model_list.get("totalResultCount", 0)
+    for camgirl in model_list.get("performers", []):
         img = "http://m1.nsimg.net/media/snap/{0}.jpg".format(camgirl.get("id"))
         status = "HD" if camgirl.get("highDefinition") else ""
         name = "{0} [COLOR deeppink][{1}][/COLOR] {2}".format(
@@ -159,7 +187,8 @@ def Playvid(url, name):
                 url
             )
         )
-        data = json.loads(response).get("formats")
+        payload = _loads_json(response) or {}
+        data = payload.get("formats", {})
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in streamate: " + str(e))
         utils.notify("Oh oh", "Couldn't find a playable webcam link")
@@ -167,17 +196,18 @@ def Playvid(url, name):
 
     playmode = int(utils.addon.getSetting("chatplay"))
     if playmode == 0:
-        videourl = data.get("mp4-hls").get("manifest")
+        videourl = data.get("mp4-hls", {}).get("manifest", "")
     elif playmode == 1:
         sources = {
             "{0}p".format(item["videoHeight"]): item["location"]
-            for item in data.get("mp4-rtmp").get("encodings")
+            for item in data.get("mp4-rtmp", {}).get("encodings", [])
         }
-        videourl = utils.prefquality(
-            sources,
-            sort_by=lambda x: int("".join([y for y in x if y.isdigit()])),
-            reverse=True,
-        )
+        if sources:
+            videourl = utils.prefquality(
+                sources,
+                sort_by=lambda x: int("".join([y for y in x if y.isdigit()])),
+                reverse=True,
+            )
 
     if videourl:
         vp = utils.VideoPlayer(name)
@@ -189,7 +219,16 @@ def Playvid(url, name):
 
 @site.register()
 def Search(url):
-    keyword = utils._get_keyboard(heading="Searching for...")
+    keyword = ""
+    try:
+        keyword = utils._get_keyboard(heading="Searching for...")
+    except Exception:
+        keyword = ""
+    if not keyword and url:
+        parsed = urllib_parse.urlparse(url)
+        tail = parsed.path.rstrip("/").split("/")[-1]
+        if tail and tail.lower() != "cam":
+            keyword = urllib_parse.unquote(tail)
     if not keyword:
         return False, 0
     try:

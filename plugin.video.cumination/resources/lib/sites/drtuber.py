@@ -274,16 +274,32 @@ def Play(url, name, download=None):
     hdr["accept"] = "application/json, text/javascript, */*; q=0.01"
     jsondata = utils.getHtml(jsonurl, url, headers=hdr)
     data = json.loads(jsondata)
-    videos = data["files"]
+    files = data.get("files", {})
     srcs = {}
-    for v in videos:
-        if videos[v]:
-            if v == "lq":
-                srcs["480p"] = videos[v]
-            elif v == "hq":
-                srcs["720p"] = videos[v]
-            elif v == "4k":
-                srcs["2160p"] = videos[v]
+    
+    if isinstance(files, dict):
+        for v, link in files.items():
+            if link:
+                if v == "lq":
+                    srcs["480p"] = link
+                elif v == "hq":
+                    srcs["720p"] = link
+                elif v == "4k":
+                    srcs["2160p"] = link
+    elif isinstance(files, list):
+        for item in files:
+            if isinstance(item, dict):
+                v = item.get("label", "").lower()
+                link = item.get("url") or item.get("file")
+                if link:
+                    if "lq" in v or "480" in v:
+                        srcs["480p"] = link
+                    elif "hq" in v or "720" in v:
+                        srcs["720p"] = link
+                    elif "2160" in v or "4k" in v:
+                        srcs["2160p"] = link
+                    elif v:
+                        srcs[v] = link
 
     video = utils.prefquality(srcs, sort_by=lambda x: int(x[:-1]), reverse=True)
     if video:

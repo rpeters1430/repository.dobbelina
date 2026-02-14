@@ -128,10 +128,25 @@ def Playvid(url, name, download=None):
         "Accept-Encoding": "deflate",
         "X-Requested-With": "XMLHttpRequest",
     }
-    id = url.split("/")[4]
+    
+    # Use regex to find video ID
+    id_match = re.search(r"/(\d+)/", url)
+    if not id_match:
+        vp.progress.close()
+        utils.notify("Oh oh", "Couldn't extract video ID")
+        return
+        
+    id = id_match.group(1)
     data = {"vid": "{}".format(id)}
-    html = utils.getHtml(site.url + "ajax/getvideo", url, headers=headers, data=data)
-    jdata = json.loads(html)
+    try:
+        html = utils.getHtml(site.url + "ajax/getvideo", url, headers=headers, data=data)
+        jdata = json.loads(html)
+        videourl = jdata.get("video_src")
+        if videourl:
+            vp.play_from_direct_link(videourl + "|Referer=" + url)
+            return
+    except Exception as e:
+        utils.kodilog("uflash: Error fetching video URL: {}".format(e))
 
-    videourl = jdata["video_src"]
-    vp.play_from_direct_link(videourl + "|Referer=" + url)
+    vp.progress.close()
+    utils.notify("Oh oh", "Couldn't find video source")

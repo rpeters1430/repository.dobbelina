@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from resources.lib import utils
+from six.moves import urllib_parse
 from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
@@ -36,89 +37,56 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, "")
+    listhtml = utils.getHtml(url, site.url)
+    if not listhtml:
+        utils.eod()
+        return
     soup = utils.parse_html(listhtml)
+    if not soup:
+        utils.eod()
+        return
 
-    # Handle first page differently - split at "More Porn Videos"
-    if "/page/1/" in url:
-        # Look for "New Porn Videos" section
-        new_videos_section = None
-        headings = soup.find_all(text=lambda text: text and "New Porn Videos" in text)
-        if headings:
-            for heading in headings:
-                parent = heading.parent
-                if parent:
-                    # Find the next sibling or find "More Porn Videos"
-                    next_element = parent.find_next()
-                    while next_element:
-                        if "More Porn Videos" in next_element.get_text():
-                            break
-                        new_videos_section = next_element
-                        next_element = next_element.find_next()
+    seen = set()
+    cards = soup.select("article a[title][href], .g1-collection a[title][href]")
+    if not cards:
+        cards = soup.select("a[title][href]")
 
-        if new_videos_section:
-            # Parse videos from the new videos section
-            video_links = new_videos_section.find_all("a[title][href]")
-            for link in video_links:
-                try:
-                    name = utils.safe_get_attr(link, "title")
-                    videopage = utils.safe_get_attr(link, "href")
-                    img_tag = link.find("img") or link.find_next("img")
-                    img = utils.safe_get_attr(img_tag, "data-src") if img_tag else ""
-
-                    if name and videopage:
-                        name = utils.cleantext(name)
-                        site.add_download_link(name, videopage, "Playvid", img, name)
-
-                except Exception as e:
-                    utils.kodilog("Error parsing new video: " + str(e))
-                    continue
-
-    # Look for "More Porn Videos" section
-    more_videos_section = None
-    headings = soup.find_all(text=lambda text: text and "More Porn Videos" in text)
-    if headings:
-        for heading in headings:
-            parent = heading.parent
-            if parent:
-                # Find the next elements until "g1-pagination-end"
-                next_element = parent.find_next()
-                while next_element:
-                    if (
-                        "g1-pagination-end" in next_element.get_text()
-                        or next_element.get("class")
-                        and "pagination" in str(next_element.get("class"))
-                    ):
-                        break
-                    if more_videos_section is None:
-                        more_videos_section = next_element
-                    else:
-                        # Append to existing section
-                        more_videos_section.append(next_element)
-                    next_element = next_element.find_next()
-
-    if more_videos_section:
-        # Parse videos from the more videos section
-        video_links = more_videos_section.find_all("a[title][href]")
-        for link in video_links:
-            try:
-                name = utils.safe_get_attr(link, "title")
-                videopage = utils.safe_get_attr(link, "href")
-                img_tag = link.find("img") or link.find_next("img")
-                img = utils.safe_get_attr(img_tag, "data-src") if img_tag else ""
-
-                if name and videopage:
-                    name = utils.cleantext(name)
-                    site.add_download_link(name, videopage, "Playvid", img, name)
-
-            except Exception as e:
-                utils.kodilog("Error parsing video: " + str(e))
+    for link in cards:
+        try:
+            videopage = utils.safe_get_attr(link, "href")
+            name = utils.safe_get_attr(link, "title")
+            if not videopage or not name:
                 continue
+            if "/category/" in videopage or "/tag/" in videopage:
+                continue
+            if videopage in seen:
+                continue
+            seen.add(videopage)
+
+            if videopage.startswith("/"):
+                videopage = urllib_parse.urljoin(site.url, videopage)
+
+            img_tag = link.select_one("img") or link.find_next("img")
+            img = utils.safe_get_attr(
+                img_tag, "data-src", ["data-lazy-src", "data-original", "src"]
+            )
+            if img and img.startswith("/"):
+                img = urllib_parse.urljoin(site.url, img)
+
+            name = utils.cleantext(name)
+            site.add_download_link(name, videopage, "Playvid", img, name)
+        except Exception as e:
+            utils.kodilog("Error parsing video: " + str(e))
+            continue
 
     # Handle pagination
-    next_link = soup.select_one('a[rel="next"]')
-    if next_link and next_link.get("href"):
-        site.add_dir("Next Page", next_link.get("href"), "List", site.img_next)
+    next_link = soup.select_one('a[rel="next"], a.next, .pagination a.next')
+    if next_link:
+        nurl = utils.safe_get_attr(next_link, "href")
+        if nurl:
+            if nurl.startswith("/"):
+                nurl = urllib_parse.urljoin(site.url, nurl)
+            site.add_dir("Next Page", nurl, "List", site.img_next)
 
     utils.eod()
 

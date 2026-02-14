@@ -21,7 +21,7 @@ def test_list_parses_video_items(monkeypatch):
     dirs = []
 
     def fake_get_html(url, referer=None, timeout=None, headers=None):
-        return html
+        return html, 200
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
         downloads.append(
@@ -43,7 +43,7 @@ def test_list_parses_video_items(monkeypatch):
             }
         )
 
-    monkeypatch.setattr(hpjav.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(hpjav.utils, "get_html_with_cloudflare_retry", fake_get_html)
     monkeypatch.setattr(hpjav.site, "add_download_link", fake_add_download_link)
     monkeypatch.setattr(hpjav.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(hpjav.utils, "eod", lambda: None)
@@ -72,7 +72,7 @@ def test_list_parses_video_items(monkeypatch):
     # Should have pagination
     assert len(dirs) == 1
     assert "Next Page" in dirs[0]["name"]
-    assert "(Currently in Page Page 1 of 10)" in dirs[0]["name"]
+    assert "Page 1 of 10" in dirs[0]["name"]
 
 
 def test_list_handles_empty_results(monkeypatch):
@@ -89,9 +89,9 @@ def test_list_handles_empty_results(monkeypatch):
     downloads = []
 
     def fake_get_html(url, referer=None, timeout=None, headers=None):
-        return html
+        return html, 200
 
-    monkeypatch.setattr(hpjav.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(hpjav.utils, "get_html_with_cloudflare_retry", fake_get_html)
     monkeypatch.setattr(
         hpjav.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
     )
@@ -110,7 +110,7 @@ def test_list_handles_timeout_gracefully(monkeypatch):
     def fake_get_html(url, referer=None, timeout=None, headers=None):
         raise Exception("Timeout")
 
-    monkeypatch.setattr(hpjav.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(hpjav.utils, "get_html_with_cloudflare_retry", fake_get_html)
     monkeypatch.setattr(hpjav.utils, "eod", lambda: None)
 
     # Should not crash
@@ -154,7 +154,7 @@ def test_list_duration_cleaning(monkeypatch):
     downloads = []
 
     def fake_get_html(url, referer=None, timeout=None, headers=None):
-        return html
+        return html, 200
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
         downloads.append(
@@ -163,7 +163,7 @@ def test_list_duration_cleaning(monkeypatch):
             }
         )
 
-    monkeypatch.setattr(hpjav.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(hpjav.utils, "get_html_with_cloudflare_retry", fake_get_html)
     monkeypatch.setattr(hpjav.site, "add_download_link", fake_add_download_link)
     monkeypatch.setattr(hpjav.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(hpjav.utils, "eod", lambda: None)
@@ -183,7 +183,7 @@ def test_list_pagination_with_page_info(monkeypatch):
     dirs = []
 
     def fake_get_html(url, referer=None, timeout=None, headers=None):
-        return html
+        return html, 200
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
         dirs.append(
@@ -193,7 +193,7 @@ def test_list_pagination_with_page_info(monkeypatch):
             }
         )
 
-    monkeypatch.setattr(hpjav.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(hpjav.utils, "get_html_with_cloudflare_retry", fake_get_html)
     monkeypatch.setattr(hpjav.site, "add_download_link", lambda *a, **k: None)
     monkeypatch.setattr(hpjav.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(hpjav.utils, "eod", lambda: None)

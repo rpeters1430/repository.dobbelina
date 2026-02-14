@@ -127,9 +127,15 @@ def Playvid(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
     html = utils.getHtml(url, site.url)
     sources = {}
-    license = re.compile(
-        r"license_code:\s*'([^']+)", re.DOTALL | re.IGNORECASE
-    ).findall(html)[0]
+    
+    # Try to find license code
+    license_match = re.search(r"license_code:\s*'([^']+)", html, re.IGNORECASE)
+    if not license_match:
+        # Fallback to general html scanner if KVS pattern not found
+        vp.play_from_html(html)
+        return
+        
+    license = license_match.group(1)
     patterns = [
         r"video_url:\s*'([^']+)[^;]+?video_url_text:\s*'([^']+)",
         r"video_alt_url:\s*'([^']+)[^;]+?video_alt_url_text:\s*'([^']+)",

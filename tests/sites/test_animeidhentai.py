@@ -138,6 +138,9 @@ def test_play_prefers_nhplayer_sources(monkeypatch):
         def play_from_html(self, html):
             captured["html_played"] = html
 
+        def play_from_direct_link(self, url):
+            captured["direct_url"] = url
+
         def play_from_link_to_resolve(self, url):
             captured["resolved_url"] = url
 
@@ -151,7 +154,6 @@ def test_play_prefers_nhplayer_sources(monkeypatch):
 
     animeidhentai.animeidhentai_play("https://animeidhentai.com/watch/video", "Sample")
 
-    assert "video.m3u8" in captured.get("html_played", "")
-    assert captured.get("direct_regex") == r'file:\s*"([^"]+)"'
+    assert "video.m3u8" in captured.get("direct_url", "")
     assert "resolved_url" not in captured
     assert captured.get("closed") is True

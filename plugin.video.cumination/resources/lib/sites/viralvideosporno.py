@@ -114,36 +114,45 @@ def Playvid(url, name, download=None):
 
     sources = []
     if soup:
+        # Get primary video links
         sources.extend(
             [
-                utils.safe_get_attr(a, "href", default="")
-                for a in soup.select(".box[href]")
+                _normalize_url(utils.safe_get_attr(a, "href", default=""))
+                for a in soup.select(".box[href], a[href*='embed'], a[href*='player']")
             ]
         )
+        
+        # Look for hidden/ocult links
+        for ocult in soup.select(".ocult, #ocult, [class*='ocult']"):
+            ocult_text = ocult.get_text(" ")
+            sources.extend(re.findall(r'https?://[^\s"<>]+', ocult_text))
+            
+        # If universal resolvers are enabled, we might need to scan more
         if utils.addon.getSetting("universal_resolvers") == "true":
-            for ocult in soup.select(".ocult"):
-                sources.extend(re.findall(r'https?://[^\s"<>]+', ocult.get_text(" ")))
-    else:
-        sources = re.compile(
-            r'class="box\s.+?href="([^"]+)', re.DOTALL | re.IGNORECASE
-        ).findall(phtml)
-        if utils.addon.getSetting("universal_resolvers") == "true":
-            sources += re.compile(
-                r'class="ocult".+?Enlaces"[^>]+>(?:<b>)?(.*?)(?:...)?<',
-                re.DOTALL | re.IGNORECASE,
-            ).findall(phtml)
+            # Search all script tags too
+            for script in soup.find_all("script", string=True):
+                sources.extend(re.findall(r'https?://[^\s"\'<>]+', script.string))
 
+    # Clean and filter unique valid URLs
     links = {}
-    for link in sources:
+    for link in set(sources):
         if not link:
             continue
-        if vp.resolveurl.HostedMediaFile(link).valid_url():
-            links[link.split("/")[2]] = link
-    videourl = utils.selector("Select link", links)
-    if not videourl:
-        vp.progress.close()
-        return
-    vp.play_from_link_to_resolve(videourl)
+        try:
+            if vp.resolveurl.HostedMediaFile(link).valid_url():
+                domain = urllib_parse.urlparse(link).netloc.replace("www.", "")
+                links[domain] = link
+        except Exception:
+            continue
+
+    if links:
+        videourl = utils.selector("Select link", links)
+        if videourl:
+            vp.play_from_link_to_resolve(videourl)
+            return
+
+    # Final fallback: let VideoPlayer scan the HTML
+    vp.play_from_html(phtml)
 
 
 @site.register()

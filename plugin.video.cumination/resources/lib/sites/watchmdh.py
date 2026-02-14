@@ -28,7 +28,13 @@ site = AdultSite(
 
 @site.register(default_mode=True)
 def Main():
-    List(site.url + "latest-updates/")
+    site.add_dir(
+        "[COLOR hotpink]Site status[/COLOR]",
+        site.url,
+        "SiteStatus",
+        site.img_cat,
+        Folder=False,
+    )
     utils.eod()
 
 
@@ -123,3 +129,11 @@ def List(url):
             )
 
     utils.eod()
+
+
+@site.register()
+def SiteStatus(url):
+    utils.notify(
+        "WatchMDH",
+        "Site currently redirects/age-gates and may not provide list pages.",
+    )

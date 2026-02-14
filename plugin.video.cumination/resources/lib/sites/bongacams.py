@@ -51,7 +51,7 @@ def Main():
         "",
         "",
     )
-    bu = "http://tools.bongacams.com/promo.php?c=226355&type=api&api_type=json&categories[]="
+    bu = "https://tools.bongacams.com/promo.php?c=226355&type=api&api_type=json&categories[]="
     if female:
         site.add_dir(
             "[COLOR hotpink]Female[/COLOR]", "{0}female".format(bu), "List", "", ""
@@ -114,13 +114,33 @@ def Main():
     utils.eod()
 
 
+def _loads_json(data):
+    if not data:
+        return None
+    payload = data.strip()
+    if not payload:
+        return None
+    try:
+        return json.loads(payload)
+    except Exception:
+        # Some endpoints prepend anti-JSON or banner text.
+        match = re.search(r"(\{.*\}|\[.*\])", payload, re.DOTALL)
+        if not match:
+            return None
+        return json.loads(match.group(1))
+
+
 @site.register()
 def List(url):
     if utils.addon.getSetting("chaturbate") == "true":
         clean_database(False)
 
     data = utils._getHtml(url)
-    model_list = json.loads(data)
+    model_list = _loads_json(data)
+    if not isinstance(model_list, list):
+        utils.notify(site.name, "No models available")
+        utils.eod()
+        return
     for model in model_list:
         img = "https:" + model["profile_images"]["thumbnail_image_big_live"]
         username = model["username"]
@@ -309,7 +329,8 @@ def List2(url):
         clean_database(False)
     headers = {"X-Requested-With": "XMLHttpRequest"}
     data = utils._getHtml(url, site.url, headers=headers)
-    items = json.loads(data).get("result").get("chatActivities")
+    payload = _loads_json(data) or {}
+    items = payload.get("result", {}).get("chatActivities", [])
     for item in items:
         username = item.get("user").get("username")
         name = item.get("user").get("displayName")
@@ -364,7 +385,8 @@ def List3(url):
         clean_database(False)
     headers = {"X-Requested-With": "XMLHttpRequest"}
     data = utils._getHtml(url, site.url, headers=headers)
-    items = json.loads(data).get("result").get("contestItems")
+    payload = _loads_json(data) or {}
+    items = payload.get("result", {}).get("contestItems", [])
     for item in items:
         username = item.get("user").get("username")
         name = item.get("user").get("displayName")

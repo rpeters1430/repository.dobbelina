@@ -183,14 +183,21 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videohtml = utils.getHtml(url)
-    match = re.compile(
-        r'class="embed-responsive-item"\s*src="([^"]+)"', re.DOTALL | re.IGNORECASE
-    ).findall(videohtml)
-    if match:
-        embedurl = match[0]
-        embedurl = "https:" + embedurl if embedurl.startswith("//") else embedurl
-        embedhtml = utils.getHtml(embedurl, url)
-        vp.play_from_html(embedhtml)
+    soup = utils.parse_html(videohtml)
+    iframe = soup.select_one('iframe.embed-responsive-item')
+    if not iframe:
+        iframe = soup.select_one('iframe[src*="embed"]')
+        
+    if iframe:
+        embedurl = utils.safe_get_attr(iframe, "src")
+        if embedurl:
+            embedurl = "https:" + embedurl if embedurl.startswith("//") else embedurl
+            embedhtml = utils.getHtml(embedurl, url)
+            vp.play_from_html(embedhtml)
+            return
+            
+    # Fallback to html searching
+    vp.play_from_html(videohtml)
 
 
 @site.register()

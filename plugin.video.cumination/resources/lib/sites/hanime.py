@@ -321,77 +321,44 @@ def get_videos(url, member=False):
 
 @site.register()
 def hanime_play(url, name, download=None):
-    url = "https://hanime.tv/videos/hentai/" + url
-
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
-    videohtml = utils.getHtml(url)
-    soup = utils.parse_html(videohtml)
-
+    # Use the API instead of scraping HTML
+    premium = utils.addon.getSetting("htvpremium") == "true"
+    data = get_video_api(url, premium_member=premium)
+    
     sources = {}
+    if data and "videos_manifest" in data:
+        try:
+            # FREE access usually has one server
+            for server in data["videos_manifest"].get("servers", []):
+                for stream in server.get("streams", []):
+                    height = str(stream.get("height"))
+                    stream_url = stream.get("url")
+                    if stream_url:
+                        sources[height] = stream_url
+        except (KeyError, IndexError) as e:
+            utils.kodilog("hanime API parsing error: {}".format(str(e)))
 
-    if soup:
-        # Look for script tags containing video sources
-        scripts = soup.find_all("script")
-        for script in scripts:
-            script_text = utils.safe_get_text(script, default="")
+    if not sources:
+        # Fallback to member API if free fails
+        data = get_video_api(url, member=True)
+        if data and "transcodes" in data:
+            for video in data["transcodes"]:
+                height = str(video.get("height"))
+                stream_url = video.get("url")
+                if stream_url:
+                    sources[height] = stream_url
 
-            # Check for multiple patterns that indicate video sources
-            if (
-                "height:" in script_text or 'height"' in script_text
-            ) and "url:" in script_text:
-                # Try to extract sources using improved regex patterns
-                # Pattern 1: height:"1080" ... url:"https://..." (quoted height and url)
-                match_quoted_both = re.compile(
-                    r'height:"(\d+)"[^}]*?url:"([^"]+)"', re.DOTALL
-                ).findall(script_text)
+    if sources:
+        videourl = utils.prefquality(sources, sort_by=lambda x: int(x) if x.isdigit() else 0, reverse=True)
+        if videourl:
+            vp.play_from_direct_link(videourl)
+            return
 
-                # Pattern 2: height: "1080" ... url: "https://..." (unquoted property names)
-                match_unquoted_props = re.compile(
-                    r'height:\s*"(\d+)"[^}]*?url:\s*"([^"]+)"', re.DOTALL
-                ).findall(script_text)
-
-                # Pattern 3: height:"1080" ... url:variable_name (variable reference)
-                match_variable = re.compile(
-                    r'height:"(\d+)"[^}]*?url:([^,\}]+)', re.DOTALL
-                ).findall(script_text)
-
-                # Process quoted URLs first (most reliable)
-                for height, videourl in match_quoted_both:
-                    if videourl.startswith("http"):
-                        sources[height] = videourl
-
-                # Try unquoted property names pattern
-                if not sources:
-                    for height, videourl in match_unquoted_props:
-                        if videourl.startswith("http"):
-                            sources[height] = videourl
-
-                # If no quoted URLs found, try variable pattern
-                if not sources and match_variable:
-                    for height, videourl in match_variable:
-                        # Clean up the URL
-                        videourl = videourl.strip().replace('"', "").replace("'", "")
-                        # Handle unicode escapes
-                        try:
-                            if "\\u" in videourl or "\\x" in videourl:
-                                videourl = videourl.encode().decode("unicode-escape")
-                        except Exception as e:
-                            utils.kodilog(
-                                "@@@@Cumination: Silent failure in hanime: " + str(e)
-                            )
-
-                        if videourl.startswith("http"):
-                            sources[height] = videourl
-
-                # If we found sources, we're done
-                if sources:
-                    break
-
-    videourl = utils.prefquality(sources, sort_by=lambda x: int(x[:-1]), reverse=True)
-    if videourl:
-        vp.play_from_direct_link(videourl)
+    vp.progress.close()
+    utils.notify("Oh oh", "Couldn't find a playable link")
 
 
 def getVideoLink(videourl, type):
