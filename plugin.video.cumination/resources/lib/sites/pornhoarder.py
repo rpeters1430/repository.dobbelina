@@ -81,30 +81,40 @@ def List(url, page=1, section=None):
     soup = utils.parse_html(listhtml)
 
     # Find all article/video links
-    links = soup.select("a[href]")
+    links = soup.select("article a[href]")
+    if not links:
+        # Fallback to broader selector if article structure changed
+        links = soup.select("a[href] h1")
+        if links:
+            links = [l.parent for l in links]
+        else:
+            links = soup.select("a[href]")
+
     for link in links:
         try:
             videopage = utils.safe_get_attr(link, "href")
-            if not videopage:
+            if not videopage or "/video" not in videopage:
                 continue
 
             # Get image
-            img_tag = link.select_one("img[data-src], img[src]")
+            img_tags = link.select("img")
             img = ""
-            if img_tag:
-                img = utils.safe_get_attr(
+            for img_tag in img_tags:
+                curr_img = utils.safe_get_attr(
                     img_tag,
                     "data-src",
                     ["data-original", "data-lazy", "data-srcset", "srcset", "src"],
                 )
-                img = _extract_srcset_url(img)
-            if not img:
-                style = utils.safe_get_attr(link, "style")
-                if style:
-                    m = re.search(r"url\((['\"]?)([^)'\"]+)\1\)", style, re.I)
-                    if m:
-                        img = m.group(2)
-            img = utils.fix_url(img, siteurl)
+                curr_img = _extract_srcset_url(curr_img)
+                alt = utils.safe_get_attr(img_tag, "alt", default="").lower()
+                
+                # Skip logos
+                if "logo" in curr_img.lower() or "logo" in alt:
+                    continue
+                
+                img = curr_img
+                if img:
+                    break
 
             # Get video title from h1
             h1_tag = link.select_one("h1")
@@ -163,10 +173,16 @@ def List2(url, page=1):
                 continue
 
             # Get image
-            img_tag = link.select_one("img[data-src]")
-            if not img_tag:
-                img_tag = link.select_one("img[src]")
-            img = utils.safe_get_attr(img_tag, "data-src", ["src"]) if img_tag else ""
+            img_tags = link.select("img")
+            img = ""
+            for img_tag in img_tags:
+                curr_img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+                alt = utils.safe_get_attr(img_tag, "alt", default="").lower()
+                if "logo" in curr_img.lower() or "logo" in alt:
+                    continue
+                img = curr_img
+                if img:
+                    break
 
             # Get video title from h1
             h1_tag = link.select_one("h1")

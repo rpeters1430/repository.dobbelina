@@ -84,16 +84,26 @@ def List(url):
 
     # Find all video articles
     articles = soup.select("article[data-video-id]")
+    if not articles:
+        # Fallback to any article or div that looks like a video container
+        articles = soup.select("article, .video-item, .item")
+
     for article in articles:
         try:
             # Get video link
-            link = article.select_one("a[href][title]") or article.select_one("a[href]")
+            link = article.select_one('a[href*="/video/"]') or article.select_one("a[href]")
             if not link:
                 continue
 
             videopage = utils.safe_get_attr(link, "href")
-            if not videopage:
+            if not videopage or "/video/" not in videopage:
                 continue
+
+            # Ensure absolute URL
+            if videopage.startswith("/"):
+                videopage = site.url[:-1] + videopage
+            elif not videopage.startswith("http"):
+                videopage = site.url + videopage
 
             name = utils.safe_get_attr(link, "title")
             if not name:

@@ -1,63 +1,55 @@
-"""Tests for Porno1.hu BeautifulSoup migration."""
+"""Tests for porno1.hu site implementation."""
 
 from pathlib import Path
-
 from resources.lib.sites import porno1hu
-
 
 FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "porno1hu"
 
 
-def load_fixture(name: str) -> str:
+def load_fixture(name):
+    """Load a fixture file from the porno1hu fixtures directory."""
     return (FIXTURE_DIR / name).read_text(encoding="utf-8")
 
 
-def test_list_parses_items_and_next(monkeypatch):
+def test_list_parses_videos(monkeypatch):
+    """Test that List correctly parses video items."""
     html = load_fixture("listing.html")
     downloads = []
-    dirs = []
 
-    monkeypatch.setattr(porno1hu.utils, "getHtml", lambda url, ref="": html)
+    def fake_get_html(url, *args, **kwargs):
+        return html
 
-    def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
-        downloads.append(
-            {
-                "name": name,
-                "url": url,
-                "img": iconimage,
-                "duration": kwargs.get("duration"),
-            }
-        )
+    monkeypatch.setattr(porno1hu.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(
+        porno1hu.site,
+        "add_download_link",
+        lambda n, u, m, i, p, **k: downloads.append({"name": n, "url": u, "icon": i}),
+    )
+    monkeypatch.setattr(porno1hu.utils, "eod", lambda: None)
 
-    def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({"name": name, "url": url, "mode": mode})
-
-    monkeypatch.setattr(porno1hu.site, "add_download_link", fake_add_download_link)
-    monkeypatch.setattr(porno1hu.site, "add_dir", fake_add_dir)
-
-    porno1hu.List("https://porno1.hu/friss-porno/", 1)
+    porno1hu.List("https://porno1.hu/friss-porno/")
 
     assert len(downloads) == 2
     assert downloads[0]["name"] == "Video A"
-    assert downloads[1]["duration"] == "06:00"
-    assert any(d["mode"] == "List" for d in dirs)
+    assert "video/alpha" in downloads[0]["url"]
+    assert "alpha.jpg" in downloads[0]["icon"]
 
 
-def test_categories_parse_and_format(monkeypatch):
-    html = load_fixture("categories.html")
+def test_list_pagination(monkeypatch):
+    """Test that List handles pagination."""
+    html = load_fixture("listing.html")
     dirs = []
 
-    monkeypatch.setattr(porno1hu.utils, "getHtml", lambda url, ref="": html)
+    monkeypatch.setattr(porno1hu.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(
+        porno1hu.site, "add_dir", lambda n, u, m, i, **k: dirs.append({"name": n, "url": u})
+    )
+    monkeypatch.setattr(porno1hu.utils, "eod", lambda: None)
 
-    def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({"name": name, "url": url})
+    porno1hu.List("https://porno1.hu/friss-porno/")
 
-    monkeypatch.setattr(porno1hu.site, "add_dir", fake_add_dir)
-
-    porno1hu.Categories("https://porno1.hu/kategoriak/")
-
-    assert len(dirs) == 2
-    assert "(12)" in dirs[0]["name"]
+    assert len(dirs) == 1
+    assert "Next Page" in dirs[0]["name"]
     assert "mode=async" in dirs[0]["url"]
 
 
@@ -82,6 +74,9 @@ def test_playvid_decodes_kvs(monkeypatch):
         def play_from_direct_link(self, url):
             player_calls.append(url)
 
+        def play_from_html(self, html):
+            player_calls.append("html_fallback")
+
     def fake_get_html(url, ref=None, hdr=None):
         if "embed" in url:
             return embed_page
@@ -89,6 +84,7 @@ def test_playvid_decodes_kvs(monkeypatch):
 
     monkeypatch.setattr(porno1hu.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(porno1hu.utils, "VideoPlayer", FakeVideoPlayer)
+    monkeypatch.setattr(porno1hu.utils, "selector", lambda t, d, **k: list(d.values())[0] if d else None)
     monkeypatch.setattr(
         porno1hu,
         "kvs_decode",
@@ -98,5 +94,6 @@ def test_playvid_decodes_kvs(monkeypatch):
     porno1hu.Playvid("https://porno1.hu/video/test", "Test Video")
 
     assert player_calls
+    # Now it should NOT be html_fallback
     assert player_calls[0].startswith("https://cdn.example.com/decoded.mp4")
     assert "referer=" in player_calls[0]

@@ -95,9 +95,7 @@ def List(url):
             continue
 
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(
-            img_tag, "src", ["data-src", "data-original", "data-lazy", "data-thumbnail"]
-        )
+        img = _extract_thumbnail(img_tag)
         img = utils.fix_url(img, site.url)
 
         duration = ""
@@ -170,9 +168,7 @@ def Categories(url):
             continue
 
         img_tag = link.select_one("img")
-        img = utils.safe_get_attr(
-            img_tag, "data-src", ["src", "data-original", "data-lazy"]
-        )
+        img = _extract_thumbnail(img_tag)
         img = utils.fix_url(img, site.url)
 
         name_tag = link.select_one(".title, .name, span, strong")
@@ -301,3 +297,44 @@ def Playvid(url, name, download=None):
         if "xh.video" in videolink:
             videolink = utils.getVideoLink(videolink).split("?")[0]
         vp.play_from_link_to_resolve(videolink)
+
+
+def _extract_thumbnail(img_tag):
+    if not img_tag:
+        return ""
+
+    # Preference order for attributes
+    attrs = [
+        "data-src",
+        "data-original",
+        "data-lazy",
+        "data-lazy-src",
+        "data-thumbnail",
+        "data-srcset",
+        "srcset",
+        "src",
+    ]
+
+    for attr in attrs:
+        val = img_tag.get(attr)
+        if not val:
+            continue
+
+        # Handle srcset (take first/highest resolution if multiple)
+        if "srcset" in attr and "," in val:
+            # Try to get the largest one (usually last in list)
+            parts = [p.strip().split(" ")[0] for p in val.split(",")]
+            if parts:
+                val = parts[-1]
+
+        # Ignore obvious placeholders/tracking pixels
+        if (
+            val
+            and "data:image" not in val
+            and not val.endswith(".gif")
+            and len(val) > 10
+        ):
+            return val
+
+    # Final fallback to src if all else failed or was filtered
+    return img_tag.get("src", "")

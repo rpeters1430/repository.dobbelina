@@ -136,6 +136,7 @@ def Playvid(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
     html = utils.getHtml(url, site.url)
     soup = utils.parse_html(html)
+    
     meta = soup.find("meta", attrs={"property": "embedURL"}) or soup.find(
         "meta", attrs={"name": "embedURL"}
     )
@@ -143,20 +144,56 @@ def Playvid(url, name, download=None):
     if not embedurl:
         iframe = soup.find("iframe", src=True)
         embedurl = utils.safe_get_attr(iframe, "src") if iframe else None
+    
     if not embedurl:
-        vp.progress.close()
+        # Fallback: scan main page html
+        vp.play_from_html(html)
         return
 
     embedhtml = utils.getHtml(embedurl, url)
     license_match = re.search(r"license_code:\s*'([^']+)", embedhtml, re.IGNORECASE)
-    video_match = re.search(r"video_url:\s*'([^']+)'", embedhtml, re.IGNORECASE)
-    license_code = license_match.group(1) if license_match else ""
-    video_url_raw = video_match.group(1) if video_match else ""
-    videourl = kvs_decode(video_url_raw, license_code)
-    if not videourl:
-        vp.progress.close()
+    if not license_match:
+        vp.play_from_html(embedhtml)
         return
-    vp.play_from_direct_link(videourl + "|referer=" + url)
+        
+    license_code = license_match.group(1)
+    sources = {}
+    patterns = [
+        (r"video_url:\s*['\"]?([^'\",\s]+)['\"]?", "00"),
+        (r"video_alt_url:\s*['\"]?([^'\",\s]+)['\"]?", "720p"),
+        (r"video_alt_url2:\s*['\"]?([^'\",\s]+)['\"]?", "1080p"),
+        (r"video_url:\s*'([^']+)',\s*postfix:\s*'\.mp4',\s*(preview)", None),
+    ]
+    for pattern, def_qual in patterns:
+        if def_qual:
+            items = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(embedhtml)
+            for surl in items:
+                surl = kvs_decode(surl, license_code)
+                if surl:
+                    sources[def_qual] = surl
+        else:
+            items = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(embedhtml)
+            for surl, qual in items:
+                qual = "00" if qual == "preview" else qual
+                qual = qual.replace(" HD", "")
+                surl = kvs_decode(surl, license_code)
+                if surl:
+                    sources[qual] = surl
+
+    if sources:
+        videourl = utils.selector(
+            "Select quality",
+            sources,
+            setting_valid="qualityask",
+            sort_by=lambda x: 1081 if x == "4k" else (int(x[:-1]) if x[:-1].isdigit() else 0),
+            reverse=True,
+        )
+        if videourl:
+            vp.play_from_direct_link(videourl + "|referer=" + url)
+            return
+
+    # Final fallback
+    vp.play_from_html(embedhtml)
 
 
 @site.register()

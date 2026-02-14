@@ -235,6 +235,26 @@ def List(url):
             duration_tag = item.select_one('.duration, [data-title="Video Duration"]')
             duration = utils.safe_get_text(duration_tag)
 
+            # Skip very short videos (likely previews/ads)
+            if duration:
+                # Convert duration to seconds for comparison
+                # Format is usually MM:SS or H:MM:SS
+                parts = duration.split(':')
+                try:
+                    seconds = 0
+                    if len(parts) == 1:
+                        seconds = int(parts[0])
+                    elif len(parts) == 2:
+                        seconds = int(parts[0]) * 60 + int(parts[1])
+                    elif len(parts) == 3:
+                        seconds = int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
+                    
+                    if seconds > 0 and seconds < 15:
+                        utils.kodilog("pornhub: Skipping short video '{}' ({}s)".format(title, seconds))
+                        continue
+                except (ValueError, TypeError):
+                    pass
+
             # Add video to list
             site.add_download_link(
                 title,
