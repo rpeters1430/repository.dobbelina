@@ -117,7 +117,6 @@ def test_playvid_detects_offline_model(monkeypatch):
         "username": "testmodel",
         "isOnline": False,
         "isBroadcasting": False,
-        "hlsPlaylist": "https://stream.stripchat.com/test.m3u8",
     }
 
     def fake_notify(title, message):
@@ -161,12 +160,71 @@ def test_playvid_detects_offline_model(monkeypatch):
     )
     monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
 
-    # Call Playvid with offline model
-    stripchat.Playvid("https://stream.stripchat.com/test.m3u8", "testmodel")
+    # Call Playvid with offline model and no valid stream URL
+    stripchat.Playvid("", "testmodel")
 
     # Should have notified about model being offline
     assert len(notifications) > 0
     assert any("offline" in n["message"].lower() for n in notifications)
+
+
+def test_playvid_uses_fallback_stream_when_api_reports_offline(monkeypatch):
+    """Play should continue when listing URL is valid even if API flags offline."""
+    notifications = []
+    played_urls = []
+    model_data = {
+        "username": "testmodel",
+        "isOnline": False,
+        "isBroadcasting": False,
+    }
+
+    def fake_notify(title, message, **kwargs):
+        notifications.append({"title": title, "message": message})
+
+    def fake_get_html(url, *args, **kwargs):
+        return json.dumps({"models": [model_data]}), False
+
+    class FakeHelper:
+        def __init__(self, adaptive_type):
+            pass
+
+        def check_inputstream(self):
+            return True
+
+    class FakeProgress:
+        def update(self, percent, message):
+            pass
+
+        def close(self):
+            pass
+
+    class FakeVideoPlayer:
+        def __init__(self, name, **kwargs):
+            self.name = name
+            self.progress = FakeProgress()
+
+        def play_from_direct_link(self, link):
+            played_urls.append(link)
+
+    import sys
+    import types
+
+    fake_inputstreamhelper = types.ModuleType("inputstreamhelper")
+    fake_inputstreamhelper.Helper = FakeHelper
+    sys.modules["inputstreamhelper"] = fake_inputstreamhelper
+
+    monkeypatch.setattr(stripchat.utils, "notify", fake_notify)
+    monkeypatch.setattr(stripchat.utils, "kodilog", lambda x: None)
+    monkeypatch.setattr(
+        stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
+    )
+    monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
+
+    stripchat.Playvid("https://stream.stripchat.com/test_fallback.m3u8", "testmodel")
+
+    assert played_urls
+    assert played_urls[0].startswith("https://stream.stripchat.com/test_fallback.m3u8|")
+    assert not notifications
 
 
 def test_playvid_validates_returned_model_name(monkeypatch):

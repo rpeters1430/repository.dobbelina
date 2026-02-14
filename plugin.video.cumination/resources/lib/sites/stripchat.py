@@ -267,13 +267,21 @@ def Playvid(url, name):
     def _pick_stream(model_data, fallback_url):
         candidates = []
         stream_info = model_data.get("stream") if model_data else None
+        is_online_flag = None
 
-        # Check if model is actually online
+        # Treat online flags as advisory only; keep stream candidates if present.
         if model_data:
-            is_online = model_data.get("isOnline") or model_data.get("isBroadcasting")
-            if not is_online:
-                utils.kodilog("Stripchat: Model {} is offline".format(name))
-                return None
+            is_online_values = [
+                model_data.get("isOnline"),
+                model_data.get("isBroadcasting"),
+            ]
+            explicit_values = [v for v in is_online_values if isinstance(v, bool)]
+            if explicit_values:
+                is_online_flag = any(explicit_values)
+                if not is_online_flag:
+                    utils.kodilog(
+                        "Stripchat: Model {} reported offline by API".format(name)
+                    )
 
         if isinstance(stream_info, dict):
             # Explicit urls map (new API structure)
@@ -320,7 +328,7 @@ def Playvid(url, name):
 
         if not candidates:
             utils.kodilog("Stripchat: No stream candidates found")
-            return None
+            return None, is_online_flag
 
         def quality_score(label):
             if not label:
@@ -355,7 +363,7 @@ def Playvid(url, name):
             "Stripchat: Using selected stream URL directly without master playlist parsing"
         )
 
-        return selected_url
+        return selected_url, is_online_flag
 
     # Load current model details
     utils.kodilog("Stripchat: Loading details for model: {}".format(name))
@@ -368,13 +376,11 @@ def Playvid(url, name):
         return
 
     # Pick best stream URL
-    stream_url = _pick_stream(model_data, url)
+    stream_url, is_online_flag = _pick_stream(model_data, url)
     if not stream_url:
         vp.progress.close()
         utils.kodilog("Stripchat: No stream URL available")
-        # Check if model is actually online
-        is_online = model_data.get("isOnline") or model_data.get("isBroadcasting")
-        if not is_online:
+        if is_online_flag is False:
             utils.notify("Stripchat", "Model is offline")
         else:
             utils.notify("Stripchat", "Unable to locate stream URL")
