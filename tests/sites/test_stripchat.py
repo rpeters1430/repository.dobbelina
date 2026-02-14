@@ -227,6 +227,137 @@ def test_playvid_uses_fallback_stream_when_api_reports_offline(monkeypatch):
     assert not notifications
 
 
+def test_playvid_promotes_low_variant_to_source_playlist(monkeypatch):
+    """Low variant URLs should be upgraded to source playlist when available."""
+    played_urls = []
+    model_data = {
+        "username": "testmodel",
+        "isOnline": True,
+        "isBroadcasting": True,
+    }
+    low_variant = "https://edge-hls.doppiocdn.com/hls/133123248/master/133123248_240p.m3u8"
+    promoted_source = (
+        "https://edge-hls.doppiocdn.com/hls/133123248/master/133123248.m3u8"
+    )
+
+    def fake_get_html(url, *args, **kwargs):
+        if "api/external/v4/widget" in url or "api/front/models" in url:
+            return json.dumps({"models": [model_data]}), False
+        return "", False
+
+    def fake__get_html(url, *args, **kwargs):
+        if url == promoted_source:
+            return '#EXTM3U\n#EXT-X-STREAM-INF:NAME="source"\nhttps://media/source.m3u8'
+        return "", False
+
+    class FakeHelper:
+        def __init__(self, adaptive_type):
+            pass
+
+        def check_inputstream(self):
+            return True
+
+    class FakeProgress:
+        def update(self, percent, message):
+            pass
+
+        def close(self):
+            pass
+
+    class FakeVideoPlayer:
+        def __init__(self, name, **kwargs):
+            self.name = name
+            self.progress = FakeProgress()
+
+        def play_from_direct_link(self, link):
+            played_urls.append(link)
+
+    import sys
+    import types
+
+    fake_inputstreamhelper = types.ModuleType("inputstreamhelper")
+    fake_inputstreamhelper.Helper = FakeHelper
+    sys.modules["inputstreamhelper"] = fake_inputstreamhelper
+
+    monkeypatch.setattr(stripchat.utils, "notify", lambda *a, **k: None)
+    monkeypatch.setattr(stripchat.utils, "kodilog", lambda x: None)
+    monkeypatch.setattr(
+        stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
+    )
+    monkeypatch.setattr(stripchat.utils, "_getHtml", fake__get_html)
+    monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
+
+    stripchat.Playvid(low_variant, "testmodel")
+
+    assert played_urls
+    assert played_urls[0].startswith(promoted_source + "|")
+
+
+def test_playvid_prefers_higher_quality_url_over_generic_label(monkeypatch):
+    """When labels are generic, quality inferred from URL should win."""
+    played_urls = []
+    model_data = {
+        "username": "testmodel",
+        "isOnline": True,
+        "isBroadcasting": True,
+        "stream": {
+            "url": "https://edge-hls.saawsedge.com/hls/100/master/100_240p.m3u8",
+        },
+    }
+
+    def fake_get_html(url, *args, **kwargs):
+        if "api/external/v4/widget" in url or "api/front/models" in url:
+            return json.dumps({"models": [model_data]}), False
+        return "", False
+
+    class FakeHelper:
+        def __init__(self, adaptive_type):
+            pass
+
+        def check_inputstream(self):
+            return True
+
+    class FakeProgress:
+        def update(self, percent, message):
+            pass
+
+        def close(self):
+            pass
+
+    class FakeVideoPlayer:
+        def __init__(self, name, **kwargs):
+            self.name = name
+            self.progress = FakeProgress()
+
+        def play_from_direct_link(self, link):
+            played_urls.append(link)
+
+    import sys
+    import types
+
+    fake_inputstreamhelper = types.ModuleType("inputstreamhelper")
+    fake_inputstreamhelper.Helper = FakeHelper
+    sys.modules["inputstreamhelper"] = fake_inputstreamhelper
+
+    monkeypatch.setattr(stripchat.utils, "notify", lambda *a, **k: None)
+    monkeypatch.setattr(stripchat.utils, "kodilog", lambda x: None)
+    monkeypatch.setattr(
+        stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
+    )
+    monkeypatch.setattr(stripchat.utils, "_getHtml", lambda *a, **k: "")
+    monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
+
+    # Fallback URL is higher quality than stream.url; should be selected.
+    stripchat.Playvid(
+        "https://edge-hls.doppiocdn.com/hls/100/master/100_480p.m3u8", "testmodel"
+    )
+
+    assert played_urls
+    assert played_urls[0].startswith(
+        "https://edge-hls.doppiocdn.com/hls/100/master/100_480p.m3u8|"
+    )
+
+
 def test_playvid_validates_returned_model_name(monkeypatch):
     """
     Test that Playvid verifies the returned model's username matches the requested one.

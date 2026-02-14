@@ -326,27 +326,99 @@ def Playvid(url, name):
             utils.kodilog("Stripchat: Using fallback URL: {}".format(fallback_url[:80]))
             candidates.append(("fallback", fallback_url))
 
+        # Some list URLs are pinned to low variants like "<id>_240p.m3u8".
+        # Try to promote those to "<id>.m3u8" (often "source"/best stream) when valid.
+        def _promote_variant_to_source_url(stream_url):
+            if not isinstance(stream_url, str) or ".m3u8" not in stream_url:
+                return None
+            match = re.search(r"/master/(\d+)_\d{3,4}p\.m3u8($|\?)", stream_url)
+            if not match:
+                return None
+
+            source_url = stream_url.replace(
+                "/master/{}_".format(match.group(1)),
+                "/master/{}.".format(match.group(1)),
+            )
+            source_url = re.sub(
+                r"/master/(\d+)\.\d{3,4}p\.m3u8",
+                r"/master/\1.m3u8",
+                source_url,
+            )
+            if source_url == stream_url:
+                return None
+
+            try:
+                probe_headers = {
+                    "User-Agent": utils.USER_AGENT,
+                    "Origin": "https://stripchat.com",
+                    "Referer": "https://stripchat.com/{0}".format(name),
+                    "Accept": "application/x-mpegURL,application/vnd.apple.mpegurl,*/*",
+                }
+                probe_data = utils._getHtml(
+                    source_url,
+                    "https://stripchat.com/{0}".format(name),
+                    headers=probe_headers,
+                )
+                if isinstance(probe_data, str) and "#EXTM3U" in probe_data:
+                    utils.kodilog(
+                        "Stripchat: Promoted variant stream to source playlist: {}".format(
+                            source_url[:80]
+                        )
+                    )
+                    return source_url
+            except Exception as e:
+                utils.kodilog(
+                    "Stripchat: Source playlist probe failed for {}: {}".format(
+                        source_url[:80], str(e)
+                    )
+                )
+            return None
+
+        promoted = []
+        for _, candidate_url in list(candidates):
+            source_url = _promote_variant_to_source_url(candidate_url)
+            if source_url:
+                promoted.append(("source-derived", source_url))
+        candidates.extend(promoted)
+
         if not candidates:
             utils.kodilog("Stripchat: No stream candidates found")
             return None, is_online_flag
 
-        def quality_score(label):
+        def quality_score(label, stream_url):
             if not label:
-                return -1
+                label = ""
+            score = -1
             label = label.lower()
             if "source" in label:
-                return 10000
+                score = max(score, 10000)
             match = re.search(r"(\d{3,4})p", label)
             if match:
                 try:
-                    return int(match.group(1))
+                    score = max(score, int(match.group(1)))
                 except ValueError:
-                    return -1
-            return 0
+                    pass
+
+            # Fallback: infer quality from URL pattern when labels are generic.
+            if isinstance(stream_url, str):
+                if re.search(r"/master/\d+\.m3u8($|\?)", stream_url):
+                    score = max(score, 9000)
+                url_quality = re.search(r"_(\d{3,4})p\.m3u8($|\?)", stream_url)
+                if url_quality:
+                    try:
+                        score = max(score, int(url_quality.group(1)))
+                    except ValueError:
+                        pass
+            return score
 
         # sort candidates: highest score first, keep stable order otherwise
         candidates_sorted = sorted(
-            candidates, key=lambda item: quality_score(item[0]), reverse=True
+            candidates,
+            key=lambda item: (
+                quality_score(item[0], item[1]),
+                1 if "doppiocdn.com" in item[1] else 0,
+            ),
+            reverse=True,
         )
         selected_url = candidates_sorted[0][1]
         selected_label = candidates_sorted[0][0]
