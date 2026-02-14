@@ -222,7 +222,7 @@ def Pornstars(url, page=1):
             img_tag = item.select_one("img")
             if not img_tag:
                 continue
-            img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+            img = utils.get_thumbnail(img_tag)
             # Remove query parameters from image URL
             if "?" in img:
                 img = img.split("?")[0]
@@ -280,7 +280,7 @@ def Studios(url, page=1):
             img_tag = item.select_one("img")
             if not img_tag:
                 continue
-            img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+            img = utils.get_thumbnail(img_tag)
             # Remove query parameters from image URL
             if "?" in img:
                 img = img.split("?")[0]
@@ -378,7 +378,7 @@ def List(channel, section, page=0):
 
             # Get image
             img_tag = section_item.select_one("img")
-            img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+            img = utils.get_thumbnail(img_tag)
 
             # Get duration
             duration_tag = section_item.select_one('[class*="tion"], .duration')

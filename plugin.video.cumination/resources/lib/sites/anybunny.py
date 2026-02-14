@@ -98,9 +98,7 @@ def List(url):
             continue
         video_url = urllib_parse.urljoin(site.url, href)
         img_tag = anchor.find("img")
-        thumb = utils.safe_get_attr(
-            img_tag, "src", ["data-src", "data-lazy", "data-original"]
-        )
+        thumb = utils.get_thumbnail(img_tag)
         title = utils.cleantext(utils.safe_get_attr(img_tag, "alt"))
         if not title:
             parent = anchor.find_parent("li")
@@ -121,7 +119,7 @@ def List(url):
         )
 
     for item in items:
-        site.add_download_link(item["title"], item["url"], "Playvid", item["thumb"])
+        site.add_download_link(item["title"], item["url"], "Playvid", item["thumb"], item["title"])
 
     next_link = soup.select_one('a[rel="next"], a.next')
     if next_link and next_link.has_attr("href"):
@@ -168,9 +166,7 @@ def Categories(url):
         if not name:
             continue
 
-        img = utils.safe_get_attr(
-            img_tag, "src", ["data-src", "data-lazy", "data-original"]
-        )
+        img = utils.get_thumbnail(img_tag)
         catpage = urllib_parse.urljoin(site.url, "new/" + catid.lstrip("/"))
         categories.append((name.lower(), name, catpage, img))
 

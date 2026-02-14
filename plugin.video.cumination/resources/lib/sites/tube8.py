@@ -104,7 +104,7 @@ def List(url):
 
             # Extract thumbnail image
             img_tag = item.select_one("img.thumb-image")
-            img = utils.safe_get_attr(img_tag, "data-src", ["src", "data-poster"])
+            img = utils.get_thumbnail(img_tag)
 
             # Extract duration
             duration_tag = item.select_one(".video-duration span")
@@ -199,7 +199,7 @@ def Categories(url):
 
             # Extract thumbnail
             img_tag = category.select_one("img")
-            img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+            img = utils.get_thumbnail(img_tag)
 
             entries.append((name, catpage, img, name.lower()))
 

@@ -73,7 +73,7 @@ def List(url):
 
         # Get thumbnail - look for img with "original" attribute (lazy-load)
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "original", ["src", "data-original"])
+        img = utils.get_thumbnail(img_tag)
 
         # Get title from img alt
         name = utils.safe_get_attr(img_tag, "alt")
@@ -264,7 +264,7 @@ def Cats(url):
 
         # Get thumbnail image
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "src", ["data-src", "original"])
+        img = utils.get_thumbnail(img_tag)
 
         # Get category title
         title_elem = item.select_one('.title, [class*="title"]')

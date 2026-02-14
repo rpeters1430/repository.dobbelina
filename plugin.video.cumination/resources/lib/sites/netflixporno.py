@@ -99,12 +99,10 @@ def List(url):
             continue
 
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(
-            img_tag, "data-lazy-src", ["data-src", "data-original", "src"]
-        )
+        img = utils.get_thumbnail(img_tag)
         img = utils.fix_url(img, site.url)
 
-        site.add_download_link(title, videopage, "Playvid", img, "")
+        site.add_download_link(title, videopage, "Playvid", img, title)
 
     _add_next_page(soup)
 

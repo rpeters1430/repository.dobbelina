@@ -100,7 +100,7 @@ def HQLIST(url):
         videourl = site.url + "/" + videopage.lstrip("/")
 
         img_tag = anchor.select_one("img")
-        img = utils.safe_get_attr(img_tag, "src")
+        img = utils.get_thumbnail(img_tag)
         if img and img.startswith("//"):
             img = "https:" + img
 

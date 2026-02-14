@@ -51,12 +51,8 @@ def List(url):
     albums = soup.select('.album, div[id*="album-"]')
     for album in albums:
         # Get thumbnail image
-        img_tag = album.select_one("img[data-src], img.album-thumbnail")
-        if not img_tag:
-            continue
-        img = utils.safe_get_attr(img_tag, "data-src") or utils.safe_get_attr(
-            img_tag, "src"
-        )
+        img_tag = album.select_one("img")
+        img = utils.get_thumbnail(img_tag)
         if img:
             img += "|Referer={0}".format(site.url)
 

@@ -174,6 +174,47 @@ def safe_get_attr(element, attr, fallback_attrs=None, default=""):
     return default
 
 
+def get_thumbnail(element, default=""):
+    """
+    Standardized robust thumbnail extraction from BeautifulSoup element.
+    Handles data-src, data-original, srcset, data-lazy, etc.
+    Filters out obvious placeholders/tracking pixels.
+    """
+    if not element:
+        return default
+
+    # Common attributes used for thumbnails
+    attrs = [
+        "data-src",
+        "data-original",
+        "original",
+        "data-lazy",
+        "data-lazy-src",
+        "data-thumbnail",
+        "data-srcset",
+        "srcset",
+        "src",
+    ]
+
+    for attr in attrs:
+        val = element.get(attr)
+        if not val:
+            continue
+
+        # Handle srcset (take last/highest resolution if multiple)
+        if "srcset" in attr and "," in val:
+            parts = [p.strip().split(" ")[0] for p in val.split(",")]
+            if parts:
+                val = parts[-1]
+
+        # Ignore obvious placeholders/tracking pixels/empty strings
+        if val and "data:image" not in val and not val.endswith(".gif") and len(val) > 10:
+            return val
+
+    # Final fallback to src if all else failed or was filtered
+    return element.get("src", default)
+
+
 def safe_get_text(element, default="", strip=True):
     """
     Safely get text content from BeautifulSoup element.

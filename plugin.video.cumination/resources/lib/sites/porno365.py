@@ -75,7 +75,7 @@ def List(url):
             utils.safe_get_attr(link, "alt") or utils.safe_get_text(link, default="")
         )
         img_tag = link.select_one("img")
-        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        img = utils.get_thumbnail(img_tag)
         duration = utils.safe_get_text(link.select_one(".duration"), default="")
         site.add_download_link(
             name,
@@ -149,9 +149,7 @@ def Categories(url):
     for card in soup.select(".categories-list-div a[href]"):
         caturl = utils.fix_url(utils.safe_get_attr(card, "href"), site.url)
         img_tag = card.select_one("img")
-        img = utils.fix_url(
-            utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"]), site.url
-        )
+        img = utils.fix_url(utils.get_thumbnail(img_tag), site.url)
         name = utils.cleantext(
             utils.safe_get_attr(img_tag, "alt") or utils.safe_get_text(card, default="")
         )
@@ -168,9 +166,7 @@ def Models(url):
     soup = utils.parse_html(cathtml)
     for card in soup.select(".item_model"):
         caturl = utils.safe_get_attr(card.select_one("a[href]"), "href")
-        img = utils.safe_get_attr(
-            card.select_one("img"), "src", ["data-src", "data-original"]
-        )
+        img = utils.get_thumbnail(card.select_one("img"))
         count = utils.safe_get_text(card.select_one(".cnt_span"), default="").strip()
         name = utils.cleantext(
             utils.safe_get_text(card.select_one(".model_eng_name"), default="")

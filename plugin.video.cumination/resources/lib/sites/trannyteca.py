@@ -51,13 +51,13 @@ def List(url):
         return
 
     for article in soup.select("article"):
-        img_tag = article.select_one("img[src]")
         link = article.select_one("a[href]")
         if not link:
             continue
 
         vurl = utils.safe_get_attr(link, "href", default="")
-        img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+        img_tag = article.select_one("img")
+        img = utils.get_thumbnail(img_tag)
         name = utils.cleantext(utils.safe_get_text(link, default=""))
 
         if vurl and name:

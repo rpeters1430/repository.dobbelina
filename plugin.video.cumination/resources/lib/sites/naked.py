@@ -177,10 +177,10 @@ def List(url):
                 continue
 
             # Try multiple thumbnail URL formats (CDN may change)
+            # Standard desktop thumb
             img = "https://live-screencaps.vscdns.com/{0}-desktop.jpg".format(mid)
-            # Fallback thumbnail patterns:
-            # img_fallback = 'https://live-screencaps.vscdns.com/{0}.jpg'.format(mid)
-
+            # Fallback patterns if needed
+            
             video_host = model.get("video_host", "")
             if not video_host:
                 utils.kodilog(
@@ -191,6 +191,11 @@ def List(url):
             videourl = "https://ws.vs3.com/chat/get-stream-urls.php?model_id={0}&video_host={1}".format(
                 mid, video_host
             )
+            
+            # Ensure subject has some content
+            if not subject.strip():
+                subject = name
+                
             site.add_download_link(
                 name, videourl, "Playvid", img, subject, noDownload=True
             )

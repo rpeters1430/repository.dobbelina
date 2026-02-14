@@ -165,8 +165,7 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
         },
         "thumbnail": {
             "selector": "img",
-            "attr": "data-src",
-            "fallback_attrs": ["src", "data-lazy", "data-original"],
+            "transform": lambda v, item: utils.get_thumbnail(item.select_one("img"))
         },
         "duration": {"transform": _duration_transform},
         "quality": {"transform": _quality_transform},

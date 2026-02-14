@@ -70,7 +70,7 @@ def List(url):
     for item in video_items:
         try:
             videopage = utils.safe_get_attr(item, "href")
-            img = utils.safe_get_attr(item, "thumb", ["data-original", "src"])
+            img = utils.get_thumbnail(item.select_one("img")) or utils.safe_get_attr(item, "thumb")
 
             duration_tag = item.select_one(".duration")
             duration = utils.safe_get_text(duration_tag)
@@ -173,8 +173,7 @@ def CategoriesTR(url):
         catpage = utils.safe_get_attr(link, "href")
         name = utils.safe_get_attr(link, "title")
 
-        img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "src")
+        img = utils.get_thumbnail(item.select_one("img"))
 
         count_tag = item.select_one("i")
         count = utils.safe_get_text(count_tag)
@@ -210,8 +209,7 @@ def Channels(url):
         catpage = utils.safe_get_attr(link, "href")
         name = utils.safe_get_attr(link, "title")
 
-        img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "src")
+        img = utils.get_thumbnail(item.select_one("img"))
 
         if name and catpage:
             channels.append((utils.cleantext(name), catpage, img))

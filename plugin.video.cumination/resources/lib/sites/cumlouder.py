@@ -71,7 +71,7 @@ def List(url):
         if not videopage:
             continue
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        img = utils.get_thumbnail(img_tag)
         if img.startswith("//"):
             img = "https:" + img
         name = utils.cleantext(

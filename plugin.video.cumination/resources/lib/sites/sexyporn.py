@@ -73,7 +73,7 @@ def List(url):
         if not videourl or not name:
             continue
 
-        thumb = utils.safe_get_attr(item.select_one("img"), "data-src", ["src"])
+        thumb = utils.get_thumbnail(item.select_one("img"))
         duration = utils.safe_get_text(item.select_one(".duration"), default="")
         quality = "HD" if item.find(string=re.compile(r"\bHD\b", re.IGNORECASE)) else ""
 

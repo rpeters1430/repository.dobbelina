@@ -67,9 +67,7 @@ def List(url):
                 videopage = urllib_parse.urljoin(site.url, videopage)
 
             img_tag = link.select_one("img") or link.find_next("img")
-            img = utils.safe_get_attr(
-                img_tag, "data-src", ["data-lazy-src", "data-original", "src"]
-            )
+            img = utils.get_thumbnail(img_tag)
             if img and img.startswith("/"):
                 img = urllib_parse.urljoin(site.url, img)
 

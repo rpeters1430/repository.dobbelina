@@ -50,7 +50,7 @@ def List(url):
         if not videourl:
             continue
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "data-src", ["src", "data-original"])
+        img = utils.get_thumbnail(img_tag)
         name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
         if not name:
             name = utils.cleantext(utils.safe_get_text(link, default=""))

@@ -85,7 +85,7 @@ def List(url, page=1):
             utils.safe_get_attr(link, "title", default=utils.safe_get_text(link))
         )
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
+        img = utils.get_thumbnail(img_tag)
         if img:
             img = urllib_parse.urljoin(site.url, img)
         duration = utils.safe_get_text(item.select_one(".duration"), default="")

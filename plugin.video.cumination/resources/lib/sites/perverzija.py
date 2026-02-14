@@ -79,7 +79,7 @@ def List(url):
             continue
 
         img_tag = video.select_one("img")
-        img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+        img = utils.get_thumbnail(img_tag)
         duration = utils.safe_get_text(video.select_one(".time_dur"), default="")
 
         contextmenu = []

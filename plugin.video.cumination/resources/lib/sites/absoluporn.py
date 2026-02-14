@@ -88,8 +88,8 @@ def List(url):
         if not name:
             continue
 
-        img_tag = link.select_one("img[src]")
-        img = utils.safe_get_attr(img_tag, "src", default="")
+        img_tag = link.select_one("img")
+        img = utils.get_thumbnail(img_tag)
 
         info = item.select_one(".thumb-info")
         info_text = utils.safe_get_text(info, default="").lower()

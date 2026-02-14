@@ -102,13 +102,14 @@ def List(url, page=1):
         return
     total_models = model_list.get("totalResultCount", 0)
     for camgirl in model_list.get("performers", []):
-        img = "http://m1.nsimg.net/media/snap/{0}.jpg".format(camgirl.get("id"))
+        img = "https://m1.nsimg.net/media/snap/{0}.jpg".format(camgirl.get("id"))
         status = "HD" if camgirl.get("highDefinition") else ""
         name = "{0} [COLOR deeppink][{1}][/COLOR] {2}".format(
             camgirl.get("nickname"), camgirl.get("age"), status
         )
+        headline = utils.cleantext(camgirl.get("headlineMessage", ""))
         subject = "{0}[CR][COLOR deeppink]Location: [/COLOR]{1}".format(
-            utils.cleantext(camgirl.get("headlineMessage", "")), camgirl.get("country")
+            headline if headline else name, camgirl.get("country")
         )
         site.add_download_link(
             name,

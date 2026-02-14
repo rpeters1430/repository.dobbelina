@@ -117,7 +117,7 @@ def List(url):
             continue
 
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        img = utils.get_thumbnail(img_tag)
 
         title_tag = item.select_one(".title")
         name = utils.safe_get_text(title_tag, "")
@@ -244,7 +244,7 @@ def Actress(url):
             continue
 
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        img = utils.get_thumbnail(img_tag)
 
         name_tag = item.select_one(".actress-title")
         name = utils.safe_get_text(name_tag, "")

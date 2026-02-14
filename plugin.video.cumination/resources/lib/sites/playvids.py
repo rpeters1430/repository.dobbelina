@@ -78,7 +78,7 @@ def List(url):
     for item in items:
         try:
             img_tag = item.select_one("img")
-            img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+            img = utils.get_thumbnail(img_tag)
 
             info_section = item.select_one(".info")
             if not info_section:
@@ -154,7 +154,7 @@ def PList(url):
     for item in items:
         try:
             img_tag = item.select_one("img")
-            img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+            img = utils.get_thumbnail(img_tag)
 
             info_section = item.select_one(".info")
             if not info_section:
@@ -226,7 +226,7 @@ def CList(url, page=1):
     for item in items:
         try:
             img_tag = item.select_one("img")
-            img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+            img = utils.get_thumbnail(img_tag)
 
             info_section = item.select_one(".info")
             if not info_section:
@@ -327,7 +327,7 @@ def Channels(url):
                 continue
 
             img_tag = item.select_one("img")
-            img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+            img = utils.get_thumbnail(img_tag)
 
             title_section = item.select_one(".title")
             if not title_section:

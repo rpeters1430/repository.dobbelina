@@ -80,8 +80,8 @@ def List(url):
             continue
 
         name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
-        img_tag = inner.select_one("img[src]")
-        img = utils.safe_get_attr(img_tag, "src", default="")
+        img_tag = inner.select_one("img")
+        img = utils.get_thumbnail(img_tag)
         if img and not img.startswith("http"):
             img = "https:" + img
 
@@ -197,8 +197,8 @@ def Categories(url):
             continue
 
         caturl = utils.safe_get_attr(link, "href", default="")
-        img_tag = item.select_one("img[src]")
-        img = utils.safe_get_attr(img_tag, "src", default="")
+        img_tag = item.select_one("img")
+        img = utils.get_thumbnail(img_tag)
 
         h2 = item.select_one("h2")
         if h2:

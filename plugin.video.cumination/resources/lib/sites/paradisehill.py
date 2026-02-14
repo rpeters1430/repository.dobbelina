@@ -85,7 +85,7 @@ def List(url):
         link = item.select_one("a[href]")
         videopage = utils.safe_get_attr(link, "href", default="")
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+        img = utils.get_thumbnail(img_tag)
         name = utils.cleantext(
             utils.safe_get_text(item.select_one(".name"), default="")
         )
@@ -124,7 +124,7 @@ def Cat(url):
         caturl = utils.safe_get_attr(link, "href", default="")
         name = utils.cleantext(utils.safe_get_text(item.select_one("span"), default=""))
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+        img = utils.get_thumbnail(img_tag)
         if not caturl or not name:
             continue
         img = site.url[:-1] + img if img and img.startswith("/") else img

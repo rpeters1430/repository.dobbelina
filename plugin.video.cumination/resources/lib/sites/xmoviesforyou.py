@@ -36,7 +36,7 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
         "items": ".grid-box-img",
         "url": {"selector": "a", "attr": "href"},
         "title": {"selector": "a", "attr": "title", "clean": True},
-        "thumbnail": {"selector": "img", "attr": "src"},
+        "thumbnail": {"transform": lambda v, item: utils.get_thumbnail(item.select_one("img"))},
         "pagination": {"selector": "a.next.page-numbers", "attr": "href"},
     }
 )

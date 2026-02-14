@@ -88,10 +88,10 @@ def List(url):
                     continue
 
                 # Get image
-                img_tag = div.select_one("img[src]")
-                if not img_tag:
+                img_tag = div.select_one("img")
+                img = utils.get_thumbnail(img_tag)
+                if not img:
                     continue
-                img = utils.safe_get_attr(img_tag, "src", ["data-src"])
 
                 # Get name from title element
                 title_elem = div.select_one('.title, [class*="title"]')

@@ -63,7 +63,7 @@ def List(url):
             continue
 
         img_tag = link.select_one("img")
-        thumb = utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
+        thumb = utils.get_thumbnail(img_tag)
         if thumb:
             thumb = urllib_parse.urljoin(site.url, thumb)
 
@@ -83,6 +83,7 @@ def List(url):
             video_url,
             "Playvid",
             thumb,
+            name,
             duration=duration,
             quality=quality,
             contextm=contextm,

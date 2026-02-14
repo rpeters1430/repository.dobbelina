@@ -79,32 +79,44 @@ def List(url):
     try:
         # Extract JSON from Next.js data script tag using BeautifulSoup
         soup = utils.parse_html(html)
-        script_tag = soup.select_one('script[type="application/json"]')
+        script_tag = soup.select_one('script#__NEXT_DATA__') or soup.select_one('script[type="application/json"]')
         if not script_tag or not script_tag.string:
             utils.kodilog("avple: Could not find JSON script tag")
             utils.notify("Error", "Unable to parse page data")
             utils.eod()
             return
 
-        jdata = json.loads(script_tag.string).get("props").get("pageProps")
-        page = jdata.get("page")
-        pages = jdata.get("totalPage")
+        props = json.loads(script_tag.string).get("props", {})
+        jdata = props.get("pageProps", {})
+        if not jdata:
+            # Try deeper nesting if structure changed
+            jdata = props.get("initialState", {})
+            
+        page = jdata.get("page", 1)
+        pages = jdata.get("totalPage", 1)
 
-        if "indexListObj" in jdata.keys():
-            indexListObj = jdata.get("indexListObj")
-        else:
+        indexListObj = jdata.get("indexListObj", {})
+        if not indexListObj and "data" in jdata:
             indexListObj = {"obj": jdata["data"]}
 
         for obj in indexListObj.keys():
             videos = indexListObj[obj]
+            if not isinstance(videos, list):
+                continue
             for video in videos:
-                name = video["title"] if utils.PY3 else video["title"].encode("utf-8")
+                if not isinstance(video, dict):
+                    continue
+                name = video.get("title", "Video")
+                if not utils.PY3:
+                    name = name.encode("utf-8")
                 name = utils.cleantext(name)
                 img = video.get("img_preview", "")
-                duration = (
-                    "" if video.get("timeLengh") is None else video.get("timeLengh")
-                )
-                videopage = "{0}video/{1}".format(site.url, video.get("_id"))
+                duration = video.get("timeLengh") or ""
+                videoid = video.get("_id") or video.get("id")
+                if not videoid:
+                    continue
+                    
+                videopage = "{0}video/{1}".format(site.url, videoid)
                 site.add_download_link(
                     name, str(videopage), "Playvid", img, name, duration=duration
                 )

@@ -142,14 +142,18 @@ def List(url):
         utils.eod()
         return
     for model in model_list:
-        img = "https:" + model["profile_images"]["thumbnail_image_big_live"]
-        username = model["username"]
-        name = model["display_name"]
-        age = model["display_age"]
+        profile_imgs = model.get("profile_images", {})
+        img = profile_imgs.get("thumbnail_image_big_live") or profile_imgs.get("thumbnail_image_medium_live") or profile_imgs.get("thumbnail_image_small_live")
+        if img and not img.startswith("http"):
+            img = "https:" + img
+        username = model.get("username")
+        name = model.get("display_name", username)
+        age = model.get("display_age", "??")
         name += " [COLOR hotpink][{}][/COLOR]".format(age)
-        if model["hd_cam"]:
+        if model.get("hd_cam"):
             name += " [COLOR gold]HD[/COLOR]"
         subject = ""
+        # ... (rest of subject building)
         if model.get("hometown"):
             subject += "Location: {}".format(model.get("hometown"))
         if model.get("homecountry"):

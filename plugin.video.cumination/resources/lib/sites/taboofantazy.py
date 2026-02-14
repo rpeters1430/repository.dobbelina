@@ -76,7 +76,7 @@ def List(url):
 
         # Get thumbnail
         img_tag = link.find("img")
-        img = utils.safe_get_attr(img_tag, "data-src", fallback_attrs=["src"])
+        img = utils.get_thumbnail(img_tag)
 
         # Check for HD badge
         hd_badge = article.find("span", class_="hd-badge")
@@ -201,8 +201,8 @@ def Cat(url):
         name = utils.cleantext(name)
 
         # Get thumbnail
-        img_tag = link.find("img", class_=True)
-        img = utils.safe_get_attr(img_tag, "src", fallback_attrs=["data-src"])
+        img_tag = link.find("img")
+        img = utils.get_thumbnail(img_tag)
 
         site.add_dir(name, caturl, "List", img)
 
