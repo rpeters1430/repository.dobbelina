@@ -46,7 +46,8 @@ def Main():
         "Search",
         site.img_search,
     )
-    List(site.url + "api?query=_best&sort=new&page=0&method=search")
+    # "_best" currently returns empty payloads; blank query returns the feed.
+    List(site.url + "api?query=&sort=new&page=0&method=search")
     utils.eod()
 
 
@@ -73,12 +74,22 @@ def List(url):
             continue
         videopage = utils.fix_url(videopage, site.url)
 
-        title_tag = item.select_one(".trigger_pop, .th_wrap, .title, h2, h3, .name")
+        # Prefer explicit title container first; generic trigger_pop/th_wrap often
+        # points to thumbnail wrappers and can return only duration text.
+        title_tag = item.select_one(
+            ".vidinfo .thumbnail_title .th_wrap, .thumbnail_title .th_wrap, .thumbnail_title, .title, h2, h3, .name"
+        )
         title = utils.safe_get_text(title_tag)
         if not title:
             title = utils.safe_get_attr(link, "title")
         if not title:
             title = utils.safe_get_text(link)
+        if re.fullmatch(r"\d{1,2}:\d{2}", title or ""):
+            title = ""
+            fallback_title = item.select_one(
+                ".vidinfo .thumbnail_title .th_wrap, .thumbnail_title .th_wrap, .thumbnail_title"
+            )
+            title = utils.safe_get_text(fallback_title)
         title = utils.cleantext(title)
         if not title:
             continue

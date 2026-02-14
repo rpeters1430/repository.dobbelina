@@ -37,6 +37,13 @@ ph_headers = {
 }
 
 
+def _extract_srcset_url(value):
+    if not value:
+        return ""
+    first = value.split(",")[0].strip()
+    return first.split(" ")[0].strip()
+
+
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
@@ -83,9 +90,21 @@ def List(url, page=1, section=None):
 
             # Get image
             img_tag = link.select_one("img[data-src], img[src]")
-            if not img_tag:
-                continue
-            img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+            img = ""
+            if img_tag:
+                img = utils.safe_get_attr(
+                    img_tag,
+                    "data-src",
+                    ["data-original", "data-lazy", "data-srcset", "srcset", "src"],
+                )
+                img = _extract_srcset_url(img)
+            if not img:
+                style = utils.safe_get_attr(link, "style")
+                if style:
+                    m = re.search(r"url\((['\"]?)([^)'\"]+)\1\)", style, re.I)
+                    if m:
+                        img = m.group(2)
+            img = utils.fix_url(img, siteurl)
 
             # Get video title from h1
             h1_tag = link.select_one("h1")

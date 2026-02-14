@@ -52,6 +52,27 @@ def Main():
 def List(url):
     url = update_url(url)
 
+    def collect_video_items(scope_obj):
+        selectors = (
+            "li.pcVideoListItem, div.pcVideoListItem, li.js-pop.videoBox, div.js-pop.videoBox"
+        )
+        nodes = list(scope_obj.select(selectors))
+        filtered = []
+        for node in nodes:
+            link = node.select_one('a[href*="/view_video.php?viewkey="]')
+            if link:
+                filtered.append(node)
+        if filtered:
+            return filtered
+
+        # Fallback: locate anchors directly when container classes change.
+        anchors = scope_obj.select('a[href*="/view_video.php?viewkey="]')
+        wrapped = []
+        for anchor in anchors:
+            parent = anchor.find_parent(["li", "div", "article"])
+            wrapped.append(parent if parent is not None else anchor)
+        return wrapped
+
     def add_img_headers(img_url):
         if not img_url:
             return img_url
@@ -154,21 +175,21 @@ def List(url):
             "#videoSearchWrapper, #videoBoxesSearch, .videoBoxesSearch"
         )
         if search_container:
-            video_items = search_container.select('[class*="pcVideoListItem"]')
+            video_items = collect_video_items(search_container)
         else:
             # Fallback to main content area if search container not found
             main_content = soup.select_one("#searchPageVideoList, #videoSearchResult")
             if main_content:
-                video_items = main_content.select('[class*="pcVideoListItem"]')
+                video_items = collect_video_items(main_content)
             else:
-                video_items = soup.select('[class*="pcVideoListItem"]')
+                video_items = collect_video_items(soup)
     else:
-        video_items = soup.select('[class*="pcVideoListItem"]')
+        video_items = collect_video_items(soup)
 
     for item in video_items:
         try:
             # Get the link element
-            link = item.select_one("a")
+            link = item.select_one('a[href*="/view_video.php?viewkey="]')
             if not link:
                 continue
 
@@ -331,7 +352,7 @@ def Playvid(url, name, download=None):
 def get_setting(x):
     dict = {
         "production": "All",
-        "minlength": "10 min",
+        "minlength": "0",
         "maxlength": "40+ Min",
         "quality": "All",
         "country": "World",
@@ -602,7 +623,7 @@ def update_url(url):
 def ResetFilters():
     dict = {
         "production": "All",
-        "minlength": "10 min",
+        "minlength": "0",
         "maxlength": "40+ Min",
         "quality": "All",
         "country": "World",

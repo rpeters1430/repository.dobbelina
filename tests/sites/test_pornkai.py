@@ -59,7 +59,7 @@ def test_list_parses_videos_and_pagination(monkeypatch, fixture_name):
     assert downloads[0]["duration"] == "12:34"
     assert downloads[0]["context"][0][0].startswith("[COLOR violet]Related videos")
 
-    assert downloads[1]["name"] == "Video Two"
+    assert downloads[1]["name"] == "Video Two Title"
     assert downloads[1]["icon"] == "https://cdn.example.com/thumb2.jpg"
 
     next_pages = [entry for entry in dirs if "Next Page" in entry["name"]]
@@ -129,3 +129,40 @@ def test_categories_parse_links(monkeypatch):
         dirs[1]["url"]
         == "https://pornkai.com/api?query=milf&sort=best&page=0&method=search"
     )
+
+
+def test_main_uses_non_empty_feed_query(monkeypatch):
+    list_calls = []
+
+    monkeypatch.setattr(pornkai, "List", lambda url: list_calls.append(url))
+    monkeypatch.setattr(pornkai.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(pornkai.utils, "eod", lambda: None)
+
+    pornkai.Main()
+
+    assert list_calls
+    assert "query=&sort=new&page=0&method=search" in list_calls[0]
+
+
+def test_list_prefers_video_title_over_duration(monkeypatch):
+    html = """
+    {"html":"<div class=\\"thumbnail\\"><div class=\\"thumbnail_inner\\">\
+<a class=\\"thumbnail_link th_derp trigger_pop\\" href=\\"/view?key=xv123\\">\
+<span class=\\"trigger_pop th_wrap\\"><div class=\\"thumbnail_video_length\\">6:09</div></span></a>\
+<div class=\\"vidinfo\\"><a href=\\"/view?key=xv123\\" class=\\"thumbnail_title thumbnail_link trigger_pop\\">\
+<span class=\\"trigger_pop th_wrap\\">Actual Video Title</span></a></div></div></div>","results_remaining":0}
+    """.strip()
+    monkeypatch.setattr(pornkai.utils, "getHtml", lambda url, referer=None: html)
+
+    downloads = []
+    monkeypatch.setattr(
+        pornkai.site,
+        "add_download_link",
+        lambda name, *a, **k: downloads.append(name),
+    )
+    monkeypatch.setattr(pornkai.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(pornkai.utils, "eod", lambda: None)
+
+    pornkai.List("https://pornkai.com/api?query=public&sort=best&page=0&method=search")
+
+    assert downloads == ["Actual Video Title"]
