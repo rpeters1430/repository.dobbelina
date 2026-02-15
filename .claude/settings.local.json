@@ -111,7 +111,10 @@
       "Bash(for site in iflix bubbaporn cambro yespornplease vintagetube)",
       "Bash(git push:*)",
       "WebFetch(domain:peachurnet.com)",
-      "Bash(git stash show:*)"
+      "Bash(git stash show:*)",
+      "Bash(/home/rpeters1428/repository.dobbelina/.venv/bin/python:*)",
+      "Bash(/home/rpeters1428/repository.dobbelina/.venv/bin/playwright install:*)",
+      "Bash(.venv/bin/python:*)"
     ],
     "deny": [],
     "ask": []

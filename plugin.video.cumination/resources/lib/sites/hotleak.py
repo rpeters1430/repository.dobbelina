@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
+import base64
+import json
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
@@ -88,34 +90,79 @@ def List(url, page=1):
     utils.eod()
 
 
+def _decrypt_video_url(encrypted_url):
+    """
+    Decrypt hotleak video URL.
+
+    The site uses client-side encryption that:
+    1. Removes first 8 characters
+    2. Removes last 16 characters
+    3. Reverses the string
+    4. Base64 decodes the result
+
+    Args:
+        encrypted_url: Encrypted URL from data-video attribute
+
+    Returns:
+        Decrypted M3U8 URL
+    """
+    try:
+        # Remove first 8 chars
+        decrypted = encrypted_url[8:]
+        # Remove last 16 chars
+        decrypted = decrypted[:-16]
+        # Reverse the string
+        decrypted = decrypted[::-1]
+        # Base64 decode
+        decrypted = base64.b64decode(decrypted).decode('utf-8')
+        return decrypted
+    except Exception as e:
+        utils.kodilog("hotleak: URL decryption failed: {}".format(e))
+        return None
+
+
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
-    try:
-        from resources.lib.playwright_helper import sniff_video_url
-        vp.progress.update(50, "[CR]Sniffing with Playwright...[CR]")
-        
-        ad_domains = ["leakedzone.com", "ourdream.ai", "adtng.com", "trafficjunky.net", "jwpltx.com"]
-        
-        video_url = sniff_video_url(
-            url, 
-            play_selectors=["#media-player", ".jw-video", ".btn-play"], 
-            exclude_domains=ad_domains,
-            debug=True
-        )
-        
-        if video_url:
-            vp.play_from_direct_link(video_url + "|Referer=" + site.url)
-            return
-            
-    except (ImportError, Exception) as e:
-        utils.kodilog("hotleak: Playwright sniffing failed: {}".format(e))
-
-    # Fallback to HTML parsing
+    # Get HTML page
     html = utils.getHtml(url)
-    vp.play_from_html(html)
+    soup = utils.parse_html(html)
+
+    # Look for video data in data-video attributes
+    video_items = soup.select('[data-video]')
+
+    for item in video_items:
+        data_video = utils.safe_get_attr(item, 'data-video')
+        if not data_video:
+            continue
+
+        try:
+            video_json = json.loads(data_video)
+
+            # Extract encrypted URL from JSON
+            if 'source' in video_json and len(video_json['source']) > 0:
+                encrypted_url = video_json['source'][0].get('src', '')
+
+                if encrypted_url:
+                    # Decrypt the URL
+                    vp.progress.update(50, "[CR]Decrypting video URL[CR]")
+                    video_url = _decrypt_video_url(encrypted_url)
+
+                    if video_url:
+                        utils.kodilog("hotleak: Decrypted URL: {}".format(video_url))
+                        vp.play_from_direct_link(video_url + "|Referer=" + site.url)
+                        return
+
+        except (json.JSONDecodeError, KeyError, IndexError) as e:
+            utils.kodilog("hotleak: Failed to parse video data: {}".format(e))
+            continue
+
+    # If we get here, we couldn't find/decrypt the video URL
+    utils.kodilog("hotleak: Could not extract video URL from page")
+    vp.progress.close()
+    utils.notify("Error", "Could not find video URL")
 
 
 @site.register()
