@@ -287,7 +287,7 @@ def sniff_video_url(
                                         clicked = True
                                         page.wait_for_timeout(wait_after_click)
                                         break
-                                except:
+                                except Exception:
                                     continue
 
                         if found_url[0]:

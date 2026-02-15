@@ -307,6 +307,7 @@ def test_playvid_calls_video_player(monkeypatch):
         def __init__(self, name, download):
             self.name = name
             self.download = download
+            self.progress = type("P", (), {"update": lambda *a, **k: None, "close": lambda *a, **k: None})()
             video_player_calls.append(("init", name, download))
 
         def play_from_link_to_resolve(self, url):

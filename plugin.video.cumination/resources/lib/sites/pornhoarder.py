@@ -86,7 +86,7 @@ def List(url, page=1, section=None):
         # Fallback to broader selector if article structure changed
         links = soup.select("a[href] h1")
         if links:
-            links = [l.parent for l in links]
+            links = [link_elem.parent for link_elem in links]
         else:
             links = soup.select("a[href]")
 

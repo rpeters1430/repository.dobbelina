@@ -304,6 +304,14 @@ def test_playback_smoke(monkeypatch, case):
     if hasattr(module, "get_cookies"):
         monkeypatch.setattr(module, "get_cookies", lambda: "")
 
+    # Mock playwright_helper to avoid live sniffing during smoke tests
+    import sys
+    import types
+    mock_ph = types.ModuleType("resources.lib.playwright_helper")
+    mock_ph.sniff_video_url = lambda *a, **k: None
+    mock_ph.fetch_with_playwright = lambda *a, **k: ""
+    monkeypatch.setitem(sys.modules, "resources.lib.playwright_helper", mock_ph)
+
     if case.get("extra_patches"):
         case["extra_patches"](module, monkeypatch)
 

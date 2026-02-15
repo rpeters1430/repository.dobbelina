@@ -247,6 +247,15 @@ def _ensure_kodi_stubs():
     websocket_module.create_connection = lambda *a, **k: None
     sys.modules["websocket"] = websocket_module
 
+    # playwright_helper stub -----------------------------------------------
+    def _playwright_disabled(*args, **kwargs):
+        raise ImportError("Playwright disabled during tests")
+
+    playwright_helper = types.ModuleType("resources.lib.playwright_helper")
+    playwright_helper.fetch_with_playwright = _playwright_disabled
+    playwright_helper.sniff_video_url = _playwright_disabled
+    sys.modules["resources.lib.playwright_helper"] = playwright_helper
+
 
 _ensure_kodi_stubs()
 

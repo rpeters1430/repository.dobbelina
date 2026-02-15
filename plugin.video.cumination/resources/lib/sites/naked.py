@@ -93,7 +93,7 @@ def List(url):
             try:
                 data = json.loads(match.group(1))
                 return json.dumps(data.get("models", []))
-            except:
+            except Exception:
                 pass
 
         soup = utils.parse_html(html)

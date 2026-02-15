@@ -142,12 +142,25 @@ def test_playvid_uses_direct_regex(monkeypatch):
     import sys
     mock_module = type(sys)('resources.lib.playwright_helper')
     mock_module.sniff_video_url = mock_sniff
-    sys.modules['resources.lib.playwright_helper'] = mock_module
+    monkeypatch.setitem(sys.modules, 'resources.lib.playwright_helper', mock_module)
+
+    # Mock get_html_with_cloudflare_retry for the fallback logic
+    def mock_get_html(url, *args, **kwargs):
+        return '<html><iframe src="http://anybunny.org/iframe/123"></iframe></html>', None
+    
+    def mock_get_iframe_html(url, *args, **kwargs):
+        return '<html>var video = "https://stream.anybunny.org/vid.mp4";</html>', None
+
+    def combined_mock_get_html(url, *args, **kwargs):
+        if "/iframe/" in url:
+            return mock_get_iframe_html(url)
+        return mock_get_html(url)
+
+    monkeypatch.setattr(anybunny.utils, "get_html_with_cloudflare_retry", combined_mock_get_html)
 
     anybunny.Playvid("http://anybunny.org/videos/video-123", "Example")
 
-    assert captured["site_url"] == "http://anybunny.org/videos/video-123"
-    assert captured["direct_regex"] == r'source src=["\']([^"\']+)["\']'
+    assert captured["direct_url"] == "https://stream.anybunny.org/vid.mp4"
 
 
 def test_playvid_with_playwright_sniffing(monkeypatch):
@@ -177,7 +190,7 @@ def test_playvid_with_playwright_sniffing(monkeypatch):
     import sys
     mock_module = type(sys)('resources.lib.playwright_helper')
     mock_module.sniff_video_url = mock_sniff
-    sys.modules['resources.lib.playwright_helper'] = mock_module
+    monkeypatch.setitem(sys.modules, 'resources.lib.playwright_helper', mock_module)
 
     anybunny.Playvid("http://anybunny.org/videos/video-123", "Example")
 

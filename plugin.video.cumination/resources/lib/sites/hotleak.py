@@ -69,8 +69,10 @@ def List(url, page=1):
         date = utils.safe_get_text(item.select_one(".date"))
         views = utils.safe_get_text(item.select_one(".view"))
         meta = []
-        if date: meta.append(date)
-        if views: meta.append(views)
+        if date:
+            meta.append(date)
+        if views:
+            meta.append(views)
         description = " | ".join(meta)
 
         site.add_download_link(
