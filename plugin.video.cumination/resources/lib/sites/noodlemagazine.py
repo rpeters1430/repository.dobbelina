@@ -49,6 +49,9 @@ data = {
 def Main(url):
     site.add_download_link(getFilterLabels(), site.url, "setFilters", "")
     site.add_dir(
+        "[COLOR hotpink]Newest[/COLOR]", site.url + "video/" + getFilters(1), "List", ""
+    )
+    site.add_dir(
         "[COLOR hotpink]Search[/COLOR]", site.url + "video/", "Search", site.img_search
     )
     site.add_dir(
@@ -61,12 +64,16 @@ def Main(url):
 
 
 @site.register()
-def List(url, page=0):
+def List(url, page=1):
     try:
-        listhtml = utils.getHtml(url, "")
-    except Exception as e:
-        utils.kodilog("@@@@Cumination: failure in noodlemagazine: " + str(e))
-        return None
+        from tests.utils.playwright_helper import fetch_with_playwright
+        listhtml = fetch_with_playwright(url, wait_for="load")
+    except (ImportError, Exception):
+        try:
+            listhtml = utils.getHtml(url, "")
+        except Exception as e:
+            utils.kodilog("@@@@Cumination: failure in noodlemagazine: " + str(e))
+            return None
 
     soup = utils.parse_html(listhtml)
     items = soup.select(".item")
@@ -121,6 +128,20 @@ def List(url, page=0):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
+
+    # Try Playwright sniffer first
+    try:
+        from tests.utils.playwright_helper import fetch_with_playwright_and_network
+        vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
+        _, requests = fetch_with_playwright_and_network(url, wait_for="load")
+        for req in requests:
+            if any(ext in req["url"].lower() for ext in [".mp4", ".m3u8"]):
+                if not any(x in req["url"].lower() for x in ["/thumbs/", "/images/"]):
+                    vp.play_from_direct_link(req["url"] + "|Referer=" + site.url)
+                    return
+    except (ImportError, Exception):
+        pass
+
     html = utils.getHtml(url, site.url)
     
     sources = {}

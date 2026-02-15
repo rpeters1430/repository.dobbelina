@@ -203,6 +203,26 @@ def Playvid(url, name):
     vp = utils.VideoPlayer(name, IA_check="IA")
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
+    # Try Playwright sniffer first to find best quality
+    try:
+        from tests.utils.playwright_helper import sniff_video_url
+        model_page_url = "https://stripchat.com/{0}".format(name)
+        vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
+        
+        # Stripchat often auto-plays, but we can try clicking video just in case
+        video_url = sniff_video_url(model_page_url, play_selectors=["video", ".vjs-big-play-button"])
+        if video_url:
+            utils.kodilog("Stripchat: Playwright found stream: {}".format(video_url[:100]))
+            # Build headers for HLS stream
+            ua = urllib_parse.quote(utils.USER_AGENT, safe="")
+            origin_enc = urllib_parse.quote("https://stripchat.com", safe="")
+            referer_enc = urllib_parse.quote(model_page_url, safe="")
+            ia_headers = "User-Agent={0}&Origin={1}&Referer={2}".format(ua, origin_enc, referer_enc)
+            vp.play_from_direct_link(video_url + "|" + ia_headers)
+            return
+    except (ImportError, Exception) as e:
+        utils.kodilog("Stripchat: Playwright sniffer failed: {}".format(e))
+
     def _load_model_details(model_name):
         headers = {
             "User-Agent": utils.USER_AGENT,

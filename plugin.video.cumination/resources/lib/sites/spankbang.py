@@ -97,7 +97,11 @@ def List(url):
         (parsed.scheme, parsed.netloc, parsed.path, "", query_string, "")
     )
 
-    listhtml = utils.getHtml(url, "")
+    try:
+        from tests.utils.playwright_helper import fetch_with_playwright
+        listhtml = fetch_with_playwright(url, wait_for="load")
+    except (ImportError, Exception):
+        listhtml = utils.getHtml(url, "")
 
     soup = utils.parse_html(listhtml)
     video_items = soup.select('[data-testid="video-item"]')
@@ -174,7 +178,12 @@ def Search(url, keyword=None):
 
 @site.register()
 def Tags(url):
-    cathtml = utils.getHtml(url, "")
+    try:
+        from tests.utils.playwright_helper import fetch_with_playwright
+        cathtml = fetch_with_playwright(url, wait_for="load")
+    except (ImportError, Exception):
+        cathtml = utils.getHtml(url, "")
+    
     soup = utils.parse_html(cathtml)
 
     # Find all tag links (don't restrict to search_holder as tags are in main_content_container)
@@ -227,7 +236,12 @@ def Tags(url):
 
 @site.register()
 def Models_alphabet(url):
-    cathtml = utils.getHtml(url, "")
+    try:
+        from tests.utils.playwright_helper import fetch_with_playwright
+        cathtml = fetch_with_playwright(url, wait_for="load")
+    except (ImportError, Exception):
+        cathtml = utils.getHtml(url, "")
+    
     soup = utils.parse_html(cathtml)
     items = soup.select("ul.alphabets li a")
     for link in items:
@@ -243,7 +257,12 @@ def Models_alphabet(url):
 
 @site.register()
 def Models(url):
-    cathtml = utils.getHtml(url, "")
+    try:
+        from tests.utils.playwright_helper import fetch_with_playwright
+        cathtml = fetch_with_playwright(url, wait_for="load")
+    except (ImportError, Exception):
+        cathtml = utils.getHtml(url, "")
+    
     soup = utils.parse_html(cathtml)
     items = soup.select("ul.list li")
     for item in items:
@@ -273,6 +292,20 @@ def Models(url):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
+    
+    # Try Playwright sniffer first to bypass Cloudflare
+    try:
+        from tests.utils.playwright_helper import sniff_video_url
+        vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
+        
+        video_url = sniff_video_url(url, play_selectors=["video", "button.vjs-big-play-button", ".play-button"])
+        if video_url:
+            utils.kodilog("spankbang: Playwright found stream: {}".format(video_url[:100]))
+            vp.play_from_direct_link(video_url)
+            return
+    except (ImportError, Exception) as e:
+        utils.kodilog("spankbang: Playwright sniffer failed: {}".format(e))
+
     html = utils.getHtml(url, "")
     sources = {}
     srcs = re.compile(

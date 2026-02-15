@@ -162,6 +162,69 @@ def fetch_with_playwright_and_network(
             browser.close()
 
 
+def sniff_video_url(
+    url: str,
+    play_selectors: Optional[list] = None,
+    timeout: int = 30000,
+) -> Optional[str]:
+    """
+    Navigate to a URL, perform optional clicks (to trigger players), 
+    and sniff the network for the first video stream URL.
+    """
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+        )
+        page = context.new_page()
+        
+        found_url = [None]
+        
+        def handle_response(response):
+            if found_url[0]:
+                return
+            r_url = response.url.lower()
+            if any(ext in r_url for ext in [".mp4", ".m3u8"]) and not any(x in r_url for x in ["/thumbs/", "/images/", ".jpg", ".png"]):
+                found_url[0] = response.url
+
+        page.on("response", handle_response)
+        
+        try:
+            page.goto(url, wait_until="load", timeout=timeout)
+            page.wait_for_timeout(2000) # Wait for JS to settle
+            
+            if play_selectors:
+                for selector in play_selectors:
+                    try:
+                        # Check main page
+                        target = page.locator(selector).first
+                        if target.is_visible(timeout=2000):
+                            target.click()
+                            break
+                        
+                        # Check all iframes
+                        for frame in page.frames:
+                            if frame == page.main_frame:
+                                continue
+                            target = frame.locator(selector).first
+                            if target.is_visible(timeout=1000):
+                                target.click()
+                                break
+                        if found_url[0]: break
+                    except:
+                        continue
+            
+            # Wait a bit more for the request to fire
+            for _ in range(10):
+                if found_url[0]: break
+                page.wait_for_timeout(500)
+                
+            return found_url[0]
+            
+        finally:
+            browser.close()
+
+
 if __name__ == "__main__":
     # Quick test
     html = fetch_with_playwright("https://example.com")

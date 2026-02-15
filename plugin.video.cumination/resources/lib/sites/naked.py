@@ -46,6 +46,12 @@ def Main():
         "",
         Folder=False,
     )
+    site.add_dir(
+        "[COLOR hotpink]Search[/COLOR]",
+        site.url + "search/models/?q=",
+        "Search",
+        site.img_search,
+    )
     if female:
         site.add_dir(
             "[COLOR hotpink]Females[/COLOR]", site.url + "live/girls/", "List", "", 1
@@ -66,12 +72,29 @@ def Main():
 
 
 @site.register()
+def Search(url, keyword=None):
+    if not keyword:
+        site.search_dir(url, "Search")
+    else:
+        url = url + keyword.replace(" ", "%20")
+        List(url)
+
+
+@site.register()
 def List(url):
     if utils.addon.getSetting("chaturbate") == "true":
         clean_database(False)
 
     def _extract_models_payload(html):
         """Return JSON array string for the models listing."""
+        # Try new __homePageData__ pattern first
+        match = re.search(r"window\.__homePageData__\s*=\s*({.*?});", html, re.DOTALL)
+        if match:
+            try:
+                data = json.loads(match.group(1))
+                return json.dumps(data.get("models", []))
+            except:
+                pass
 
         soup = utils.parse_html(html)
         for script_tag in soup.find_all("script"):
@@ -103,12 +126,20 @@ def List(url):
         return None
 
     try:
-        listhtml = utils._getHtml(url, site.url, timeout=30)
-    except Exception as e:
-        utils.kodilog("Naked: Error fetching page: {}".format(str(e)))
-        utils.notify("Error", "Unable to load naked.com page")
-        utils.eod()
-        return
+        from tests.utils.playwright_helper import fetch_with_playwright
+        listhtml = fetch_with_playwright(url, wait_for="load")
+        # Check if models are empty in initial load, if so wait more
+        payload = _extract_models_payload(listhtml)
+        if not payload or payload == "[]":
+             listhtml = fetch_with_playwright(url, wait_for="networkidle")
+    except (ImportError, Exception):
+        try:
+            listhtml = utils._getHtml(url, site.url, timeout=30)
+        except Exception as e:
+            utils.kodilog("Naked: Error fetching page: {}".format(str(e)))
+            utils.notify("Error", "Unable to load naked.com page")
+            utils.eod()
+            return
 
     payload = _extract_models_payload(listhtml)
 
@@ -231,6 +262,25 @@ def clean_database(showdialog=True):
 
 @site.register()
 def Playvid(url, name):
+    vp = utils.VideoPlayer(name)
+    vp.progress.update(25, "[CR]Loading video page[CR]")
+    
+    # Try Playwright sniffer first
+    try:
+        from tests.utils.playwright_helper import sniff_video_url
+        # Get model name from name string (remove age/status)
+        model_name = name.split("[COLOR")[0].strip().replace(" ", "-").lower()
+        model_page_url = "https://www.naked.com/chat/{0}/".format(model_name)
+        vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
+        
+        video_url = sniff_video_url(model_page_url, play_selectors=["video", ".vjs-big-play-button"])
+        if video_url:
+            utils.kodilog("naked: Playwright found stream: {}".format(video_url[:100]))
+            vp.play_from_direct_link(video_url)
+            return
+    except (ImportError, Exception) as e:
+        utils.kodilog("naked: Playwright sniffer failed: {}".format(e))
+
     playmode = 0  # int(utils.addon.getSetting('chatplay'))
     url = "{0}&t={1}".format(url, int(time.time() * 1000))
     params = urllib_parse.parse_qs(url.split("?")[1])

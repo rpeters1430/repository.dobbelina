@@ -58,7 +58,12 @@ def Main():
 
 @site.register()
 def List(url):
-    html = utils.getHtml(url, site.url)
+    try:
+        from tests.utils.playwright_helper import fetch_with_playwright
+        html = fetch_with_playwright(url, wait_for="load")
+    except (ImportError, Exception):
+        html = utils.getHtml(url, site.url)
+    
     soup = utils.parse_html(html)
 
     # Find all video items tagged with preview handlers
@@ -143,7 +148,12 @@ def List(url):
 
 @site.register()
 def Models(url):
-    cathtml = utils.getHtml(url, site.url)
+    try:
+        from tests.utils.playwright_helper import fetch_with_playwright
+        cathtml = fetch_with_playwright(url, wait_for="load")
+    except (ImportError, Exception):
+        cathtml = utils.getHtml(url, site.url)
+    
     soup = utils.parse_html(cathtml)
 
     # Find all list items with model info
@@ -214,7 +224,12 @@ def Models(url):
 
 @site.register()
 def Categories(url):
-    html = utils.getHtml(site.url + "en/")
+    try:
+        from tests.utils.playwright_helper import fetch_with_playwright
+        html = fetch_with_playwright(site.url + "en/", wait_for="load")
+    except (ImportError, Exception):
+        html = utils.getHtml(site.url + "en/")
+    
     soup = utils.parse_html(html)
 
     # Find the span section with x-show attribute matching the category
@@ -266,7 +281,23 @@ def Search(url, keyword=None):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    video_page = utils.getHtml(url, site.url)
+    
+    # Try fetching with Playwright if available (for dev/testing)
+    try:
+        from tests.utils.playwright_helper import fetch_with_playwright_and_network
+        vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
+        html, requests = fetch_with_playwright_and_network(url, wait_for="load")
+        
+        # Look for playlist.m3u8 in network requests
+        for req in requests:
+            if "playlist.m3u8" in req["url"] or "video.m3u8" in req["url"]:
+                vp.play_from_direct_link(req["url"] + "|Referer=" + site.url)
+                return
+                
+        video_page = html
+    except (ImportError, Exception) as e:
+        utils.log("MissAV Playvid: Playwright fallback unavailable or failed: {}".format(e))
+        video_page = utils.getHtml(url, site.url)
 
     packed = re.compile(
         r"(eval\(function\(p,a,c,k,e,d\)[^\n]+)", re.DOTALL | re.IGNORECASE

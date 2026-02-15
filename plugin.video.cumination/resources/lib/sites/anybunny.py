@@ -83,7 +83,12 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+    try:
+        from tests.utils.playwright_helper import fetch_with_playwright
+        listhtml = fetch_with_playwright(url, wait_for="load")
+    except (ImportError, Exception):
+        listhtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+    
     if not listhtml:
         utils.kodilog("anybunny List: Failed to fetch page")
         utils.eod()
@@ -132,12 +137,33 @@ def List(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download, direct_regex=r'source src=["\']([^"\']+)["\']')
+    
+    # Try Playwright sniffer with the specific player selector
+    try:
+        from tests.utils.playwright_helper import sniff_video_url
+        # The selector from codegen: pjsdiv:nth-child(8) > pjsdiv > pjsdiv
+        # We'll use a broader pjsdiv selector to catch variations
+        play_selectors = ["pjsdiv", "video", ".play-button", "button.vjs-big-play-button"]
+        vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
+        
+        video_url = sniff_video_url(url, play_selectors=play_selectors)
+        if video_url:
+            vp.play_from_direct_link(video_url)
+            return
+    except (ImportError, Exception):
+        pass
+
     vp.play_from_site_link(url)
 
 
 @site.register()
 def Categories(url):
-    cathtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+    try:
+        from tests.utils.playwright_helper import fetch_with_playwright
+        cathtml = fetch_with_playwright(url, wait_for="load")
+    except (ImportError, Exception):
+        cathtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+    
     if not cathtml:
         utils.kodilog("anybunny Categories: Failed to fetch page")
         utils.eod()
@@ -181,7 +207,12 @@ def Categories(url):
 
 @site.register()
 def Categories2(url):
-    cathtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+    try:
+        from tests.utils.playwright_helper import fetch_with_playwright
+        cathtml = fetch_with_playwright(url, wait_for="load")
+    except (ImportError, Exception):
+        cathtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+    
     if not cathtml:
         utils.kodilog("anybunny Categories2: Failed to fetch page")
         utils.eod()

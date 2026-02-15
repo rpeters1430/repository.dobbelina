@@ -263,6 +263,20 @@ def Search(url, keyword=None):
 @site.register()
 def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download)
+    
+    # Try Playwright sniffer first
+    try:
+        from tests.utils.playwright_helper import fetch_with_playwright_and_network
+        vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
+        _, requests = fetch_with_playwright_and_network(url, wait_for="load")
+        for req in requests:
+            if any(ext in req["url"].lower() for ext in [".mp4", ".m3u8"]):
+                if not any(x in req["url"].lower() for x in ["/thumbs/", "/images/"]):
+                    vp.play_from_direct_link(req["url"])
+                    return
+    except (ImportError, Exception):
+        pass
+
     # More robust video ID extraction
     videoid_match = re.search(r"/video/(\d+)", url)
     if not videoid_match:
@@ -286,16 +300,25 @@ def Play(url, name, download=None):
     hdr = utils.base_hdrs.copy()
     hdr["accept"] = "application/json, text/javascript, */*; q=0.01"
     jsondata = utils.getHtml(jsonurl, url, headers=hdr)
-    data = json.loads(jsondata)
+    if not jsondata:
+        utils.notify("Error", "Could not load player config")
+        return
+
+    try:
+        data = json.loads(jsondata)
+    except Exception:
+        utils.notify("Error", "Failed to parse player config")
+        return
     
     srcs = {}
+    files = {}
     if isinstance(data, dict):
         files = data.get("files", {})
     elif isinstance(data, list) and len(data) > 0:
         # If it's a list, the first item might contain the files
-        files = data[0].get("files", {}) if isinstance(data[0], dict) else {}
-    else:
-        files = {}
+        item = data[0]
+        if isinstance(item, dict):
+            files = item.get("files", {})
 
     if isinstance(files, dict):
         for v, link in files.items():

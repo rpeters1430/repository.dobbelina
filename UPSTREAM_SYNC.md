@@ -79,6 +79,7 @@ The following upstream commits are regex-based fixes for sites that have been mi
 
 | Upstream Hash | Message | Reason |
 |---------------|---------|--------|
+| `68e4ef97` | pornkai - fixes #1760 | Fork has BeautifulSoup migration |
 | `f3d48c1b` | xhmster playback | Fork has BeautifulSoup migration |
 | `1721e034` | terebon - fix playback | Fork has BeautifulSoup migration |
 | `d47192d5` | camsoda #1685 | Fork has BeautifulSoup migration |

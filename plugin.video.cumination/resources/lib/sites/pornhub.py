@@ -366,6 +366,32 @@ def Categories(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
+    vp.progress.update(25, "[CR]Loading video page[CR]")
+    
+    # Try Playwright sniffer first to skip ads and age gate
+    try:
+        from tests.utils.playwright_helper import sniff_video_url
+        vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
+        
+        # Selectors from user provided script
+        # 1. Age Gate: "I am 18 or older - Enter"
+        # 2. Skip Ad: "Skip Ad"
+        play_selectors = [
+            'button:has-text("I am 18 or older")',
+            'button:has-text("Enter")',
+            'div:has-text("Skip Ad")',
+            '.skip-ad',
+            'video'
+        ]
+        
+        video_url = sniff_video_url(url, play_selectors=play_selectors)
+        if video_url:
+            utils.kodilog("pornhub: Playwright found stream: {}".format(video_url[:100]))
+            vp.play_from_direct_link(video_url)
+            return
+    except (ImportError, Exception) as e:
+        utils.kodilog("pornhub: Playwright sniffer failed: {}".format(e))
+
     vp.play_from_link_to_resolve(url)
 
 
