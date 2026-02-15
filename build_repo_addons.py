@@ -81,6 +81,14 @@ def build_zip(addon_dir: Path, out_dir: Path) -> Path:
             if "\\" in info.filename:
                 raise RuntimeError(f"Backslash found in zip entry: {info.filename}")
 
+    # Copy metadata assets to the output directory (Kodi repo browser expects them there)
+    for asset in ["icon.png", "fanart.jpg", "changelog.txt"]:
+        asset_path = addon_dir / asset
+        dest_path = addon_out_dir / asset
+        if asset_path.is_file() and asset_path.resolve() != dest_path.resolve():
+            import shutil
+            shutil.copy2(asset_path, dest_path)
+
     return zip_path
 
 

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <addons>
-<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.224">
+<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.236">
 <requires>
 <import addon="xbmc.python" version="3.0.0" />
 <import addon="script.module.six" />
@@ -90,7 +90,7 @@ Metadata refreshed for Matrix/Nexus/Omega compatibility
 <description lang="en">Use this addon to play F4m v1 and v2 streams</description>
 </extension>
 </addon>
-<addon id="script.module.resolveurl" name="ResolveURL" version="5.1.192" provider-name="gujal">
+<addon id="script.module.resolveurl" name="ResolveURL" version="5.1.193" provider-name="gujal">
 <requires>
 <import addon="script.module.six" />
 <import addon="script.module.kodi-six" />
