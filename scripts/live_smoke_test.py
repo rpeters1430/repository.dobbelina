@@ -321,17 +321,20 @@ class TimeoutCtx:
     def __init__(self, seconds: int):
         self.seconds = seconds
         self._old_handler: Any = None
+        self._has_sigalrm = hasattr(signal, "SIGALRM")
 
     def _handler(self, signum, frame):
         raise StepTimeout(f"Timed out after {self.seconds}s")
 
     def __enter__(self):
-        self._old_handler = signal.signal(signal.SIGALRM, self._handler)
-        signal.alarm(self.seconds)
+        if self._has_sigalrm:
+            self._old_handler = signal.signal(signal.SIGALRM, self._handler)
+            signal.alarm(self.seconds)
 
     def __exit__(self, exc_type, exc, tb):
-        signal.alarm(0)
-        signal.signal(signal.SIGALRM, self._old_handler)
+        if self._has_sigalrm:
+            signal.alarm(0)
+            signal.signal(signal.SIGALRM, self._old_handler)
         return False
 
 

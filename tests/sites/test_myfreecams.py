@@ -46,7 +46,7 @@ def test_tags_parses_items(monkeypatch):
     monkeypatch.setattr(
         myfreecams.site,
         "add_dir",
-        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+        lambda name, url, mode, iconimage=None, page=None, **kwargs: dirs.append(
             {"name": name, "url": url}
         ),
     )
