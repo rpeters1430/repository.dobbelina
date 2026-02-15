@@ -30,9 +30,27 @@ class _Recorder:
 def test_list_populates_download_links(monkeypatch):
     recorder = _Recorder()
 
-    fixture_mapped_get_html(
+    get_html_fn = fixture_mapped_get_html(
         monkeypatch, anybunny, {"new/?p=1": "sites/anybunny/listing.html"}
     )
+
+    # Mock fetch_with_playwright to raise ImportError
+    import sys
+    import builtins
+    original_import = builtins.__import__
+
+    def mock_import(name, *args, **kwargs):
+        if name == 'tests.utils.playwright_helper':
+            raise ImportError("Mocked ImportError for testing")
+        return original_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, '__import__', mock_import)
+
+    # Also mock get_html_with_cloudflare_retry to return the fixture
+    def mock_cloudflare_html(url, *args, **kwargs):
+        return get_html_fn(url), None
+
+    monkeypatch.setattr(anybunny.utils, "get_html_with_cloudflare_retry", mock_cloudflare_html)
     monkeypatch.setattr(anybunny.site, "add_download_link", recorder.add_download)
     monkeypatch.setattr(anybunny.site, "add_dir", recorder.add_dir)
     monkeypatch.setattr(anybunny.utils, "eod", lambda *args, **kwargs: None)
@@ -66,9 +84,27 @@ def test_list_populates_download_links(monkeypatch):
 def test_search_results_have_no_pagination(monkeypatch):
     recorder = _Recorder()
 
-    fixture_mapped_get_html(
+    get_html_fn = fixture_mapped_get_html(
         monkeypatch, anybunny, {"search": "sites/anybunny/search.html"}
     )
+
+    # Mock fetch_with_playwright to raise ImportError
+    import sys
+    import builtins
+    original_import = builtins.__import__
+
+    def mock_import(name, *args, **kwargs):
+        if name == 'tests.utils.playwright_helper':
+            raise ImportError("Mocked ImportError for testing")
+        return original_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, '__import__', mock_import)
+
+    # Also mock get_html_with_cloudflare_retry to return the fixture
+    def mock_cloudflare_html(url, *args, **kwargs):
+        return get_html_fn(url), None
+
+    monkeypatch.setattr(anybunny.utils, "get_html_with_cloudflare_retry", mock_cloudflare_html)
     monkeypatch.setattr(anybunny.site, "add_download_link", recorder.add_download)
     monkeypatch.setattr(anybunny.site, "add_dir", recorder.add_dir)
     monkeypatch.setattr(anybunny.utils, "eod", lambda *args, **kwargs: None)
@@ -93,9 +129,61 @@ def test_playvid_uses_direct_regex(monkeypatch):
         def play_from_site_link(self, url):
             captured["site_url"] = url
 
+        def play_from_direct_link(self, url):
+            captured["direct_url"] = url
+
     monkeypatch.setattr(anybunny.utils, "VideoPlayer", _DummyVP)
+
+    # Mock sniff_video_url to return None (simulating Playwright not available or failed)
+    def mock_sniff(*args, **kwargs):
+        return None
+
+    # Patch the import to avoid ImportError
+    import sys
+    mock_module = type(sys)('tests.utils.playwright_helper')
+    mock_module.sniff_video_url = mock_sniff
+    sys.modules['tests.utils.playwright_helper'] = mock_module
 
     anybunny.Playvid("http://anybunny.org/videos/video-123", "Example")
 
     assert captured["site_url"] == "http://anybunny.org/videos/video-123"
-    assert captured["direct_regex"] == r"source src='([^']+)'"
+    assert captured["direct_regex"] == r'source src=["\']([^"\']+)["\']'
+
+
+def test_playvid_with_playwright_sniffing(monkeypatch):
+    """Test that Playvid uses Playwright sniffing when available."""
+    captured = {}
+
+    class _DummyVP:
+        def __init__(self, name, download=False, direct_regex=None, **kwargs):
+            captured["direct_regex"] = direct_regex
+            self.progress = type("P", (), {"update": lambda *a, **k: None})()
+
+        def play_from_site_link(self, url):
+            captured["site_url"] = url
+
+        def play_from_direct_link(self, url):
+            captured["direct_url"] = url
+
+    monkeypatch.setattr(anybunny.utils, "VideoPlayer", _DummyVP)
+
+    # Mock sniff_video_url to return a video URL
+    def mock_sniff(url, play_selectors=None, **kwargs):
+        captured["sniff_url"] = url
+        captured["play_selectors"] = play_selectors
+        return "https://stream1.anybunny.org/m4vid/123/video.mp4"
+
+    # Patch the import
+    import sys
+    mock_module = type(sys)('tests.utils.playwright_helper')
+    mock_module.sniff_video_url = mock_sniff
+    sys.modules['tests.utils.playwright_helper'] = mock_module
+
+    anybunny.Playvid("http://anybunny.org/videos/video-123", "Example")
+
+    # Should use Playwright sniffing
+    assert captured["sniff_url"] == "http://anybunny.org/videos/video-123"
+    assert captured["play_selectors"] == ["pjsdiv", "video", ".play-button", "button.vjs-big-play-button"]
+    assert captured["direct_url"] == "https://stream1.anybunny.org/m4vid/123/video.mp4"
+    # Should not fall back to site link
+    assert "site_url" not in captured

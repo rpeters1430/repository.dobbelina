@@ -18,6 +18,24 @@ Usage:
 from playwright.sync_api import sync_playwright
 from typing import Optional, Dict
 
+# Try to import stealth - it's optional but recommended
+HAS_STEALTH = False
+stealth_sync = None
+
+try:
+    from playwright_stealth import Stealth
+    stealth_obj = Stealth()
+    stealth_sync = stealth_obj.apply_stealth_sync
+    HAS_STEALTH = True
+except ImportError:
+    pass
+
+# Fallback if stealth not available
+if not HAS_STEALTH:
+    def stealth_sync(page):
+        """Dummy stealth function if playwright-stealth not available."""
+        pass
+
 
 def fetch_with_playwright(
     url: str,
@@ -63,6 +81,7 @@ def fetch_with_playwright(
             )
 
         page = context.new_page()
+        stealth_sync(page)
 
         try:
             # Navigate to the URL
@@ -106,6 +125,7 @@ def take_screenshot(
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
+        stealth_sync(page)
 
         try:
             page.goto(url, wait_until="networkidle")
@@ -142,6 +162,7 @@ def fetch_with_playwright_and_network(
             context.set_extra_http_headers(headers)
 
         page = context.new_page()
+        stealth_sync(page)
 
         def handle_request(request):
             requests.append({"url": request.url, "headers": request.headers})
@@ -166,10 +187,22 @@ def sniff_video_url(
     url: str,
     play_selectors: Optional[list] = None,
     timeout: int = 30000,
+    wait_after_click: int = 3000,
+    debug: bool = False,
 ) -> Optional[str]:
     """
-    Navigate to a URL, perform optional clicks (to trigger players), 
+    Navigate to a URL, perform optional clicks (to trigger players),
     and sniff the network for the first video stream URL.
+
+    Args:
+        url: The video page URL
+        play_selectors: List of CSS selectors to try clicking (play buttons, player containers)
+        timeout: Navigation timeout in milliseconds
+        wait_after_click: How long to wait after clicking for video to load (ms)
+        debug: Print debug information
+
+    Returns:
+        The first video URL found, or None
     """
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -177,50 +210,101 @@ def sniff_video_url(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
         )
         page = context.new_page()
-        
+        stealth_sync(page)
+
         found_url = [None]
-        
+        all_video_urls = []
+
         def handle_response(response):
-            if found_url[0]:
-                return
             r_url = response.url.lower()
-            if any(ext in r_url for ext in [".mp4", ".m3u8"]) and not any(x in r_url for x in ["/thumbs/", "/images/", ".jpg", ".png"]):
-                found_url[0] = response.url
+            if any(ext in r_url for ext in [".mp4", ".m3u8"]) and not any(x in r_url for x in ["/thumbs/", "/images/", ".jpg", ".png", "/thumb/", "/image/"]):
+                if response.url not in all_video_urls:
+                    all_video_urls.append(response.url)
+                    if not found_url[0]:
+                        found_url[0] = response.url
+                        if debug:
+                            print(f"[sniff] Found video URL: {response.url}")
 
         page.on("response", handle_response)
-        
+
         try:
+            if debug:
+                print(f"[sniff] Navigating to: {url}")
             page.goto(url, wait_until="load", timeout=timeout)
-            page.wait_for_timeout(2000) # Wait for JS to settle
-            
+            page.wait_for_timeout(3000)  # Wait for JS to settle and lazy-loaded scripts
+
             if play_selectors:
+                clicked = False
                 for selector in play_selectors:
+                    if found_url[0]:
+                        break
+
                     try:
-                        # Check main page
-                        target = page.locator(selector).first
-                        if target.is_visible(timeout=2000):
-                            target.click()
-                            break
-                        
-                        # Check all iframes
-                        for frame in page.frames:
-                            if frame == page.main_frame:
+                        # Try main page first
+                        elements = page.locator(selector)
+                        count = elements.count()
+
+                        if debug:
+                            print(f"[sniff] Trying selector '{selector}': found {count} elements")
+
+                        for i in range(count):
+                            try:
+                                elem = elements.nth(i)
+                                if elem.is_visible(timeout=2000):
+                                    if debug:
+                                        print(f"[sniff] Clicking element {i} ({selector})...")
+                                    elem.click(timeout=5000)
+                                    clicked = True
+                                    page.wait_for_timeout(wait_after_click)
+                                    if found_url[0]:
+                                        break
+                            except Exception as e:
+                                if debug:
+                                    print(f"[sniff] Could not click element {i}: {e}")
                                 continue
-                            target = frame.locator(selector).first
-                            if target.is_visible(timeout=1000):
-                                target.click()
-                                break
-                        if found_url[0]: break
-                    except:
+
+                        if clicked and found_url[0]:
+                            break
+
+                        # Try iframes if main page didn't work
+                        if not clicked:
+                            for frame_idx, frame in enumerate(page.frames):
+                                if frame == page.main_frame:
+                                    continue
+                                try:
+                                    target = frame.locator(selector).first
+                                    if target.is_visible(timeout=1000):
+                                        if debug:
+                                            print(f"[sniff] Clicking in iframe {frame_idx}...")
+                                        target.click()
+                                        clicked = True
+                                        page.wait_for_timeout(wait_after_click)
+                                        break
+                                except:
+                                    continue
+
+                        if found_url[0]:
+                            break
+
+                    except Exception as e:
+                        if debug:
+                            print(f"[sniff] Error with selector '{selector}': {e}")
                         continue
-            
+
             # Wait a bit more for the request to fire
-            for _ in range(10):
-                if found_url[0]: break
+            max_wait_loops = 20
+            for i in range(max_wait_loops):
+                if found_url[0]:
+                    break
                 page.wait_for_timeout(500)
-                
+
+            if debug:
+                print(f"[sniff] Total video URLs found: {len(all_video_urls)}")
+                for vid_url in all_video_urls:
+                    print(f"[sniff]   - {vid_url}")
+
             return found_url[0]
-            
+
         finally:
             browser.close()
 

@@ -114,7 +114,7 @@ def List(url):
                 fanart=img,
             )
         except Exception as e:
-            utils.log("missav List: Error processing video - {}".format(e))
+            utils.kodilog("missav List: Error processing video - {}".format(e))
             continue
 
     # Pagination - find "next" link and last page number
@@ -192,7 +192,7 @@ def Models(url):
 
             site.add_dir(name, caturl, "List", img)
         except Exception as e:
-            utils.log("missav Models: Error processing model - {}".format(e))
+            utils.kodilog("missav Models: Error processing model - {}".format(e))
             continue
 
     # Pagination - find "next" link and last page number
@@ -262,7 +262,7 @@ def Categories(url):
 
                 site.add_dir(name, caturl, "List", "")
             except Exception as e:
-                utils.log("missav Categories: Error processing category - {}".format(e))
+                utils.kodilog("missav Categories: Error processing category - {}".format(e))
                 continue
 
     utils.eod()
@@ -296,7 +296,7 @@ def Playvid(url, name, download=None):
                 
         video_page = html
     except (ImportError, Exception) as e:
-        utils.log("MissAV Playvid: Playwright fallback unavailable or failed: {}".format(e))
+        utils.kodilog("MissAV Playvid: Playwright fallback unavailable or failed: {}".format(e))
         video_page = utils.getHtml(url, site.url)
 
     packed = re.compile(

@@ -64,7 +64,8 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir("[COLOR hotpink]Top videos[/COLOR]", site.url + "top/", "List", "", "")
+    site.add_dir("[COLOR hotpink]New videos[/COLOR]", site.url + "new/", "List", site.img_cat)
+    site.add_dir("[COLOR hotpink]Top videos[/COLOR]", site.url + "top/", "List", site.img_cat)
     site.add_dir(
         "[COLOR hotpink]Categories - images[/COLOR]",
         site.url,
@@ -77,7 +78,6 @@ def Main():
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]", site.url + "new/", "Search", site.img_search
     )
-    List(site.url + "new/?p=1")
     utils.eod()
 
 
@@ -141,16 +141,22 @@ def Playvid(url, name, download=None):
     # Try Playwright sniffer with the specific player selector
     try:
         from tests.utils.playwright_helper import sniff_video_url
-        # The selector from codegen: pjsdiv:nth-child(8) > pjsdiv > pjsdiv
-        # We'll use a broader pjsdiv selector to catch variations
+        # Anybunny uses a custom pjsdiv player element
+        # Try pjsdiv first, then fallback to standard video elements
         play_selectors = ["pjsdiv", "video", ".play-button", "button.vjs-big-play-button"]
         vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
-        
-        video_url = sniff_video_url(url, play_selectors=play_selectors)
+
+        video_url = sniff_video_url(
+            url,
+            play_selectors=play_selectors,
+            wait_after_click=5000,  # Wait 5s after clicking
+            timeout=60000
+        )
         if video_url:
             vp.play_from_direct_link(video_url)
             return
-    except (ImportError, Exception):
+    except (ImportError, Exception) as e:
+        utils.kodilog(f"anybunny Playvid: Playwright sniffing failed: {e}")
         pass
 
     vp.play_from_site_link(url)

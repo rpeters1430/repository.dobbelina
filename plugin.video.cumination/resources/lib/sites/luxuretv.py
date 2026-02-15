@@ -89,7 +89,7 @@ def List(url):
 
             site.add_download_link(name, video, "Play", img, name, duration=duration)
         except Exception as e:
-            utils.log("luxuretv List: Error processing video - {}".format(e))
+            utils.kodilog("luxuretv List: Error processing video - {}".format(e))
             continue
 
     # Pagination - find "Suivante/Next/Siguiente" link
@@ -152,7 +152,7 @@ def Cat(url):
 
             site.add_dir(name, catpage, "List", img)
         except Exception as e:
-            utils.log("luxuretv Cat: Error processing category - {}".format(e))
+            utils.kodilog("luxuretv Cat: Error processing category - {}".format(e))
             continue
 
     utils.eod()
