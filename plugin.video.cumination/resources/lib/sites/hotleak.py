@@ -25,7 +25,7 @@ from six.moves import urllib_parse
 
 site = AdultSite(
     "hotleak",
-    "[COLOR lightblue]Hotleak[/COLOR]",
+    "[COLOR hotpink]Hotleak[/COLOR]",
     "https://hotleak.vip/",
     "hotleak.png",
     "hotleak",
@@ -34,8 +34,8 @@ site = AdultSite(
 
 @site.register(default_mode=True)
 def Main(url):
-    site.add_dir("[COLOR lightblue]Videos[/COLOR]", site.url + "videos", "List", "")
-    site.add_dir("[COLOR lightblue]Search[/COLOR]", site.url + "videos", "Search", site.img_search)
+    site.add_dir("[COLOR hotpink]Videos[/COLOR]", site.url + "videos", "List", "")
+    site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "videos", "Search", site.img_search)
     utils.eod()
 
 
@@ -152,7 +152,9 @@ def Playvid(url, name, download=None):
 
                     if video_url:
                         utils.kodilog("hotleak: Decrypted URL: {}".format(video_url))
-                        vp.play_from_direct_link(video_url + "|Referer=" + site.url)
+                        # M3U8 requires both Referer and User-Agent headers
+                        video_url_with_headers = video_url + "|Referer=" + site.url + "&User-Agent=" + utils.USER_AGENT
+                        vp.play_from_direct_link(video_url_with_headers)
                         return
 
         except (json.JSONDecodeError, KeyError, IndexError) as e:
