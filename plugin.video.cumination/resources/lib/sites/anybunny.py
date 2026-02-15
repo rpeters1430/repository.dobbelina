@@ -83,7 +83,7 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, site.url)
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
     if not listhtml:
         utils.kodilog("anybunny List: Failed to fetch page")
         utils.eod()
@@ -131,7 +131,7 @@ def List(url):
 
 @site.register()
 def Playvid(url, name, download=None):
-    vp = utils.VideoPlayer(name, download, direct_regex=r"source src='([^']+)'")
+    vp = utils.VideoPlayer(name, download, direct_regex=r'source src=["\']([^"\']+)["\']')
     vp.play_from_site_link(url)
 
 

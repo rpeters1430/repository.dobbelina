@@ -104,13 +104,26 @@ def NLVIDEOLIST(url):
             site.add_download_link(
                 name, surl, "NLPLAYVID", img, name, duration=duration
             )
+        
+        # Robust pagination
         nextp = soup.select_one(".pagination .current ~ a")
+        if not nextp:
+            # Fallback to general next link
+            nextp = soup.select_one('.pagination a[href]:-soup-contains("Next"), .pagination a[href]:-soup-contains(">")')
+            
         if nextp:
             next_url = utils.safe_get_attr(nextp, "href")
             next_url = (
                 next_url if next_url.startswith("http") else urljoin(siteurl, next_url)
             )
-            page_nr = "".join([c for c in next_url if c.isdigit()])
+            # Try to get page number from text or url
+            page_text = utils.safe_get_text(nextp)
+            if page_text.isdigit():
+                page_nr = page_text
+            else:
+                match = re.search(r"page/(\d+)", next_url) or re.search(r"p=(\d+)", next_url)
+                page_nr = match.group(1) if match else "Next"
+                
             site.add_dir(
                 "Next Page ({})".format(page_nr), next_url, "NLVIDEOLIST", site.img_next
             )

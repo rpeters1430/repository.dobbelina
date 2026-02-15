@@ -92,6 +92,8 @@ def install_kodi_stubs() -> None:
                 "couples_keywords": "",
                 "trans_keywords": "",
                 "sortxt": "0",
+                "fs_enable": "true",
+                "fs_host": "http://localhost:8191/v1",
             }
 
         def getAddonInfo(self, key):

@@ -152,7 +152,8 @@ def Playvid(url, name):
     listhtml = utils._getHtml(url, site.url)
     vurls = json.loads(listhtml).get("videoTechnologies")
     if vurls:
-        vurl = vurls.get("fmp4-hls")
+        # Try multiple possible keys for HLS streams
+        vurl = vurls.get("fmp4-hls") or vurls.get("hls") or vurls.get("hls-fmp4")
         if vurl:
             vp.play_from_direct_link(vurl + "|User-Agent=iPad")
             return

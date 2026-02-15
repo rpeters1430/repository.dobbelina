@@ -180,9 +180,18 @@ def Search(url, keyword=None):
 
 @site.register()
 def Playvid(url, name, download=None):
-    vp = utils.VideoPlayer(name, download)
+    vp = utils.VideoPlayer(
+        name, download, direct_regex=r'source src=["\']([^"\']+)["\']'
+    )
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videohtml = utils.getHtml(url)
+    
+    # Try finding the video source directly in the main page first
+    match = re.search(r'<source\s+[^>]*src=["\']([^"\']+)["\']', videohtml, re.IGNORECASE)
+    if match:
+        vp.play_from_direct_link(match.group(1))
+        return
+
     soup = utils.parse_html(videohtml)
     iframe = soup.select_one('iframe.embed-responsive-item')
     if not iframe:

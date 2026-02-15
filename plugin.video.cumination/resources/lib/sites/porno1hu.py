@@ -134,6 +134,25 @@ def List(url, page=1):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
+    
+    # Try direct API first if it's a standard video URL
+    video_id_match = re.search(r"/szexvideo/(\d+)/", url)
+    if video_id_match:
+        video_id = video_id_match.group(1)
+        api_url = "https://porno1.hu/api/videofile.php?video_id={}&lifetime=8640000".format(video_id)
+        try:
+            jsondata = utils.getHtml(api_url, url)
+            r = re.search('video_url":"([^"]+)', jsondata)
+            if r:
+                from resources.lib.decrypters import txxx
+                videourl = txxx.Tdecode(r.group(1))
+                if not videourl.startswith("http"):
+                    videourl = "https://porno1.hu" + videourl
+                vp.play_from_direct_link(videourl + "|referer=https://porno1.hu/")
+                return
+        except Exception:
+            pass
+
     html = utils.getHtml(url, site.url)
     soup = utils.parse_html(html)
     
@@ -151,34 +170,32 @@ def Playvid(url, name, download=None):
         return
 
     embedhtml = utils.getHtml(embedurl, url)
-    license_match = re.search(r"license_code:\s*'([^']+)", embedhtml, re.IGNORECASE)
+    license_match = re.search(r"license_code:\s*['\"]([^\"']+)['\"]", embedhtml, re.IGNORECASE)
     if not license_match:
         vp.play_from_html(embedhtml)
         return
         
     license_code = license_match.group(1)
     sources = {}
-    patterns = [
-        (r"video_url:\s*['\"]?([^'\",\s]+)['\"]?", "00"),
-        (r"video_alt_url:\s*['\"]?([^'\",\s]+)['\"]?", "720p"),
-        (r"video_alt_url2:\s*['\"]?([^'\",\s]+)['\"]?", "1080p"),
-        (r"video_url:\s*'([^']+)',\s*postfix:\s*'\.mp4',\s*(preview)", None),
-    ]
-    for pattern, def_qual in patterns:
-        if def_qual:
-            items = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(embedhtml)
-            for surl in items:
-                surl = kvs_decode(surl, license_code)
-                if surl:
-                    sources[def_qual] = surl
-        else:
-            items = re.compile(pattern, re.DOTALL | re.IGNORECASE).findall(embedhtml)
-            for surl, qual in items:
-                qual = "00" if qual == "preview" else qual
+    # Find all kvs player vars with video urls
+    items = re.findall(r"video_url[23]*:\s*['\"]([^\"']+)['\"]", embedhtml)
+    # Also find labels
+    labels = re.findall(r"video_url[23]*_text:\s*['\"]([^\"']+)['\"]", embedhtml)
+    
+    if items:
+        for i, surl in enumerate(items):
+            surl = kvs_decode(surl, license_code)
+            if surl:
+                qual = labels[i] if i < len(labels) else "HD"
                 qual = qual.replace(" HD", "")
-                surl = kvs_decode(surl, license_code)
-                if surl:
-                    sources[qual] = surl
+                sources[qual] = surl
+    
+    # Try alternate pattern
+    if not sources:
+        matches = re.findall(r"video_url:\s*'([^']+)',\s*postfix:\s*'\.mp4',\s*(preview)", embedhtml)
+        for surl, qual in matches:
+            surl = kvs_decode(surl, license_code)
+            sources["480p"] = surl
 
     if sources:
         videourl = utils.selector(

@@ -129,7 +129,14 @@ def Playvid(url, name, download=None):
     sources = {}
     
     # Try to find license code
-    license_match = re.search(r"license_code:\s*'([^']+)", html, re.IGNORECASE)
+    license_match = re.search(r"license_code:\s*['\"]([^\"']+)['\"]", html, re.IGNORECASE)
+    
+    # Try finding the video source directly in the page first
+    source_match = re.search(r'<source\s+[^>]*src=["\']([^"\']+)["\']', html, re.IGNORECASE)
+    if source_match and not license_match:
+        vp.play_from_direct_link(source_match.group(1) + "|referer=" + url)
+        return
+
     if not license_match:
         # Fallback to general html scanner if KVS pattern not found
         vp.play_from_html(html)

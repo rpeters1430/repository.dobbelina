@@ -263,7 +263,20 @@ def Search(url, keyword=None):
 @site.register()
 def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download)
-    videoid = url.replace(site.url, "").split("/")[0]
+    # More robust video ID extraction
+    videoid_match = re.search(r"/video/(\d+)", url)
+    if not videoid_match:
+        # Try finding it in the page if not in URL
+        vpage = utils.getHtml(url, site.url)
+        videoid_match = re.search(r'video_id:\s*(\d+)', vpage)
+        if not videoid_match:
+            videoid_match = re.search(r'vid=(\d+)', url)
+            
+    if not videoid_match:
+        utils.notify("Error", "Could not find video ID")
+        return
+        
+    videoid = videoid_match.group(1)
     jsonurl = (
         site.url
         + "player_config_json/?vid={}&aid=0&domain_id=0&embed=0&ref=null&check_speed=0".format(
@@ -274,9 +287,16 @@ def Play(url, name, download=None):
     hdr["accept"] = "application/json, text/javascript, */*; q=0.01"
     jsondata = utils.getHtml(jsonurl, url, headers=hdr)
     data = json.loads(jsondata)
-    files = data.get("files", {})
-    srcs = {}
     
+    srcs = {}
+    if isinstance(data, dict):
+        files = data.get("files", {})
+    elif isinstance(data, list) and len(data) > 0:
+        # If it's a list, the first item might contain the files
+        files = data[0].get("files", {}) if isinstance(data[0], dict) else {}
+    else:
+        files = {}
+
     if isinstance(files, dict):
         for v, link in files.items():
             if link:

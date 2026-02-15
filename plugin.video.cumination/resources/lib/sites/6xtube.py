@@ -228,11 +228,18 @@ def Categories(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(
-        name, download, direct_regex=r'(?:src:|source src=)\s*"([^"]+)"'
+        name, download, direct_regex=r'(?:src:|source src=)\s*["\']([^"\']+)["\']'
     )
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
     videohtml = utils.getHtml(url, site.url, ignoreCertificateErrors=True)
+    
+    # Try finding the video source directly in the page first
+    source_match = re.search(r'<source\s+[^>]*src=["\']([^"\']+)["\']', videohtml, re.IGNORECASE)
+    if source_match:
+        vp.play_from_direct_link(source_match.group(1))
+        return
+
     match = re.compile(
         r'iframe scrolling="no"\s*src="([^"]+)"', re.IGNORECASE | re.DOTALL
     ).findall(videohtml)

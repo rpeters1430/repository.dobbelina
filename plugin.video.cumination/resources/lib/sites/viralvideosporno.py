@@ -107,9 +107,16 @@ def List(url):
 
 @site.register()
 def Playvid(url, name, download=None):
-    vp = utils.VideoPlayer(name, download)
+    vp = utils.VideoPlayer(name, download, direct_regex=r'source src=["\']([^"\']+)["\']')
     vp.progress.update(25, "[CR]Loading video page[CR]")
     phtml = utils.getHtml(url, site.url)
+    
+    # Try finding the video source directly in the page first
+    source_match = re.search(r'<source\s+[^>]*src=["\']([^"\']+)["\']', phtml, re.IGNORECASE)
+    if source_match:
+        vp.play_from_direct_link(source_match.group(1))
+        return
+
     soup = utils.parse_html(phtml)
 
     sources = []

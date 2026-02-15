@@ -36,7 +36,7 @@ def Main():
     site.add_dir("[COLOR hotpink]4K[/COLOR]", site.url + "4k/", "List", site.img_cat)
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]",
-        site.url + "en/search/{}/",
+        site.url + "en/search/videos/{}/",
         "Search",
         site.img_search,
     )

@@ -548,13 +548,31 @@ def Categories(url):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
+    
+    # Try direct API first if it's a standard video URL
+    video_id_match = re.search(r"/videos/(\d+)/", url)
+    if video_id_match:
+        video_id = video_id_match.group(1)
+        api_url = "https://www.whoreshub.com/api/videofile.php?video_id={}&lifetime=8640000".format(video_id)
+        try:
+            jsondata = utils.getHtml(api_url, url)
+            r = re.search('video_url":"([^"]+)', jsondata)
+            if r:
+                from resources.lib.decrypters import txxx
+                videourl = txxx.Tdecode(r.group(1))
+                if not videourl.startswith("http"):
+                    videourl = "https://www.whoreshub.com" + videourl
+                vp.play_from_direct_link(videourl + "|referer=https://www.whoreshub.com/")
+                return
+        except Exception:
+            pass
 
     hdr = dict(utils.base_hdrs)
     hdr["Cookie"] = get_cookies()
     videohtml = utils.getHtml(url, site.url, headers=hdr)
 
     match = re.compile(
-        r"video(?:_|_alt_)url\d*: '([^']+)'.+?video(?:_|_alt_)url\d*_text: '([^']+)'",
+        r"video(?:_|_alt_)url\d*:\s*['\"]([^\"']+)['\"].+?video(?:_|_alt_)url\d*_text:\s*['\"]([^\"']+)['\"]",
         re.DOTALL | re.IGNORECASE,
     ).findall(videohtml)
 
@@ -564,6 +582,12 @@ def Playvid(url, name, download=None):
             if "login" in video[0].lower():
                 continue
             sources[video[1]] = video[0]
+            
+    if not sources:
+        # Try finding direct source tags
+        matches = re.findall(r'<source\s+[^>]*src=["\']([^"\']+)["\'](?:[^>]*title=["\']([^"\']+)["\'])?', videohtml, re.IGNORECASE)
+        for src_url, label in matches:
+            sources[label or "HD"] = src_url
 
     utils.kodilog("whoreshub sources found: " + str(sources))
     vp.progress.update(75, "[CR]Video found[CR]")

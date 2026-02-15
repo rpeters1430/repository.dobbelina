@@ -69,8 +69,21 @@ def animeidhentai_list(url):
 
     for article in soup.select("article"):
         link = article.select_one("a.link-co[href]") or article.select_one("a[href]")
-        title = utils.safe_get_text(article.select_one(".link-co") or link, default="")
-        if not link or not title:
+        if not link:
+            continue
+            
+        # Try to find a better title than just the link text
+        title_tag = article.select_one(".title, h2, h3")
+        if title_tag:
+            title = utils.safe_get_text(title_tag, default="")
+        else:
+            title = utils.safe_get_text(link, default="")
+            
+        # If title is still just "play now" or similar, try link title attribute
+        if title.lower() in ["play now", "play"]:
+            title = utils.safe_get_attr(link, "title", default=title)
+            
+        if not title:
             continue
 
         thumbnail = utils.safe_get_attr(article.select_one("img"), "src", ["data-src"])
@@ -193,7 +206,18 @@ def animeidhentai_play(url, name, download=None):
         utils.notify("Oh oh", "Couldn't parse video page")
         return
 
-    iframe = soup.select_one("iframe[src]")
+    # Find the video iframe, skipping potential ad iframes
+    iframes = soup.select("iframe[src]")
+    iframe = None
+    for ifr in iframes:
+        src = utils.safe_get_attr(ifr, "src", default="").lower()
+        if any(x in src for x in ["nhplayer", "player", "embed", "video", "stream"]):
+            iframe = ifr
+            break
+            
+    if not iframe and iframes:
+        iframe = iframes[0]
+
     if iframe:
         videourl = utils.safe_get_attr(iframe, "src", default="")
         if "nhplayer.com" in videourl:

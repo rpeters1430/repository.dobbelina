@@ -126,7 +126,7 @@ def Playvid(url, name, download=None):
     sources = {}
     
     # Try finding the playlist JS variable
-    p = re.compile(r"window.playlist\s*=\s*([^;]+);", re.DOTALL | re.IGNORECASE).search(
+    p = re.compile(r"(?:window\.playlist|playlist)\s*=\s*(\{.*?\});", re.DOTALL | re.IGNORECASE).search(
         html
     )
     if p:
@@ -134,12 +134,18 @@ def Playvid(url, name, download=None):
             js = json.loads(p.group(1))
             src = js.get("sources", [])
             for x in src:
-                label = x.get("label", "Unknown")
+                label = str(x.get("label", "Unknown"))
                 file_url = x.get("file")
                 if file_url:
                     sources[label] = file_url
         except Exception as e:
             utils.kodilog("noodlemagazine: Error parsing playlist JSON: {}".format(e))
+
+    # Try finding direct source tags with regex as well
+    if not sources:
+        matches = re.findall(r'<source\s+[^>]*src=["\']([^"\']+)["\'](?:[^>]*label=["\']([^"\']+)["\'])?', html, re.IGNORECASE)
+        for src_url, label in matches:
+            sources[label or "HD"] = src_url
 
     # Fallback to general HTML source searching if playlist JS not found or failed
     if not sources:

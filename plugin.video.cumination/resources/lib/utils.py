@@ -1109,7 +1109,7 @@ def _getHtml(
                             return flaresolve(url, referer)
                         except RuntimeError as fs_error:
                             # FlareSolverr failed with a clear error message
-                            notify("FlareSolverr Failed", str(fs_error), time=8000)
+                            notify("FlareSolverr Failed", str(fs_error), duration=8000)
                             raise
                         except Exception as fs_error:
                             # Unexpected error from FlareSolverr

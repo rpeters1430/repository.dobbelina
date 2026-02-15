@@ -197,8 +197,19 @@ def BGPlayvid(url, name, download=None):
     playall = utils.addon.getSetting("paradisehill") == "true"
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    listjson = base64.b64decode(url)
-    jdata = json.loads(listjson.decode('utf-8', 'ignore'))
+    try:
+        listjson = base64.b64decode(url)
+        # Try different decodings to be safe
+        try:
+            decoded_json = listjson.decode('utf-8')
+        except UnicodeDecodeError:
+            decoded_json = listjson.decode('latin-1', 'ignore')
+        jdata = json.loads(decoded_json)
+    except Exception as e:
+        utils.kodilog("beeg BGPlayvid: JSON decode error - {}".format(e))
+        vp.progress.close()
+        utils.notify("Error", "Unable to parse video data")
+        return
 
     fc_facts = jdata["fc_facts"]
     if len(fc_facts) == 1:

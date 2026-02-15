@@ -73,8 +73,8 @@ def List(url):
         utils.eod()
         return
 
-    for item in soup.select(".thumb-main-titre"):
-        link = item.select_one("a[href][title]")
+    for item in soup.select(".thumb-main-titre, .thumb-block"):
+        link = item.select_one("a[href][title]") or item.find_parent("a") or item.select_one("a")
         if not link:
             continue
 
@@ -84,11 +84,12 @@ def List(url):
         videopage = urllib_parse.urljoin(site.url[:-3], videourl)
         videopage = videopage.replace(" ", "%20")
 
-        name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+        name = utils.cleantext(utils.safe_get_attr(link, "title", default=utils.safe_get_text(link)))
         if not name:
             continue
 
-        img_tag = link.select_one("img")
+        # Look for img inside link or nearby
+        img_tag = item.select_one("img") or link.select_one("img")
         img = utils.get_thumbnail(img_tag)
 
         info = item.select_one(".thumb-info")
@@ -154,10 +155,19 @@ def Cat(url):
         utils.eod()
         return
 
-    catsec = soup.select_one(".categorie")
+    catsec = soup.select_one(".categorie, #categories, .categories-list")
     if not catsec:
-        utils.eod()
-        return
+        # Try finding all links that look like category links
+        cat_links = soup.select('a[href*="/cat-"]')
+        if cat_links:
+            # Create a dummy container to reuse the logic below
+            from bs4 import BeautifulSoup
+            catsec = BeautifulSoup("", "html.parser").new_tag("div")
+            for link in cat_links:
+                catsec.append(link)
+        else:
+            utils.eod()
+            return
 
     for link in catsec.select("a[href]"):
         caturl = utils.safe_get_attr(link, "href", default="")
