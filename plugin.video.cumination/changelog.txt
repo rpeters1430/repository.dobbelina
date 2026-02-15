@@ -1,0 +1,121 @@
+[B]Version 1.1.212[/B]
+- easynews - avoid prompting for credentials on startup
+- pornhub - add headers for thumbnails (some missing images)
+- freepornvideos - improve thumbnail selection and add headers
+- awmnet - add headers for direct video playback
+- kissjav - fix thumbnails, playback fixes #1743
+- allclassic - fixes #1742
+- chaturbate favorites - fixes #1745
+- sxyprn - fix search fixes #1277
+- luxuretv - fix nextpage, thumbnails
+- xxxtube - fix pagination
+
+[B]Version 1.1.211[/B]
+- americass - removed (site defunct) - cherry-picked from upstream
+- Fix video playback for FlareSolverr scraped sites (e.g. luxuretv) - cherry-picked from upstream
+- Add upstream sync tracking system with automated scripts
+- xxxtube - new site - cherry-picked from upstream
+- sxyprn - fix search
+- allclassic - fixes #1742
+- kissjav - fix thumbnails, playback fixes #1743
+- xxxvideo - fix pagination
+- luxuretv - fix nextpage, thumbnails
+
+[B]Version 1.1.204[/B]
+- Testing Infrastructure: Expanded test suite from 449 to 622 tests (38% increase)
+- Testing Coverage: Achieved 38% overall code coverage (up from 37%)
+- Core Module Testing: Added comprehensive tests for url_dispatcher (44%→96%), adultsite (66%→100%), basics (17%→48%), favorites (11%→24%), and utils (30%→31%)
+- Site Testing: Added 22 new tests for thothub.py utility functions (21%→31% coverage)
+- Test Quality: All 622 tests passing with proper fixtures and mocking
+- Code Quality: Improved test infrastructure with better fixtures, helpers, and organization
+
+[B]Version 1.1.203[/B]
+- sexyporn - add new site with soup-based listings, categories, search, and playback
+- watchmdh - migrate listings to BeautifulSoup and add pagination fixture coverage
+- porntn/yrprno/netfapx/perverzija/vaginanl/viralvideosporno - soup migrations with deterministic fixtures and tests
+- update migration checklists and NEW_SITES status markers
+
+[B]Version 1.1.197[/B]
+- awmnet - migrate to BeautifulSoup for more reliable parsing
+- erogarga - add missing duration parameter to video listings
+- javbangers - migrate pagination to BeautifulSoup for better reliability
+- longvideos - fix parsing to handle videos without title attributes
+- luxuretv - fix parsing to handle videos without title attributes
+- pornhoarder - fix image parsing to support both src and data-src attributes
+- pornmz - fix video parsing and HD quality detection, improve pagination
+- reallifecam - fix lazy-loading images to prioritize data-src over placeholder
+- camwhoresbay - add Referer header to playback for compatibility (upstream fix)
+- freepornvideos - add new site (upstream addition)
+- Remove dead sites: bubbaporn, iflix, yespornplease (upstream removals)
+- Fix all ruff linting errors
+- Achieve 100% test pass rate (394 tests passing)
+
+[B]Version 1.1.185[/B]
+- thothub - add Next Page button so pagination loads subsequent videos
+
+[B]Version 1.1.184[/B]
+- Declare Kodi Matrix/Nexus/Omega compatibility by targeting xbmc.python 3.0.0
+- Prep packaging metadata for refreshed repository build
+
+[B]Version 1.1.182[/B]
+- archivebate - add new site with JSON listing, categories, search, and direct playback support
+- xhamster - restore playback with updated decryptor and additional manifest fallbacks
+- terebon - fix playback when iframe embeds are missing
+- hanime - fix thumbnails and poster requests
+- hanime - fix playback when inline manifests change format
+- peachurnet - add new JAV provider with navigation-aware listings, search integration, and direct playback fallbacks
+- pornhub - fix Categories screen URL and sort the list alphabetically
+- recu.me - add site with categories, search, and playback via the WordPress API
+- thothub - ensure private videos trigger a real login instead of stopping at the PHP session cookie
+- chaturbate - begin BeautifulSoup migration (room data & CSRF token parsing)
+
+
+[B]Version 1.1.160[/B]
+- settings: add StripChat option to always force highest quality
+
+
+[B]Version 1.1.159[/B]
+- stripchat - auto-select highest quality variant (prefer source, else highest resolution)
+
+
+[B]Version 1.1.158[/B]
+- stripchat - prefer external widget stream URL for more compatible CDN host
+
+
+[B]Version 1.1.157[/B]
+- stripchat - URL-encode IA headers (UA/Origin/Referer) for HLS
+
+
+[B]Version 1.1.156[/B]
+- stripchat - force InputStream Adaptive and add HLS headers to prevent early stop
+- awmnet - update site list (48 sites)
+- familypornhd - fix sound
+
+
+[B]Version 1.1.155[/B]
+- stripchat - add headers to HLS playback to prevent early stop
+
+
+[B]Version 1.1.154[/B]
+- xhamster - fix playback (play h264 streams instead of av1)
+- eroticage - fix playback (xhmaster streams)
+- pornhoarder - fix playback (select video host)
+- awmnet - fix playback (xhmaster streams)
+[B]Version 1.1.161[/B]
+- add ThotHub site: browse, search, and ResolveURL playback
+- StripChat: keep highest-quality option and stability fixes remain
+
+
+[B]Version 1.1.162[/B]
+- packaging: rebuild zip to correct top-level folder structure
+
+
+[B]Version 1.1.163[/B]
+- thothub - fix listing (recent videos), thumbs, and playback
+
+[B]Version 1.1.164[/B]
+- thothub - add robust listing fallback (videos/, page/1/, latest/) when homepage yields no items
+[B]Version 1.1.186[/B]
+- youporn, youjizz, tube8, redtube: fix playback by extracting direct sources and setting referer
+- youporn: remove duplicate listings
+- motherless: load Recent by default, de-dupe listings, and play direct sources
