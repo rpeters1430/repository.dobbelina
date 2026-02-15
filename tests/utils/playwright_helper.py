@@ -189,6 +189,7 @@ def sniff_video_url(
     timeout: int = 30000,
     wait_after_click: int = 3000,
     debug: bool = False,
+    exclude_domains: Optional[list] = None,
 ) -> Optional[str]:
     """
     Navigate to a URL, perform optional clicks (to trigger players),
@@ -200,6 +201,7 @@ def sniff_video_url(
         timeout: Navigation timeout in milliseconds
         wait_after_click: How long to wait after clicking for video to load (ms)
         debug: Print debug information
+        exclude_domains: List of domains to ignore (e.g., ['ads.com', 'tracking.net'])
 
     Returns:
         The first video URL found, or None
@@ -218,6 +220,11 @@ def sniff_video_url(
         def handle_response(response):
             r_url = response.url.lower()
             if any(ext in r_url for ext in [".mp4", ".m3u8"]) and not any(x in r_url for x in ["/thumbs/", "/images/", ".jpg", ".png", "/thumb/", "/image/"]):
+                
+                # Check exclusion list
+                if exclude_domains and any(domain.lower() in r_url for domain in exclude_domains):
+                    return
+
                 if response.url not in all_video_urls:
                     all_video_urls.append(response.url)
                     if not found_url[0]:

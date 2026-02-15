@@ -17,6 +17,18 @@ Playwright is now installed and configured for testing JavaScript-heavy sites. T
 - System dependencies: Installed
 - Integration test: Passed
 
+## VS Code MCP Profiles
+
+Playwright MCP is configured for this workspace in [.vscode/mcp.json](.vscode/mcp.json) with two server profiles:
+
+- `playwright`: Headless browser mode (default for automation)
+- `playwright-headed`: Headed browser mode (useful for visual debugging)
+
+If a new profile does not appear immediately in VS Code:
+
+1. Run `Developer: Reload Window`
+2. Reconnect/restart the MCP server session
+
 ## Quick Start
 
 ### Using the Helper Function

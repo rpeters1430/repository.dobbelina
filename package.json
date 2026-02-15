@@ -1,0 +1,27 @@
+{
+  "name": "repository.dobbelina",
+  "version": "1.0.0",
+  "description": "<img src=\"https://user-images.githubusercontent.com/46063764/103461711-a9eb6280-4d20-11eb-983b-516b022cbbf5.png\" width=\"300\" align=\"right\">",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rpeters1430/repository.dobbelina.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rpeters1430/repository.dobbelina/issues"
+  },
+  "homepage": "https://github.com/rpeters1430/repository.dobbelina#readme",
+  "devDependencies": {
+    "@playwright/mcp": "^0.0.68",
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.2.3"
+  }
+}
