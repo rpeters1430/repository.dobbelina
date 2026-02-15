@@ -69,6 +69,13 @@ def Main():
         site.add_dir(
             "[COLOR hotpink]Couples[/COLOR]", "{0}couples".format(bu), "List", "", ""
         )
+        site.add_dir(
+            "[COLOR hotpink]Couples (Site)[/COLOR]",
+            "https://stripchat.com/couples",
+            "List2",
+            "",
+            "",
+        )
     if male:
         site.add_dir(
             "[COLOR hotpink]Male HD[/COLOR]",
@@ -631,41 +638,78 @@ def List2(url):
         utils.eod()
         return
 
-    # Find the top_ranks or top_others section
-    section = soup.find(class_="top_ranks") or soup.find(class_="top_others")
-    if not section:
-        utils.eod()
-        return
+    # Check for window.LOADABLE_DATA first (modern client-side rendering)
+    scripts = soup.find_all("script")
+    found_models = False
+    for script in scripts:
+        script_text = script.string or ""
+        if "window.LOADABLE_DATA" in script_text:
+            try:
+                # Extract JSON from window.LOADABLE_DATA = {...};
+                json_match = re.search(r"window\.LOADABLE_DATA\s*=\s*({.*?});", script_text)
+                if json_match:
+                    payload = json.loads(json_match.group(1))
+                    model_list = []
+                    
+                    # Dig through the nested structure
+                    # It's usually in payload['categoryTagPage']['models'] or payload['models']
+                    if "models" in payload:
+                        model_list = payload["models"]
+                    elif "categoryTagPage" in payload and "models" in payload["categoryTagPage"]:
+                        model_list = payload["categoryTagPage"]["models"]
+                    
+                    if model_list:
+                        found_models = True
+                        for model in model_list:
+                            name = utils.cleanhtml(model["username"])
+                            videourl = model.get("hlsPlaylist")
+                            img = "https://img.strpst.com/thumbs/{0}/{1}_webp".format(
+                                model.get("snapshotTimestamp"), model.get("id")
+                            )
+                            # Handle offline/profile links
+                            if model.get("status") == "off":
+                                name = "[COLOR hotpink][Offline][/COLOR] " + name
+                                videourl = "  "
+                            
+                            site.add_download_link(name, videourl, "Playvid", img, "")
+                        break
+            except Exception as e:
+                utils.kodilog("Stripchat List2: Error parsing LOADABLE_DATA: {}".format(str(e)))
 
-    # Find all model entries with top_thumb class
-    models = section.find_all(class_="top_thumb")
-    for model in models:
-        try:
-            link = model.find("a", href=True)
-            if not link:
-                continue
-            model_url = utils.safe_get_attr(link, "href", default="")
+    if not found_models:
+        # Fallback to traditional HTML parsing
+        # Find the top_ranks or top_others section
+        section = soup.find(class_="top_ranks") or soup.find(class_="top_others")
+        if section:
+            # Find all model entries with top_thumb class
+            models = section.find_all(class_="top_thumb")
+            for model in models:
+                try:
+                    link = model.find("a", href=True)
+                    if not link:
+                        continue
+                    model_url = utils.safe_get_attr(link, "href", default="")
 
-            img_tag = model.find("img")
-            img = utils.safe_get_attr(img_tag, "src", ["data-src"], "")
-            if img and not img.startswith("http"):
-                img = "https:" + img
+                    img_tag = model.find("img")
+                    img = utils.safe_get_attr(img_tag, "src", ["data-src"], "")
+                    if img and not img.startswith("http"):
+                        img = "https:" + img
 
-            name_tag = model.find(class_="mn_lc")
-            name = utils.safe_get_text(name_tag, default="Unknown")
+                    name_tag = model.find(class_="mn_lc")
+                    name = utils.safe_get_text(name_tag, default="Unknown")
 
-            if "profile" in model_url:
-                name = "[COLOR hotpink][Offline][/COLOR] " + name
-                model_url = "  "
-            elif model_url.startswith("/"):
-                model_url = model_url[1:]
+                    if "profile" in model_url:
+                        name = "[COLOR hotpink][Offline][/COLOR] " + name
+                        model_url = "  "
+                    elif model_url.startswith("/"):
+                        model_url = model_url[1:]
 
-            site.add_download_link(name, model_url, "Playvid", img, "")
-        except Exception as e:
-            utils.kodilog(
-                "Stripchat List2: Error parsing model entry: {}".format(str(e))
-            )
-            continue
+                    site.add_download_link(name, model_url, "Playvid", img, "")
+                except Exception as e:
+                    utils.kodilog(
+                        "Stripchat List2: Error parsing model entry: {}".format(str(e))
+                    )
+                    continue
 
     utils.eod()
 
@@ -712,41 +756,76 @@ def List3(url):
         utils.eod()
         return
 
-    # Find the top_ranks section
-    section = soup.find(class_="top_ranks")
-    if not section:
-        utils.eod()
-        return
+    # Check for window.LOADABLE_DATA first (modern client-side rendering)
+    scripts = soup.find_all("script")
+    found_models = False
+    for script in scripts:
+        script_text = script.string or ""
+        if "window.LOADABLE_DATA" in script_text:
+            try:
+                # Extract JSON from window.LOADABLE_DATA = {...};
+                json_match = re.search(r"window\.LOADABLE_DATA\s*=\s*({.*?});", script_text)
+                if json_match:
+                    payload = json.loads(json_match.group(1))
+                    model_list = []
+                    
+                    if "models" in payload:
+                        model_list = payload["models"]
+                    elif "categoryTagPage" in payload and "models" in payload["categoryTagPage"]:
+                        model_list = payload["categoryTagPage"]["models"]
+                    
+                    if model_list:
+                        found_models = True
+                        for model in model_list:
+                            name = utils.cleanhtml(model["username"])
+                            videourl = model.get("hlsPlaylist")
+                            img = "https://img.strpst.com/thumbs/{0}/{1}_webp".format(
+                                model.get("snapshotTimestamp"), model.get("id")
+                            )
+                            # Handle offline/profile links
+                            if model.get("status") == "off":
+                                name = "[COLOR hotpink][Offline][/COLOR] " + name
+                                videourl = "  "
+                            
+                            site.add_download_link(name, videourl, "Playvid", img, "")
+                        break
+            except Exception as e:
+                utils.kodilog("Stripchat List3: Error parsing LOADABLE_DATA: {}".format(str(e)))
 
-    # Find all model entries with top_thumb class
-    models = section.find_all(class_="top_thumb")
-    for model in models:
-        try:
-            link = model.find("a", href=True)
-            if not link:
-                continue
-            model_url = utils.safe_get_attr(link, "href", default="")
+    if not found_models:
+        # Fallback to traditional HTML parsing
+        # Find the top_ranks section
+        section = soup.find(class_="top_ranks")
+        if section:
+            # Find all model entries with top_thumb class
+            models = section.find_all(class_="top_thumb")
+            for model in models:
+                try:
+                    link = model.find("a", href=True)
+                    if not link:
+                        continue
+                    model_url = utils.safe_get_attr(link, "href", default="")
 
-            img_tag = model.find("img")
-            img = utils.safe_get_attr(img_tag, "src", ["data-src"], "")
-            if img and not img.startswith("http"):
-                img = "https:" + img
+                    img_tag = model.find("img")
+                    img = utils.safe_get_attr(img_tag, "src", ["data-src"], "")
+                    if img and not img.startswith("http"):
+                        img = "https:" + img
 
-            name_tag = model.find(class_="mn_lc")
-            name = utils.safe_get_text(name_tag, default="Unknown")
+                    name_tag = model.find(class_="mn_lc")
+                    name = utils.safe_get_text(name_tag, default="Unknown")
 
-            if "profile" in model_url:
-                name = "[COLOR hotpink][Offline][/COLOR] " + name
-                model_url = "  "
-            elif model_url.startswith("/"):
-                model_url = model_url[1:]
+                    if "profile" in model_url:
+                        name = "[COLOR hotpink][Offline][/COLOR] " + name
+                        model_url = "  "
+                    elif model_url.startswith("/"):
+                        model_url = model_url[1:]
 
-            site.add_download_link(name, model_url, "Playvid", img, "")
-        except Exception as e:
-            utils.kodilog(
-                "Stripchat List3: Error parsing model entry: {}".format(str(e))
-            )
-            continue
+                    site.add_download_link(name, model_url, "Playvid", img, "")
+                except Exception as e:
+                    utils.kodilog(
+                        "Stripchat List3: Error parsing model entry: {}".format(str(e))
+                    )
+                    continue
 
     utils.eod()
 

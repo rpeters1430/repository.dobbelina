@@ -8,7 +8,7 @@ Welcome to Cumination!
 
 ## Development Setup
 
-To install the tools needed for testing and logo processing on Ubuntu, Fedora, or Windows, follow [SETUP.md](SETUP.md).
+To install the tools needed for testing and logo processing on Ubuntu, Fedora, or Windows, follow [docs/guides/SETUP.md](docs/guides/SETUP.md).
 
 ---
 All credit to the fantastic people at reddit who has provided the fixes, and especially jdoedev & 12asdfg12 & camilt

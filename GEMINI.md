@@ -29,8 +29,8 @@ The project is currently undergoing a significant **modernization effort** to im
 
 The primary goal is to migrate all site scrapers from fragile Regex patterns to robust **BeautifulSoup4** parsing.
 
-*   **Tracking:** See `MODERNIZATION.md` for detailed roadmap and `PROJECT_STATUS.md` for recent progress.
-*   **Known Issues:** See `KNOWN_ISSUES.md`.
+*   **Tracking:** See [docs/development/MODERNIZATION.md](docs/development/MODERNIZATION.md) for detailed roadmap and [docs/development/PROJECT_STATUS.md](docs/development/PROJECT_STATUS.md) for recent progress.
+*   **Known Issues:** See [docs/development/KNOWN_ISSUES.md](docs/development/KNOWN_ISSUES.md).
 
 ## Development Workflow
 
