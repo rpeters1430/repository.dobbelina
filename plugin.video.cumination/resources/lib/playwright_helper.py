@@ -190,6 +190,7 @@ def sniff_video_url(
     wait_after_click: int = 3000,
     debug: bool = False,
     exclude_domains: Optional[list] = None,
+    preferred_extension: Optional[str] = None,
 ) -> Optional[str]:
     """
     Navigate to a URL, perform optional clicks (to trigger players),
@@ -202,6 +203,7 @@ def sniff_video_url(
         wait_after_click: How long to wait after clicking for video to load (ms)
         debug: Print debug information
         exclude_domains: List of domains to ignore (e.g., ['ads.com', 'tracking.net'])
+        preferred_extension: Extension to prefer (e.g., '.m3u8')
 
     Returns:
         The first video URL found, or None
@@ -219,7 +221,7 @@ def sniff_video_url(
 
         def handle_response(response):
             r_url = response.url.lower()
-            if any(ext in r_url for ext in [".mp4", ".m3u8"]) and not any(x in r_url for x in ["/thumbs/", "/images/", ".jpg", ".png", "/thumb/", "/image/"]):
+            if any(ext in r_url for ext in [".mp4", ".m3u8", ".m4s"]) and not any(x in r_url for x in ["/thumbs/", "/images/", ".jpg", ".png", "/thumb/", "/image/"]):
                 
                 # Check exclusion list
                 if exclude_domains and any(domain.lower() in r_url for domain in exclude_domains):
@@ -227,7 +229,14 @@ def sniff_video_url(
 
                 if response.url not in all_video_urls:
                     all_video_urls.append(response.url)
-                    if not found_url[0]:
+                    
+                    # If this matches our preferred extension, update immediately
+                    if preferred_extension and preferred_extension.lower() in r_url:
+                        found_url[0] = response.url
+                        if debug:
+                            print(f"[sniff] Found preferred video URL: {response.url}")
+                    
+                    elif not found_url[0]:
                         found_url[0] = response.url
                         if debug:
                             print(f"[sniff] Found video URL: {response.url}")
@@ -260,7 +269,7 @@ def sniff_video_url(
                                 if elem.is_visible(timeout=2000):
                                     if debug:
                                         print(f"[sniff] Clicking element {i} ({selector})...")
-                                    elem.click(timeout=5000)
+                                    elem.click(timeout=5000, force=True)
                                     clicked = True
                                     page.wait_for_timeout(wait_after_click)
                                     if found_url[0]:

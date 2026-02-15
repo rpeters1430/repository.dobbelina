@@ -128,6 +128,35 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
+    # Try Playwright sniffer first to handle tokens and bot detection
+    try:
+        from resources.lib.playwright_helper import sniff_video_url
+        vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
+        
+        # Site often auto-plays, but we can try common player selectors
+        # Based on user script, clicking "video" is important
+        # JWPlayer uses .jw-icon-display for the big play button
+        play_selectors = [".jw-icon-display", "video", ".vjs-big-play-button", ".play-button", "article.movie-item"]
+        
+        video_url = sniff_video_url(
+            url, 
+            play_selectors=play_selectors,
+            preferred_extension=".m3u8",
+            exclude_domains=["tantaly", "leakedzone", "doubleclick", "ads", "popads"]
+        )
+        if video_url:
+            utils.kodilog("hotleak: Playwright found stream: {}".format(video_url[:100]))
+            # Build headers for the stream
+            ia_headers = "Referer={0}&User-Agent={1}".format(
+                urllib_parse.quote(site.url, safe=""),
+                urllib_parse.quote(utils.USER_AGENT, safe="")
+            )
+            vp.play_from_direct_link(video_url + "|" + ia_headers)
+            return
+    except (ImportError, Exception) as e:
+        utils.kodilog("hotleak: Playwright sniffer failed: {}".format(e))
+
+    # Fallback to manual decryption
     # Get HTML page
     html = utils.getHtml(url)
     soup = utils.parse_html(html)
