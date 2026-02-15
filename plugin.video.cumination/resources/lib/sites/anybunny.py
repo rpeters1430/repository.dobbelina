@@ -84,7 +84,7 @@ def Main():
 @site.register()
 def List(url):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         listhtml = fetch_with_playwright(url, wait_for="load")
     except (ImportError, Exception):
         listhtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
@@ -140,7 +140,7 @@ def Playvid(url, name, download=None):
 
     # Try Playwright sniffer with the specific player selector (for development/testing)
     try:
-        from tests.utils.playwright_helper import sniff_video_url
+        from resources.lib.playwright_helper import sniff_video_url
         # Anybunny uses a custom pjsdiv player element
         # Try pjsdiv first, then fallback to standard video elements
         play_selectors = ["pjsdiv", "video", ".play-button", "button.vjs-big-play-button"]
@@ -213,7 +213,7 @@ def Playvid(url, name, download=None):
 @site.register()
 def Categories(url):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         cathtml = fetch_with_playwright(url, wait_for="load")
     except (ImportError, Exception):
         cathtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
@@ -262,7 +262,7 @@ def Categories(url):
 @site.register()
 def Categories2(url):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         cathtml = fetch_with_playwright(url, wait_for="load")
     except (ImportError, Exception):
         cathtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)

@@ -6,7 +6,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from tests.utils.playwright_helper import fetch_with_playwright, sniff_video_url
+from resources.lib.playwright_helper import fetch_with_playwright, sniff_video_url
 from bs4 import BeautifulSoup
 
 

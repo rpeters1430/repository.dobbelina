@@ -266,7 +266,7 @@ def Play(url, name, download=None):
     
     # Try Playwright sniffer first
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright_and_network
+        from resources.lib.playwright_helper import fetch_with_playwright_and_network
         vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
         _, requests = fetch_with_playwright_and_network(url, wait_for="load")
         for req in requests:

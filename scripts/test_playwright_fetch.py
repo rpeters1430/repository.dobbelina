@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from tests.utils.playwright_helper import fetch_with_playwright, take_screenshot
+from resources.lib.playwright_helper import fetch_with_playwright, take_screenshot
 from bs4 import BeautifulSoup
 
 def test_site(name, url, wait_for="networkidle"):

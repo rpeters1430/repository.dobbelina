@@ -59,7 +59,7 @@ def Main():
 @site.register()
 def List(url):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         html = fetch_with_playwright(url, wait_for="load")
     except (ImportError, Exception):
         html = utils.getHtml(url, site.url)
@@ -149,7 +149,7 @@ def List(url):
 @site.register()
 def Models(url):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         cathtml = fetch_with_playwright(url, wait_for="load")
     except (ImportError, Exception):
         cathtml = utils.getHtml(url, site.url)
@@ -225,7 +225,7 @@ def Models(url):
 @site.register()
 def Categories(url):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         html = fetch_with_playwright(site.url + "en/", wait_for="load")
     except (ImportError, Exception):
         html = utils.getHtml(site.url + "en/")
@@ -284,7 +284,7 @@ def Playvid(url, name, download=None):
     
     # Try fetching with Playwright if available (for dev/testing)
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright_and_network
+        from resources.lib.playwright_helper import fetch_with_playwright_and_network
         vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
         html, requests = fetch_with_playwright_and_network(url, wait_for="load")
         

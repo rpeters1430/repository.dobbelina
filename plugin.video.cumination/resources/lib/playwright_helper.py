@@ -9,7 +9,7 @@ such as those with:
 - Lazy-loaded images
 
 Usage:
-    from tests.utils.playwright_helper import fetch_with_playwright
+    from resources.lib.playwright_helper import fetch_with_playwright
 
     html = fetch_with_playwright('https://example.com/videos')
     soup = BeautifulSoup(html, 'html.parser')

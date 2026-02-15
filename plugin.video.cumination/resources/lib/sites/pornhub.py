@@ -370,7 +370,7 @@ def Playvid(url, name, download=None):
     
     # Try Playwright sniffer first to skip ads and age gate
     try:
-        from tests.utils.playwright_helper import sniff_video_url
+        from resources.lib.playwright_helper import sniff_video_url
         vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
         
         # Selectors from user provided script

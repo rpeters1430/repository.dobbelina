@@ -205,7 +205,7 @@ def Playvid(url, name):
 
     # Try Playwright sniffer first to find best quality
     try:
-        from tests.utils.playwright_helper import sniff_video_url
+        from resources.lib.playwright_helper import sniff_video_url
         model_page_url = "https://stripchat.com/{0}".format(name)
         vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
         

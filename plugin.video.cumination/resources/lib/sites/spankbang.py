@@ -98,7 +98,7 @@ def List(url):
     )
 
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         listhtml = fetch_with_playwright(url, wait_for="load")
     except (ImportError, Exception):
         listhtml = utils.getHtml(url, "")
@@ -179,7 +179,7 @@ def Search(url, keyword=None):
 @site.register()
 def Tags(url):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         cathtml = fetch_with_playwright(url, wait_for="load")
     except (ImportError, Exception):
         cathtml = utils.getHtml(url, "")
@@ -237,7 +237,7 @@ def Tags(url):
 @site.register()
 def Models_alphabet(url):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         cathtml = fetch_with_playwright(url, wait_for="load")
     except (ImportError, Exception):
         cathtml = utils.getHtml(url, "")
@@ -258,7 +258,7 @@ def Models_alphabet(url):
 @site.register()
 def Models(url):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         cathtml = fetch_with_playwright(url, wait_for="load")
     except (ImportError, Exception):
         cathtml = utils.getHtml(url, "")
@@ -295,7 +295,7 @@ def Playvid(url, name, download=None):
     
     # Try Playwright sniffer first to bypass Cloudflare
     try:
-        from tests.utils.playwright_helper import sniff_video_url
+        from resources.lib.playwright_helper import sniff_video_url
         vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
         
         video_url = sniff_video_url(url, play_selectors=["video", "button.vjs-big-play-button", ".play-button"])

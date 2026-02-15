@@ -40,7 +40,7 @@ def test_list_populates_download_links(monkeypatch):
     original_import = builtins.__import__
 
     def mock_import(name, *args, **kwargs):
-        if name == 'tests.utils.playwright_helper':
+        if name == 'resources.lib.playwright_helper':
             raise ImportError("Mocked ImportError for testing")
         return original_import(name, *args, **kwargs)
 
@@ -94,7 +94,7 @@ def test_search_results_have_no_pagination(monkeypatch):
     original_import = builtins.__import__
 
     def mock_import(name, *args, **kwargs):
-        if name == 'tests.utils.playwright_helper':
+        if name == 'resources.lib.playwright_helper':
             raise ImportError("Mocked ImportError for testing")
         return original_import(name, *args, **kwargs)
 
@@ -140,9 +140,9 @@ def test_playvid_uses_direct_regex(monkeypatch):
 
     # Patch the import to avoid ImportError
     import sys
-    mock_module = type(sys)('tests.utils.playwright_helper')
+    mock_module = type(sys)('resources.lib.playwright_helper')
     mock_module.sniff_video_url = mock_sniff
-    sys.modules['tests.utils.playwright_helper'] = mock_module
+    sys.modules['resources.lib.playwright_helper'] = mock_module
 
     anybunny.Playvid("http://anybunny.org/videos/video-123", "Example")
 
@@ -175,9 +175,9 @@ def test_playvid_with_playwright_sniffing(monkeypatch):
 
     # Patch the import
     import sys
-    mock_module = type(sys)('tests.utils.playwright_helper')
+    mock_module = type(sys)('resources.lib.playwright_helper')
     mock_module.sniff_video_url = mock_sniff
-    sys.modules['tests.utils.playwright_helper'] = mock_module
+    sys.modules['resources.lib.playwright_helper'] = mock_module
 
     anybunny.Playvid("http://anybunny.org/videos/video-123", "Example")
 

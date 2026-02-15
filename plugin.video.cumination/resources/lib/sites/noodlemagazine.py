@@ -66,7 +66,7 @@ def Main(url):
 @site.register()
 def List(url, page=1):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         listhtml = fetch_with_playwright(url, wait_for="load")
     except (ImportError, Exception):
         try:
@@ -131,7 +131,7 @@ def Playvid(url, name, download=None):
 
     # Try Playwright sniffer first
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright_and_network
+        from resources.lib.playwright_helper import fetch_with_playwright_and_network
         vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
         _, requests = fetch_with_playwright_and_network(url, wait_for="load")
         for req in requests:

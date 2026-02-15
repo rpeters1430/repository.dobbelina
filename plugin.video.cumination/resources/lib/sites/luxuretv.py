@@ -46,7 +46,7 @@ def Main():
 @site.register()
 def List(url):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         listhtml = fetch_with_playwright(url, wait_for="load")
     except (ImportError, Exception):
         listhtml = utils.getHtml(url)
@@ -122,7 +122,7 @@ def List(url):
 @site.register()
 def Cat(url):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         listhtml = fetch_with_playwright(url, wait_for="load")
     except (ImportError, Exception):
         listhtml = utils.getHtml(url)
@@ -170,7 +170,7 @@ def Search(url, keyword=None):
 @site.register()
 def Play(url, name, download=None):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright_and_network
+        from resources.lib.playwright_helper import fetch_with_playwright_and_network
         html, requests = fetch_with_playwright_and_network(url, wait_for="load")
         
         # Check network for video streams

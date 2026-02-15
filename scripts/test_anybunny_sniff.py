@@ -7,7 +7,7 @@ import os
 # Add parent directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from tests.utils.playwright_helper import sniff_video_url
+from resources.lib.playwright_helper import sniff_video_url
 
 
 def test_anybunny_sniff(video_url: str):

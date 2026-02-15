@@ -40,7 +40,7 @@ def Main(url):
 @site.register()
 def List(url, page=1):
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         listhtml = fetch_with_playwright(url, wait_for="load")
     except (ImportError, Exception):
         listhtml = utils.getHtml(url)
@@ -94,7 +94,7 @@ def Playvid(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
     try:
-        from tests.utils.playwright_helper import sniff_video_url
+        from resources.lib.playwright_helper import sniff_video_url
         vp.progress.update(50, "[CR]Sniffing with Playwright...[CR]")
         
         ad_domains = ["leakedzone.com", "ourdream.ai", "adtng.com", "trafficjunky.net", "jwpltx.com"]

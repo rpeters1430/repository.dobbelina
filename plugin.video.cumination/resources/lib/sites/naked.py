@@ -126,7 +126,7 @@ def List(url):
         return None
 
     try:
-        from tests.utils.playwright_helper import fetch_with_playwright
+        from resources.lib.playwright_helper import fetch_with_playwright
         listhtml = fetch_with_playwright(url, wait_for="load")
         # Check if models are empty in initial load, if so wait more
         payload = _extract_models_payload(listhtml)
@@ -267,7 +267,7 @@ def Playvid(url, name):
     
     # Try Playwright sniffer first
     try:
-        from tests.utils.playwright_helper import sniff_video_url
+        from resources.lib.playwright_helper import sniff_video_url
         # Get model name from name string (remove age/status)
         model_name = name.split("[COLOR")[0].strip().replace(" ", "-").lower()
         model_page_url = "https://www.naked.com/chat/{0}/".format(model_name)
