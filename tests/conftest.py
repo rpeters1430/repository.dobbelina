@@ -59,6 +59,13 @@ def _ensure_kodi_stubs():
                 "duration_in_name": "false",
                 "quality_in_name": "false",
                 "qualityask": "0",
+                "pdsection": "0",
+                "sortxt": "0",
+                "sortbt": "0",
+                "sortpd": "0",
+                "paradisehill": "false",
+                "hcaptcha": "false",
+                "proxy_use": "false",
             }
 
         def getAddonInfo(self, key):
@@ -74,7 +81,7 @@ def _ensure_kodi_stubs():
             return self._settings.get(key, "")
 
         def getLocalizedString(self, string_id):
-            return string_id
+            return str(string_id)
 
         def setSetting(self, key, value):
             self._settings[key] = value
@@ -144,6 +151,9 @@ def _ensure_kodi_stubs():
         def close(self):
             pass
 
+        def iscanceled(self):
+            return False
+
     xbmcgui.ListItem = _ListItem
     xbmcgui.Dialog = _Dialog
     xbmcgui.DialogProgress = _DialogProgress
@@ -193,6 +203,17 @@ def _ensure_kodi_stubs():
         def cacheDelete(self, *args, **kwargs):
             pass
 
+        def cacheFunction(self, *args, **kwargs):
+            if args and callable(args[0]):
+                return args[0](*args[1:])
+            return None
+
+        def get(self, *args, **kwargs):
+            return None
+
+        def set(self, *args, **kwargs):
+            pass
+
     storage_module.StorageServer = _StorageServer
     sys.modules["StorageServer"] = storage_module
 
@@ -220,6 +241,11 @@ def _ensure_kodi_stubs():
     requests_module.get = _get
     requests_module.post = _post
     sys.modules["requests"] = requests_module
+
+    # websocket stub -------------------------------------------------------
+    websocket_module = types.ModuleType("websocket")
+    websocket_module.create_connection = lambda *a, **k: None
+    sys.modules["websocket"] = websocket_module
 
 
 _ensure_kodi_stubs()

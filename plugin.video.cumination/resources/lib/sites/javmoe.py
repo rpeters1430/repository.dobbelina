@@ -66,7 +66,11 @@ def Main():
 @site.register()
 def List(url):
     items = 0
+    visited = set()
     while items < 36 and url:
+        if url in visited:
+            break
+        visited.add(url)
         try:
             listhtml = utils.getHtml(url, site.url)
         except Exception as e:

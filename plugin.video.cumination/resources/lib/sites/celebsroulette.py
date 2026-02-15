@@ -127,7 +127,18 @@ def List(url):
 
     if nextp:
         np = nextp
-        pg = int(np) - 1
+        try:
+            pg = int(np) - 1
+        except ValueError:
+            # If not a number, try to extract from url or just stop
+            match = re.search(r"/(\d+)/", url)
+            if match:
+                np = str(int(match.group(1)) + 1)
+                pg = int(np) - 1
+            else:
+                nextp = ""
+
+    if nextp:
         r = re.search(r"/\d+/", url)
         if r:
             next_page = re.sub(r"/\d+/", "/{0}/".format(np), url)
