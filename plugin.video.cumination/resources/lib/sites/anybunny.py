@@ -136,9 +136,9 @@ def List(url):
 
 @site.register()
 def Playvid(url, name, download=None):
-    vp = utils.VideoPlayer(name, download, direct_regex=r'source src=["\']([^"\']+)["\']')
-    
-    # Try Playwright sniffer with the specific player selector
+    vp = utils.VideoPlayer(name, download)
+
+    # Try Playwright sniffer with the specific player selector (for development/testing)
     try:
         from tests.utils.playwright_helper import sniff_video_url
         # Anybunny uses a custom pjsdiv player element
@@ -159,7 +159,55 @@ def Playvid(url, name, download=None):
         utils.kodilog(f"anybunny Playvid: Playwright sniffing failed: {e}")
         pass
 
-    vp.play_from_site_link(url)
+    # Fallback: Extract iframe URL and get video from there
+    vp.progress.update(50, "[CR]Fetching video page...[CR]")
+    pagehtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+
+    if not pagehtml:
+        utils.kodilog("anybunny Playvid: Failed to fetch page")
+        return
+
+    # Extract iframe URL
+    iframe_match = re.search(r'<iframe[^>]+src=["\']([^"\']+)["\']', pagehtml, re.IGNORECASE)
+    if not iframe_match:
+        utils.kodilog("anybunny Playvid: No iframe found")
+        return
+
+    iframe_url = iframe_match.group(1)
+    if not iframe_url.startswith('http'):
+        iframe_url = urllib_parse.urljoin(site.url, iframe_url)
+
+    utils.kodilog(f"anybunny Playvid: Found iframe: {iframe_url[:100]}")
+
+    # Fetch iframe content
+    vp.progress.update(70, "[CR]Loading player...[CR]")
+    iframe_html, _ = utils.get_html_with_cloudflare_retry(iframe_url, referer=url)
+
+    if not iframe_html:
+        utils.kodilog("anybunny Playvid: Failed to fetch iframe")
+        return
+
+    # Extract video URL from iframe
+    # Look for .mp4 or .m3u8 URLs in the iframe
+    video_patterns = [
+        r'(https?://[^\s\"\'\],]+\.mp4[^\s\"\'\],]*)',
+        r'(https?://[^\s\"\'\],]+\.m3u8[^\s\"\'\],]*)',
+    ]
+
+    for pattern in video_patterns:
+        video_match = re.search(pattern, iframe_html, re.IGNORECASE)
+        if video_match:
+            video_url = video_match.group(1)
+            # Clean up any trailing characters that might have been captured
+            video_url = video_url.split(':cast:')[0]  # Remove Chromecast URLs
+            video_url = re.sub(r'[,\]\)\}].*$', '', video_url)  # Remove trailing punctuation
+
+            utils.kodilog(f"anybunny Playvid: Found video URL: {video_url[:100]}")
+            vp.play_from_direct_link(video_url)
+            return
+
+    utils.kodilog("anybunny Playvid: No video URL found in iframe")
+    utils.notify("Error", "Could not extract video URL")
 
 
 @site.register()
