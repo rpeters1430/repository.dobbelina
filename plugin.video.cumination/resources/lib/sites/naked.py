@@ -126,7 +126,7 @@ def List(url):
         return None
 
     try:
-        listhtml = utils._getHtml(url, site.url, timeout=30)
+        listhtml = utils._getHtml(url, site.url)
     except Exception as e:
         utils.kodilog("Naked: Error fetching page: {}".format(str(e)))
         utils.notify("Error", "Unable to load naked.com page")
@@ -271,7 +271,7 @@ def Playvid(url, name):
     mdata = None
     for attempt in range(3):
         try:
-            mdata = utils._getHtml(murl, site.url, timeout=10)
+            mdata = utils._getHtml(murl, site.url)
             if mdata and len(mdata) > 10:  # Valid response
                 break
             utils.kodilog(
@@ -307,7 +307,7 @@ def Playvid(url, name):
     vdata = None
     for attempt in range(3):
         try:
-            vdata = utils._getHtml(url, site.url, timeout=10)
+            vdata = utils._getHtml(url, site.url)
             if vdata and len(vdata) > 10:
                 break
             utils.kodilog(

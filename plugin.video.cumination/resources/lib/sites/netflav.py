@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
 
-import xbmc
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
@@ -273,9 +272,6 @@ def Playvid(url, name, download=None):
         )
         links = {}
 
-        if jdata.get("isMissav"):
-            links["MISSAV"] = "https://missav.com/en/{}".format(jdata.get("code"))
-
         for link in jdata.get("srcs", []):
             if vp.bypass_hosters_single(link):
                 continue
@@ -285,17 +281,6 @@ def Playvid(url, name, download=None):
         videourl = utils.selector("Select link", links)
         if not videourl:
             vp.progress.close()
-            return
-
-        if "missav.com" in videourl:
-            contexturl = (
-                utils.addon_sys
-                + "?mode=missav.Playvid"
-                + "&name=name"
-                + "&url="
-                + urllib_parse.quote_plus(videourl)
-            )
-            xbmc.executebuiltin("RunPlugin(" + contexturl + ")")
             return
 
         vp.play_from_link_to_resolve(videourl)

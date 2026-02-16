@@ -61,3 +61,4 @@ def test_categories_parses_items(monkeypatch):
 
     assert len(dirs) == 2
     assert dirs[0]["name"] == "Alpha"
+    assert dirs[0]["url"] == "https://www.blendporn.com/category/alpha"

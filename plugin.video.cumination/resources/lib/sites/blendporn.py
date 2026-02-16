@@ -61,11 +61,14 @@ def List(url):
         videopage = utils.safe_get_attr(link, "href", default="")
         if not videopage or "=modelfeed" in videopage:
             continue
+        videopage = urllib_parse.urljoin(site.url, videopage)
         name = utils.cleantext(
             utils.safe_get_attr(link, "title", default=utils.safe_get_text(link))
         )
         img_tag = item.select_one("img")
         img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
         duration = utils.safe_get_text(item.select_one(".duration"), default="")
         quality = (
             "HD" if item.select_one(".quality, .hd") or "HD" in item.get_text() else ""
@@ -85,6 +88,7 @@ def List(url):
     if next_link and "next" in utils.safe_get_text(next_link, "").lower():
         next_url = utils.safe_get_attr(next_link, "href", default="")
         if next_url:
+            next_url = urllib_parse.urljoin(site.url, next_url)
             site.add_dir("Next Page", next_url, "blendporn.List", site.img_next)
     utils.eod()
 
@@ -136,9 +140,12 @@ def Categories(url):
     for item in soup.select(".col-sm-6, .category-item"):
         link = item.select_one("a[href]")
         caturl = utils.safe_get_attr(link, "href", default="")
+        caturl = urllib_parse.urljoin(site.url, caturl)
         name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
         img_tag = item.select_one("img")
         img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
         if not caturl or not name:
             continue
         site.add_dir(name, caturl, "List", img)
@@ -174,5 +181,6 @@ def Playvid(url, name, download=None):
             embedlink = match[0]
 
     if embedlink:
+        embedlink = urllib_parse.urljoin(site.url, embedlink)
         embedhtml = utils.getHtml(embedlink, url)
         vp.play_from_html(embedhtml)

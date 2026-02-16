@@ -43,7 +43,12 @@ def Main(url):
 @site.register()
 def List(url, page=1):
     html = utils.getHtml(url)
-    soup = utils.parse_html(html)
+    if hasattr(html, "select"):
+        soup = html
+    else:
+        if not isinstance(html, (str, bytes)):
+            html = ""
+        soup = utils.parse_html(html)
     
     # Video items are in .innercont div
     items = soup.select(".innercont")
@@ -123,8 +128,21 @@ def Playvid(url, name, download=None):
     video_match = re.search(r'<video[^>]+src=["\']\s*([^"\']+)["\']', html, re.IGNORECASE)
     if video_match:
         video_url = video_match.group(1).strip()
+        video_url = urllib_parse.urljoin(site.url, video_url)
         utils.kodilog("josporn: Found direct video URL: {}".format(video_url))
         vp.play_from_direct_link(video_url + "|Referer=" + site.url + "&User-Agent=" + utils.USER_AGENT)
+        return
+
+    # Fallback: <source src="..."> within the player markup.
+    source_match = re.search(
+        r'<source[^>]+src=["\']\s*([^"\']+)["\']', html, re.IGNORECASE
+    )
+    if source_match:
+        video_url = urllib_parse.urljoin(site.url, source_match.group(1).strip())
+        utils.kodilog("josporn: Found source video URL: {}".format(video_url))
+        vp.play_from_direct_link(
+            video_url + "|Referer=" + site.url + "&User-Agent=" + utils.USER_AGENT
+        )
         return
 
     utils.notify("Error", "Could not find video URL")

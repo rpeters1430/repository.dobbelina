@@ -72,17 +72,28 @@ def List(url):
         videopage = utils.safe_get_attr(link, "href")
         if not videopage:
             continue
+        videopage = urllib_parse.urljoin(site.url, videopage)
 
         img_tag = item.select_one("img")
         img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
 
-        # Get name from link title or img alt
+        # Prefer explicit title/alt over link text (which often includes timer overlays).
         name = utils.safe_get_attr(link, "title")
+        if not name:
+            name = utils.safe_get_attr(img_tag, "alt")
+        if not name:
+            title_tag = item.select_one("h2, h3, .title")
+            name = utils.safe_get_text(title_tag, "").strip()
         if not name:
             name = utils.safe_get_text(link, "").strip()
 
         timer_tag = item.select_one(".timer")
         duration = utils.safe_get_text(timer_tag, "")
+        if duration and name:
+            name = re.sub(r"^\s*{}\s*".format(re.escape(duration)), "", name).strip()
+            name = re.sub(r"\s{2,}", " ", name).strip()
 
         if name:
             site.add_download_link(
@@ -110,6 +121,7 @@ def List(url):
                             last_page_num = utils.safe_get_text(last_link, "")
 
                 if next_url:
+                    next_url = urllib_parse.urljoin(site.url, next_url)
                     cm_gotopage = []
                     if last_page_num:
                         cm_gotopage_url = (
@@ -185,6 +197,7 @@ def Playvid(url, name, download=None):
     )
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
+    url = urllib_parse.urljoin(site.url, url)
     videohtml = utils.getHtml(url)
     
     # Try finding the video source directly in the main page first
@@ -201,7 +214,7 @@ def Playvid(url, name, download=None):
     if iframe:
         embedurl = utils.safe_get_attr(iframe, "src")
         if embedurl:
-            embedurl = "https:" + embedurl if embedurl.startswith("//") else embedurl
+            embedurl = urllib_parse.urljoin(site.url, embedurl)
             embedhtml = utils.getHtml(embedurl, url)
             vp.play_from_html(embedhtml)
             return

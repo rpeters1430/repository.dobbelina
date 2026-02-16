@@ -4,6 +4,7 @@ Tests for hotleak site
 import pytest
 import base64
 import json
+from resources.lib.sites import hotleak
 
 
 def test_hotleak_url_decryption():
@@ -106,3 +107,64 @@ def test_hotleak_video_page_parsing():
     encrypted_url = video_json['source'][0].get('src', '')
     assert encrypted_url, "Should have encrypted src URL"
     assert len(encrypted_url) > 50, "Encrypted URL should be reasonably long"
+
+
+def test_hotleak_list_handles_profile_search_results(monkeypatch):
+    html = """
+    <article class="movie-item">
+      <a href="https://hotleak.vip/samplecreator"></a>
+      <img class="post-thumbnail" src="/thumb.jpg" />
+      <div class="movie-name"><h3>Sample Creator</h3></div>
+    </article>
+    """
+    dirs = []
+    downloads = []
+
+    monkeypatch.setattr(hotleak.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(hotleak.utils, "eod", lambda: None)
+    monkeypatch.setattr(
+        hotleak.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, desc="", **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
+    monkeypatch.setattr(
+        hotleak.site,
+        "add_download_link",
+        lambda *a, **k: downloads.append(a),
+    )
+
+    hotleak.List("https://hotleak.vip/search?search=sample")
+
+    assert len(downloads) == 0
+    assert len(dirs) == 1
+    assert dirs[0]["mode"] == "List"
+    assert dirs[0]["url"] == "https://hotleak.vip/samplecreator"
+
+
+def test_hotleak_list_cleans_creator_id_suffix(monkeypatch):
+    html = """
+    <article class="movie-item">
+      <a href="https://hotleak.vip/creator/video/11939112"></a>
+      <img class="post-thumbnail" src="/thumb.jpg" />
+      <div class="movie-name"><h3>@creator 11939112</h3></div>
+    </article>
+    """
+    downloads = []
+
+    monkeypatch.setattr(hotleak.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(hotleak.utils, "eod", lambda: None)
+    monkeypatch.setattr(
+        hotleak.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append(
+            {"name": name, "url": url}
+        ),
+    )
+    monkeypatch.setattr(hotleak.site, "add_dir", lambda *a, **k: None)
+
+    hotleak.List("https://hotleak.vip/videos")
+
+    assert len(downloads) == 1
+    assert downloads[0]["name"] == "@creator"

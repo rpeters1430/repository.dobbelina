@@ -71,7 +71,12 @@ def List(url, page=1):
         utils.kodilog("@@@@Cumination: failure in noodlemagazine: " + str(e))
         return None
 
-    soup = utils.parse_html(listhtml)
+    if hasattr(listhtml, "select"):
+        soup = listhtml
+    else:
+        if not isinstance(listhtml, (str, bytes)):
+            listhtml = ""
+        soup = utils.parse_html(listhtml)
     items = soup.select(".item")
     for item in items:
         link = item.select_one("a[href]")

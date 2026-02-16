@@ -58,3 +58,34 @@ def test_list_parses_videos_and_pagination(monkeypatch):
     next_dir = dirs[0]
     assert "Next Page (2)" in next_dir["name"]
     assert next_dir["url"].endswith("/page/2.html")
+
+
+def test_list_joins_relative_video_urls_and_strips_timer_from_name(monkeypatch):
+    html = """
+    <div class="thumb">
+      <a href="/xxx/sample-video-123.html">
+        <img src="/avatar/sample.jpg" alt="Sample Relative Title" />
+        <span class="timer">01:13:17</span>
+        01:13:17
+        Sample Relative Title
+      </a>
+    </div>
+    """
+
+    downloads = []
+    monkeypatch.setattr(foxnxx.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(foxnxx.utils, "eod", lambda *a, **k: None)
+    monkeypatch.setattr(
+        foxnxx.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append(
+            {"name": name, "url": url, "icon": iconimage}
+        ),
+    )
+
+    foxnxx.List("https://foxnxx.com/")
+
+    assert len(downloads) == 1
+    assert downloads[0]["url"] == "https://foxnxx.com/xxx/sample-video-123.html"
+    assert downloads[0]["icon"] == "https://foxnxx.com/avatar/sample.jpg"
+    assert downloads[0]["name"] == "Sample Relative Title"

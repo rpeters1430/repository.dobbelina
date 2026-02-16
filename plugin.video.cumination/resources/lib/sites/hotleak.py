@@ -31,14 +31,12 @@ site = AdultSite(
     "hotleak",
 )
 
-# Use a stable, common user agent for Hotleak to prevent 403s
-HOTLEAK_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
-
-
 @site.register(default_mode=True)
 def Main(url):
     site.add_dir("[COLOR hotpink]Videos[/COLOR]", site.url + "videos", "List", "")
-    site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "videos", "Search", site.img_search)
+    site.add_dir(
+        "[COLOR hotpink]Search[/COLOR]", site.url + "search?search=", "Search", site.img_search
+    )
     utils.eod()
 
 
@@ -54,6 +52,7 @@ def List(url, page=1):
         if not videopage or "tantaly.com" in videopage: # Skip ads
             continue
         videopage = urllib_parse.urljoin(site.url, videopage)
+        is_video = "/video/" in videopage
 
         img_tag = item.select_one("img.post-thumbnail")
         img = utils.safe_get_attr(img_tag, "src")
@@ -64,6 +63,9 @@ def List(url, page=1):
         name = utils.safe_get_text(item.select_one(".movie-name h3"))
         if not name:
             name = utils.safe_get_attr(img_tag, "alt", default="Video")
+        name = re.sub(r"\s+\d{5,}\s*$", "", name).strip()
+        if not name:
+            name = "Video"
 
         date = utils.safe_get_text(item.select_one(".date"))
         views = utils.safe_get_text(item.select_one(".view"))
@@ -74,9 +76,13 @@ def List(url, page=1):
             meta.append(views)
         description = " | ".join(meta)
 
-        site.add_download_link(
-            name, videopage, "Playvid", img, desc=description
-        )
+        if is_video:
+            site.add_download_link(
+                name, videopage, "Playvid", img, desc=description
+            )
+        else:
+            # Search results often return profile pages; open them as folders.
+            site.add_dir(name, videopage, "List", img, desc=description)
 
     # Next Page
     next_el = soup.select_one("a.page-link[rel='next']")
@@ -156,11 +162,8 @@ def Playvid(url, name, download=None):
 
                     if video_url:
                         utils.kodilog("hotleak: Decrypted URL: {}".format(video_url))
-                        # M3U8 requires Origin header; Referer must NOT be sent (causes 403)
-                        video_url_with_headers = "{0}|User-Agent={1}&Origin={2}".format(
-                            video_url, HOTLEAK_UA, site.url.rstrip('/')
-                        )
-                        vp.play_from_direct_link(video_url_with_headers)
+                        # Hotleak frequently rejects custom headers; let Kodi request raw URL.
+                        vp.play_from_direct_link(video_url)
                         return
 
         except (json.JSONDecodeError, KeyError, IndexError) as e:

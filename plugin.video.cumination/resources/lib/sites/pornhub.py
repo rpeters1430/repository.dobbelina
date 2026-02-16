@@ -592,6 +592,19 @@ def param(x):
 
 
 def update_url(url):
+    if "/video/search" in url:
+        # Keep search queries simple and stable; aggressive filters often return empty results.
+        query_match = re.search(r"[?&]search=([^&]*)", url)
+        search_value = query_match.group(1) if query_match else ""
+        page_match = re.search(r"[?&]page=(\d+)", url)
+        page_value = page_match.group(1) if page_match else ""
+
+        clean_url = site.url + "video/search?search=" + search_value
+        if page_value:
+            clean_url += "&page=" + page_value
+        clean_url += "&o=mr"
+        return clean_url
+
     old_params = url.split("?")[-1].split("&")
     old_params.sort()
     url = re.sub(r"[\?&]p=[^\?&]+", "", url)
