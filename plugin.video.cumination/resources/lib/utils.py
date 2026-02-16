@@ -2675,8 +2675,11 @@ class VideoPlayer:
         klurl = re.compile(
             r"(https://www.keeplinks.org/[^/]+/[0-9a-fA-f]+)", re.DOTALL | re.IGNORECASE
         ).findall(html)
+        hornyhill = re.compile(
+            r"(https?://hornyhill\.com/player/jwplayer/index\.php/\d+)", re.DOTALL | re.IGNORECASE
+        ).findall(html)
         links = []
-        if sdurl or sdurl_world or fcurl or shortixurl or klurl:
+        if sdurl or sdurl_world or fcurl or shortixurl or klurl or hornyhill:
             self.progress.update(50, "[CR]{0}[CR]".format(i18n("fnd_sbsite")))
         if sdurl:
             links.extend(self._solve_streamdefence(sdurl, referrer_url, False))
@@ -2688,6 +2691,8 @@ class VideoPlayer:
             links.extend(self._solve_shortix(shortixurl, referrer_url))
         elif klurl:
             links.extend(self._solve_keeplinks(klurl, referrer_url))
+        elif hornyhill:
+            links.extend(self._solve_hornyhill(hornyhill, referrer_url))
         return links
 
     @_cancellable
@@ -2757,6 +2762,25 @@ class VideoPlayer:
                 'class="numlive.+?href="([^"\r]+)', re.DOTALL | re.IGNORECASE
             ).findall(klsrc)
             sources.extend(srcs)
+        return sources
+
+    @_cancellable
+    def _solve_hornyhill(self, urls, referrer_url):
+        self.progress.update(55, "[CR]{0}[CR]".format(i18n("load_vpage")))
+        sources = []
+        for url in urls:
+            try:
+                from resources.lib.playwright_helper import sniff_video_url
+                # Site has simple player, clicking 'video' usually works
+                video_url = sniff_video_url(
+                    url, 
+                    play_selectors=["video", ".jw-icon-display"],
+                    preferred_extension=".m3u8"
+                )
+                if video_url:
+                    sources.append(video_url)
+            except (ImportError, Exception):
+                pass
         return sources
 
 

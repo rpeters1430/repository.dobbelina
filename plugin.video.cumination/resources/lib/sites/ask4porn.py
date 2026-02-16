@@ -122,10 +122,10 @@ def Girls(url):
 
 @site.register()
 def Playvid(url, name, download=None):
-    vp = utils.VideoPlayer(name, download)
+    vp = utils.VideoPlayer(name, download, IA_check="skip")
     html, _ = utils.get_html_with_cloudflare_retry(url)
     
-    # Try direct link parsing first
+    # Try direct link parsing first (includes hornyhill iframe detection)
     vp.play_from_html(html, url)
 
 
