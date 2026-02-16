@@ -921,6 +921,10 @@ def playvid(videourl, name, download=None, subtitle=None, IA_check="check"):
 
         if IA_check != "skip":
             videourl, listitem = inputstream_check(videourl, listitem, IA_check)
+        else:
+            # When skipping IA_check, we should still set ContentLookup(False) 
+            # for some sites that block HEAD requests (like hotleak)
+            listitem.setContentLookup(False)
 
         if subtitle:
             listitem.setSubtitles([subtitle])

@@ -7,16 +7,21 @@ such as those with:
 - Cloudflare protection
 - React/Vue/Angular frameworks
 - Lazy-loaded images
-
-Usage:
-    from resources.lib.playwright_helper import fetch_with_playwright
-
-    html = fetch_with_playwright('https://example.com/videos')
-    soup = BeautifulSoup(html, 'html.parser')
 """
 
-from playwright.sync_api import sync_playwright
+import json
+import subprocess
+import os
+import sys
 from typing import Optional, Dict
+
+# Try to import playwright - if it fails, we will use npx playwright as fallback
+HAS_PLAYWRIGHT_PY = False
+try:
+    from playwright.sync_api import sync_playwright
+    HAS_PLAYWRIGHT_PY = True
+except (ImportError, Exception):
+    pass
 
 # Try to import stealth - it's optional but recommended
 HAS_STEALTH = False
@@ -27,7 +32,7 @@ try:
     stealth_obj = Stealth()
     stealth_sync = stealth_obj.apply_stealth_sync
     HAS_STEALTH = True
-except ImportError:
+except (ImportError, Exception):
     pass
 
 # Fallback if stealth not available
@@ -46,25 +51,10 @@ def fetch_with_playwright(
 ) -> str:
     """
     Fetch HTML content using Playwright (headless Chromium).
-
-    Args:
-        url: The URL to fetch
-        wait_for: When to consider navigation complete ('networkidle', 'load', 'domcontentloaded')
-        wait_for_selector: Optional CSS selector to wait for before returning
-        timeout: Timeout in milliseconds (default: 30s)
-        headers: Optional HTTP headers dict
-
-    Returns:
-        str: The fully-rendered HTML content
-
-    Example:
-        >>> html = fetch_with_playwright(
-        ...     'https://example.com/videos',
-        ...     wait_for_selector='.video-item'
-        ... )
-        >>> soup = BeautifulSoup(html, 'html.parser')
-        >>> videos = soup.select('.video-item')
     """
+    if not HAS_PLAYWRIGHT_PY:
+        raise ImportError("Playwright python module not found. Use npx playwright fallback for sniffing.")
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         context = browser.new_context()
@@ -100,89 +90,6 @@ def fetch_with_playwright(
             browser.close()
 
 
-def take_screenshot(
-    url: str,
-    output_path: str,
-    wait_for_selector: Optional[str] = None,
-    full_page: bool = True,
-) -> None:
-    """
-    Take a screenshot of a page (useful for debugging failed tests).
-
-    Args:
-        url: The URL to screenshot
-        output_path: Path to save the screenshot (e.g., 'debug.png')
-        wait_for_selector: Optional CSS selector to wait for
-        full_page: Whether to capture the full scrollable page
-
-    Example:
-        >>> take_screenshot(
-        ...     'https://example.com/videos',
-        ...     'tests/debug/videos_page.png',
-        ...     wait_for_selector='.video-item'
-        ... )
-    """
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-        stealth_sync(page)
-
-        try:
-            page.goto(url, wait_until="networkidle")
-
-            if wait_for_selector:
-                page.wait_for_selector(wait_for_selector)
-
-            page.screenshot(path=output_path, full_page=full_page)
-            print(f"Screenshot saved to: {output_path}")
-
-        finally:
-            browser.close()
-
-
-def fetch_with_playwright_and_network(
-    url: str,
-    wait_for: str = "networkidle",
-    wait_for_selector: Optional[str] = None,
-    timeout: int = 30000,
-    headers: Optional[Dict[str, str]] = None,
-) -> (str, list):
-    """
-    Fetch HTML content and network requests using Playwright (headless Chromium).
-    """
-    requests = []
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context(
-            user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
-        )
-        context.clear_cookies()
-
-        if headers:
-            context.set_extra_http_headers(headers)
-
-        page = context.new_page()
-        stealth_sync(page)
-
-        def handle_request(request):
-            requests.append({"url": request.url, "headers": request.headers})
-
-        page.on("request", handle_request)
-
-        try:
-            page.goto(url, wait_until=wait_for, timeout=timeout)
-
-            if wait_for_selector:
-                page.wait_for_selector(wait_for_selector, timeout=timeout)
-
-            html = page.content()
-
-            return html, requests
-
-        finally:
-            browser.close()
-
-
 def sniff_video_url(
     url: str,
     play_selectors: Optional[list] = None,
@@ -195,19 +102,10 @@ def sniff_video_url(
     """
     Navigate to a URL, perform optional clicks (to trigger players),
     and sniff the network for the first video stream URL.
-
-    Args:
-        url: The video page URL
-        play_selectors: List of CSS selectors to try clicking (play buttons, player containers)
-        timeout: Navigation timeout in milliseconds
-        wait_after_click: How long to wait after clicking for video to load (ms)
-        debug: Print debug information
-        exclude_domains: List of domains to ignore (e.g., ['ads.com', 'tracking.net'])
-        preferred_extension: Extension to prefer (e.g., '.m3u8')
-
-    Returns:
-        The first video URL found, or None
     """
+    if not HAS_PLAYWRIGHT_PY:
+        return sniff_video_url_npx(url, play_selectors, timeout, wait_after_click, debug, exclude_domains, preferred_extension)
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         context = browser.new_context(
@@ -233,21 +131,15 @@ def sniff_video_url(
                     # If this matches our preferred extension, update immediately
                     if preferred_extension and preferred_extension.lower() in r_url:
                         found_url[0] = response.url
-                        if debug:
-                            print(f"[sniff] Found preferred video URL: {response.url}")
                     
                     elif not found_url[0]:
                         found_url[0] = response.url
-                        if debug:
-                            print(f"[sniff] Found video URL: {response.url}")
 
         page.on("response", handle_response)
 
         try:
-            if debug:
-                print(f"[sniff] Navigating to: {url}")
             page.goto(url, wait_until="load", timeout=timeout)
-            page.wait_for_timeout(3000)  # Wait for JS to settle and lazy-loaded scripts
+            page.wait_for_timeout(3000)
 
             if play_selectors:
                 clicked = False
@@ -256,42 +148,28 @@ def sniff_video_url(
                         break
 
                     try:
-                        # Try main page first
                         elements = page.locator(selector)
                         count = elements.count()
 
-                        if debug:
-                            print(f"[sniff] Trying selector '{selector}': found {count} elements")
-
                         for i in range(count):
-                            try:
-                                elem = elements.nth(i)
-                                if elem.is_visible(timeout=2000):
-                                    if debug:
-                                        print(f"[sniff] Clicking element {i} ({selector})...")
-                                    elem.click(timeout=5000, force=True)
-                                    clicked = True
-                                    page.wait_for_timeout(wait_after_click)
-                                    if found_url[0]:
-                                        break
-                            except Exception as e:
-                                if debug:
-                                    print(f"[sniff] Could not click element {i}: {e}")
-                                continue
+                            elem = elements.nth(i)
+                            if elem.is_visible(timeout=2000):
+                                elem.click(timeout=5000, force=True)
+                                clicked = True
+                                page.wait_for_timeout(wait_after_click)
+                                if found_url[0]:
+                                    break
 
                         if clicked and found_url[0]:
                             break
 
-                        # Try iframes if main page didn't work
                         if not clicked:
-                            for frame_idx, frame in enumerate(page.frames):
+                            for frame in page.frames:
                                 if frame == page.main_frame:
                                     continue
                                 try:
                                     target = frame.locator(selector).first
                                     if target.is_visible(timeout=1000):
-                                        if debug:
-                                            print(f"[sniff] Clicking in iframe {frame_idx}...")
                                         target.click()
                                         clicked = True
                                         page.wait_for_timeout(wait_after_click)
@@ -302,22 +180,14 @@ def sniff_video_url(
                         if found_url[0]:
                             break
 
-                    except Exception as e:
-                        if debug:
-                            print(f"[sniff] Error with selector '{selector}': {e}")
+                    except Exception:
                         continue
 
-            # Wait a bit more for the request to fire
-            max_wait_loops = 20
-            for i in range(max_wait_loops):
+            # Wait a bit more
+            for i in range(20):
                 if found_url[0]:
                     break
                 page.wait_for_timeout(500)
-
-            if debug:
-                print(f"[sniff] Total video URLs found: {len(all_video_urls)}")
-                for vid_url in all_video_urls:
-                    print(f"[sniff]   - {vid_url}")
 
             return found_url[0]
 
@@ -325,8 +195,69 @@ def sniff_video_url(
             browser.close()
 
 
-if __name__ == "__main__":
-    # Quick test
-    html = fetch_with_playwright("https://example.com")
-    print(f"Fetched {len(html)} bytes")
-    print("✅ Playwright helper is working!")
+def sniff_video_url_npx(
+    url: str,
+    play_selectors: Optional[list] = None,
+    timeout: int = 30000,
+    wait_after_click: int = 3000,
+    debug: bool = False,
+    exclude_domains: Optional[list] = None,
+    preferred_extension: Optional[str] = None,
+) -> Optional[str]:
+    """
+    Fallback for sniff_video_url using npx playwright.
+    """
+    from resources.lib import utils
+    utils.kodilog("playwright_helper: Using npx playwright fallback")
+    
+    js_path = os.path.join(os.path.dirname(__file__), "playwright_sniffer.js")
+    if not os.path.exists(js_path):
+        utils.kodilog("playwright_helper: JS sniffer not found at {}".format(js_path))
+        return None
+
+    args = {
+        "url": url,
+        "playSelectors": play_selectors or [],
+        "preferredExtension": preferred_extension,
+        "excludeDomains": exclude_domains or []
+    }
+    
+    try:
+        # Use npx playwright to run the script
+        # On Windows, we might need shell=True or call npx.cmd
+        cmd = ["npx", "playwright", "node", js_path, json.dumps(args)]
+        if sys.platform == "win32":
+            cmd = ["npx.cmd", "node", js_path, json.dumps(args)]
+        else:
+            cmd = ["npx", "node", js_path, json.dumps(args)]
+
+        utils.kodilog("playwright_helper: Running command: {}".format(" ".join(cmd)))
+        
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            shell=(sys.platform == "win32")
+        )
+        stdout, stderr = process.communicate(timeout=timeout/1000 + 10)
+        
+        if debug:
+            utils.kodilog("playwright_helper: stdout: {}".format(stdout))
+            utils.kodilog("playwright_helper: stderr: {}".format(stderr))
+
+        for line in stdout.splitlines():
+            try:
+                data = json.loads(line)
+                if "url" in data:
+                    return data["url"]
+                if "error" in data:
+                    utils.kodilog("playwright_helper: JS error: {}".format(data["error"]))
+            except ValueError:
+                continue
+                
+        return None
+
+    except Exception as e:
+        utils.kodilog("playwright_helper: npx fallback failed: {}".format(e))
+        return None
