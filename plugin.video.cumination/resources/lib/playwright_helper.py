@@ -53,7 +53,7 @@ def fetch_with_playwright(
     Fetch HTML content using Playwright (headless Chromium).
     """
     if not HAS_PLAYWRIGHT_PY:
-        raise ImportError("Playwright python module not found. Use npx playwright fallback for sniffing.")
+        return fetch_with_playwright_npx(url, wait_for, wait_for_selector, timeout, headers)
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -261,3 +261,52 @@ def sniff_video_url_npx(
     except Exception as e:
         utils.kodilog("playwright_helper: npx fallback failed: {}".format(e))
         return None
+
+
+def fetch_with_playwright_npx(
+    url: str,
+    wait_for: str = "networkidle",
+    wait_for_selector: Optional[str] = None,
+    timeout: int = 30000,
+    headers: Optional[Dict[str, str]] = None,
+) -> str:
+    """
+    Fallback for fetch_with_playwright using npx playwright.
+    """
+    from resources.lib import utils
+    utils.kodilog("playwright_helper: Using npx playwright fallback for fetch")
+
+    js_path = os.path.join(os.path.dirname(__file__), "playwright_fetch.js")
+    if not os.path.exists(js_path):
+        utils.kodilog("playwright_helper: JS fetcher not found at {}".format(js_path))
+        return ""
+
+    args = {
+        "url": url,
+        "waitFor": wait_for,
+        "waitForSelector": wait_for_selector,
+        "timeout": timeout,
+        "headers": headers or {}
+    }
+
+    try:
+        cmd = ["npx.cmd", "node", js_path, json.dumps(args)] if sys.platform == "win32" else ["npx", "node", js_path, json.dumps(args)]
+
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            shell=(sys.platform == "win32")
+        )
+        stdout, stderr = process.communicate(timeout=timeout/1000 + 10)
+
+        if process.returncode != 0:
+            utils.kodilog("playwright_helper: npx fetch failed: {}".format(stderr))
+            return ""
+
+        return stdout
+
+    except Exception as e:
+        utils.kodilog("playwright_helper: npx fetch fallback failed: {}".format(e))
+        return ""

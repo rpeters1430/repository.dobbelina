@@ -10,6 +10,7 @@ __pycache__/
 AGENTS.md
 
 .pytest_cache/
+.profile/
 .claude/
 .venv/
 .venv-win/
