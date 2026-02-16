@@ -31,6 +31,9 @@ site = AdultSite(
     "hotleak",
 )
 
+# Use a stable, common user agent for Hotleak to prevent 403s
+HOTLEAK_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+
 
 @site.register(default_mode=True)
 def Main(url):
@@ -127,6 +130,9 @@ def _decrypt_video_url(encrypted_url):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
+    # Skip inputstream.adaptive - the m3u8 server rejects HEAD requests (403)
+    # and rejects Referer headers. Let Kodi's FFMpeg handle the HLS directly.
+    vp.IA_check = "skip"
 
     # Try Playwright sniffer first to handle tokens and bot detection
     try:
@@ -146,11 +152,8 @@ def Playvid(url, name, download=None):
         )
         if video_url:
             utils.kodilog("hotleak: Playwright found stream: {}".format(video_url[:100]))
-            # Build headers for the stream
-            ia_headers = "Referer={0}&User-Agent={1}".format(
-                urllib_parse.quote(site.url, safe=""),
-                urllib_parse.quote(utils.USER_AGENT, safe="")
-            )
+            # Build headers - Origin is required, Referer must NOT be sent (causes 403)
+            ia_headers = "User-Agent={0}&Origin={1}".format(HOTLEAK_UA, site.url.rstrip('/'))
             vp.play_from_direct_link(video_url + "|" + ia_headers)
             return
     except (ImportError, Exception) as e:
@@ -183,8 +186,10 @@ def Playvid(url, name, download=None):
 
                     if video_url:
                         utils.kodilog("hotleak: Decrypted URL: {}".format(video_url))
-                        # M3U8 requires both Referer and User-Agent headers
-                        video_url_with_headers = video_url + "|Referer=" + site.url + "&User-Agent=" + utils.USER_AGENT
+                        # M3U8 requires Origin header; Referer must NOT be sent (causes 403)
+                        video_url_with_headers = "{0}|User-Agent={1}&Origin={2}".format(
+                            video_url, HOTLEAK_UA, site.url.rstrip('/')
+                        )
                         vp.play_from_direct_link(video_url_with_headers)
                         return
 

@@ -114,7 +114,9 @@
       "Bash(git stash show:*)",
       "Bash(/home/rpeters1428/repository.dobbelina/.venv/bin/python:*)",
       "Bash(/home/rpeters1428/repository.dobbelina/.venv/bin/playwright install:*)",
-      "Bash(.venv/bin/python:*)"
+      "Bash(.venv/bin/python:*)",
+      "mcp__plugin_playwright_playwright__browser_run_code",
+      "Bash(.venv/bin/python3:*)"
     ],
     "deny": [],
     "ask": []
