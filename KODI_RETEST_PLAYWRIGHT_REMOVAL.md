@@ -16,17 +16,17 @@ This checklist covers the site modules that were changed to remove Playwright ru
 
 ## Sites To Retest
 
-- [ ] `anybunny`
-- [ ] `blendporn`
-- [ ] `drtuber`
-- [ ] `foxnxx`
-- [ ] `hotleak`
-- [ ] `josporn`
-- [ ] `luxuretv`
-- [ ] `missav`
-- [ ] `naked`
-- [ ] `noodlemagazine`
-- [ ] `pornhub`
+- [X] `anybunny` - videos + images load (very low quality) - need "Next Page" on main screen. Top Videos folder lists videos with no images and lists only 10 videos with no Next Page. Videos play same quality issues. We can remove "Categories - images" folder completely. Categories work but loads only 9 videos and images are iffy. Videos do play though at about 10p it looks like. Search Works and videos play with same issue. On main screen we can list the "Newest" or latest videos on the page.
+- [X] `blendporn` - main screen videos load with no images. Videos play no problem. Category folder works but image shows "Preview Image Coming Soon! (we can just add the logo as the image or find them). Category videos load no images but videos do play. Search works with no images and videos do play for search.
+- [ ] `drtuber` - Videos on main page load with images ok and videos play ok. Categories do load but there are about 12-14 empty folders at the top of the screen that list before the categories actually list. Videos in categories do load with images and videos do play. HD & 4k folders work with videos + images + video playback. Search all works just fine.
+- [ ] `foxnxx` - videos load but the title of the video there are numbers overlayed over the name of it. Videos do not play on main screen. There are no Category folder or anything just Search but the listing names are messed up.
+- [ ] `hotleak` - List latest videos on main screen. The videos do load with the images but do not play. The name of the video listed is weird says i.e. "@estarletto 11939060" so search is broken
+- [ ] `josporn` - Latest updates videos can be listed on main screen. Logo is missing. Latest videos do load with images. Videos do not play saying cannot find video url. Search does not work either but essentially search + logo + video playback. Also the name of the site just JosPorn will work remove the URL
+- [ ] `luxuretv` - luxeretv we can remove the site completely
+- [ ] `missav` - missav we can remove also completely 
+- [ ] `naked` - Error is Unable to load naked.com page
+- [ ] `noodlemagazine` - Noodlemagazine won't load at all
+- [ ] `pornhub` - Everything works except for search
 - [ ] `porntn`
 - [ ] `pornxpert`
 - [ ] `spankbang`
