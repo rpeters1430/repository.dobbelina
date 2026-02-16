@@ -45,11 +45,7 @@ def Main():
 
 @site.register()
 def List(url):
-    try:
-        from resources.lib.playwright_helper import fetch_with_playwright
-        listhtml = fetch_with_playwright(url, wait_for="load")
-    except (ImportError, Exception):
-        listhtml = utils.getHtml(url)
+    listhtml = utils.getHtml(url)
     
     soup = utils.parse_html(listhtml)
 
@@ -121,11 +117,7 @@ def List(url):
 
 @site.register()
 def Cat(url):
-    try:
-        from resources.lib.playwright_helper import fetch_with_playwright
-        listhtml = fetch_with_playwright(url, wait_for="load")
-    except (ImportError, Exception):
-        listhtml = utils.getHtml(url)
+    listhtml = utils.getHtml(url)
     
     soup = utils.parse_html(listhtml)
 
@@ -169,22 +161,7 @@ def Search(url, keyword=None):
 
 @site.register()
 def Play(url, name, download=None):
-    try:
-        from resources.lib.playwright_helper import fetch_with_playwright_and_network
-        html, requests = fetch_with_playwright_and_network(url, wait_for="load")
-        
-        # Check network for video streams
-        for req in requests:
-            if any(ext in req["url"].lower() for ext in [".mp4", ".m3u8"]):
-                # Filter out thumbnails/images that might have these extensions in path
-                if not any(x in req["url"].lower() for x in ["/thumbs/", "/images/"]):
-                    vp = utils.VideoPlayer(name, download=download)
-                    vp.play_from_direct_link(req["url"])
-                    return
-        
-        listhtml = html
-    except (ImportError, Exception):
-        listhtml = utils.getHtml(url, url)
+    listhtml = utils.getHtml(url, url)
     
     soup = utils.parse_html(listhtml)
 

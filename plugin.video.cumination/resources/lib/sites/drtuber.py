@@ -263,19 +263,6 @@ def Search(url, keyword=None):
 @site.register()
 def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download)
-    
-    # Try Playwright sniffer first
-    try:
-        from resources.lib.playwright_helper import fetch_with_playwright_and_network
-        vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
-        _, requests = fetch_with_playwright_and_network(url, wait_for="load")
-        for req in requests:
-            if any(ext in req["url"].lower() for ext in [".mp4", ".m3u8"]):
-                if not any(x in req["url"].lower() for x in ["/thumbs/", "/images/"]):
-                    vp.play_from_direct_link(req["url"])
-                    return
-    except (ImportError, Exception):
-        pass
 
     # More robust video ID extraction
     videoid_match = re.search(r"/video/(\d+)", url)

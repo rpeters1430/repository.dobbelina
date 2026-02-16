@@ -44,11 +44,7 @@ def Main(url):
 
 @site.register()
 def List(url, page=1):
-    try:
-        from resources.lib.playwright_helper import fetch_with_playwright
-        listhtml = fetch_with_playwright(url, wait_for="load")
-    except (ImportError, Exception):
-        listhtml = utils.getHtml(url)
+    listhtml = utils.getHtml(url)
 
     soup = utils.parse_html(listhtml)
     items = soup.select("article.movie-item")
@@ -134,32 +130,6 @@ def Playvid(url, name, download=None):
     # and rejects Referer headers. Let Kodi's FFMpeg handle the HLS directly.
     vp.IA_check = "skip"
 
-    # Try Playwright sniffer first to handle tokens and bot detection
-    try:
-        from resources.lib.playwright_helper import sniff_video_url
-        vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
-        
-        # Site often auto-plays, but we can try common player selectors
-        # Based on user script, clicking "video" is important
-        # JWPlayer uses .jw-icon-display for the big play button
-        play_selectors = [".jw-icon-display", "video", ".vjs-big-play-button", ".play-button", "article.movie-item"]
-        
-        video_url = sniff_video_url(
-            url, 
-            play_selectors=play_selectors,
-            preferred_extension=".m3u8",
-            exclude_domains=["tantaly", "leakedzone", "doubleclick", "ads", "popads"]
-        )
-        if video_url:
-            utils.kodilog("hotleak: Playwright found stream: {}".format(video_url[:100]))
-            # Build headers - Origin is required, Referer must NOT be sent (causes 403)
-            ia_headers = "User-Agent={0}&Origin={1}".format(HOTLEAK_UA, site.url.rstrip('/'))
-            vp.play_from_direct_link(video_url + "|" + ia_headers)
-            return
-    except (ImportError, Exception) as e:
-        utils.kodilog("hotleak: Playwright sniffer failed: {}".format(e))
-
-    # Fallback to manual decryption
     # Get HTML page
     html = utils.getHtml(url)
     soup = utils.parse_html(html)

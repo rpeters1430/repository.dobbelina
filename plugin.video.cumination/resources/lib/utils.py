@@ -2770,16 +2770,13 @@ class VideoPlayer:
         sources = []
         for url in urls:
             try:
-                from resources.lib.playwright_helper import sniff_video_url
-                # Site has simple player, clicking 'video' usually works
-                video_url = sniff_video_url(
-                    url, 
-                    play_selectors=["video", ".jw-icon-display"],
-                    preferred_extension=".m3u8"
-                )
-                if video_url:
-                    sources.append(video_url)
-            except (ImportError, Exception):
+                html = getHtml(url, referrer_url or url)
+                m3u8_urls = re.findall(r"https?://[^\"'\\s<>]+\\.m3u8[^\"'\\s<>]*", html)
+                mp4_urls = re.findall(r"https?://[^\"'\\s<>]+\\.mp4[^\"'\\s<>]*", html)
+                for stream_url in m3u8_urls + mp4_urls:
+                    if stream_url not in sources:
+                        sources.append(stream_url)
+            except Exception:
                 pass
         return sources
 

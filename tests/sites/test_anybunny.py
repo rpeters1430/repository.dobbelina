@@ -163,8 +163,7 @@ def test_playvid_uses_direct_regex(monkeypatch):
     assert captured["direct_url"] == "https://stream.anybunny.org/vid.mp4"
 
 
-def test_playvid_with_playwright_sniffing(monkeypatch):
-    """Test that Playvid uses Playwright sniffing when available."""
+def test_playvid_uses_iframe_fallback_without_playwright(monkeypatch):
     captured = {}
 
     class _DummyVP:
@@ -180,23 +179,13 @@ def test_playvid_with_playwright_sniffing(monkeypatch):
 
     monkeypatch.setattr(anybunny.utils, "VideoPlayer", _DummyVP)
 
-    # Mock sniff_video_url to return a video URL
-    def mock_sniff(url, play_selectors=None, **kwargs):
-        captured["sniff_url"] = url
-        captured["play_selectors"] = play_selectors
-        return "https://stream1.anybunny.org/m4vid/123/video.mp4"
+    def mock_get_html(url, *args, **kwargs):
+        if "/iframe/" in url:
+            return '<html>var video = "https://stream1.anybunny.org/m4vid/123/video.mp4";</html>', None
+        return '<html><iframe src="http://anybunny.org/iframe/123"></iframe></html>', None
 
-    # Patch the import
-    import sys
-    mock_module = type(sys)('resources.lib.playwright_helper')
-    mock_module.sniff_video_url = mock_sniff
-    monkeypatch.setitem(sys.modules, 'resources.lib.playwright_helper', mock_module)
+    monkeypatch.setattr(anybunny.utils, "get_html_with_cloudflare_retry", mock_get_html)
 
     anybunny.Playvid("http://anybunny.org/videos/video-123", "Example")
 
-    # Should use Playwright sniffing
-    assert captured["sniff_url"] == "http://anybunny.org/videos/video-123"
-    assert captured["play_selectors"] == ["pjsdiv", "video", ".play-button", "button.vjs-big-play-button"]
     assert captured["direct_url"] == "https://stream1.anybunny.org/m4vid/123/video.mp4"
-    # Should not fall back to site link
-    assert "site_url" not in captured

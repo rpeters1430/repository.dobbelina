@@ -83,11 +83,7 @@ def Main():
 
 @site.register()
 def List(url):
-    try:
-        from resources.lib.playwright_helper import fetch_with_playwright
-        listhtml = fetch_with_playwright(url, wait_for="load")
-    except (ImportError, Exception):
-        listhtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
     
     if not listhtml:
         utils.kodilog("anybunny List: Failed to fetch page")
@@ -137,27 +133,6 @@ def List(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
-
-    # Try Playwright sniffer with the specific player selector (for development/testing)
-    try:
-        from resources.lib.playwright_helper import sniff_video_url
-        # Anybunny uses a custom pjsdiv player element
-        # Try pjsdiv first, then fallback to standard video elements
-        play_selectors = ["pjsdiv", "video", ".play-button", "button.vjs-big-play-button"]
-        vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
-
-        video_url = sniff_video_url(
-            url,
-            play_selectors=play_selectors,
-            wait_after_click=5000,  # Wait 5s after clicking
-            timeout=60000
-        )
-        if video_url:
-            vp.play_from_direct_link(video_url)
-            return
-    except (ImportError, Exception) as e:
-        utils.kodilog(f"anybunny Playvid: Playwright sniffing failed: {e}")
-        pass
 
     # Fallback: Extract iframe URL and get video from there
     vp.progress.update(50, "[CR]Fetching video page...[CR]")
@@ -212,11 +187,7 @@ def Playvid(url, name, download=None):
 
 @site.register()
 def Categories(url):
-    try:
-        from resources.lib.playwright_helper import fetch_with_playwright
-        cathtml = fetch_with_playwright(url, wait_for="load")
-    except (ImportError, Exception):
-        cathtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+    cathtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
     
     if not cathtml:
         utils.kodilog("anybunny Categories: Failed to fetch page")
@@ -261,11 +232,7 @@ def Categories(url):
 
 @site.register()
 def Categories2(url):
-    try:
-        from resources.lib.playwright_helper import fetch_with_playwright
-        cathtml = fetch_with_playwright(url, wait_for="load")
-    except (ImportError, Exception):
-        cathtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
+    cathtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
     
     if not cathtml:
         utils.kodilog("anybunny Categories2: Failed to fetch page")

@@ -1,16 +1,12 @@
 """
-Playwright helper utilities for testing JavaScript-heavy sites.
+Playwright helper utilities for development/testing.
 
-This module provides utilities for testing sites that require JavaScript execution,
-such as those with:
-- Dynamic content loading
-- Cloudflare protection
-- React/Vue/Angular frameworks
-- Lazy-loaded images
+Playwright is disabled by default for addon runtime. Site modules should rely
+on request/HTML parsing fallbacks. To enable Playwright explicitly for local
+debugging, set environment variable: CUMINATION_ALLOW_PLAYWRIGHT=1
 """
 
 import json
-import subprocess
 import os
 import sys
 from typing import Optional, Dict
@@ -22,6 +18,31 @@ try:
     HAS_PLAYWRIGHT_PY = True
 except (ImportError, Exception):
     pass
+
+
+def _is_kodi_runtime() -> bool:
+    """
+    Detect Kodi runtime.
+    In Kodi, external browser/node execution is unavailable or unreliable.
+    """
+    if "xbmc" in sys.modules:
+        return True
+    try:
+        import xbmc  # type: ignore
+
+        return bool(xbmc)
+    except Exception:
+        return False
+
+
+def _playwright_enabled() -> bool:
+    return os.environ.get("CUMINATION_ALLOW_PLAYWRIGHT") == "1"
+
+
+def _raise_playwright_disabled():
+    raise ImportError(
+        "Playwright is disabled for addon runtime (set CUMINATION_ALLOW_PLAYWRIGHT=1 for local debugging only)"
+    )
 
 # Try to import stealth - it's optional but recommended
 HAS_STEALTH = False
@@ -52,8 +73,11 @@ def fetch_with_playwright(
     """
     Fetch HTML content using Playwright (headless Chromium).
     """
+    if _is_kodi_runtime() or not _playwright_enabled():
+        _raise_playwright_disabled()
+
     if not HAS_PLAYWRIGHT_PY:
-        return fetch_with_playwright_npx(url, wait_for, wait_for_selector, timeout, headers)
+        raise ImportError("Python playwright package not available")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -103,8 +127,11 @@ def sniff_video_url(
     Navigate to a URL, perform optional clicks (to trigger players),
     and sniff the network for the first video stream URL.
     """
+    if _is_kodi_runtime() or not _playwright_enabled():
+        _raise_playwright_disabled()
+
     if not HAS_PLAYWRIGHT_PY:
-        return sniff_video_url_npx(url, play_selectors, timeout, wait_after_click, debug, exclude_domains, preferred_extension)
+        raise ImportError("Python playwright package not available")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -205,62 +232,11 @@ def sniff_video_url_npx(
     preferred_extension: Optional[str] = None,
 ) -> Optional[str]:
     """
-    Fallback for sniff_video_url using npx playwright.
+    Deprecated: npx/node fallback is disabled for addon compatibility.
     """
     from resources.lib import utils
-    utils.kodilog("playwright_helper: Using npx playwright fallback")
-    
-    js_path = os.path.join(os.path.dirname(__file__), "playwright_sniffer.js")
-    if not os.path.exists(js_path):
-        utils.kodilog("playwright_helper: JS sniffer not found at {}".format(js_path))
-        return None
-
-    args = {
-        "url": url,
-        "playSelectors": play_selectors or [],
-        "preferredExtension": preferred_extension,
-        "excludeDomains": exclude_domains or []
-    }
-    
-    try:
-        # Use npx playwright to run the script
-        # On Windows, we might need shell=True or call npx.cmd
-        cmd = ["npx", "playwright", "node", js_path, json.dumps(args)]
-        if sys.platform == "win32":
-            cmd = ["npx.cmd", "node", js_path, json.dumps(args)]
-        else:
-            cmd = ["npx", "node", js_path, json.dumps(args)]
-
-        utils.kodilog("playwright_helper: Running command: {}".format(" ".join(cmd)))
-        
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-            shell=(sys.platform == "win32")
-        )
-        stdout, stderr = process.communicate(timeout=timeout/1000 + 10)
-        
-        if debug:
-            utils.kodilog("playwright_helper: stdout: {}".format(stdout))
-            utils.kodilog("playwright_helper: stderr: {}".format(stderr))
-
-        for line in stdout.splitlines():
-            try:
-                data = json.loads(line)
-                if "url" in data:
-                    return data["url"]
-                if "error" in data:
-                    utils.kodilog("playwright_helper: JS error: {}".format(data["error"]))
-            except ValueError:
-                continue
-                
-        return None
-
-    except Exception as e:
-        utils.kodilog("playwright_helper: npx fallback failed: {}".format(e))
-        return None
+    utils.kodilog("playwright_helper: npx/node fallback disabled")
+    return None
 
 
 def fetch_with_playwright_npx(
@@ -271,42 +247,8 @@ def fetch_with_playwright_npx(
     headers: Optional[Dict[str, str]] = None,
 ) -> str:
     """
-    Fallback for fetch_with_playwright using npx playwright.
+    Deprecated: npx/node fallback is disabled for addon compatibility.
     """
     from resources.lib import utils
-    utils.kodilog("playwright_helper: Using npx playwright fallback for fetch")
-
-    js_path = os.path.join(os.path.dirname(__file__), "playwright_fetch.js")
-    if not os.path.exists(js_path):
-        utils.kodilog("playwright_helper: JS fetcher not found at {}".format(js_path))
-        return ""
-
-    args = {
-        "url": url,
-        "waitFor": wait_for,
-        "waitForSelector": wait_for_selector,
-        "timeout": timeout,
-        "headers": headers or {}
-    }
-
-    try:
-        cmd = ["npx.cmd", "node", js_path, json.dumps(args)] if sys.platform == "win32" else ["npx", "node", js_path, json.dumps(args)]
-
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-            shell=(sys.platform == "win32")
-        )
-        stdout, stderr = process.communicate(timeout=timeout/1000 + 10)
-
-        if process.returncode != 0:
-            utils.kodilog("playwright_helper: npx fetch failed: {}".format(stderr))
-            return ""
-
-        return stdout
-
-    except Exception as e:
-        utils.kodilog("playwright_helper: npx fetch fallback failed: {}".format(e))
-        return ""
+    utils.kodilog("playwright_helper: npx/node fallback disabled")
+    return ""

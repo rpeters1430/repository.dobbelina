@@ -127,19 +127,6 @@ def Playvid(url, name, download=None):
         vp.play_from_direct_link(video_url + "|Referer=" + site.url + "&User-Agent=" + utils.USER_AGENT)
         return
 
-    # Try sniffing if direct match fails (many sites use JS to inject src)
-    try:
-        from resources.lib.playwright_helper import sniff_video_url
-        vp.progress.update(40, "[CR]Sniffing with Playwright...[CR]")
-        
-        video_url = sniff_video_url(url, play_selectors=["video", "#videoplayer", ".players"])
-        if video_url:
-            utils.kodilog("josporn: Playwright found stream: {}".format(video_url[:100]))
-            vp.play_from_direct_link(video_url + "|Referer=" + site.url + "&User-Agent=" + utils.USER_AGENT)
-            return
-    except (ImportError, Exception) as e:
-        utils.kodilog("josporn: Playwright sniffer failed: {}".format(e))
-
     utils.notify("Error", "Could not find video URL")
 
 
