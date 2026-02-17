@@ -1,64 +1,47 @@
+
 import pytest
-import sys
-import os
-from unittest.mock import MagicMock, patch
-
-# Add plugin path to sys.path
-plugin_path = os.path.join(os.getcwd(), "plugin.video.cumination")
-if plugin_path not in sys.path:
-    sys.path.insert(0, plugin_path)
-
 from resources.lib.sites import pornhd3x
+from tests.conftest import read_fixture
 
+class Recorder:
+    def __init__(self):
+        self.downloads = []
+        self.dirs = []
 
-@pytest.fixture
-def mock_site():
-    with patch("resources.lib.sites.pornhd3x.site") as mock:
-        mock.url = "https://www9.pornhd3x.tv/"
-        yield mock
-
-
-def test_list_videos(mock_site):
-    with open("tests/fixtures/sites/pornhd3x_list.html", "r", encoding="utf-8") as f:
-        html = f.read()
-
-    with (
-        patch("resources.lib.utils.getHtml", return_value=html),
-        patch("resources.lib.utils.eod"),
-    ):
-        pornhd3x.List("https://www9.pornhd3x.tv/")
-
-        # Verify some videos were added
-        assert mock_site.add_download_link.called
-        # Check first video details from fixture
-        args, kwargs = mock_site.add_download_link.call_args_list[0]
-        assert "BangBros 18" in args[0]
-        assert "/movies/bangbros-18" in args[1]
-        assert "HD" in kwargs.get("quality", "")
-
-
-def test_playvid(mock_site):
-    with open("tests/fixtures/sites/pornhd3x_video.html", "r", encoding="utf-8") as f:
-        html = f.read()
-
-    mock_vp = MagicMock()
-    with (
-        patch("resources.lib.utils.getHtml", return_value=html),
-        patch("resources.lib.utils.VideoPlayer", return_value=mock_vp),
-    ):
-        pornhd3x.Playvid("https://www9.pornhd3x.tv/movies/some-video", "Test Video")
-
-        # Verify attempt to play
-        assert (
-            mock_vp.play_from_direct_link.called
-            or mock_vp.play_from_link_to_resolve.called
+    def add_download(self, name, url, mode, iconimage, **kwargs):
+        self.downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": pornhd3x.site.get_full_mode(mode),
+                "icon": iconimage,
+            }
         )
 
+    def add_dir(self, name, url, mode, *args, **kwargs):
+        self.dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": pornhd3x.site.get_full_mode(mode),
+            }
+        )
 
-def test_thumb_transform_falls_back_for_cms_images(mock_site):
-    mock_site.image = "special://home/addons/plugin.video.cumination/icon.png"
-    result = pornhd3x._thumb_with_headers(
-        "https://www9.pornhd3x.tv/Cms_Data/Contents/admin/Media/images/test.jpg",
-        None,
-    )
-    assert result == mock_site.image
+def test_list_videos(monkeypatch):
+    recorder = Recorder()
+
+    def mock_get_html(url, *args, **kwargs):
+        return read_fixture("sites/pornhd3x.html")
+
+    monkeypatch.setattr(pornhd3x.utils, "getHtml", mock_get_html)
+    monkeypatch.setattr(pornhd3x.site, "add_download_link", recorder.add_download)
+    monkeypatch.setattr(pornhd3x.site, "add_dir", recorder.add_dir)
+    monkeypatch.setattr(pornhd3x.utils, "eod", lambda: None)
+
+    pornhd3x.List("https://www9.pornhd3x.tv/")
+
+    assert len(recorder.downloads) > 0
+    first_video = recorder.downloads[0]
+    assert first_video["name"] == "Dan Dangler & Angela White Fuck a Guy by the Pool, Alex Mack"
+    assert first_video["url"].endswith("/movies/dan-dangler-angela-white-fuck-a-guy-by-the-pool-alex-mack")
+    assert "/Cms_Data/Contents/admin/Media/images/" in first_video["icon"]

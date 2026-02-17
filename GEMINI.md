@@ -101,3 +101,4 @@ When migrating a site (e.g., `site_xyz.py`):
 *   **Code Style:** Follow PEP 8. Use `ruff` to catch errors (especially avoiding bare `except:`).
 *   **Commits:** Use semantic prefixes (e.g., `feat:`, `fix:`, `refactor:`).
 *   **Version Control:** `addon.xml` version must be bumped when releasing.
+*   **PLAYWRIGHT IS A DEBUGGING TOOL ONLY:** WE CANNOT USE PLAYWRIGHT IN THE SITE MODULES BECAUSE KODI DOES NOT SUPPORT IT. ANY CODE THAT USES PLAYWRIGHT WILL FAIL IN KODI.

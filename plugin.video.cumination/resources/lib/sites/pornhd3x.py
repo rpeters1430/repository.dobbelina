@@ -48,10 +48,6 @@ _TOKEN_SEED = (
 def _thumb_with_headers(value, _item):
     if not value or "|" in value:
         return value
-    # The CMS jpg endpoints currently serve WEBP bytes with a jpg MIME/type,
-    # which Kodi fails to decode reliably. Use addon icon instead of broken art.
-    if "/Cms_Data/Contents/admin/Media/images/" in value:
-        return site.image if isinstance(site.image, str) else ""
     return "{}|Referer={}&User-Agent={}".format(value, site.url, utils.USER_AGENT)
 
 
