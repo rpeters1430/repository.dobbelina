@@ -64,8 +64,7 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
         },
         "quality": {"selector": ".mli-quality", "text": True},
         "pagination": {
-            "selector": ".pagination a",
-            "text_matches": ["next", "last", "»"],
+            "selector": ".pagination li.active + li a",
             "attr": "href",
             "mode": "List",
         },
@@ -130,7 +129,7 @@ def Search(url, keyword=None):
 
 @site.register()
 def Playvid(url, name, download=None):
-    vp = utils.VideoPlayer(name, download)
+    vp = utils.VideoPlayer(name, download, IA_check="IA")
     html = utils.getHtml(url, site.url)
     if not html:
         vp.play_from_link_to_resolve(url)
@@ -177,7 +176,7 @@ def Playvid(url, name, download=None):
                         else next(iter(sources.values()))
                     )
                     if stream_url:
-                        vp.play_from_direct_link(stream_url + "|Referer=" + url)
+                        vp.play_from_direct_link(stream_url + "|Referer={}&User-Agent={}".format(url, utils.USER_AGENT))
                         return
             except Exception:
                 pass
@@ -195,7 +194,7 @@ def Playvid(url, name, download=None):
             if sources:
                 best_url = utils.selector("Select quality", sources)
                 if best_url:
-                    vp.play_from_direct_link(best_url + "|Referer=" + url)
+                    vp.play_from_direct_link(best_url + "|Referer={}&User-Agent={}".format(url, utils.USER_AGENT))
                     return
         except Exception:
             pass
@@ -203,13 +202,13 @@ def Playvid(url, name, download=None):
     # Pattern 3: direct file pattern.
     match = re.search(r"file:\s*[\"']([^\"']+\.(?:mp4|m3u8)[^\"']*)[\"']", html)
     if match:
-        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        vp.play_from_direct_link(match.group(1) + "|Referer={}&User-Agent={}".format(url, utils.USER_AGENT))
         return
 
     # Pattern 4: KVS-like video_url.
     match = re.search(r"video_url\s*[:=]\s*[\"']([^\"']+)[\"']", html)
     if match:
-        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        vp.play_from_direct_link(match.group(1) + "|Referer={}&User-Agent={}".format(url, utils.USER_AGENT))
         return
 
     # Pattern 5: video tag source.
@@ -217,7 +216,7 @@ def Playvid(url, name, download=None):
     if video_tag:
         source = video_tag.find("source")
         if source and source.get("src"):
-            vp.play_from_direct_link(source["src"] + "|Referer=" + url)
+            vp.play_from_direct_link(source["src"] + "|Referer={}&User-Agent={}".format(url, utils.USER_AGENT))
             return
 
     # Pattern 6: iframe fallback.

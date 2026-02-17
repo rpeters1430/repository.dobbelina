@@ -9,7 +9,7 @@ Kodi addon repository for adult content. The primary addon is **Cumination** (`p
 ## Commands
 
 ```bash
-# Setup
+# Setup (or run ./setup.sh which handles system deps + venv)
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-test.txt
 
@@ -106,12 +106,7 @@ If the site doesn't appear in Kodi: verify `AdultSite(...)` is at module level, 
 
 ## BeautifulSoup Migration
 
-Active migration from regex to BeautifulSoup4 for HTML parsing. Tracked in **MODERNIZATION.md**. Check current count:
-```bash
-grep -l "parse_html\|BeautifulSoup" plugin.video.cumination/resources/lib/sites/*.py | wc -l
-```
-
-When migrating: replace `re.compile(...).findall(html)` with `soup.select()` + `safe_get_attr()`. Use `parse_html()`, `safe_get_attr()`, `safe_get_text()`, and `soup_videos_list()` from utils. Reference implementation: `sites/pornhub.py`.
+Migration from regex to BeautifulSoup4 is **complete** (137/137 sites). Tracked in `docs/development/MODERNIZATION.md`. All new sites should use BeautifulSoup exclusively — use `parse_html()`, `safe_get_attr()`, `safe_get_text()`, and `soup_videos_list()` from utils. Reference implementation: `sites/pornhub.py`.
 
 Find sites needing tests:
 ```bash
@@ -136,3 +131,4 @@ comm -23 <(grep -l "parse_html" plugin.video.cumination/resources/lib/sites/*.py
 - **HLS/M3U8**: Requires `inputstream.adaptive` (not always bundled on Linux)
 - **Kodi import errors in tests**: Run from repo root with `python run_tests.py`; check `conftest.py` mocks
 - **Lazy-loading images**: Check `data-src`, `data-lazy`, `data-original` attributes via `safe_get_attr` fallbacks
+- **Playwright**: Only for tests and development-time site exploration. Never use Playwright in site modules — it is not available in the Kodi runtime environment
