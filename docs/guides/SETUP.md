@@ -38,4 +38,4 @@ After activation on any platform, run:
 pytest
 ```
 
-ImageMagick and pngquant are required by the logo-processing scripts (e.g., `process_logos.py`).
+ImageMagick and pngquant are required by the logo-processing scripts (e.g., `scripts/process_logos.py`).

@@ -5,10 +5,10 @@
 ### 1. Comprehensive Analysis Completed
 
 **Scripts Created:**
-- `analyze_logos.py` - Initial analysis of logo files and site configurations
-- `get_logo_dimensions.py` - Dimension extraction without PIL dependency
-- `process_logos.py` - Automated download, conversion, and processing tool
-- `validate_logos.py` - Ongoing validation and quality assurance
+- `scripts/analyze_logos.py` - Initial analysis of logo files and site configurations
+- `scripts/get_logo_dimensions.py` - Dimension extraction without PIL dependency
+- `scripts/process_logos.py` - Automated download, conversion, and processing tool
+- `scripts/validate_logos.py` - Ongoing validation and quality assurance
 
 **Documentation Created:**
 - `LOGO_STANDARDIZATION_PLAN.md` - Complete 400+ line standardization plan with:
@@ -139,7 +139,7 @@ Once ImageMagick is installed, run:
 
 ```bash
 cd "C:/Users/James/Desktop/repository.dobbelina"
-python process_logos.py
+python scripts/process_logos.py
 ```
 
 Select option 1 to download and process all missing logos automatically.
@@ -168,7 +168,7 @@ The script will:
 **Automated Processing:**
 
 ```bash
-python process_logos.py
+python scripts/process_logos.py
 ```
 
 Select option 2 to convert all JPG/GIF logos to PNG.
@@ -183,7 +183,7 @@ Select option 2 to convert all JPG/GIF logos to PNG.
 **Automated Processing:**
 
 ```bash
-python process_logos.py
+python scripts/process_logos.py
 ```
 
 Select option 3 to resize all existing logos.
@@ -219,7 +219,7 @@ This step can be done manually or with a script. I can create an automated updat
 After all processing, run validation:
 
 ```bash
-python validate_logos.py
+python scripts/validate_logos.py
 ```
 
 **Expected result:**
@@ -278,7 +278,7 @@ These sites are currently set up but need logo URLs discovered:
 **2. Run Automated Processing (30-60 minutes)**
 ```bash
 cd "C:/Users/James/Desktop/repository.dobbelina"
-python process_logos.py
+python scripts/process_logos.py
 # Select option 5 (Run all tasks)
 ```
 
@@ -288,7 +288,7 @@ python process_logos.py
 
 **4. Validate Results (5 minutes)**
 ```bash
-python validate_logos.py
+python scripts/validate_logos.py
 ```
 
 **5. Commit Changes**
@@ -325,10 +325,10 @@ Generated with Claude Code"
 |------|---------|----------|
 | LOGO_STANDARDIZATION_PLAN.md | Complete implementation plan | Repository root |
 | LOGO_STANDARDIZATION_SUMMARY.md | This file - execution guide | Repository root |
-| validate_logos.py | Validation script | Repository root |
-| process_logos.py | Automated processing | Repository root |
-| analyze_logos.py | Initial analysis | Repository root |
-| get_logo_dimensions.py | Dimension extraction | Repository root |
+| scripts/validate_logos.py | Validation script | Repository root |
+| scripts/process_logos.py | Automated processing | Repository root |
+| scripts/analyze_logos.py | Initial analysis | Repository root |
+| scripts/get_logo_dimensions.py | Dimension extraction | Repository root |
 
 **Directories:**
 
@@ -366,7 +366,7 @@ Generated with Claude Code"
 ## Next Steps (Priority Order)
 
 1. **[HIGH]** Install ImageMagick
-2. **[HIGH]** Run automated processing (process_logos.py option 5)
+2. **[HIGH]** Run automated processing (scripts/process_logos.py option 5)
 3. **[HIGH]** Update 50 site modules to use local logo files
 4. **[MEDIUM]** Investigate 2 orphaned logos (chaturbate, tnaflix)
 5. **[MEDIUM]** Discover URLs for 11 sites without logo URLs

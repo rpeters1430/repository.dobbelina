@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 import shutil
 
-REPO_ROOT = Path(r"C:\Users\James\Desktop\repository.dobbelina")
+REPO_ROOT = Path(os.environ.get("REPO_ROOT", Path(__file__).resolve().parents[1]))
 SITES_DIR = REPO_ROOT / "plugin.video.cumination" / "resources" / "lib" / "sites"
 IMAGES_DIR = REPO_ROOT / "plugin.video.cumination" / "resources" / "images"
 BACKUP_DIR = REPO_ROOT / "site_modules_backup"
@@ -108,7 +108,7 @@ def preview_changes(sites):
     missing_logos = sum(1 for s in sites if not s["local_exists"])
     if missing_logos:
         print(f"[WARNING] {missing_logos} sites don't have local logos yet!")
-        print(f"          Run process_logos.py first to download missing logos")
+        print(f"          Run scripts/process_logos.py first to download missing logos")
 
 
 def apply_changes(sites, dry_run=False):

@@ -2,17 +2,17 @@
 
 ## Overview
 
-This directory contains a comprehensive suite of Python scripts to standardize all site logos in the Cumination addon. All scripts are located in the repository root directory.
+This directory contains a comprehensive suite of Python scripts to standardize all site logos in the Cumination addon. All logo scripts are located in the `scripts/` directory and should be run from the repository root.
 
 ## Scripts Summary
 
 | Script | Purpose | When to Use |
 |--------|---------|-------------|
-| **validate_logos.py** | Check all logos meet standards | Before/after any changes |
-| **process_logos.py** | Download, convert, resize logos | Main processing tool |
-| **update_site_modules.py** | Update site .py files | After processing logos |
-| **analyze_logos.py** | Detailed analysis and reports | Initial assessment |
-| **get_logo_dimensions.py** | Extract logo dimensions | Manual inspection |
+| **scripts/validate_logos.py** | Check all logos meet standards | Before/after any changes |
+| **scripts/process_logos.py** | Download, convert, resize logos | Main processing tool |
+| **scripts/update_site_modules.py** | Update site .py files | After processing logos |
+| **scripts/analyze_logos.py** | Detailed analysis and reports | Initial assessment |
+| **scripts/get_logo_dimensions.py** | Extract logo dimensions | Manual inspection |
 
 ## Prerequisites
 
@@ -53,7 +53,7 @@ Run the validation script to see current state:
 
 ```bash
 cd "C:/Users/James/Desktop/repository.dobbelina"
-python validate_logos.py
+python scripts/validate_logos.py
 ```
 
 **What it checks:**
@@ -92,7 +92,7 @@ Info: 0
 Run the main processing script:
 
 ```bash
-python process_logos.py
+python scripts/process_logos.py
 ```
 
 **Interactive menu:**
@@ -131,7 +131,7 @@ Options:
 After processing logos, update the site .py files:
 
 ```bash
-python update_site_modules.py
+python scripts/update_site_modules.py
 ```
 
 **Interactive menu:**
@@ -162,7 +162,7 @@ AFTER:  'avple.png'
 Run validation again to confirm all changes:
 
 ```bash
-python validate_logos.py
+python scripts/validate_logos.py
 ```
 
 **Expected result:**
@@ -184,13 +184,13 @@ VALIDATION PASSED - ALL LOGOS MEET STANDARDS!
 
 ## Script Details
 
-### validate_logos.py
+### scripts/validate_logos.py
 
 **Purpose:** Comprehensive validation of all logos
 
 **Usage:**
 ```bash
-python validate_logos.py
+python scripts/validate_logos.py
 ```
 
 **Checks performed:**
@@ -210,13 +210,13 @@ python validate_logos.py
 
 ---
 
-### process_logos.py
+### scripts/process_logos.py
 
 **Purpose:** Main logo processing and automation tool
 
 **Usage:**
 ```bash
-python process_logos.py
+python scripts/process_logos.py
 # Follow interactive menu
 ```
 
@@ -240,7 +240,7 @@ python process_logos.py
 - Preserves aspect ratio
 
 **Option 4: Validate**
-- Same as validate_logos.py
+- Same as scripts/validate_logos.py
 - Convenient integration
 
 **Option 5: Run all**
@@ -275,13 +275,13 @@ For each logo:
 
 ---
 
-### update_site_modules.py
+### scripts/update_site_modules.py
 
 **Purpose:** Batch update site .py files to use local logos
 
 **Usage:**
 ```bash
-python update_site_modules.py
+python scripts/update_site_modules.py
 # Choose option 1 (with backup)
 ```
 
@@ -326,13 +326,13 @@ site = AdultSite('siteid', '[COLOR hotpink]Name[/COLOR]',
 
 ---
 
-### analyze_logos.py
+### scripts/analyze_logos.py
 
 **Purpose:** Detailed analysis and reporting
 
 **Usage:**
 ```bash
-python analyze_logos.py
+python scripts/analyze_logos.py
 ```
 
 **Output:**
@@ -347,13 +347,13 @@ python analyze_logos.py
 
 ---
 
-### get_logo_dimensions.py
+### scripts/get_logo_dimensions.py
 
 **Purpose:** Extract exact dimensions without PIL dependency
 
 **Usage:**
 ```bash
-python get_logo_dimensions.py
+python scripts/get_logo_dimensions.py
 ```
 
 **Output:**
@@ -459,10 +459,10 @@ python get_logo_dimensions.py
 
 ### "Site module not updated"
 
-**Problem:** update_site_modules.py skipped a site
+**Problem:** scripts/update_site_modules.py skipped a site
 
 **Causes:**
-1. Local logo doesn't exist - run process_logos.py first
+1. Local logo doesn't exist - run scripts/process_logos.py first
 2. Site already uses local logo - no update needed
 3. Regex pattern didn't match - unusual formatting
 4. File encoding issue - check for BOM or non-UTF8
@@ -501,7 +501,7 @@ move sitename.png "plugin.video.cumination/resources/images/"
 
 ### Batch Process Specific Sites
 
-Edit `process_logos.py` and modify the `get_sites_needing_logos()` function to filter specific sites:
+Edit `scripts/process_logos.py` and modify the `get_sites_needing_logos()` function to filter specific sites:
 
 ```python
 sites = get_sites_needing_logos()
@@ -511,7 +511,7 @@ sites = [s for s in sites if s['site_id'] in ['avple', 'eporner', 'xnxx']]
 
 ### Custom Validation Rules
 
-Edit `validate_logos.py` constants:
+Edit `scripts/validate_logos.py` constants:
 
 ```python
 TARGET_SIZE = "512x512"  # Use larger size
@@ -537,18 +537,18 @@ python -c "from pathlib import Path; logos = Path('plugin.video.cumination/resou
 
 ```bash
 # 1. Validate current state
-python validate_logos.py
+python scripts/validate_logos.py
 
 # 2. Process all logos (downloads, converts, resizes)
-python process_logos.py
+python scripts/process_logos.py
 # Select option 5
 
 # 3. Update site modules
-python update_site_modules.py
+python scripts/update_site_modules.py
 # Select option 1
 
 # 4. Final validation
-python validate_logos.py
+python scripts/validate_logos.py
 # Should show all PASSED
 
 # 5. Commit changes
@@ -568,7 +568,7 @@ git commit -m "Standardize all site logos to 256x256 PNG"
 python -c "from pathlib import Path; import subprocess; f = Path('plugin.video.cumination/resources/images/newsiteid.png'); print(subprocess.run(['magick', 'identify', '-format', '%wx%h %b', str(f)], capture_output=True, text=True).stdout)"
 
 # 3. Run full validation
-python validate_logos.py
+python scripts/validate_logos.py
 ```
 
 ---
@@ -590,7 +590,7 @@ magick identify plugin.video.cumination/resources/images/sitename.png
 magick identify -format "%f: %wx%h %b\n" plugin.video.cumination/resources/images/*.png
 
 # Find orphaned logos
-python validate_logos.py | grep -A 20 "CHECK 3"
+python scripts/validate_logos.py | grep -A 20 "CHECK 3"
 
 # Count logos by format
 ls plugin.video.cumination/resources/images/*.{png,jpg,gif} 2>/dev/null | wc -l

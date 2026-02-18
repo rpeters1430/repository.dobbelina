@@ -1,10 +1,10 @@
 import sys
 
-sys.path.append("plugin.video.cumination/resources/lib")
+
 import types
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[0]
+ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_PATH = ROOT / "plugin.video.cumination"
 
 # Ensure the plugin package is importable when running tests

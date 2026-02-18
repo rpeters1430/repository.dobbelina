@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `fix_all_logos.py` script automatically:
+The `scripts/fix_all_logos.py` script automatically:
 1. ✅ **Verifies** all site logos are present and correctly configured
 2. 🔧 **Updates** site code to use local PNG files instead of remote URLs
 3. 🔨 **Fixes** file extension mismatches (e.g., .jpg → .png)
@@ -26,7 +26,7 @@ As of the last scan, the addon has:
 See what would be fixed without making any changes:
 
 ```bash
-python3 fix_all_logos.py --dry-run
+python3 scripts/fix_all_logos.py --dry-run
 ```
 
 ### 2. Interactive Mode
@@ -34,7 +34,7 @@ python3 fix_all_logos.py --dry-run
 Run with confirmation prompt:
 
 ```bash
-python3 fix_all_logos.py
+python3 scripts/fix_all_logos.py
 ```
 
 You'll be asked to confirm before making changes.
@@ -44,7 +44,7 @@ You'll be asked to confirm before making changes.
 Run without confirmation (useful for CI/CD):
 
 ```bash
-python3 fix_all_logos.py --yes
+python3 scripts/fix_all_logos.py --yes
 ```
 
 ## Requirements

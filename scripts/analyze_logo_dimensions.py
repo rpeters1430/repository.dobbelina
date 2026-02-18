@@ -5,6 +5,7 @@ Analyze logo dimensions using PIL
 
 import os
 from collections import Counter
+from pathlib import Path
 
 try:
     from PIL import Image
@@ -12,7 +13,8 @@ except ImportError:
     print("PIL/Pillow not installed. Install with: pip install Pillow")
     exit(1)
 
-IMAGES_DIR = r"C:\Users\James\Desktop\repository.dobbelina\plugin.video.cumination\resources\images"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+IMAGES_DIR = REPO_ROOT / "plugin.video.cumination" / "resources" / "images"
 
 
 def analyze_dimensions():

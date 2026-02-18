@@ -107,6 +107,6 @@ def main(page_url):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python sniff_video.py <page_url>")
+        print("Usage: python scripts/sniff_video.py <page_url>")
         sys.exit(1)
     main(sys.argv[1])

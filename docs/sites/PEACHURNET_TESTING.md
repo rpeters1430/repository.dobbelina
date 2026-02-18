@@ -134,7 +134,7 @@ Once testing is complete and successful:
 
 ```bash
 # Remove debug files
-rm -f debug_peachurnet.py debug_peachurnet_simple.py test_extraction.py
+rm -f scripts/debug_peachurnet.py scripts/debug_peachurnet_simple.py test_extraction.py
 rm -f ~/peachurnet_debug.html /tmp/peachurnet_*.html
 
 # Restore kodi.log (if desired)
