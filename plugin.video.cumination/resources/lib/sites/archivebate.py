@@ -40,22 +40,25 @@ _PLATFORMS = [
 
 
 def _livewire_list(url):
-    """Two-step Livewire fetch. Returns the HTML fragment string, or None on failure."""
+    """Two-step Livewire fetch. Returns (html_fragment, next_page_url) or (None, None)."""
     session = requests.Session()
     session.headers.update({"User-Agent": utils.USER_AGENT})
 
     resp = session.get(url)
+    # Derive base from the final URL after any redirect (.cc ↔ .com)
+    final_url = resp.url
+    base = final_url.split("//", 1)[0] + "//" + final_url.split("//", 1)[1].split("/")[0]
 
     csrf_match = re.search(r'<meta name="csrf-token" content="([^"]+)"', resp.text)
     if not csrf_match:
-        return None
+        return None, None
     csrf = csrf_match.group(1)
 
     wire_match = re.search(
         r'wire:initial-data="([^"]+)"[^>]*wire:init="loadVideos"', resp.text
     )
     if not wire_match:
-        return None
+        return None, None
     wire_state = json.loads(htmlmod.unescape(wire_match.group(1)))
 
     component_name = wire_state["fingerprint"]["name"]
@@ -69,17 +72,26 @@ def _livewire_list(url):
     }
 
     lw_resp = session.post(
-        "https://archivebate.com/livewire/message/" + component_name,
+        base + "/livewire/message/" + component_name,
         json=payload,
         headers={
             "X-CSRF-TOKEN": csrf,
             "X-Livewire": "true",
             "Accept": "application/json",
-            "Referer": url,
+            "Referer": final_url,
         },
     )
     data = lw_resp.json()
-    return data.get("effects", {}).get("html")
+    fragment = data.get("effects", {}).get("html")
+
+    # Extract next page URL and normalise domain to archivebate.com
+    next_url = None
+    if fragment:
+        next_match = re.search(r'<a[^>]+rel="next"[^>]+href="([^"]+)"', fragment)
+        if next_match:
+            next_url = re.sub(r'https://archivebate\.\w+', 'https://archivebate.com', next_match.group(1))
+
+    return fragment, next_url
 
 
 @site.register(default_mode=True)
@@ -92,7 +104,7 @@ def Main():
 
 @site.register()
 def List(url):
-    fragment = _livewire_list(url)
+    fragment, next_url = _livewire_list(url)
     if not fragment:
         utils.eod()
         return
@@ -111,6 +123,9 @@ def List(url):
         name = performer.text.strip() if performer else "Video"
 
         site.add_download_link(name, watch_url, "Playvid", image)
+
+    if next_url:
+        site.add_dir("Next Page", next_url, "List", site.img_next)
 
     utils.eod()
 

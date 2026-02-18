@@ -12,7 +12,7 @@ def load_fixture(name):
     return (FIXTURE_DIR / name).read_text(encoding="utf-8")
 
 
-def make_session_mock(fragment_html):
+def make_session_mock(fragment_html, base_url="https://archivebate.com/"):
     """Build a mock requests.Session that returns Livewire data."""
     # Minimal page HTML with csrf token and wire:initial-data
     page_html = (
@@ -24,6 +24,7 @@ def make_session_mock(fragment_html):
 
     get_response = MagicMock()
     get_response.text = page_html
+    get_response.url = base_url  # needed for domain-corrected POST URL
 
     post_response = MagicMock()
     post_response.json.return_value = {
@@ -151,6 +152,42 @@ def test_playvid_handles_missing_iframe(monkeypatch):
     archivebate.Playvid("https://archivebate.com/watch/000000", "missing")
 
     fake_vp.play_from_link_to_resolve.assert_not_called()
+
+
+def test_list_adds_next_page_dir(monkeypatch):
+    """List() adds a Next Page dir when the fragment contains a[rel=next]."""
+    fragment_with_next = """
+    <div>
+      <section class="video_item">
+        <a href="https://archivebate.com/watch/111111">
+          <video class="video-splash-mov" poster="https://cdn.archivebate.com/t1.jpg"></video>
+        </a>
+        <a href="https://archivebate.com/profile/performer_one">performer_one</a>
+      </section>
+      <ul class="pagination">
+        <li><a rel="next" href="https://archivebate.cc?page=2"></a></li>
+      </ul>
+    </div>
+    """
+    session_mock = make_session_mock(fragment_with_next)
+
+    downloads = []
+    dirs = []
+
+    monkeypatch.setattr(archivebate.requests, "Session", session_mock)
+    monkeypatch.setattr(archivebate.site, "add_download_link",
+                        lambda name, url, mode, icon, **kw: downloads.append(name))
+    monkeypatch.setattr(archivebate.site, "add_dir",
+                        lambda name, url, mode, icon=None, **kw: dirs.append({"name": name, "url": url}))
+    monkeypatch.setattr(archivebate.utils, "eod", lambda: None)
+
+    archivebate.List("https://archivebate.com/")
+
+    assert len(downloads) == 1
+    assert len(dirs) == 1
+    assert dirs[0]["name"] == "Next Page"
+    # .cc domain normalized to .com; no trailing slash (matches live site link format)
+    assert dirs[0]["url"] == "https://archivebate.com?page=2"
 
 
 # --- Main tests ---
