@@ -228,6 +228,9 @@ def _ensure_kodi_stubs():
             self.content = b""
             self.headers = {}
 
+        def json(self):
+            return {}
+
     def _head(url, allow_redirects=True):
         return _Response(url)
 
@@ -237,9 +240,20 @@ def _ensure_kodi_stubs():
     def _post(url, **kwargs):
         return _Response(url)
 
+    class _Session:
+        def __init__(self):
+            self.headers = {}
+
+        def get(self, url, **kwargs):
+            return _Response(url)
+
+        def post(self, url, **kwargs):
+            return _Response(url)
+
     requests_module.head = _head
     requests_module.get = _get
     requests_module.post = _post
+    requests_module.Session = _Session
     sys.modules["requests"] = requests_module
 
     # websocket stub -------------------------------------------------------
