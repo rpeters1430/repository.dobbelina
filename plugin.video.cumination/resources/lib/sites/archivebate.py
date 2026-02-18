@@ -122,3 +122,5 @@ def Playvid(url, name, download=None):
     iframe = soup.select_one("iframe.video-frame")
     if iframe and iframe.get("src"):
         vp.play_from_link_to_resolve(iframe["src"])
+        return
+    utils.notify("Archivebate", "No video found")
