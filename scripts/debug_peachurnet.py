@@ -8,7 +8,9 @@ import sys
 import os
 
 # Add the plugin path to import the modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "plugin.video.cumination"))
+sys.path.insert(
+    0, os.path.join(os.path.dirname(__file__), "..", "plugin.video.cumination")
+)
 
 from resources.lib.sites import peachurnet
 from resources.lib import utils

@@ -1,6 +1,7 @@
 """
 Test hotleak video URL decryption without Playwright
 """
+
 import base64
 import json
 import re
@@ -30,7 +31,7 @@ def decrypt_hotleak_url(encrypted_url):
     # Reverse the string
     decrypted = decrypted[::-1]
     # Base64 decode
-    decrypted = base64.b64decode(decrypted).decode('utf-8')
+    decrypted = base64.b64decode(decrypted).decode("utf-8")
 
     return decrypted
 
@@ -45,13 +46,13 @@ def extract_video_url_from_html(html):
     Returns:
         Decrypted M3U8 URL or None if not found
     """
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(html, "html.parser")
 
     # Look for elements with data-video attribute
-    video_items = soup.select('[data-video]')
+    video_items = soup.select("[data-video]")
 
     for item in video_items:
-        data_video = item.get('data-video', '')
+        data_video = item.get("data-video", "")
         if not data_video:
             continue
 
@@ -59,8 +60,8 @@ def extract_video_url_from_html(html):
             video_json = json.loads(data_video)
 
             # Extract encrypted URL
-            if 'source' in video_json and len(video_json['source']) > 0:
-                encrypted_url = video_json['source'][0].get('src', '')
+            if "source" in video_json and len(video_json["source"]) > 0:
+                encrypted_url = video_json["source"][0].get("src", "")
 
                 if encrypted_url:
                     # Decrypt and return the first valid URL found
@@ -74,7 +75,7 @@ def extract_video_url_from_html(html):
 
 
 # Test the decryption
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Test cases from the actual page
     test_cases = [
         "nsHBDRtgq21ismxd==wToxkWER0YThjYYdTcwZkY9IzZpNnJ1ADNiFjM2YWYjdTN4ATNkdTNiVGOlNTMjJ2Y0MDOxYWYldTYmJmNllTOwETN4ATZidTO5MTN0EGNmFTY4ETNh1zZpNnJ4MzM5gTMxczNx0TZtlGd/gTdz0mL2kDM5MTOxEzL4U3Mt9CcpZnLrFWZsR3bo9yL6MHc0RHaAwsYEQOVzY1M3sRW",
