@@ -119,7 +119,8 @@
       "Bash(.venv/bin/python3:*)",
       "mcp__plugin_playwright_playwright__browser_navigate",
       "mcp__plugin_playwright_playwright__browser_install",
-      "WebFetch(domain:www9.pornhd3x.tv)"
+      "WebFetch(domain:www9.pornhd3x.tv)",
+      "Bash(pip install:*)"
     ],
     "deny": [],
     "ask": []

@@ -6,7 +6,6 @@ on request/HTML parsing fallbacks. To enable Playwright explicitly for local
 debugging, set environment variable: CUMINATION_ALLOW_PLAYWRIGHT=1
 """
 
-import json
 import os
 import sys
 from typing import Optional, Dict

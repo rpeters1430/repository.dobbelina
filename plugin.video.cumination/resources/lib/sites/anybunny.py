@@ -26,7 +26,7 @@ from resources.lib.sites.soup_spec import SoupSiteSpec
 site = AdultSite(
     "anybunny",
     "[COLOR hotpink]Anybunny[/COLOR]",
-    "http://anybunny.org/",
+    "https://anybunny.org/",
     "anybunny.png",
     "anybunny",
 )
@@ -64,8 +64,8 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir("[COLOR hotpink]New videos[/COLOR]", site.url + "new/", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Top videos[/COLOR]", site.url + "top/", "List", site.img_cat)
+    site.add_dir("[COLOR hotpink]New videos[/COLOR]", site.url + "new/page/1/", "List", site.img_cat)
+    site.add_dir("[COLOR hotpink]Top videos[/COLOR]", site.url + "top/page/1/", "List", site.img_cat)
     site.add_dir(
         "[COLOR hotpink]Categories - images[/COLOR]",
         site.url,
@@ -122,10 +122,12 @@ def List(url):
     for item in items:
         site.add_download_link(item["title"], item["url"], "Playvid", item["thumb"], item["title"])
 
-    next_link = soup.select_one('a[rel="next"], a.next')
+    next_link = soup.select_one('a[rel="next"], a.next, a.topbtmsel2r')
     if next_link and next_link.has_attr("href"):
-        next_url = urllib_parse.urljoin(site.url, next_link["href"])
-        site.add_dir("Next Page", next_url, "List")
+        text = next_link.get_text().strip().lower()
+        if not text or "next" in text or text in ("»", ">", "→"):
+            next_url = urllib_parse.urljoin(site.url, next_link["href"])
+            site.add_dir("Next Page", next_url, "List")
 
     utils.eod()
 

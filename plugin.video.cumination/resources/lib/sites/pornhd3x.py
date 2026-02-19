@@ -45,12 +45,6 @@ _TOKEN_SEED = (
 )
 
 
-def _thumb_with_headers(value, _item):
-    if not value or "|" in value:
-        return value
-    return "{}|Referer={}&User-Agent={}".format(value, site.url, utils.USER_AGENT)
-
-
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
         "items": ".ml-item.item",
@@ -60,7 +54,6 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
             "selector": "img",
             "attr": "data-original",
             "fallback_attrs": ["data-src", "src"],
-            "transform": _thumb_with_headers,
         },
         "quality": {"selector": ".mli-quality", "text": True},
         "pagination": {

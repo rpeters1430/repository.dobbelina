@@ -60,22 +60,22 @@ def test_list_populates_download_links(monkeypatch):
     assert recorder.downloads == [
         {
             "name": "First Video Title",
-            "url": "http://anybunny.org/videos/first-video",
+            "url": "https://anybunny.org/videos/first-video",
             "mode": "anybunny.Playvid",
-            "icon": "http://cdn.anybunny.org/thumb-first.jpg",
+            "icon": "https://cdn.anybunny.org/thumb-first.jpg",
         },
         {
             "name": "Second Video Title",
-            "url": "http://anybunny.org/videos/second-video",
+            "url": "https://anybunny.org/videos/second-video",
             "mode": "anybunny.Playvid",
-            "icon": "http://cdn.anybunny.org/thumb-second.jpg",
+            "icon": "https://cdn.anybunny.org/thumb-second.jpg",
         },
     ]
 
     assert recorder.dirs == [
         {
             "name": "Next Page",
-            "url": "http://anybunny.org/new/?p=2",
+            "url": "https://anybunny.org/new/?p=2",
             "mode": "anybunny.List",
         }
     ]
