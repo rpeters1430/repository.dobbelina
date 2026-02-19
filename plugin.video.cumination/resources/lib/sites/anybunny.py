@@ -93,9 +93,9 @@ def List(url):
     soup = utils.parse_html(listhtml)
 
     items = []
-    for anchor in soup.select('a.nuyrfe[href], a[href*="/view/"], a[href*="/videos/"]'):
+    for anchor in soup.select('a.nuyrfe[href], a[href*="/view/"], a[href*="/videos/"], a[href*="/too/"]'):
         href = utils.safe_get_attr(anchor, "href")
-        if not href or ("/videos/" not in href and "/view/" not in href):
+        if not href or ("/videos/" not in href and "/view/" not in href and "/too/" not in href):
             continue
         video_url = urllib_parse.urljoin(site.url, href)
         img_tag = anchor.find("img")
@@ -127,16 +127,63 @@ def List(url):
         text = next_link.get_text().strip().lower()
         if not text or "next" in text or text in ("»", ">", "→"):
             next_url = urllib_parse.urljoin(site.url, next_link["href"])
-            site.add_dir("Next Page", next_url, "List")
+            # Skip JS-driven ?p=N pagination on base listing pages (/new/page/N/,
+            # /top/page/N/) — those pages ignore ?p and return the same content.
+            # Category pages (e.g. /top/teens?p=2) have real server-side pagination.
+            if not re.search(r'/(?:new|top)/page/\d+/', url):
+                site.add_dir("Next Page", next_url, "List")
 
     utils.eod()
+
+
+def _extract_playerjs_best_url(html_content):
+    """Extract the best quality video URL from Playerjs file parameter in HTML.
+
+    Handles two formats:
+    - Quality-labelled: file:"[240]url,[360]url,[480]url,[720]url" (picks highest)
+    - Multi-source:     file:"m3u8_url :cast:cast_url or mp4_url :cast:cast_url"
+    Falls back to bare URL pattern scan if no file: parameter is found.
+    """
+    file_match = re.search(r'file\s*:\s*["\']([^"\']+)["\']', html_content, re.IGNORECASE)
+    if file_match:
+        file_val = file_match.group(1)
+
+        # Quality-labelled format: [240]url,[360]url,...
+        quality_options = re.findall(r'\[(\d+)\](https?://[^,\[\s"\']+)', file_val)
+        if quality_options:
+            quality_options.sort(key=lambda x: int(x[0]), reverse=True)
+            return quality_options[0][1]
+
+        # Multi-source format: url1 :cast:casturl1 or url2 :cast:casturl2
+        mp4_url = None
+        m3u8_url = None
+        for part in re.split(r'\s+or\s+', file_val):
+            primary = part.split(':cast:')[0].strip()
+            if '.mp4' in primary.lower() and not mp4_url:
+                mp4_url = primary
+            elif ('.m3u8' in primary.lower() or '/hls/' in primary.lower()) and not m3u8_url:
+                m3u8_url = primary
+        if mp4_url or m3u8_url:
+            # Prefer mp4: plays without inputstream.adaptive
+            return mp4_url or m3u8_url
+
+    # Fallback: scan for bare media URLs
+    for pattern in [
+        r'(https?://[^\s"\'\\,\]]+\.mp4(?:[^\s"\'\\,\]]*)?)',
+        r'(https?://[^\s"\'\\,\]]+\.m3u8(?:[^\s"\'\\,\]]*)?)',
+    ]:
+        match = re.search(pattern, html_content, re.IGNORECASE)
+        if match:
+            video_url = match.group(1).split(':cast:')[0].strip()
+            return video_url
+
+    return None
 
 
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
 
-    # Fallback: Extract iframe URL and get video from there
     vp.progress.update(50, "[CR]Fetching video page...[CR]")
     pagehtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
 
@@ -144,10 +191,18 @@ def Playvid(url, name, download=None):
         utils.kodilog("anybunny Playvid: Failed to fetch page")
         return
 
-    # Extract iframe URL
+    # /too/ pages embed the Playerjs file parameter directly in the page HTML
+    video_url = _extract_playerjs_best_url(pagehtml)
+    if video_url:
+        utils.kodilog(f"anybunny Playvid: Found video URL in page: {video_url[:100]}")
+        vp.play_from_direct_link(video_url)
+        return
+
+    # /view/ pages use an iframe containing the Playerjs player
     iframe_match = re.search(r'<iframe[^>]+src=["\']([^"\']+)["\']', pagehtml, re.IGNORECASE)
     if not iframe_match:
-        utils.kodilog("anybunny Playvid: No iframe found")
+        utils.kodilog("anybunny Playvid: No iframe or video found")
+        utils.notify("Error", "Could not extract video URL")
         return
 
     iframe_url = iframe_match.group(1)
@@ -155,8 +210,6 @@ def Playvid(url, name, download=None):
         iframe_url = urllib_parse.urljoin(site.url, iframe_url)
 
     utils.kodilog(f"anybunny Playvid: Found iframe: {iframe_url[:100]}")
-
-    # Fetch iframe content
     vp.progress.update(70, "[CR]Loading player...[CR]")
     iframe_html, _ = utils.get_html_with_cloudflare_retry(iframe_url, referer=url)
 
@@ -164,26 +217,13 @@ def Playvid(url, name, download=None):
         utils.kodilog("anybunny Playvid: Failed to fetch iframe")
         return
 
-    # Extract video URL from iframe
-    # Look for .mp4 or .m3u8 URLs in the iframe
-    video_patterns = [
-        r'(https?://[^\s\"\'\],]+\.mp4[^\s\"\'\],]*)',
-        r'(https?://[^\s\"\'\],]+\.m3u8[^\s\"\'\],]*)',
-    ]
+    video_url = _extract_playerjs_best_url(iframe_html)
+    if video_url:
+        utils.kodilog(f"anybunny Playvid: Found video URL in iframe: {video_url[:100]}")
+        vp.play_from_direct_link(video_url)
+        return
 
-    for pattern in video_patterns:
-        video_match = re.search(pattern, iframe_html, re.IGNORECASE)
-        if video_match:
-            video_url = video_match.group(1)
-            # Clean up any trailing characters that might have been captured
-            video_url = video_url.split(':cast:')[0]  # Remove Chromecast URLs
-            video_url = re.sub(r'[,\]\)\}].*$', '', video_url)  # Remove trailing punctuation
-
-            utils.kodilog(f"anybunny Playvid: Found video URL: {video_url[:100]}")
-            vp.play_from_direct_link(video_url)
-            return
-
-    utils.kodilog("anybunny Playvid: No video URL found in iframe")
+    utils.kodilog("anybunny Playvid: No video URL found")
     utils.notify("Error", "Could not extract video URL")
 
 

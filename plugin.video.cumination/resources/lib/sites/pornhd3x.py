@@ -169,7 +169,11 @@ def Playvid(url, name, download=None):
                         else next(iter(sources.values()))
                     )
                     if stream_url:
-                        vp.play_from_direct_link(stream_url + "|Referer={}&User-Agent={}".format(url, utils.USER_AGENT))
+                        # Stream URLs are pre-signed with md5+expires tokens; adding
+                        # Referer/User-Agent via | would cause inputstream.adaptive to
+                        # append them as query params (stream_params) to every segment
+                        # URL, making them malformed (curl error 3).
+                        vp.play_from_direct_link(stream_url)
                         return
             except Exception:
                 pass
@@ -187,7 +191,7 @@ def Playvid(url, name, download=None):
             if sources:
                 best_url = utils.selector("Select quality", sources)
                 if best_url:
-                    vp.play_from_direct_link(best_url + "|Referer={}&User-Agent={}".format(url, utils.USER_AGENT))
+                    vp.play_from_direct_link(best_url)
                     return
         except Exception:
             pass
@@ -195,13 +199,13 @@ def Playvid(url, name, download=None):
     # Pattern 3: direct file pattern.
     match = re.search(r"file:\s*[\"']([^\"']+\.(?:mp4|m3u8)[^\"']*)[\"']", html)
     if match:
-        vp.play_from_direct_link(match.group(1) + "|Referer={}&User-Agent={}".format(url, utils.USER_AGENT))
+        vp.play_from_direct_link(match.group(1))
         return
 
     # Pattern 4: KVS-like video_url.
     match = re.search(r"video_url\s*[:=]\s*[\"']([^\"']+)[\"']", html)
     if match:
-        vp.play_from_direct_link(match.group(1) + "|Referer={}&User-Agent={}".format(url, utils.USER_AGENT))
+        vp.play_from_direct_link(match.group(1))
         return
 
     # Pattern 5: video tag source.
@@ -209,7 +213,7 @@ def Playvid(url, name, download=None):
     if video_tag:
         source = video_tag.find("source")
         if source and source.get("src"):
-            vp.play_from_direct_link(source["src"] + "|Referer={}&User-Agent={}".format(url, utils.USER_AGENT))
+            vp.play_from_direct_link(source["src"])
             return
 
     # Pattern 6: iframe fallback.
