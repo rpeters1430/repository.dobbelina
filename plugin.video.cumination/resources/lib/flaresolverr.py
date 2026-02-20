@@ -5,7 +5,7 @@ import time
 class FlareSolverrManager:
     def __init__(self, flaresolverr_url=None, session_id=None):
         self.session = requests.session()
-        self.flaresolverr_url = flaresolverr_url or "http://localhost:8191/v1"
+        self.flaresolverr_url = flaresolverr_url or "http://127.0.0.1:8191/v1"
         self.session_id = session_id or "cumination_session_{}".format(int(time.time()))
 
         # Only clear old cumination sessions to avoid conflicts with other addons

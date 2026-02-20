@@ -1230,18 +1230,8 @@ def flaresolve(url, referer):
     from resources.lib.flaresolverr import FlareSolverrManager
 
     fs_host = addon.getSetting("fs_host")
-    if not fs_host or fs_host == "http://localhost:8191/v1":
-        # Check if default localhost FlareSolverr is actually available
-        try:
-            import requests
-
-            requests.get("http://localhost:8191", timeout=2)
-        except Exception:
-            raise RuntimeError(
-                "FlareSolverr is not configured or not running. "
-                "Please install and configure FlareSolverr in addon settings. "
-                "See: https://github.com/FlareSolverr/FlareSolverr"
-            )
+    if not fs_host:
+        fs_host = "http://127.0.0.1:8191/v1"
 
     try:
         flaresolverr = FlareSolverrManager(fs_host)
@@ -2771,9 +2761,10 @@ class VideoPlayer:
         for url in urls:
             try:
                 html = getHtml(url, referrer_url or url)
-                m3u8_urls = re.findall(r"https?://[^\"'\\s<>]+\\.m3u8[^\"'\\s<>]*", html)
-                mp4_urls = re.findall(r"https?://[^\"'\\s<>]+\\.mp4[^\"'\\s<>]*", html)
-                for stream_url in m3u8_urls + mp4_urls:
+                m3u8_urls = re.findall(r"https?://[^\"'\s<>]+\.m3u8[^\"'\s<>]*", html)
+                mp4_urls = re.findall(r"https?://[^\"'\s<>]+\.mp4[^\"'\s<>]*", html)
+                file_urls = re.findall(r'"file"\s*:\s*"(https?://[^"]+)"', html)
+                for stream_url in m3u8_urls + mp4_urls + file_urls:
                     if stream_url not in sources:
                         sources.append(stream_url)
             except Exception:
