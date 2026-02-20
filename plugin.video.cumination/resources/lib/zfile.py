@@ -19,7 +19,12 @@ except ImportError:
     crc32 = binascii.crc32
 import xbmc
 
-KODIV = float(xbmc.getInfoLabel("System.BuildVersion")[:4])
+try:
+    _version = xbmc.getInfoLabel("System.BuildVersion")
+    _match = re.search(r"(\d+\.\d+)", _version)
+    KODIV = float(_match.group(1)) if _match else 19.0
+except Exception:
+    KODIV = 19.0
 __all__ = [
     "BadZipfile",
     "error",

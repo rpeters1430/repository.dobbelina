@@ -67,7 +67,12 @@ PY2 = six.PY2
 PY3 = six.PY3
 TRANSLATEPATH = xbmcvfs.translatePath if PY3 else xbmc.translatePath
 LOGINFO = xbmc.LOGINFO if PY3 else xbmc.LOGNOTICE
-KODIVER = float(xbmcaddon.Addon("xbmc.addon").getAddonInfo("version")[:4])
+try:
+    _version = xbmcaddon.Addon("xbmc.addon").getAddonInfo("version")
+    _match = re.search(r"(\d+\.\d+)", _version)
+    KODIVER = float(_match.group(1)) if _match else 19.0
+except Exception:
+    KODIVER = 19.0
 
 base_hdrs = {
     "User-Agent": USER_AGENT,
@@ -121,6 +126,9 @@ def parse_html(html):
         soup = parse_html(listhtml)
         videos = soup.select('div.video-item')
     """
+    if not html:
+        from bs4 import BeautifulSoup
+        return BeautifulSoup("", "html.parser")
     try:
         from bs4 import BeautifulSoup
 
@@ -2571,6 +2579,9 @@ class VideoPlayer:
 
     @_cancellable
     def play_from_html(self, html, url=None):
+        if not html:
+            notify(i18n("oh_oh"), i18n("not_found"))
+            return
         self.progress.update(40, "[CR]{0}[CR]".format(i18n("srch_host")))
         solved_suburls = self._check_suburls(html, url)
         self.progress.update(60, "[CR]{0}[CR]".format(i18n("srch_host")))
@@ -2650,6 +2661,8 @@ class VideoPlayer:
 
     @_cancellable
     def _check_suburls(self, html, referrer_url):
+        if not html:
+            return []
         sdurl = re.compile(
             r"""streamdefence\.com/view.php\?ref=([^"']+)""", re.DOTALL | re.IGNORECASE
         ).findall(html)

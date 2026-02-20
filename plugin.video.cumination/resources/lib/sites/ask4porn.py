@@ -49,13 +49,13 @@ def List(url):
     soup = utils.parse_html(html)
 
     selectors = {
-        "items": "article.thumb-block",
+        "items": ["article.thumb-block", "div.thumb-block", ".thumb-block"],
         "url": {"selector": "a", "attr": "href"},
-        "title": {"selector": "span.title", "text": True},
-        "thumbnail": {"selector": "img", "attr": "src"},
+        "title": {"selector": ["span.title", "h2", ".title"], "text": True},
+        "thumbnail": {"selector": "img", "attr": "src", "fallback_attrs": ["data-src"]},
         "duration": {"selector": "span.duration", "text": True},
         "pagination": {
-            "selector": "div.pagination a",
+            "selector": ["div.pagination a", ".pagination a"],
             "text_matches": ["next"],
             "attr": "href",
         },

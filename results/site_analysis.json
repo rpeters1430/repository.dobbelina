@@ -1,8 +1,8 @@
 {
   "summary": {
-    "total_sites": 152,
+    "total_sites": 157,
     "successful_imports": 0,
-    "import_errors": 152,
+    "import_errors": 157,
     "beautifulsoup_sites": 0,
     "regex_only_sites": 0,
     "soup_spec_sites": 0,
@@ -33,9 +33,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\6xtube.py",
-      "source_lines": 242,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/6xtube.py",
+      "source_lines": 249,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "85po",
@@ -54,9 +54,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\85po.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/85po.py",
       "source_lines": 276,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "aagmaal",
@@ -75,9 +75,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\aagmaal.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/aagmaal.py",
       "source_lines": 258,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "aagmaalpro",
@@ -96,9 +96,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\aagmaalpro.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/aagmaalpro.py",
       "source_lines": 315,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "absoluporn",
@@ -117,9 +117,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\absoluporn.py",
-      "source_lines": 192,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/absoluporn.py",
+      "source_lines": 202,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "allclassic",
@@ -138,9 +138,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\allclassic.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/allclassic.py",
       "source_lines": 278,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "amateurtv",
@@ -159,9 +159,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\amateurtv.py",
-      "source_lines": 162,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/amateurtv.py",
+      "source_lines": 163,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "animeidhentai",
@@ -180,9 +180,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\animeidhentai.py",
-      "source_lines": 222,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/animeidhentai.py",
+      "source_lines": 246,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "anybunny",
@@ -201,9 +201,51 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\anybunny.py",
-      "source_lines": 245,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/anybunny.py",
+      "source_lines": 339,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
+    },
+    {
+      "name": "archivebate",
+      "display_name": "",
+      "base_url": "",
+      "icon": "",
+      "is_webcam": false,
+      "uses_beautifulsoup": true,
+      "uses_regex": true,
+      "uses_soup_spec": false,
+      "default_mode": "",
+      "registered_functions": [],
+      "function_names": [],
+      "has_main": false,
+      "has_list": false,
+      "has_categories": false,
+      "has_search": false,
+      "has_play": false,
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/archivebate.py",
+      "source_lines": 141,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
+    },
+    {
+      "name": "ask4porn",
+      "display_name": "",
+      "base_url": "",
+      "icon": "",
+      "is_webcam": false,
+      "uses_beautifulsoup": true,
+      "uses_regex": false,
+      "uses_soup_spec": false,
+      "default_mode": "",
+      "registered_functions": [],
+      "function_names": [],
+      "has_main": false,
+      "has_list": false,
+      "has_categories": false,
+      "has_search": false,
+      "has_play": false,
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/ask4porn.py",
+      "source_lines": 138,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "avple",
@@ -222,9 +264,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\avple.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/avple.py",
       "source_lines": 372,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "awmnet",
@@ -243,9 +285,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\awmnet.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/awmnet.py",
       "source_lines": 714,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "beeg",
@@ -264,9 +306,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\beeg.py",
-      "source_lines": 321,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/beeg.py",
+      "source_lines": 332,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "beemtube",
@@ -285,9 +327,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\beemtube.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/beemtube.py",
       "source_lines": 219,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "blendporn",
@@ -306,9 +348,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\blendporn.py",
-      "source_lines": 171,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/blendporn.py",
+      "source_lines": 186,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "bongacams",
@@ -327,9 +369,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\bongacams.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/bongacams.py",
       "source_lines": 420,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "cam4",
@@ -348,9 +390,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\cam4.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/cam4.py",
       "source_lines": 180,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "camsoda",
@@ -369,9 +411,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\camsoda.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/camsoda.py",
       "source_lines": 205,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "camwhoresbay",
@@ -390,9 +432,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\camwhoresbay.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/camwhoresbay.py",
       "source_lines": 636,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "celebsroulette",
@@ -411,9 +453,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\celebsroulette.py",
-      "source_lines": 439,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/celebsroulette.py",
+      "source_lines": 450,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "chaturbate",
@@ -432,9 +474,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\chaturbate.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/chaturbate.py",
       "source_lines": 989,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "cumlouder",
@@ -453,9 +495,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\cumlouder.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/cumlouder.py",
       "source_lines": 238,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "drtuber",
@@ -474,9 +516,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\drtuber.py",
-      "source_lines": 306,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/drtuber.py",
+      "source_lines": 336,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "eporner",
@@ -495,9 +537,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\eporner.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/eporner.py",
       "source_lines": 266,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "erogarga",
@@ -516,9 +558,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\erogarga.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/erogarga.py",
       "source_lines": 480,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "erome",
@@ -537,9 +579,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\erome.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/erome.py",
       "source_lines": 203,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "eroticage",
@@ -558,9 +600,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\eroticage.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/eroticage.py",
       "source_lines": 207,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "eroticmv",
@@ -579,9 +621,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\eroticmv.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/eroticmv.py",
       "source_lines": 160,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "familypornhd",
@@ -600,9 +642,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\familypornhd.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/familypornhd.py",
       "source_lines": 244,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "foxnxx",
@@ -611,7 +653,7 @@
       "icon": "",
       "is_webcam": false,
       "uses_beautifulsoup": true,
-      "uses_regex": false,
+      "uses_regex": true,
       "uses_soup_spec": false,
       "default_mode": "",
       "registered_functions": [],
@@ -621,9 +663,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\foxnxx.py",
-      "source_lines": 229,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/foxnxx.py",
+      "source_lines": 252,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "freeomovie",
@@ -642,9 +684,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\freeomovie.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/freeomovie.py",
       "source_lines": 163,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "freepornvideos",
@@ -663,9 +705,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\freepornvideos.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/freepornvideos.py",
       "source_lines": 309,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "freeuseporn",
@@ -684,9 +726,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\freeuseporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/freeuseporn.py",
       "source_lines": 147,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "freshporno",
@@ -705,9 +747,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\freshporno.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/freshporno.py",
       "source_lines": 342,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "fullporner",
@@ -726,9 +768,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\fullporner.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/fullporner.py",
       "source_lines": 207,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "fullxcinema",
@@ -747,9 +789,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\fullxcinema.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/fullxcinema.py",
       "source_lines": 259,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "fyxxr",
@@ -768,9 +810,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\fyxxr.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/fyxxr.py",
       "source_lines": 323,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hanime",
@@ -789,9 +831,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\hanime.py",
-      "source_lines": 510,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/hanime.py",
+      "source_lines": 509,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hdporn",
@@ -810,9 +852,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\hdporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/hdporn.py",
       "source_lines": 159,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hdporn92",
@@ -831,9 +873,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\hdporn92.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/hdporn92.py",
       "source_lines": 247,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "heavyr",
@@ -852,9 +894,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\heavyr.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/heavyr.py",
       "source_lines": 151,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hentai-moon",
@@ -873,9 +915,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\hentai-moon.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/hentai-moon.py",
       "source_lines": 329,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hentaidude",
@@ -894,9 +936,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\hentaidude.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/hentaidude.py",
       "source_lines": 321,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hentaihavenco",
@@ -915,9 +957,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\hentaihavenco.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/hentaihavenco.py",
       "source_lines": 204,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hentaistream",
@@ -936,9 +978,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\hentaistream.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/hentaistream.py",
       "source_lines": 220,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "heroero",
@@ -957,9 +999,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\heroero.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/heroero.py",
       "source_lines": 347,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hitprn",
@@ -978,9 +1020,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\hitprn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/hitprn.py",
       "source_lines": 171,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hobbyporn",
@@ -999,9 +1041,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\hobbyporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/hobbyporn.py",
       "source_lines": 181,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "homemoviestube",
@@ -1020,9 +1062,30 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\homemoviestube.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/homemoviestube.py",
       "source_lines": 135,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
+    },
+    {
+      "name": "hotleak",
+      "display_name": "",
+      "base_url": "",
+      "icon": "",
+      "is_webcam": false,
+      "uses_beautifulsoup": true,
+      "uses_regex": true,
+      "uses_soup_spec": false,
+      "default_mode": "",
+      "registered_functions": [],
+      "function_names": [],
+      "has_main": false,
+      "has_list": false,
+      "has_categories": false,
+      "has_search": false,
+      "has_play": false,
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/hotleak.py",
+      "source_lines": 185,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hpjav",
@@ -1041,9 +1104,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\hpjav.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/hpjav.py",
       "source_lines": 184,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hqporner",
@@ -1062,9 +1125,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\hqporner.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/hqporner.py",
       "source_lines": 368,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "japteenx",
@@ -1083,9 +1146,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\japteenx.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/japteenx.py",
       "source_lines": 209,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "javbangers",
@@ -1104,9 +1167,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\javbangers.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/javbangers.py",
       "source_lines": 628,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "javgg",
@@ -1125,9 +1188,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\javgg.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/javgg.py",
       "source_lines": 202,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "javguru",
@@ -1146,9 +1209,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\javguru.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/javguru.py",
       "source_lines": 457,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "javhdporn",
@@ -1167,9 +1230,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\javhdporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/javhdporn.py",
       "source_lines": 314,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "javmoe",
@@ -1188,9 +1251,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\javmoe.py",
-      "source_lines": 347,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/javmoe.py",
+      "source_lines": 351,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "jizzbunker",
@@ -1209,9 +1272,30 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\jizzbunker.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/jizzbunker.py",
       "source_lines": 175,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
+    },
+    {
+      "name": "josporn",
+      "display_name": "",
+      "base_url": "",
+      "icon": "",
+      "is_webcam": false,
+      "uses_beautifulsoup": true,
+      "uses_regex": true,
+      "uses_soup_spec": false,
+      "default_mode": "",
+      "registered_functions": [],
+      "function_names": [],
+      "has_main": false,
+      "has_list": false,
+      "has_categories": false,
+      "has_search": false,
+      "has_play": false,
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/josporn.py",
+      "source_lines": 158,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "justfullporn",
@@ -1230,9 +1314,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\justfullporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/justfullporn.py",
       "source_lines": 228,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "justporn",
@@ -1251,9 +1335,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\justporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/justporn.py",
       "source_lines": 329,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "kissjav",
@@ -1272,9 +1356,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\kissjav.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/kissjav.py",
       "source_lines": 310,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "livecamrips",
@@ -1293,9 +1377,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\livecamrips.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/livecamrips.py",
       "source_lines": 336,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "longvideos",
@@ -1314,9 +1398,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\longvideos.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/longvideos.py",
       "source_lines": 291,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "luxuretv",
@@ -1335,9 +1419,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\luxuretv.py",
-      "source_lines": 174,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/luxuretv.py",
+      "source_lines": 177,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "missav",
@@ -1356,9 +1440,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\missav.py",
-      "source_lines": 290,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/missav.py",
+      "source_lines": 293,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "motherless",
@@ -1377,9 +1461,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\motherless.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/motherless.py",
       "source_lines": 258,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "mrsexe",
@@ -1398,9 +1482,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\mrsexe.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/mrsexe.py",
       "source_lines": 188,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "myfreecams",
@@ -1419,9 +1503,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\myfreecams.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/myfreecams.py",
       "source_lines": 315,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "naked",
@@ -1440,9 +1524,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\naked.py",
-      "source_lines": 331,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/naked.py",
+      "source_lines": 357,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "naughtyblog",
@@ -1461,9 +1545,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\naughtyblog.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/naughtyblog.py",
       "source_lines": 244,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "neporn",
@@ -1482,9 +1566,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\neporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/neporn.py",
       "source_lines": 251,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "netfapx",
@@ -1503,9 +1587,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\netfapx.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/netfapx.py",
       "source_lines": 297,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "netflav",
@@ -1524,9 +1608,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\netflav.py",
-      "source_lines": 321,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/netflav.py",
+      "source_lines": 306,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "netflixporno",
@@ -1545,9 +1629,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\netflixporno.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/netflixporno.py",
       "source_lines": 280,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "nltubes",
@@ -1566,9 +1650,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\nltubes.py",
-      "source_lines": 220,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/nltubes.py",
+      "source_lines": 234,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "nonktube",
@@ -1587,9 +1671,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\nonktube.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/nonktube.py",
       "source_lines": 184,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "noodlemagazine",
@@ -1608,9 +1692,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\noodlemagazine.py",
-      "source_lines": 251,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/noodlemagazine.py",
+      "source_lines": 266,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "okxxx",
@@ -1629,9 +1713,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\okxxx.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/okxxx.py",
       "source_lines": 167,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "paradisehill",
@@ -1650,9 +1734,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\paradisehill.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/paradisehill.py",
       "source_lines": 238,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "peachurnet",
@@ -1671,9 +1755,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\peachurnet.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/peachurnet.py",
       "source_lines": 589,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "peekvids",
@@ -1692,9 +1776,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\peekvids.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/peekvids.py",
       "source_lines": 246,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "perverzija",
@@ -1713,9 +1797,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\perverzija.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/perverzija.py",
       "source_lines": 235,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "playhdporn",
@@ -1734,9 +1818,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\playhdporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/playhdporn.py",
       "source_lines": 231,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "playvids",
@@ -1755,9 +1839,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\playvids.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/playvids.py",
       "source_lines": 453,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porn4k",
@@ -1776,9 +1860,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\porn4k.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/porn4k.py",
       "source_lines": 201,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porndig",
@@ -1797,9 +1881,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\porndig.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/porndig.py",
       "source_lines": 475,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porndish",
@@ -1818,9 +1902,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\porndish.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/porndish.py",
       "source_lines": 95,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornez",
@@ -1839,9 +1923,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\pornez.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/pornez.py",
       "source_lines": 163,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porngo",
@@ -1860,9 +1944,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\porngo.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/porngo.py",
       "source_lines": 206,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornhat",
@@ -1881,9 +1965,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\pornhat.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/pornhat.py",
       "source_lines": 470,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornhd3x",
@@ -1902,9 +1986,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\pornhd3x.py",
-      "source_lines": 234,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/pornhd3x.py",
+      "source_lines": 226,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornhits",
@@ -1923,9 +2007,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\pornhits.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/pornhits.py",
       "source_lines": 279,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornhoarder",
@@ -1944,9 +2028,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\pornhoarder.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/pornhoarder.py",
       "source_lines": 511,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornhub",
@@ -1965,9 +2049,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\pornhub.py",
-      "source_lines": 656,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/pornhub.py",
+      "source_lines": 670,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornkai",
@@ -1986,9 +2070,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\pornkai.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/pornkai.py",
       "source_lines": 340,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornmz",
@@ -2007,9 +2091,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\pornmz.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/pornmz.py",
       "source_lines": 311,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porno1hu",
@@ -2028,9 +2112,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\porno1hu.py",
-      "source_lines": 254,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/porno1hu.py",
+      "source_lines": 271,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porno365",
@@ -2049,9 +2133,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\porno365.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/porno365.py",
       "source_lines": 198,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornone",
@@ -2070,9 +2154,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\pornone.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/pornone.py",
       "source_lines": 240,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornroom",
@@ -2091,9 +2175,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\pornroom.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/pornroom.py",
       "source_lines": 152,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porntn",
@@ -2112,9 +2196,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\porntn.py",
-      "source_lines": 252,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/porntn.py",
+      "source_lines": 260,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porntrex",
@@ -2133,9 +2217,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\porntrex.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/porntrex.py",
       "source_lines": 675,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornxp",
@@ -2154,9 +2238,30 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\pornxp.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/pornxp.py",
       "source_lines": 167,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
+    },
+    {
+      "name": "pornxpert",
+      "display_name": "",
+      "base_url": "",
+      "icon": "",
+      "is_webcam": false,
+      "uses_beautifulsoup": true,
+      "uses_regex": true,
+      "uses_soup_spec": false,
+      "default_mode": "",
+      "registered_functions": [],
+      "function_names": [],
+      "has_main": false,
+      "has_list": false,
+      "has_categories": false,
+      "has_search": false,
+      "has_play": false,
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/pornxpert.py",
+      "source_lines": 150,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "premiumporn",
@@ -2175,9 +2280,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\premiumporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/premiumporn.py",
       "source_lines": 277,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "reallifecam",
@@ -2196,9 +2301,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\reallifecam.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/reallifecam.py",
       "source_lines": 310,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "redtube",
@@ -2217,9 +2322,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\redtube.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/redtube.py",
       "source_lines": 370,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "rule34video",
@@ -2238,9 +2343,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\rule34video.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/rule34video.py",
       "source_lines": 357,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "seaporn",
@@ -2259,9 +2364,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\seaporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/seaporn.py",
       "source_lines": 250,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "sextb",
@@ -2280,9 +2385,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\sextb.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/sextb.py",
       "source_lines": 326,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "sexyporn",
@@ -2301,9 +2406,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\sexyporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/sexyporn.py",
       "source_lines": 153,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "spankbang",
@@ -2322,9 +2427,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\spankbang.py",
-      "source_lines": 316,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/spankbang.py",
+      "source_lines": 320,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "speedporn",
@@ -2343,9 +2448,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\speedporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/speedporn.py",
       "source_lines": 326,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "streamate",
@@ -2364,9 +2469,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\streamate.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/streamate.py",
       "source_lines": 265,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "stripchat",
@@ -2385,9 +2490,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\stripchat.py",
-      "source_lines": 740,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/stripchat.py",
+      "source_lines": 819,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "superporn",
@@ -2406,9 +2511,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\superporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/superporn.py",
       "source_lines": 233,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "supjav",
@@ -2427,9 +2532,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\supjav.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/supjav.py",
       "source_lines": 243,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "sxyprn",
@@ -2448,9 +2553,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\sxyprn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/sxyprn.py",
       "source_lines": 317,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "taboofantazy",
@@ -2469,9 +2574,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\taboofantazy.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/taboofantazy.py",
       "source_lines": 280,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "tabootube",
@@ -2490,9 +2595,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\tabootube.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/tabootube.py",
       "source_lines": 257,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "terebon",
@@ -2511,9 +2616,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\terebon.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/terebon.py",
       "source_lines": 379,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "theyarehuge",
@@ -2532,9 +2637,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\theyarehuge.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/theyarehuge.py",
       "source_lines": 326,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "thothub",
@@ -2553,9 +2658,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\thothub.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/thothub.py",
       "source_lines": 893,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "tnaflix",
@@ -2574,9 +2679,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\tnaflix.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/tnaflix.py",
       "source_lines": 366,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "tokyomotion",
@@ -2595,9 +2700,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\tokyomotion.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/tokyomotion.py",
       "source_lines": 165,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "trannyteca",
@@ -2616,9 +2721,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\trannyteca.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/trannyteca.py",
       "source_lines": 144,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "trendyporn",
@@ -2627,7 +2732,7 @@
       "icon": "",
       "is_webcam": false,
       "uses_beautifulsoup": true,
-      "uses_regex": false,
+      "uses_regex": true,
       "uses_soup_spec": false,
       "default_mode": "",
       "registered_functions": [],
@@ -2637,9 +2742,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\trendyporn.py",
-      "source_lines": 168,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/trendyporn.py",
+      "source_lines": 175,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "tube8",
@@ -2658,9 +2763,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\tube8.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/tube8.py",
       "source_lines": 305,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "tubxporn",
@@ -2679,9 +2784,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\tubxporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/tubxporn.py",
       "source_lines": 252,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "txxx",
@@ -2700,9 +2805,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\txxx.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/txxx.py",
       "source_lines": 442,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "uflash",
@@ -2721,9 +2826,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\uflash.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/uflash.py",
       "source_lines": 152,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "vaginanl",
@@ -2742,9 +2847,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\vaginanl.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/vaginanl.py",
       "source_lines": 162,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "vipporns",
@@ -2763,9 +2868,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\vipporns.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/vipporns.py",
       "source_lines": 190,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "viralvideosporno",
@@ -2784,9 +2889,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\viralvideosporno.py",
-      "source_lines": 225,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/viralvideosporno.py",
+      "source_lines": 233,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "watcherotic",
@@ -2805,9 +2910,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\watcherotic.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/watcherotic.py",
       "source_lines": 237,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "watchmdh",
@@ -2826,9 +2931,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\watchmdh.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/watchmdh.py",
       "source_lines": 140,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "watchporn",
@@ -2847,9 +2952,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\watchporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/watchporn.py",
       "source_lines": 301,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "whereismyporn",
@@ -2868,9 +2973,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\whereismyporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/whereismyporn.py",
       "source_lines": 85,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "whoreshub",
@@ -2889,9 +2994,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\whoreshub.py",
-      "source_lines": 685,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/whoreshub.py",
+      "source_lines": 709,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xfreehd",
@@ -2910,9 +3015,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\xfreehd.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/xfreehd.py",
       "source_lines": 425,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xhamster",
@@ -2931,9 +3036,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\xhamster.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/xhamster.py",
       "source_lines": 704,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xmegadrive",
@@ -2952,9 +3057,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\xmegadrive.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/xmegadrive.py",
       "source_lines": 286,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xmoviesforyou",
@@ -2973,9 +3078,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\xmoviesforyou.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/xmoviesforyou.py",
       "source_lines": 158,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xnxx",
@@ -2994,9 +3099,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\xnxx.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/xnxx.py",
       "source_lines": 258,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xozilla",
@@ -3015,9 +3120,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\xozilla.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/xozilla.py",
       "source_lines": 252,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xsharings",
@@ -3036,9 +3141,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\xsharings.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/xsharings.py",
       "source_lines": 270,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xtheatre",
@@ -3057,9 +3162,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\xtheatre.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/xtheatre.py",
       "source_lines": 181,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xvideos",
@@ -3078,9 +3183,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\xvideos.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/xvideos.py",
       "source_lines": 721,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xxdbx",
@@ -3099,9 +3204,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\xxdbx.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/xxdbx.py",
       "source_lines": 251,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xxxtube",
@@ -3120,9 +3225,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\xxxtube.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/xxxtube.py",
       "source_lines": 271,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "youcrazyx",
@@ -3141,9 +3246,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\youcrazyx.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/youcrazyx.py",
       "source_lines": 134,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "youjizz",
@@ -3162,9 +3267,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\youjizz.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/youjizz.py",
       "source_lines": 343,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "youporn",
@@ -3183,9 +3288,9 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\youporn.py",
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/youporn.py",
       "source_lines": 288,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "yrprno",
@@ -3204,619 +3309,639 @@
       "has_categories": false,
       "has_search": false,
       "has_play": false,
-      "source_file": "C:\\Users\\James\\Desktop\\repository.dobbelina\\plugin.video.cumination\\resources\\lib\\sites\\yrprno.py",
-      "source_lines": 210,
-      "import_error": "ValueError: could not convert string to float: '1.0.'"
+      "source_file": "/Users/rpeters1428/Documents/repository.dobbelina/plugin.video.cumination/resources/lib/sites/yrprno.py",
+      "source_lines": 219,
+      "import_error": "ValueError: invalid literal for int() with base 10: ''"
     }
   ],
   "errors": [
     {
       "name": "6xtube",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "85po",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "aagmaal",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "aagmaalpro",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "absoluporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "allclassic",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "amateurtv",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "animeidhentai",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "anybunny",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
+    },
+    {
+      "name": "archivebate",
+      "error": "ValueError: invalid literal for int() with base 10: ''"
+    },
+    {
+      "name": "ask4porn",
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "avple",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "awmnet",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "beeg",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "beemtube",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "blendporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "bongacams",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "cam4",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "camsoda",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "camwhoresbay",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "celebsroulette",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "chaturbate",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "cumlouder",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "drtuber",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "eporner",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "erogarga",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "erome",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "eroticage",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "eroticmv",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "familypornhd",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "foxnxx",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "freeomovie",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "freepornvideos",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "freeuseporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "freshporno",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "fullporner",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "fullxcinema",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "fyxxr",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hanime",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hdporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hdporn92",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "heavyr",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hentai-moon",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hentaidude",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hentaihavenco",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hentaistream",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "heroero",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hitprn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hobbyporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "homemoviestube",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
+    },
+    {
+      "name": "hotleak",
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hpjav",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "hqporner",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "japteenx",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "javbangers",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "javgg",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "javguru",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "javhdporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "javmoe",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "jizzbunker",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
+    },
+    {
+      "name": "josporn",
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "justfullporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "justporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "kissjav",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "livecamrips",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "longvideos",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "luxuretv",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "missav",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "motherless",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "mrsexe",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "myfreecams",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "naked",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "naughtyblog",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "neporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "netfapx",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "netflav",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "netflixporno",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "nltubes",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "nonktube",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "noodlemagazine",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "okxxx",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "paradisehill",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "peachurnet",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "peekvids",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "perverzija",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "playhdporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "playvids",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porn4k",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porndig",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porndish",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornez",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porngo",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornhat",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornhd3x",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornhits",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornhoarder",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornhub",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornkai",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornmz",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porno1hu",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porno365",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornone",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornroom",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porntn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "porntrex",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "pornxp",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
+    },
+    {
+      "name": "pornxpert",
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "premiumporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "reallifecam",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "redtube",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "rule34video",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "seaporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "sextb",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "sexyporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "spankbang",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "speedporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "streamate",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "stripchat",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "superporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "supjav",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "sxyprn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "taboofantazy",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "tabootube",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "terebon",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "theyarehuge",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "thothub",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "tnaflix",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "tokyomotion",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "trannyteca",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "trendyporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "tube8",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "tubxporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "txxx",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "uflash",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "vaginanl",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "vipporns",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "viralvideosporno",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "watcherotic",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "watchmdh",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "watchporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "whereismyporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "whoreshub",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xfreehd",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xhamster",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xmegadrive",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xmoviesforyou",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xnxx",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xozilla",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xsharings",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xtheatre",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xvideos",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xxdbx",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "xxxtube",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "youcrazyx",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "youjizz",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "youporn",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     },
     {
       "name": "yrprno",
-      "error": "ValueError: could not convert string to float: '1.0.'"
+      "error": "ValueError: invalid literal for int() with base 10: ''"
     }
   ],
   "missing_critical": {

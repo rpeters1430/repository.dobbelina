@@ -46,10 +46,17 @@ if not os.path.exists(profileDir):
 if not os.path.exists(customSitesDir):
     os.makedirs(customSitesDir)
 
+import re
+
 if not os.path.exists(tempDir):
     os.makedirs(tempDir)
 
-KODIVER = float(xbmcaddon.Addon("xbmc.addon").getAddonInfo("version")[:4])
+try:
+    _version = xbmcaddon.Addon("xbmc.addon").getAddonInfo("version")
+    _match = re.search(r"(\d+\.\d+)", _version)
+    KODIVER = float(_match.group(1)) if _match else 19.0
+except Exception:
+    KODIVER = 19.0
 
 
 def cum_image(filename, custom=False):

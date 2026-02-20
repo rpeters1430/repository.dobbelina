@@ -118,8 +118,26 @@ class _MockListItem:
         return type("VideoInfoTag", (), {"setMediaType": lambda *a, **k: None})()
 
 
-sys.modules["xbmcgui"].ListItem = _MockListItem
-sys.modules["kodi_six.xbmcgui"].ListItem = _MockListItem
+class _MockDialog:
+    def notification(self, *a, **k):
+        pass
+    def ok(self, *a, **k):
+        pass
+
+class _MockDialogProgress:
+    def create(self, *a, **k):
+        pass
+    def update(self, *a, **k):
+        pass
+    def close(self, *a, **k):
+        pass
+
+sys.modules['xbmcgui'].ListItem = _MockListItem
+sys.modules['xbmcgui'].Dialog = _MockDialog
+sys.modules['xbmcgui'].DialogProgress = _MockDialogProgress
+sys.modules['kodi_six.xbmcgui'].ListItem = _MockListItem
+sys.modules['kodi_six.xbmcgui'].Dialog = _MockDialog
+sys.modules['kodi_six.xbmcgui'].DialogProgress = _MockDialogProgress
 
 # Mock xbmcvfs functions
 sys.modules["xbmcvfs"].translatePath = lambda p: str(p).replace(

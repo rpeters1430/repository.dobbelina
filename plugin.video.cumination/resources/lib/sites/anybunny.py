@@ -64,8 +64,8 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir("[COLOR hotpink]New videos[/COLOR]", site.url + "new/page/1/", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Top videos[/COLOR]", site.url + "top/page/1/", "List", site.img_cat)
+    site.add_dir("[COLOR hotpink]New videos[/COLOR]", site.url + "new/", "List", site.img_cat)
+    site.add_dir("[COLOR hotpink]Top videos[/COLOR]", site.url + "top/", "List", site.img_cat)
     site.add_dir(
         "[COLOR hotpink]Categories - images[/COLOR]",
         site.url,
@@ -127,10 +127,10 @@ def List(url):
         text = next_link.get_text().strip().lower()
         if not text or "next" in text or text in ("»", ">", "→"):
             next_url = urllib_parse.urljoin(site.url, next_link["href"])
-            # Skip JS-driven ?p=N pagination on base listing pages (/new/page/N/,
-            # /top/page/N/) — those pages ignore ?p and return the same content.
-            # Category pages (e.g. /top/teens?p=2) have real server-side pagination.
-            if not re.search(r'/(?:new|top)/page/\d+/', url):
+            # Only add pagination if it's NOT a /new/ or /top/ search-like page
+            # These pages (e.g. /new/page/N/) are actually searches for "page" 
+            # and return identical/stale results.
+            if not any(x in url for x in ["/new/", "/top/"]) or "?" in next_link["href"]:
                 site.add_dir("Next Page", next_url, "List")
 
     utils.eod()
