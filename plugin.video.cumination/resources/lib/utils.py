@@ -1121,14 +1121,14 @@ def _getHtml(
                             notify(
                                 "FlareSolverr Error",
                                 "Failed to bypass Cloudflare. Check Kodi log.",
-                                time=6000,
+                                duration=6000,
                             )
                             raise
                     else:
                         notify(
                             i18n("oh_oh"),
                             "Cloudflare protection detected. Enable FlareSolverr in addon settings.",
-                            time=6000,
+                            duration=6000,
                         )
                         raise
             elif 400 < e.code < 500:
