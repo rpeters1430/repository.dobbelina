@@ -31,11 +31,11 @@ site = AdultSite(
 
 @site.register(default_mode=True)
 def Main(url):
-    site.add_dir("Newest", site.url + "videos/?filter=latest", "List", "")
-    site.add_dir("Best", site.url + "videos/?filter=popular", "List", "")
-    site.add_dir("Most Viewed", site.url + "videos/?filter=most-viewed", "List", "")
-    site.add_dir("Longest", site.url + "videos/?filter=longest", "List", "")
-    site.add_dir("Random", site.url + "videos/?filter=random", "List", "")
+    site.add_dir("Newest", site.url + "?filter=latest", "List", "")
+    site.add_dir("Best", site.url + "?filter=popular", "List", "")
+    site.add_dir("Most Viewed", site.url + "?filter=most-viewed", "List", "")
+    site.add_dir("Longest", site.url + "?filter=longest", "List", "")
+    site.add_dir("Random", site.url + "?filter=random", "List", "")
     site.add_dir("Studios", site.url + "categories/", "Studios", "")
     site.add_dir("Categories", site.url + "tags/", "Categories", "")
     site.add_dir("Girls", site.url + "actors-1/", "Girls", "")
@@ -69,16 +69,20 @@ def List(url):
 def Studios(url):
     html, _ = utils.get_html_with_cloudflare_retry(url)
     soup = utils.parse_html(html)
-    
-    items = soup.select(".categories-list .thumb-block")
-    for item in items:
-        name = utils.safe_get_text(item.select_one(".cat-title"))
-        href = utils.safe_get_attr(item.select_one("a"), "href")
-        img = utils.get_thumbnail(item.select_one("img"))
-        
+
+    for item in soup.select("a.netflix-category-link"):
+        href = utils.safe_get_attr(item, "href")
+        name = utils.safe_get_text(item.select_one(".netflix-category-name"))
+        img = utils.safe_get_attr(item.select_one("img"), "src")
         if name and href:
             site.add_dir(name, urllib_parse.urljoin(site.url, href), "List", img)
-            
+
+    for a_tag in soup.find_all("a"):
+        text = utils.safe_get_text(a_tag)
+        if ("next" in text.lower() or "»" in text) and "/page/" in (utils.safe_get_attr(a_tag, "href") or ""):
+            site.add_dir("Next Page", urllib_parse.urljoin(site.url, utils.safe_get_attr(a_tag, "href")), "Studios", site.img_next)
+            break
+
     utils.eod()
 
 
@@ -86,14 +90,14 @@ def Studios(url):
 def Categories(url):
     html, _ = utils.get_html_with_cloudflare_retry(url)
     soup = utils.parse_html(html)
-    
-    items = soup.select(".tags-letter-block .tag-item a")
-    for item in items:
-        name = utils.safe_get_text(item)
+
+    for item in soup.select("a.netflix-tag-link"):
         href = utils.safe_get_attr(item, "href")
+        name = utils.safe_get_text(item.select_one(".netflix-tag-name"))
+        img = utils.safe_get_attr(item.select_one("img"), "src")
         if name and href:
-            site.add_dir(name, urllib_parse.urljoin(site.url, href), "List", "")
-            
+            site.add_dir(name, urllib_parse.urljoin(site.url, href), "List", img)
+
     utils.eod()
 
 
@@ -101,22 +105,21 @@ def Categories(url):
 def Girls(url):
     html, _ = utils.get_html_with_cloudflare_retry(url)
     soup = utils.parse_html(html)
-    
-    items = soup.select(".actors-list .thumb-block")
-    for item in items:
-        name = utils.safe_get_text(item.select_one(".cat-title"))
-        href = utils.safe_get_attr(item.select_one("a"), "href")
-        img = utils.get_thumbnail(item.select_one("img"))
-        
+
+    for item in soup.select("a.netflix-actor-link"):
+        href = utils.safe_get_attr(item, "href")
+        name = utils.safe_get_text(item.select_one(".netflix-actor-name"))
+        img = utils.safe_get_attr(item.select_one("img"), "src")
         if name and href:
             site.add_dir(name, urllib_parse.urljoin(site.url, href), "List", img)
-            
-    # Pagination
-    next_el = soup.select_one("div.pagination a:-soup-contains('Next')")
-    if next_el:
-        next_url = utils.safe_get_attr(next_el, "href")
-        site.add_dir("Next Page", urllib_parse.urljoin(site.url, next_url), "Girls", site.img_next)
-        
+
+    for a_tag in soup.find_all("a"):
+        href = utils.safe_get_attr(a_tag, "href") or ""
+        text = utils.safe_get_text(a_tag)
+        if (">" in text or "next" in text.lower() or "»" in text) and "/page/" in href:
+            site.add_dir("Next Page", urllib_parse.urljoin(site.url, href), "Girls", site.img_next)
+            break
+
     utils.eod()
 
 

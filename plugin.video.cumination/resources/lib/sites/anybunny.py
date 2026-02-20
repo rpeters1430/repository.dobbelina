@@ -260,7 +260,7 @@ def Categories(url):
             continue
 
         img = utils.get_thumbnail(img_tag)
-        catpage = urllib_parse.urljoin(site.url, "new/" + catid.lstrip("/"))
+        catpage = urllib_parse.urljoin(site.url, "top/" + catid.lstrip("/"))
         categories.append((name.lower(), name, catpage, img))
 
     seen = set()
@@ -316,7 +316,7 @@ def Categories2(url):
         if videos:
             label = f"{name} [COLOR deeppink]({videos})[/COLOR]"
 
-        catpage = urllib_parse.urljoin(site.url, "new/" + catid.lstrip("/"))
+        catpage = urllib_parse.urljoin(site.url, "top/" + catid.lstrip("/"))
         entries.append((name.lower(), label, catpage))
 
     seen = set()
