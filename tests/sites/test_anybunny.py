@@ -35,7 +35,6 @@ def test_list_populates_download_links(monkeypatch):
     )
 
     # Mock fetch_with_playwright to raise ImportError
-    import sys
     import builtins
     original_import = builtins.__import__
 
@@ -89,7 +88,6 @@ def test_search_results_have_no_pagination(monkeypatch):
     )
 
     # Mock fetch_with_playwright to raise ImportError
-    import sys
     import builtins
     original_import = builtins.__import__
 

@@ -16,8 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import urllib
-import re
 import os.path
 import sys
 import socket
@@ -26,8 +24,7 @@ import xbmc
 import xbmcplugin
 import xbmcaddon
 from resources.lib import utils
-from resources.lib import favorites
-from resources.lib.sites import *
+from resources.lib.sites import watchxxxfree, hdporn, porntrex
 
 socket.setdefaulttimeout(60)
 
@@ -760,9 +757,9 @@ else:
 
 
 def main(argv=None):
-    if sys.argv:
+    if argv is None:
         argv = sys.argv
-    queries = utils.parse_query(sys.argv[2])
+    queries = utils.parse_query(argv[2])
     mode = queries.get("mode", None)
     utils.url_dispatcher.dispatch(mode, queries)
 

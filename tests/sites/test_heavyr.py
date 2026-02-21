@@ -1,6 +1,6 @@
+from resources.lib.sites import heavyr
 import pytest
 import sys
-import os
 from unittest.mock import MagicMock, patch
 
 # Mock kodi-specific imports and others causing issues
@@ -12,14 +12,6 @@ sys.modules["xbmcaddon"] = MagicMock()
 sys.modules["StorageServer"] = MagicMock()
 sys.modules["kodi_six"] = MagicMock()
 sys.modules["resources.lib.brotlidecpy"] = MagicMock()
-
-# Add plugin path to sys.path
-plugin_path = os.path.join(os.getcwd(), "plugin.video.cumination")
-if plugin_path not in sys.path:
-    sys.path.insert(0, plugin_path)
-
-from resources.lib.sites import heavyr
-
 
 @pytest.fixture
 def mock_site():

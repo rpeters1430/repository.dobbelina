@@ -2,7 +2,6 @@
 
 import os
 
-import pytest
 
 from resources.lib import utils
 

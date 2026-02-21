@@ -4,7 +4,6 @@ Test module for fullxcinema site
 
 import pytest
 from resources.lib.sites import fullxcinema
-from resources.lib import utils
 
 
 class TestFullXCinema:

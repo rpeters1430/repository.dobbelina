@@ -6,7 +6,6 @@ Uses the same Kodi mocks as all other tests, so results should match real addon 
 
 import pytest
 import importlib
-import sys
 from pathlib import Path
 
 # Get all site modules
@@ -196,7 +195,6 @@ def test_site_main_function_runs(site_name, captured_items, monkeypatch):
                 pytest.fail(f"{site_name} crashed: {error_type}: {error_msg}")
 
         # Check that function produced some output or didn't crash
-        total_items = len(captured_items.dirs) + len(captured_items.downloads)
 
         # Webcam sites may not produce items in test environment
         if hasattr(site, 'webcam') and site.webcam:

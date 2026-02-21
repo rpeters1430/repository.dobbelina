@@ -2,7 +2,6 @@
 
 import types
 
-import pytest
 
 from resources.lib import flaresolverr
 from resources.lib.flaresolverr import FlareSolverrManager

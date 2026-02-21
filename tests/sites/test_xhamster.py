@@ -126,7 +126,7 @@ def test_list_skips_geo_blocked_videos(monkeypatch):
 
 def test_categories_parses_json(monkeypatch):
     """Test that Categories function parses category data."""
-    html = f"""
+    html = """
     <html>
     <a class="thumbItem-abc" href="/categories/amateur">
         <img data-thumb-url="thumb1.jpg" />

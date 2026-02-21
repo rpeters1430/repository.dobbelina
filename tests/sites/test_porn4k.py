@@ -4,7 +4,6 @@ Test module for porn4k site
 
 import pytest
 from resources.lib.sites import porn4k
-from resources.lib import utils
 
 
 class TestPorn4K:

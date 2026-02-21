@@ -1,15 +1,6 @@
-import pytest
-import sys
-import os
-from unittest.mock import MagicMock, patch
-
-# Add plugin path to sys.path
-plugin_path = os.path.join(os.getcwd(), "plugin.video.cumination")
-if plugin_path not in sys.path:
-    sys.path.insert(0, plugin_path)
-
 from resources.lib.sites import superporn
-
+import pytest
+from unittest.mock import MagicMock, patch
 
 @pytest.fixture
 def mock_site():

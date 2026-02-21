@@ -4,7 +4,6 @@ Test module for fullporner site
 
 import pytest
 from resources.lib.sites import fullporner
-from resources.lib import utils
 
 
 class TestFullPorner:

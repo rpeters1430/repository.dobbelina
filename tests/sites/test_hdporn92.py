@@ -4,7 +4,6 @@ Test module for hdporn92 site
 
 import pytest
 from resources.lib.sites import hdporn92
-from resources.lib import utils
 
 
 class TestHDPorn92:

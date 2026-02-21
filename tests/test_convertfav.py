@@ -1,4 +1,3 @@
-import pytest
 
 from resources.lib import convertfav
 

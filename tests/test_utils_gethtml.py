@@ -3,7 +3,6 @@
 import gzip
 import io
 
-import pytest
 
 from resources.lib import utils
 

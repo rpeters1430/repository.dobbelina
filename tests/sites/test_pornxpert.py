@@ -1,4 +1,3 @@
-import pytest
 import os
 from resources.lib import utils
 from resources.lib.sites import pornxpert

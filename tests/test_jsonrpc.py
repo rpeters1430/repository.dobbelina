@@ -1,6 +1,5 @@
 import json
 
-import pytest
 
 
 def test_rpc_request_and_validate_response(monkeypatch):

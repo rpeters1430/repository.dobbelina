@@ -4,7 +4,6 @@ Test module for freepornvideos site
 
 import pytest
 from resources.lib.sites import freepornvideos
-from resources.lib import utils
 
 
 class TestFreePornVideos:

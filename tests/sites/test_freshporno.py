@@ -4,7 +4,6 @@ Test module for freshporno site
 
 import pytest
 from resources.lib.sites import freshporno
-from resources.lib import utils
 
 
 class TestFreshPorno:

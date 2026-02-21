@@ -1,5 +1,4 @@
 
-import pytest
 from resources.lib.sites import pornhd3x
 from tests.conftest import read_fixture
 
