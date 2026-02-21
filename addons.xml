@@ -49,7 +49,7 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
 <platform>all</platform>
 </extension>
 </addon>
-<addon id="plugin.video.uwc" name="Ultimate Whitecream" version="1.2.47" provider-name="Whitecream, holisticdioxide">
+<addon id="plugin.video.uwc" name="Ultimate Whitecream" version="1.2.48" provider-name="Whitecream, holisticdioxide">
 <requires>
 <import addon="xbmc.python" version="3.0.0" />
 <import addon="script.module.resolveurl" version="5.0.00" />
@@ -75,7 +75,7 @@ Metadata refreshed for Matrix/Nexus/Omega compatibility
 </news>
 </extension>
 </addon>
-<addon id="script.video.F4mProxy" name="F4mProxy" version="2.8.9" provider-name="Shani">
+<addon id="script.video.F4mProxy" name="F4mProxy" version="2.8.10" provider-name="Shani">
 <requires>
 <import addon="xbmc.python" version="3.0.0" />
 <import addon="script.module.requests" />
