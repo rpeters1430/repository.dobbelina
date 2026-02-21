@@ -2763,10 +2763,31 @@ class VideoPlayer:
                 html = getHtml(url, referrer_url or url)
                 m3u8_urls = re.findall(r"https?://[^\"'\s<>]+\.m3u8[^\"'\s<>]*", html)
                 mp4_urls = re.findall(r"https?://[^\"'\s<>]+\.mp4[^\"'\s<>]*", html)
-                file_urls = re.findall(r'"file"\s*:\s*"(https?://[^"]+)"', html)
-                for stream_url in m3u8_urls + mp4_urls + file_urls:
+                for stream_url in m3u8_urls + mp4_urls:
                     if stream_url not in sources:
                         sources.append(stream_url)
+                # Extract the source video page URL from the JWPlayer error handler
+                # e.g. console.log('Retrying to scrape playing links from source:https://...')
+                source_pages = re.findall(
+                    r"scrape playing links from source:(https?://[^'\"\s]+)", html
+                )
+                for source_page in source_pages:
+                    try:
+                        source_html, _ = get_html_with_cloudflare_retry(source_page, url)
+                        page_sources = re.findall(
+                            r"<source[^>]+src=[\"'](https?://[^\"']+)[\"']", source_html
+                        )
+                        page_mp4 = re.findall(
+                            r"https?://[^\"'\s<>]+\.mp4[^\"'\s<>]*", source_html
+                        )
+                        page_m3u8 = re.findall(
+                            r"https?://[^\"'\s<>]+\.m3u8[^\"'\s<>]*", source_html
+                        )
+                        for stream_url in page_sources + page_mp4 + page_m3u8:
+                            if stream_url not in sources:
+                                sources.append(stream_url)
+                    except Exception:
+                        pass
             except Exception:
                 pass
         return sources
