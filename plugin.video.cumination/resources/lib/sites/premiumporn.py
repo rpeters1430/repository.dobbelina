@@ -194,61 +194,67 @@ def decrypt_aes_gcm(payload, key, iv):
 def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     html = utils.getHtml(url)
-    match = re.compile(
-        r'itemprop="embedURL" content="(https://[^/]+/e/([^/]+)/[^"]+)"',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(html)
-    if match:
-        embed_url = match[0][0]
-        video_id = match[0][1]
-        details_url = "https://bysewihe.com/api/videos/{}/embed/details".format(
-            video_id
-        )
-        details_data = utils.getHtml(details_url, url)
-        details_json = json.loads(details_data)
-        embed = details_json.get("embed_frame_url", "")
-
-        api_url = "https://g9r6.com/api/videos/{}/embed/playback".format(video_id)
-        hdr = utils.base_hdrs.copy()
-        hdr["X-Embed-Origin"] = "premiumporn.org"
-        hdr["X-Embed-Parent"] = embed_url
-        hdr["X-Embed-Referer"] = site.url
-
-        api_data = utils.getHtml(api_url, embed, headers=hdr)
-        encrypted_data = json.loads(api_data)
-
-        playback = encrypted_data["playback"]
-
-        iv = base64_url_decode(playback["iv"])
-        payload = base64_url_decode(playback["payload"])
-
-        key_part1 = base64_url_decode(playback["key_parts"][0])
-        key_part2 = base64_url_decode(playback["key_parts"][1])
-        combined_key = key_part1 + key_part2
-
-        result = decrypt_aes_gcm(payload, combined_key, iv)
-        src = {}
-        for source in json.loads(result).get("sources", []):
-            video_url = source.get("url", "").replace("\\u0026", "&")
-            label = source.get("label", "")
-            src[label] = video_url
-
-        video_url = utils.prefquality(
-            src, sort_by=lambda x: 2160 if x == "4k" else int(x[:-1]), reverse=True
-        )
-        if video_url:
-            vp.play_from_direct_link(video_url)
-            return
-
+    # Prefer direct iframe resolving first to avoid slow/fragile API decrypt calls.
     iframematch = re.compile(
-        r'<iframe src="([^"]+)"', re.DOTALL | re.IGNORECASE
+        r'<iframe[^>]+src="([^"]+)"', re.DOTALL | re.IGNORECASE
     ).findall(html)
     if iframematch:
         iframe = iframematch[0]
+        if iframe.startswith("//"):
+            iframe = "https:" + iframe
         vp.play_from_link_to_resolve(iframe)
         return
-    else:
-        utils.notify("Oh oh", "No video found")
+
+    try:
+        match = re.compile(
+            r'itemprop="embedURL" content="(https://[^/]+/e/([^/]+)/[^"]+)"',
+            re.DOTALL | re.IGNORECASE,
+        ).findall(html)
+        if match:
+            embed_url = match[0][0]
+            video_id = match[0][1]
+            details_url = "https://bysewihe.com/api/videos/{}/embed/details".format(
+                video_id
+            )
+            details_data = utils.getHtml(details_url, url)
+            details_json = json.loads(details_data)
+            embed = details_json.get("embed_frame_url", "")
+
+            api_url = "https://g9r6.com/api/videos/{}/embed/playback".format(video_id)
+            hdr = utils.base_hdrs.copy()
+            hdr["X-Embed-Origin"] = "premiumporn.org"
+            hdr["X-Embed-Parent"] = embed_url
+            hdr["X-Embed-Referer"] = site.url
+
+            api_data = utils.getHtml(api_url, embed, headers=hdr)
+            encrypted_data = json.loads(api_data)
+
+            playback = encrypted_data["playback"]
+
+            iv = base64_url_decode(playback["iv"])
+            payload = base64_url_decode(playback["payload"])
+
+            key_part1 = base64_url_decode(playback["key_parts"][0])
+            key_part2 = base64_url_decode(playback["key_parts"][1])
+            combined_key = key_part1 + key_part2
+
+            result = decrypt_aes_gcm(payload, combined_key, iv)
+            src = {}
+            for source in json.loads(result).get("sources", []):
+                video_url = source.get("url", "").replace("\\u0026", "&")
+                label = source.get("label", "")
+                src[label] = video_url
+
+            video_url = utils.prefquality(
+                src, sort_by=lambda x: 2160 if x == "4k" else int(x[:-1]), reverse=True
+            )
+            if video_url:
+                vp.play_from_direct_link(video_url)
+                return
+    except Exception as exc:
+        utils.kodilog("premiumporn.Play fallback to resolver after API error: {}".format(exc))
+
+    utils.notify("Oh oh", "No video found")
 
 
 @site.register()

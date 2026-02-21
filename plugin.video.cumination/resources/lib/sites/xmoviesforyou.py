@@ -33,11 +33,22 @@ site = AdultSite(
 
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
-        "items": ".grid-box-img",
+        "items": [".grid-box-img", "article.group"],
         "url": {"selector": "a", "attr": "href"},
-        "title": {"selector": "a", "attr": "title", "clean": True},
-        "thumbnail": {"transform": lambda v, item: utils.get_thumbnail(item.select_one("img"))},
-        "pagination": {"selector": "a.next.page-numbers", "attr": "href"},
+        "title": {
+            "selector": ["a[title]", "h3 a", "a"],
+            "attr": "title",
+            "text": True,
+            "clean": True,
+        },
+        "thumbnail": {
+            "transform": lambda v, item: utils.get_thumbnail(item.select_one("img"))
+        },
+        "pagination": {
+            "selector": "a.next.page-numbers, a[href*='?page=']",
+            "attr": "href",
+            "text_matches": ["next"],
+        },
     }
 )
 
@@ -51,7 +62,10 @@ def Main():
         site.img_cat,
     )
     site.add_dir(
-        "[COLOR hotpink]Search[/COLOR]", site.url + "?s=", "Search", site.img_search
+        "[COLOR hotpink]Search[/COLOR]",
+        site.url + "search?q=",
+        "Search",
+        site.img_search,
     )
     List(site.url)
     utils.eod()

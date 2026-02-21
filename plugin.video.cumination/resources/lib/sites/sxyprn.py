@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import json
 import re
 from six.moves import urllib_parse
 from resources.lib import utils
@@ -70,7 +71,12 @@ def List(url):
     video_items = soup.select("div.post_el_small")
 
     for item in video_items:
-        link = item.select_one('a[href*="/blog/"]') or item.select_one("a[href]")
+        # Prefer real post links over author/category links.
+        link = (
+            item.select_one('a[href*="/post/"]')
+            or item.select_one("a[aria-label][href]")
+            or item.select_one("a[href]")
+        )
         if not link:
             continue
 
@@ -88,13 +94,18 @@ def List(url):
         videopage = urllib_parse.urljoin(site.url, href)
         name = title
 
-        if "http" in name:
-            urls = re.findall(r"(http[^\s]+)", name)
-            if urls:
-                name = re.sub(r"(http[^\s]+)", "", name)
-                iurl = "|".join(urls) + "@"
-            else:
-                iurl = videopage
+        external_links = []
+        for ext_link in item.select(".post_text a.extlink[href], a.extlink_icon[href]"):
+            ext_url = utils.safe_get_attr(ext_link, "href")
+            if ext_url and ext_url.startswith("http"):
+                external_links.append(ext_url)
+
+        if not external_links and "http" in name:
+            external_links = re.findall(r"(http[^\s]+)", name)
+
+        if external_links:
+            name = re.sub(r"(http[^\s]+)", "", name)
+            iurl = "|".join(dict.fromkeys(external_links)) + "@"
         else:
             iurl = videopage
 
@@ -277,18 +288,59 @@ def Playvid(url, name, download=None):
         videourl = utils.selector("Select link", links)
     else:
         videopage = utils.getHtml(url, site.url)
-        match = re.compile(
-            '''data-vnfo='{".+?":"(.+?)"''', re.DOTALL | re.IGNORECASE
-        ).findall(videopage)
-        if not match:
-            utils.notify("Oh Oh", "No Videos found")
-            vp.progress.close()
-            return
-        videourl = match[0].replace(r"\/", "/")
-        tmpfile = videourl.split("/")
-        tmpfile[5] = str(int(tmpfile[5]) - ssut51(tmpfile[6]) - ssut51(tmpfile[7]))
-        videourl = "/".join(tmpfile)
-        videourl = site.url[:-1] + videourl.replace("/cdn/", "/cdn8/")
+        soup = utils.parse_html(videopage)
+
+        external_links = []
+        for ext_link in soup.select(".post_text a.extlink[href], a.extlink_icon[href]"):
+            ext_url = utils.safe_get_attr(ext_link, "href")
+            if ext_url and vp.resolveurl.HostedMediaFile(ext_url):
+                external_links.append(ext_url)
+        if external_links:
+            links = {utils.get_vidhost(link): link for link in external_links}
+            videourl = utils.selector("Select link", links)
+
+        if not videourl:
+            # New pages expose encoded mappings in a hidden data-vnfo JSON map.
+            vnfo = soup.select_one(".vidsnfo[data-vnfo]")
+            data_vnfo = utils.safe_get_attr(vnfo, "data-vnfo", default="") if vnfo else ""
+            path = ""
+            if data_vnfo:
+                try:
+                    mapping = json.loads(data_vnfo)
+                    post_match = re.search(r"/post/([^/.]+)", url)
+                    post_id = post_match.group(1) if post_match else ""
+                    if post_id and post_id in mapping:
+                        path = mapping.get(post_id, "")
+                    elif mapping:
+                        path = list(mapping.values())[0]
+                except Exception:
+                    path = ""
+
+            if not path:
+                legacy = re.compile(
+                    r'data-vnfo=[\'"]\{".+?":"(.+?)"',
+                    re.DOTALL | re.IGNORECASE,
+                ).findall(videopage)
+                path = legacy[0] if legacy else ""
+
+            if path:
+                path = path.replace(r"\/", "/")
+                if path.startswith("/"):
+                    videourl = site.url[:-1] + path
+                else:
+                    videourl = path
+
+                if "/cdn/" in videourl:
+                    tmpfile = videourl.split("/")
+                    if len(tmpfile) > 7:
+                        try:
+                            tmpfile[5] = str(
+                                int(tmpfile[5]) - ssut51(tmpfile[6]) - ssut51(tmpfile[7])
+                            )
+                            videourl = "/".join(tmpfile)
+                        except Exception:
+                            pass
+                    videourl = videourl.replace("/cdn/", "/cdn8/")
 
     if not videourl:
         utils.notify("Oh Oh", "No Videos found")

@@ -30,6 +30,15 @@ site = AdultSite(
 )
 
 
+def _fetch_html(url, referer=""):
+    html = utils.getHtml(url, referer)
+    if utils.is_cloudflare_challenge_page(html):
+        html, _ = utils.get_html_with_cloudflare_retry(
+            url, referer=referer, retry_on_empty=True
+        )
+    return html
+
+
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
@@ -65,7 +74,17 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, "")
+    listhtml = _fetch_html(url, "")
+    if not listhtml:
+        utils.eod()
+        return
+    if utils.is_cloudflare_challenge_page(listhtml):
+        utils.notify(
+            "Cloudflare blocked NaughtyBlog",
+            "Enable FlareSolverr in Cumination settings",
+        )
+        utils.eod()
+        return
     soup = utils.parse_html(listhtml)
     posts = soup.select("article, .post, .post-content")
     if not posts:
@@ -117,13 +136,30 @@ def List(url):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    sitehtml = utils.getHtml(url, site.url)
+    sitehtml = _fetch_html(url, site.url)
+    if not sitehtml:
+        vp.progress.close()
+        return
+
+    sources = []
     downloads = re.compile(
         'id="download">(.*?)</div>', re.DOTALL | re.IGNORECASE
-    ).findall(sitehtml)[0]
-    sources = re.compile(
-        r'href="([^"]+)"\s+?title="([^\s]+)\s', re.DOTALL | re.IGNORECASE
-    ).findall(downloads)
+    ).findall(sitehtml)
+    if downloads:
+        sources = re.compile(
+            r'href="([^"]+)"\s+?title="([^\s]+)\s', re.DOTALL | re.IGNORECASE
+        ).findall(downloads[0])
+
+    if not sources:
+        soup = utils.parse_html(sitehtml)
+        for link in soup.select("a[href]"):
+            href = utils.safe_get_attr(link, "href", default="")
+            if not href or "naughtyblog.org" in href or "/report/" in href:
+                continue
+            title = utils.safe_get_attr(link, "title", default="")
+            host_label = title.split(" ")[0] if title else utils.get_vidhost(href)
+            sources.append((href, host_label))
+
     links = {}
     for link, hoster in sources:
         if utils.addon.getSetting("filter_hosters"):
@@ -154,7 +190,7 @@ def Search(url, keyword=None):
 
 @site.register()
 def Categories(url):
-    listhtml = utils.getHtml(url)
+    listhtml = _fetch_html(url)
     soup = utils.parse_html(listhtml)
     for item in soup.select(".pocetvideicat"):
         link = item.find_previous("a")
@@ -207,7 +243,7 @@ def SitesABC(url):
 
 @site.register()
 def PornstarsAndSites(url):
-    listhtml = utils.getHtml(url)
+    listhtml = _fetch_html(url)
     match = re.compile(
         '<li><a href="([^"]+)"[^>]+>([^<]+)<span[^>]+>([^<]+)<',
         re.DOTALL | re.IGNORECASE,
