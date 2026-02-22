@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
+import traceback
 from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
@@ -49,46 +50,56 @@ def _normalize_thumb(img):
 
 
 @site.register(default_mode=True)
-def Main():
-    site.add_dir(
-        "[COLOR hotpink]Latest[/COLOR]",
-        site.url + "videos?type=public&o=mr&page=1",
-        "List",
-        "",
-    )
-    site.add_dir(
-        "[COLOR hotpink]Categories[/COLOR]",
-        site.url + "categories",
-        "Categories",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Search[/COLOR]",
-        site.url + "search?search_query={}&search_type=videos",
-        "Search",
-        site.img_search,
-    )
-    utils.eod()
+def Main(url=None):
+    try:
+        site.add_dir(
+            "[COLOR hotpink]Latest[/COLOR]",
+            site.url + "videos?type=public&o=mr&page=1",
+            "List",
+            "",
+        )
+        site.add_dir(
+            "[COLOR hotpink]Categories[/COLOR]",
+            site.url + "categories",
+            "Categories",
+            site.img_cat,
+        )
+        site.add_dir(
+            "[COLOR hotpink]Search[/COLOR]",
+            site.url + "search?search_query={}&search_type=videos",
+            "Search",
+            site.img_search,
+        )
+        utils.eod()
+    except Exception as exc:
+        utils.kodilog("@@@@Cumination: tokyomotion Main failed: {}".format(exc))
+        utils.kodilog(traceback.format_exc())
+        utils.notify(msg="TokyoMotion menu failed")
+        utils.eod()
 
 
 @site.register()
 def List(url, page=1):
-    listhtml = utils.getHtml(url, site.url)
-    if not listhtml:
-        utils.notify(msg="Nothing found")
-        utils.eod()
-        return
-
-    if "No Videos Found" in listhtml:
-        utils.notify(msg="Nothing found")
-        utils.eod()
-        return
-
     try:
+        if not url:
+            url = site.url + "videos?type=public&o=mr&page=1"
+
+        listhtml = utils.getHtml(url, site.url)
+        if not listhtml:
+            utils.notify(msg="Nothing found")
+            utils.eod()
+            return
+
+        if "No Videos Found" in listhtml:
+            utils.notify(msg="Nothing found")
+            utils.eod()
+            return
+
         soup = utils.parse_html(listhtml)
     except Exception as exc:
-        utils.kodilog("@@@@Cumination: tokyomotion parse error: {}".format(exc))
-        utils.notify(msg="Failed to parse TokyoMotion page")
+        utils.kodilog("@@@@Cumination: tokyomotion List failed: {}".format(exc))
+        utils.kodilog(traceback.format_exc())
+        utils.notify(msg="TokyoMotion list failed")
         utils.eod()
         return
 
@@ -159,30 +170,35 @@ def List(url, page=1):
 
 @site.register()
 def Playvid(url, name, download=None):
-    vp = utils.VideoPlayer(name, download)
-    videohtml = utils.getHtml(url, site.url)
-    if not videohtml:
-        utils.notify(msg="Unable to load video page")
-        return
-
     try:
-        soup = utils.parse_html(videohtml)
-    except Exception:
-        soup = None
+        vp = utils.VideoPlayer(name, download)
+        videohtml = utils.getHtml(url, site.url)
+        if not videohtml:
+            utils.notify(msg="Unable to load video page")
+            return
 
-    sources = soup.find_all("source") if soup else []
-    src = ""
-    if sources:
-        src = utils.safe_get_attr(sources[-1], "src", ["data-src"]) or ""
+        try:
+            soup = utils.parse_html(videohtml)
+        except Exception:
+            soup = None
 
-    if not src:
-        match = re.search(
-            r'source[^>]+src="([^"]+)"', videohtml, re.DOTALL | re.IGNORECASE
-        )
-        if match:
-            src = match.group(1)
-    if src:
-        vp.play_from_direct_link(src + "|Referer={}".format(site.url))
+        sources = soup.find_all("source") if soup else []
+        src = ""
+        if sources:
+            src = utils.safe_get_attr(sources[-1], "src", ["data-src"]) or ""
+
+        if not src:
+            match = re.search(
+                r'source[^>]+src="([^"]+)"', videohtml, re.DOTALL | re.IGNORECASE
+            )
+            if match:
+                src = match.group(1)
+        if src:
+            vp.play_from_direct_link(src + "|Referer={}".format(site.url))
+    except Exception as exc:
+        utils.kodilog("@@@@Cumination: tokyomotion Playvid failed: {}".format(exc))
+        utils.kodilog(traceback.format_exc())
+        utils.notify(msg="TokyoMotion playback failed")
 
 
 @site.register()
@@ -195,27 +211,33 @@ def Search(url, keyword=None):
 
 @site.register()
 def Categories(url):
-    listhtml = utils.getHtml(url, site.url)
-    if not listhtml:
-        utils.notify(msg="Nothing found")
+    try:
+        listhtml = utils.getHtml(url, site.url)
+        if not listhtml:
+            utils.notify(msg="Nothing found")
+            utils.eod()
+            return
+
+        soup = utils.parse_html(listhtml)
+        items = soup.select("div.col-sm-6 a[href]") if soup else []
+        for anchor in items:
+            catpage = utils.safe_get_attr(anchor, "href")
+            if not catpage:
+                continue
+            catpage = urllib_parse.urljoin(site.url, catpage)
+            if "type=" not in catpage:
+                sep = "&" if "?" in catpage else "?"
+                catpage = catpage + "{}type=public&o=mr".format(sep)
+
+            img_tag = anchor.find("img")
+            img = utils.safe_get_attr(img_tag, "src")
+            name = utils.safe_get_attr(anchor, "title") or utils.safe_get_text(anchor)
+            if not name:
+                continue
+            site.add_dir(utils.cleantext(name), catpage, "List", img)
         utils.eod()
-        return
-
-    soup = utils.parse_html(listhtml)
-    items = soup.select("div.col-sm-6 a[href]") if soup else []
-    for anchor in items:
-        catpage = utils.safe_get_attr(anchor, "href")
-        if not catpage:
-            continue
-        catpage = urllib_parse.urljoin(site.url, catpage)
-        if "type=" not in catpage:
-            sep = "&" if "?" in catpage else "?"
-            catpage = catpage + "{}type=public&o=mr".format(sep)
-
-        img_tag = anchor.find("img")
-        img = utils.safe_get_attr(img_tag, "src")
-        name = utils.safe_get_attr(anchor, "title") or utils.safe_get_text(anchor)
-        if not name:
-            continue
-        site.add_dir(utils.cleantext(name), catpage, "List", img)
-    utils.eod()
+    except Exception as exc:
+        utils.kodilog("@@@@Cumination: tokyomotion Categories failed: {}".format(exc))
+        utils.kodilog(traceback.format_exc())
+        utils.notify(msg="TokyoMotion categories failed")
+        utils.eod()
