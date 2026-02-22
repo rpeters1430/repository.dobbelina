@@ -29,9 +29,33 @@ site = AdultSite(
     "tokyomotion",
 )
 
+# Use local artwork for listing items to avoid heavy remote thumb fetches that can
+# destabilize some Kodi builds/devices on this site.
+USE_REMOTE_THUMBS = False
+
+
+def _normalize_thumb(img):
+    """Normalize thumbnail URL and drop unsafe/non-http schemes."""
+    if not USE_REMOTE_THUMBS:
+        return site.image
+    if not img:
+        return site.image
+    img = img.strip()
+    if img.startswith("//"):
+        img = "https:" + img
+    if not img.lower().startswith(("http://", "https://")):
+        return site.image
+    return img + "|Referer=" + site.url
+
 
 @site.register(default_mode=True)
 def Main():
+    site.add_dir(
+        "[COLOR hotpink]Latest[/COLOR]",
+        site.url + "videos?type=public&o=mr&page=1",
+        "List",
+        "",
+    )
     site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]",
         site.url + "categories",
@@ -44,29 +68,40 @@ def Main():
         "Search",
         site.img_search,
     )
-    List(site.url + "videos?type=public&o=mr&page=1")
     utils.eod()
 
 
 @site.register()
 def List(url, page=1):
     listhtml = utils.getHtml(url, site.url)
+    if not listhtml:
+        utils.notify(msg="Nothing found")
+        utils.eod()
+        return
+
     if "No Videos Found" in listhtml:
         utils.notify(msg="Nothing found")
         utils.eod()
         return
 
-    soup = utils.parse_html(listhtml)
+    try:
+        soup = utils.parse_html(listhtml)
+    except Exception as exc:
+        utils.kodilog("@@@@Cumination: tokyomotion parse error: {}".format(exc))
+        utils.notify(msg="Failed to parse TokyoMotion page")
+        utils.eod()
+        return
+
     cards = soup.select("div.well.well-sm") if soup else []
     if not cards:
-        # Fallback to regex parsing if the layout is not as expected
+        # Fallback to regex parsing if the layout is not as expected.
         match = re.compile(
-            r'well well-sm[^"]*?">\s*<a href="/([^"]+)".*?src="([^"]+)"\s*title="([^"]+)"(.*?)duration">([^<]+)<',
+            r'well well-sm[^\"]*?">\s*<a href="/([^\"]+)".*?src="([^\"]+)"\s*title="([^\"]+)"(.*?)duration">([^<]+)<',
             re.DOTALL | re.IGNORECASE,
         ).findall(listhtml)
         for videopage, img, name, hd, duration in match:
             videopage = urllib_parse.urljoin(site.url, videopage)
-            img = (img + "|Referer=" + site.url) if img else None
+            img = _normalize_thumb(img)
             hd = "HD" if "HD" in hd else ""
             site.add_download_link(
                 utils.cleantext(name),
@@ -85,11 +120,10 @@ def List(url, page=1):
             videopage = urllib_parse.urljoin(site.url, link["href"])
 
             img_tag = card.find("img")
-            img = utils.safe_get_attr(img_tag, "data-src", ["src"])
-            if img and img.startswith("//"):
-                img = "https:" + img
-            if img:
-                img = img + "|Referer=" + site.url
+            img = utils.safe_get_attr(
+                img_tag, "data-src", ["src", "data-original", "data-preview"]
+            )
+            img = _normalize_thumb(img)
 
             name = utils.safe_get_attr(link, "title") or utils.safe_get_text(link)
             name = utils.cleantext(name) if name else "Video"
@@ -106,7 +140,11 @@ def List(url, page=1):
                 name, videopage, "Playvid", img, name, duration=duration, quality=hd
             )
 
-    next_link = soup.find("a", class_=lambda c: c and "prevnext" in c) if soup else None
+    next_link = (
+        soup.select_one("a.prevnext")
+        or soup.select_one("a[rel='next']")
+        or soup.select_one("a[aria-label='Next']")
+    )
     if next_link:
         next_href = utils.safe_get_attr(next_link, "href")
         if next_href:
@@ -123,11 +161,24 @@ def List(url, page=1):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     videohtml = utils.getHtml(url, site.url)
-    soup = utils.parse_html(videohtml)
+    if not videohtml:
+        utils.notify(msg="Unable to load video page")
+        return
+
+    try:
+        soup = utils.parse_html(videohtml)
+    except Exception:
+        soup = None
+
     sources = soup.find_all("source") if soup else []
-    src = utils.safe_get_attr(sources[-1], "src") if sources else ""
+    src = ""
+    if sources:
+        src = utils.safe_get_attr(sources[-1], "src", ["data-src"]) or ""
+
     if not src:
-        match = re.search(r'source src="([^"]+)"', videohtml, re.DOTALL | re.IGNORECASE)
+        match = re.search(
+            r'source[^>]+src="([^"]+)"', videohtml, re.DOTALL | re.IGNORECASE
+        )
         if match:
             src = match.group(1)
     if src:
@@ -145,6 +196,11 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     listhtml = utils.getHtml(url, site.url)
+    if not listhtml:
+        utils.notify(msg="Nothing found")
+        utils.eod()
+        return
+
     soup = utils.parse_html(listhtml)
     items = soup.select("div.col-sm-6 a[href]") if soup else []
     for anchor in items:

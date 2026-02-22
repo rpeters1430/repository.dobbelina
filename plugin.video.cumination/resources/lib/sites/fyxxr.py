@@ -30,7 +30,7 @@ site = AdultSite(
     "fyxxr",
     "[COLOR hotpink]fyxXR[/COLOR]",
     "https://fyxxr.to/",
-    "https://fyxxr.to/contents/playerother/theme/logo.png",
+    "fyxxr.png",
     "fyxxr",
 )
 
