@@ -59,20 +59,24 @@ def List(url):
     # Parse HTML with BeautifulSoup
     soup = utils.parse_html(listhtml)
 
-    # Extract video items - YouPorn uses class="video-box"
-    video_items = soup.select(".video-box")
+    # Extract video items - keep selectors broad for homepage/search/category variants.
+    video_items = soup.select(
+        ".video-box, .js_video-box, .thumbnail-card, li.videoBox, div.videoBox"
+    )
     seen = set()
 
     for item in video_items:
         try:
             # Get the link element
-            link = item.select_one("a.video-box-image")
+            link = item.select_one(
+                "a.video-box-image, a.tm_video_item, a.video-box-link, a[href*='/watch/']"
+            )
             if not link:
                 continue
 
             # Extract video URL
             video_url = utils.safe_get_attr(link, "href")
-            if not video_url:
+            if not video_url or "/watch/" not in video_url:
                 continue
 
             # Make absolute URL if needed
@@ -95,12 +99,33 @@ def List(url):
                 title = utils.safe_get_attr(img_tag, "alt") if img_tag else "Video"
 
             # Extract thumbnail image
-            img_tag = item.select_one("img.thumb-image")
-            img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+            img_tag = item.select_one("img.thumb-image, img")
+            img = utils.get_thumbnail(img_tag)
+            if not img:
+                img = utils.safe_get_attr(
+                    item,
+                    "data-thumbnail",
+                    ["data-src", "data-original", "thumb", "data-thumb"],
+                )
+            if not img:
+                img = utils.safe_get_attr(
+                    link,
+                    "data-thumbnail",
+                    ["data-src", "data-original", "thumb", "data-thumb"],
+                )
+            if img and img.startswith("//"):
+                img = "https:" + img
 
             # Extract duration
-            duration_tag = item.select_one(".video-duration span")
-            duration = utils.safe_get_text(duration_tag)
+            duration_tag = item.select_one(
+                ".video-duration span, .tm_video_duration span, .video-duration, .duration"
+            )
+            duration = utils.safe_get_text(duration_tag).replace("\xa0", " ").strip()
+            if not duration:
+                duration = utils.safe_get_attr(item, "data-duration")
+            duration_seconds = _duration_to_seconds(duration)
+            if duration_seconds is not None and 0 < duration_seconds < 60:
+                continue
 
             # Add video to list
             site.add_download_link(
@@ -137,12 +162,11 @@ def List(url):
 
 @site.register()
 def Search(url, keyword=None):
-    searchUrl = url
     if not keyword:
         site.search_dir(url, "Search")
     else:
         title = urllib_parse.quote_plus(keyword)
-        searchUrl = searchUrl + title + "/"
+        searchUrl = site.url + "search/?query=" + title
         List(searchUrl)
 
 
@@ -183,7 +207,9 @@ def Categories(url):
 
             # Extract thumbnail
             img_tag = category.select_one("img")
-            img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+            img = utils.get_thumbnail(img_tag)
+            if img and img.startswith("//"):
+                img = "https:" + img
 
             entries.append((name, catpage, img, name.lower()))
 
@@ -286,3 +312,25 @@ def _extract_best_source(html):
     if best.startswith("//"):
         best = "https:" + best
     return best
+
+
+def _duration_to_seconds(duration):
+    if not duration:
+        return None
+
+    parts = [p.strip() for p in duration.split(":") if p.strip()]
+    if not parts:
+        return None
+
+    try:
+        values = [int(p) for p in parts]
+    except (ValueError, TypeError):
+        return None
+
+    if len(values) == 1:
+        return values[0]
+    if len(values) == 2:
+        return values[0] * 60 + values[1]
+    if len(values) == 3:
+        return values[0] * 3600 + values[1] * 60 + values[2]
+    return None

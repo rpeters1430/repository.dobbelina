@@ -133,5 +133,51 @@ def test_search_builds_correct_url(monkeypatch):
     youporn.Search("https://www.youporn.com/search/", keyword="test search")
 
     assert len(called_urls) == 1
-    assert "test+search" in called_urls[0]
-    assert called_urls[0].endswith("/")
+    assert called_urls[0] == "https://www.youporn.com/search/?query=test+search"
+
+
+def test_list_skips_short_videos_and_uses_thumbnail_fallback(monkeypatch):
+    """Test that List filters sub-minute clips and still extracts lazy thumbs."""
+    html_data = """
+    <html>
+      <body>
+        <div class="video-box">
+          <a href="/watch/111/" class="video-box-image" data-thumbnail="//cdn.example.com/thumb-111.jpg">
+            <div class="video-duration"><span>00:45</span></div>
+          </a>
+          <div class="video-title-wrapper">
+            <a class="video-title-text"><span>Short teaser</span></a>
+          </div>
+        </div>
+        <div class="video-box">
+          <a href="/watch/222/" class="video-box-image">
+            <img class="thumb-image" src="data:image/png;base64,placeholder" data-original="https://cdn.example.com/thumb-222.jpg" />
+            <div class="video-duration"><span>01:01</span></div>
+          </a>
+          <div class="video-title-wrapper">
+            <a class="video-title-text"><span>Keep this one</span></a>
+          </div>
+        </div>
+      </body>
+    </html>
+    """
+
+    downloads = []
+
+    def fake_get_html(url, referer=None, headers=None):
+        return html_data
+
+    def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
+        downloads.append({"name": name, "url": url, "icon": iconimage})
+
+    monkeypatch.setattr(youporn.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(youporn.site, "add_download_link", fake_add_download_link)
+    monkeypatch.setattr(youporn.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(youporn.utils, "eod", lambda: None)
+
+    youporn.List("https://www.youporn.com/")
+
+    assert len(downloads) == 1
+    assert downloads[0]["name"] == "Keep this one"
+    assert downloads[0]["url"] == "https://www.youporn.com/watch/222/"
+    assert downloads[0]["icon"] == "https://cdn.example.com/thumb-222.jpg"
