@@ -44,14 +44,21 @@ def Main():
 def List(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
-    for item in soup.select("[data-post-id], article, .video-item, .item"):
-        link = item.select_one("a.infos[href][title], a[href][title], a[href]")
+    for item in soup.select(".video-block, [data-post-id], article, .video-item, .item"):
+        link = item.select_one("a.infos[href], a[href][title], a[href]")
         videourl = utils.safe_get_attr(link, "href", default="")
         if not videourl:
             continue
-        img_tag = item.select_one("img")
+        img_tag = item.select_one(".video-img, img")
         img = utils.get_thumbnail(img_tag)
-        name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+        
+        # Try to get name from .title span, then link title, then link text
+        title_span = item.select_one(".title")
+        if title_span:
+            name = utils.cleantext(title_span.get_text())
+        else:
+            name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+            
         if not name:
             name = utils.cleantext(utils.safe_get_text(link, default=""))
         if not name or name == "Live Cams":
@@ -148,9 +155,18 @@ def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download)
     videohtml = utils.getHtml(url)
     soup = utils.parse_html(videohtml)
+    
+    # Try to find embed URL (myvidplay or others)
     playerurl = utils.safe_get_attr(soup.select_one("iframe[src]"), "src", default="")
     if not playerurl:
+        playerurl = "".join(re.findall(r'meta itemprop="embedURL" content="([^"]+)"', videohtml))
+        
+    if not playerurl:
         return
+        
+    if playerurl.startswith("//"):
+        playerurl = "https:" + playerurl
+        
     if vp.resolveurl.HostedMediaFile(playerurl):
         vp.play_from_link_to_resolve(playerurl)
     else:

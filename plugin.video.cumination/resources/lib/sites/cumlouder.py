@@ -66,7 +66,11 @@ def List(url):
     listhtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(listhtml)
     for item in soup.select(".muestra-escena, .scene-item, .item"):
-        link = item if item.name == "a" and item.has_attr("href") else item.select_one("a[href]")
+        link = (
+            item
+            if item.name == "a" and item.has_attr("href")
+            else item.select_one("a[href]")
+        )
         videopage = utils.safe_get_attr(link, "href", default="")
         if not videopage:
             continue
@@ -74,10 +78,22 @@ def List(url):
         img = utils.get_thumbnail(img_tag)
         if img.startswith("//"):
             img = "https:" + img
-        name = utils.cleantext(
-            utils.safe_get_text(item.select_one(".titulo, .title, .name"), default="")
-        )
-        duration = utils.safe_get_text(item.select_one(".duration"), default="")
+        
+        # Get name from h2 if it exists, otherwise from link title/alt
+        h2 = item.select_one("h2")
+        if h2:
+            name = utils.cleantext(h2.get_text())
+        else:
+            name = utils.cleantext(
+                utils.safe_get_text(item.select_one(".titulo, .title, .name"), default="")
+            )
+        
+        if not name:
+            name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+        if not name:
+            name = utils.cleantext(utils.safe_get_attr(img_tag, "alt", default=""))
+            
+        duration = utils.safe_get_text(item.select_one(".duration, .minutos"), default="")
         hd = "HD" if item.select_one(".hd") else ""
         videopage = urllib_parse.urljoin(site.url, videopage)
         site.add_download_link(
@@ -103,16 +119,32 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     vpage = utils.getHtml(url, site.url)
-    match = re.compile(
-        r"""<iframe\s*src=["']([^"']+)""", re.DOTALL | re.IGNORECASE
-    ).findall(vpage)
-    if match:
-        videourl = match[-1]
+    
+    # Extract embed URL
+    embed_id = re.findall(r"/embed/(\d+)/", vpage)
+    if embed_id:
+        videourl = site.url + "embed/" + embed_id[0] + "/"
     else:
-        vp.progress.close()
-        return
-    vp.progress.update(75, "[CR]Video found[CR]")
-    vp.play_from_link_to_resolve(videourl)
+        match = re.compile(
+            r"""<iframe\s*src=["']([^"']+)""", re.DOTALL | re.IGNORECASE
+        ).findall(vpage)
+        if match:
+            videourl = match[-1]
+        else:
+            vp.progress.close()
+            return
+            
+    vp.progress.update(50, "[CR]Loading embed page[CR]")
+    embed_html = utils.getHtml(videourl, site.url)
+    source_match = re.findall(r'<source src="([^"]+)"', embed_html)
+    
+    if source_match:
+        final_url = source_match[0]
+        vp.progress.update(75, "[CR]Video found[CR]")
+        vp.play_from_direct_link(final_url)
+    else:
+        vp.progress.update(75, "[CR]Resolving video[CR]")
+        vp.play_from_link_to_resolve(videourl)
 
 
 @site.register()
