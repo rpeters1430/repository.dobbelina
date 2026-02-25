@@ -42,27 +42,37 @@ def Main():
     )
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]",
-        site.url + "api?query={}&sort=best&page=0&method=search",
+        site.url + "videos?q={}&sort=best&page=1",
         "Search",
         site.img_search,
     )
-    # "_best" currently returns empty payloads; blank query returns the feed.
-    List(site.url + "api?query=&sort=new&page=0&method=search")
+    # The API is currently returning 500/504 errors; use the HTML list instead.
+    List(site.url + "videos?q=&sort=new&page=1")
     utils.eod()
 
 
 @site.register()
 def List(url):
     html = utils.getHtml(url, site.url)
-
-    markup, results_remaining = _extract_markup_and_meta(html)
-    if not markup:
+    if not html:
         utils.eod()
         return
 
-    soup = utils.parse_html(markup)
+    # Check if it's JSON (API fallback) or HTML
+    if html.strip().startswith("{") or html.strip().startswith("["):
+        markup, results_remaining = _extract_markup_and_meta(html)
+    else:
+        markup = html
+        results_remaining = 120  # Arbitrary positive value to show next page if HTML pagination exists
 
+    soup = utils.parse_html(markup)
     video_items = soup.select("div.thumbnail")
+    
+    # If no thumbnails, maybe it's the raw API response or empty results
+    if not video_items and not html.strip().startswith("<"):
+        markup, results_remaining = _extract_markup_and_meta(html)
+        soup = utils.parse_html(markup)
+        video_items = soup.select("div.thumbnail")
 
     for item in video_items:
         link = item.select_one("a[href]")

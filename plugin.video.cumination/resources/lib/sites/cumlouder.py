@@ -66,7 +66,7 @@ def List(url):
     listhtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(listhtml)
     for item in soup.select(".muestra-escena, .scene-item, .item"):
-        link = item.select_one("a[href]")
+        link = item if item.name == "a" and item.has_attr("href") else item.select_one("a[href]")
         videopage = utils.safe_get_attr(link, "href", default="")
         if not videopage:
             continue

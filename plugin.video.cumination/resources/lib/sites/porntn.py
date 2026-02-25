@@ -34,8 +34,7 @@ def Main(url):
     )
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]",
-        site.url
-        + "video/{0}/?mode=async&function=get_block&block_id=list_videos_videos_list_search_result&q={0}&category_ids=&sort_by=&from_videos=1",
+        site.url + "search/?q={0}",
         "Search",
         site.img_search,
     )

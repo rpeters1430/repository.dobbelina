@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import re
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
-import requests
 
 site = AdultSite(
     "pornhoarder",
@@ -72,7 +71,7 @@ def Main():
 @site.register()
 def List(url, page=1, section=None):
     search = "" if url.startswith("https://") else url
-    siteurl = section if section else requests.head(site.url, allow_redirects=True).url
+    siteurl = section if section else site.url
 
     data = Createdata(page, search)
     listhtml = utils.postHtml(

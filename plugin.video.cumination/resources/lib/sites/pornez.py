@@ -45,7 +45,7 @@ def List(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
     for item in soup.select("[data-post-id], article, .video-item, .item"):
-        link = item.select_one("a[href]")
+        link = item.select_one("a.infos[href][title], a[href][title], a[href]")
         videourl = utils.safe_get_attr(link, "href", default="")
         if not videourl:
             continue
