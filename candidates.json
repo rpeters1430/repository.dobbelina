@@ -1,0 +1,331 @@
+[
+  {
+    "url": "https://edge-hls.doppiocdn.net/hls/200900667/master/200900667_auto.m3u8?playlistType=lowLatency",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "edge-hls.doppiocdn.net",
+    "firstSeen": 1772084844692,
+    "lastSeen": 1772084844794
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4050_dAVgLbc1zkSlqzgg_1772084839_part0.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845345,
+    "lastSeen": 1772084845459
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4050_dAVgLbc1zkSlqzgg_1772084839_part1.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845345,
+    "lastSeen": 1772084845582
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4050_dAVgLbc1zkSlqzgg_1772084839_part2.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845345,
+    "lastSeen": 1772084845638
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4050_dAVgLbc1zkSlqzgg_1772084839_part3.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845345,
+    "lastSeen": 1772084845669
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4051_rUuM0lZF2SdPqqcb_1772084841_part0.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845345,
+    "lastSeen": 1772084845693
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4051_rUuM0lZF2SdPqqcb_1772084841_part1.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845345,
+    "lastSeen": 1772084845718
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4051_rUuM0lZF2SdPqqcb_1772084841_part2.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845345,
+    "lastSeen": 1772084845728
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4051_rUuM0lZF2SdPqqcb_1772084841_part3.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845345,
+    "lastSeen": 1772084845743
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4052_x27jkz8vquq2BLqu_1772084843_part0.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845459,
+    "lastSeen": 1772084845553
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4052_x27jkz8vquq2BLqu_1772084843_part1.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845565,
+    "lastSeen": 1772084845662
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4052_x27jkz8vquq2BLqu_1772084843_part2.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845802,
+    "lastSeen": 1772084845929
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4052_x27jkz8vquq2BLqu_1772084843_part3.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084846315,
+    "lastSeen": 1772084846445
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4053_epqWl0sw8klzkKUK_1772084845_part0.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084846905,
+    "lastSeen": 1772084847009
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4053_epqWl0sw8klzkKUK_1772084845_part1.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084847477,
+    "lastSeen": 1772084847587
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4053_epqWl0sw8klzkKUK_1772084845_part2.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084847920,
+    "lastSeen": 1772084848013
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4053_epqWl0sw8klzkKUK_1772084845_part3.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084848494,
+    "lastSeen": 1772084848586
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_4054_GTK5iNrb2c5BtC7a_1772084847_part0.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084848625,
+    "lastSeen": 1772084848726
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667_init_74oDqcSpPu9t6ajt.mp4",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845345,
+    "lastSeen": 1772084845751
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667.m3u8?playlistType=lowLatency&psch=v2&pkey=Ook7quaiNgiyuhai",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084844800,
+    "lastSeen": 1772084845327
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667.m3u8?playlistType=lowLatency&psch=v2&pkey=Ook7quaiNgiyuhai&_HLS_msn=4052&_HLS_part=0",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845343,
+    "lastSeen": 1772084845452
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667.m3u8?playlistType=lowLatency&psch=v2&pkey=Ook7quaiNgiyuhai&_HLS_msn=4052&_HLS_part=1",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845459,
+    "lastSeen": 1772084845553
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667.m3u8?playlistType=lowLatency&psch=v2&pkey=Ook7quaiNgiyuhai&_HLS_msn=4052&_HLS_part=2",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845564,
+    "lastSeen": 1772084845793
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667.m3u8?playlistType=lowLatency&psch=v2&pkey=Ook7quaiNgiyuhai&_HLS_msn=4052&_HLS_part=3",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084845802,
+    "lastSeen": 1772084846310
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667.m3u8?playlistType=lowLatency&psch=v2&pkey=Ook7quaiNgiyuhai&_HLS_msn=4053&_HLS_part=0",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084846315,
+    "lastSeen": 1772084846898
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667.m3u8?playlistType=lowLatency&psch=v2&pkey=Ook7quaiNgiyuhai&_HLS_msn=4053&_HLS_part=1",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084846904,
+    "lastSeen": 1772084847466
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667.m3u8?playlistType=lowLatency&psch=v2&pkey=Ook7quaiNgiyuhai&_HLS_msn=4053&_HLS_part=2",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084847476,
+    "lastSeen": 1772084847913
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667.m3u8?playlistType=lowLatency&psch=v2&pkey=Ook7quaiNgiyuhai&_HLS_msn=4053&_HLS_part=3",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084847919,
+    "lastSeen": 1772084848484
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667.m3u8?playlistType=lowLatency&psch=v2&pkey=Ook7quaiNgiyuhai&_HLS_msn=4054&_HLS_part=0",
+    "count": 2,
+    "types": [
+      "fetch",
+      "response"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084848493,
+    "lastSeen": 1772084848615
+  },
+  {
+    "url": "https://media-hls.doppiocdn.net/b-hls-02/200900667/200900667.m3u8?playlistType=lowLatency&psch=v2&pkey=Ook7quaiNgiyuhai&_HLS_msn=4054&_HLS_part=1",
+    "count": 1,
+    "types": [
+      "fetch"
+    ],
+    "host": "media-hls.doppiocdn.net",
+    "firstSeen": 1772084848624,
+    "lastSeen": 1772084848624
+  }
+]
