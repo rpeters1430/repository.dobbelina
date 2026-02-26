@@ -19,6 +19,7 @@ import json
 import re
 import time
 import requests
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
 from resources.lib import utils
 from six.moves import urllib_parse
@@ -536,11 +537,71 @@ def Playvid(url, name):
                     return True
             return False
 
+        def _merge_query(url, params):
+            parsed = urlparse(url)
+            query = parse_qs(parsed.query, keep_blank_values=True)
+            for key, value in params.items():
+                if key not in query:
+                    query[key] = [value]
+            new_query = urlencode(query, doseq=True)
+            return urlunparse(
+                (
+                    parsed.scheme,
+                    parsed.netloc,
+                    parsed.path,
+                    parsed.params,
+                    new_query,
+                    parsed.fragment,
+                )
+            )
+
+        def _derive_signed_media_candidate(master_url):
+            master_text = _fetch_manifest_text(master_url)
+            if not master_text or "#EXTM3U" not in master_text:
+                return None
+
+            mouflon = re.search(
+                r"#EXT-X-MOUFLON:PSCH:(v\d+):([^\r\n]+)", master_text
+            )
+            if not mouflon:
+                return None
+
+            psch = mouflon.group(1)
+            pkey = mouflon.group(2).strip()
+            if not pkey:
+                return None
+
+            child_urls = [
+                line.strip()
+                for line in master_text.splitlines()
+                if line.strip() and not line.startswith("#")
+            ]
+            for child_url in child_urls[:2]:
+                signed_child_url = _merge_query(
+                    child_url,
+                    {"psch": psch, "pkey": pkey},
+                )
+                child_text = _fetch_manifest_text(signed_child_url)
+                if not child_text or "#EXTM3U" not in child_text:
+                    continue
+                if _is_ad_or_stub_manifest(child_text):
+                    continue
+                utils.kodilog(
+                    "Stripchat: Derived signed media candidate: {}".format(
+                        signed_child_url[:80]
+                    )
+                )
+                return signed_child_url
+            return None
+
         promoted = []
         for _, candidate_url in list(candidates):
             source_url = _promote_variant_to_source_url(candidate_url)
             if source_url:
                 promoted.append(("source-derived", source_url))
+            signed_media_url = _derive_signed_media_candidate(candidate_url)
+            if signed_media_url:
+                promoted.append(("media-signed", signed_media_url))
         candidates.extend(promoted)
 
         if not candidates:
