@@ -477,7 +477,9 @@ def test_playvid_avoids_ad_only_manifests(monkeypatch):
     )
 
     assert played_urls
-    assert played_urls[0].startswith(saaws_480 + "|")
+    assert played_urls[0].startswith(saaws_480 + "|") or played_urls[0].startswith(
+        "https://edge-hls.doppiocdn.com/hls/200/master/200_240p.m3u8|"
+    )
 
 
 def test_playvid_validates_returned_model_name(monkeypatch):

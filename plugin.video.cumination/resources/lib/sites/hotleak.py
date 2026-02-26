@@ -19,6 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import re
 import base64
 import json
+import os
+import time
+import requests
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
@@ -163,6 +166,44 @@ def _decrypt_video_url(encrypted_url):
         return None
 
 
+def _write_local_manifest(manifest_url):
+    """
+    Fetch one-time manifest URL once, then write a local playlist file.
+    This avoids token reuse failures caused by repeated remote manifest requests.
+    """
+    try:
+        response = requests.get(manifest_url, timeout=15)
+        if response.status_code != 200:
+            utils.kodilog(
+                "hotleak: Manifest fetch failed (status {}): {}".format(
+                    response.status_code, manifest_url[:120]
+                )
+            )
+            return ""
+        manifest = response.text
+        if "#EXTM3U" not in manifest:
+            utils.kodilog("hotleak: Invalid manifest content")
+            return ""
+
+        rewritten = []
+        for line in manifest.splitlines():
+            stripped = line.strip()
+            if stripped and not stripped.startswith("#"):
+                stripped = urllib_parse.urljoin(manifest_url, stripped)
+            rewritten.append(stripped)
+
+        temp_dir = utils.TRANSLATEPATH("special://temp")
+        local_path = os.path.join(
+            temp_dir, "hotleak_{0}.m3u8".format(int(time.time() * 1000))
+        )
+        with open(local_path, "w", encoding="utf-8") as handle:
+            handle.write("\n".join(rewritten))
+        return local_path
+    except Exception as e:
+        utils.kodilog("hotleak: Failed to materialize manifest: {}".format(e))
+        return ""
+
+
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
@@ -197,8 +238,15 @@ def Playvid(url, name, download=None):
 
                     if video_url:
                         utils.kodilog("hotleak: Decrypted URL: {}".format(video_url))
-                        # Hotleak frequently rejects custom headers; let Kodi request raw URL.
-                        vp.play_from_direct_link(video_url)
+                        local_manifest = _write_local_manifest(video_url)
+                        if local_manifest:
+                            utils.kodilog(
+                                "hotleak: Playing local manifest: {}".format(local_manifest)
+                            )
+                            vp.play_from_direct_link(local_manifest)
+                        else:
+                            # Fallback if local manifest materialization failed.
+                            vp.play_from_direct_link(video_url)
                         return
 
         except (json.JSONDecodeError, KeyError, IndexError) as e:

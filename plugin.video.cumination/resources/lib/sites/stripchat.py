@@ -17,6 +17,7 @@ import os
 import sqlite3
 import json
 import re
+import socket
 
 from resources.lib import utils
 from six.moves import urllib_parse
@@ -416,6 +417,7 @@ def Playvid(url, name):
                     source_url,
                     "https://stripchat.com/{0}".format(name),
                     headers=probe_headers,
+                    error="throw",
                 )
                 if isinstance(probe_data, str) and "#EXTM3U" in probe_data:
                     utils.kodilog(
@@ -448,6 +450,7 @@ def Playvid(url, name):
                     manifest_url,
                     "https://stripchat.com/{0}".format(name),
                     headers=headers,
+                    error="throw",
                 )
             except Exception as e:
                 utils.kodilog(
@@ -530,10 +533,21 @@ def Playvid(url, name):
                         pass
             return score
 
+        def host_is_resolvable(stream_url):
+            try:
+                host = urllib_parse.urlparse(stream_url).hostname
+                if not host:
+                    return False
+                socket.getaddrinfo(host, 443)
+                return True
+            except Exception:
+                return False
+
         # sort candidates: highest score first, keep stable order otherwise
         candidates_sorted = sorted(
             candidates,
             key=lambda item: (
+                1 if host_is_resolvable(item[1]) else 0,
                 -1 if _candidate_is_ad_path(item[1]) else 0,
                 quality_score(item[0], item[1]),
                 1 if "doppiocdn.com" in item[1] else 0,
