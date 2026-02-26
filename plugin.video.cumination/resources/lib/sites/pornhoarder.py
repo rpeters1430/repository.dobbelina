@@ -52,6 +52,98 @@ def _extract_search_term(url):
     return urllib_parse.unquote(match.group(1))
 
 
+def _extract_video_image(link, siteurl):
+    primary = link.select_one(".video-image.primary[data-src], .video-image.primary[src]")
+    if primary:
+        src = utils.safe_get_attr(primary, "data-src", ["src"])
+        if src:
+            return urllib_parse.urljoin(siteurl, src)
+
+    for img_tag in link.select("img"):
+        src = utils.safe_get_attr(
+            img_tag,
+            "data-src",
+            ["data-original", "data-lazy", "data-srcset", "srcset", "src"],
+        )
+        src = _extract_srcset_url(src)
+        if not src:
+            continue
+        alt = utils.safe_get_attr(img_tag, "alt", default="").lower()
+        if "logo" in src.lower() or "server_icons" in src or "logo" in alt or alt == "ico":
+            continue
+        return urllib_parse.urljoin(siteurl, src)
+    return ""
+
+
+def _parse_video_items(soup, siteurl):
+    selector = (
+        "article a[href], a.video-link[href], a[href*='/watch/'], "
+        "a[href*='/pornvideo/'], a[href*='/videos/']"
+    )
+    for link in soup.select(selector):
+        videourl = utils.safe_get_attr(link, "href", default="")
+        if not videourl or not any(
+            marker in videourl
+            for marker in ("/watch/", "/pornvideo/", "/videos/", "/video/")
+        ):
+            continue
+
+        videourl = urllib_parse.urljoin(siteurl, videourl)
+        img = _extract_video_image(link, siteurl)
+
+        name = utils.cleantext(utils.safe_get_text(link.select_one("h1"), default=""))
+        if not name:
+            name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+        if not name:
+            continue
+
+        duration = utils.safe_get_text(link.select_one(".length"), default="")
+        if not duration:
+            duration = utils.safe_get_text(link.select_one(".video-length"), default="")
+
+        site.add_download_link(name, videourl, "Playvid", img, name, duration=duration)
+
+
+def _add_next_page_from_soup(soup, url, mode, siteurl=None):
+    next_link = soup.select_one(".pagination .next a[href], .next a[href]")
+    next_button = soup.select_one(".next .pagination-button[data-page]")
+    next_page = ""
+    next_url = url
+
+    if next_button:
+        next_page = utils.safe_get_attr(next_button, "data-page", default="")
+
+    if next_link:
+        next_url = urllib_parse.urljoin(site.url, utils.safe_get_attr(next_link, "href", default=""))
+        if not next_page:
+            next_page = utils.safe_get_attr(next_link, "data-page", default="").strip()
+        if not next_page:
+            next_page = utils.safe_get_text(next_link, default="").strip()
+        if not next_page:
+            href = utils.safe_get_attr(next_link, "href", default="")
+            match = re.search(r"(?:[?&]page=|/page/)(\d+)", href)
+            if match:
+                next_page = match.group(1)
+
+    if next_page:
+        if mode == "List" and siteurl:
+            site.add_dir(
+                "Next Page ({})".format(next_page),
+                url,
+                mode,
+                site.img_next,
+                page=int(next_page),
+                section=siteurl,
+            )
+        else:
+            site.add_dir(
+                "Next Page ({})".format(next_page),
+                next_url,
+                mode,
+                site.img_next,
+            )
+
+
 def Createdata(page=1, search=""):
     return [
         ("search", search),
@@ -77,6 +169,30 @@ def Createdata(page=1, search=""):
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
+        "[COLOR hotpink]Latest Videos[/COLOR]",
+        site.url + "search/?search=&sort=0",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Popular Videos[/COLOR]",
+        site.url + "search/?search=&sort=2",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Trending Videos[/COLOR]",
+        site.url + "trending-videos/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Random Videos[/COLOR]",
+        site.url + "random-videos/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]",
         site.url + "categories/",
         "Categories",
@@ -84,28 +200,42 @@ def Main():
     )
     site.add_dir(
         "[COLOR hotpink]Studios[/COLOR]",
-        site.url + "porn-studios/",
+        site.url + "studios/",
         "Studios",
         site.img_cat,
     )
     site.add_dir(
         "[COLOR hotpink]Pornstars[/COLOR]",
-        site.url + "porn-stars/",
+        site.url + "pornstars/",
         "Pornstars",
         site.img_cat,
     )
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]",
-        site.url + "search/?search={0}",
+        site.url + "search/",
         "Search",
         site.img_search,
     )
-    List(site.url + "ajax_search.php", page=1)
     utils.eod()
 
 
 @site.register()
 def List(url, page=1, section=None):
+    if isinstance(url, str) and any(
+        path in url
+        for path in ("/trending-videos/", "/random-videos/", "/search/?search=&sort=")
+    ):
+        paged_url = url
+        if int(page) > 1 and "page=" not in paged_url:
+            sep = "&" if "?" in paged_url else "?"
+            paged_url = "{}{}page={}".format(paged_url, sep, page)
+        html = utils.getHtml(paged_url, site.url)
+        soup = utils.parse_html(html)
+        _parse_video_items(soup, site.url)
+        _add_next_page_from_soup(soup, url, "List")
+        utils.eod()
+        return
+
     search = "" if isinstance(url, str) and url.startswith("https://") else url
     siteurl = section if section else site.url
 
@@ -132,77 +262,8 @@ def List(url, page=1, section=None):
         listhtml = utils.getHtml(fallback_url)
 
     soup = utils.parse_html(listhtml)
-    links = soup.select("article a[href], a[href]")
-    for link in links:
-        videourl = utils.safe_get_attr(link, "href", default="")
-        if not videourl or not any(
-            marker in videourl
-            for marker in ("/watch/", "/pornvideo/", "/videos/", "/video/")
-        ):
-            continue
-
-        videourl = urllib_parse.urljoin(siteurl, videourl)
-        img = ""
-        for img_tag in link.select("img"):
-            src = utils.safe_get_attr(
-                img_tag,
-                "data-src",
-                ["data-original", "data-lazy", "data-srcset", "srcset", "src"],
-            )
-            src = _extract_srcset_url(src)
-            alt = utils.safe_get_attr(img_tag, "alt", default="").lower()
-            if "logo" in src.lower() or "logo" in alt:
-                continue
-            img = src
-            if img:
-                break
-        if img and img.startswith("/"):
-            img = urllib_parse.urljoin(siteurl, img)
-
-        name = utils.cleantext(utils.safe_get_text(link.select_one("h1"), default=""))
-        if not name:
-            name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
-        if not name:
-            h2 = link.select_one("h2")
-            name = utils.cleantext(h2.get_text()) if h2 else ""
-        if not name:
-            name = utils.cleantext(utils.safe_get_text(link))
-        if not name:
-            continue
-
-        duration = utils.safe_get_text(link.select_one(".length"), default="")
-        if not duration:
-            duration = utils.safe_get_text(link.select_one(".video-length"), default="")
-
-        site.add_download_link(
-            name, videourl, "Playvid", img, name, duration=duration
-        )
-
-    next_page = ""
-    next_button = soup.select_one(".next .pagination-button[data-page]")
-    if next_button:
-        next_page = utils.safe_get_attr(next_button, "data-page", default="")
-    if not next_page:
-        next_link = soup.select_one(".pagination .next a[href]")
-        if next_link:
-            next_page = utils.safe_get_attr(next_link, "data-page", default="").strip()
-            if not next_page:
-                next_page = utils.safe_get_text(next_link, default="").strip()
-            if not next_page:
-                href = utils.safe_get_attr(next_link, "href", default="")
-                match = re.search(r"/page/(\d+)/", href)
-                if match:
-                    next_page = match.group(1)
-
-    if next_page:
-        site.add_dir(
-            "Next Page ({})".format(next_page),
-            url,
-            "List",
-            site.img_next,
-            page=int(next_page),
-            section=siteurl,
-        )
+    _parse_video_items(soup, siteurl)
+    _add_next_page_from_soup(soup, url, "List", siteurl=siteurl)
 
     utils.eod()
 
@@ -212,10 +273,11 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download)
     html = utils.getHtml(url, site.url)
     
-    # Extract embed URL from json-ld or iframe
-    embed_url = "".join(re.findall(r'"embedUrl":\s*"([^"]+)"', html))
+    watch_soup = utils.parse_html(html)
+    # Prefer current iframe source (player_t.php) over embedUrl metadata.
+    embed_url = utils.safe_get_attr(watch_soup.select_one("iframe[src]"), "src", default="")
     if not embed_url:
-        embed_url = utils.safe_get_attr(utils.parse_html(html).select_one("iframe[src]"), "src", default="")
+        embed_url = "".join(re.findall(r'"embedUrl":\s*"([^"]+)"', html))
         
     if not embed_url:
         # Try to find any player.php link
@@ -225,6 +287,7 @@ def Playvid(url, name, download=None):
         vp.progress.close()
         return
 
+    embed_url = embed_url.replace("/player.php?", "/player_t.php?")
     if embed_url.startswith("//"):
         embed_url = "https:" + embed_url
     elif embed_url.startswith("/"):
@@ -249,6 +312,10 @@ def Playvid(url, name, download=None):
                 embed_url = "https:" + embed_url
             elif embed_url.startswith("/"):
                 embed_url = urllib_parse.urljoin(site.url, embed_url)
+
+    if not embed_url:
+        vp.progress.close()
+        return
 
     vp.play_from_link_to_resolve(embed_url)
 
@@ -275,16 +342,7 @@ def Categories(url):
 
         site.add_dir(name, search_term, "List", img)
 
-    next_link = soup.select_one(".pagination .next a[href]")
-    if next_link:
-        page_number = utils.safe_get_text(next_link, default="").strip()
-        if page_number:
-            site.add_dir(
-                "Next Page ({})".format(page_number),
-                utils.safe_get_attr(next_link, "href", default=""),
-                "Categories",
-                site.img_next,
-            )
+    _add_next_page_from_soup(soup, url, "Categories")
     utils.eod()
 
 
@@ -292,15 +350,18 @@ def Categories(url):
 def Studios(url):
     html = utils.getHtml(url, site.url)
     soup = utils.parse_html(html)
-    for item in soup.select(".video.category"):
-        link = item.select_one("a.video-link")
-        if not link: continue
-        
-        sturl = utils.safe_get_attr(link, "href", default="")
-        sturl = urllib_parse.urljoin(site.url, sturl)
-        
+    for item in soup.select("article"):
+        link = item.select_one("a[href]")
+        if not link:
+            continue
+
+        sturl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, "href", default=""))
         name = utils.cleantext(utils.safe_get_text(item.select_one("h2")))
+        if not sturl or not name:
+            continue
         site.add_dir(name, sturl, "List", "")
+
+    _add_next_page_from_soup(soup, url, "Studios")
     utils.eod()
 
 
@@ -308,20 +369,19 @@ def Studios(url):
 def Pornstars(url):
     html = utils.getHtml(url, site.url)
     soup = utils.parse_html(html)
-    for item in soup.select(".video.category"):
-        link = item.select_one("a.video-link")
-        if not link: continue
-        
-        psurl = utils.safe_get_attr(link, "href", default="")
-        psurl = urllib_parse.urljoin(site.url, psurl)
-        
+    for item in soup.select("article"):
+        link = item.select_one("a[href]")
+        if not link:
+            continue
+
+        psurl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, "href", default=""))
         name = utils.cleantext(utils.safe_get_text(item.select_one("h2")))
-        img_tag = item.select_one("img")
-        img = utils.get_thumbnail(img_tag)
-        if img and img.startswith("/"):
-            img = urllib_parse.urljoin(site.url, img)
-            
+        img = _extract_video_image(link, site.url)
+        if not psurl or not name:
+            continue
         site.add_dir(name, psurl, "List", img)
+
+    _add_next_page_from_soup(soup, url, "Pornstars")
     utils.eod()
 
 
@@ -330,8 +390,4 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        if "{0}" in url:
-            search_url = url.format(urllib_parse.quote(keyword))
-            List(search_url)
-        else:
-            List(keyword, page=1)
+        List(keyword, page=1)
