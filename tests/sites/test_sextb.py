@@ -190,5 +190,30 @@ def test_list_url_normalization(monkeypatch):
     sextb.List("https://sextb.net/uncensored/pg-1")
 
     assert len(downloads) == 1
-    # Next page URL should be absolute
-    assert downloads[0]["url"].startswith("/video/")
+    # Video URL should be normalized to absolute
+    assert downloads[0]["url"].startswith("https://sextb.net/video/")
+
+
+def test_get_page_html_cloudflare_fallback(monkeypatch):
+    """Cloudflare challenge pages should trigger flaresolve fallback."""
+    challenge_html = "<html><title>Checking your browser before accessing</title></html>"
+    solved_html = "<html><body>ok</body></html>"
+    calls = []
+
+    def fake_get_html(url, referer=None, error=None):
+        calls.append(("getHtml", url, referer, error))
+        return challenge_html
+
+    def fake_flaresolve(url, referer=None):
+        calls.append(("flaresolve", url, referer))
+        return solved_html
+
+    monkeypatch.setattr(sextb.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(sextb.utils, "flaresolve", fake_flaresolve)
+
+    html = sextb._get_page_html("https://sextb.net/uncensored/pg-1", "https://sextb.net/")
+
+    assert html == solved_html
+    assert calls[0][0] == "getHtml"
+    assert calls[0][3] is True
+    assert calls[1][0] == "flaresolve"

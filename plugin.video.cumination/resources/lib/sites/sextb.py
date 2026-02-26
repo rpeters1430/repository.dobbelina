@@ -42,6 +42,27 @@ enames = {
 }
 
 
+def _get_page_html(url, referer=site.url):
+    """
+    Fetch page HTML with a Cloudflare challenge fallback.
+
+    Some sextb endpoints return a 403 challenge page. Requesting with error=True
+    allows us to inspect response content and optionally solve via FlareSolverr.
+    """
+    try:
+        html = utils.getHtml(url, referer, error=True)
+    except TypeError:
+        # Keep compatibility with simplified test doubles that only accept
+        # (url, referer) signature.
+        html = utils.getHtml(url, referer)
+    if html and utils.is_cloudflare_challenge_page(html):
+        try:
+            html = utils.flaresolve(url, referer)
+        except Exception as exc:
+            utils.kodilog("sextb: flaresolve failed for {}: {}".format(url, exc))
+    return html or ""
+
+
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
@@ -98,31 +119,43 @@ def Main():
 
 @site.register()
 def List(url):
-    html = utils.getHtml(url, site.url)
+    html = _get_page_html(url, site.url)
 
-    if "No Video were found that matched your search query" in html or len(html) < 10:
+    if (
+        not html
+        or "No Video were found that matched your search query" in html
+        or len(html) < 10
+    ):
         utils.eod()
         return
 
     soup = utils.parse_html(html)
-    items = soup.select(".tray-item")
+    items = soup.select(".tray-item, .video-item, .tray .item, article")
 
     for item in items:
-        link = item.select_one("a")
+        link = item.select_one("a[href]")
         if not link:
             continue
 
         videopage = utils.safe_get_attr(link, "href")
         if not videopage:
             continue
+        if videopage.startswith("/"):
+            videopage = urllib_parse.urljoin(site.url, videopage)
 
-        img_tag = item.select_one("img")
+        img_tag = link.select_one("img") or item.select_one("img")
         img = utils.get_thumbnail(img_tag)
+        if img.startswith("/"):
+            img = urllib_parse.urljoin(site.url, img)
 
-        title_tag = item.select_one(".title")
-        name = utils.safe_get_text(title_tag, "")
+        title_tag = item.select_one(".title, .tray-item-title, .video-title")
+        name = (
+            utils.safe_get_text(title_tag, "")
+            or utils.safe_get_attr(link, "title")
+            or utils.safe_get_text(link, "")
+        )
 
-        time_tag = item.select_one(".time")
+        time_tag = item.select_one(".time, .duration")
         duration = utils.safe_get_text(time_tag, "")
 
         if name:
@@ -131,7 +164,9 @@ def List(url):
             )
 
     # Pagination
-    next_link = soup.find("a", string="Next")
+    next_link = soup.select_one(
+        "a[rel='next'], .pagination a.next, a.next, a[aria-label='Next']"
+    ) or soup.find("a", string="Next")
     if next_link:
         np = utils.safe_get_attr(next_link, "href")
         if np:
