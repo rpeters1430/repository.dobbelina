@@ -79,7 +79,7 @@ def test_model_screenshot_prefers_live_preview_variant():
     }
 
     assert stripchat._model_screenshot(model) == (
-        "https://static-proxy.strpst.com/previews/a/b/c/hash?t=123456"
+        "https://static-proxy.strpst.com/previews/a/b/c/hash-thumb-small?t=123456"
     )
 
 

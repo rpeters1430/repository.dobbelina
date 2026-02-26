@@ -19,6 +19,7 @@ import json
 import re
 import socket
 import time
+import requests
 
 from resources.lib import utils
 from six.moves import urllib_parse
@@ -51,10 +52,8 @@ def _live_preview_url(url, snapshot_ts=None, cache_bust=None):
     normalized = _normalize_model_image_url(url)
     if not normalized:
         return ""
-    # Stripchat preview endpoints support a higher-quality variant by removing
-    # the "-thumb-small" suffix; also add snapshot timestamp to avoid stale cache.
-    if normalized.endswith("-thumb-small"):
-        normalized = normalized.replace("-thumb-small", "")
+    # Keep previewUrlThumbSmall path as-is; this is the most reliable
+    # near-live frame endpoint currently exposed by Stripchat API.
     if "strpst.com/previews/" in normalized and snapshot_ts:
         sep = "&" if "?" in normalized else "?"
         normalized = "{}{}t={}".format(normalized, sep, snapshot_ts)
@@ -69,9 +68,9 @@ def _model_screenshot(model, cache_bust=None):
         return ""
     snapshot_ts = model.get("snapshotTimestamp") or model.get("popularSnapshotTimestamp")
     image_fields = (
+        "previewUrlThumbSmall",
         "previewUrlThumbBig",
         "previewUrlThumbLarge",
-        "previewUrlThumbSmall",
         "preview",
         "previewUrl",
         "snapshotUrl",
@@ -464,6 +463,17 @@ def Playvid(url, name):
                     )
                 )
                 text = ""
+            if (not isinstance(text, str) or "#EXTM3U" not in text) and isinstance(
+                manifest_url, str
+            ):
+                # Some CDN paths (notably doppiocdn media manifests) are easier to
+                # inspect without custom headers; use requests as a probe fallback.
+                try:
+                    resp = requests.get(manifest_url, timeout=8)
+                    if resp.status_code == 200 and "#EXTM3U" in resp.text:
+                        text = resp.text
+                except Exception:
+                    pass
             manifest_probe_cache[manifest_url] = text if isinstance(text, str) else ""
             return manifest_probe_cache[manifest_url]
 
@@ -559,6 +569,10 @@ def Playvid(url, name):
             ),
             reverse=True,
         )
+        non_ad = [item for item in candidates_sorted if not _candidate_is_ad_path(item[1])]
+        if non_ad:
+            candidates_sorted = non_ad
+
         selected_url = candidates_sorted[0][1]
         selected_label = candidates_sorted[0][0]
         utils.kodilog(
