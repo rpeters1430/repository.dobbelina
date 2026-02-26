@@ -17,7 +17,6 @@ import os
 import sqlite3
 import json
 import re
-import socket
 import time
 import requests
 
@@ -331,6 +330,7 @@ def Playvid(url, name):
         stream_info = model_data.get("stream") if model_data else None
         is_online_flag = None
         manifest_probe_cache = {}
+        manifest_probe_errors = {}
 
         # Treat online flags as advisory only; keep stream candidates if present.
         if model_data:
@@ -456,6 +456,7 @@ def Playvid(url, name):
                     headers=headers,
                     error="throw",
                 )
+                manifest_probe_errors.pop(manifest_url, None)
             except Exception as e:
                 utils.kodilog(
                     "Stripchat: Manifest probe failed for {}: {}".format(
@@ -463,6 +464,9 @@ def Playvid(url, name):
                     )
                 )
                 text = ""
+                err = str(e).lower()
+                if "name or service not known" in err or "could not resolve host" in err:
+                    manifest_probe_errors[manifest_url] = "dns"
             if (not isinstance(text, str) or "#EXTM3U" not in text) and isinstance(
                 manifest_url, str
             ):
@@ -472,6 +476,7 @@ def Playvid(url, name):
                     resp = requests.get(manifest_url, timeout=8)
                     if resp.status_code == 200 and "#EXTM3U" in resp.text:
                         text = resp.text
+                        manifest_probe_errors.pop(manifest_url, None)
                 except Exception:
                     pass
             manifest_probe_cache[manifest_url] = text if isinstance(text, str) else ""
@@ -548,33 +553,39 @@ def Playvid(url, name):
                         pass
             return score
 
-        def host_is_resolvable(stream_url):
-            try:
-                host = urllib_parse.urlparse(stream_url).hostname
-                if not host:
-                    return False
-                socket.getaddrinfo(host, 443)
-                return True
-            except Exception:
-                return False
+        evaluated = []
+        for label, candidate_url in candidates:
+            reachable = manifest_probe_errors.get(candidate_url) != "dns"
+            ad_path = _candidate_is_ad_path(candidate_url)
+            evaluated.append(
+                {
+                    "label": label,
+                    "url": candidate_url,
+                    "reachable": reachable,
+                    "ad": ad_path,
+                    "score": quality_score(label, candidate_url),
+                }
+            )
 
-        # sort candidates: highest score first, keep stable order otherwise
-        candidates_sorted = sorted(
-            candidates,
-            key=lambda item: (
-                1 if host_is_resolvable(item[1]) else 0,
-                -1 if _candidate_is_ad_path(item[1]) else 0,
-                quality_score(item[0], item[1]),
-                0 if "doppiocdn.com" in item[1] else 1,
-            ),
+        preferred_reachable = [c for c in evaluated if c["reachable"] and not c["ad"]]
+        preferred_unreachable = [c for c in evaluated if (not c["reachable"]) and (not c["ad"])]
+        if preferred_reachable:
+            preferred = preferred_reachable
+        elif preferred_unreachable:
+            utils.kodilog(
+                "Stripchat: Only unresolved non-ad streams available; skipping playback"
+            )
+            return None, is_online_flag
+        else:
+            utils.kodilog("Stripchat: Only ad stream candidates available; skipping playback")
+            return None, is_online_flag
+
+        preferred.sort(
+            key=lambda c: (c["score"], 0 if "doppiocdn.com" in c["url"] else 1),
             reverse=True,
         )
-        non_ad = [item for item in candidates_sorted if not _candidate_is_ad_path(item[1])]
-        if non_ad:
-            candidates_sorted = non_ad
-
-        selected_url = candidates_sorted[0][1]
-        selected_label = candidates_sorted[0][0]
+        selected_url = preferred[0]["url"]
+        selected_label = preferred[0]["label"]
         utils.kodilog(
             "Stripchat: Selected stream: {} - {}".format(
                 selected_label, selected_url[:80]
