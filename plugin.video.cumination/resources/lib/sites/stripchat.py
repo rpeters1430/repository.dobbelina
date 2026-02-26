@@ -662,18 +662,23 @@ def List2(url):
         if "window.LOADABLE_DATA" in script_text:
             try:
                 # Extract JSON from window.LOADABLE_DATA = {...};
-                json_match = re.search(r"window\.LOADABLE_DATA\s*=\s*({.*?});", script_text)
+                json_match = re.search(
+                    r"window\.LOADABLE_DATA\s*=\s*({.*?});", script_text
+                )
                 if json_match:
                     payload = json.loads(json_match.group(1))
                     model_list = []
-                    
+
                     # Dig through the nested structure
                     # It's usually in payload['categoryTagPage']['models'] or payload['models']
                     if "models" in payload:
                         model_list = payload["models"]
-                    elif "categoryTagPage" in payload and "models" in payload["categoryTagPage"]:
+                    elif (
+                        "categoryTagPage" in payload
+                        and "models" in payload["categoryTagPage"]
+                    ):
                         model_list = payload["categoryTagPage"]["models"]
-                    
+
                     if model_list:
                         found_models = True
                         for model in model_list:
@@ -684,7 +689,7 @@ def List2(url):
                             if model.get("status") == "off":
                                 name = "[COLOR hotpink][Offline][/COLOR] " + name
                                 videourl = "  "
-                            
+
                             site.add_download_link(
                                 name,
                                 videourl,
@@ -695,7 +700,9 @@ def List2(url):
                             )
                         break
             except Exception as e:
-                utils.kodilog("Stripchat List2: Error parsing LOADABLE_DATA: {}".format(str(e)))
+                utils.kodilog(
+                    "Stripchat List2: Error parsing LOADABLE_DATA: {}".format(str(e))
+                )
 
     if not found_models:
         # Fallback to traditional HTML parsing
@@ -792,16 +799,21 @@ def List3(url):
         if "window.LOADABLE_DATA" in script_text:
             try:
                 # Extract JSON from window.LOADABLE_DATA = {...};
-                json_match = re.search(r"window\.LOADABLE_DATA\s*=\s*({.*?});", script_text)
+                json_match = re.search(
+                    r"window\.LOADABLE_DATA\s*=\s*({.*?});", script_text
+                )
                 if json_match:
                     payload = json.loads(json_match.group(1))
                     model_list = []
-                    
+
                     if "models" in payload:
                         model_list = payload["models"]
-                    elif "categoryTagPage" in payload and "models" in payload["categoryTagPage"]:
+                    elif (
+                        "categoryTagPage" in payload
+                        and "models" in payload["categoryTagPage"]
+                    ):
                         model_list = payload["categoryTagPage"]["models"]
-                    
+
                     if model_list:
                         found_models = True
                         for model in model_list:
@@ -812,7 +824,7 @@ def List3(url):
                             if model.get("status") == "off":
                                 name = "[COLOR hotpink][Offline][/COLOR] " + name
                                 videourl = "  "
-                            
+
                             site.add_download_link(
                                 name,
                                 videourl,
@@ -823,7 +835,9 @@ def List3(url):
                             )
                         break
             except Exception as e:
-                utils.kodilog("Stripchat List3: Error parsing LOADABLE_DATA: {}".format(str(e)))
+                utils.kodilog(
+                    "Stripchat List3: Error parsing LOADABLE_DATA: {}".format(str(e))
+                )
 
     if not found_models:
         # Fallback to traditional HTML parsing

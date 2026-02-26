@@ -258,7 +258,9 @@ def test_playvid_promotes_low_variant_to_source_playlist(monkeypatch):
         "isOnline": True,
         "isBroadcasting": True,
     }
-    low_variant = "https://edge-hls.doppiocdn.com/hls/133123248/master/133123248_240p.m3u8"
+    low_variant = (
+        "https://edge-hls.doppiocdn.com/hls/133123248/master/133123248_240p.m3u8"
+    )
     promoted_source = (
         "https://edge-hls.doppiocdn.com/hls/133123248/master/133123248.m3u8"
     )
