@@ -131,7 +131,7 @@ def test_categories_parse_links(monkeypatch):
     )
 
 
-def test_main_uses_non_empty_feed_query(monkeypatch):
+def test_main_uses_html_feed_url(monkeypatch):
     list_calls = []
 
     monkeypatch.setattr(pornkai, "List", lambda url: list_calls.append(url))
@@ -141,7 +141,7 @@ def test_main_uses_non_empty_feed_query(monkeypatch):
     pornkai.Main()
 
     assert list_calls
-    assert "query=&sort=new&page=0&method=search" in list_calls[0]
+    assert "videos?q=&sort=new&page=1" in list_calls[0]
 
 
 def test_list_prefers_video_title_over_duration(monkeypatch):
