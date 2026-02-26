@@ -18,6 +18,7 @@ import sqlite3
 import json
 import re
 import socket
+import time
 
 from resources.lib import utils
 from six.moves import urllib_parse
@@ -46,7 +47,7 @@ def _normalize_model_image_url(url):
     return ""
 
 
-def _live_preview_url(url, snapshot_ts=None):
+def _live_preview_url(url, snapshot_ts=None, cache_bust=None):
     normalized = _normalize_model_image_url(url)
     if not normalized:
         return ""
@@ -54,13 +55,16 @@ def _live_preview_url(url, snapshot_ts=None):
     # the "-thumb-small" suffix; also add snapshot timestamp to avoid stale cache.
     if normalized.endswith("-thumb-small"):
         normalized = normalized.replace("-thumb-small", "")
-    if snapshot_ts and "strpst.com/previews/" in normalized:
+    if "strpst.com/previews/" in normalized and snapshot_ts:
         sep = "&" if "?" in normalized else "?"
         normalized = "{}{}t={}".format(normalized, sep, snapshot_ts)
+    if "strpst.com/previews/" in normalized and cache_bust:
+        sep = "&" if "?" in normalized else "?"
+        normalized = "{}{}cb={}".format(normalized, sep, cache_bust)
     return normalized
 
 
-def _model_screenshot(model):
+def _model_screenshot(model, cache_bust=None):
     if not isinstance(model, dict):
         return ""
     snapshot_ts = model.get("snapshotTimestamp") or model.get("popularSnapshotTimestamp")
@@ -73,7 +77,7 @@ def _model_screenshot(model):
         "snapshotUrl",
     )
     for field in image_fields:
-        img = _live_preview_url(model.get(field), snapshot_ts)
+        img = _live_preview_url(model.get(field), snapshot_ts, cache_bust=cache_bust)
         if img:
             return img
 
@@ -179,10 +183,11 @@ def List(url, page=1):
         utils.notify("Error", "Could not load Stripchat models")
         return None
 
+    cache_bust = int(time.time())
     for model in model_list:
         name = utils.cleanhtml(model["username"])
         videourl = model["hlsPlaylist"]
-        img = _model_screenshot(model)
+        img = _model_screenshot(model, cache_bust=cache_bust)
         fanart = img
         subject = model.get("groupShowTopic")
         if subject:
@@ -550,7 +555,7 @@ def Playvid(url, name):
                 1 if host_is_resolvable(item[1]) else 0,
                 -1 if _candidate_is_ad_path(item[1]) else 0,
                 quality_score(item[0], item[1]),
-                1 if "doppiocdn.com" in item[1] else 0,
+                0 if "doppiocdn.com" in item[1] else 1,
             ),
             reverse=True,
         )
