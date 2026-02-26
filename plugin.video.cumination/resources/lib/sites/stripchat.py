@@ -32,6 +32,44 @@ site = AdultSite(
 )
 
 
+def _normalize_model_image_url(url):
+    if not isinstance(url, str) or not url:
+        return ""
+    normalized = url.strip()
+    if normalized.startswith("//"):
+        return "https:" + normalized
+    if normalized.startswith("/"):
+        return "https://stripchat.com" + normalized
+    if normalized.startswith("http"):
+        return normalized
+    return ""
+
+
+def _model_screenshot(model):
+    if not isinstance(model, dict):
+        return ""
+    image_fields = (
+        "previewUrlThumbBig",
+        "previewUrlThumbLarge",
+        "previewUrlThumbSmall",
+        "preview",
+        "previewUrl",
+        "snapshotUrl",
+    )
+    for field in image_fields:
+        img = _normalize_model_image_url(model.get(field))
+        if img:
+            return img
+
+    snapshot_ts = model.get("snapshotTimestamp")
+    model_id = model.get("id")
+    if snapshot_ts and model_id:
+        return "https://img.strpst.com/thumbs/{0}/{1}_webp".format(
+            snapshot_ts, model_id
+        )
+    return ""
+
+
 @site.register(default_mode=True)
 def Main():
     female = utils.addon.getSetting("chatfemale") == "true"
@@ -129,10 +167,8 @@ def List(url, page=1):
     for model in model_list:
         name = utils.cleanhtml(model["username"])
         videourl = model["hlsPlaylist"]
-        fanart = model.get("previewUrlThumbSmall")
-        img = "https://img.strpst.com/thumbs/{0}/{1}_webp".format(
-            model.get("snapshotTimestamp"), model.get("id")
-        )
+        img = _model_screenshot(model)
+        fanart = img
         subject = model.get("groupShowTopic")
         if subject:
             subject += "[CR]"
@@ -643,15 +679,20 @@ def List2(url):
                         for model in model_list:
                             name = utils.cleanhtml(model["username"])
                             videourl = model.get("hlsPlaylist")
-                            img = "https://img.strpst.com/thumbs/{0}/{1}_webp".format(
-                                model.get("snapshotTimestamp"), model.get("id")
-                            )
+                            img = _model_screenshot(model)
                             # Handle offline/profile links
                             if model.get("status") == "off":
                                 name = "[COLOR hotpink][Offline][/COLOR] " + name
                                 videourl = "  "
                             
-                            site.add_download_link(name, videourl, "Playvid", img, "")
+                            site.add_download_link(
+                                name,
+                                videourl,
+                                "Playvid",
+                                img,
+                                "",
+                                fanart=img,
+                            )
                         break
             except Exception as e:
                 utils.kodilog("Stripchat List2: Error parsing LOADABLE_DATA: {}".format(str(e)))
@@ -684,7 +725,14 @@ def List2(url):
                     elif model_url.startswith("/"):
                         model_url = model_url[1:]
 
-                    site.add_download_link(name, model_url, "Playvid", img, "")
+                    site.add_download_link(
+                        name,
+                        model_url,
+                        "Playvid",
+                        img,
+                        "",
+                        fanart=img,
+                    )
                 except Exception as e:
                     utils.kodilog(
                         "Stripchat List2: Error parsing model entry: {}".format(str(e))
@@ -759,15 +807,20 @@ def List3(url):
                         for model in model_list:
                             name = utils.cleanhtml(model["username"])
                             videourl = model.get("hlsPlaylist")
-                            img = "https://img.strpst.com/thumbs/{0}/{1}_webp".format(
-                                model.get("snapshotTimestamp"), model.get("id")
-                            )
+                            img = _model_screenshot(model)
                             # Handle offline/profile links
                             if model.get("status") == "off":
                                 name = "[COLOR hotpink][Offline][/COLOR] " + name
                                 videourl = "  "
                             
-                            site.add_download_link(name, videourl, "Playvid", img, "")
+                            site.add_download_link(
+                                name,
+                                videourl,
+                                "Playvid",
+                                img,
+                                "",
+                                fanart=img,
+                            )
                         break
             except Exception as e:
                 utils.kodilog("Stripchat List3: Error parsing LOADABLE_DATA: {}".format(str(e)))
@@ -800,7 +853,14 @@ def List3(url):
                     elif model_url.startswith("/"):
                         model_url = model_url[1:]
 
-                    site.add_download_link(name, model_url, "Playvid", img, "")
+                    site.add_download_link(
+                        name,
+                        model_url,
+                        "Playvid",
+                        img,
+                        "",
+                        fanart=img,
+                    )
                 except Exception as e:
                     utils.kodilog(
                         "Stripchat List3: Error parsing model entry: {}".format(str(e))
