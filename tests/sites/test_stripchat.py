@@ -34,7 +34,14 @@ def test_list_parses_json_models(monkeypatch):
         return json.dumps(json_data), False
 
     def fake_add_download_link(name, url, mode, iconimage, desc, **kwargs):
-        downloads.append({"name": name, "url": url})
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "iconimage": iconimage,
+                "fanart": kwargs.get("fanart"),
+            }
+        )
 
     monkeypatch.setattr(
         stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
@@ -46,9 +53,22 @@ def test_list_parses_json_models(monkeypatch):
     # Test assumes stripchat.List exists and parses JSON
     try:
         stripchat.List("https://stripchat.com/")
-        assert len(downloads) >= 0
+        assert len(downloads) == 2
+        assert downloads[0]["iconimage"] == "https://img.stripchat.com/thumb1.jpg"
+        assert downloads[0]["fanart"] == "https://img.stripchat.com/thumb1.jpg"
+        assert downloads[1]["iconimage"] == "https://img.stripchat.com/thumb2.jpg"
+        assert downloads[1]["fanart"] == "https://img.stripchat.com/thumb2.jpg"
     except AttributeError:
         pass
+
+
+def test_model_screenshot_falls_back_to_snapshot_url():
+    model = {"snapshotTimestamp": "123456", "id": "111"}
+
+    assert (
+        stripchat._model_screenshot(model)
+        == "https://img.strpst.com/thumbs/123456/111_webp"
+    )
 
 
 def test_playvid_requires_inputstreamadaptive(monkeypatch):
@@ -238,7 +258,9 @@ def test_playvid_promotes_low_variant_to_source_playlist(monkeypatch):
         "isOnline": True,
         "isBroadcasting": True,
     }
-    low_variant = "https://edge-hls.doppiocdn.com/hls/133123248/master/133123248_240p.m3u8"
+    low_variant = (
+        "https://edge-hls.doppiocdn.com/hls/133123248/master/133123248_240p.m3u8"
+    )
     promoted_source = (
         "https://edge-hls.doppiocdn.com/hls/133123248/master/133123248.m3u8"
     )
