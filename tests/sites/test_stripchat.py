@@ -71,6 +71,18 @@ def test_model_screenshot_falls_back_to_snapshot_url():
     )
 
 
+def test_model_screenshot_prefers_live_preview_variant():
+    model = {
+        "previewUrlThumbSmall": "https://static-proxy.strpst.com/previews/a/b/c/hash-thumb-small",
+        "snapshotTimestamp": "123456",
+        "id": "111",
+    }
+
+    assert stripchat._model_screenshot(model) == (
+        "https://static-proxy.strpst.com/previews/a/b/c/hash?t=123456"
+    )
+
+
 def test_playvid_requires_inputstreamadaptive(monkeypatch):
     """Test that Playvid properly checks for inputstreamadaptive."""
     notifications = []

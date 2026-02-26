@@ -45,9 +45,24 @@ def _normalize_model_image_url(url):
     return ""
 
 
+def _live_preview_url(url, snapshot_ts=None):
+    normalized = _normalize_model_image_url(url)
+    if not normalized:
+        return ""
+    # Stripchat preview endpoints support a higher-quality variant by removing
+    # the "-thumb-small" suffix; also add snapshot timestamp to avoid stale cache.
+    if normalized.endswith("-thumb-small"):
+        normalized = normalized.replace("-thumb-small", "")
+    if snapshot_ts and "strpst.com/previews/" in normalized:
+        sep = "&" if "?" in normalized else "?"
+        normalized = "{}{}t={}".format(normalized, sep, snapshot_ts)
+    return normalized
+
+
 def _model_screenshot(model):
     if not isinstance(model, dict):
         return ""
+    snapshot_ts = model.get("snapshotTimestamp") or model.get("popularSnapshotTimestamp")
     image_fields = (
         "previewUrlThumbBig",
         "previewUrlThumbLarge",
@@ -57,11 +72,10 @@ def _model_screenshot(model):
         "snapshotUrl",
     )
     for field in image_fields:
-        img = _normalize_model_image_url(model.get(field))
+        img = _live_preview_url(model.get(field), snapshot_ts)
         if img:
             return img
 
-    snapshot_ts = model.get("snapshotTimestamp")
     model_id = model.get("id")
     if snapshot_ts and model_id:
         return "https://img.strpst.com/thumbs/{0}/{1}_webp".format(
