@@ -13,9 +13,6 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / 'tests'))  # For conftest
 sys.path.insert(0, str(ROOT / 'plugin.video.cumination'))
-
-# Import pytest and conftest to get Kodi mocks
-import pytest
 from conftest import *  # This sets up all Kodi mocks
 
 # Now import our analysis modules

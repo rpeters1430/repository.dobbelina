@@ -5,7 +5,6 @@ Analyze all site logos and site configurations for standardization
 
 import os
 import re
-import json
 from collections import defaultdict
 
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))

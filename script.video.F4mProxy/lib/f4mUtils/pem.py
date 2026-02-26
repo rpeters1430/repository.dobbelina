@@ -2,7 +2,6 @@
 # See the LICENSE file for legal information regarding use of this file.
 
 from .compat import *
-import binascii
 
 # This code is shared with tackpy (somewhat), so I'd rather make minimal
 # changes, and preserve the use of a2b_base64 throughout.

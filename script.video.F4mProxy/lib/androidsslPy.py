@@ -7,9 +7,6 @@ from __future__ import with_statement
 
 __license__ = "GPL v3"
 
-import sys
-import os
-
 
 class IGNOBLEError(Exception):
     pass
@@ -17,18 +14,14 @@ class IGNOBLEError(Exception):
 
 def _load_crypto_libcrypto():
     from ctypes import (
-        CDLL,
         POINTER,
-        c_void_p,
         c_char_p,
         c_int,
         c_long,
         Structure,
         c_ulong,
         create_string_buffer,
-        cast,
-    )
-    from ctypes.util import find_library
+        )
     import ctypes
 
     libcrypto = ctypes.cdll.LoadLibrary("libcrypto.so")

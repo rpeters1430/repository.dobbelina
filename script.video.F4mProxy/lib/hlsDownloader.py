@@ -14,28 +14,14 @@ Last updated: July 22, 2012
 MODIFIED BY shani to make it work with F4mProxy
 """
 
-import urlparse,urlparse, urllib2, subprocess, os,traceback,cookielib,re,Queue,threading
-import xml.etree.ElementTree as etree
-import base64
-from struct import unpack, pack
+import urlparse,urlparse, urllib2, os,traceback,cookielib,re
 import struct
 import sys
-import io
 import os
-import time
-import itertools
-import xbmcaddon
 import xbmc
-import urllib2,urllib
+import urllib2
 import traceback
 import urlparse
-import posixpath
-import re
-import hmac
-import hashlib
-import binascii 
-import zlib
-from hashlib import sha256
 import cookielib
 import array, random, string
 import requests

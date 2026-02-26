@@ -11,8 +11,6 @@ This module has basic math/crypto code."""
 from __future__ import print_function
 import os
 import math
-import base64
-import binascii
 
 from .compat import compat26Str, compatHMAC, compatLong, \
         bytes_to_int, int_to_bytes, bit_length, byte_length

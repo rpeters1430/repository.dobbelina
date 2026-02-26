@@ -50,7 +50,7 @@ import random
 import math
 import base64
 import hashlib
-from resolveurl.lib.pyaes.aes import AES, AESModeOfOperationCTR, AESModeOfOperationCBC, AESModeOfOperationCFB, AESModeOfOperationECB, AESModeOfOperationOFB, AESModesOfOperation, Counter
+from resolveurl.lib.pyaes.aes import AESModeOfOperationCBC
 from os import urandom
 # Python 3 compatibility
 import six

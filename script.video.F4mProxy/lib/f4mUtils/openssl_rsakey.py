@@ -6,7 +6,6 @@
 from .cryptomath import *
 
 from .rsakey import *
-from .python_rsakey import Python_RSAKey
 
 
 # copied from M2Crypto.util.py, so when we load the local copy of m2

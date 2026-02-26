@@ -17,7 +17,6 @@ import sys
 import re
 import subprocess
 import urllib.request
-import urllib.error
 from pathlib import Path
 from bs4 import BeautifulSoup
 import time

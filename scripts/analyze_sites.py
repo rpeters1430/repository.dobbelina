@@ -115,9 +115,6 @@ class _MockStorage:
         return fn(*args, **kwargs)
 
 sys.modules['StorageServer'].StorageServer = _MockStorage
-
-# NOW safe to import everything else
-import ast
 import importlib
 import inspect
 import json

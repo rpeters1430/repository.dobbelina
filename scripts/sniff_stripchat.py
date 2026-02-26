@@ -1,6 +1,5 @@
 
 import sys
-import time
 from playwright.sync_api import sync_playwright
 
 def run_sniff(url, wait_time=15):

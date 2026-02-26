@@ -1,4 +1,4 @@
-import xbmc, xbmcgui
+import xbmcgui
 
 # get actioncodes from https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/Key.h
 ACTION_PREVIOUS_MENU = 10

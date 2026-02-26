@@ -3,7 +3,6 @@ Test hotleak video URL decryption without Playwright
 """
 import base64
 import json
-import re
 from bs4 import BeautifulSoup
 
 

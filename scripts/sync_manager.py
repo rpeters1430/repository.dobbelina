@@ -5,7 +5,6 @@ Automates identifying, analyzing, and cherry-picking commits from upstream.
 """
 
 import subprocess
-import os
 import re
 import sys
 from pathlib import Path

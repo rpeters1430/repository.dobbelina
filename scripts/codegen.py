@@ -22,7 +22,6 @@ Usage:
 """
 
 import argparse
-import sys
 from playwright.sync_api import sync_playwright
 
 # Ad/tracker domains to block. Any request URL containing these strings is aborted.

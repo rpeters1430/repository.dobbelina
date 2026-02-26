@@ -21,7 +21,6 @@ import sys
 import time
 import json
 import importlib
-import traceback
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Any, Optional
@@ -120,9 +119,8 @@ mock_kodi()
 
 # Now imports that depend on mocks
 from resources.lib import utils
-from resources.lib.adultsite import AdultSite
 from resources.lib import playwright_helper
-from resources.lib.playwright_helper import fetch_with_playwright, sniff_video_url
+from resources.lib.playwright_helper import fetch_with_playwright
 
 # Override Kodi detection so Playwright works during testing
 playwright_helper._is_kodi_runtime = lambda: False
