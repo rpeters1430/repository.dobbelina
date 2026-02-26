@@ -50,7 +50,28 @@ def test_pornxpert_video_parsing(monkeypatch):
     
     assert mock_vp_instance[0].played_url is not None
     assert ".mp4" in mock_vp_instance[0].played_url
+    assert ".mp4/" not in mock_vp_instance[0].played_url
     assert "Referer=" in mock_vp_instance[0].played_url
+
+
+def test_pornxpert_main_loads_latest(monkeypatch):
+    """Test that main screen renders menu and latest list items."""
+    captured_dirs = []
+    list_calls = []
+
+    monkeypatch.setattr(
+        pornxpert.site,
+        "add_dir",
+        lambda name, url, mode, thumb, **kwargs: captured_dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
+    monkeypatch.setattr(pornxpert, "List", lambda url, page=1: list_calls.append((url, page)))
+
+    pornxpert.Main("https://www.pornxpert.com/")
+
+    assert any(d["mode"] == "List" and "latest-updates" in d["url"] for d in captured_dirs)
+    assert list_calls == [("https://www.pornxpert.com/latest-updates/", 1)]
 
 
 def test_pornxpert_list_pagination(monkeypatch):

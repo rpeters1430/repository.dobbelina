@@ -29,6 +29,12 @@ site = AdultSite(
     "pornxpert",
 )
 
+def _normalize_video_url(video_url):
+    if not video_url:
+        return ""
+    video_url = video_url.strip()
+    return re.sub(r"(?i)(\.(?:mp4|m3u8))(?:/)+$", r"\1", video_url)
+
 
 @site.register(default_mode=True)
 def Main(url):
@@ -37,7 +43,8 @@ def Main(url):
     site.add_dir("[COLOR hotpink]Top Rated[/COLOR]", site.url + "top-rated/", "List", "")
     site.add_dir("[COLOR hotpink]Categories[/COLOR]", site.url + "categories/", "Categories", site.img_cat)
     site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "latest-updates/", "Search", site.img_search)
-    utils.eod()
+    # Keep legacy behavior: show latest videos directly on the main screen.
+    List(site.url + "latest-updates/")
 
 
 @site.register()
@@ -139,7 +146,7 @@ def Playvid(url, name, download=None):
     # KVS player config often has video_url: '...'
     video_match = re.search(r"video_url:\s*['\"]([^\"']+)['\"]", html)
     if video_match:
-        video_url = video_match.group(1)
+        video_url = _normalize_video_url(video_match.group(1))
         # Check if it starts with function/0/ (common in KVS)
         if video_url.startswith("function/0/"):
             video_url = video_url[11:]
@@ -151,7 +158,7 @@ def Playvid(url, name, download=None):
     # Check for JSON-LD contentUrl
     json_match = re.search(r'["\']contentUrl["\']:\s*["\']([^"\']+)["\']', html)
     if json_match:
-        video_url = json_match.group(1)
+        video_url = _normalize_video_url(json_match.group(1))
         utils.kodilog("pornxpert: Found video URL in JSON-LD: {}".format(video_url))
         vp.play_from_direct_link(video_url + "|Referer=" + site.url + "&User-Agent=" + utils.USER_AGENT)
         return
