@@ -51,8 +51,11 @@ def _live_preview_url(url, snapshot_ts=None, cache_bust=None):
     normalized = _normalize_model_image_url(url)
     if not normalized:
         return ""
-    # Keep previewUrlThumbSmall path as-is; this is the most reliable
-    # near-live frame endpoint currently exposed by Stripchat API.
+    if "strpst.com/previews/" in normalized and "-thumb-small" in normalized:
+        # Stripchat API currently exposes only thumb-small in many responses.
+        # The corresponding thumb-big endpoint exists and gives a clearer live frame.
+        normalized = normalized.replace("-thumb-small", "-thumb-big")
+    # Attach snapshot/cache-bust params so Kodi does not hold stale thumbnails.
     if "strpst.com/previews/" in normalized and snapshot_ts:
         sep = "&" if "?" in normalized else "?"
         normalized = "{}{}t={}".format(normalized, sep, snapshot_ts)
@@ -573,9 +576,9 @@ def Playvid(url, name):
             preferred = preferred_reachable
         elif preferred_unreachable:
             utils.kodilog(
-                "Stripchat: Only unresolved non-ad streams available; skipping playback"
+                "Stripchat: Only unresolved non-ad streams available; trying unresolved fallback"
             )
-            return None, is_online_flag
+            preferred = preferred_unreachable
         else:
             utils.kodilog("Stripchat: Only ad stream candidates available; skipping playback")
             return None, is_online_flag

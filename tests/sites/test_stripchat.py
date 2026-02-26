@@ -79,7 +79,7 @@ def test_model_screenshot_prefers_live_preview_variant():
     }
 
     assert stripchat._model_screenshot(model) == (
-        "https://static-proxy.strpst.com/previews/a/b/c/hash-thumb-small?t=123456"
+        "https://static-proxy.strpst.com/previews/a/b/c/hash-thumb-big?t=123456"
     )
 
 
@@ -558,8 +558,8 @@ def test_playvid_validates_returned_model_name(monkeypatch):
     )
 
 
-def test_playvid_skips_unresolved_candidates(monkeypatch):
-    """Unresolvable stream hosts must not be selected for playback."""
+def test_playvid_uses_unresolved_non_ad_candidate_as_last_resort(monkeypatch):
+    """If only unresolved non-ad streams remain, pass best one to Kodi as fallback."""
     notifications = []
     played_urls = []
     model_data = {
@@ -631,6 +631,8 @@ def test_playvid_skips_unresolved_candidates(monkeypatch):
         "https://edge-hls.doppiocdn.com/hls/999/master/999_240p.m3u8", "testmodel"
     )
 
-    assert not played_urls
-    assert notifications
-    assert any("unable to locate stream url" in n["message"].lower() for n in notifications)
+    assert played_urls
+    assert played_urls[0].startswith(
+        "https://edge-hls.saawsedge.com/hls/999/master/999_480p.m3u8|"
+    )
+    assert not notifications
