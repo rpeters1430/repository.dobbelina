@@ -636,3 +636,74 @@ def test_playvid_uses_unresolved_non_ad_candidate_as_last_resort(monkeypatch):
         "https://edge-hls.saawsedge.com/hls/999/master/999_480p.m3u8|"
     )
     assert not notifications
+
+
+def test_playvid_mirrors_saaws_to_doppi_and_plays_reachable_stream(monkeypatch):
+    """When saaws host is unresolved, mirrored doppi host should be selected."""
+    played_urls = []
+    model_data = {
+        "username": "testmodel",
+        "isOnline": True,
+        "isBroadcasting": True,
+        "stream": {
+            "url": "https://edge-hls.saawsedge.com/hls/123/master/123_480p.m3u8",
+        },
+    }
+
+    mirrored = "https://edge-hls.doppiocdn.com/hls/123/master/123_480p.m3u8"
+
+    def fake_get_html(url, *args, **kwargs):
+        if "api/external/v4/widget" in url or "api/front/models" in url:
+            return json.dumps({"models": [model_data]}), False
+        return "", False
+
+    def fake__get_html(url, *args, **kwargs):
+        if "saawsedge.com" in url:
+            raise Exception("<urlopen error [Errno -2] Name or service not known>")
+        if url == mirrored:
+            return '#EXTM3U\n#EXT-X-STREAM-INF:NAME="480p"\nhttps://media-hls.doppiocdn.com/b-hls-01/123/live.m3u8'
+        if "doppiocdn.com" in url and url.endswith("live.m3u8"):
+            return "#EXTM3U\n#EXTINF:8.333,\nhttps://media-hls.doppiocdn.com/b-hls-01/123/seg_1.mp4\n"
+        return ""
+
+    class FakeHelper:
+        def __init__(self, adaptive_type):
+            pass
+
+        def check_inputstream(self):
+            return True
+
+    class FakeProgress:
+        def update(self, percent, message):
+            pass
+
+        def close(self):
+            pass
+
+    class FakeVideoPlayer:
+        def __init__(self, name, **kwargs):
+            self.name = name
+            self.progress = FakeProgress()
+
+        def play_from_direct_link(self, link):
+            played_urls.append(link)
+
+    import sys
+    import types
+
+    fake_inputstreamhelper = types.ModuleType("inputstreamhelper")
+    fake_inputstreamhelper.Helper = FakeHelper
+    sys.modules["inputstreamhelper"] = fake_inputstreamhelper
+
+    monkeypatch.setattr(stripchat.utils, "notify", lambda *a, **k: None)
+    monkeypatch.setattr(stripchat.utils, "kodilog", lambda x: None)
+    monkeypatch.setattr(
+        stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
+    )
+    monkeypatch.setattr(stripchat.utils, "_getHtml", fake__get_html)
+    monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
+
+    stripchat.Playvid("https://edge-hls.doppiocdn.com/hls/123/master/123_240p.m3u8", "testmodel")
+
+    assert played_urls
+    assert played_urls[0].startswith(mirrored + "|")

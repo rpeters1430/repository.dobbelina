@@ -335,6 +335,11 @@ def Playvid(url, name):
         manifest_probe_cache = {}
         manifest_probe_errors = {}
 
+        def _mirror_saaws_to_doppi(stream_url):
+            if not isinstance(stream_url, str) or "saawsedge.com" not in stream_url:
+                return None
+            return stream_url.replace("edge-hls.saawsedge.com", "edge-hls.doppiocdn.com")
+
         # Treat online flags as advisory only; keep stream candidates if present.
         if model_data:
             is_online_values = [
@@ -391,6 +396,18 @@ def Playvid(url, name):
         if isinstance(fallback_url, str) and fallback_url.startswith("http"):
             utils.kodilog("Stripchat: Using fallback URL: {}".format(fallback_url[:80]))
             candidates.append(("fallback", fallback_url))
+
+        mirrored = []
+        for label, candidate_url in list(candidates):
+            mirror_url = _mirror_saaws_to_doppi(candidate_url)
+            if mirror_url and mirror_url != candidate_url:
+                utils.kodilog(
+                    "Stripchat: Added mirrored stream candidate: {} - {}".format(
+                        label, mirror_url[:80]
+                    )
+                )
+                mirrored.append(("{}-mirror".format(label), mirror_url))
+        candidates.extend(mirrored)
 
         # Some list URLs are pinned to low variants like "<id>_240p.m3u8".
         # Try to promote those to "<id>.m3u8" (often "source"/best stream) when valid.
