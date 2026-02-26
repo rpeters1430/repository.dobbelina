@@ -27,6 +27,16 @@ site = AdultSite(
 )
 
 
+def _get_page_html(url, referer=""):
+    html = utils.getHtml(url, referer)
+    if html and utils.is_cloudflare_challenge_page(html):
+        try:
+            html = utils.flaresolve(url, referer)
+        except Exception as exc:
+            utils.kodilog("porntn: flaresolve failed for {}: {}".format(url, exc))
+    return html or ""
+
+
 @site.register(default_mode=True)
 def Main(url):
     site.add_dir(
@@ -38,18 +48,15 @@ def Main(url):
         "Search",
         site.img_search,
     )
-    List(
-        site.url
-        + "video/?mode=async&function=get_block&block_id=list_videos_videos_list_search_result&q=&category_ids=&sort_by=title&from_videos=1",
-        1,
-    )
+    # The async endpoint now frequently returns 404/empty data; use homepage listing.
+    List(site.url, 1)
     utils.eod()
 
 
 @site.register()
 def List(url, page=1):
     try:
-        listhtml = utils.getHtml(url, "")
+        listhtml = _get_page_html(url, "")
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in porntn: " + str(e))
         return None

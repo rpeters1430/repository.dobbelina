@@ -58,7 +58,7 @@ def HQLIST(url):
 
     for attempt in range(max_retries):
         try:
-            link = utils.getHtml(url, "", timeout=timeout)
+            link = utils.getHtml(url, "")
             break  # Success, exit retry loop
         except Exception as e:
             utils.kodilog(
@@ -144,7 +144,7 @@ def HQCAT(url):
 
     for attempt in range(max_retries):
         try:
-            link = utils.getHtml(url, "", timeout=timeout)
+            link = utils.getHtml(url, "")
             break
         except Exception as e:
             utils.kodilog(
@@ -211,7 +211,7 @@ def HQPLAY(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
     try:
-        videopage = utils.getHtml(url, url, timeout=30)
+        videopage = utils.getHtml(url, url)
     except Exception as e:
         utils.kodilog("hqporner HQPLAY: Error loading video page: {}".format(str(e)))
         vp.progress.close()

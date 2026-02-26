@@ -31,6 +31,16 @@ site = AdultSite(
 )
 
 
+def _get_page_html(url, referer=""):
+    html = utils.getHtml(url, referer)
+    if html and utils.is_cloudflare_challenge_page(html):
+        try:
+            html = utils.flaresolve(url, referer)
+        except Exception as exc:
+            utils.kodilog("speedporn: flaresolve failed for {}: {}".format(url, exc))
+    return html or ""
+
+
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
@@ -76,7 +86,7 @@ def Main():
 @site.register()
 def List(url):
     try:
-        listhtml = utils.getHtml(url)
+        listhtml = _get_page_html(url)
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in speedporn: " + str(e))
         return None
