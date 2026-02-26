@@ -556,3 +556,81 @@ def test_playvid_validates_returned_model_name(monkeypatch):
         "not found" in n["message"].lower() or "offline" in n["message"].lower()
         for n in notifications
     )
+
+
+def test_playvid_skips_unresolved_candidates(monkeypatch):
+    """Unresolvable stream hosts must not be selected for playback."""
+    notifications = []
+    played_urls = []
+    model_data = {
+        "username": "testmodel",
+        "isOnline": True,
+        "isBroadcasting": True,
+        "stream": {
+            "url": "https://edge-hls.saawsedge.com/hls/999/master/999_480p.m3u8",
+        },
+    }
+
+    def fake_notify(title, message, **kwargs):
+        notifications.append({"title": title, "message": message})
+
+    def fake_get_html(url, *args, **kwargs):
+        if "api/external/v4/widget" in url or "api/front/models" in url:
+            return json.dumps({"models": [model_data]}), False
+        return "", False
+
+    def fake__get_html(url, *args, **kwargs):
+        if "saawsedge.com" in url:
+            raise Exception("<urlopen error [Errno -2] Name or service not known>")
+        if "doppiocdn.com" in url and url.endswith(".m3u8"):
+            return (
+                "#EXTM3U\n#EXT-X-MOUFLON-ADVERT\n#EXT-X-PLAYLIST-TYPE:VOD\n"
+                "#EXTINF:4.0,\nhttps://media-hls.doppiocdn.com/b-hls-03/cpa/v2/chunk_000.m4s\n"
+                "#EXT-X-ENDLIST"
+            )
+        return ""
+
+    class FakeHelper:
+        def __init__(self, adaptive_type):
+            pass
+
+        def check_inputstream(self):
+            return True
+
+    class FakeProgress:
+        def update(self, percent, message):
+            pass
+
+        def close(self):
+            pass
+
+    class FakeVideoPlayer:
+        def __init__(self, name, **kwargs):
+            self.name = name
+            self.progress = FakeProgress()
+
+        def play_from_direct_link(self, link):
+            played_urls.append(link)
+
+    import sys
+    import types
+
+    fake_inputstreamhelper = types.ModuleType("inputstreamhelper")
+    fake_inputstreamhelper.Helper = FakeHelper
+    sys.modules["inputstreamhelper"] = fake_inputstreamhelper
+
+    monkeypatch.setattr(stripchat.utils, "notify", fake_notify)
+    monkeypatch.setattr(stripchat.utils, "kodilog", lambda x: None)
+    monkeypatch.setattr(
+        stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
+    )
+    monkeypatch.setattr(stripchat.utils, "_getHtml", fake__get_html)
+    monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
+
+    stripchat.Playvid(
+        "https://edge-hls.doppiocdn.com/hls/999/master/999_240p.m3u8", "testmodel"
+    )
+
+    assert not played_urls
+    assert notifications
+    assert any("unable to locate stream url" in n["message"].lower() for n in notifications)

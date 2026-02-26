@@ -555,8 +555,8 @@ def Playvid(url, name):
 
         evaluated = []
         for label, candidate_url in candidates:
-            reachable = manifest_probe_errors.get(candidate_url) != "dns"
             ad_path = _candidate_is_ad_path(candidate_url)
+            reachable = manifest_probe_errors.get(candidate_url) != "dns"
             evaluated.append(
                 {
                     "label": label,
