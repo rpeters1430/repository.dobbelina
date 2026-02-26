@@ -25,7 +25,7 @@ from six.moves import urllib_parse
 site = AdultSite(
     "pornhoarder",
     "[COLOR hotpink]PornHoarder[/COLOR]",
-    "https://pornhoarder.tv/",
+    "https://pornhoarder.io/",
     "pornhoarder.png",
     "pornhoarder",
 )
@@ -136,7 +136,8 @@ def List(url, page=1, section=None):
     for link in links:
         videourl = utils.safe_get_attr(link, "href", default="")
         if not videourl or not any(
-            marker in videourl for marker in ("/pornvideo/", "/videos/", "/video/")
+            marker in videourl
+            for marker in ("/watch/", "/pornvideo/", "/videos/", "/video/")
         ):
             continue
 
@@ -223,10 +224,32 @@ def Playvid(url, name, download=None):
     if not embed_url:
         vp.progress.close()
         return
-        
+
     if embed_url.startswith("//"):
         embed_url = "https:" + embed_url
-        
+    elif embed_url.startswith("/"):
+        embed_url = urllib_parse.urljoin(site.url, embed_url)
+
+    # New player endpoints require a POST to resolve the final host iframe.
+    if "pornhoarder.net/player" in embed_url:
+        headers = dict(ph_headers)
+        headers["Referer"] = url
+        player_html = utils.postHtml(embed_url, headers=headers, form_data={"play": ""})
+        if not player_html:
+            player_html = utils.getHtml(embed_url, url)
+
+        iframe_match = re.findall(
+            r"""<iframe.+?src\s*=\s*["']([^'"]+)""",
+            player_html,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if iframe_match:
+            embed_url = iframe_match[0]
+            if embed_url.startswith("//"):
+                embed_url = "https:" + embed_url
+            elif embed_url.startswith("/"):
+                embed_url = urllib_parse.urljoin(site.url, embed_url)
+
     vp.play_from_link_to_resolve(embed_url)
 
 
