@@ -42,27 +42,60 @@ def Main(url):
 
 @site.register()
 def List(url, page=1):
-    listhtml = utils.getHtml(url)
+    listhtml = ""
+    try:
+        listhtml, _ = utils.get_html_with_cloudflare_retry(
+            url, referer=site.url, retry_on_empty=True
+        )
+    except Exception:
+        listhtml = ""
+    if not listhtml:
+        listhtml = utils.getHtml(url, site.url)
+    if not listhtml:
+        utils.eod()
+        return
 
     soup = utils.parse_html(listhtml)
-    items = soup.select("article.movie-item")
+    items = soup.select("article.movie-item, article[class*='movie-item']")
+    if not items:
+        # Fallback layout: derive entries directly from video/profile links.
+        items = soup.select("a[href*='/video/'], a[href*='/photo/']")
+
     for item in items:
-        link = item.select_one("a[href]")
+        link = item if getattr(item, "name", "") == "a" else item.select_one("a[href]")
         videopage = utils.safe_get_attr(link, "href")
         if not videopage or "tantaly.com" in videopage: # Skip ads
             continue
         videopage = urllib_parse.urljoin(site.url, videopage)
         is_video = "/video/" in videopage
+        is_photo = "/photo/" in videopage
+        if is_photo:
+            # Ignore photo posts in video listings.
+            continue
 
-        img_tag = item.select_one("img.post-thumbnail")
-        img = utils.safe_get_attr(img_tag, "src")
+        img_tag = (
+            item.select_one("img.post-thumbnail, img")
+            if getattr(item, "name", "") != "a"
+            else item.select_one("img")
+        )
+        img = utils.safe_get_attr(img_tag, "data-src", ["data-original", "srcset", "src"])
+        if img and img.startswith("data:image"):
+            img = utils.safe_get_attr(img_tag, "data-src", ["data-original", "src"])
+        if img and "," in img and " " in img:
+            img = img.split(",")[0].strip().split(" ")[0].strip()
         if img:
             img = urllib_parse.urljoin(site.url, img)
             img = img + "|User-Agent=" + utils.USER_AGENT
 
-        name = utils.safe_get_text(item.select_one(".movie-name h3"))
+        name = utils.safe_get_text(
+            item.select_one(".movie-name h3, .movie-name, .post-title, .title")
+            if getattr(item, "name", "") != "a"
+            else None
+        )
         if not name:
             name = utils.safe_get_attr(img_tag, "alt", default="Video")
+        if not name:
+            name = utils.safe_get_attr(link, "title")
         name = re.sub(r"\s+\d{5,}\s*$", "", name).strip()
         if not name:
             name = "Video"
@@ -85,7 +118,9 @@ def List(url, page=1):
             site.add_dir(name, videopage, "List", img, desc=description)
 
     # Next Page
-    next_el = soup.select_one("a.page-link[rel='next']")
+    next_el = soup.select_one(
+        "a.page-link[rel='next'], ul.pagination a[rel='next'], a[aria-label='Next'], a.next"
+    )
     if next_el:
         np_url = utils.safe_get_attr(next_el, "href")
         if np_url:
