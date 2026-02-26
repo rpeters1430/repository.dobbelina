@@ -144,11 +144,11 @@ def _add_next_page_from_soup(soup, url, mode, siteurl=None):
             )
 
 
-def Createdata(page=1, search=""):
+def Createdata(page=1, search="", sort="0", date="0"):
     return [
         ("search", search),
-        ("sort", "0"),
-        ("date", "0"),
+        ("sort", sort),
+        ("date", date),
         ("servers[]", "21"),
         ("servers[]", "40"),
         ("servers[]", "12"),
@@ -227,10 +227,7 @@ def List(url, page=1, section=None):
     except (TypeError, ValueError):
         current_page = 1
 
-    if isinstance(url, str) and any(
-        path in url
-        for path in ("/trending-videos/", "/random-videos/", "/search/?search=&sort=")
-    ):
+    if isinstance(url, str) and any(path in url for path in ("/trending-videos/", "/random-videos/")):
         paged_url = url
         if current_page > 1 and "page=" not in paged_url:
             sep = "&" if "?" in paged_url else "?"
@@ -244,11 +241,22 @@ def List(url, page=1, section=None):
 
     search = "" if isinstance(url, str) and url.startswith("https://") else url
     siteurl = section if section else site.url
+    sort = "0"
+    date = "0"
 
     if isinstance(url, str) and url.startswith("https://"):
-        if "ajax_search.php" in url:
+        if "ajax_search.php" in url or "/search/" in url:
             ajax_url = url
+            if "/search/" in url:
+                ajax_url = siteurl + "ajax_search.php"
             referer = siteurl
+            search = _extract_search_term(url)
+            sort_match = re.search(r"[?&]sort=(\d+)", url)
+            if sort_match:
+                sort = sort_match.group(1)
+            date_match = re.search(r"[?&]date=(\d+)", url)
+            if date_match:
+                date = date_match.group(1)
         else:
             ajax_url = siteurl + "ajax_search.php"
             referer = url
@@ -261,7 +269,9 @@ def List(url, page=1, section=None):
     headers["Referer"] = referer
 
     listhtml = utils.postHtml(
-        ajax_url, form_data=Createdata(current_page, search), headers=headers
+        ajax_url,
+        form_data=Createdata(current_page, search, sort=sort, date=date),
+        headers=headers,
     )
     if not listhtml:
         fallback_url = url
