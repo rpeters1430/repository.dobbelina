@@ -558,8 +558,8 @@ def test_playvid_validates_returned_model_name(monkeypatch):
     )
 
 
-def test_playvid_uses_unresolved_non_ad_candidate_as_last_resort(monkeypatch):
-    """If only unresolved non-ad streams remain, pass best one to Kodi as fallback."""
+def test_playvid_prefers_reachable_ad_when_non_ad_is_unresolved(monkeypatch):
+    """Prefer reachable ad stream over unresolved non-ad stream to avoid immediate failure."""
     notifications = []
     played_urls = []
     model_data = {
@@ -633,7 +633,7 @@ def test_playvid_uses_unresolved_non_ad_candidate_as_last_resort(monkeypatch):
 
     assert played_urls
     assert played_urls[0].startswith(
-        "https://edge-hls.saawsedge.com/hls/999/master/999_480p.m3u8|"
+        "https://edge-hls.doppiocdn.com/hls/999/master/999.m3u8|"
     )
     assert not notifications
 

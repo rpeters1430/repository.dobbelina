@@ -588,9 +588,19 @@ def Playvid(url, name):
             )
 
         preferred_reachable = [c for c in evaluated if c["reachable"] and not c["ad"]]
-        preferred_unreachable = [c for c in evaluated if (not c["reachable"]) and (not c["ad"])]
+        preferred_unreachable = [
+            c for c in evaluated if (not c["reachable"]) and (not c["ad"])
+        ]
+        ad_reachable = [c for c in evaluated if c["reachable"] and c["ad"]]
         if preferred_reachable:
             preferred = preferred_reachable
+        elif ad_reachable:
+            # If the only non-ad options are DNS-broken in this environment,
+            # prefer a reachable ad-backed stream over a guaranteed playback failure.
+            utils.kodilog(
+                "Stripchat: Non-ad streams unresolved; falling back to reachable ad stream"
+            )
+            preferred = ad_reachable
         elif preferred_unreachable:
             utils.kodilog(
                 "Stripchat: Only unresolved non-ad streams available; trying unresolved fallback"
