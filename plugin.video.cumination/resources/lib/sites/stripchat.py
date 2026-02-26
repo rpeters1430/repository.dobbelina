@@ -595,12 +595,10 @@ def Playvid(url, name):
         if preferred_reachable:
             preferred = preferred_reachable
         elif ad_reachable:
-            # If the only non-ad options are DNS-broken in this environment,
-            # prefer a reachable ad-backed stream over a guaranteed playback failure.
             utils.kodilog(
-                "Stripchat: Non-ad streams unresolved; falling back to reachable ad stream"
+                "Stripchat: Non-ad streams unresolved and reachable streams are ad-only; skipping playback"
             )
-            preferred = ad_reachable
+            return None, is_online_flag
         elif preferred_unreachable:
             utils.kodilog(
                 "Stripchat: Only unresolved non-ad streams available; trying unresolved fallback"

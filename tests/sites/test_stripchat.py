@@ -558,8 +558,8 @@ def test_playvid_validates_returned_model_name(monkeypatch):
     )
 
 
-def test_playvid_prefers_reachable_ad_when_non_ad_is_unresolved(monkeypatch):
-    """Prefer reachable ad stream over unresolved non-ad stream to avoid immediate failure."""
+def test_playvid_skips_reachable_ad_when_non_ad_is_unresolved(monkeypatch):
+    """Do not play ad stream when non-ad streams are unresolved."""
     notifications = []
     played_urls = []
     model_data = {
@@ -631,11 +631,9 @@ def test_playvid_prefers_reachable_ad_when_non_ad_is_unresolved(monkeypatch):
         "https://edge-hls.doppiocdn.com/hls/999/master/999_240p.m3u8", "testmodel"
     )
 
-    assert played_urls
-    assert played_urls[0].startswith(
-        "https://edge-hls.doppiocdn.com/hls/999/master/999.m3u8|"
-    )
-    assert not notifications
+    assert not played_urls
+    assert notifications
+    assert any("unable to locate stream url" in n["message"].lower() for n in notifications)
 
 
 def test_playvid_mirrors_saaws_to_doppi_and_plays_reachable_stream(monkeypatch):
