@@ -43,36 +43,55 @@ def Main(url):
 @site.register()
 def List(url, page=1):
     html = utils.getHtml(url)
+    if not html:
+        utils.notify("PornXpert", "No content returned")
+        utils.eod()
+        return
+
     soup = utils.parse_html(html)
-    
-    # KVS uses .item for video containers
-    items = soup.select(".item")
+
+    # KVS layouts vary by theme; prefer card containers, then fallback to anchors.
+    items = soup.select(".item, .list-videos .item, .thumb, .video-item")
+    if not items:
+        items = soup.select("a[href*='/video/']")
+
     for item in items:
-        link = item.select_one("a")
-        if not link or "/video/" not in utils.safe_get_attr(link, "href"):
+        if getattr(item, "name", "") == "a":
+            link = item
+        else:
+            link = item.select_one("a[href*='/video/'], a")
+
+        href = utils.safe_get_attr(link, "href")
+        if not link or not href or "/video/" not in href:
             continue
 
-        videopage = utils.safe_get_attr(link, "href")
-        videopage = urllib_parse.urljoin(site.url, videopage)
+        videopage = urllib_parse.urljoin(site.url, href)
 
-        img_tag = item.select_one("img")
+        img_tag = link.select_one("img") or item.select_one("img")
         img = utils.safe_get_attr(img_tag, "src", ["data-original"])
         if img and img.startswith("data:"):
-            img = utils.safe_get_attr(img_tag, "data-original")
+            img = utils.safe_get_attr(img_tag, "data-original", ["data-src"])
         if img:
             img = urllib_parse.urljoin(site.url, img)
 
         name = utils.safe_get_attr(img_tag, "alt") or utils.safe_get_text(link)
         name = utils.cleantext(name)
+        if not name:
+            title_el = link.select_one(".title, strong.title")
+            name = utils.cleantext(utils.safe_get_text(title_el))
+        if not name:
+            continue
 
-        duration = utils.safe_get_text(item.select_one(".duration"))
+        duration = utils.safe_get_text(link.select_one(".duration")) or utils.safe_get_text(
+            item.select_one(".duration")
+        )
 
         site.add_download_link(
             name, videopage, "Playvid", img, name, duration=duration
         )
 
-    # Pagination - KVS uses .load-more with an anchor to next page
-    next_el = soup.select_one(".load-more a")
+    # Pagination - KVS uses .load-more; some themes use .pagination-next.
+    next_el = soup.select_one(".load-more a, .pagination-next a, a.next")
     if next_el:
         np_url = utils.safe_get_attr(next_el, "href")
         if np_url:
