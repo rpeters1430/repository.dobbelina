@@ -135,7 +135,9 @@ def List(url, page=1, section=None):
     links = soup.select("article a[href], a[href]")
     for link in links:
         videourl = utils.safe_get_attr(link, "href", default="")
-        if not videourl or "/video" not in videourl:
+        if not videourl or not any(
+            marker in videourl for marker in ("/pornvideo/", "/videos/", "/video/")
+        ):
             continue
 
         videourl = urllib_parse.urljoin(siteurl, videourl)
