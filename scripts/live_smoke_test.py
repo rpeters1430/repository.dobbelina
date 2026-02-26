@@ -14,11 +14,9 @@ import argparse
 import importlib
 import inspect
 import json
-import os
 import signal
 import subprocess
 import sys
-import textwrap
 import time
 import traceback
 import urllib.error
@@ -212,7 +210,9 @@ def install_kodi_stubs() -> None:
 
     # xbmcvfs
     xbmcvfs = types.ModuleType("kodi_six.xbmcvfs")
-    xbmcvfs.translatePath = lambda path: str(path).replace("special://profile", str(ROOT / ".profile"))
+    xbmcvfs.translatePath = lambda path: str(path).replace(
+        "special://profile", str(ROOT / ".profile")
+    )
     xbmcvfs.exists = lambda path: Path(str(path)).exists()
     xbmcvfs.mkdirs = lambda path: Path(str(path)).mkdir(parents=True, exist_ok=True)
 
@@ -395,7 +395,10 @@ def probe_url_status(url: str, timeout: int = 8) -> tuple[bool, str]:
         return False, "empty url"
     req = urllib.request.Request(
         url,
-        headers={"User-Agent": "Mozilla/5.0", "Accept": "text/html,application/xhtml+xml"},
+        headers={
+            "User-Agent": "Mozilla/5.0",
+            "Accept": "text/html,application/xhtml+xml",
+        },
     )
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
@@ -443,7 +446,9 @@ def get_mode_param_name(plugin_url: str) -> str:
         return ""
 
 
-def run_site_child(site_name: str, steps: list[str], timeout_s: int, keyword: str) -> dict[str, Any]:
+def run_site_child(
+    site_name: str, steps: list[str], timeout_s: int, keyword: str
+) -> dict[str, Any]:
     if str(ROOT) not in sys.path:
         sys.path.insert(0, str(ROOT))
     if str(PLUGIN_PATH) not in sys.path:
@@ -622,7 +627,15 @@ def run_site_child(site_name: str, steps: list[str], timeout_s: int, keyword: st
         utils.playvideo = fake_playvid
     utils.VideoPlayer = FakeVideoPlayer
     utils.progress = FakeProgress()
-    utils.dialog = type("Dialog", (), {"ok": lambda *a, **k: None, "yesno": lambda *a, **k: True, "select": lambda *a, **k: 0})()
+    utils.dialog = type(
+        "Dialog",
+        (),
+        {
+            "ok": lambda *a, **k: None,
+            "yesno": lambda *a, **k: True,
+            "select": lambda *a, **k: 0,
+        },
+    )()
 
     step_results: dict[str, dict[str, Any]] = {}
     list_candidate: dict[str, str] = {}
@@ -696,7 +709,9 @@ def run_site_child(site_name: str, steps: list[str], timeout_s: int, keyword: st
         res.elapsed = round(time.time() - start, 2)
         step_results[step_name] = asdict(res)
 
-    def find_mode_candidate(mode_suffixes: tuple[str, ...], dirs: list[dict[str, Any]]) -> dict[str, str]:
+    def find_mode_candidate(
+        mode_suffixes: tuple[str, ...], dirs: list[dict[str, Any]]
+    ) -> dict[str, str]:
         for entry in dirs:
             mode = entry.get("mode", "")
             candidate_url = entry.get("url", "")
@@ -728,7 +743,19 @@ def run_site_child(site_name: str, steps: list[str], timeout_s: int, keyword: st
                 mlow = mode.lower()
                 if not mode_exists(mode):
                     continue
-                if any(x in mlow for x in ("search", "cat", "categorie", "genre", "year", "sort", "login", "logout")):
+                if any(
+                    x in mlow
+                    for x in (
+                        "search",
+                        "cat",
+                        "categorie",
+                        "genre",
+                        "year",
+                        "sort",
+                        "login",
+                        "logout",
+                    )
+                ):
                     continue
                 if not any(x in mlow for x in ("list", "sitemain")):
                     continue
@@ -767,7 +794,11 @@ def run_site_child(site_name: str, steps: list[str], timeout_s: int, keyword: st
                 exclude_terms=("search", "cat", "genre", "year", "sort", "main"),
             )
             if fallback_list_mode:
-                nonlocal_list = {"mode": fallback_list_mode, "url": site.url, "name": ""}
+                nonlocal_list = {
+                    "mode": fallback_list_mode,
+                    "url": site.url,
+                    "name": "",
+                }
         if not nonlocal_cat:
             fallback_cat_mode = pick_registered_mode(
                 include_terms=("cat", "categ", "genre"),
@@ -828,7 +859,9 @@ def run_site_child(site_name: str, steps: list[str], timeout_s: int, keyword: st
                     items=videos + len(captured_dirs),
                     video_items=videos,
                     image_items=sum(1 for x in captured_downloads if x.get("icon")),
-                    description_items=sum(1 for x in captured_downloads if x.get("desc")),
+                    description_items=sum(
+                        1 for x in captured_downloads if x.get("desc")
+                    ),
                     playable=1 if first.get("url") else 0,
                     sample_url=url,
                 )
@@ -844,9 +877,23 @@ def run_site_child(site_name: str, steps: list[str], timeout_s: int, keyword: st
                     mlow = entry_mode.lower()
                     if not mode_exists(entry_mode):
                         continue
-                    if any(x in mlow for x in ("search", "cat", "categorie", "genre", "year", "sort", "login", "logout")):
+                    if any(
+                        x in mlow
+                        for x in (
+                            "search",
+                            "cat",
+                            "categorie",
+                            "genre",
+                            "year",
+                            "sort",
+                            "login",
+                            "logout",
+                        )
+                    ):
                         continue
-                    if not any(x in mlow for x in ("list", "video", "item", "page", "main")):
+                    if not any(
+                        x in mlow for x in ("list", "video", "item", "page", "main")
+                    ):
                         continue
                     next_candidate = {
                         "mode": entry_mode,
@@ -915,7 +962,11 @@ def run_site_child(site_name: str, steps: list[str], timeout_s: int, keyword: st
                 f"List URL unreachable in harness ({probe})",
                 sample_url=url,
             )
-        if probe.startswith("HTTP 403") or probe.startswith("HTTP 429") or probe.startswith("HTTP 451"):
+        if (
+            probe.startswith("HTTP 403")
+            or probe.startswith("HTTP 429")
+            or probe.startswith("HTTP 451")
+        ):
             return StepResult(
                 "SKIP",
                 f"List URL blocked/challenged in harness ({probe})",
@@ -992,8 +1043,15 @@ def run_site_child(site_name: str, steps: list[str], timeout_s: int, keyword: st
 
     # Webcam/live site names that can't produce playback URLs in harness
     WEBCAM_SITES = {
-        "bongacams", "chaturbate", "naked", "streamate", "stripchat",
-        "camsoda", "cam4", "xlovecam", "imlive",
+        "bongacams",
+        "chaturbate",
+        "naked",
+        "streamate",
+        "stripchat",
+        "camsoda",
+        "cam4",
+        "xlovecam",
+        "imlive",
     }
 
     def _classify_play_failure(notify_msgs: list[str], raw_url: str) -> StepResult:
@@ -1101,10 +1159,16 @@ def run_site_child(site_name: str, steps: list[str], timeout_s: int, keyword: st
                 "websocket",
             )
             if any(m in lower for m in env_markers):
-                return StepResult("SKIP", f"Play check skipped in harness ({msg})", sample_url=raw_url)
+                return StepResult(
+                    "SKIP", f"Play check skipped in harness ({msg})", sample_url=raw_url
+                )
             # Webcam/live sites often fail with parsing errors on non-video pages
             if site.name in WEBCAM_SITES or getattr(site, "webcam", False):
-                return StepResult("SKIP", f"Webcam/live site play error in harness ({msg})", sample_url=raw_url)
+                return StepResult(
+                    "SKIP",
+                    f"Webcam/live site play error in harness ({msg})",
+                    sample_url=raw_url,
+                )
             raise
         if not play_calls:
             return _classify_play_failure(notify_calls[:], raw_url)
@@ -1155,7 +1219,9 @@ def run_site_child(site_name: str, steps: list[str], timeout_s: int, keyword: st
 
     return {
         "site": site.name,
-        "title": site.get_clean_title() if hasattr(site, "get_clean_title") else site.name,
+        "title": site.get_clean_title()
+        if hasattr(site, "get_clean_title")
+        else site.name,
         "base_url": site.url,
         "overall": overall,
         "steps": step_results,
@@ -1246,7 +1312,9 @@ def run_parent(args: argparse.Namespace) -> int:
             if overall == "PASS"
             else ("🟨" if overall == "WARN" else ("⚠️" if overall == "SKIP" else "❌"))
         )
-        print(f"[{idx:>3}/{len(sites)}] {icon} {site_name:<24} {overall:<6} ({elapsed:.1f}s)")
+        print(
+            f"[{idx:>3}/{len(sites)}] {icon} {site_name:<24} {overall:<6} ({elapsed:.1f}s)"
+        )
 
         if overall == "SKIP":
             skipped += 1
@@ -1309,21 +1377,24 @@ def render_markdown(payload: dict[str, Any]) -> str:
     lines.append(f"- Sites: `{s['sites_total']}`")
     lines.append(f"- Steps: `{', '.join(s['steps'])}`")
     lines.append(
-        f"- Result: `PASS {s['pass']}` | `WARN {s.get('warn',0)}` | `FAIL {s['fail']}` | `ERROR {s['error']}` | `SKIP {s['skip']}`"
+        f"- Result: `PASS {s['pass']}` | `WARN {s.get('warn', 0)}` | `FAIL {s['fail']}` | `ERROR {s['error']}` | `SKIP {s['skip']}`"
     )
     lines.append("")
     lines.append("| Site | Overall | Main | List | Categories | Search | Play | Time |")
     lines.append("|---|---|---|---|---|---|---|---:|")
     for r in payload["sites"]:
+
         def icon(step):
             data = r.get("steps", {}).get(step)
             if not data:
                 return "—"
             status = data.get("status")
-            return "PASS" if status == "PASS" else ("SKIP" if status == "SKIP" else "FAIL")
+            return (
+                "PASS" if status == "PASS" else ("SKIP" if status == "SKIP" else "FAIL")
+            )
 
         lines.append(
-            f"| {r.get('site','')} | {r.get('overall','')} | {icon('main')} | {icon('list')} | {icon('categories')} | {icon('search')} | {icon('play')} | {r.get('elapsed',0):.1f}s |"
+            f"| {r.get('site', '')} | {r.get('overall', '')} | {icon('main')} | {icon('list')} | {icon('categories')} | {icon('search')} | {icon('play')} | {r.get('elapsed', 0):.1f}s |"
         )
 
     failing = [r for r in payload["sites"] if r.get("overall") in ("FAIL", "ERROR")]
@@ -1367,7 +1438,16 @@ def render_markdown(payload: dict[str, Any]) -> str:
                 if data.get("status") == "FAIL":
                     msg = data.get("message", "").lower()
                     # Real code bugs: IndexError, TypeError, KeyError, ValueError, AttributeError
-                    if any(err in msg for err in ("indexerror", "typeerror", "keyerror", "valueerror", "attributeerror")):
+                    if any(
+                        err in msg
+                        for err in (
+                            "indexerror",
+                            "typeerror",
+                            "keyerror",
+                            "valueerror",
+                            "attributeerror",
+                        )
+                    ):
                         has_real_fail = True
                         break
                     # No notifications and no playback = likely real issue
@@ -1395,7 +1475,9 @@ def render_markdown(payload: dict[str, Any]) -> str:
         if demoted_warns:
             lines.append("### WARN (Likely Not Actionable)")
             lines.append("")
-            lines.append("These WARN sites failed only on steps that are likely harness limitations:")
+            lines.append(
+                "These WARN sites failed only on steps that are likely harness limitations:"
+            )
             lines.append("")
             for r in demoted_warns:
                 fail_steps = []
@@ -1432,7 +1514,9 @@ def render_markdown(payload: dict[str, Any]) -> str:
         lines.append("")
         for category, sites in skip_categories.items():
             if sites:
-                lines.append(f"- **{category}** ({len(sites)}): {', '.join(sorted(sites))}")
+                lines.append(
+                    f"- **{category}** ({len(sites)}): {', '.join(sorted(sites))}"
+                )
         lines.append("")
 
     return "\n".join(lines).strip() + "\n"
@@ -1449,7 +1533,9 @@ def parse_args() -> argparse.Namespace:
         help="Comma-separated steps: main,list,categories,search,play",
     )
     parser.add_argument("--keyword", default="test", help="Search keyword")
-    parser.add_argument("--timeout", type=int, default=35, help="Timeout per step (seconds)")
+    parser.add_argument(
+        "--timeout", type=int, default=35, help="Timeout per step (seconds)"
+    )
     parser.add_argument(
         "--site-timeout",
         type=int,

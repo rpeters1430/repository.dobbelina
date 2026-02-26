@@ -4,7 +4,6 @@ Logo Validation Script
 Validates all logos meet Cumination standards and site references are correct
 """
 
-import os
 import re
 import subprocess
 from pathlib import Path

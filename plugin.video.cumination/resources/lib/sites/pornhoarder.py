@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
-import requests
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
@@ -53,7 +52,9 @@ def _extract_search_term(url):
 
 
 def _extract_video_image(link, siteurl):
-    primary = link.select_one(".video-image.primary[data-src], .video-image.primary[src]")
+    primary = link.select_one(
+        ".video-image.primary[data-src], .video-image.primary[src]"
+    )
     if primary:
         src = utils.safe_get_attr(primary, "data-src", ["src"])
         if src:
@@ -69,7 +70,12 @@ def _extract_video_image(link, siteurl):
         if not src:
             continue
         alt = utils.safe_get_attr(img_tag, "alt", default="").lower()
-        if "logo" in src.lower() or "server_icons" in src or "logo" in alt or alt == "ico":
+        if (
+            "logo" in src.lower()
+            or "server_icons" in src
+            or "logo" in alt
+            or alt == "ico"
+        ):
             continue
         return urllib_parse.urljoin(siteurl, src)
     return ""
@@ -114,7 +120,9 @@ def _add_next_page_from_soup(soup, url, mode, siteurl=None):
         next_page = utils.safe_get_attr(next_button, "data-page", default="")
 
     if next_link:
-        next_url = urllib_parse.urljoin(site.url, utils.safe_get_attr(next_link, "href", default=""))
+        next_url = urllib_parse.urljoin(
+            site.url, utils.safe_get_attr(next_link, "href", default="")
+        )
         if not next_page:
             next_page = utils.safe_get_attr(next_link, "data-page", default="").strip()
         if not next_page:
@@ -227,7 +235,9 @@ def List(url, page=1, section=None):
     except (TypeError, ValueError):
         current_page = 1
 
-    if isinstance(url, str) and any(path in url for path in ("/trending-videos/", "/random-videos/")):
+    if isinstance(url, str) and any(
+        path in url for path in ("/trending-videos/", "/random-videos/")
+    ):
         paged_url = url
         if current_page > 1 and "page=" not in paged_url:
             sep = "&" if "?" in paged_url else "?"
@@ -276,7 +286,9 @@ def List(url, page=1, section=None):
     if not listhtml:
         fallback_url = url
         if not isinstance(url, str) or not url.startswith("https://"):
-            fallback_url = siteurl + "search/?search={}".format(urllib_parse.quote(search))
+            fallback_url = siteurl + "search/?search={}".format(
+                urllib_parse.quote(search)
+            )
         listhtml = utils.getHtml(fallback_url)
 
     soup = utils.parse_html(listhtml)
@@ -290,16 +302,20 @@ def List(url, page=1, section=None):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download)
     html = utils.getHtml(url, site.url)
-    
+
     watch_soup = utils.parse_html(html)
     # Prefer current iframe source (player_t.php) over embedUrl metadata.
-    embed_url = utils.safe_get_attr(watch_soup.select_one("iframe[src]"), "src", default="")
+    embed_url = utils.safe_get_attr(
+        watch_soup.select_one("iframe[src]"), "src", default=""
+    )
     if not embed_url:
         embed_url = "".join(re.findall(r'"embedUrl":\s*"([^"]+)"', html))
-        
+
     if not embed_url:
         # Try to find any player.php link
-        embed_url = "".join(re.findall(r'https?://pornhoarder\.net/player\.php\?video=[^"\'\s>]+', html))
+        embed_url = "".join(
+            re.findall(r'https?://pornhoarder\.net/player\.php\?video=[^"\'\s>]+', html)
+        )
 
     if not embed_url:
         vp.progress.close()
@@ -373,7 +389,9 @@ def Studios(url):
         if not link:
             continue
 
-        sturl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, "href", default=""))
+        sturl = urllib_parse.urljoin(
+            site.url, utils.safe_get_attr(link, "href", default="")
+        )
         name = utils.cleantext(utils.safe_get_text(item.select_one("h2")))
         if not sturl or not name:
             continue
@@ -392,7 +410,9 @@ def Pornstars(url):
         if not link:
             continue
 
-        psurl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, "href", default=""))
+        psurl = urllib_parse.urljoin(
+            site.url, utils.safe_get_attr(link, "href", default="")
+        )
         name = utils.cleantext(utils.safe_get_text(item.select_one("h2")))
         img = _extract_video_image(link, site.url)
         if not psurl or not name:

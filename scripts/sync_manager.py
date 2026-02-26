@@ -5,7 +5,6 @@ Automates identifying, analyzing, and cherry-picking commits from upstream.
 """
 
 import subprocess
-import os
 import re
 import sys
 from pathlib import Path
@@ -182,7 +181,9 @@ class SyncManager:
             if any(sha.startswith(h) or h.startswith(sha) for h in self.tracked_hashes):
                 continue
             # Check git history
-            if any(sha.startswith(h) or h.startswith(sha) for h in self.integrated_in_git):
+            if any(
+                sha.startswith(h) or h.startswith(sha) for h in self.integrated_in_git
+            ):
                 continue
             pending.append(c)
 

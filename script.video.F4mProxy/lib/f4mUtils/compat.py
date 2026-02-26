@@ -4,8 +4,6 @@
 """Miscellaneous functions to mask Python version differences."""
 
 import sys
-import os
-import math
 import binascii
 
 if sys.version_info >= (3, 0):

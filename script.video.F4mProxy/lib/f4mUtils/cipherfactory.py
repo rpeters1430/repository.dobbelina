@@ -3,8 +3,6 @@
 
 """Factory functions for symmetric cryptography."""
 
-import os
-
 from tlslite.utils import python_aes
 from tlslite.utils import python_rc4
 

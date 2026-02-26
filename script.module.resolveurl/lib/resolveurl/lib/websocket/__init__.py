@@ -18,8 +18,8 @@ Copyright (C) 2010 Hiroki Ohtani(liris)
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 """
+
 from ._abnf import *
-from ._app import WebSocketApp
 from ._core import *
 from ._exceptions import *
 from ._logging import *

@@ -50,8 +50,9 @@ import random
 import math
 import base64
 import hashlib
-from resolveurl.lib.pyaes.aes import AES, AESModeOfOperationCTR, AESModeOfOperationCBC, AESModeOfOperationCFB, AESModeOfOperationECB, AESModeOfOperationOFB, AESModesOfOperation, Counter
+from resolveurl.lib.pyaes.aes import AESModeOfOperationCBC
 from os import urandom
+
 # Python 3 compatibility
 import six
 
@@ -64,7 +65,7 @@ def pad(s):
 
 
 def unpad(s):
-    return s[:-ord(s[len(s) - 1:])]
+    return s[: -ord(s[len(s) - 1 :])]
 
 
 """
@@ -82,29 +83,29 @@ def unpad(s):
 
 def randArr(num):
     """
-        JavaScript Code:
+    JavaScript Code:
 
-        var result = [], i;
-        for (i = 0; i < num; i++) {
-            result = result.concat(Math.floor(Math.random() * 256));
-        }
-        return result;
+    var result = [], i;
+    for (i = 0; i < num; i++) {
+        result = result.concat(Math.floor(Math.random() * 256));
+    }
+    return result;
     """
     return map(lambda i: math.floor(random.random() * 256), six.moves.range(num))
 
 
 def s2a(s, binary):
     """
-        JavaScript Code:
+    JavaScript Code:
 
-        var array = [], i;
-        if (! binary) {
-            string = enc_utf8(string);
-        }
-        for (i = 0; i < string.length; i++) {
-            array[i] = string.charCodeAt(i);
-        }
-        return array;
+    var array = [], i;
+    if (! binary) {
+        string = enc_utf8(string);
+    }
+    for (i = 0; i < string.length; i++) {
+        array[i] = string.charCodeAt(i);
+    }
+    return array;
     """
     return map(lambda s: ord(s), list(s))
 
@@ -157,12 +158,12 @@ def openSSLKey(passwordArr, saltArr, Nr, Nk):
 
 
 def derive_key_and_iv(password, salt, key_length, iv_length):
-    d = d_i = six.ensure_binary('')
+    d = d_i = six.ensure_binary("")
     password = six.ensure_binary(password)
     while len(d) < key_length + iv_length:
         d_i = hashlib.md5(d_i + password + salt).digest()
         d += d_i
-    return d[:key_length], d[key_length:key_length + iv_length]
+    return d[:key_length], d[key_length : key_length + iv_length]
 
 
 class AESCipher:
@@ -172,12 +173,12 @@ class AESCipher:
     def encrypt(self, plaintext, password, key_length=32):
         data = ""
         bs = 16
-        salt = urandom(bs - len('Salted__'))
+        salt = urandom(bs - len("Salted__"))
 
         key, iv = derive_key_and_iv(password, salt, key_length, bs)
         cipher = AESModeOfOperationCBC(key, iv)
 
-        data += 'Salted__' + salt
+        data += "Salted__" + salt
         chunk = plaintext
 
         if len(chunk) == 0 or len(chunk) % bs != 0:
@@ -190,19 +191,21 @@ class AESCipher:
     def decrypt(self, data, password, key_length=32):
         data = base64.b64decode(data)
         bs = 16
-        salt = data[len("Salted__"): 16]
-        data = data[len("Salted__") + len(salt):]
+        salt = data[len("Salted__") : 16]
+        data = data[len("Salted__") + len(salt) :]
 
         key, iv = derive_key_and_iv(password, salt, key_length, bs)
         cipher = AESModeOfOperationCBC(key, iv)
 
-        decryptedBytes = six.ensure_binary('')
+        decryptedBytes = six.ensure_binary("")
         for x in range(len(data) // 16):
             # Decrypt it
-            blockBytes = data[x * 16: (x * 16) + 16]
+            blockBytes = data[x * 16 : (x * 16) + 16]
             decryptedBytes += cipher.decrypt(blockBytes)
 
         padding = decryptedBytes[-1]
-        padding_length = ord(padding) if isinstance(padding, six.string_types) else padding
+        padding_length = (
+            ord(padding) if isinstance(padding, six.string_types) else padding
+        )
 
         return six.ensure_str(decryptedBytes[:-padding_length])

@@ -12,7 +12,6 @@ Usage:
     python run_tests.py --verbose          # Run with verbose output
 """
 
-import os
 import sys
 import platform
 import subprocess
