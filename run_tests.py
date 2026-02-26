@@ -11,6 +11,7 @@ Usage:
     python run_tests.py --site pornhub     # Run specific site test
     python run_tests.py --verbose          # Run with verbose output
 """
+
 import sys
 import platform
 import subprocess

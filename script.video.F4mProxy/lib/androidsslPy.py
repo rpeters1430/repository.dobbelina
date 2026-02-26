@@ -21,7 +21,7 @@ def _load_crypto_libcrypto():
         Structure,
         c_ulong,
         create_string_buffer,
-        )
+    )
     import ctypes
 
     libcrypto = ctypes.cdll.LoadLibrary("libcrypto.so")

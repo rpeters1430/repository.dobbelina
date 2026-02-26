@@ -3,6 +3,7 @@
 Site Module Updater
 Automatically updates site modules to reference local logo files instead of remote URLs
 """
+
 import re
 from pathlib import Path
 import shutil

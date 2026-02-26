@@ -58,15 +58,32 @@ BLOCKED_DOMAINS = [
 
 # Popup/overlay selectors to auto-remove after page load.
 POPUP_SELECTORS = [
-    ".age-gate", "#age-gate", "[class*='age-verify']", "[class*='age-gate']",
-    "[class*='cookie']", "[class*='consent']", "[class*='gdpr']",
-    ".cookie-banner", "#cookie-banner",
-    "[id*='popup']:not(video)", "[class*='popup']:not(video)",
-    "[id*='modal']", "[class*='modal']",
-    "[id*='overlay']", "[class*='overlay']",
+    ".age-gate",
+    "#age-gate",
+    "[class*='age-verify']",
+    "[class*='age-gate']",
+    "[class*='cookie']",
+    "[class*='consent']",
+    "[class*='gdpr']",
+    ".cookie-banner",
+    "#cookie-banner",
+    "[id*='popup']:not(video)",
+    "[class*='popup']:not(video)",
+    "[id*='modal']",
+    "[class*='modal']",
+    "[id*='overlay']",
+    "[class*='overlay']",
 ]
 
-VIDEO_EXTENSIONS = [".mp4", ".m3u8", ".ts", ".m4s", "manifest", "/playlist", "get_sources"]
+VIDEO_EXTENSIONS = [
+    ".mp4",
+    ".m3u8",
+    ".ts",
+    ".m4s",
+    "manifest",
+    "/playlist",
+    "get_sources",
+]
 
 # XHR/API patterns to log response bodies for (useful for Livewire/AJAX sites).
 API_PATTERNS = ["livewire/message", "api/video", "api/stream", "get_video", "source"]
@@ -83,20 +100,20 @@ def main():
     )
     parser.add_argument("url", help="Site URL to open")
     parser.add_argument(
-        "--sniff", action="store_true",
-        help="Print video/stream URLs as they are detected"
+        "--sniff",
+        action="store_true",
+        help="Print video/stream URLs as they are detected",
     )
     parser.add_argument(
-        "--no-dismiss", action="store_true",
-        help="Skip auto-dismissing popups/overlays"
+        "--no-dismiss", action="store_true", help="Skip auto-dismissing popups/overlays"
     )
     parser.add_argument(
-        "--no-block", action="store_true",
-        help="Disable ad/tracker blocking"
+        "--no-block", action="store_true", help="Disable ad/tracker blocking"
     )
     parser.add_argument(
-        "--dump-page", metavar="FILE",
-        help="After load, save the fully-rendered page HTML to FILE for offline inspection"
+        "--dump-page",
+        metavar="FILE",
+        help="After load, save the fully-rendered page HTML to FILE for offline inspection",
     )
     args = parser.parse_args()
 
@@ -120,6 +137,7 @@ def main():
         # Auto-close any new tab/window that opens (window.open, target="_blank").
         # This is the main source of popup ads on adult sites.
         if not args.no_block:
+
             def on_new_page(new_page):
                 try:
                     new_page.close()
@@ -129,6 +147,7 @@ def main():
             context.on("page", on_new_page)
 
         if not args.no_block:
+
             def route_handler(route):
                 if should_block(route.request.url):
                     route.abort()
@@ -140,6 +159,7 @@ def main():
             print(f"[*] Auto-closing popup windows")
 
         if args.sniff:
+
             def handle_response(response):
                 url = response.url
                 lower = url.lower()
