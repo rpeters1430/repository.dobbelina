@@ -216,19 +216,25 @@ def Main():
         "Search",
         site.img_search,
     )
-    utils.eod()
+    # Keep legacy behavior: show latest videos directly on main page.
+    List(site.url + "search/?search=&sort=0", page=1)
 
 
 @site.register()
 def List(url, page=1, section=None):
+    try:
+        current_page = int(page)
+    except (TypeError, ValueError):
+        current_page = 1
+
     if isinstance(url, str) and any(
         path in url
         for path in ("/trending-videos/", "/random-videos/", "/search/?search=&sort=")
     ):
         paged_url = url
-        if int(page) > 1 and "page=" not in paged_url:
+        if current_page > 1 and "page=" not in paged_url:
             sep = "&" if "?" in paged_url else "?"
-            paged_url = "{}{}page={}".format(paged_url, sep, page)
+            paged_url = "{}{}page={}".format(paged_url, sep, current_page)
         html = utils.getHtml(paged_url, site.url)
         soup = utils.parse_html(html)
         _parse_video_items(soup, site.url)
@@ -254,7 +260,9 @@ def List(url, page=1, section=None):
     headers = dict(ph_headers)
     headers["Referer"] = referer
 
-    listhtml = utils.postHtml(ajax_url, form_data=Createdata(page, search), headers=headers)
+    listhtml = utils.postHtml(
+        ajax_url, form_data=Createdata(current_page, search), headers=headers
+    )
     if not listhtml:
         fallback_url = url
         if not isinstance(url, str) or not url.startswith("https://"):
