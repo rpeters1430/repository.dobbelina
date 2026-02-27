@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: build-addons-${{ github.ref }}
+  group: build-addons-${{ github.ref_name }}
   cancel-in-progress: true
 
 jobs:
@@ -146,14 +146,23 @@ jobs:
                   text=True,
               ).splitlines()
           else:
-              changed = subprocess.check_output(
-                  ["git", "diff", "--name-only", before, after],
-                  text=True,
-              ).splitlines()
+              try:
+                  changed = subprocess.check_output(
+                      ["git", "diff", "--name-only", before, after],
+                      text=True,
+                      stderr=subprocess.PIPE,
+                  ).splitlines()
+              except subprocess.CalledProcessError:
+                  # Fallback if before commit is not available (e.g., shallow clone)
+                  print(f"Warning: Could not diff {before}..{after}, using current commit only")
+                  changed = subprocess.check_output(
+                      ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", after],
+                      text=True,
+                  ).splitlines()
 
           patterns = [
               re.compile(r"^[^/]+/addon\.xml$"),
-              re.compile(r"^[^/]+/.*\.py$"),
+              re.compile(r"^.*\.py$"),
               re.compile(r"^[^/]+/resources/"),
               re.compile(r"^build_repo_addons\.py$"),
               re.compile(r"^requirements-test\.txt$"),
@@ -194,7 +203,7 @@ jobs:
           retention-days: 7
 
       - name: Deploy to GitHub Pages
-        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (github.event_name != 'push' || steps.changes.outputs.has_relevant_changes == 'true')
+        if: github.event_name != 'push' || steps.changes.outputs.has_relevant_changes == 'true'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: upload
