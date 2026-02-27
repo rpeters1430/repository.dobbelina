@@ -38,21 +38,22 @@ def Main(url):
         "Search",
         site.img_search,
     )
-    List(
-        site.url
-        + "video/?mode=async&function=get_block&block_id=list_videos_videos_list_search_result&q=&category_ids=&sort_by=title&from_videos=1",
-        1,
-    )
+    # The async endpoint now frequently returns 404/empty data; use homepage listing.
+    List(site.url, 1)
     utils.eod()
 
 
 @site.register()
 def List(url, page=1):
     try:
-        listhtml = utils.getHtml(url, "")
+        listhtml, _ = utils.get_html_with_cloudflare_retry(url, "")
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in porntn: " + str(e))
         return None
+
+    if not listhtml or utils.is_cloudflare_challenge_page(listhtml):
+        utils.eod()
+        return
 
     soup = utils.parse_html(listhtml)
     if not soup:
@@ -125,7 +126,17 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
-    html = utils.getHtml(url, site.url)
+    try:
+        html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in porntn: " + str(e))
+        vp.progress.close()
+        return
+
+    if not html or utils.is_cloudflare_challenge_page(html):
+        vp.progress.close()
+        return
+
     sources = {}
     
     # Try to find license code
@@ -173,7 +184,7 @@ def Playvid(url, name, download=None):
 @site.register()
 def Categories(url):
     try:
-        cathtml = utils.getHtml(url, "")
+        cathtml = utils.get_html_with_cloudflare_retry(url, "")[0]
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in porntn: " + str(e))
         return None
@@ -201,7 +212,7 @@ def Categories(url):
 @site.register()
 def Tags(url):
     try:
-        taghtml = utils.getHtml(url, "")
+        taghtml = utils.get_html_with_cloudflare_retry(url, "")[0]
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in porntn: " + str(e))
         return None
@@ -236,10 +247,13 @@ def Search(url, keyword=None):
 
 @site.register()
 def Lookupinfo(url):
-    html = utils.getHtml(url, site.url)
-    soup = utils.parse_html(html)
-    if not soup:
+    try:
+        html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+    except Exception:
         return
+    if not html or utils.is_cloudflare_challenge_page(html):
+        return
+    soup = utils.parse_html(html)
 
     categories = []
     for link in soup.select('a[href*="/categories/"]'):

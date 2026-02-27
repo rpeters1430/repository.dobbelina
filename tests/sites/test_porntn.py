@@ -15,7 +15,7 @@ def test_list_parses_items_and_next(monkeypatch):
     downloads = []
     dirs = []
 
-    monkeypatch.setattr(porntn.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(porntn.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (html, False))
     monkeypatch.setattr(porntn.utils, "eod", lambda: None)
     monkeypatch.setattr(
         porntn.site,
@@ -69,7 +69,7 @@ def test_categories(monkeypatch):
     html = load_fixture("categories.html")
     dirs = []
 
-    monkeypatch.setattr(porntn.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(porntn.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (html, False))
     monkeypatch.setattr(porntn.utils, "eod", lambda: None)
     monkeypatch.setattr(
         porntn.site,
@@ -93,7 +93,7 @@ def test_tags(monkeypatch):
     html = load_fixture("tags.html")
     dirs = []
 
-    monkeypatch.setattr(porntn.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(porntn.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (html, False))
     monkeypatch.setattr(porntn.utils, "eod", lambda: None)
     monkeypatch.setattr(
         porntn.site,

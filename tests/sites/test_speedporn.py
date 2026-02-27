@@ -17,7 +17,7 @@ def test_list_parses_items(monkeypatch):
     downloads = []
     dirs = []
 
-    monkeypatch.setattr(speedporn.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(speedporn.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (html, False))
     monkeypatch.setattr(speedporn.utils, "eod", lambda: None)
     monkeypatch.setattr(
         speedporn.site,

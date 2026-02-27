@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
+import time
 from six.moves import urllib_parse, urllib_error
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
@@ -53,12 +54,11 @@ def HQMAIN():
 def HQLIST(url):
     # Retry logic for pagination pages that may be slow
     max_retries = 3
-    timeout = 45  # Increased from 30 to handle slow pagination pages
     link = None
 
     for attempt in range(max_retries):
         try:
-            link = utils.getHtml(url, "", timeout=timeout)
+            link = utils.getHtml(url, "")
             break  # Success, exit retry loop
         except Exception as e:
             utils.kodilog(
@@ -68,8 +68,6 @@ def HQLIST(url):
             )
             if attempt < max_retries - 1:
                 # Not the last attempt, retry after a brief pause
-                import time
-
                 time.sleep(2)
                 continue
             else:
@@ -139,12 +137,11 @@ def HQLIST(url):
 def HQCAT(url):
     # Retry logic for slow page loads
     max_retries = 3
-    timeout = 45
     link = None
 
     for attempt in range(max_retries):
         try:
-            link = utils.getHtml(url, "", timeout=timeout)
+            link = utils.getHtml(url, "")
             break
         except Exception as e:
             utils.kodilog(
@@ -153,8 +150,6 @@ def HQCAT(url):
                 )
             )
             if attempt < max_retries - 1:
-                import time
-
                 time.sleep(2)
                 continue
             else:
@@ -211,7 +206,7 @@ def HQPLAY(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
     try:
-        videopage = utils.getHtml(url, url, timeout=30)
+        videopage = utils.getHtml(url, url)
     except Exception as e:
         utils.kodilog("hqporner HQPLAY: Error loading video page: {}".format(str(e)))
         vp.progress.close()

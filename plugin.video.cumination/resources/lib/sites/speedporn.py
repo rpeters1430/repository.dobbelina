@@ -76,10 +76,15 @@ def Main():
 @site.register()
 def List(url):
     try:
-        listhtml = utils.getHtml(url)
+        listhtml, _ = utils.get_html_with_cloudflare_retry(url)
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in speedporn: " + str(e))
         return None
+
+    if not listhtml or utils.is_cloudflare_challenge_page(listhtml):
+        utils.eod()
+        return
+
     # utils.kodilog(listhtml)
     soup = utils.parse_html(listhtml)
     for link in soup.select("a.thumb, a.thumb[href]"):
@@ -131,7 +136,10 @@ def List_all(url):
     nextpg = True
     while nextpg:
         try:
-            listhtml = utils.getHtml(url)
+            listhtml, _ = utils.get_html_with_cloudflare_retry(url)
+            if not listhtml or utils.is_cloudflare_challenge_page(listhtml):
+                break
+
             match = re.compile(
                 r'class="thumb" href="([^"]+)".+?-src="([^"]+)".+?span class="duration">([^<]+).+?span class="title">([^<]+)',
                 re.DOTALL | re.IGNORECASE,
@@ -178,7 +186,7 @@ def List_all(url):
 
 @site.register()
 def Categories(url):
-    cathtml = utils.getHtml(url, "")
+    cathtml = utils.get_html_with_cloudflare_retry(url, "")[0]
     videos = cathtml.split('class="video-block video-block-cat"')
     videos.pop(0)
 
@@ -210,7 +218,7 @@ def Categories_all(url):
     nextpg = True
     while nextpg:
         try:
-            cathtml = utils.getHtml(url, "")
+            cathtml = utils.get_html_with_cloudflare_retry(url, "")[0]
             videos = cathtml.split('class="video-block video-block-cat"')
             videos.pop(0)
 
@@ -244,7 +252,7 @@ def Categories_all(url):
 
 @site.register()
 def Tags(url):
-    cathtml = utils.getHtml(url, "")
+    cathtml = utils.get_html_with_cloudflare_retry(url, "")[0]
     match = re.compile(
         'div class="tag-item"><a href="([^"]+)"[^>]+>([^<]+)<',
         re.DOTALL | re.IGNORECASE,
@@ -260,7 +268,16 @@ def Playvid(url, name, download=None):
     links = {}
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    videopage = utils.getHtml(url)
+    try:
+        videopage, _ = utils.get_html_with_cloudflare_retry(url)
+    except Exception:
+        vp.progress.close()
+        return
+
+    if not videopage or utils.is_cloudflare_challenge_page(videopage):
+        vp.progress.close()
+        return
+
     videopage = videopage.split(">Watch Online")[-1]
 
     srcs = re.compile(
@@ -271,7 +288,13 @@ def Playvid(url, name, download=None):
         title = title.split(" on ")[-1]
         src = src.split("?link=")[-1]
         if "mangovideo" in src:
-            html = utils.getHtml(src, url)
+            try:
+                html, _ = utils.get_html_with_cloudflare_retry(src, url)
+            except Exception:
+                continue
+            if not html or utils.is_cloudflare_challenge_page(html):
+                continue
+
             if "=" in src:
                 src = src.split("=")[-1]
             murl = re.compile(
