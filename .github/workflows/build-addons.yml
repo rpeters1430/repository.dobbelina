@@ -148,4 +148,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           folder: upload
           branch: gh-pages
-          clean-dir: true
+          clean: true
