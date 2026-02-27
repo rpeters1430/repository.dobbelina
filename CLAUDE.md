@@ -41,6 +41,7 @@ Kodi calls `plugin://plugin.video.cumination/?mode=sitename.Function&url=...` â†
 
 ### Core Components
 
+- **`basics.py`** - Loaded first; defines global addon constants and paths (`addon`, `addon_handle`, `cookiePath`, `favoritesdb`, `profileDir`, `imgDir`, etc.). Imported by both `utils.py` and `adultsite.py`.
 - **`url_dispatcher.py`** - Routes mode strings to decorated functions. Registry is class-level (shared across instances).
 - **`adultsite.py`** - `AdultSite` base class. Maintains a `WeakSet` of all instances for auto-discovery. Each site gets an isolated mode namespace.
 - **`default.py`** - Entry point. Imports `resources.lib.sites.*` which triggers module-level `AdultSite(...)` instantiation, auto-registering each site.
@@ -49,6 +50,7 @@ Kodi calls `plugin://plugin.video.cumination/?mode=sitename.Function&url=...` â†
 - **`sites/soup_spec.py`** - `SoupSiteSpec` dataclass for declarative selector-based video listing.
 - **`favorites.py`** - SQLite-backed favorites and custom site management.
 - **`decrypters/`** / **`jscrypto/`** - Custom video player decryption (KVS, Uppod, etc.)
+- **`playwright_helper.py`** (in lib/) - Dev/debug tool only; same restriction as Playwright â€” never use in site modules.
 
 ### Site Module Pattern
 

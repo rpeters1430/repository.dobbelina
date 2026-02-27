@@ -77,9 +77,23 @@ def _model_screenshot(model, cache_bust=None):
         "preview",
         "previewUrl",
         "snapshotUrl",
+        "avatarUrl",
+        "thumbnailUrl",
+        "thumbUrl",
+        "imageUrl",
+        "posterUrl",
     )
     for field in image_fields:
-        img = _live_preview_url(model.get(field), snapshot_ts, cache_bust=cache_bust)
+        value = model.get(field)
+        if isinstance(value, dict):
+            for nested_key in ("url", "src", "https", "absolute"):
+                img = _live_preview_url(
+                    value.get(nested_key), snapshot_ts, cache_bust=cache_bust
+                )
+                if img:
+                    return img
+            continue
+        img = _live_preview_url(value, snapshot_ts, cache_bust=cache_bust)
         if img:
             return img
 
@@ -648,6 +662,17 @@ def Playvid(url, name):
                 }
             )
 
+        # saawsedge frequently fails DNS in some networks; if we discovered any
+        # non-saaws candidate, avoid selecting saaws URLs.
+        has_non_saaws = any("saawsedge.com" not in c["url"] for c in evaluated)
+        if has_non_saaws:
+            filtered = [c for c in evaluated if "saawsedge.com" not in c["url"]]
+            if filtered:
+                utils.kodilog(
+                    "Stripchat: Excluding saawsedge candidates in favor of reachable mirrored CDN"
+                )
+                evaluated = filtered
+
         preferred_reachable = [c for c in evaluated if c["reachable"] and not c["ad"]]
         preferred_unreachable = [
             c for c in evaluated if (not c["reachable"]) and (not c["ad"])
@@ -670,7 +695,7 @@ def Playvid(url, name):
             return None, is_online_flag
 
         preferred.sort(
-            key=lambda c: (c["score"], 0 if "doppiocdn.com" in c["url"] else 1),
+            key=lambda c: (c["score"], 1 if "doppiocdn.com" in c["url"] else 0),
             reverse=True,
         )
         selected_url = preferred[0]["url"]
