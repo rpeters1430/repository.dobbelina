@@ -62,6 +62,49 @@ def test_list_parses_json_models(monkeypatch):
         pass
 
 
+def test_list_handles_missing_topic_and_playlist(monkeypatch):
+    """List should not crash when optional model fields are absent."""
+    json_data = {
+        "models": [
+            {
+                "username": "model1",
+                "previewUrlThumbSmall": "https://img.stripchat.com/thumb1.jpg",
+                "country": "us",
+                "groupShowTopic": None,
+            }
+        ]
+    }
+
+    downloads = []
+
+    def fake_get_html(url, *args, **kwargs):
+        return json.dumps(json_data), False
+
+    def fake_add_download_link(name, url, mode, iconimage, desc, **kwargs):
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+                "iconimage": iconimage,
+                "desc": desc,
+            }
+        )
+
+    monkeypatch.setattr(
+        stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
+    )
+    monkeypatch.setattr(stripchat.site, "add_download_link", fake_add_download_link)
+    monkeypatch.setattr(stripchat.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(stripchat.utils, "eod", lambda: None)
+
+    stripchat.List("https://stripchat.com/")
+
+    assert len(downloads) == 1
+    assert downloads[0]["name"] == "model1"
+    assert downloads[0]["url"] == ""
+    assert "Location:" in downloads[0]["desc"]
+
+
 def test_model_screenshot_falls_back_to_snapshot_url():
     model = {"snapshotTimestamp": "123456", "id": "111"}
 

@@ -201,13 +201,16 @@ def List(url, page=1):
 
     cache_bust = int(time.time())
     for model in model_list:
-        name = utils.cleanhtml(model["username"])
-        videourl = model["hlsPlaylist"]
+        raw_name = model.get("username")
+        if not raw_name:
+            continue
+        name = utils.cleanhtml(raw_name)
+        videourl = model.get("hlsPlaylist") or ""
         img = _model_screenshot(model, cache_bust=cache_bust)
         fanart = img
-        subject = model.get("groupShowTopic")
-        if subject:
-            subject += "[CR]"
+        subject = ""
+        if model.get("groupShowTopic"):
+            subject += model.get("groupShowTopic") + "[CR]"
         if model.get("country"):
             subject += "[COLOR deeppink]Location: [/COLOR]{0}[CR]".format(
                 utils.get_country(model.get("country"))
@@ -854,8 +857,11 @@ def List2(url):
                     if model_list:
                         found_models = True
                         for model in model_list:
-                            name = utils.cleanhtml(model["username"])
-                            videourl = model.get("hlsPlaylist")
+                            raw_name = model.get("username")
+                            if not raw_name:
+                                continue
+                            name = utils.cleanhtml(raw_name)
+                            videourl = model.get("hlsPlaylist") or ""
                             img = _model_screenshot(model)
                             # Handle offline/profile links
                             if model.get("status") == "off":
@@ -989,8 +995,11 @@ def List3(url):
                     if model_list:
                         found_models = True
                         for model in model_list:
-                            name = utils.cleanhtml(model["username"])
-                            videourl = model.get("hlsPlaylist")
+                            raw_name = model.get("username")
+                            if not raw_name:
+                                continue
+                            name = utils.cleanhtml(raw_name)
+                            videourl = model.get("hlsPlaylist") or ""
                             img = _model_screenshot(model)
                             # Handle offline/profile links
                             if model.get("status") == "off":
