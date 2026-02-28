@@ -138,7 +138,7 @@ def test_rewrite_mouflon_manifest_for_kodi_replaces_placeholder_segments():
     assert stripchat._rewrite_mouflon_manifest_for_kodi(manifest) == (
         "#EXTM3U\n"
         "#EXT-X-VERSION:6\n"
-        "#EXTINF:4.000\n"
+        "#EXTINF:4.000,\n"
         "https://cdn.example.com/segment_1.mp4\n"
     )
 

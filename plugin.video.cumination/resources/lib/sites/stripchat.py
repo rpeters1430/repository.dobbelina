@@ -114,11 +114,11 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text):
         return ""
 
     lines = manifest_text.splitlines()
-    rewritten = []
+    header_lines = []
+    part_segments = []
+    full_segments = []
     mouflon_uri = ""
-    replaced = False
-    segment_from_parts = False
-    skip_next_media_placeholder = False
+    pending_duration = None
 
     for line in lines:
         stripped = line.strip()
@@ -129,36 +129,51 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text):
         if stripped.startswith("#EXT-X-PART:"):
             duration_match = re.search(r"DURATION=([0-9.]+)", stripped)
             if mouflon_uri and duration_match:
-                rewritten.append("#EXTINF:{0},".format(duration_match.group(1)))
-                rewritten.append(mouflon_uri)
-                replaced = True
-                segment_from_parts = True
+                part_segments.append((duration_match.group(1), mouflon_uri))
                 mouflon_uri = ""
             continue
 
-        if stripped.startswith("#EXTINF:") and segment_from_parts:
-            skip_next_media_placeholder = True
-            segment_from_parts = False
+        if stripped.startswith("#EXTINF:"):
+            duration_match = re.search(r"#EXTINF:([0-9.]+)", stripped)
+            pending_duration = duration_match.group(1) if duration_match else None
             continue
 
         if stripped and not stripped.startswith("#"):
-            if skip_next_media_placeholder:
-                skip_next_media_placeholder = False
-                mouflon_uri = ""
-                continue
-            if mouflon_uri and (
-                stripped.startswith("../") or stripped.endswith("/media.mp4")
-            ):
-                rewritten.append(mouflon_uri)
-                replaced = True
-                mouflon_uri = ""
-                continue
+            if pending_duration and mouflon_uri:
+                if stripped.startswith("../") or stripped.endswith("/media.mp4"):
+                    full_segments.append((pending_duration, mouflon_uri))
+                else:
+                    full_segments.append((pending_duration, stripped))
+            pending_duration = None
             mouflon_uri = ""
+            continue
 
-        rewritten.append(line)
+        header_lines.append(line)
 
-    if not replaced:
+    chosen_segments = part_segments[-4:] if part_segments else full_segments
+    if not chosen_segments:
         return ""
+
+    rewritten = []
+    for line in header_lines:
+        stripped = line.strip()
+        if stripped.startswith("#EXT-X-TARGETDURATION:") and part_segments:
+            rewritten.append("#EXT-X-TARGETDURATION:1")
+            continue
+        if stripped.startswith("#EXT-X-SERVER-CONTROL:"):
+            continue
+        if stripped.startswith("#EXT-X-PART-INF:"):
+            continue
+        if stripped.startswith("#EXT-X-PROGRAM-DATE-TIME:"):
+            continue
+        if stripped.startswith("#EXT-X-PRELOAD-HINT:"):
+            continue
+        if stripped.startswith("#EXT-X-RENDITION-REPORT:"):
+            continue
+        rewritten.append(line)
+    for duration, segment_url in chosen_segments:
+        rewritten.append("#EXTINF:{0},".format(duration))
+        rewritten.append(segment_url)
     return "\n".join(rewritten) + "\n"
 
 
@@ -969,23 +984,50 @@ def Playvid(url, name):
             "        if '#EXTM3U' not in text:\n"
             "            time.sleep(1)\n"
             "            continue\n"
-            "        out=[]\n"
+            "        headers=[]\n"
+            "        part_segments=[]\n"
+            "        full_segments=[]\n"
             "        mou=''\n"
-            "        replaced=False\n"
+            "        pending_duration=''\n"
             "        for raw in text.splitlines():\n"
             "            stripped=raw.strip()\n"
             "            if stripped.startswith('#EXT-X-MOUFLON:URI:'):\n"
             "                mou=stripped.split(':URI:', 1)[1].strip()\n"
             "                continue\n"
-            "            if stripped and not stripped.startswith('#'):\n"
-            "                if mou and (stripped.startswith('../') or stripped.endswith('/media.mp4')):\n"
-            "                    out.append(mou)\n"
-            "                    replaced=True\n"
+            "            if stripped.startswith('#EXT-X-PART:'):\n"
+            "                marker='DURATION='\n"
+            "                if mou and marker in stripped:\n"
+            "                    duration=stripped.split(marker,1)[1].split(',',1)[0]\n"
+            "                    part_segments.append((duration, mou))\n"
             "                    mou=''\n"
-            "                    continue\n"
+            "                continue\n"
+            "            if stripped.startswith('#EXTINF:'):\n"
+            "                pending_duration=stripped.split(':',1)[1].split(',',1)[0]\n"
+            "                continue\n"
+            "            if stripped and not stripped.startswith('#'):\n"
+            "                if pending_duration and mou:\n"
+            "                    if stripped.startswith('../') or stripped.endswith('/media.mp4'):\n"
+            "                        full_segments.append((pending_duration, mou))\n"
+            "                    else:\n"
+            "                        full_segments.append((pending_duration, stripped))\n"
+            "                pending_duration=''\n"
             "                mou=''\n"
-            "            out.append(raw)\n"
-            "        if replaced:\n"
+            "                continue\n"
+            "            headers.append(raw)\n"
+            "        chosen=part_segments[-4:] if part_segments else full_segments\n"
+            "        if chosen:\n"
+            "            out=[]\n"
+            "            for raw in headers:\n"
+            "                stripped=raw.strip()\n"
+            "                if part_segments and stripped.startswith('#EXT-X-TARGETDURATION:'):\n"
+            "                    out.append('#EXT-X-TARGETDURATION:1')\n"
+            "                    continue\n"
+            "                if stripped.startswith('#EXT-X-SERVER-CONTROL:') or stripped.startswith('#EXT-X-PART-INF:') or stripped.startswith('#EXT-X-PROGRAM-DATE-TIME:') or stripped.startswith('#EXT-X-PRELOAD-HINT:') or stripped.startswith('#EXT-X-RENDITION-REPORT:'):\n"
+            "                    continue\n"
+            "                out.append(raw)\n"
+            "            for duration, seg in chosen:\n"
+            "                out.append('#EXTINF:'+duration+',')\n"
+            "                out.append(seg)\n"
             "            payload='\\n'.join(out)+'\\n'\n"
             "            if payload!=last:\n"
             "                with open(path, 'w') as fh:\n"
