@@ -139,7 +139,6 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
     placeholder ../media.mp4 segment line. This function:
       - replaces every placeholder segment with the corresponding real URL
       - makes the EXT-X-MAP URI absolute
-      - converts LL-HLS part tags into standard EXTINF entries when possible
       - strips low-latency and MOUFLON-specific tags ISA doesn't understand
     """
     if not manifest_text:
@@ -157,23 +156,11 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
 
     lines_out = []
     pending_segment_url = None
-    part_segment_urls = []
-    drop_next_segment = False
     for line in manifest_text.splitlines():
         stripped = line.strip()
 
         if stripped.startswith("#EXT-X-MOUFLON:URI:"):
             pending_segment_url = stripped[len("#EXT-X-MOUFLON:URI:"):]
-            continue
-
-        if stripped.startswith("#EXT-X-PART:"):
-            if not pending_segment_url:
-                continue
-            duration_match = re.search(r"DURATION=([0-9.]+)", stripped)
-            if not duration_match:
-                continue
-            part_segment_urls.append((duration_match.group(1), pending_segment_url))
-            pending_segment_url = None
             continue
 
         if any(stripped.startswith(p) for p in _STRIP_PREFIXES):
@@ -192,20 +179,7 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
             stripped += ","
             line = stripped
 
-        if stripped.startswith("#EXTINF:") and part_segment_urls:
-            for duration, segment_url in part_segment_urls:
-                lines_out.append("#EXTINF:{0},".format(duration))
-                lines_out.append(segment_url)
-            part_segment_urls = []
-            pending_segment_url = None
-            drop_next_segment = True
-            continue
-
         if stripped and not stripped.startswith("#"):
-            if drop_next_segment:
-                drop_next_segment = False
-                pending_segment_url = None
-                continue
             if pending_segment_url:
                 lines_out.append(pending_segment_url)
                 pending_segment_url = None
