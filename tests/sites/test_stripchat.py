@@ -54,10 +54,10 @@ def test_list_parses_json_models(monkeypatch):
     try:
         stripchat.List("https://stripchat.com/")
         assert len(downloads) == 2
-        assert downloads[0]["iconimage"] == "https://img.stripchat.com/thumb1.jpg"
-        assert downloads[0]["fanart"] == "https://img.stripchat.com/thumb1.jpg"
-        assert downloads[1]["iconimage"] == "https://img.stripchat.com/thumb2.jpg"
-        assert downloads[1]["fanart"] == "https://img.stripchat.com/thumb2.jpg"
+        assert downloads[0]["iconimage"] == "https://img.doppiocdn.com/thumbs/123456/111_webp"
+        assert downloads[0]["fanart"] == "https://img.doppiocdn.com/thumbs/123456/111_webp"
+        assert downloads[1]["iconimage"] == "https://img.doppiocdn.com/thumbs/654321/222_webp"
+        assert downloads[1]["fanart"] == "https://img.doppiocdn.com/thumbs/654321/222_webp"
     except AttributeError:
         pass
 
@@ -122,7 +122,24 @@ def test_model_screenshot_prefers_live_preview_variant():
     }
 
     assert stripchat._model_screenshot(model) == (
-        "https://static-proxy.strpst.com/previews/a/b/c/hash-thumb-big?t=123456"
+        "https://img.doppiocdn.com/thumbs/123456/111_webp"
+    )
+
+
+def test_rewrite_mouflon_manifest_for_kodi_replaces_placeholder_segments():
+    manifest = (
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:6\n"
+        "#EXTINF:4.000\n"
+        "#EXT-X-MOUFLON:URI:https://cdn.example.com/segment_1.mp4\n"
+        "https://media-hls.doppiocdn.com/b-hls-11/media.mp4\n"
+    )
+
+    assert stripchat._rewrite_mouflon_manifest_for_kodi(manifest) == (
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:6\n"
+        "#EXTINF:4.000\n"
+        "https://cdn.example.com/segment_1.mp4\n"
     )
 
 

@@ -18,6 +18,8 @@ import sqlite3
 import json
 import re
 import time
+import sys
+import subprocess
 import requests
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
@@ -69,9 +71,14 @@ def _live_preview_url(url, snapshot_ts=None, cache_bust=None):
 def _model_screenshot(model, cache_bust=None):
     if not isinstance(model, dict):
         return ""
+    model_id = model.get("id")
     snapshot_ts = model.get("snapshotTimestamp") or model.get(
         "popularSnapshotTimestamp"
     )
+    if snapshot_ts and model_id:
+        return "https://img.doppiocdn.com/thumbs/{0}/{1}_webp".format(
+            snapshot_ts, model_id
+        )
     image_fields = (
         "previewUrlThumbSmall",
         "previewUrlThumbBig",
@@ -99,12 +106,39 @@ def _model_screenshot(model, cache_bust=None):
         if img:
             return img
 
-    model_id = model.get("id")
-    if snapshot_ts and model_id:
-        return "https://img.doppiocdn.com/thumbs/{0}/{1}_webp".format(
-            snapshot_ts, model_id
-        )
     return ""
+
+
+def _rewrite_mouflon_manifest_for_kodi(manifest_text):
+    if not isinstance(manifest_text, str) or "#EXTM3U" not in manifest_text:
+        return ""
+
+    lines = manifest_text.splitlines()
+    rewritten = []
+    mouflon_uri = ""
+    replaced = False
+
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("#EXT-X-MOUFLON:URI:"):
+            mouflon_uri = stripped.split(":URI:", 1)[1].strip()
+            continue
+
+        if stripped and not stripped.startswith("#"):
+            if mouflon_uri and (
+                stripped.startswith("../") or stripped.endswith("/media.mp4")
+            ):
+                rewritten.append(mouflon_uri)
+                replaced = True
+                mouflon_uri = ""
+                continue
+            mouflon_uri = ""
+
+        rewritten.append(line)
+
+    if not replaced:
+        return ""
+    return "\n".join(rewritten) + "\n"
 
 
 @site.register(default_mode=True)
@@ -828,8 +862,128 @@ def Playvid(url, name):
         )
     )
 
+    def _build_local_mouflon_stream(selected_stream_url):
+        try:
+            proxy_headers = {
+                "User-Agent": utils.USER_AGENT,
+                "Origin": "https://stripchat.com",
+                "Referer": "https://stripchat.com/{0}".format(name),
+                "Accept": "application/x-mpegURL,application/vnd.apple.mpegurl,*/*",
+            }
+            manifest_text = utils._getHtml(
+                selected_stream_url,
+                "https://stripchat.com/{0}".format(name),
+                headers=proxy_headers,
+                error="throw",
+            )
+        except Exception:
+            manifest_text = ""
+        if (not isinstance(manifest_text, str) or "#EXTM3U" not in manifest_text) and (
+            isinstance(selected_stream_url, str) and ".m3u8" in selected_stream_url
+        ):
+            try:
+                manifest_text = requests.get(selected_stream_url, timeout=8).text
+            except Exception:
+                manifest_text = ""
+        rewritten = _rewrite_mouflon_manifest_for_kodi(manifest_text)
+        if not rewritten:
+            return None
+
+        temp_dir = utils.TRANSLATEPATH("special://temp/stripchat")
+        if not os.path.isdir(temp_dir):
+            os.makedirs(temp_dir)
+
+        safe_name = re.sub(r"[^A-Za-z0-9._-]+", "_", name)[:64] or "stripchat"
+        child_path = os.path.join(temp_dir, "{}_live.m3u8".format(safe_name))
+        parent_path = os.path.join(temp_dir, "{}_live.mp4".format(safe_name))
+
+        with open(child_path, "w") as child_file:
+            child_file.write(rewritten)
+        with open(parent_path, "w") as parent_file:
+            parent_file.write(
+                "#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-STREAM-INF:PROGRAM-ID=1\n{0}\n".format(
+                    child_path
+                )
+            )
+
+        updater_python = None
+        executable = getattr(sys, "executable", "") or ""
+        if os.path.basename(executable).lower().startswith("python"):
+            updater_python = executable
+        else:
+            updater_python = "python"
+
+        updater_script = (
+            "import sys,time,requests\n"
+            "url,path=sys.argv[1],sys.argv[2]\n"
+            "session=requests.Session()\n"
+            "deadline=time.time()+7200\n"
+            "last=''\n"
+            "while time.time()<deadline:\n"
+            "    try:\n"
+            "        text=session.get(url, timeout=10).text\n"
+            "        if '#EXTM3U' not in text:\n"
+            "            time.sleep(1)\n"
+            "            continue\n"
+            "        out=[]\n"
+            "        mou=''\n"
+            "        replaced=False\n"
+            "        for raw in text.splitlines():\n"
+            "            stripped=raw.strip()\n"
+            "            if stripped.startswith('#EXT-X-MOUFLON:URI:'):\n"
+            "                mou=stripped.split(':URI:', 1)[1].strip()\n"
+            "                continue\n"
+            "            if stripped and not stripped.startswith('#'):\n"
+            "                if mou and (stripped.startswith('../') or stripped.endswith('/media.mp4')):\n"
+            "                    out.append(mou)\n"
+            "                    replaced=True\n"
+            "                    mou=''\n"
+            "                    continue\n"
+            "                mou=''\n"
+            "            out.append(raw)\n"
+            "        if replaced:\n"
+            "            payload='\\n'.join(out)+'\\n'\n"
+            "            if payload!=last:\n"
+            "                with open(path, 'w') as fh:\n"
+            "                    fh.write(payload)\n"
+            "                last=payload\n"
+            "    except Exception:\n"
+            "        pass\n"
+            "    time.sleep(1)\n"
+        )
+
+        try:
+            creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+            subprocess.Popen(
+                [updater_python, "-c", updater_script, selected_stream_url, child_path],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                stdin=subprocess.DEVNULL,
+                creationflags=creationflags,
+                close_fds=True,
+            )
+            utils.kodilog(
+                "Stripchat: Started local MOUFLON manifest proxy: {}".format(
+                    parent_path
+                )
+            )
+        except Exception as e:
+            utils.kodilog(
+                "Stripchat: Failed to start manifest proxy updater: {}".format(str(e))
+            )
+
+        return parent_path
+
+    proxy_stream = _build_local_mouflon_stream(stream_url)
+    if proxy_stream:
+        stream_url = proxy_stream
+        ia_headers = ""
+
     utils.kodilog("Stripchat: Starting playback")
-    vp.play_from_direct_link(stream_url + "|" + ia_headers)
+    if ia_headers:
+        vp.play_from_direct_link(stream_url + "|" + ia_headers)
+    else:
+        vp.play_from_direct_link(stream_url)
 
 
 @site.register()
