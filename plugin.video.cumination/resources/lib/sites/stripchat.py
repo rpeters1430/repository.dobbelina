@@ -156,6 +156,9 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
 
     lines_out = []
     pending_segment_url = None
+    replaced_segments = 0
+    normalized_relative_segments = 0
+    map_rewrites = 0
     for line in manifest_text.splitlines():
         stripped = line.strip()
 
@@ -172,6 +175,7 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
                 map_uri = uri_match.group(1)
                 if not map_uri.startswith("http"):
                     line = line.replace(map_uri, urljoin(base_url, map_uri))
+                    map_rewrites += 1
             lines_out.append(line)
             continue
 
@@ -183,20 +187,152 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
             if pending_segment_url:
                 lines_out.append(pending_segment_url)
                 pending_segment_url = None
+                replaced_segments += 1
                 continue
             if not stripped.startswith("http"):
                 lines_out.append(urljoin(base_url, stripped))
+                normalized_relative_segments += 1
                 continue
 
         lines_out.append(line)
 
     if not lines_out:
+        utils.kodilog("Stripchat rewrite: produced empty manifest")
         return ""
-    return "\n".join(lines_out) + "\n"
+    rewritten = "\n".join(lines_out) + "\n"
+    utils.kodilog(
+        "Stripchat rewrite: in_lines={0} out_lines={1} replaced_segments={2} map_rewrites={3} normalized_relative={4}".format(
+            len(manifest_text.splitlines()),
+            len(lines_out),
+            replaced_segments,
+            map_rewrites,
+            normalized_relative_segments,
+        )
+    )
+    return rewritten
 
 
 def _rewrite_mouflon_for_isa(manifest_text, base_url):
     return _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url)
+
+
+def _keep_only_stable_segments(manifest_text, fetch_headers=None, keep_count=3, edge_buffer=1):
+    """Build a minimal manifest from older, reachable full segments.
+
+    Stripchat's newest live-edge segments can disappear before Kodi fetches them.
+    For playback stability, skip the freshest segment and keep only a few older
+    full segments that respond successfully.
+    """
+    if not manifest_text or "#EXTM3U" not in manifest_text:
+        utils.kodilog("Stripchat stable: skipped, manifest missing or invalid")
+        return manifest_text
+
+    header_prefixes = (
+        "#EXTM3U",
+        "#EXT-X-VERSION:",
+        "#EXT-X-TARGETDURATION:",
+        "#EXT-X-INDEPENDENT-SEGMENTS",
+        "#EXT-X-MAP:",
+    )
+
+    header_lines = []
+    segments = []
+    lines = manifest_text.splitlines()
+    idx = 0
+    while idx < len(lines):
+        line = lines[idx]
+        stripped = line.strip()
+        if stripped.startswith("#EXTINF:") and idx + 1 < len(lines):
+            segment_url = lines[idx + 1].strip()
+            if segment_url and not segment_url.startswith("#"):
+                segments.append((line, lines[idx + 1]))
+                idx += 2
+                continue
+        if stripped.startswith(header_prefixes):
+            header_lines.append(line)
+        idx += 1
+
+    if len(segments) <= edge_buffer:
+        utils.kodilog(
+            "Stripchat stable: skipped filtering, segments={0} edge_buffer={1}".format(
+                len(segments), edge_buffer
+            )
+        )
+        return manifest_text
+
+    def _segment_ok(segment_url):
+        try:
+            resp = requests.get(
+                segment_url,
+                headers=fetch_headers or None,
+                timeout=5,
+                stream=True,
+            )
+            ok = resp.status_code == 200
+            utils.kodilog(
+                "Stripchat stable: probe {0} -> HTTP {1}".format(
+                    segment_url[:140], resp.status_code
+                )
+            )
+            resp.close()
+            return ok
+        except Exception as e:
+            utils.kodilog(
+                "Stripchat stable: probe error for {0}: {1}".format(
+                    segment_url[:140], str(e)
+                )
+            )
+            return False
+
+    utils.kodilog(
+        "Stripchat stable: header_lines={0} segments={1} keep_count={2} edge_buffer={3}".format(
+            len(header_lines), len(segments), keep_count, edge_buffer
+        )
+    )
+
+    stable_segments = []
+    last_usable_index = len(segments) - edge_buffer
+    for idx in range(last_usable_index - 1, -1, -1):
+        extinf_line, segment_url = segments[idx]
+        utils.kodilog(
+            "Stripchat stable: testing candidate index={0} url={1}".format(
+                idx, segment_url.strip()[:140]
+            )
+        )
+        if _segment_ok(segment_url.strip()):
+            stable_segments.append((extinf_line, segment_url))
+            utils.kodilog(
+                "Stripchat stable: accepted candidate index={0} url={1}".format(
+                    idx, segment_url.strip()[:140]
+                )
+            )
+            if len(stable_segments) >= keep_count:
+                break
+        else:
+            utils.kodilog(
+                "Stripchat stable: rejected candidate index={0} url={1}".format(
+                    idx, segment_url.strip()[:140]
+                )
+            )
+
+    if not stable_segments:
+        utils.kodilog(
+            "Stripchat stable: no stable segments found, keeping original manifest"
+        )
+        return manifest_text
+
+    stable_segments.reverse()
+    out_lines = list(header_lines)
+    for extinf_line, segment_url in stable_segments:
+        out_lines.append(extinf_line)
+        out_lines.append(segment_url)
+    utils.kodilog(
+        "Stripchat stable: selected {0} segment(s): {1}".format(
+            len(stable_segments),
+            " | ".join(segment_url.strip()[:100] for _, segment_url in stable_segments),
+        )
+    )
+    return "\n".join(out_lines) + "\n"
 
 
 def _start_manifest_proxy(selected_url, name):
@@ -229,9 +365,16 @@ def _start_manifest_proxy(selected_url, name):
 
     state = {"content": b""}
     state_lock = threading.Lock()
+    fetch_round = {"count": 0}
 
     def _fetch_and_rewrite():
         try:
+            fetch_round["count"] += 1
+            utils.kodilog(
+                "Stripchat proxy: refresh #{0} fetching {1}".format(
+                    fetch_round["count"], selected_url[:140]
+                )
+            )
             resp = requests.get(selected_url, headers=fetch_headers, timeout=8)
             if resp.status_code != 200:
                 utils.kodilog(
@@ -247,10 +390,27 @@ def _start_manifest_proxy(selected_url, name):
                     )
                 )
                 return
+            utils.kodilog(
+                "Stripchat proxy: fetch #{0} returned {1} bytes".format(
+                    fetch_round["count"], len(resp.text.encode("utf-8"))
+                )
+            )
             rewritten = _rewrite_mouflon_for_isa(resp.text, base_url)
             if rewritten and "#EXTM3U" in rewritten:
+                rewritten = _keep_only_stable_segments(rewritten, fetch_headers=fetch_headers)
+                utils.kodilog(
+                    "Stripchat proxy: refresh #{0} prepared stable manifest with {1} bytes".format(
+                        fetch_round["count"], len(rewritten.encode("utf-8"))
+                    )
+                )
                 with state_lock:
                     state["content"] = rewritten.encode("utf-8")
+            else:
+                utils.kodilog(
+                    "Stripchat proxy: refresh #{0} rewrite produced invalid manifest".format(
+                        fetch_round["count"]
+                    )
+                )
         except Exception as e:
             utils.kodilog("Stripchat proxy: fetch error: {}".format(str(e)))
 
@@ -264,6 +424,11 @@ def _start_manifest_proxy(selected_url, name):
         def do_GET(self):
             with state_lock:
                 content = state["content"]
+            utils.kodilog(
+                "Stripchat proxy: serving {0} bytes to {1}".format(
+                    len(content), self.path
+                )
+            )
             self.send_response(200)
             self.send_header("Content-Type", "application/vnd.apple.mpegurl")
             self.send_header("Content-Length", str(len(content)))

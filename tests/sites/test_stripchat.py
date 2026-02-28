@@ -176,6 +176,46 @@ def test_rewrite_mouflon_manifest_ignores_parts_and_uses_full_segments():
     )
 
 
+def test_keep_only_stable_segments_skips_live_edge_and_unreachable(monkeypatch):
+    manifest = (
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:6\n"
+        "#EXT-X-TARGETDURATION:2\n"
+        "#EXT-X-MAP:URI=\"https://cdn.example.com/init.mp4\"\n"
+        "#EXTINF:2.0,\n"
+        "https://cdn.example.com/seg1.mp4\n"
+        "#EXTINF:2.0,\n"
+        "https://cdn.example.com/seg2.mp4\n"
+        "#EXTINF:2.0,\n"
+        "https://cdn.example.com/seg3.mp4\n"
+    )
+
+    class FakeResp:
+        def __init__(self, status_code):
+            self.status_code = status_code
+
+        def close(self):
+            pass
+
+    def fake_requests_get(url, headers=None, timeout=None, stream=False):
+        statuses = {
+            "https://cdn.example.com/seg1.mp4": 200,
+            "https://cdn.example.com/seg2.mp4": 404,
+        }
+        return FakeResp(statuses.get(url, 404))
+
+    monkeypatch.setattr(stripchat.requests, "get", fake_requests_get)
+
+    assert stripchat._keep_only_stable_segments(manifest, keep_count=2, edge_buffer=1) == (
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:6\n"
+        "#EXT-X-TARGETDURATION:2\n"
+        "#EXT-X-MAP:URI=\"https://cdn.example.com/init.mp4\"\n"
+        "#EXTINF:2.0,\n"
+        "https://cdn.example.com/seg1.mp4\n"
+    )
+
+
 def test_pick_stream_parses_flat_quality_urls(monkeypatch):
     """stream.urls with direct quality keys like '480p', '240p' should be used as candidates."""
     played_urls = []
