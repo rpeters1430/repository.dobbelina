@@ -170,6 +170,9 @@ def _normalize_stream_cdn_url(url):
     normalized = normalized.replace("media-hls.doppiocdn.com", "media-hls.doppiocdn.net")
     normalized = normalized.replace("edge-hls.saawsedge.com", "edge-hls.saawsedge.net")
     normalized = normalized.replace("media-hls.saawsedge.com", "media-hls.saawsedge.net")
+    if ".m3u8" in normalized and "playlistType=" not in normalized:
+        sep = "&" if "?" in normalized else "?"
+        normalized = normalized + sep + "playlistType=lowLatency"
     return normalized
 
 

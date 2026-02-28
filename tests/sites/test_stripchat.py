@@ -146,10 +146,13 @@ def test_rewrite_mouflon_manifest_for_kodi_replaces_placeholder_segments():
 def test_normalize_stream_cdn_url_prefers_net_hosts():
     assert stripchat._normalize_stream_cdn_url(
         "https://edge-hls.doppiocdn.com/hls/1/master/1_480p.m3u8"
-    ) == "https://edge-hls.doppiocdn.net/hls/1/master/1_480p.m3u8"
+    ) == "https://edge-hls.doppiocdn.net/hls/1/master/1_480p.m3u8?playlistType=lowLatency"
     assert stripchat._normalize_stream_cdn_url(
         "https://media-hls.doppiocdn.com/b-hls-1/media.mp4"
     ) == "https://media-hls.doppiocdn.net/b-hls-1/media.mp4"
+    assert stripchat._normalize_stream_cdn_url(
+        "https://media-hls.doppiocdn.com/b-hls-1/1/1_480p.m3u8?psch=v2&pkey=abc"
+    ) == "https://media-hls.doppiocdn.net/b-hls-1/1/1_480p.m3u8?psch=v2&pkey=abc&playlistType=lowLatency"
 
 
 def test_rewrite_mouflon_manifest_prefers_parts_over_broken_full_segments():
