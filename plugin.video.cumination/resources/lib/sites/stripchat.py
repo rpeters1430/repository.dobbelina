@@ -560,6 +560,17 @@ def Playvid(url, name):
                 return True
             return False
 
+        def _manifest_has_parent_relative_segments(manifest_text):
+            if not isinstance(manifest_text, str) or "#EXTM3U" not in manifest_text:
+                return False
+            for line in manifest_text.splitlines():
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                if line.startswith("../"):
+                    return True
+            return False
+
         def _candidate_is_ad_path(candidate_url):
             master_text = _fetch_manifest_text(candidate_url)
             if not master_text or "#EXTM3U" not in master_text:
@@ -627,6 +638,13 @@ def Playvid(url, name):
                 if not child_text or "#EXTM3U" not in child_text:
                     continue
                 if _is_ad_or_stub_manifest(child_text):
+                    continue
+                if _manifest_has_parent_relative_segments(child_text):
+                    utils.kodilog(
+                        "Stripchat: Skipping signed media candidate with parent-relative segments: {}".format(
+                            signed_child_url[:80]
+                        )
+                    )
                     continue
                 utils.kodilog(
                     "Stripchat: Derived signed media candidate: {}".format(
