@@ -69,7 +69,9 @@ def _live_preview_url(url, snapshot_ts=None, cache_bust=None):
 def _model_screenshot(model, cache_bust=None):
     if not isinstance(model, dict):
         return ""
-    snapshot_ts = model.get("snapshotTimestamp") or model.get("popularSnapshotTimestamp")
+    snapshot_ts = model.get("snapshotTimestamp") or model.get(
+        "popularSnapshotTimestamp"
+    )
     image_fields = (
         "previewUrlThumbSmall",
         "previewUrlThumbBig",
@@ -268,16 +270,12 @@ def clean_database(showdialog=True):
                 for row in rows:
                     conn.execute("DELETE FROM sizes WHERE idtexture = ?;", (row[0],))
                     try:
-                        os.remove(
-                            utils.TRANSLATEPATH("special://thumbnails/" + row[1])
-                        )
+                        os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
                     except Exception as e:
                         utils.kodilog(
                             "@@@@Cumination: Silent failure in stripchat: " + str(e)
                         )
-                conn.execute(
-                    "DELETE FROM texture WHERE url LIKE ?;", (pattern,)
-                )
+                conn.execute("DELETE FROM texture WHERE url LIKE ?;", (pattern,))
             if showdialog:
                 utils.notify("Finished", "Stripchat images cleared")
     except Exception as e:
@@ -298,10 +296,14 @@ def Playvid(url, name):
         }
         # The external widget API returns rich stream data (stream.url, stream.urls,
         # snapshotUrl etc.) and supports modelsList lookup by username.
-        endpoint = "https://stripchat.com/api/external/v4/widget/?limit=1&modelsList={0}"
+        endpoint = (
+            "https://stripchat.com/api/external/v4/widget/?limit=1&modelsList={0}"
+        )
         try:
             utils.kodilog(
-                "Stripchat: Fetching model details: {}".format(endpoint.format(model_name))
+                "Stripchat: Fetching model details: {}".format(
+                    endpoint.format(model_name)
+                )
             )
             response, _ = utils.get_html_with_cloudflare_retry(
                 endpoint.format(model_name),
@@ -339,9 +341,7 @@ def Playvid(url, name):
         except json.JSONDecodeError as e:
             utils.kodilog("Stripchat: JSON decode error: {}".format(str(e)))
         except Exception as e:
-            utils.kodilog(
-                "Stripchat: Error loading model details: {}".format(str(e))
-            )
+            utils.kodilog("Stripchat: Error loading model details: {}".format(str(e)))
         return None
 
     def _pick_stream(model_data, fallback_url):
@@ -354,7 +354,9 @@ def Playvid(url, name):
         def _mirror_saaws_to_doppi(stream_url):
             if not isinstance(stream_url, str) or "saawsedge.com" not in stream_url:
                 return None
-            return stream_url.replace("edge-hls.saawsedge.com", "edge-hls.doppiocdn.com")
+            return stream_url.replace(
+                "edge-hls.saawsedge.com", "edge-hls.doppiocdn.com"
+            )
 
         # Treat online flags as advisory only; keep stream candidates if present.
         if model_data:
@@ -525,7 +527,10 @@ def Playvid(url, name):
                 )
                 text = ""
                 err = str(e).lower()
-                if "name or service not known" in err or "could not resolve host" in err:
+                if (
+                    "name or service not known" in err
+                    or "could not resolve host" in err
+                ):
                     manifest_probe_errors[manifest_url] = "dns"
             if (not isinstance(text, str) or "#EXTM3U" not in text) and isinstance(
                 manifest_url, str
@@ -599,9 +604,7 @@ def Playvid(url, name):
             if not master_text or "#EXTM3U" not in master_text:
                 return None
 
-            mouflon = re.search(
-                r"#EXT-X-MOUFLON:PSCH:(v\d+):([^\r\n]+)", master_text
-            )
+            mouflon = re.search(r"#EXT-X-MOUFLON:PSCH:(v\d+):([^\r\n]+)", master_text)
             if not mouflon:
                 return None
 
@@ -716,7 +719,9 @@ def Playvid(url, name):
             )
             preferred = preferred_unreachable
         else:
-            utils.kodilog("Stripchat: Only ad stream candidates available; skipping playback")
+            utils.kodilog(
+                "Stripchat: Only ad stream candidates available; skipping playback"
+            )
             return None, is_online_flag
 
         preferred.sort(

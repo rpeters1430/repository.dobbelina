@@ -193,7 +193,9 @@ def test_pick_stream_parses_flat_quality_urls(monkeypatch):
     monkeypatch.setattr(stripchat.utils, "_getHtml", fake__get_html)
     monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
 
-    stripchat.Playvid("https://edge-hls.doppiocdn.com/hls/123/master/123_240p.m3u8", "testmodel")
+    stripchat.Playvid(
+        "https://edge-hls.doppiocdn.com/hls/123/master/123_240p.m3u8", "testmodel"
+    )
 
     # The 480p candidate from stream.urls gets promoted to source (123.m3u8, score 9000)
     # which beats 480p (score 480). Both are doppiocdn URLs — either is acceptable.
@@ -753,7 +755,9 @@ def test_playvid_skips_reachable_ad_when_non_ad_is_unresolved(monkeypatch):
 
     assert not played_urls
     assert notifications
-    assert any("unable to locate stream url" in n["message"].lower() for n in notifications)
+    assert any(
+        "unable to locate stream url" in n["message"].lower() for n in notifications
+    )
 
 
 def test_playvid_mirrors_saaws_to_doppi_and_plays_reachable_stream(monkeypatch):
@@ -821,7 +825,9 @@ def test_playvid_mirrors_saaws_to_doppi_and_plays_reachable_stream(monkeypatch):
     monkeypatch.setattr(stripchat.utils, "_getHtml", fake__get_html)
     monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
 
-    stripchat.Playvid("https://edge-hls.doppiocdn.com/hls/123/master/123_240p.m3u8", "testmodel")
+    stripchat.Playvid(
+        "https://edge-hls.doppiocdn.com/hls/123/master/123_240p.m3u8", "testmodel"
+    )
 
     assert played_urls
     assert played_urls[0].startswith(mirrored + "|")
@@ -839,7 +845,9 @@ def test_playvid_uses_signed_media_child_to_avoid_ad_manifest(monkeypatch):
         },
     }
 
-    doppi_master = "https://edge-hls.doppiocdn.com/hls/200900667/master/200900667_480p.m3u8"
+    doppi_master = (
+        "https://edge-hls.doppiocdn.com/hls/200900667/master/200900667_480p.m3u8"
+    )
     plain_child = "https://media-hls.doppiocdn.com/b-hls-02/200900667/200900667.m3u8?playlistType=lowLatency"
     signed_child = plain_child + "&psch=v2&pkey=Ook7quaiNgiyuhai"
 
@@ -851,12 +859,11 @@ def test_playvid_uses_signed_media_child_to_avoid_ad_manifest(monkeypatch):
     def fake__get_html(url, *args, **kwargs):
         if "saawsedge.com" in url:
             raise Exception("<urlopen error [Errno -2] Name or service not known>")
-        if (
-            url.startswith("https://edge-hls.doppiocdn.com/hls/200900667/master/")
-            and url.endswith(".m3u8")
-        ):
+        if url.startswith(
+            "https://edge-hls.doppiocdn.com/hls/200900667/master/"
+        ) and url.endswith(".m3u8"):
             return (
-                '#EXTM3U\n#EXT-X-MOUFLON:PSCH:v2:Ook7quaiNgiyuhai\n'
+                "#EXTM3U\n#EXT-X-MOUFLON:PSCH:v2:Ook7quaiNgiyuhai\n"
                 '#EXT-X-STREAM-INF:NAME="480p"\n' + plain_child
             )
         if url == plain_child:
