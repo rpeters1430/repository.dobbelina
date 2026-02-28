@@ -107,14 +107,39 @@ def _model_screenshot(model, cache_bust=None):
     return ""
 
 
-def _rewrite_mouflon_for_isa(manifest_text, base_url):
-    """Rewrite a MOUFLON HLS manifest so inputstream.adaptive can play it.
+def _normalize_stream_cdn_url(url):
+    if not isinstance(url, str) or not url:
+        return url
+
+    normalized = url.replace(".doppiocdn.com", ".doppiocdn.net")
+    parsed = urlparse(normalized)
+    if ".m3u8" not in parsed.path:
+        return normalized
+
+    query = parse_qs(parsed.query, keep_blank_values=True)
+    if "playlistType" not in query:
+        query["playlistType"] = ["lowLatency"]
+    return urlunparse(
+        (
+            parsed.scheme,
+            parsed.netloc,
+            parsed.path,
+            parsed.params,
+            urlencode(query, doseq=True),
+            parsed.fragment,
+        )
+    )
+
+
+def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
+    """Rewrite a MOUFLON HLS manifest so Kodi can play it.
 
     MOUFLON is Stripchat's proprietary LL-HLS extension. Each real segment URL
     is carried in an #EXT-X-MOUFLON:URI:<url> tag immediately before the
     placeholder ../media.mp4 segment line. This function:
       - replaces every placeholder segment with the corresponding real URL
       - makes the EXT-X-MAP URI absolute
+      - converts LL-HLS part tags into standard EXTINF entries when possible
       - strips low-latency and MOUFLON-specific tags ISA doesn't understand
     """
     if not manifest_text:
@@ -132,11 +157,23 @@ def _rewrite_mouflon_for_isa(manifest_text, base_url):
 
     lines_out = []
     pending_segment_url = None
+    part_segment_urls = []
+    drop_next_segment = False
     for line in manifest_text.splitlines():
         stripped = line.strip()
 
         if stripped.startswith("#EXT-X-MOUFLON:URI:"):
             pending_segment_url = stripped[len("#EXT-X-MOUFLON:URI:"):]
+            continue
+
+        if stripped.startswith("#EXT-X-PART:"):
+            if not pending_segment_url:
+                continue
+            duration_match = re.search(r"DURATION=([0-9.]+)", stripped)
+            if not duration_match:
+                continue
+            part_segment_urls.append((duration_match.group(1), pending_segment_url))
+            pending_segment_url = None
             continue
 
         if any(stripped.startswith(p) for p in _STRIP_PREFIXES):
@@ -151,7 +188,24 @@ def _rewrite_mouflon_for_isa(manifest_text, base_url):
             lines_out.append(line)
             continue
 
+        if stripped.startswith("#EXTINF:") and not stripped.endswith(","):
+            stripped += ","
+            line = stripped
+
+        if stripped.startswith("#EXTINF:") and part_segment_urls:
+            for duration, segment_url in part_segment_urls:
+                lines_out.append("#EXTINF:{0},".format(duration))
+                lines_out.append(segment_url)
+            part_segment_urls = []
+            pending_segment_url = None
+            drop_next_segment = True
+            continue
+
         if stripped and not stripped.startswith("#"):
+            if drop_next_segment:
+                drop_next_segment = False
+                pending_segment_url = None
+                continue
             if pending_segment_url:
                 lines_out.append(pending_segment_url)
                 pending_segment_url = None
@@ -162,7 +216,13 @@ def _rewrite_mouflon_for_isa(manifest_text, base_url):
 
         lines_out.append(line)
 
-    return "\n".join(lines_out)
+    if not lines_out:
+        return ""
+    return "\n".join(lines_out) + "\n"
+
+
+def _rewrite_mouflon_for_isa(manifest_text, base_url):
+    return _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url)
 
 
 def _start_manifest_proxy(selected_url, name):
@@ -178,6 +238,7 @@ def _start_manifest_proxy(selected_url, name):
     import threading
     import socket
 
+    selected_url = _normalize_stream_cdn_url(selected_url)
     parsed = urlparse(selected_url)
     base_url = "{0}://{1}{2}/".format(
         parsed.scheme,
@@ -198,8 +259,22 @@ def _start_manifest_proxy(selected_url, name):
     def _fetch_and_rewrite():
         try:
             resp = requests.get(selected_url, headers=fetch_headers, timeout=8)
-            if resp.status_code == 200 and "#EXTM3U" in resp.text:
-                rewritten = _rewrite_mouflon_for_isa(resp.text, base_url)
+            if resp.status_code != 200:
+                utils.kodilog(
+                    "Stripchat proxy: fetch failed with HTTP {0} for {1}".format(
+                        resp.status_code, selected_url[:120]
+                    )
+                )
+                return
+            if "#EXTM3U" not in resp.text:
+                utils.kodilog(
+                    "Stripchat proxy: fetch returned non-manifest content for {0}".format(
+                        selected_url[:120]
+                    )
+                )
+                return
+            rewritten = _rewrite_mouflon_for_isa(resp.text, base_url)
+            if rewritten and "#EXTM3U" in rewritten:
                 with state_lock:
                     state["content"] = rewritten.encode("utf-8")
         except Exception as e:
