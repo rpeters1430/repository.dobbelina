@@ -19,7 +19,7 @@ import json
 import re
 import time
 import requests
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, urljoin
 
 from resources.lib import utils
 from six.moves import urllib_parse
@@ -106,6 +106,141 @@ def _model_screenshot(model, cache_bust=None):
 
     return ""
 
+
+def _rewrite_mouflon_for_isa(manifest_text, base_url):
+    """Rewrite a MOUFLON HLS manifest so inputstream.adaptive can play it.
+
+    MOUFLON is Stripchat's proprietary LL-HLS extension. Each real segment URL
+    is carried in an #EXT-X-MOUFLON:URI:<url> tag immediately before the
+    placeholder ../media.mp4 segment line. This function:
+      - replaces every placeholder segment with the corresponding real URL
+      - makes the EXT-X-MAP URI absolute
+      - strips low-latency and MOUFLON-specific tags ISA doesn't understand
+    """
+    if not manifest_text:
+        return manifest_text
+
+    _STRIP_PREFIXES = (
+        "#EXT-X-SERVER-CONTROL:",
+        "#EXT-X-PART-INF:",
+        "#EXT-X-PART:",
+        "#EXT-X-PRELOAD-HINT:",
+        "#EXT-X-RENDITION-REPORT:",
+        "#EXT-X-MOUFLON:",
+        "#EXT-X-MOUFLON-ADVERT",
+    )
+
+    lines_out = []
+    pending_segment_url = None
+    for line in manifest_text.splitlines():
+        stripped = line.strip()
+
+        if stripped.startswith("#EXT-X-MOUFLON:URI:"):
+            pending_segment_url = stripped[len("#EXT-X-MOUFLON:URI:"):]
+            continue
+
+        if any(stripped.startswith(p) for p in _STRIP_PREFIXES):
+            continue
+
+        if stripped.startswith("#EXT-X-MAP:URI="):
+            uri_match = re.search(r'URI="([^"]+)"', stripped)
+            if uri_match:
+                map_uri = uri_match.group(1)
+                if not map_uri.startswith("http"):
+                    line = line.replace(map_uri, urljoin(base_url, map_uri))
+            lines_out.append(line)
+            continue
+
+        if stripped and not stripped.startswith("#"):
+            if pending_segment_url:
+                lines_out.append(pending_segment_url)
+                pending_segment_url = None
+                continue
+            if not stripped.startswith("http"):
+                lines_out.append(urljoin(base_url, stripped))
+                continue
+
+        lines_out.append(line)
+
+    return "\n".join(lines_out)
+
+
+def _start_manifest_proxy(selected_url, name):
+    """Start a local HTTP server that serves a MOUFLON-rewritten manifest.
+
+    ISA cannot handle MOUFLON HLS extensions, so we intercept the manifest,
+    rewrite the placeholder ../media.mp4 segments with real CDN URLs, and
+    serve the clean manifest over localhost HTTP for ISA to poll.
+
+    Returns the localhost URL to pass to ISA, or None on failure.
+    """
+    import http.server
+    import threading
+    import socket
+
+    parsed = urlparse(selected_url)
+    base_url = "{0}://{1}{2}/".format(
+        parsed.scheme,
+        parsed.netloc,
+        "/".join(parsed.path.split("/")[:-1]),
+    )
+
+    fetch_headers = {
+        "User-Agent": utils.USER_AGENT,
+        "Origin": "https://stripchat.com",
+        "Referer": "https://stripchat.com/{0}".format(name),
+        "Accept": "application/x-mpegURL,application/vnd.apple.mpegurl,*/*",
+    }
+
+    state = {"content": b""}
+    state_lock = threading.Lock()
+
+    def _fetch_and_rewrite():
+        try:
+            resp = requests.get(selected_url, headers=fetch_headers, timeout=8)
+            if resp.status_code == 200 and "#EXTM3U" in resp.text:
+                rewritten = _rewrite_mouflon_for_isa(resp.text, base_url)
+                with state_lock:
+                    state["content"] = rewritten.encode("utf-8")
+        except Exception as e:
+            utils.kodilog("Stripchat proxy: fetch error: {}".format(str(e)))
+
+    _fetch_and_rewrite()
+    with state_lock:
+        if not state["content"]:
+            utils.kodilog("Stripchat: Manifest proxy initial fetch failed, falling back")
+            return None
+
+    class ManifestHandler(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            with state_lock:
+                content = state["content"]
+            self.send_response(200)
+            self.send_header("Content-Type", "application/vnd.apple.mpegurl")
+            self.send_header("Content-Length", str(len(content)))
+            self.send_header("Cache-Control", "no-cache")
+            self.end_headers()
+            self.wfile.write(content)
+
+        def log_message(self, fmt, *args):
+            pass
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("127.0.0.1", 0))
+        port = s.getsockname()[1]
+
+    srv = http.server.HTTPServer(("127.0.0.1", port), ManifestHandler)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+
+    def _refresh():
+        while True:
+            time.sleep(1)
+            _fetch_and_rewrite()
+
+    threading.Thread(target=_refresh, daemon=True).start()
+
+    utils.kodilog("Stripchat: Started manifest proxy on port {}".format(port))
+    return "http://127.0.0.1:{}/manifest.m3u8".format(port)
 
 
 @site.register(default_mode=True)
@@ -561,17 +696,6 @@ def Playvid(url, name):
                 return True
             return False
 
-        def _manifest_has_parent_relative_segments(manifest_text):
-            if not isinstance(manifest_text, str) or "#EXTM3U" not in manifest_text:
-                return False
-            for line in manifest_text.splitlines():
-                line = line.strip()
-                if not line or line.startswith("#"):
-                    continue
-                if line.startswith("../"):
-                    return True
-            return False
-
         def _candidate_is_ad_path(candidate_url):
             master_text = _fetch_manifest_text(candidate_url)
             if not master_text or "#EXTM3U" not in master_text:
@@ -639,13 +763,6 @@ def Playvid(url, name):
                 if not child_text or "#EXTM3U" not in child_text:
                     continue
                 if _is_ad_or_stub_manifest(child_text):
-                    continue
-                if _manifest_has_parent_relative_segments(child_text):
-                    utils.kodilog(
-                        "Stripchat: Skipping signed media candidate with parent-relative segments: {}".format(
-                            signed_child_url[:80]
-                        )
-                    )
                     continue
                 utils.kodilog(
                     "Stripchat: Derived signed media candidate: {}".format(
@@ -830,7 +947,11 @@ def Playvid(url, name):
     )
 
     utils.kodilog("Stripchat: Starting playback")
-    if ia_headers:
+    proxy_url = _start_manifest_proxy(stream_url, name)
+    if proxy_url:
+        utils.kodilog("Stripchat: Using manifest proxy: {}".format(proxy_url))
+        vp.play_from_direct_link(proxy_url)
+    elif ia_headers:
         vp.play_from_direct_link(stream_url + "|" + ia_headers)
     else:
         vp.play_from_direct_link(stream_url)
