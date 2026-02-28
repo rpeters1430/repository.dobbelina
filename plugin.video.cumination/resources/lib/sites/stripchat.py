@@ -99,7 +99,7 @@ def _model_screenshot(model, cache_bust=None):
 
     model_id = model.get("id")
     if snapshot_ts and model_id:
-        return "https://img.strpst.com/thumbs/{0}/{1}_webp".format(
+        return "https://img.doppiocdn.com/thumbs/{0}/{1}_webp".format(
             snapshot_ts, model_id
         )
     return ""
@@ -259,21 +259,25 @@ def clean_database(showdialog=True):
     conn = sqlite3.connect(utils.TRANSLATEPATH("special://database/Textures13.db"))
     try:
         with conn:
-            list = conn.execute(
-                "SELECT id, cachedurl FROM texture WHERE url LIKE ?;",
-                ("%" + ".strpst.com" + "%",),
-            )
-            for row in list:
-                conn.execute("DELETE FROM sizes WHERE idtexture = ?;", (row[0],))
-                try:
-                    os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
-                except Exception as e:
-                    utils.kodilog(
-                        "@@@@Cumination: Silent failure in stripchat: " + str(e)
-                    )
-            conn.execute(
-                "DELETE FROM texture WHERE url LIKE ?;", ("%" + ".strpst.com" + "%",)
-            )
+            for domain_fragment in (".strpst.com", ".doppiocdn.com"):
+                pattern = "%" + domain_fragment + "%"
+                rows = conn.execute(
+                    "SELECT id, cachedurl FROM texture WHERE url LIKE ?;",
+                    (pattern,),
+                ).fetchall()
+                for row in rows:
+                    conn.execute("DELETE FROM sizes WHERE idtexture = ?;", (row[0],))
+                    try:
+                        os.remove(
+                            utils.TRANSLATEPATH("special://thumbnails/" + row[1])
+                        )
+                    except Exception as e:
+                        utils.kodilog(
+                            "@@@@Cumination: Silent failure in stripchat: " + str(e)
+                        )
+                conn.execute(
+                    "DELETE FROM texture WHERE url LIKE ?;", (pattern,)
+                )
             if showdialog:
                 utils.notify("Finished", "Stripchat images cleared")
     except Exception as e:
@@ -292,58 +296,52 @@ def Playvid(url, name):
             "Origin": "https://stripchat.com",
             "Referer": "https://stripchat.com/{0}".format(model_name),
         }
-        endpoints = [
-            "https://stripchat.com/api/external/v4/widget/?limit=1&modelsList={0}",
-            "https://stripchat.com/api/front/models?limit=1&modelsList={0}&offset=0",
-        ]
-        for endpoint in endpoints:
-            try:
-                utils.kodilog(
-                    "Stripchat: Trying endpoint: {}".format(endpoint.format(model_name))
-                )
-                response, _ = utils.get_html_with_cloudflare_retry(
-                    endpoint.format(model_name),
-                    site.url,
-                    headers=headers,
-                    retry_on_empty=True,
-                )
-                if not response:
-                    utils.kodilog("Stripchat: Empty response from endpoint")
-                    continue
-                payload = json.loads(response)
-                models = payload.get("models") if isinstance(payload, dict) else None
-                if models and len(models) > 0:
-                    # Validate that the returned model matches the requested one
-                    for model in models:
-                        if model.get("username", "").lower() == model_name.lower():
-                            utils.kodilog(
-                                "Stripchat: Successfully loaded model details for {}".format(
-                                    model_name
-                                )
+        # The external widget API returns rich stream data (stream.url, stream.urls,
+        # snapshotUrl etc.) and supports modelsList lookup by username.
+        endpoint = "https://stripchat.com/api/external/v4/widget/?limit=1&modelsList={0}"
+        try:
+            utils.kodilog(
+                "Stripchat: Fetching model details: {}".format(endpoint.format(model_name))
+            )
+            response, _ = utils.get_html_with_cloudflare_retry(
+                endpoint.format(model_name),
+                site.url,
+                headers=headers,
+                retry_on_empty=True,
+            )
+            if not response:
+                utils.kodilog("Stripchat: Empty response from widget endpoint")
+                return None
+            payload = json.loads(response)
+            models = payload.get("models") if isinstance(payload, dict) else None
+            if models and len(models) > 0:
+                for model in models:
+                    if model.get("username", "").lower() == model_name.lower():
+                        utils.kodilog(
+                            "Stripchat: Successfully loaded model details for {}".format(
+                                model_name
                             )
-                            return model
-
+                        )
+                        return model
+                utils.kodilog(
+                    "Stripchat: Widget API returned models but none matched {}".format(
+                        model_name
+                    )
+                )
+                if models:
                     utils.kodilog(
-                        "Stripchat: API returned models but none matched {}".format(
-                            model_name
+                        "Stripchat: First returned model was: {}".format(
+                            models[0].get("username")
                         )
                     )
-                    if models:
-                        utils.kodilog(
-                            "Stripchat: First returned model was: {}".format(
-                                models[0].get("username")
-                            )
-                        )
-                else:
-                    utils.kodilog("Stripchat: No models in response")
-            except json.JSONDecodeError as e:
-                utils.kodilog("Stripchat: JSON decode error: {}".format(str(e)))
-                continue
-            except Exception as e:
-                utils.kodilog(
-                    "Stripchat: Error loading model details: {}".format(str(e))
-                )
-                continue
+            else:
+                utils.kodilog("Stripchat: No models in widget response")
+        except json.JSONDecodeError as e:
+            utils.kodilog("Stripchat: JSON decode error: {}".format(str(e)))
+        except Exception as e:
+            utils.kodilog(
+                "Stripchat: Error loading model details: {}".format(str(e))
+            )
         return None
 
     def _pick_stream(model_data, fallback_url):
@@ -399,6 +397,30 @@ def Playvid(url, name):
                             )
                         )
                         candidates.append((quality_label, data))
+            elif isinstance(urls_map, dict):
+                # Flat quality dict: stream.urls = {"480p": "url", "240p": "url", ...}
+                for quality, data in urls_map.items():
+                    quality_label = str(quality).lower()
+                    if isinstance(data, str) and data.startswith("http"):
+                        utils.kodilog(
+                            "Stripchat: Found quality stream: {} - {}".format(
+                                quality_label, data[:80]
+                            )
+                        )
+                        candidates.append((quality_label, data))
+                    elif isinstance(data, dict):
+                        for key in ("absolute", "https", "url", "src"):
+                            stream_url = data.get(key)
+                            if isinstance(stream_url, str) and stream_url.startswith(
+                                "http"
+                            ):
+                                utils.kodilog(
+                                    "Stripchat: Found quality stream: {} - {}".format(
+                                        quality_label, stream_url[:80]
+                                    )
+                                )
+                                candidates.append((quality_label, stream_url))
+                                break
             # Some responses keep direct URL on stream['url']
             stream_url = stream_info.get("url")
             if isinstance(stream_url, str) and stream_url.startswith("http"):

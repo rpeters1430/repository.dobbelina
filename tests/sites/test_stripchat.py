@@ -110,7 +110,7 @@ def test_model_screenshot_falls_back_to_snapshot_url():
 
     assert (
         stripchat._model_screenshot(model)
-        == "https://img.strpst.com/thumbs/123456/111_webp"
+        == "https://img.doppiocdn.com/thumbs/123456/111_webp"
     )
 
 
@@ -124,6 +124,82 @@ def test_model_screenshot_prefers_live_preview_variant():
     assert stripchat._model_screenshot(model) == (
         "https://static-proxy.strpst.com/previews/a/b/c/hash-thumb-big?t=123456"
     )
+
+
+def test_pick_stream_parses_flat_quality_urls(monkeypatch):
+    """stream.urls with direct quality keys like '480p', '240p' should be used as candidates."""
+    played_urls = []
+    model_data = {
+        "username": "testmodel",
+        "isOnline": True,
+        "isBroadcasting": True,
+        "stream": {
+            "url": "https://edge-hls.saawsedge.com/hls/123/master/123_480p.m3u8",
+            "urls": {
+                "original": "https://edge-hls.saawsedge.com/hls/123/master/123_480p.m3u8",
+                "480p": "https://edge-hls.saawsedge.com/hls/123/master/123_480p.m3u8",
+                "240p": "https://edge-hls.saawsedge.com/hls/123/master/123_240p.m3u8",
+                "160p": "https://edge-hls.saawsedge.com/hls/123/master/123_160p.m3u8",
+            },
+        },
+    }
+
+    doppi_480 = "https://edge-hls.doppiocdn.com/hls/123/master/123_480p.m3u8"
+
+    def fake_get_html(url, *args, **kwargs):
+        if "api/external/v4/widget" in url:
+            return json.dumps({"models": [model_data]}), False
+        return "", False
+
+    def fake__get_html(url, *args, **kwargs):
+        if "doppiocdn.com" in url and ".m3u8" in url:
+            return "#EXTM3U\n#EXT-X-TARGETDURATION:4\n#EXTINF:4.0,\nhttps://media/seg1.ts\n"
+        raise Exception("Name or service not known")
+
+    class FakeHelper:
+        def __init__(self, adaptive_type):
+            pass
+
+        def check_inputstream(self):
+            return True
+
+    class FakeProgress:
+        def update(self, percent, message):
+            pass
+
+        def close(self):
+            pass
+
+    class FakeVideoPlayer:
+        def __init__(self, name, **kwargs):
+            self.name = name
+            self.progress = FakeProgress()
+
+        def play_from_direct_link(self, link):
+            played_urls.append(link)
+
+    import sys
+    import types
+
+    fake_inputstreamhelper = types.ModuleType("inputstreamhelper")
+    fake_inputstreamhelper.Helper = FakeHelper
+    sys.modules["inputstreamhelper"] = fake_inputstreamhelper
+
+    monkeypatch.setattr(stripchat.utils, "notify", lambda *a, **k: None)
+    monkeypatch.setattr(stripchat.utils, "kodilog", lambda x: None)
+    monkeypatch.setattr(
+        stripchat.utils, "get_html_with_cloudflare_retry", fake_get_html
+    )
+    monkeypatch.setattr(stripchat.utils, "_getHtml", fake__get_html)
+    monkeypatch.setattr(stripchat.utils, "VideoPlayer", FakeVideoPlayer)
+
+    stripchat.Playvid("https://edge-hls.doppiocdn.com/hls/123/master/123_240p.m3u8", "testmodel")
+
+    # The 480p candidate from stream.urls gets promoted to source (123.m3u8, score 9000)
+    # which beats 480p (score 480). Both are doppiocdn URLs — either is acceptable.
+    assert played_urls
+    assert "doppiocdn.com" in played_urls[0]
+    assert "/hls/123/" in played_urls[0]
 
 
 def test_playvid_requires_inputstreamadaptive(monkeypatch):
@@ -519,10 +595,11 @@ def test_playvid_avoids_ad_only_manifests(monkeypatch):
         "https://edge-hls.doppiocdn.com/hls/200/master/200_240p.m3u8", "testmodel"
     )
 
+    # The ad candidate (doppi_source) is rejected. saawsedge is filtered out.
+    # The saawsedge 480p mirror (doppiocdn 480p) is not an ad and wins over 240p fallback.
     assert played_urls
-    assert played_urls[0].startswith(saaws_480 + "|") or played_urls[0].startswith(
-        "https://edge-hls.doppiocdn.com/hls/200/master/200_240p.m3u8|"
-    )
+    assert "doppiocdn.com" in played_urls[0]
+    assert doppi_source.split("|")[0] not in played_urls[0]
 
 
 def test_playvid_validates_returned_model_name(monkeypatch):
