@@ -141,6 +141,17 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text):
     return "\n".join(rewritten) + "\n"
 
 
+def _normalize_stream_cdn_url(url):
+    if not isinstance(url, str) or not url:
+        return url
+    normalized = url
+    normalized = normalized.replace("edge-hls.doppiocdn.com", "edge-hls.doppiocdn.net")
+    normalized = normalized.replace("media-hls.doppiocdn.com", "media-hls.doppiocdn.net")
+    normalized = normalized.replace("edge-hls.saawsedge.com", "edge-hls.saawsedge.net")
+    normalized = normalized.replace("media-hls.saawsedge.com", "media-hls.saawsedge.net")
+    return normalized
+
+
 @site.register(default_mode=True)
 def Main():
     female = utils.addon.getSetting("chatfemale") == "true"
@@ -863,28 +874,37 @@ def Playvid(url, name):
     )
 
     def _build_local_mouflon_stream(selected_stream_url):
-        try:
-            proxy_headers = {
-                "User-Agent": utils.USER_AGENT,
-                "Origin": "https://stripchat.com",
-                "Referer": "https://stripchat.com/{0}".format(name),
-                "Accept": "application/x-mpegURL,application/vnd.apple.mpegurl,*/*",
-            }
-            manifest_text = utils._getHtml(
-                selected_stream_url,
-                "https://stripchat.com/{0}".format(name),
-                headers=proxy_headers,
-                error="throw",
-            )
-        except Exception:
-            manifest_text = ""
-        if (not isinstance(manifest_text, str) or "#EXTM3U" not in manifest_text) and (
-            isinstance(selected_stream_url, str) and ".m3u8" in selected_stream_url
-        ):
+        proxy_headers = {
+            "User-Agent": utils.USER_AGENT,
+            "Origin": "https://stripchat.com",
+            "Referer": "https://stripchat.com/{0}".format(name),
+            "Accept": "application/x-mpegURL,application/vnd.apple.mpegurl,*/*",
+        }
+        manifest_text = ""
+        active_stream_url = selected_stream_url
+        candidate_fetch_urls = [_normalize_stream_cdn_url(selected_stream_url)]
+        if candidate_fetch_urls[0] != selected_stream_url:
+            candidate_fetch_urls.append(selected_stream_url)
+        for fetch_url in candidate_fetch_urls:
             try:
-                manifest_text = requests.get(selected_stream_url, timeout=8).text
+                manifest_text = utils._getHtml(
+                    fetch_url,
+                    "https://stripchat.com/{0}".format(name),
+                    headers=proxy_headers,
+                    error="throw",
+                )
             except Exception:
                 manifest_text = ""
+            if (
+                not isinstance(manifest_text, str) or "#EXTM3U" not in manifest_text
+            ) and (isinstance(fetch_url, str) and ".m3u8" in fetch_url):
+                try:
+                    manifest_text = requests.get(fetch_url, timeout=8).text
+                except Exception:
+                    manifest_text = ""
+            if isinstance(manifest_text, str) and "#EXTM3U" in manifest_text:
+                active_stream_url = fetch_url
+                break
         rewritten = _rewrite_mouflon_manifest_for_kodi(manifest_text)
         if not rewritten:
             return None
@@ -955,7 +975,7 @@ def Playvid(url, name):
         try:
             creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
             subprocess.Popen(
-                [updater_python, "-c", updater_script, selected_stream_url, child_path],
+                [updater_python, "-c", updater_script, active_stream_url, child_path],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 stdin=subprocess.DEVNULL,

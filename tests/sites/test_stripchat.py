@@ -143,6 +143,15 @@ def test_rewrite_mouflon_manifest_for_kodi_replaces_placeholder_segments():
     )
 
 
+def test_normalize_stream_cdn_url_prefers_net_hosts():
+    assert stripchat._normalize_stream_cdn_url(
+        "https://edge-hls.doppiocdn.com/hls/1/master/1_480p.m3u8"
+    ) == "https://edge-hls.doppiocdn.net/hls/1/master/1_480p.m3u8"
+    assert stripchat._normalize_stream_cdn_url(
+        "https://media-hls.doppiocdn.com/b-hls-1/media.mp4"
+    ) == "https://media-hls.doppiocdn.net/b-hls-1/media.mp4"
+
+
 def test_pick_stream_parses_flat_quality_urls(monkeypatch):
     """stream.urls with direct quality keys like '480p', '240p' should be used as candidates."""
     played_urls = []
