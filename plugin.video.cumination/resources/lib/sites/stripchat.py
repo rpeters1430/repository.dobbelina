@@ -117,6 +117,8 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text):
     rewritten = []
     mouflon_uri = ""
     replaced = False
+    segment_from_parts = False
+    skip_next_media_placeholder = False
 
     for line in lines:
         stripped = line.strip()
@@ -124,7 +126,26 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text):
             mouflon_uri = stripped.split(":URI:", 1)[1].strip()
             continue
 
+        if stripped.startswith("#EXT-X-PART:"):
+            duration_match = re.search(r"DURATION=([0-9.]+)", stripped)
+            if mouflon_uri and duration_match:
+                rewritten.append("#EXTINF:{0},".format(duration_match.group(1)))
+                rewritten.append(mouflon_uri)
+                replaced = True
+                segment_from_parts = True
+                mouflon_uri = ""
+            continue
+
+        if stripped.startswith("#EXTINF:") and segment_from_parts:
+            skip_next_media_placeholder = True
+            segment_from_parts = False
+            continue
+
         if stripped and not stripped.startswith("#"):
+            if skip_next_media_placeholder:
+                skip_next_media_placeholder = False
+                mouflon_uri = ""
+                continue
             if mouflon_uri and (
                 stripped.startswith("../") or stripped.endswith("/media.mp4")
             ):

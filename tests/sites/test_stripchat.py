@@ -152,6 +152,29 @@ def test_normalize_stream_cdn_url_prefers_net_hosts():
     ) == "https://media-hls.doppiocdn.net/b-hls-1/media.mp4"
 
 
+def test_rewrite_mouflon_manifest_prefers_parts_over_broken_full_segments():
+    manifest = (
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:6\n"
+        "#EXT-X-MOUFLON:URI:https://cdn.example.com/part0.mp4\n"
+        '#EXT-X-PART:DURATION=0.500,URI="https://cdn.example.com/media.mp4"\n'
+        "#EXT-X-MOUFLON:URI:https://cdn.example.com/part1.mp4\n"
+        '#EXT-X-PART:DURATION=0.500,URI="https://cdn.example.com/media.mp4"\n'
+        "#EXTINF:1.000,\n"
+        "#EXT-X-MOUFLON:URI:https://cdn.example.com/full.mp4\n"
+        "https://cdn.example.com/media.mp4\n"
+    )
+
+    assert stripchat._rewrite_mouflon_manifest_for_kodi(manifest) == (
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:6\n"
+        "#EXTINF:0.500,\n"
+        "https://cdn.example.com/part0.mp4\n"
+        "#EXTINF:0.500,\n"
+        "https://cdn.example.com/part1.mp4\n"
+    )
+
+
 def test_pick_stream_parses_flat_quality_urls(monkeypatch):
     """stream.urls with direct quality keys like '480p', '240p' should be used as candidates."""
     played_urls = []
