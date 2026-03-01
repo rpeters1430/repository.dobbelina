@@ -123,7 +123,9 @@
       "Bash(pip install:*)",
       "Bash(podman ps:*)",
       "Bash(git stash:*)",
-      "Bash(git stash pop:*)"
+      "Bash(git stash pop:*)",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(git:*)"
     ],
     "deny": [],
     "ask": []
