@@ -239,6 +239,37 @@ def test_list_without_pagination(monkeypatch):
     assert len(dirs) == 0
 
 
+def test_list_parses_new_video_format(monkeypatch):
+    """Test that List correctly parses the new /video/ URL format."""
+    html = (FIXTURE_DIR / "listing_new.html").read_text(encoding="utf-8")
+
+    downloads = []
+
+    def fake_get_html(url, referer=None):
+        return html
+
+    def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
+        downloads.append(
+            {
+                "name": name,
+                "url": url,
+            }
+        )
+
+    monkeypatch.setattr(reallifecam.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(reallifecam.site, "add_download_link", fake_add_download_link)
+    monkeypatch.setattr(reallifecam.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(reallifecam.utils, "eod", lambda: None)
+
+    reallifecam.List("https://reallifecam.to/videos?o=mr")
+
+    assert len(downloads) == 2
+    assert "/video/21206/" in downloads[0]["url"] or "/video/21206" in downloads[0]["url"]
+    assert "Massage Viper" in downloads[0]["name"]
+    assert "/video/21205/" in downloads[1]["url"] or "/video/21205" in downloads[1]["url"]
+    assert "Savaira" in downloads[1]["name"]
+
+
 def test_categories_parses_items(monkeypatch):
     """Test that Categories correctly parses category items."""
     html = load_fixture("categories.html")

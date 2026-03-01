@@ -45,8 +45,8 @@ site3 = AdultSite(
 )
 site4 = AdultSite(
     "camcaps",
-    "[COLOR hotpink]Camcaps.to (SimpVids)[/COLOR]",
-    "https://simpvids.com/",
+    "[COLOR hotpink]Camcaps.tv (SimpVids)[/COLOR]",
+    "https://camcaps.tv/",
     "camcaps.png",
     "camcapsto",
 )
@@ -59,7 +59,7 @@ def getBaselink(url):
         siteurl = site2.url
     elif "reallifecams.in" in url:
         siteurl = site3.url
-    elif "camcaps.to" in url or "simpvids.com" in url:
+    elif "camcaps.to" in url or "simpvids.com" in url or "camcaps.tv" in url:
         siteurl = site4.url
     return siteurl
 
@@ -256,34 +256,50 @@ def Playvid(url, name, download=None):
 
     soup = utils.parse_html(videopage)
 
-    # For simpvids.com - extract video ID from iframe and construct clean URL
-    # This avoids accessing the malicious embed URL entirely
-    if "simpvids.com" in url:
-        iframe = soup.select_one('.video-embedded iframe[src*="vidello.net"]')
-        if iframe:
-            iframe_src = utils.safe_get_attr(iframe, "src")
-            # Extract video ID from: https://vidello.net/embed-e14kle5qmavq.html
+    # Find ALL iframes and filter out ads
+    iframes = soup.select(".video-embedded iframe, iframe[src]")
+    refurl = None
+    for iframe in iframes:
+        src = utils.safe_get_attr(iframe, "src")
+        if src and "a-ads.com" not in src:
+            refurl = src
+            break
+
+    if refurl:
+        if refurl.startswith("//"):
+            refurl = "https:" + refurl
+        elif refurl.startswith("/"):
+            refurl = urllib_parse.urljoin(url, refurl)
+
+        # Handle camcaps.tv / camcaps.to / simpvids.com which often lead to vidello
+        if "vidello.net" in refurl or "camcaps.tv" in refurl:
+            # If it's a camcaps.tv embed, it might contain another iframe for vidello
+            if "camcaps.tv/embed/" in refurl:
+                embed_page = utils.getHtml(refurl)
+                embed_soup = utils.parse_html(embed_page)
+                vidello_iframe = embed_soup.select_one('iframe[src*="vidello.net"]')
+                if vidello_iframe:
+                    refurl = utils.safe_get_attr(vidello_iframe, "src")
+
+            # Extract video ID from vidello: https://vidello.net/embed-e14kle5qmavq.html
             # To construct clean URL: https://vidello.net/e14kle5qmavq.html
             video_id_match = re.search(
-                r"vidello\.net/(?:embed-)?([^/]+)\.html", iframe_src
+                r"vidello\.net/(?:embed-)?([^/]+)\.html", refurl
             )
             if video_id_match:
                 video_id = video_id_match.group(1)
-                # Construct clean non-embed URL
                 vidello_url = "https://vidello.net/{}.html".format(video_id)
                 if vp.resolveurl.HostedMediaFile(vidello_url):
                     vp.play_from_link_to_resolve(vidello_url)
                     return
 
-    # Original logic for other sites (reallifecam, voyeur-house, etc)
-    iframe = soup.select_one(".video-embedded iframe, iframe[src]")
-    refurl = utils.safe_get_attr(iframe, "src") if iframe else None
-    if refurl:
         if "/vtplayer.net/" in refurl:
             refurl = refurl.replace("embed-", "")
+
         if vp.resolveurl.HostedMediaFile(refurl):
             vp.play_from_link_to_resolve(refurl)
             return
+
         refpage = utils.getHtml(refurl)
         if "/playerz/" in refurl:
             videourl = re.compile(
@@ -294,17 +310,20 @@ def Playvid(url, name, download=None):
             vp.direct_regex = '{"file":"([^"]+)"'
             vp.play_from_html(videourlpage)
         else:
-            videourl = re.compile(
+            packed_match = re.compile(
                 r">(eval.+?)<\/script>", re.DOTALL | re.IGNORECASE
-            ).findall(refpage)[0]
-            videourl = unpack(videourl)
-            videolink = re.compile(
-                '(?:src|file):"([^"]+)"', re.DOTALL | re.IGNORECASE
-            ).findall(videourl)
-            if videolink:
-                videolink = videolink[0] + "|Referer=" + refurl + "&verifypeer=false"
-                if videolink.startswith("/") and "vidello" in refurl:
-                    videolink = "https://oracle.vidello.net" + videolink
-                vp.play_from_direct_link(videolink)
-    else:
-        vp.play_from_html(videopage)
+            ).findall(refpage)
+            if packed_match:
+                videourl = unpack(packed_match[0])
+                videolink = re.compile(
+                    '(?:src|file):"([^"]+)"', re.DOTALL | re.IGNORECASE
+                ).findall(videourl)
+                if videolink:
+                    videolink = videolink[0] + "|Referer=" + refurl + "&verifypeer=false"
+                    if videolink.startswith("/") and "vidello" in refurl:
+                        videolink = "https://oracle.vidello.net" + videolink
+                    vp.play_from_direct_link(videolink)
+                    return
+
+    # Fallback to direct page scraping
+    vp.play_from_html(videopage)
