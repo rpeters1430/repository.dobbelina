@@ -418,14 +418,49 @@ def _start_manifest_proxy(selected_url, name):
         "Accept": "application/x-mpegURL,application/vnd.apple.mpegurl,*/*",
     }
 
+    # Shared session so CDN cookies from the manifest fetch carry over to
+    # all segment requests (some CDNs set auth cookies on the manifest URL).
+    session = requests.Session()
+    session.headers.update(fetch_headers)
+
     state = {"content": b""}
     state_lock = threading.Lock()
     fetch_round = {"count": 0}
+
+    # Segment byte cache: cdn_url -> bytes
+    # Segments are pre-fetched immediately after each manifest refresh so they
+    # are available before ISA asks for them (avoids timing / expiry issues).
+    segment_cache = {}
+    segment_cache_lock = threading.Lock()
 
     # Bind socket first so port is known for segment URL rewriting
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(("127.0.0.1", 0))
         port = s.getsockname()[1]
+
+    def _prefetch_segment(cdn_url):
+        """Fetch one segment from CDN and store in cache."""
+        try:
+            resp = session.get(cdn_url, timeout=12)
+            if resp.status_code == 200:
+                with segment_cache_lock:
+                    segment_cache[cdn_url] = resp.content
+                    # Keep cache bounded to ~15 segments
+                    while len(segment_cache) > 15:
+                        del segment_cache[next(iter(segment_cache))]
+                utils.kodilog(
+                    "Stripchat proxy: pre-fetched {0}b for ...{1}".format(
+                        len(resp.content), cdn_url[-70:]
+                    )
+                )
+            else:
+                utils.kodilog(
+                    "Stripchat proxy: pre-fetch CDN HTTP {0} for ...{1}".format(
+                        resp.status_code, cdn_url[-70:]
+                    )
+                )
+        except Exception as e:
+            utils.kodilog("Stripchat proxy: pre-fetch error: {}".format(str(e)))
 
     def _fetch_and_rewrite():
         try:
@@ -435,7 +470,7 @@ def _start_manifest_proxy(selected_url, name):
                     fetch_round["count"], selected_url[:140]
                 )
             )
-            resp = requests.get(selected_url, headers=fetch_headers, timeout=8)
+            resp = session.get(selected_url, timeout=8)
             if resp.status_code != 200:
                 utils.kodilog(
                     "Stripchat proxy: fetch failed with HTTP {0} for {1}".format(
@@ -457,6 +492,19 @@ def _start_manifest_proxy(selected_url, name):
             )
             rewritten = _rewrite_mouflon_for_isa(resp.text, base_url)
             if rewritten and "#EXTM3U" in rewritten:
+                # Kick off background pre-fetches for every content segment URL
+                # while they are still fresh on the CDN.
+                for line in rewritten.splitlines():
+                    stripped = line.strip()
+                    if stripped and not stripped.startswith("#") and stripped.startswith("http"):
+                        with segment_cache_lock:
+                            already = stripped in segment_cache
+                        if not already:
+                            threading.Thread(
+                                target=_prefetch_segment,
+                                args=(stripped,),
+                                daemon=True,
+                            ).start()
                 rewritten = _proxy_segment_urls_in_manifest(rewritten, port)
                 utils.kodilog(
                     "Stripchat proxy: refresh #{0} prepared manifest with {1} bytes".format(
@@ -493,28 +541,57 @@ def _start_manifest_proxy(selected_url, name):
                     self.send_response(400)
                     self.end_headers()
                     return
-                try:
-                    seg_resp = requests.get(
-                        cdn_url, headers=fetch_headers, timeout=15, stream=True
-                    )
-                    self.send_response(seg_resp.status_code)
-                    ct = seg_resp.headers.get("Content-Type", "video/mp4")
-                    self.send_header("Content-Type", ct)
-                    cl = seg_resp.headers.get("Content-Length")
-                    if cl:
-                        self.send_header("Content-Length", cl)
-                    self.end_headers()
-                    for chunk in seg_resp.iter_content(chunk_size=65536):
-                        self.wfile.write(chunk)
-                except Exception as e:
+                # Wait briefly for any in-progress pre-fetch to complete
+                for _ in range(20):
+                    with segment_cache_lock:
+                        if cdn_url in segment_cache:
+                            break
+                    time.sleep(0.05)
+                with segment_cache_lock:
+                    cached = segment_cache.get(cdn_url)
+                if cached:
                     utils.kodilog(
-                        "Stripchat proxy: segment fetch error: {}".format(str(e))
+                        "Stripchat proxy: cache hit {0}b for ...{1}".format(
+                            len(cached), cdn_url[-70:]
+                        )
+                    )
+                    self.send_response(200)
+                    self.send_header("Content-Type", "video/mp4")
+                    self.send_header("Content-Length", str(len(cached)))
+                    self.end_headers()
+                    self.wfile.write(cached)
+                else:
+                    # Not in cache — fetch live from CDN (session carries cookies)
+                    utils.kodilog(
+                        "Stripchat proxy: cache miss, fetching live ...{}".format(
+                            cdn_url[-70:]
+                        )
                     )
                     try:
-                        self.send_response(503)
+                        seg_resp = session.get(cdn_url, timeout=15, stream=True)
+                        utils.kodilog(
+                            "Stripchat proxy: CDN returned HTTP {0} for ...{1}".format(
+                                seg_resp.status_code, cdn_url[-70:]
+                            )
+                        )
+                        self.send_response(seg_resp.status_code)
+                        ct = seg_resp.headers.get("Content-Type", "video/mp4")
+                        self.send_header("Content-Type", ct)
+                        cl = seg_resp.headers.get("Content-Length")
+                        if cl:
+                            self.send_header("Content-Length", cl)
                         self.end_headers()
-                    except Exception:
-                        pass
+                        for chunk in seg_resp.iter_content(chunk_size=65536):
+                            self.wfile.write(chunk)
+                    except Exception as e:
+                        utils.kodilog(
+                            "Stripchat proxy: segment fetch error: {}".format(str(e))
+                        )
+                        try:
+                            self.send_response(503)
+                            self.end_headers()
+                        except Exception:
+                            pass
             else:
                 with state_lock:
                     content = state["content"]
