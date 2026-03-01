@@ -103,7 +103,7 @@ def test_gotopage_valid_and_out_of_range(monkeypatch):
 
 
 def test_playvid_quality_paths(monkeypatch):
-    played = []
+    kt_player_called = {}
 
     class _Progress:
         def update(self, *_a, **_k):
@@ -113,47 +113,20 @@ def test_playvid_quality_paths(monkeypatch):
         def __init__(self, *_a, **_k):
             self.progress = _Progress()
 
-        def play_from_direct_link(self, url):
-            played.append(url)
+        def play_from_kt_player(self, html, url=None):
+            kt_player_called["html"] = html
+            kt_player_called["url"] = url
 
-    page = """
-    flashvars = {
-      license_code: "LIC123",
-      video_url_text: "MAX",
-      video_url: "function/0/encrypted",
-      video_alt_url_text: "1080p",
-      video_alt_url: "https://cdn/1080.mp4",
-      video_alt_url2: "https://cdn/480.mp4"
-    };
-    """
+    page = "kt_player('kt_player', 'https://allclassic.porn/player/', '600', '420', {});"
 
     monkeypatch.setattr(allclassic.utils, "VideoPlayer", _Player)
     monkeypatch.setattr(allclassic.utils, "getHtml", lambda *a, **k: page)
-    monkeypatch.setattr(
-        allclassic.utils, "prefquality", lambda *a, **k: "function/0/encrypted"
-    )
-    monkeypatch.setattr(
-        allclassic, "kvs_decode", lambda url, license: "https://decoded/video.mp4"
-    )
 
     allclassic.Playvid("https://allclassic.porn/watch/1", "Name")
 
-    monkeypatch.setattr(
-        allclassic.utils,
-        "prefquality",
-        lambda *a, **k: (_ for _ in ()).throw(ValueError("selector path")),
-    )
-    monkeypatch.setattr(
-        allclassic.utils, "selector", lambda *_a, **_k: "https://cdn/fallback.mp4"
-    )
-    allclassic.Playvid("https://allclassic.porn/watch/2", "Name")
-
-    assert (
-        played[0] == "https://decoded/video.mp4|Referer=https://allclassic.porn/watch/1"
-    )
-    assert (
-        played[1] == "https://cdn/fallback.mp4|Referer=https://allclassic.porn/watch/2"
-    )
+    assert "html" in kt_player_called
+    assert "kt_player('kt_player'" in kt_player_called["html"]
+    assert kt_player_called["url"] == "https://allclassic.porn/watch/1"
 
 
 def test_search_categories_lookup_related(monkeypatch):

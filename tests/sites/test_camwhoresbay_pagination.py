@@ -105,14 +105,8 @@ def test_gotopage_updates_page_param(monkeypatch):
 
 
 def test_playvid_decodes_and_plays(monkeypatch):
-    html = """
-    <html><body>
-    license_code: 'LIC123'
-    video_url: 'ENC720' some text video_url_text: '720p'
-    video_alt_url: 'ENC480' other text video_alt_url_text: '480p'
-    </body></html>
-    """
-    played = {}
+    html = "kt_player('kt_player', 'https://www.camwhoresbay.com/player/', '600', '420', {});"
+    kt_player_called = {}
 
     class DummyVP:
         def __init__(self, name, download):
@@ -120,26 +114,16 @@ def test_playvid_decodes_and_plays(monkeypatch):
             self.download = download
             self.progress = type("P", (), {"update": lambda *a, **k: None})
 
-        def play_from_direct_link(self, url):
-            played["url"] = url
+        def play_from_kt_player(self, html, url=None):
+            kt_player_called["html"] = html
+            kt_player_called["url"] = url
 
     monkeypatch.setattr(
         camwhoresbay.utils, "getHtml", lambda url, ref=None, headers=None: html
     )
     monkeypatch.setattr(camwhoresbay.utils, "VideoPlayer", DummyVP)
-    monkeypatch.setattr(
-        camwhoresbay, "kvs_decode", lambda surl, lic: f"decoded:{surl}:{lic}"
-    )
-
-    def select(prompt, sources, **kwargs):
-        # Should choose highest quality (720p) by default
-        return sources["720p"]
-
-    monkeypatch.setattr(camwhoresbay.utils, "selector", select)
 
     camwhoresbay.Playvid("https://www.camwhoresbay.com/video/123", "Sample Video")
 
-    assert (
-        played["url"]
-        == "decoded:ENC720:LIC123|Referer=https://www.camwhoresbay.com/video/123"
-    )
+    assert "html" in kt_player_called
+    assert "kt_player('kt_player'" in kt_player_called["html"]

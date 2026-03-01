@@ -85,7 +85,6 @@ def List(url):
         utils.eod()
         return
 
-    # utils.kodilog(listhtml)
     soup = utils.parse_html(listhtml)
     for link in soup.select("a.thumb, a.thumb[href]"):
         videopage = utils.safe_get_attr(link, "href", default="")

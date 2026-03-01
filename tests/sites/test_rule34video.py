@@ -319,22 +319,13 @@ def test_tag_handles_pagination_with_120_items(monkeypatch):
 
 
 def test_playvid_extracts_video_urls(monkeypatch):
-    """Test that Playvid() correctly extracts video URLs."""
+    """Test that Playvid() calls play_from_kt_player when kt_player is detected."""
     html = load_fixture("video.html")
 
-    play_called_with = {}
-    quality_srcs = {}
+    kt_player_called_with = {}
 
     def fake_get_html(url, referer=None):
         return html
-
-    def fake_prefquality(srcs, sort_by=None, reverse=False):
-        quality_srcs["srcs"] = srcs
-        # Return 1080p URL
-        return srcs["1080p"]
-
-    def fake_get_video_link(url, referer):
-        return url
 
     class MockVideoPlayer:
         def __init__(self, name, download=None):
@@ -344,12 +335,11 @@ def test_playvid_extracts_video_urls(monkeypatch):
                 {"update": lambda *a, **k: None, "close": lambda *a, **k: None},
             )()
 
-        def play_from_direct_link(self, url):
-            play_called_with["url"] = url
+        def play_from_kt_player(self, html, url=None):
+            kt_player_called_with["html"] = html
+            kt_player_called_with["url"] = url
 
     monkeypatch.setattr(rule34video.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(rule34video.utils, "prefquality", fake_prefquality)
-    monkeypatch.setattr(rule34video.utils, "getVideoLink", fake_get_video_link)
     monkeypatch.setattr(rule34video.utils, "VideoPlayer", MockVideoPlayer)
 
     # Call Playvid
@@ -358,50 +348,19 @@ def test_playvid_extracts_video_urls(monkeypatch):
         "Hentai Anime Episode 1",
     )
 
-    # Verify quality sources were extracted
-    assert "srcs" in quality_srcs
-    assert "720p" in quality_srcs["srcs"]
-    assert "1080p" in quality_srcs["srcs"]
-    assert "4k" in quality_srcs["srcs"]
-    assert (
-        quality_srcs["srcs"]["720p"]
-        == "https://cdn1.rule34video.com/videos/123/123.mp4"
-    )
-    assert (
-        quality_srcs["srcs"]["1080p"]
-        == "https://cdn2.rule34video.com/videos/123/123_1080.mp4"
-    )
-    assert (
-        quality_srcs["srcs"]["4k"]
-        == "https://cdn3.rule34video.com/videos/123/123_4k.mp4"
-    )
-
-    # Verify video was played
-    assert "url" in play_called_with
-    assert "cdn2.rule34video.com" in play_called_with["url"]
-    assert "User-Agent=iPad" in play_called_with["url"]
-    assert "Referer=" in play_called_with["url"]
+    # Verify play_from_kt_player was called with the fixture HTML
+    assert "html" in kt_player_called_with
+    assert "kt_player('kt_player'" in kt_player_called_with["html"]
 
 
 def test_playvid_handles_kvs_encrypted_urls(monkeypatch):
-    """Test that Playvid() decodes KVS encrypted URLs."""
+    """Test that Playvid() calls play_from_kt_player for KVS-encrypted pages."""
     html = load_fixture("video_kvs.html")
 
-    kvs_decode_called_with = {}
-    play_called_with = {}
+    kt_player_called_with = {}
 
     def fake_get_html(url, referer=None):
         return html
-
-    def fake_kvs_decode(url, license_code):
-        kvs_decode_called_with["url"] = url
-        kvs_decode_called_with["license_code"] = license_code
-        # Return decrypted URL
-        return "https://cdn-decrypted.rule34video.com/videos/123/123_720.mp4"
-
-    def fake_prefquality(srcs, sort_by=None, reverse=False):
-        # Return 720p encrypted URL
-        return srcs["720p"]
 
     class MockVideoPlayer:
         def __init__(self, name, download=None):
@@ -411,13 +370,11 @@ def test_playvid_handles_kvs_encrypted_urls(monkeypatch):
                 {"update": lambda *a, **k: None, "close": lambda *a, **k: None},
             )()
 
-        def play_from_direct_link(self, url):
-            play_called_with["url"] = url
+        def play_from_kt_player(self, html, url=None):
+            kt_player_called_with["html"] = html
+            kt_player_called_with["url"] = url
 
     monkeypatch.setattr(rule34video.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(rule34video, "kvs_decode", fake_kvs_decode)
-    monkeypatch.setattr(rule34video.utils, "prefquality", fake_prefquality)
-    monkeypatch.setattr(rule34video.utils, "getVideoLink", lambda *a: a[0])
     monkeypatch.setattr(rule34video.utils, "VideoPlayer", MockVideoPlayer)
 
     # Call Playvid
@@ -425,22 +382,17 @@ def test_playvid_handles_kvs_encrypted_urls(monkeypatch):
         "https://rule34video.com/video/123/encrypted-video/", "Encrypted Video"
     )
 
-    # Verify KVS decoder was called
-    assert "url" in kvs_decode_called_with
-    assert "license_code" in kvs_decode_called_with
-    assert kvs_decode_called_with["url"] == "function/0/123/abcdef/"
-    assert kvs_decode_called_with["license_code"] == "xyz789abc456def"
-
-    # Verify decrypted URL was played
-    assert "url" in play_called_with
-    assert "cdn-decrypted.rule34video.com" in play_called_with["url"]
+    # Verify play_from_kt_player was called
+    assert "html" in kt_player_called_with
+    assert "kt_player('kt_player'" in kt_player_called_with["html"]
 
 
 def test_playvid_handles_get_file_urls(monkeypatch):
-    """Test that Playvid() handles get_file URLs."""
+    """Test that Playvid() calls play_from_kt_player for pages with kt_player."""
     html = """
     <html>
     <script>
+        kt_player('kt_player', 'https://rule34video.com/player/', '600', '420', {});
         var flashvars = {
             video_url: 'https://rule34video.com/get_file/123/abcdef/', video_url_text: '720p',
             license_code: 'test123'
@@ -450,19 +402,10 @@ def test_playvid_handles_get_file_urls(monkeypatch):
     </html>
     """
 
-    get_video_link_called_with = {}
-    play_called_with = {}
+    kt_player_called_with = {}
 
     def fake_get_html(url, referer=None):
         return html
-
-    def fake_get_video_link(url, referer):
-        get_video_link_called_with["url"] = url
-        get_video_link_called_with["referer"] = referer
-        return "https://cdn-direct.rule34video.com/videos/123/123.mp4"
-
-    def fake_prefquality(srcs, sort_by=None, reverse=False):
-        return srcs["720p"]
 
     class MockVideoPlayer:
         def __init__(self, name, download=None):
@@ -472,36 +415,26 @@ def test_playvid_handles_get_file_urls(monkeypatch):
                 {"update": lambda *a, **k: None, "close": lambda *a, **k: None},
             )()
 
-        def play_from_direct_link(self, url):
-            play_called_with["url"] = url
+        def play_from_kt_player(self, html, url=None):
+            kt_player_called_with["html"] = html
+            kt_player_called_with["url"] = url
 
     monkeypatch.setattr(rule34video.utils, "getHtml", fake_get_html)
-    monkeypatch.setattr(rule34video.utils, "getVideoLink", fake_get_video_link)
-    monkeypatch.setattr(rule34video.utils, "prefquality", fake_prefquality)
     monkeypatch.setattr(rule34video.utils, "VideoPlayer", MockVideoPlayer)
 
     # Call Playvid
     rule34video.Playvid("https://rule34video.com/video/123/test/", "Test Video")
 
-    # Verify getVideoLink was called
-    assert "url" in get_video_link_called_with
-    assert "get_file" in get_video_link_called_with["url"]
-    assert get_video_link_called_with["referer"] == "https://rule34video.com/"
-
-    # Verify resolved URL was played
-    assert "url" in play_called_with
-    assert "cdn-direct.rule34video.com" in play_called_with["url"]
+    # Verify play_from_kt_player was called
+    assert "html" in kt_player_called_with
+    assert "kt_player('kt_player'" in kt_player_called_with["html"]
 
 
 def test_playvid_handles_no_video_sources(monkeypatch):
-    """Test that Playvid() handles missing video sources gracefully."""
+    """Test that Playvid() returns None silently when kt_player is not found."""
     html = "<html><body>No video here</body></html>"
 
-    notify_called_with = {}
-
-    def fake_notify(title, message):
-        notify_called_with["title"] = title
-        notify_called_with["message"] = message
+    kt_player_called = [False]
 
     class MockVideoPlayer:
         def __init__(self, name, download=None):
@@ -511,16 +444,17 @@ def test_playvid_handles_no_video_sources(monkeypatch):
                 {"update": lambda *a, **k: None, "close": lambda *a, **k: None},
             )()
 
+        def play_from_kt_player(self, html, url=None):
+            kt_player_called[0] = True
+
     monkeypatch.setattr(rule34video.utils, "getHtml", lambda *a, **k: html)
-    monkeypatch.setattr(rule34video.utils, "notify", fake_notify)
     monkeypatch.setattr(rule34video.utils, "VideoPlayer", MockVideoPlayer)
 
-    # Call Playvid
+    # Call Playvid - should return None without error
     result = rule34video.Playvid("https://rule34video.com/video/123/", "Test")
 
-    # Verify notify was called with error
-    assert notify_called_with["title"] == "Oh oh"
-    assert notify_called_with["message"] == "No video found"
+    # kt_player should not have been called
+    assert not kt_player_called[0]
     assert result is None
 
 

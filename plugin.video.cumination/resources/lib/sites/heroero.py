@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import re
 import xbmc
 from resources.lib import utils
-from resources.lib.decrypters.kvsplayer import kvs_decode
 from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
 from kodi_six import xbmcgui, xbmcplugin
@@ -313,18 +312,10 @@ def Categories(url):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    html = utils.getHtml(url)
-    surl = re.search(r"video_url:\s*'([^']+)'", html)
-    if surl:
-        surl = surl.group(1)
-        if surl.startswith("function/"):
-            license = re.findall(r"license_code:\s*'([^']+)", html)[0]
-            surl = kvs_decode(surl, license)
-    else:
-        vp.progress.close()
-        return
-    vp.progress.update(75, "[CR]Video found[CR]")
-    vp.play_from_direct_link(surl)
+    vpage = utils.getHtml(url, site.url)
+    if "kt_player('kt_player'" in vpage:
+        vp.progress.update(60, "[CR]{0}[CR]".format("kt_player detected"))
+        vp.play_from_kt_player(vpage, url)
 
 
 @site.register()

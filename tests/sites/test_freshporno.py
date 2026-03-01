@@ -204,46 +204,42 @@ class TestFreshPorno:
         assert "Lookupinfo" in source
 
     def test_kvs_decoder_usage(self):
-        """Test that Playvid function uses KVS decoder"""
+        """Test that Playvid function uses play_from_kt_player"""
         import inspect
 
         source = inspect.getsource(freshporno.Playvid)
 
-        # Should import and use KVS decoder
-        assert "kvs_decode" in source
-        assert "license_code" in source
-        assert "video_url:" in source
+        # Should use the centralized kt_player handler
+        assert "play_from_kt_player" in source
+        assert "kt_player('kt_player'" in source
 
     def test_video_source_patterns(self):
-        """Test that Playvid function has multiple video source patterns"""
+        """Test that Playvid function calls play_from_kt_player"""
         import inspect
 
         source = inspect.getsource(freshporno.Playvid)
 
-        # Should have multiple patterns for video sources
-        assert "video_url:" in source
-        assert "video_alt_url:" in source
-        assert "video_alt_url2:" in source
+        # Should delegate to play_from_kt_player for kt_player pages
+        assert "play_from_kt_player" in source
 
     def test_quality_selection_logic(self):
-        """Test that quality selection logic is present"""
+        """Test that Playvid uses play_from_kt_player which handles quality internally"""
         import inspect
 
         source = inspect.getsource(freshporno.Playvid)
 
-        # Should have quality selection
-        assert "utils.selector" in source
-        assert "Select quality" in source
+        # play_from_kt_player handles quality selection internally
+        assert "play_from_kt_player" in source
 
     def test_fallback_download_button(self):
-        """Test that there's fallback to download button when no sources found"""
+        """Test that Playvid calls play_from_kt_player when kt_player detected"""
         import inspect
 
         source = inspect.getsource(freshporno.Playvid)
 
-        # Should have fallback
-        assert "btn-download" in source
-        assert "No Videos found" in source
+        # Should trigger on kt_player detection
+        assert "kt_player('kt_player'" in source
+        assert "play_from_kt_player" in source
 
     def test_tag_icon_detection(self):
         """Test that tag function properly detects tag icons"""

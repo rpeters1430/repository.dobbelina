@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 from resources.lib import utils
-from resources.lib.decrypters.kvsplayer import kvs_decode
 from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
@@ -103,31 +102,10 @@ def List(url):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    html = utils.getHtml(url)
-    sources = re.findall(r"video(?:_alt)?_url:\s*'([^']+).+?text:\s*'([^']+)", html)
-    if sources:
-        sources = {label: url for url, label in sources}
-        surl = utils.prefquality(
-            sources,
-            sort_by=lambda x: int("".join([y for y in x if y.isdigit()])),
-            reverse=True,
-        )
-        if surl and surl.startswith("function/"):
-            lcode_match = re.findall(r"license_code:\s*'([^']+)", html)
-            if lcode_match:
-                lcode = lcode_match[0]
-                surl = "{0}|User-Agent=iPad&Referer={1}/".format(
-                    kvs_decode(surl, lcode), site.url
-                )
-    if not sources or not surl:
-        vp.progress.close()
-        return
-    vp.progress.update(75, "[CR]Video found[CR]")
-    vp.progress.close()
-    if download == 1:
-        utils.downloadVideo(surl, name)
-    else:
-        vp.play_from_direct_link(surl)
+    vpage = utils.getHtml(url, site.url)
+    if "kt_player('kt_player'" in vpage:
+        vp.progress.update(60, "[CR]{0}[CR]".format("kt_player detected"))
+        vp.play_from_kt_player(vpage, url)
 
 
 @site.register()

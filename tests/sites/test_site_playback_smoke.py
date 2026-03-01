@@ -29,6 +29,7 @@ class _Recorder:
         self.play_from_direct_link = None
         self.play_from_site_link = None
         self.play_from_html = None
+        self.play_from_kt_player = None
 
 
 def _pref_by_number(sources):
@@ -111,21 +112,7 @@ PLAY_CASES = [
         "func": "Play",
         "url": "https://www.pornhat.com/video/abc123",
         "fixture": "pornhat_play.html",
-        "expect": lambda rec, url: rec.play_from_direct_link
-        == "decoded:ENC720:LIC|resolved",
-        "extra_patches": lambda module, monkeypatch: (
-            monkeypatch.setattr(
-                module, "kvs_decode", lambda surl, lic: f"decoded:{surl}:{lic}"
-            ),
-            monkeypatch.setattr(
-                module.utils,
-                "selector",
-                lambda *_a, **_k: {"720p": "decoded:ENC720:LIC"}["720p"],
-            ),
-            monkeypatch.setattr(
-                module.utils, "getVideoLink", lambda link, ref: link + "|resolved"
-            ),
-        ),
+        "expect": lambda rec, url: rec.play_from_kt_player is not None,
     },
     {
         "name": "eporner",
@@ -159,8 +146,7 @@ PLAY_CASES = [
         "func": "Playvid",
         "url": "https://watchporn.to/video/abc123",
         "fixture": "watchporn_play.html",
-        "expect": lambda rec, url: rec.play_from_direct_link
-        == "https://watchporn.to/video720.mp4",
+        "expect": lambda rec, url: rec.play_from_kt_player is not None,
     },
     {
         "name": "hqporner",
@@ -282,6 +268,9 @@ def test_playback_smoke(monkeypatch, case):
 
         def play_from_link_to_resolve(self, url):
             recorder.play_from_site_link = url
+
+        def play_from_kt_player(self, html, url=None):
+            recorder.play_from_kt_player = (html, url)
 
     def fake_get_html(url, ref=None, headers=None):
         if "fixture_map" in case:
