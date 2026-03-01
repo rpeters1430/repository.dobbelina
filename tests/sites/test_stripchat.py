@@ -146,13 +146,13 @@ def test_rewrite_mouflon_manifest_for_kodi_replaces_placeholder_segments():
 def test_normalize_stream_cdn_url_prefers_net_hosts():
     assert stripchat._normalize_stream_cdn_url(
         "https://edge-hls.doppiocdn.com/hls/1/master/1_480p.m3u8"
-    ) == "https://edge-hls.doppiocdn.net/hls/1/master/1_480p.m3u8?playlistType=lowLatency"
+    ) == "https://edge-hls.doppiocdn.net/hls/1/master/1_480p.m3u8"
     assert stripchat._normalize_stream_cdn_url(
         "https://media-hls.doppiocdn.com/b-hls-1/media.mp4"
     ) == "https://media-hls.doppiocdn.net/b-hls-1/media.mp4"
     assert stripchat._normalize_stream_cdn_url(
         "https://media-hls.doppiocdn.com/b-hls-1/1/1_480p.m3u8?psch=v2&pkey=abc"
-    ) == "https://media-hls.doppiocdn.net/b-hls-1/1/1_480p.m3u8?psch=v2&pkey=abc&playlistType=lowLatency"
+    ) == "https://media-hls.doppiocdn.net/b-hls-1/1/1_480p.m3u8?psch=v2&pkey=abc"
 
 
 def test_rewrite_mouflon_manifest_prefers_parts_over_broken_full_segments():
@@ -940,8 +940,8 @@ def test_playvid_uses_signed_media_child_to_avoid_ad_manifest(monkeypatch):
     doppi_master = (
         "https://edge-hls.doppiocdn.com/hls/200900667/master/200900667_480p.m3u8"
     )
-    plain_child = "https://media-hls.doppiocdn.com/b-hls-02/200900667/200900667.m3u8?playlistType=lowLatency"
-    signed_child = plain_child + "&psch=v2&pkey=Ook7quaiNgiyuhai"
+    plain_child = "https://media-hls.doppiocdn.com/b-hls-02/200900667/200900667.m3u8"
+    signed_child = plain_child + "?psch=v2&pkey=Ook7quaiNgiyuhai"
 
     def fake_get_html(url, *args, **kwargs):
         if "api/external/v4/widget" in url or "api/front/models" in url:

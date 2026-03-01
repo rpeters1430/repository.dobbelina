@@ -50,7 +50,6 @@ def test_list_parses_video_items(monkeypatch):
         )
 
     monkeypatch.setattr(pornhoarder.utils, "postHtml", fake_post_html)
-    monkeypatch.setattr(pornhoarder.requests, "head", fake_head)
     monkeypatch.setattr(pornhoarder.site, "add_download_link", fake_add_download_link)
     monkeypatch.setattr(pornhoarder.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(pornhoarder.utils, "eod", lambda: None)
@@ -172,7 +171,6 @@ def test_list_handles_empty_results(monkeypatch):
         return Response()
 
     monkeypatch.setattr(pornhoarder.utils, "postHtml", fake_post_html)
-    monkeypatch.setattr(pornhoarder.requests, "head", fake_head)
     monkeypatch.setattr(
         pornhoarder.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
     )
