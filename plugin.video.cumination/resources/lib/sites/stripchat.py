@@ -19,7 +19,7 @@ import json
 import re
 import time
 import requests
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, urljoin
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, urljoin, quote, unquote
 
 from resources.lib import utils
 from six.moves import urllib_parse
@@ -361,6 +361,34 @@ def _keep_only_stable_segments(manifest_text, fetch_headers=None, keep_count=3, 
     return "\n".join(out_lines) + "\n"
 
 
+def _proxy_segment_urls_in_manifest(manifest_text, port):
+    """Rewrite absolute CDN segment URLs to route through the local proxy.
+
+    ISA fetches segments directly from the CDN without Origin/Referer headers,
+    causing 404 errors. By rewriting URLs to http://127.0.0.1:{port}/seg?url=...,
+    all segment fetches go through our proxy which adds the required headers.
+    """
+    lines = manifest_text.splitlines()
+    out = []
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("#EXT-X-MAP:URI="):
+            uri_match = re.search(r'URI="([^"]+)"', stripped)
+            if uri_match:
+                cdn_url = uri_match.group(1)
+                if cdn_url.startswith("http"):
+                    proxy_url = "http://127.0.0.1:{0}/seg?url={1}".format(
+                        port, quote(cdn_url, safe="")
+                    )
+                    line = line.replace(cdn_url, proxy_url)
+        elif stripped and not stripped.startswith("#") and stripped.startswith("http"):
+            line = "http://127.0.0.1:{0}/seg?url={1}".format(
+                port, quote(stripped, safe="")
+            )
+        out.append(line)
+    return "\n".join(out) + "\n"
+
+
 def _start_manifest_proxy(selected_url, name):
     """Start a local HTTP server that serves a MOUFLON-rewritten manifest.
 
@@ -373,6 +401,7 @@ def _start_manifest_proxy(selected_url, name):
     import http.server
     import threading
     import socket
+    import socketserver
 
     selected_url = _normalize_stream_cdn_url(selected_url)
     parsed = urlparse(selected_url)
@@ -392,6 +421,11 @@ def _start_manifest_proxy(selected_url, name):
     state = {"content": b""}
     state_lock = threading.Lock()
     fetch_round = {"count": 0}
+
+    # Bind socket first so port is known for segment URL rewriting
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("127.0.0.1", 0))
+        port = s.getsockname()[1]
 
     def _fetch_and_rewrite():
         try:
@@ -423,6 +457,7 @@ def _start_manifest_proxy(selected_url, name):
             )
             rewritten = _rewrite_mouflon_for_isa(resp.text, base_url)
             if rewritten and "#EXTM3U" in rewritten:
+                rewritten = _proxy_segment_urls_in_manifest(rewritten, port)
                 utils.kodilog(
                     "Stripchat proxy: refresh #{0} prepared manifest with {1} bytes".format(
                         fetch_round["count"], len(rewritten.encode("utf-8"))
@@ -445,30 +480,60 @@ def _start_manifest_proxy(selected_url, name):
             utils.kodilog("Stripchat: Manifest proxy initial fetch failed, falling back")
             return None
 
+    class _ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
+        daemon_threads = True
+
     class ManifestHandler(http.server.BaseHTTPRequestHandler):
         def do_GET(self):
-            with state_lock:
-                content = state["content"]
-            utils.kodilog(
-                "Stripchat proxy: serving {0} bytes to {1}".format(
-                    len(content), self.path
+            parsed_path = urlparse(self.path)
+            if parsed_path.path == "/seg":
+                params = parse_qs(parsed_path.query)
+                cdn_url = unquote(params.get("url", [""])[0])
+                if not cdn_url:
+                    self.send_response(400)
+                    self.end_headers()
+                    return
+                try:
+                    seg_resp = requests.get(
+                        cdn_url, headers=fetch_headers, timeout=15, stream=True
+                    )
+                    self.send_response(seg_resp.status_code)
+                    ct = seg_resp.headers.get("Content-Type", "video/mp4")
+                    self.send_header("Content-Type", ct)
+                    cl = seg_resp.headers.get("Content-Length")
+                    if cl:
+                        self.send_header("Content-Length", cl)
+                    self.end_headers()
+                    for chunk in seg_resp.iter_content(chunk_size=65536):
+                        self.wfile.write(chunk)
+                except Exception as e:
+                    utils.kodilog(
+                        "Stripchat proxy: segment fetch error: {}".format(str(e))
+                    )
+                    try:
+                        self.send_response(503)
+                        self.end_headers()
+                    except Exception:
+                        pass
+            else:
+                with state_lock:
+                    content = state["content"]
+                utils.kodilog(
+                    "Stripchat proxy: serving {0} bytes to {1}".format(
+                        len(content), self.path
+                    )
                 )
-            )
-            self.send_response(200)
-            self.send_header("Content-Type", "application/vnd.apple.mpegurl")
-            self.send_header("Content-Length", str(len(content)))
-            self.send_header("Cache-Control", "no-cache")
-            self.end_headers()
-            self.wfile.write(content)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/vnd.apple.mpegurl")
+                self.send_header("Content-Length", str(len(content)))
+                self.send_header("Cache-Control", "no-cache")
+                self.end_headers()
+                self.wfile.write(content)
 
         def log_message(self, fmt, *args):
             pass
 
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(("127.0.0.1", 0))
-        port = s.getsockname()[1]
-
-    srv = http.server.HTTPServer(("127.0.0.1", port), ManifestHandler)
+    srv = _ThreadingHTTPServer(("127.0.0.1", port), ManifestHandler)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
 
     def _refresh():
