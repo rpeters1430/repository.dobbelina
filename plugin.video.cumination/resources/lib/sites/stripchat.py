@@ -156,14 +156,28 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
 
     lines_out = []
     pending_segment_url = None
+    pending_part_segments = []
+    skip_next_full_segment = False
     replaced_segments = 0
     normalized_relative_segments = 0
     map_rewrites = 0
+    replaced_parts = 0
     for line in manifest_text.splitlines():
         stripped = line.strip()
 
         if stripped.startswith("#EXT-X-MOUFLON:URI:"):
             pending_segment_url = stripped[len("#EXT-X-MOUFLON:URI:"):]
+            continue
+
+        if stripped.startswith("#EXT-X-PART:"):
+            if pending_segment_url:
+                duration_match = re.search(r"DURATION=([0-9.]+)", stripped)
+                if duration_match:
+                    pending_part_segments.append(
+                        (duration_match.group(1), pending_segment_url)
+                    )
+                    replaced_parts += 1
+                pending_segment_url = None
             continue
 
         if any(stripped.startswith(p) for p in _STRIP_PREFIXES):
@@ -183,7 +197,19 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
             stripped += ","
             line = stripped
 
+        if stripped.startswith("#EXTINF:") and pending_part_segments:
+            for duration, part_url in pending_part_segments:
+                lines_out.append("#EXTINF:{0},".format(duration))
+                lines_out.append(part_url)
+            pending_part_segments = []
+            skip_next_full_segment = True
+            continue
+
         if stripped and not stripped.startswith("#"):
+            if skip_next_full_segment:
+                skip_next_full_segment = False
+                pending_segment_url = None
+                continue
             if pending_segment_url:
                 lines_out.append(pending_segment_url)
                 pending_segment_url = None
@@ -201,10 +227,11 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
         return ""
     rewritten = "\n".join(lines_out) + "\n"
     utils.kodilog(
-        "Stripchat rewrite: in_lines={0} out_lines={1} replaced_segments={2} map_rewrites={3} normalized_relative={4}".format(
+        "Stripchat rewrite: in_lines={0} out_lines={1} replaced_segments={2} replaced_parts={3} map_rewrites={4} normalized_relative={5}".format(
             len(manifest_text.splitlines()),
             len(lines_out),
             replaced_segments,
+            replaced_parts,
             map_rewrites,
             normalized_relative_segments,
         )

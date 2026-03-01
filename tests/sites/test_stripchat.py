@@ -155,7 +155,7 @@ def test_normalize_stream_cdn_url_prefers_net_hosts():
     ) == "https://media-hls.doppiocdn.net/b-hls-1/1/1_480p.m3u8?psch=v2&pkey=abc&playlistType=lowLatency"
 
 
-def test_rewrite_mouflon_manifest_ignores_parts_and_uses_full_segments():
+def test_rewrite_mouflon_manifest_prefers_parts_over_broken_full_segments():
     manifest = (
         "#EXTM3U\n"
         "#EXT-X-VERSION:6\n"
@@ -171,8 +171,10 @@ def test_rewrite_mouflon_manifest_ignores_parts_and_uses_full_segments():
     assert stripchat._rewrite_mouflon_manifest_for_kodi(manifest) == (
         "#EXTM3U\n"
         "#EXT-X-VERSION:6\n"
-        "#EXTINF:1.000,\n"
-        "https://cdn.example.com/full.mp4\n"
+        "#EXTINF:0.500,\n"
+        "https://cdn.example.com/part0.mp4\n"
+        "#EXTINF:0.500,\n"
+        "https://cdn.example.com/part1.mp4\n"
     )
 
 
