@@ -117,8 +117,7 @@ def _normalize_stream_cdn_url(url):
         return normalized
 
     query = parse_qs(parsed.query, keep_blank_values=True)
-    if "playlistType" not in query:
-        query["playlistType"] = ["lowLatency"]
+    query.pop("playlistType", None)
     return urlunparse(
         (
             parsed.scheme,
@@ -424,9 +423,8 @@ def _start_manifest_proxy(selected_url, name):
             )
             rewritten = _rewrite_mouflon_for_isa(resp.text, base_url)
             if rewritten and "#EXTM3U" in rewritten:
-                rewritten = _keep_only_stable_segments(rewritten, fetch_headers=fetch_headers)
                 utils.kodilog(
-                    "Stripchat proxy: refresh #{0} prepared stable manifest with {1} bytes".format(
+                    "Stripchat proxy: refresh #{0} prepared manifest with {1} bytes".format(
                         fetch_round["count"], len(rewritten.encode("utf-8"))
                     )
                 )
