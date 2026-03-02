@@ -1,10 +1,15 @@
-[B]Version 1.1.299[/B]
+[B]Version 1.1.300[/B]
+- feat: update version to 1.1.299 and enhance playback functionality for sxyprn and hqporner
 - Enhance video playback and thumbnail handling across multiple sites
 - feat: add changelog update step to build process and implement changelog script
 - docs: update README.md to reflect modernization efforts and installation instructions
 - Add tests for PimpBunny site functionality
 - Refactor Reallifecams integration and enhance Stripchat playback options
-- fix: enhance playback logic by adding manifest rewriting when not using proxy
+
+[B]Version 1.1.299[/B]
+- sxyprn - fix playback (direct links) - upstream fix
+- hqporner - fix thumbnails - upstream fix
+- pimpbunny - fix thumbnails, logo, and home screen listing
 
 [B]Version 1.1.298[/B]
 - feat: add changelog update step to build process and implement changelog script
