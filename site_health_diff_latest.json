@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-03-24T06:37:26.493598",
+    "sites_total": 167,
+    "pass": 145,
+    "warn": 2,
+    "fail": 19,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-03-23T06:39:17.122506",
     "sites_total": 167,
     "pass": 135,
@@ -8,1188 +17,293 @@
     "error": 3,
     "skip": 0
   },
-  "previous": null,
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 0,
-    "persistent_failures": 0,
-    "improved_sites": 0,
+    "resolved_failures": 9,
+    "persistent_failures": 19,
+    "improved_sites": 2,
     "regressions": 0,
     "step_regressions": 0
   },
   "new_failures": [],
-  "resolved_failures": [],
-  "persistent_failures": [],
-  "improved_sites": [],
+  "resolved_failures": [
+    {
+      "site": "analdin",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "archivebate",
+      "previous": "ERROR",
+      "current": "PASS"
+    },
+    {
+      "site": "ask4porn",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "beeg",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "eporner",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "pimpbunny",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "porndoe",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "stripchat",
+      "previous": "ERROR",
+      "current": "SKIP"
+    },
+    {
+      "site": "xhamster",
+      "previous": "FAIL",
+      "current": "PASS"
+    }
+  ],
+  "persistent_failures": [
+    {
+      "site": "aagmaalpro",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "erogarga",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "familypornhd",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "freepornvideos",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "hdporn92",
+      "previous": "ERROR",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "heavyr",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "hentaidude",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "javgg",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "javhdporn",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "jizzbunker",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "perverzija",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "pmvhaven",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "porndish",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "rlc",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "spankbang",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "thepornarea",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "tubxporn",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "wimp",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    },
+    {
+      "site": "xmoviesforyou",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+    }
+  ],
+  "improved_sites": [
+    {
+      "site": "supjav",
+      "previous": "WARN",
+      "current": "PASS"
+    },
+    {
+      "site": "xfreehd",
+      "previous": "WARN",
+      "current": "PASS"
+    }
+  ],
   "step_regressions": [],
   "deltas": [
     {
-      "site": "6xtube",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "85po",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "aagmaal",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "aagmaalpro",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "absoluporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "allclassic",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "amateurtv",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
       "site": "analdin",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "animeid",
-      "previous": "MISSING",
+      "previous": "FAIL",
       "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "anybunny",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "archivebate",
-      "previous": "MISSING",
-      "current": "ERROR",
-      "kind": "new_site",
+      "previous": "ERROR",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "ask4porn",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "avple",
-      "previous": "MISSING",
+      "previous": "FAIL",
       "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "awmnet",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "beeg",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "beemtube",
-      "previous": "MISSING",
+      "previous": "FAIL",
       "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "blendporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "bongacams",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "cam4",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "camsoda",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "camwhoresbay",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "celebsroulette",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "chaturbate",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "cumlouder",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "drtuber",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "eporner",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "erogarga",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "erome",
-      "previous": "MISSING",
+      "previous": "FAIL",
       "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "eroticage",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "eroticmv",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "familypornhd",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "foxnxx",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "freeomovie",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "freepornvideos",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "freeuseporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "freshporno",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "fullporner",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "fullxcinema",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "fyxxr",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "hanime",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "hdporn92",
-      "previous": "MISSING",
-      "current": "ERROR",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "heavyr",
-      "previous": "MISSING",
+      "previous": "ERROR",
       "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "hentai-moon",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "hentaidude",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "hentaihavenc",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "hentaistream",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "heroero",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "hitprn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "hobbyporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "homemoviestube",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "hornyfap",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "hotleak",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "hpjav",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "hqporner",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "japteenx",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "javbangers",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "javgg",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "javguru",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "javhdporn",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "javmoe",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "javseen",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "jizzbunker",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "josporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "justfullporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "justporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "kissjav",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "lemoncams",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "livecamrips",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "longvideos",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "luxuretv",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "missav",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "motherless",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "mrsexe",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "myfreecams",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "naked",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "naughtyblog",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "neporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "netfapx",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "netflav",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "netflixporno",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "nonktube",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "noodlemagazine",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "okxxx",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "paradisehill",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "peachurnet",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "peekvids",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "perverzija",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "pimpbunny",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "playhdporn",
-      "previous": "MISSING",
+      "previous": "FAIL",
       "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "playvids",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pmvhaven",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "poldertube",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "porn00",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "porn4k",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "porndig",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "porndish",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pornditt",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "porndoe",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pornez",
-      "previous": "MISSING",
+      "previous": "FAIL",
       "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "porngo",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pornhat",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pornhd3x",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pornhits",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pornhoarder",
-      "previous": "MISSING",
-      "current": "WARN",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pornhub",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pornkai",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pornmz",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "porno1hu",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "porno365",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pornone",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pornroom",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "porntn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "porntrex",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pornxp",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "premiumporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "redtube",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "rlc",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "rule34video",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "seaporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "sextb",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "sexyporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "someporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "spankbang",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "speedporn",
-      "previous": "MISSING",
-      "current": "WARN",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "streamate",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "stripchat",
-      "previous": "MISSING",
-      "current": "ERROR",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "superporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
+      "previous": "ERROR",
+      "current": "SKIP",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "supjav",
-      "previous": "MISSING",
-      "current": "WARN",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "sxyprn",
-      "previous": "MISSING",
+      "previous": "WARN",
       "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "taboofantazy",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "tabootube",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "terebon",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "thepornarea",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "theyarehuge",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "thothub",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "tnaflix",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "tokyomotion",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "trannyteca",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "trendyporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "tube8",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "tubxporn",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "txxx",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "uflash",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "vaginanl",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "vipporns",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "viralvideosporno",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "watcherotic",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "watchmdh",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "watchporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "whoreshub",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "wimp",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "xfreehd",
-      "previous": "MISSING",
-      "current": "WARN",
-      "kind": "new_site",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "xhamster",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "xmegadrive",
-      "previous": "MISSING",
+      "previous": "FAIL",
       "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "xmoviesforyou",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "xnxx",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "xozilla",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "xsharings",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "xtheatre",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "xvideos",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "xxdbx",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "xxthots",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "xxxtube",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "youcrazyx",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "youjizz",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "youporn",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "yrprno",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
+      "kind": "improvement",
       "detail": ""
     }
   ]
