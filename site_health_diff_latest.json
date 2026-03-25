@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-03-25T06:49:20.736834",
+    "sites_total": 167,
+    "pass": 154,
+    "warn": 5,
+    "fail": 7,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-03-24T06:37:26.493598",
     "sites_total": 167,
     "pass": 145,
@@ -8,264 +17,330 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-03-23T06:39:17.122506",
-    "sites_total": 167,
-    "pass": 135,
-    "warn": 4,
-    "fail": 25,
-    "error": 3,
-    "skip": 0
-  },
   "summary": {
-    "new_failures": 0,
-    "resolved_failures": 9,
-    "persistent_failures": 19,
-    "improved_sites": 2,
-    "regressions": 0,
-    "step_regressions": 0
+    "new_failures": 5,
+    "resolved_failures": 17,
+    "persistent_failures": 2,
+    "improved_sites": 0,
+    "regressions": 6,
+    "step_regressions": 9
   },
-  "new_failures": [],
-  "resolved_failures": [
+  "new_failures": [
     {
       "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "archivebate",
-      "previous": "ERROR",
-      "current": "PASS"
-    },
-    {
-      "site": "ask4porn",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "beeg",
-      "previous": "FAIL",
-      "current": "PASS"
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
     },
     {
       "site": "eporner",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "pimpbunny",
-      "previous": "FAIL",
-      "current": "PASS"
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
     },
     {
       "site": "porndoe",
-      "previous": "FAIL",
-      "current": "PASS"
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
     },
     {
-      "site": "stripchat",
-      "previous": "ERROR",
-      "current": "SKIP"
+      "site": "speedporn",
+      "previous": "WARN",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "Site process timed out after 140s"
     },
     {
       "site": "xhamster",
-      "previous": "FAIL",
-      "current": "PASS"
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "CODE",
+      "message": "main: KeyError: 'videoListProps'"
     }
   ],
-  "persistent_failures": [
+  "resolved_failures": [
     {
       "site": "aagmaalpro",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "PASS"
     },
     {
       "site": "erogarga",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "PASS"
     },
     {
       "site": "familypornhd",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "PASS"
     },
     {
       "site": "freepornvideos",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
-    },
-    {
-      "site": "hdporn92",
-      "previous": "ERROR",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "PASS"
     },
     {
       "site": "heavyr",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "WARN"
     },
     {
       "site": "hentaidude",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "PASS"
     },
     {
       "site": "javgg",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "PASS"
     },
     {
       "site": "javhdporn",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "WARN"
     },
     {
       "site": "jizzbunker",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "PASS"
     },
     {
       "site": "perverzija",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "PASS"
     },
     {
       "site": "pmvhaven",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "PASS"
     },
     {
       "site": "porndish",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "PASS"
     },
     {
       "site": "rlc",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "PASS"
     },
     {
       "site": "spankbang",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "current": "PASS"
     },
     {
       "site": "thepornarea",
       "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "wimp",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "xmoviesforyou",
+      "previous": "FAIL",
+      "current": "WARN"
+    }
+  ],
+  "persistent_failures": [
+    {
+      "site": "hdporn92",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "message": "Site process timed out after 140s"
     },
     {
       "site": "tubxporn",
       "previous": "FAIL",
       "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
-    },
-    {
-      "site": "wimp",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
-    },
-    {
-      "site": "xmoviesforyou",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Max retries exceeded with url: /v1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8191): Failed to establish a new connection: [Errno 111] Connection refused\")). Please check if FlareSolverr is running and configured correctly in addon settings."
+      "class": "BLOCKED",
+      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177442"
     }
   ],
-  "improved_sites": [
-    {
-      "site": "supjav",
-      "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "xfreehd",
-      "previous": "WARN",
-      "current": "PASS"
-    }
-  ],
-  "step_regressions": [],
-  "deltas": [
+  "improved_sites": [],
+  "step_regressions": [
     {
       "site": "analdin",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "List returned no videos",
+      "class": "PARSER"
+    },
+    {
+      "site": "eporner",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "List returned no videos",
+      "class": "PARSER"
+    },
+    {
+      "site": "eroticage",
+      "step": "play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+      "class": "CODE"
+    },
+    {
+      "site": "heavyr",
+      "step": "play",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177442",
+      "class": "BLOCKED"
+    },
+    {
+      "site": "javhdporn",
+      "step": "play",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "HTTPError: HTTP Error 403: Forbidden",
+      "class": "BLOCKED"
+    },
+    {
+      "site": "porndoe",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "List returned no videos",
+      "class": "PARSER"
+    },
+    {
+      "site": "xhamster",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "KeyError: 'videoListProps'",
+      "class": "CODE"
+    },
+    {
+      "site": "xhamster",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "KeyError: 'videoListProps'",
+      "class": "CODE"
+    },
+    {
+      "site": "xhamster",
+      "step": "search",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "KeyError: 'videoListProps'",
+      "class": "CODE"
+    }
+  ],
+  "deltas": [
+    {
+      "site": "aagmaalpro",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "archivebate",
-      "previous": "ERROR",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "ask4porn",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "beeg",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
+      "site": "analdin",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
       "detail": ""
     },
     {
       "site": "eporner",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "erogarga",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "hdporn92",
-      "previous": "ERROR",
-      "current": "FAIL",
+      "site": "eroticage",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "familypornhd",
+      "previous": "FAIL",
+      "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "pimpbunny",
+      "site": "freepornvideos",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "heavyr",
+      "previous": "FAIL",
+      "current": "WARN",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "hentaidude",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "javgg",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "javhdporn",
+      "previous": "FAIL",
+      "current": "WARN",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "jizzbunker",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "perverzija",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "pmvhaven",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "porndish",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
@@ -273,36 +348,57 @@
     },
     {
       "site": "porndoe",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "rlc",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "stripchat",
-      "previous": "ERROR",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "supjav",
-      "previous": "WARN",
+      "site": "spankbang",
+      "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "xfreehd",
+      "site": "speedporn",
       "previous": "WARN",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "thepornarea",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "wimp",
+      "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
       "site": "xhamster",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "xmoviesforyou",
       "previous": "FAIL",
-      "current": "PASS",
+      "current": "WARN",
       "kind": "improvement",
       "detail": ""
     }

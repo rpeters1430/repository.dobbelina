@@ -1,31 +1,24 @@
 # Site Profile Audit
 
 - Sites: `167`
-- Tier1 hot: `1`
-- Failing: `16`
-- Warn: `2`
+- Tier1 hot: `0`
+- Failing: `7`
+- Warn: `5`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| spankbang | tier1_hot | FAIL | 1 | video |  | Y | Y | Y | Y |
-| aagmaalpro | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| erogarga | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| familypornhd | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| freepornvideos | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| analdin | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| eporner | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | hdporn92 | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| heavyr | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| hentaidude | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| javgg | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| javhdporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| jizzbunker | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| perverzija | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| pmvhaven | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| porndish | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| thepornarea | failing | FAIL | 2 | video |  | Y |  | Y | Y |
+| porndoe | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| speedporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | tubxporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| xmoviesforyou | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| xhamster | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| eroticage | warn | WARN |  | video |  | Y | Y | Y | Y |
+| heavyr | warn | WARN |  | video |  | Y | Y | Y | Y |
+| javhdporn | warn | WARN |  | video |  | Y | Y | Y | Y |
 | pornhoarder | warn | WARN |  | video |  | Y | Y | Y | Y |
-| speedporn | warn | WARN |  | video |  | Y | Y | Y | Y |
+| xmoviesforyou | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -36,6 +29,7 @@
 | porndig | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | pornhub | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | pornkai | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
+| spankbang | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | streamate | tier1 | PASS | 1 | cam |  | Y |  |  |  |
 | stripchat | tier1 | SKIP | 1 | cam |  |  |  |  |  |
 | xnxx | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
@@ -44,10 +38,10 @@
 | 6xtube | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | 85po | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | aagmaal | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| aagmaalpro | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
-| analdin | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | avple | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -60,12 +54,13 @@
 | celebsroulette | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | cumlouder | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | drtuber | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| eporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| erogarga | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erome | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| eroticage | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eroticmv | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| familypornhd | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | foxnxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | freeomovie | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| freepornvideos | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | freeuseporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | freshporno | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | fullporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -74,6 +69,7 @@
 | hanime | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hdporn | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | hentai-moon | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| hentaidude | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hentaihavenco | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | hentaistream | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | heroero | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -86,9 +82,11 @@
 | hqporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | japteenx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javbangers | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| javgg | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javguru | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javmoe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javseen | backlog | PASS | 2 | video |  | Y |  | Y | Y |
+| jizzbunker | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | josporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | justfullporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | justporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -112,12 +110,14 @@
 | paradisehill | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | peachurnet | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | peekvids | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| perverzija | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pimpbunny | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | playhdporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | playvids | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| pmvhaven | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porn4k | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| porndish | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornditt | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| porndoe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornez | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porngo | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhat | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -145,6 +145,7 @@
 | taboofantazy | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | tabootube | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | terebon | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| thepornarea | backlog | PASS | 2 | video |  | Y |  | Y | Y |
 | theyarehuge | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | thothub | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | tnaflix | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -163,7 +164,6 @@
 | whereismyporn | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | whoreshub | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xfreehd | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| xhamster | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xmegadrive | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xozilla | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xsharings | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -177,23 +177,23 @@
 
 ## Next Batch
 
-- **spankbang** (tier1_hot, tier=1) | failures: main:FAIL, list:FAIL, search:FAIL
-- **aagmaalpro** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
-- **erogarga** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
-- **familypornhd** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
-- **freepornvideos** (failing, tier=None) | failures: main:FAIL, list:FAIL, search:FAIL
-- **hdporn92** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
-- **heavyr** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
-- **hentaidude** (failing, tier=None) | failures: main:FAIL, list:FAIL, search:FAIL
-- **javgg** (failing, tier=None) | failures: main:FAIL, list:FAIL, search:FAIL
-- **javhdporn** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
-- **jizzbunker** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
-- **perverzija** (failing, tier=None) | failures: main:FAIL, list:FAIL, search:FAIL
-- **pmvhaven** (failing, tier=None) | failures: main:FAIL, list:FAIL, search:FAIL
-- **porndish** (failing, tier=None) | failures: main:FAIL, list:FAIL
-- **thepornarea** (failing, tier=2) | failures: main:FAIL, list:FAIL, search:FAIL
+- **analdin** (failing, tier=None) | failures: list:FAIL
+- **eporner** (failing, tier=None) | failures: list:FAIL
+- **hdporn92** (failing, tier=None)
+- **porndoe** (failing, tier=None) | failures: list:FAIL
+- **speedporn** (failing, tier=None)
 - **tubxporn** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
-- **xmoviesforyou** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
+- **xhamster** (failing, tier=None) | failures: main:FAIL, list:FAIL, search:FAIL
+- **eroticage** (warn, tier=None) | failures: play:FAIL
+- **heavyr** (warn, tier=None) | failures: categories:FAIL, search:FAIL, play:FAIL
+- **javhdporn** (warn, tier=None) | failures: play:FAIL
 - **pornhoarder** (warn, tier=None) | failures: play:FAIL
-- **speedporn** (warn, tier=None) | failures: categories:FAIL
+- **xmoviesforyou** (warn, tier=None) | failures: categories:FAIL
 - **anybunny** (tier1, tier=1)
+- **ask4porn** (tier1, tier=1)
+- **cam4** (tier1, tier=1)
+- **camsoda** (tier1, tier=1)
+- **chaturbate** (tier1, tier=1)
+- **luxuretv** (tier1, tier=1)
+- **missav** (tier1, tier=1)
+- **porndig** (tier1, tier=1)
