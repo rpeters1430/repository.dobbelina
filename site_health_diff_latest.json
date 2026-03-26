@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-03-26T06:51:27.045702",
+    "sites_total": 167,
+    "pass": 156,
+    "warn": 6,
+    "fail": 4,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-03-25T06:49:20.736834",
     "sites_total": 167,
     "pass": 154,
@@ -8,360 +17,76 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-03-24T06:37:26.493598",
-    "sites_total": 167,
-    "pass": 145,
-    "warn": 2,
-    "fail": 19,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
-    "new_failures": 5,
-    "resolved_failures": 17,
-    "persistent_failures": 2,
+    "new_failures": 0,
+    "resolved_failures": 3,
+    "persistent_failures": 4,
     "improved_sites": 0,
-    "regressions": 6,
-    "step_regressions": 9
+    "regressions": 1,
+    "step_regressions": 1
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [
+    {
+      "site": "hdporn92",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "speedporn",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "xhamster",
+      "previous": "FAIL",
+      "current": "PASS"
+    }
+  ],
+  "persistent_failures": [
     {
       "site": "analdin",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "list: List returned no videos"
     },
     {
       "site": "eporner",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "list: List returned no videos"
     },
     {
       "site": "porndoe",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "list: List returned no videos"
-    },
-    {
-      "site": "speedporn",
-      "previous": "WARN",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "Site process timed out after 140s"
-    },
-    {
-      "site": "xhamster",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "CODE",
-      "message": "main: KeyError: 'videoListProps'"
-    }
-  ],
-  "resolved_failures": [
-    {
-      "site": "aagmaalpro",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "erogarga",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "familypornhd",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "freepornvideos",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "heavyr",
-      "previous": "FAIL",
-      "current": "WARN"
-    },
-    {
-      "site": "hentaidude",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "javgg",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "javhdporn",
-      "previous": "FAIL",
-      "current": "WARN"
-    },
-    {
-      "site": "jizzbunker",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "perverzija",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "pmvhaven",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "porndish",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "rlc",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "spankbang",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "thepornarea",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "wimp",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "xmoviesforyou",
-      "previous": "FAIL",
-      "current": "WARN"
-    }
-  ],
-  "persistent_failures": [
-    {
-      "site": "hdporn92",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "Site process timed out after 140s"
     },
     {
       "site": "tubxporn",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "BLOCKED",
-      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177442"
+      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177450"
     }
   ],
   "improved_sites": [],
   "step_regressions": [
     {
-      "site": "analdin",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
-    },
-    {
-      "site": "eporner",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
-    },
-    {
-      "site": "eroticage",
-      "step": "play",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-      "class": "CODE"
-    },
-    {
-      "site": "heavyr",
+      "site": "xfreehd",
       "step": "play",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177442",
-      "class": "BLOCKED"
-    },
-    {
-      "site": "javhdporn",
-      "step": "play",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "HTTPError: HTTP Error 403: Forbidden",
-      "class": "BLOCKED"
-    },
-    {
-      "site": "porndoe",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
-    },
-    {
-      "site": "xhamster",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "KeyError: 'videoListProps'",
-      "class": "CODE"
-    },
-    {
-      "site": "xhamster",
-      "step": "main",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "KeyError: 'videoListProps'",
-      "class": "CODE"
-    },
-    {
-      "site": "xhamster",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "KeyError: 'videoListProps'",
-      "class": "CODE"
+      "message": "Play function executed but no playback URL captured (no notifications)",
+      "class": "PLAYBACK"
     }
   ],
   "deltas": [
     {
-      "site": "aagmaalpro",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "eporner",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "erogarga",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "eroticage",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "familypornhd",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "freepornvideos",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "heavyr",
-      "previous": "FAIL",
-      "current": "WARN",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "hentaidude",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "javgg",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "javhdporn",
-      "previous": "FAIL",
-      "current": "WARN",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "jizzbunker",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "perverzija",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "pmvhaven",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "porndish",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "porndoe",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "rlc",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "spankbang",
+      "site": "hdporn92",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
@@ -369,36 +94,22 @@
     },
     {
       "site": "speedporn",
-      "previous": "WARN",
-      "current": "FAIL",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "xfreehd",
+      "previous": "PASS",
+      "current": "WARN",
       "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "thepornarea",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "wimp",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "xhamster",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "xmoviesforyou",
       "previous": "FAIL",
-      "current": "WARN",
+      "current": "PASS",
       "kind": "improvement",
       "detail": ""
     }
