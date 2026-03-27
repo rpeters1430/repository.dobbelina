@@ -2,20 +2,18 @@
 
 - Sites: `167`
 - Tier1 hot: `0`
-- Failing: `4`
+- Failing: `2`
 - Warn: `6`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| analdin | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| eporner | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | porndoe | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | tubxporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | eroticage | warn | WARN |  | video |  | Y | Y | Y | Y |
 | heavyr | warn | WARN |  | video |  | Y | Y | Y | Y |
 | javhdporn | warn | WARN |  | video |  | Y | Y | Y | Y |
 | pornhoarder | warn | WARN |  | video |  | Y | Y | Y | Y |
-| xfreehd | warn | WARN |  | video |  | Y | Y | Y | Y |
+| xhamster | warn | WARN |  | video |  | Y | Y | Y | Y |
 | xmoviesforyou | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
@@ -40,6 +38,7 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
+| analdin | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | avple | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -52,6 +51,7 @@
 | celebsroulette | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | cumlouder | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | drtuber | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| eporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erogarga | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erome | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eroticmv | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -163,7 +163,7 @@
 | watchporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | whereismyporn | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | whoreshub | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| xhamster | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| xfreehd | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xmegadrive | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xozilla | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xsharings | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -177,15 +177,13 @@
 
 ## Next Batch
 
-- **analdin** (failing, tier=None) | failures: list:FAIL
-- **eporner** (failing, tier=None) | failures: list:FAIL
 - **porndoe** (failing, tier=None) | failures: list:FAIL
 - **tubxporn** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
 - **eroticage** (warn, tier=None) | failures: play:FAIL
 - **heavyr** (warn, tier=None) | failures: categories:FAIL, search:FAIL, play:FAIL
 - **javhdporn** (warn, tier=None) | failures: play:FAIL
 - **pornhoarder** (warn, tier=None) | failures: play:FAIL
-- **xfreehd** (warn, tier=None) | failures: play:FAIL
+- **xhamster** (warn, tier=None) | failures: play:FAIL
 - **xmoviesforyou** (warn, tier=None) | failures: categories:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
@@ -197,3 +195,5 @@
 - **porndig** (tier1, tier=1)
 - **pornhub** (tier1, tier=1)
 - **pornkai** (tier1, tier=1)
+- **spankbang** (tier1, tier=1)
+- **streamate** (tier1, tier=1)

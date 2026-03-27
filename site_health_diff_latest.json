@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-03-27T06:51:02.545770",
+    "sites_total": 167,
+    "pass": 158,
+    "warn": 6,
+    "fail": 2,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-03-26T06:51:27.045702",
     "sites_total": 167,
     "pass": 156,
@@ -8,56 +17,28 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-03-25T06:49:20.736834",
-    "sites_total": 167,
-    "pass": 154,
-    "warn": 5,
-    "fail": 7,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 3,
-    "persistent_failures": 4,
-    "improved_sites": 0,
+    "resolved_failures": 2,
+    "persistent_failures": 2,
+    "improved_sites": 1,
     "regressions": 1,
     "step_regressions": 1
   },
   "new_failures": [],
   "resolved_failures": [
     {
-      "site": "hdporn92",
+      "site": "analdin",
       "previous": "FAIL",
       "current": "PASS"
     },
     {
-      "site": "speedporn",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "xhamster",
+      "site": "eporner",
       "previous": "FAIL",
       "current": "PASS"
     }
   ],
   "persistent_failures": [
-    {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
-    },
-    {
-      "site": "eporner",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
-    },
     {
       "site": "porndoe",
       "previous": "FAIL",
@@ -70,30 +51,36 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "BLOCKED",
-      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177450"
+      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177459"
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
       "site": "xfreehd",
+      "previous": "WARN",
+      "current": "PASS"
+    }
+  ],
+  "step_regressions": [
+    {
+      "site": "xhamster",
       "step": "play",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "Play function executed but no playback URL captured (no notifications)",
-      "class": "PLAYBACK"
+      "message": "AttributeError: 'NoneType' object has no attribute 'get'",
+      "class": "CODE"
     }
   ],
   "deltas": [
     {
-      "site": "hdporn92",
+      "site": "analdin",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "speedporn",
+      "site": "eporner",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
@@ -101,16 +88,16 @@
     },
     {
       "site": "xfreehd",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "xhamster",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
       "detail": ""
     }
   ]
