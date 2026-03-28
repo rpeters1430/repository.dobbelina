@@ -1,35 +1,33 @@
 # Site Health Delta
 
-- Current report: `live_smoke_20260327_065102.json`
+- Current report: `live_smoke_20260328_064548.json`
 - Previous report: `live_smoke_latest.json`
 
 ## Snapshot
 
-- Current: `PASS 158` | `WARN 6` | `FAIL 2` | `ERROR 0` | `SKIP 1`
-- Previous: `PASS 156` | `WARN 6` | `FAIL 4` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 159` | `WARN 6` | `FAIL 1` | `ERROR 0` | `SKIP 1`
+- Previous: `PASS 158` | `WARN 6` | `FAIL 2` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
 - New failures: `0`
-- Resolved failures: `2`
-- Persistent failures: `2`
+- Resolved failures: `1`
+- Persistent failures: `1`
 - Site regressions: `1`
 - Step regressions: `1`
 
 ## Resolved Failures
 
-- **analdin**: `FAIL -> PASS`
-- **eporner**: `FAIL -> PASS`
+- **porndoe**: `FAIL -> PASS`
 
 ## Persistent Failures
 
-- **porndoe**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
-- **tubxporn**: `FAIL -> FAIL` (BLOCKED) | main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {"status": "error", "message": "Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.", "startTimestamp": 177459
+- **tubxporn**: `FAIL -> FAIL` (BLOCKED) | main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {"status": "error", "message": "Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.", "startTimestamp": 177468
 
 ## Step Regressions
 
-- **xhamster** `play`: `SKIP -> FAIL` (CODE) | AttributeError: 'NoneType' object has no attribute 'get'
+- **playvids** `search`: `SKIP -> FAIL` (NETWORK) | Timed out after 35s
 
 ## Improvements
 
-- **xfreehd**: `WARN -> PASS`
+- **xhamster**: `WARN -> PASS`

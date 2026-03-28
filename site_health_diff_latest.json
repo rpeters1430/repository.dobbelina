@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-03-28T06:45:48.827469",
+    "sites_total": 167,
+    "pass": 159,
+    "warn": 6,
+    "fail": 1,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-03-27T06:51:02.545770",
     "sites_total": 167,
     "pass": 158,
@@ -8,19 +17,10 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-03-26T06:51:27.045702",
-    "sites_total": 167,
-    "pass": 156,
-    "warn": 6,
-    "fail": 4,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 2,
-    "persistent_failures": 2,
+    "resolved_failures": 1,
+    "persistent_failures": 1,
     "improved_sites": 1,
     "regressions": 1,
     "step_regressions": 1
@@ -28,76 +28,57 @@
   "new_failures": [],
   "resolved_failures": [
     {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "eporner",
+      "site": "porndoe",
       "previous": "FAIL",
       "current": "PASS"
     }
   ],
   "persistent_failures": [
     {
-      "site": "porndoe",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
-    },
-    {
       "site": "tubxporn",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "BLOCKED",
-      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177459"
+      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177468"
     }
   ],
   "improved_sites": [
     {
-      "site": "xfreehd",
+      "site": "xhamster",
       "previous": "WARN",
       "current": "PASS"
     }
   ],
   "step_regressions": [
     {
-      "site": "xhamster",
-      "step": "play",
+      "site": "playvids",
+      "step": "search",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "AttributeError: 'NoneType' object has no attribute 'get'",
-      "class": "CODE"
+      "message": "Timed out after 35s",
+      "class": "NETWORK"
     }
   ],
   "deltas": [
     {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
+      "site": "playvids",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
       "detail": ""
     },
     {
-      "site": "eporner",
+      "site": "porndoe",
       "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "xfreehd",
-      "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
       "site": "xhamster",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]

@@ -2,18 +2,17 @@
 
 - Sites: `167`
 - Tier1 hot: `0`
-- Failing: `2`
+- Failing: `1`
 - Warn: `6`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| porndoe | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | tubxporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | eroticage | warn | WARN |  | video |  | Y | Y | Y | Y |
 | heavyr | warn | WARN |  | video |  | Y | Y | Y | Y |
 | javhdporn | warn | WARN |  | video |  | Y | Y | Y | Y |
+| playvids | warn | WARN |  | video |  | Y | Y | Y | Y |
 | pornhoarder | warn | WARN |  | video |  | Y | Y | Y | Y |
-| xhamster | warn | WARN |  | video |  | Y | Y | Y | Y |
 | xmoviesforyou | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
@@ -112,11 +111,11 @@
 | perverzija | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pimpbunny | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | playhdporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| playvids | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pmvhaven | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porn4k | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porndish | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornditt | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| porndoe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornez | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porngo | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhat | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -164,6 +163,7 @@
 | whereismyporn | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | whoreshub | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xfreehd | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| xhamster | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xmegadrive | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xozilla | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xsharings | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -177,13 +177,12 @@
 
 ## Next Batch
 
-- **porndoe** (failing, tier=None) | failures: list:FAIL
 - **tubxporn** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
 - **eroticage** (warn, tier=None) | failures: play:FAIL
 - **heavyr** (warn, tier=None) | failures: categories:FAIL, search:FAIL, play:FAIL
 - **javhdporn** (warn, tier=None) | failures: play:FAIL
+- **playvids** (warn, tier=None) | failures: search:FAIL
 - **pornhoarder** (warn, tier=None) | failures: play:FAIL
-- **xhamster** (warn, tier=None) | failures: play:FAIL
 - **xmoviesforyou** (warn, tier=None) | failures: categories:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
@@ -197,3 +196,4 @@
 - **pornkai** (tier1, tier=1)
 - **spankbang** (tier1, tier=1)
 - **streamate** (tier1, tier=1)
+- **stripchat** (tier1, tier=1)
