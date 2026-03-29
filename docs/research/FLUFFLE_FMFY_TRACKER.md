@@ -80,6 +80,9 @@ These Fluffle-listed sites already map to active site modules in the addon.
 
 ### Streaming / Tube
 
+- `anysex` (Requires FlareSolverr)
+- `analdin`
+- `porndoe`
 - `hqporner`
 - `sxyprn` / SexyPorn
 - `watchporn`

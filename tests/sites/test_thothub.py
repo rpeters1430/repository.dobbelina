@@ -155,7 +155,9 @@ def test_main_exposes_navigation(monkeypatch):
 
     thothub.Main()
 
-    assert len(dirs) == 3
+    assert len(dirs) == 5
     assert dirs[0]["url"] == "https://thothub.mx/latest-updates/"
     assert dirs[1]["url"] == "https://thothub.mx/public/"
-    assert dirs[2]["mode"] == "Search"
+    assert dirs[2]["url"] == "https://thothub.mx/categories/"
+    assert dirs[3]["url"] == "https://thothub.mx/models/"
+    assert dirs[4]["mode"] == "Search"

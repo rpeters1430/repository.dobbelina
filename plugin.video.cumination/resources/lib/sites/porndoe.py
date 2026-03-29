@@ -20,8 +20,7 @@ site = AdultSite(
     "porndoe",
     "[COLOR hotpink]PornDoe[/COLOR]",
     "https://porndoe.com/",
-    "cum-sites.png",
-    testing=True,
+    "porndoe.png",
 )
 
 

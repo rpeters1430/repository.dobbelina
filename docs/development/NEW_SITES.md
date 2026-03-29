@@ -1,85 +1,40 @@
-# New Sites to Implement (Updated from Fluffle.cc)
+# New Sites to Implement (Updated March 28, 2026 - Audit Pass)
 
-This file tracks sites identified for potential implementation in the Cumination addon, ranked by estimated difficulty.
+This file tracks sites identified for potential implementation. Recent audit shows many previous "Easy" sites are now parked or behind Cloudflare.
 
-## 🟢 Tier 1 - Easy (Standard layouts, low security)
-*No Cloudflare, standard HTML structure, standard video tags.*
-
-| Site | Category | Difficulty | Status | Notes |
-| :--- | :--- | :--- | :--- | :--- |
-| **Ask4Porn** | Tube | Easy | [ ] | **Next Up** |
-| **ClipHunter** | Tube | Easy | [ ] | |
-| **SexVid** | Tube | Easy | [ ] | |
-| **Vid123** | Tube | Easy | [ ] | |
-| **josporn** | Tube | Easy | ✅ | |
-| **PornXpert** | Tube | Easy | ✅ | |
-| **Porninja** | Tube | Easy | [ ] | *Currently Down* |
-
-## 🟡 Tier 2 - Medium (API-based or light JS)
-*Light Cloudflare, some JS obfuscation, or AJAX-based listings.*
+## 🟢 Tier 1 - Easy (Standard layouts, No Cloudflare)
+*Direct access via standard HTTP, high value.*
 
 | Site | Category | Difficulty | Status | Notes |
 | :--- | :--- | :--- | :--- | :--- |
-| **NSFWBase** | Aggregator| Medium | [ ] | Aggregator, client-side rendered |
-| **PornMD** | Aggregator | Medium | [ ] | |
-| **Porndoe** | Tube | Medium | [ ] | AngularJS based |
-| **ThePornArea** | Tube | Medium | [ ] | Starts immediate download? |
-| **Analdin** | Tube | Medium | [ ] | Timeout/Slow |
-| **10HitMovies** | Movies | Medium | [ ] | |
-| **pornken** | Tube | Medium | [ ] | |
-| **SUJ** | Tube | Medium | [ ] | |
-| **Siska** | Tube | Medium | [ ] | |
-| **PORNEKIP** | Tube | Medium | [ ] | |
-| **RareLust** | Movies | Medium | [ ] | |
-| **PandaMovies** | Movies | Medium | [ ] | |
+| **Analdin** | Tube | Easy | ✅ | **Integrated** |
+| **PornDoe** | Tube | Medium | ✅ | **Integrated** |
+| **AnySex.com** | Tube | Medium | ✅ | **Integrated** (Requires FlareSolverr) |
 
-## 🔴 Tier 3 - Hard (Heavy Cloudflare or complex players)
-*Heavy Cloudflare (403/Challenges), highly obfuscated JS, or complex player handshakes.*
+## 🟡 Tier 2 - Medium (Requires FlareSolverr / Cloudflare)
+*Cloudflare protected (403/503) or Meta-Search.*
 
 | Site | Category | Difficulty | Status | Notes |
 | :--- | :--- | :--- | :--- | :--- |
-| **OnlinePornHub** | Tube | Hard | [ ] | Currently 403 Blocked |
-| **Film1k** | Movies | Hard | [ ] | Cloudflare/403 |
+| **PornMD** | Aggregator | Medium | [ ] | **Active** - Meta-search engine, needs redirect handling. |
+| **ArchiveBate** | Aggregator | Medium | ✅ | **Integrated** |
+| **Sex-Empire** | Tube | Medium | [ ] | Cloudflare protected. |
+| **IXXX** | Tube | Medium | [ ] | High priority, behind CF. |
 
-## 🌏 Tier 4 - Asian / JAV / International
-| Site | Category | Difficulty | Status | Notes |
-| :--- | :--- | :--- | :--- | :--- |
-| **anysex.com** | Tube | Easy | [ ] | |
-| **Kojka** | Tube | Easy | [ ] | |
-| **Sex-Empire** | Tube | Easy | [ ] | |
-| **ifuqyou** | Tube | Easy | [ ] | |
-| **Intporn** | Cam/Site | Easy | ✅ | Redirects to Stripchat |
-| **xxxgr** | Tube | Easy | [ ] | Greek |
+## 🔴 Tier 3 - Parked / Changed / Hard
+| Site | Status | Notes |
+| :--- | :--- | :--- |
+| **ClipHunter** | Parked | Redirects to Stripchat white-label. |
+| **TopVid** | Changed | Now a "Video Ad Maker" service. |
+| **Vid123** | Parked | For Sale lander. |
+| **SexVid** | Parked | ParkLogic redirector. |
+| **Kojka** | Redirect | Redirects to YouPorn. |
 
 ---
 ## ✅ Recently Added
-*Sites that have been successfully integrated.*
-
 | Site | Category | Status |
 | :--- | :--- | :--- |
-| **HQPorner** | Tube | ✅ |
-| **SexyPorn** | Tube | ✅ |
-| **EPorner** | Tube | ✅ |
-| **xHamster** | Tube | ✅ |
-| **XVideos** | Tube | ✅ |
-| **PlayHDPorn** | Tube | ✅ |
-| **SpankBang** | Tube | ✅ |
-| **PornHub** | Tube | ✅ |
-| **Youporn** | Tube | ✅ |
-| **XNXX** | Tube | ✅ |
-| **DrTuber** | Tube | ✅ |
-| **Tube8** | Tube | ✅ |
-| **Motherless** | Tube | ✅ |
-| **Beeg** | Tube | ✅ |
-| **Redtube** | Tube | ✅ |
-| **SuperPorn** | Tube | ✅ |
-| **txxx** | Tube | ✅ |
-| **Jizzbunker** | Tube | ✅ |
-| **Heavy-R** | Tube | ✅ |
-| **Porndish** | Tube | ✅ |
-| **Porndig** | Tube | ✅ |
-| **xxdbx** | Tube | ✅ |
-| **Xozilla** | Tube | ✅ |
-| **OK.XXX** | Tube | ✅ |
-| **josporn** | Tube | ✅ |
-| **PornXpert** | Tube | ✅ |
+| **Analdin** | Tube | ✅ Added Mar 2026 |
+| **PornDoe** | Tube | ✅ Added Mar 2026 |
+| **AnySex.com** | Tube | ✅ Added Mar 2026 |
+| **ArchiveBate** | Aggregator | ✅ Added Mar 2026 |
