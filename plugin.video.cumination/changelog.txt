@@ -1,3 +1,11 @@
+[B]Version 1.1.348[/B]
+- site updates
+- fix site health playvids and tubxporn
+- feat: enhance video extraction and playback logic across multiple sites
+- Site Fixes
+- feat: port upstream 034f9e42 - fix aagmaal and aagmaalpro domains and scrapers
+- feat: enhance site functionality and improve test coverage for analdin and xhamster
+
 [B]Version 1.1.347[/B]
 - fix site health playvids and tubxporn
 - feat: enhance video extraction and playback logic across multiple sites
