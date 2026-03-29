@@ -56,3 +56,64 @@ def test_list_populates_download_links(monkeypatch):
             "mode": "xmoviesforyou.List",
         }
     ]
+
+
+def test_categories_falls_back_to_html_archive(monkeypatch):
+    recorder = _Recorder()
+
+    fixture_mapped_get_html(
+        monkeypatch,
+        xmoviesforyou,
+        {
+            "wp-json/wp/v2/categories?page=1": "sites/xmoviesforyou/categories.html",
+        },
+    )
+    monkeypatch.setattr(xmoviesforyou.site, "add_dir", recorder.add_dir)
+    monkeypatch.setattr(xmoviesforyou.utils, "eod", lambda *args, **kwargs: None)
+
+    xmoviesforyou.Categories("https://xmoviesforyou.com/wp-json/wp/v2/categories?page=1")
+
+    assert recorder.dirs
+    assert recorder.dirs[0] == {
+        "name": "21Sextury ([COLOR hotpink]212[/COLOR])",
+        "url": "https://xmoviesforyou.com/category/21sextury",
+        "mode": "xmoviesforyou.List",
+    }
+
+
+def test_categories_base_url_falls_back_to_archive(monkeypatch):
+    recorder = _Recorder()
+
+    fixture_mapped_get_html(
+        monkeypatch,
+        xmoviesforyou,
+        {
+            "xmoviesforyou.com/categories": "sites/xmoviesforyou/categories.html",
+        },
+    )
+    monkeypatch.setattr(xmoviesforyou.site, "add_dir", recorder.add_dir)
+    monkeypatch.setattr(xmoviesforyou.utils, "eod", lambda *args, **kwargs: None)
+
+    xmoviesforyou.Categories("https://xmoviesforyou.com/")
+
+    assert recorder.dirs
+    assert recorder.dirs[0]["url"] == "https://xmoviesforyou.com/category/21sextury"
+
+
+def test_search_base_url_uses_search_archive(monkeypatch):
+    recorder = _Recorder()
+
+    fixture_mapped_get_html(
+        monkeypatch,
+        xmoviesforyou,
+        {
+            "xmoviesforyou.com/search?q=test": "sites/xmoviesforyou/list.html",
+        },
+    )
+    monkeypatch.setattr(xmoviesforyou.site, "add_download_link", recorder.add_download)
+    monkeypatch.setattr(xmoviesforyou.site, "add_dir", recorder.add_dir)
+    monkeypatch.setattr(xmoviesforyou.utils, "eod", lambda *args, **kwargs: None)
+
+    xmoviesforyou.Search("https://xmoviesforyou.com/", keyword="test")
+
+    assert recorder.downloads

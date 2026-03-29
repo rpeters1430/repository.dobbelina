@@ -53,6 +53,55 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
 )
 
 
+def _normalize_categories_url(url):
+    current = (url or "").strip()
+    if not current or current.rstrip("/") == site.url.rstrip("/"):
+        return urllib_parse.urljoin(site.url, "categories")
+    return current
+
+
+def _normalize_search_url(url):
+    current = (url or "").strip()
+    if not current:
+        return site.url + "search?q="
+    if "search?q=" in current or "?s=" in current:
+        return current
+    if current.rstrip("/") == site.url.rstrip("/"):
+        return site.url + "search?q="
+    return current
+
+
+def _add_category_dir(name, count, href):
+    if not name or not href:
+        return
+    label = name
+    if count:
+        label = "{} ([COLOR hotpink]{}[/COLOR])".format(name, count)
+    site.add_dir(label, urllib_parse.urljoin(site.url, href), "List", "")
+
+
+def _categories_from_html(cathtml):
+    soup = utils.parse_html(cathtml)
+    if not soup:
+        return False
+
+    added = 0
+    for item in soup.select("main a[href*='/category/']"):
+        href = utils.safe_get_attr(item, "href")
+        name = utils.safe_get_text(item.select_one("h3")) or utils.safe_get_text(item)
+        count_text = utils.safe_get_text(item.select_one("span"))
+        count = ""
+        if count_text:
+            digits = "".join(ch for ch in count_text if ch.isdigit())
+            count = digits
+        if not name or not href:
+            continue
+        _add_category_dir(name, count, href)
+        added += 1
+
+    return added > 0
+
+
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
@@ -114,9 +163,9 @@ def Playvid(url, name, download=None):
 
 @site.register()
 def Search(url, keyword=None):
-    searchUrl = url
+    searchUrl = _normalize_search_url(url)
     if not keyword:
-        site.search_dir(url, "Search")
+        site.search_dir(searchUrl, "Search")
     else:
         title = keyword.replace(" ", "+")
         searchUrl = searchUrl + title
@@ -125,24 +174,31 @@ def Search(url, keyword=None):
 
 @site.register()
 def Categories(url):
+    url = _normalize_categories_url(url)
     cathtml = utils.getHtml(url, "")
     if not cathtml:
         utils.eod()
         return
-    catjson = json.loads(cathtml)
+    try:
+        catjson = json.loads(cathtml)
+    except (TypeError, ValueError):
+        if not _categories_from_html(cathtml):
+            utils.eod()
+            return
+        utils.eod()
+        return
+
     jdata = []
     i = 0
     # The original loop seems to try to fetch multiple pages of categories
     while i < 10 and len(catjson) > 0:
         i += 1
         jdata += catjson
-        # Parse current page and increment
         parsed_url = urllib_parse.urlparse(url)
         params = urllib_parse.parse_qs(parsed_url.query)
         current_page = int(params.get("page", [1])[0])
         next_page = current_page + 1
 
-        # Build next URL
         query = params.copy()
         query["page"] = [str(next_page)]
         new_query = urllib_parse.urlencode(query, doseq=True)
@@ -151,13 +207,13 @@ def Categories(url):
         cathtml = utils.getHtml(url, "")
         if not cathtml:
             break
-        catjson = json.loads(cathtml)
+        try:
+            catjson = json.loads(cathtml)
+        except (TypeError, ValueError):
+            break
 
     for category in jdata:
-        name = "{} ([COLOR hotpink]{}[/COLOR])".format(
-            category["name"], category["count"]
-        )
-        site.add_dir(name, category["link"], "List", "")
+        _add_category_dir(category.get("name"), category.get("count"), category.get("link"))
     utils.eod()
 
 
