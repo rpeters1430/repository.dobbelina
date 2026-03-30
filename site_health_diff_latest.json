@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-03-30T07:05:19.235083",
+    "sites_total": 168,
+    "pass": 160,
+    "warn": 4,
+    "fail": 3,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-03-29T06:50:09.089796",
     "sites_total": 168,
     "pass": 154,
@@ -8,173 +17,114 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-03-28T06:45:48.827469",
-    "sites_total": 167,
-    "pass": 159,
-    "warn": 6,
-    "fail": 1,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
-    "new_failures": 6,
-    "resolved_failures": 0,
-    "persistent_failures": 1,
+    "new_failures": 0,
+    "resolved_failures": 5,
+    "persistent_failures": 3,
     "improved_sites": 1,
-    "regressions": 6,
-    "step_regressions": 4
+    "regressions": 0,
+    "step_regressions": 0
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
+      "previous": "FAIL",
+      "current": "PASS"
     },
     {
       "site": "ask4porn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "Site process timed out after 140s"
+      "previous": "FAIL",
+      "current": "PASS"
     },
     {
       "site": "eporner",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
+      "previous": "FAIL",
+      "current": "PASS"
     },
     {
       "site": "hdporn92",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "Site process timed out after 140s"
-    },
-    {
-      "site": "peachurnet",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
+      "previous": "FAIL",
+      "current": "PASS"
     },
     {
       "site": "porndoe",
-      "previous": "PASS",
+      "previous": "FAIL",
+      "current": "PASS"
+    }
+  ],
+  "persistent_failures": [
+    {
+      "site": "anysex",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "list: List returned no videos"
-    }
-  ],
-  "resolved_failures": [],
-  "persistent_failures": [
+    },
+    {
+      "site": "peachurnet",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
+    },
     {
       "site": "tubxporn",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "BLOCKED",
-      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177476"
+      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177485"
     }
   ],
   "improved_sites": [
     {
-      "site": "playvids",
+      "site": "xmoviesforyou",
       "previous": "WARN",
       "current": "PASS"
     }
   ],
-  "step_regressions": [
-    {
-      "site": "analdin",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
-    },
-    {
-      "site": "eporner",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
-    },
-    {
-      "site": "peachurnet",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
-    },
-    {
-      "site": "porndoe",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
-    }
-  ],
+  "step_regressions": [],
   "deltas": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "anysex",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "ask4porn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "eporner",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "hdporn92",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "peachurnet",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "playvids",
-      "previous": "WARN",
+      "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
       "site": "porndoe",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "xmoviesforyou",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]

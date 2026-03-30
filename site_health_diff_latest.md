@@ -1,41 +1,35 @@
 # Site Health Delta
 
-- Current report: `live_smoke_20260329_065009.json`
+- Current report: `live_smoke_20260330_070519.json`
 - Previous report: `live_smoke_latest.json`
 
 ## Snapshot
 
-- Current: `PASS 154` | `WARN 5` | `FAIL 8` | `ERROR 0` | `SKIP 1`
-- Previous: `PASS 159` | `WARN 6` | `FAIL 1` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 160` | `WARN 4` | `FAIL 3` | `ERROR 0` | `SKIP 1`
+- Previous: `PASS 154` | `WARN 5` | `FAIL 8` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
-- New failures: `6`
-- Resolved failures: `0`
-- Persistent failures: `1`
-- Site regressions: `6`
-- Step regressions: `4`
+- New failures: `0`
+- Resolved failures: `5`
+- Persistent failures: `3`
+- Site regressions: `0`
+- Step regressions: `0`
 
-## New Failures
+## Resolved Failures
 
-- **analdin**: `PASS -> FAIL` (PARSER) | list: List returned no videos
-- **ask4porn**: `PASS -> FAIL` (NETWORK) | Site process timed out after 140s
-- **eporner**: `PASS -> FAIL` (PARSER) | list: List returned no videos
-- **hdporn92**: `PASS -> FAIL` (NETWORK) | Site process timed out after 140s
-- **peachurnet**: `PASS -> FAIL` (PARSER) | list: List returned no videos
-- **porndoe**: `PASS -> FAIL` (PARSER) | list: List returned no videos
+- **analdin**: `FAIL -> PASS`
+- **ask4porn**: `FAIL -> PASS`
+- **eporner**: `FAIL -> PASS`
+- **hdporn92**: `FAIL -> PASS`
+- **porndoe**: `FAIL -> PASS`
 
 ## Persistent Failures
 
-- **tubxporn**: `FAIL -> FAIL` (BLOCKED) | main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {"status": "error", "message": "Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.", "startTimestamp": 177476
-
-## Step Regressions
-
-- **analdin** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
-- **eporner** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
-- **peachurnet** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
-- **porndoe** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
+- **anysex**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
+- **peachurnet**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
+- **tubxporn**: `FAIL -> FAIL` (BLOCKED) | main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {"status": "error", "message": "Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.", "startTimestamp": 177485
 
 ## Improvements
 
-- **playvids**: `WARN -> PASS`
+- **xmoviesforyou**: `WARN -> PASS`
