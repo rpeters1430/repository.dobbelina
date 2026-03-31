@@ -395,6 +395,18 @@ def classify_message(msg: str) -> str:
         return "BLOCKED"
     if any(x in m for x in ("timed out", "timeout", "connection", "network")):
         return "NETWORK"
+    if any(
+        x in m
+        for x in (
+            "503",
+            "service temporarily unavailable",
+            "temporarily unavailable",
+            "maintenance",
+            "bad gateway",
+            "gateway timeout",
+        )
+    ):
+        return "NETWORK"
     if any(x in m for x in ("no items", "no videos", "empty")):
         return "PARSER"
     if any(x in m for x in ("exception", "traceback", "import")):
@@ -1070,6 +1082,12 @@ def run_site_child(
             return StepResult(
                 "SKIP",
                 f"List URL blocked/challenged in harness ({probe})",
+                sample_url=url,
+            )
+        if probe.startswith("HTTP 5"):
+            return StepResult(
+                "FAIL",
+                f"List URL unavailable in harness ({probe})",
                 sample_url=url,
             )
         return StepResult("FAIL", "List returned no videos", sample_url=url)

@@ -1,0 +1,1763 @@
+{
+  "summary": {
+    "generated": "2026-03-29T19:03:55.254532",
+    "started": "2026-03-29T19:02:13.533797",
+    "sites_total": 20,
+    "pass": 20,
+    "warn": 0,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "blocked_hint": 0,
+    "steps": [
+      "main",
+      "list",
+      "categories",
+      "search",
+      "play"
+    ],
+    "timeout_per_step_sec": 35,
+    "timeout_per_site_sec": 140,
+    "keyword": "test"
+  },
+  "sites": [
+    {
+      "site": "porngo",
+      "title": "PornGO",
+      "base_url": "https://www.porngo.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 60 videos",
+          "elapsed": 0.84,
+          "items": 63,
+          "video_items": 60,
+          "image_items": 60,
+          "description_items": 60,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "60 videos",
+          "elapsed": 0.51,
+          "items": 61,
+          "video_items": 60,
+          "image_items": 60,
+          "description_items": 60,
+          "playable": 1,
+          "sample_url": "https://www.porngo.com/latest-updates/2/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "8380 categories",
+          "elapsed": 2.06,
+          "items": 8380,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.porngo.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.41,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.porngo.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.6,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.porngo.com/videos/1881576/indian-princess-kneels-and-takes-big-white-cock-in-mouth-rough-interracial-pool-sex/",
+          "play_url": "https://www.porngo.com/get_file/1020/ee77a9b70310dd504c5e15621f245979c2189a5887/1881000/1881576/1881576_480m.mp4/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.87
+    },
+    {
+      "site": "pornhat",
+      "title": "Pornhat",
+      "base_url": "https://www.pornhat.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 120 videos",
+          "elapsed": 1.29,
+          "items": 124,
+          "video_items": 120,
+          "image_items": 120,
+          "description_items": 120,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "120 videos",
+          "elapsed": 0.73,
+          "items": 121,
+          "video_items": 120,
+          "image_items": 120,
+          "description_items": 120,
+          "playable": 1,
+          "sample_url": "https://www.pornhat.com/2/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "52 categories",
+          "elapsed": 0.36,
+          "items": 52,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.pornhat.com/channels/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.23,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.pornhat.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.58,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.pornhat.com/video/hd-clip-with-well-formed-ian-tate-and-honour-may-from-fake-taxi/",
+          "play_url": "https://cdn.privatehost.com/hls/contents/videos/720000/720596/720596,_360p.mp4,.mp4,_720p.mp4,?&lra=5000k&c=9&exp_time=1774843341&tag=pornhat.com&sign=4b1f4f7356f7af767fa3f507f8f4b98f"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.43
+    },
+    {
+      "site": "pornhd3x",
+      "title": "PornHD3x",
+      "base_url": "https://pornhd3x.tv/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "6 dirs, 28 videos",
+          "elapsed": 1.35,
+          "items": 34,
+          "video_items": 28,
+          "image_items": 28,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "40 videos",
+          "elapsed": 0.84,
+          "items": 41,
+          "video_items": 40,
+          "image_items": 40,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://pornhd3x.tv/porn-hd-free-full-1080p",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.98,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://pornhd3x.tv/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.66,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://pornhd3x.tv/movies/new-jacquieetmicheltv-cristal-44-years-old-delighted-to-have-two-guys-for-herself-29-03-2026-hardcore-milf-bigtits-threesome-reality-french-iluvy-luluvdo-com-myvidplay-com",
+          "play_url": "https://cdn-aws-exp.cdnamz.me/playlists/8b7b5ea9-1f52-4ca1-a924-98d92525d4e3/u8lmahqjne.m3u8?md5=0rcvmfKtvlA5oHz8BX9nYQ&expires=1774846946"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.08
+    },
+    {
+      "site": "pornhits",
+      "title": "PornHits",
+      "base_url": "https://www.pornhits.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 36 videos",
+          "elapsed": 1.33,
+          "items": 39,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 36,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "36 videos",
+          "elapsed": 1.07,
+          "items": 37,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 36,
+          "playable": 1,
+          "sample_url": "https://www.pornhits.com/videos.php?p=2&s=l",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "163 categories",
+          "elapsed": 1.14,
+          "items": 163,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.pornhits.com/categories.php",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.03,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.pornhits.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.7,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.pornhits.com/video/584279/chris-lockwood-and-lauren-phillips-stepmom-i-wanna-cum-inside-you-please/",
+          "play_url": "https://www.pornhits.com/get_file/3/255d6226bb3d1b2e6b68c546abecfc37bbd689d10e/584000/584279/584279_hq.mp4/?d=2493&br=302&ti=1774836153|referer=https://www.pornhits.com/embed.php?id=584279"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 6.56
+    },
+    {
+      "site": "pornhoarder",
+      "title": "PornHoarder",
+      "base_url": "https://pornhoarder.io/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "9 dirs, 97 videos",
+          "elapsed": 1.61,
+          "items": 106,
+          "video_items": 97,
+          "image_items": 97,
+          "description_items": 97,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "97 videos",
+          "elapsed": 1.12,
+          "items": 98,
+          "video_items": 97,
+          "image_items": 97,
+          "description_items": 97,
+          "playable": 1,
+          "sample_url": "https://pornhoarder.io/search/?search=&sort=0",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "64 categories",
+          "elapsed": 0.28,
+          "items": 64,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://pornhoarder.io/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "100 results for 'test'",
+          "elapsed": 1.24,
+          "items": 101,
+          "video_items": 100,
+          "image_items": 100,
+          "description_items": 100,
+          "playable": 1,
+          "sample_url": "https://pornhoarder.io/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.75,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://pornhoarder.io/watch/amuse-busty-38yo-english-teacher-living-in-france-full-vid/bHZSMzFzUjRDMlBpaTU1Y05veG1SMkdnMnMxcnZMTCtBQXlFL3Z2cHBJZz0=",
+          "play_url": "https://dsvplay.com/e/nm39ahxxtz20/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.25
+    },
+    {
+      "site": "pornhub",
+      "title": "PornHub",
+      "base_url": "https://www.pornhub.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 31 videos",
+          "elapsed": 1.91,
+          "items": 35,
+          "video_items": 31,
+          "image_items": 31,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "48 videos",
+          "elapsed": 2.22,
+          "items": 50,
+          "video_items": 48,
+          "image_items": 48,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.pornhub.com/video?o=cm&page=2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "113 categories",
+          "elapsed": 1.62,
+          "items": 113,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.pornhub.com/categories",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.33,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.pornhub.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.pornhub.com/view_video.php?viewkey=67e8520fddaf9",
+          "play_url": "https://www.pornhub.com/view_video.php?viewkey=67e8520fddaf9"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 7.33
+    },
+    {
+      "site": "pornkai",
+      "title": "PornKai",
+      "base_url": "https://pornkai.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 120 videos",
+          "elapsed": 0.93,
+          "items": 123,
+          "video_items": 120,
+          "image_items": 120,
+          "description_items": 120,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "120 videos",
+          "elapsed": 0.89,
+          "items": 121,
+          "video_items": 120,
+          "image_items": 120,
+          "description_items": 120,
+          "playable": 1,
+          "sample_url": "https://pornkai.com/videos?q=porn&sort=new&page=2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "92 categories",
+          "elapsed": 0.6,
+          "items": 92,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://pornkai.com/all-categories",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.57,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://pornkai.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.57,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://pornkai.com/view?key=xv88922734&click_index=0",
+          "play_url": "https://www.xvideos.com/embedframe/oucdape97c8"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 3.81
+    },
+    {
+      "site": "pornmz",
+      "title": "Pornmz",
+      "base_url": "https://pornmz.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "7 dirs, 26 videos",
+          "elapsed": 0.78,
+          "items": 33,
+          "video_items": 26,
+          "image_items": 26,
+          "description_items": 26,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "26 videos",
+          "elapsed": 0.56,
+          "items": 27,
+          "video_items": 26,
+          "image_items": 26,
+          "description_items": 26,
+          "playable": 1,
+          "sample_url": "https://pornmz.com/page/1?filter=popular",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "67 categories",
+          "elapsed": 2.76,
+          "items": 67,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://pornmz.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "4 results for 'test'",
+          "elapsed": 0.98,
+          "items": 4,
+          "video_items": 4,
+          "image_items": 4,
+          "description_items": 4,
+          "playable": 1,
+          "sample_url": "https://pornmz.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.85,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://pornmz.com/video/id=pm13035858187170",
+          "play_url": "https://cdn8.vids69.com/video/78/8/77737/77737.mp4|Referer=https://pornmz.com/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 6.19
+    },
+    {
+      "site": "porno1hu",
+      "title": "Porno1.hu",
+      "base_url": "https://porno1.hu/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 30 videos",
+          "elapsed": 1.24,
+          "items": 33,
+          "video_items": 30,
+          "image_items": 30,
+          "description_items": 30,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "30 videos",
+          "elapsed": 0.73,
+          "items": 31,
+          "video_items": 30,
+          "image_items": 30,
+          "description_items": 30,
+          "playable": 1,
+          "sample_url": "https://porno1.hu/friss-porno/2/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "197 categories",
+          "elapsed": 0.82,
+          "items": 197,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://porno1.hu/kategoriak/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.15,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://porno1.hu/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.32,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://porno1.hu/szexvideo/30489/a-huncut-tini-ribanc-korrepetalas-helyett-inkabb-felpattant-az-idos-magantanara-erektalt-faszara/",
+          "play_url": "https://porno1.hu/prn/286540321_hd.mp4"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist.",
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.52
+    },
+    {
+      "site": "porno365",
+      "title": "Porno365",
+      "base_url": "http://m.porno365.pics/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 0 videos",
+          "elapsed": 1.93,
+          "items": 3,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "No reliable list URL discovered from Main; list fallback yielded no videos",
+          "elapsed": 1.36,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "http://m.porno365.pics/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 1.32,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "http://m.porno365.pics/categories",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.2,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "http://m.porno365.pics/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "No video item available from list/search",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 6.07
+    },
+    {
+      "site": "pornone",
+      "title": "PornOne",
+      "base_url": "https://pornone.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 35 videos",
+          "elapsed": 0.49,
+          "items": 38,
+          "video_items": 35,
+          "image_items": 35,
+          "description_items": 35,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "35 videos",
+          "elapsed": 0.36,
+          "items": 36,
+          "video_items": 35,
+          "image_items": 35,
+          "description_items": 35,
+          "playable": 1,
+          "sample_url": "https://pornone.com/newest/2/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "510 categories",
+          "elapsed": 0.34,
+          "items": 510,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://pornone.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.26,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://pornone.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.18,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://pornone.com/femdom/i-m-necgrapes-on-discord-reach-out-for-customs/280464185/?rr=164",
+          "play_url": "https://s314.pornone.com/vid2/Iky8oMAwMA5enbOYKJVkzw/1774839789/85/280464185/280464185_1920x1080_4000k.mp4?lang=en"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 1.87
+    },
+    {
+      "site": "pornroom",
+      "title": "ThePornRoom",
+      "base_url": "https://thepornroom.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 36 videos",
+          "elapsed": 1.92,
+          "items": 39,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 36,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "36 videos",
+          "elapsed": 1.51,
+          "items": 37,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 36,
+          "playable": 1,
+          "sample_url": "https://thepornroom.com/page/2/?filter=latest",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "38 categories",
+          "elapsed": 0.76,
+          "items": 38,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://thepornroom.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.51,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://thepornroom.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://thepornroom.com/horny-skinny-teen-susy-at-cam-show/",
+          "play_url": "https://thepornroom.com/horny-skinny-teen-susy-at-cam-show/"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.92
+    },
+    {
+      "site": "porntn",
+      "title": "PornTN",
+      "base_url": "https://porntn.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 29 videos",
+          "elapsed": 0.93,
+          "items": 31,
+          "video_items": 29,
+          "image_items": 29,
+          "description_items": 29,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "29 videos",
+          "elapsed": 0.7,
+          "items": 29,
+          "video_items": 29,
+          "image_items": 29,
+          "description_items": 29,
+          "playable": 1,
+          "sample_url": "https://porntn.com/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 0.74,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://porntn.com/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "29 results for 'test'",
+          "elapsed": 0.77,
+          "items": 29,
+          "video_items": 29,
+          "image_items": 29,
+          "description_items": 29,
+          "playable": 1,
+          "sample_url": "https://porntn.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.7,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://porntn.com/video/8521/sashacurves-a-new-start/",
+          "play_url": "https://porntn.com/video/8521/sashacurves-a-new-start/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.11
+    },
+    {
+      "site": "porntrex",
+      "title": "PornTrex",
+      "base_url": "https://www.porntrex.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "6 dirs, 85 videos",
+          "elapsed": 1.47,
+          "items": 91,
+          "video_items": 85,
+          "image_items": 85,
+          "description_items": 85,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "85 videos",
+          "elapsed": 1.31,
+          "items": 86,
+          "video_items": 85,
+          "image_items": 85,
+          "description_items": 85,
+          "playable": 1,
+          "sample_url": "https://www.porntrex.com/latest-updates/2/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "91 categories",
+          "elapsed": 1.1,
+          "items": 91,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.porntrex.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.62,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.porntrex.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.17,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.porntrex.com/video/3134194/analvault-nikatsu",
+          "play_url": "https://www.porntrex.com/video/3134194/analvault-nikatsu"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist.",
+        "Oh oh: No videos found"
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.95
+    },
+    {
+      "site": "pornxp",
+      "title": "PornXP",
+      "base_url": "https://pornxp.com-mirror.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "5 dirs, 36 videos",
+          "elapsed": 1.18,
+          "items": 41,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "36 videos",
+          "elapsed": 0.74,
+          "items": 37,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://pornxp.com-mirror.com/released/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.67,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://pornxp.com-mirror.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.7,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://pornxp.com-mirror.com/videos/65505257490",
+          "play_url": "https://sn.porn-xp.com/_vxTdB0uByfH5jsFZ7on7Ojdw/65505257641/1080.mp4"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.56
+    },
+    {
+      "site": "premiumporn",
+      "title": "PremiumPorn",
+      "base_url": "https://premiumporn.org/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 18 videos",
+          "elapsed": 1.61,
+          "items": 22,
+          "video_items": 18,
+          "image_items": 18,
+          "description_items": 18,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "18 videos",
+          "elapsed": 0.83,
+          "items": 19,
+          "video_items": 18,
+          "image_items": 18,
+          "description_items": 18,
+          "playable": 1,
+          "sample_url": "https://premiumporn.org/page/2/?filter=latest",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "61 categories",
+          "elapsed": 0.52,
+          "items": 61,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://premiumporn.org/actors/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.52,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://premiumporn.org/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.84,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://premiumporn.org/freeuse-fantasy-everyone-shares-me-in-our-free-use-household-pixie-smalls/",
+          "play_url": "https://bysewihe.com/e/5on7vzd6gp6z/freeuse-fantasy-everyone-shares-me-in-our-free-use-household-pixie-smalls-premiumporn-org"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.61
+    },
+    {
+      "site": "rlc",
+      "title": "Reallifecam.to",
+      "base_url": "https://reallifecam.to/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 36 videos",
+          "elapsed": 1.1,
+          "items": 39,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 36,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "36 videos",
+          "elapsed": 1.07,
+          "items": 37,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 36,
+          "playable": 1,
+          "sample_url": "https://reallifecam.to/videos?o=mr&page=2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 1.75,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://reallifecam.to/categories",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.26,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://reallifecam.to/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.47,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://reallifecam.to/video/21447/reallifecam-angie-and-guest-girl-have-hot-lesbian-pussy-eat-and-fuck-on-sofa-26-03-2026",
+          "play_url": "https://myvidplay.com/e/xm6e34rs3513"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.92
+    },
+    {
+      "site": "redtube",
+      "title": "RedTube",
+      "base_url": "https://www.redtube.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 73 videos",
+          "elapsed": 1.96,
+          "items": 76,
+          "video_items": 73,
+          "image_items": 73,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "73 videos",
+          "elapsed": 1.82,
+          "items": 74,
+          "video_items": 73,
+          "image_items": 73,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.redtube.com/?page=2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "77 categories",
+          "elapsed": 1.31,
+          "items": 77,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.redtube.com/categories",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.29,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.redtube.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 2.43,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.redtube.com/198882851",
+          "play_url": "https://ev-h-ph.rdtcdn.com/hls/videos/202404/06/450705551/1080P_4000K_450705551.mp4/master.m3u8?validfrom=1774832627&validto=1774839827&hdl=-1&hash=LE7LLUgjxeZhmZ6rKaUbGOsmhew%3D|Referer=https://www.redtube.com/198882851"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 9.03
+    },
+    {
+      "site": "rule34video",
+      "title": "Rule34 Video",
+      "base_url": "https://rule34video.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 0 videos",
+          "elapsed": 0.7,
+          "items": 3,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "No reliable list URL discovered from Main; list fallback yielded no videos",
+          "elapsed": 0.4,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://rule34video.com/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "36 categories",
+          "elapsed": 0.34,
+          "items": 36,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://rule34video.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.43,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://rule34video.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "No video item available from list/search",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 2.04
+    },
+    {
+      "site": "seaporn",
+      "title": "SeaPorn [COLOR red][Debrid only]",
+      "base_url": "https://www.seaporn.org/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 11 videos",
+          "elapsed": 1.06,
+          "items": 14,
+          "video_items": 11,
+          "image_items": 11,
+          "description_items": 11,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "11 videos",
+          "elapsed": 0.93,
+          "items": 12,
+          "video_items": 11,
+          "image_items": 11,
+          "description_items": 11,
+          "playable": 1,
+          "sample_url": "https://www.seaporn.org/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "11 categories",
+          "elapsed": 0.86,
+          "items": 11,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.seaporn.org/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.02,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.seaporn.org/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.5,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.seaporn.org/uncategorized/download-all-you-want-with-a-k2s-premium-account/",
+          "play_url": "https://duckduckgo.com/?q=CherryPimps.Cheese.20.10.20.Chanel.Preston.XXX.1080p.MP4-WRB&#038;t=ffnt&#038;ia=web"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.59
+    }
+  ]
+}

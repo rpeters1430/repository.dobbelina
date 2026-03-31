@@ -1,0 +1,1757 @@
+{
+  "summary": {
+    "generated": "2026-03-29T17:27:09.654711",
+    "started": "2026-03-29T17:25:30.188465",
+    "sites_total": 20,
+    "pass": 20,
+    "warn": 0,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "blocked_hint": 0,
+    "steps": [
+      "main",
+      "list",
+      "categories",
+      "search",
+      "play"
+    ],
+    "timeout_per_step_sec": 35,
+    "timeout_per_site_sec": 140,
+    "keyword": "test"
+  },
+  "sites": [
+    {
+      "site": "hanime",
+      "title": "hanime.tv",
+      "base_url": "https://hanime.tv",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "5 dirs, 48 videos",
+          "elapsed": 0.98,
+          "items": 53,
+          "video_items": 48,
+          "image_items": 48,
+          "description_items": 48,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "Main already returned videos; list probe skipped",
+          "elapsed": 0.51,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hanime.tv/uncensored",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "9 results for 'test'",
+          "elapsed": 0.6,
+          "items": 9,
+          "video_items": 9,
+          "image_items": 9,
+          "description_items": 9,
+          "playable": 1,
+          "sample_url": "https://hanime.tv",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Harness limitation (notify): Oh oh: Couldn't find a playable link",
+          "elapsed": 0.84,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hanime.tv/kenki-virgo-1",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "Oh oh: Couldn't find a playable link"
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.13
+    },
+    {
+      "site": "hdporn92",
+      "title": "Hdporn92",
+      "base_url": "https://hdporn92.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "5 dirs, 40 videos",
+          "elapsed": 1.15,
+          "items": 45,
+          "video_items": 40,
+          "image_items": 40,
+          "description_items": 40,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "40 videos",
+          "elapsed": 0.54,
+          "items": 41,
+          "video_items": 40,
+          "image_items": 40,
+          "description_items": 40,
+          "playable": 1,
+          "sample_url": "https://hdporn92.com/page/2/?filter=latest",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "21 categories",
+          "elapsed": 0.86,
+          "items": 21,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hdporn92.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "1 results for 'test'",
+          "elapsed": 1.27,
+          "items": 1,
+          "video_items": 1,
+          "image_items": 0,
+          "description_items": 1,
+          "playable": 1,
+          "sample_url": "https://hdporn92.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.22,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://hdporn92.com/rkprime-kylie-rocket-breaking-entering-her-pussy/",
+          "play_url": "https://minochinos.com/embed/yjet3fl594pk"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.47
+    },
+    {
+      "site": "porn00",
+      "title": "Porn00",
+      "base_url": "https://www.porn00.org",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 12 videos",
+          "elapsed": 0.74,
+          "items": 15,
+          "video_items": 12,
+          "image_items": 12,
+          "description_items": 12,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "12 videos",
+          "elapsed": 0.76,
+          "items": 13,
+          "video_items": 12,
+          "image_items": 12,
+          "description_items": 12,
+          "playable": 1,
+          "sample_url": "https://www.porn00.org/porn-page/2/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 0.33,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.porn00.org/tags/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.3,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.porn00.org",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.3,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.porn00.org/video/mandii-rose-big-assed-babe-slammed-that-cock/",
+          "play_url": "https://www.porn00.org/video/mandii-rose-big-assed-babe-slammed-that-cock/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 2.57
+    },
+    {
+      "site": "heavyr",
+      "title": "Heavy-R",
+      "base_url": "https://www.heavy-r.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 16 videos",
+          "elapsed": 3.53,
+          "items": 20,
+          "video_items": 16,
+          "image_items": 16,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "Main already returned videos; list probe skipped",
+          "elapsed": 6.47,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.heavy-r.com/videos/most_viewed/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "63 categories",
+          "elapsed": 6.73,
+          "items": 63,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.heavy-r.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "16 results for 'test'",
+          "elapsed": 2.86,
+          "items": 17,
+          "video_items": 16,
+          "image_items": 16,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.heavy-r.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.34,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.heavy-r.com/video/448030/Small_Girl_Takes_Deep_Anal/",
+          "play_url": "https://www.heavy-r.com/video/448030/Small_Girl_Takes_Deep_Anal/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 21.1
+    },
+    {
+      "site": "hentaidude",
+      "title": "Hentaidude",
+      "base_url": "https://hentaidude.xxx/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "24 dirs, 20 videos",
+          "elapsed": 1.47,
+          "items": 44,
+          "video_items": 20,
+          "image_items": 20,
+          "description_items": 20,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "20 videos",
+          "elapsed": 1.11,
+          "items": 21,
+          "video_items": 20,
+          "image_items": 20,
+          "description_items": 19,
+          "playable": 1,
+          "sample_url": "https://hentaidude.xxx/genre/uncensored-hentai/page/1/?m_orderby=latest",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.23,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hentaidude.xxx/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Harness limitation (notify): Notify: No videos found",
+          "elapsed": 0.45,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hentaidude.xxx/watch/night-shift-nurses-2/",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "Notify: No videos found"
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.44
+    },
+    {
+      "site": "hentaihavenc",
+      "title": "Hentaihaven",
+      "base_url": "https://hentaihaven.co/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 40 videos",
+          "elapsed": 0.88,
+          "items": 44,
+          "video_items": 40,
+          "image_items": 40,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "Main already returned videos; list probe skipped",
+          "elapsed": 0.6,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hentaihaven.co/#",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "66 categories",
+          "elapsed": 0.36,
+          "items": 66,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hentaihaven.co/genres/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.32,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hentaihaven.co/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.5,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://hentaihaven.co/watch/natsu-to-hako-episode-2/",
+          "play_url": "//a.adtng.com/get/10001807?ata=freddiehdxd"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 2.85
+    },
+    {
+      "site": "hentai-moon",
+      "title": "Hentai Moon",
+      "base_url": "https://hentai-moon.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "7 dirs, 20 videos",
+          "elapsed": 0.75,
+          "items": 27,
+          "video_items": 20,
+          "image_items": 0,
+          "description_items": 20,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "20 videos",
+          "elapsed": 0.29,
+          "items": 21,
+          "video_items": 20,
+          "image_items": 0,
+          "description_items": 20,
+          "playable": 1,
+          "sample_url": "https://hentai-moon.com/top-rated/?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=rating&from=1",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "26 categories",
+          "elapsed": 0.3,
+          "items": 26,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hentai-moon.com/categories/?mode=async&function=get_block&block_id=list_categories_categories_list&sort_by=title",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.69,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hentai-moon.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.68,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://hentai-moon.com/videos/7756/sister-breeder-ep-4/",
+          "play_url": "https://hentai-moon.com/videos/7756/sister-breeder-ep-4/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 2.88
+    },
+    {
+      "site": "hentaistream",
+      "title": "HentaiStream",
+      "base_url": "https://hstream.moe/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 25 videos",
+          "elapsed": 0.9,
+          "items": 28,
+          "video_items": 25,
+          "image_items": 25,
+          "description_items": 25,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "25 videos",
+          "elapsed": 1.13,
+          "items": 26,
+          "video_items": 25,
+          "image_items": 25,
+          "description_items": 25,
+          "playable": 1,
+          "sample_url": "https://hstream.moe/search?order=recently-uploaded&page=2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.48,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hstream.moe/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 2.29,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://hstream.moe/hentai/h-na-gishi-series-the-animation-2",
+          "play_url": "https://imoto-str.ane-h.xyz/2025/H.na.Gishi.Series.The.Animation/E02/2160/manifest.mpd"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.97
+    },
+    {
+      "site": "heroero",
+      "title": "Heroero",
+      "base_url": "https://heroero.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 40 videos",
+          "elapsed": 0.9,
+          "items": 43,
+          "video_items": 40,
+          "image_items": 40,
+          "description_items": 40,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "52 videos",
+          "elapsed": 0.77,
+          "items": 52,
+          "video_items": 52,
+          "image_items": 52,
+          "description_items": 52,
+          "playable": 1,
+          "sample_url": "https://heroero.com/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "21 categories",
+          "elapsed": 0.65,
+          "items": 21,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://heroero.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "52 results for 'test'",
+          "elapsed": 0.76,
+          "items": 52,
+          "video_items": 52,
+          "image_items": 52,
+          "description_items": 52,
+          "playable": 1,
+          "sample_url": "https://heroero.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.82,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://heroero.com/videos/22312/sex-video-american-pie-series-every-sexy-scene/",
+          "play_url": "https://media.heroero.com/contents/videos/22000/22312/22312_480p.mp4|Referer=https://heroero.com/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.06
+    },
+    {
+      "site": "hitprn",
+      "title": "Hitprn",
+      "base_url": "https://www.hitprn.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 48 videos",
+          "elapsed": 1.19,
+          "items": 52,
+          "video_items": 48,
+          "image_items": 48,
+          "description_items": 48,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "48 videos",
+          "elapsed": 0.89,
+          "items": 48,
+          "video_items": 48,
+          "image_items": 48,
+          "description_items": 48,
+          "playable": 1,
+          "sample_url": "https://www.hitprn.com/page/1/?orderby=views",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 5.52,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.hitprn.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.98,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.hitrpn.com/ready-or-not-here-i-cum-julia-roca-susy-gala-double-heat/",
+          "play_url": "https://www.myyouporn.org/wp-content/uploads/videos/special720p/ReadyOrNotHereICum%20-%20Double%20heat%20-%20Julia%20Roca,%20Susy%20Gala,%20Nacho%20Vidal%20(hitprn.com)_720.mp4|Referer=https://www.hitprn.com/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 8.74
+    },
+    {
+      "site": "hobbyporn",
+      "title": "Hobby Porn",
+      "base_url": "https://hobby.porn/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 118 videos",
+          "elapsed": 0.7,
+          "items": 122,
+          "video_items": 118,
+          "image_items": 78,
+          "description_items": 118,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "118 videos",
+          "elapsed": 0.49,
+          "items": 118,
+          "video_items": 118,
+          "image_items": 78,
+          "description_items": 118,
+          "playable": 1,
+          "sample_url": "https://hobby.porn/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "74 categories",
+          "elapsed": 0.78,
+          "items": 74,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hobby.porn/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.39,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hobby.porn/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Harness limitation (notify): Oh Oh: No Videos found",
+          "elapsed": 0.38,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hobby.porn/model/esteban-gamboa/",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "Oh Oh: No Videos found"
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 2.92
+    },
+    {
+      "site": "homemoviestube",
+      "title": "HomeMovies Tube",
+      "base_url": "https://www.homemoviestube.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 1 videos",
+          "elapsed": 1.32,
+          "items": 4,
+          "video_items": 1,
+          "image_items": 0,
+          "description_items": 1,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "1 videos",
+          "elapsed": 0.73,
+          "items": 2,
+          "video_items": 1,
+          "image_items": 0,
+          "description_items": 1,
+          "playable": 1,
+          "sample_url": "https://www.homemoviestube.com/most-recent/page2.html",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 0.42,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.homemoviestube.com/channels/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.29,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.homemoviestube.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.72,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.sisishy.com/?trafficsource=rosssite",
+          "play_url": "video/sisi_shy_video01.mp4|verifypeer=false"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.63
+    },
+    {
+      "site": "hornyfap",
+      "title": "HornyFap",
+      "base_url": "https://hornyfap.tv/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "5 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 5,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "24 videos",
+          "elapsed": 0.43,
+          "items": 25,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 1,
+          "sample_url": "https://hornyfap.tv/latest-updates/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 0.32,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hornyfap.tv/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "2 results for 'test'",
+          "elapsed": 0.37,
+          "items": 2,
+          "video_items": 2,
+          "image_items": 2,
+          "description_items": 2,
+          "playable": 1,
+          "sample_url": "https://hornyfap.tv/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.36,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://hornyfap.tv/video/14091/bufalika-aka-ika-d-auria-nude-tits-play-after-shower-ppv-onlyfan-video/",
+          "play_url": "https://hornyfap.tv/video/14091/bufalika-aka-ika-d-auria-nude-tits-play-after-shower-ppv-onlyfan-video/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 1.61
+    },
+    {
+      "site": "hotleak",
+      "title": "Hotleak",
+      "base_url": "https://hotleak.vip/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 2,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "24 videos",
+          "elapsed": 1.17,
+          "items": 25,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 1,
+          "sample_url": "https://hotleak.vip/videos",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "24 results for 'test'",
+          "elapsed": 0.94,
+          "items": 25,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 1,
+          "sample_url": "https://hotleak.vip/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.1,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://hotleak.vip/eth0t.666/video/11939112",
+          "play_url": "https://hotleak.vip/m3u8/11939112.m3u8?time=1774836402&sig=a7d7c4936d4d5b30a805ecb7b06d89628cf54a821527376200b863bd0c26967a&sig2=dgUIkmtPV8ydmCt3|User-Agent=Mozilla/5.0%20%28Windows%20NT%206.3%3B%20rv%3A109.0.0.0%29%20Gecko/20100101%20Firefox/109.0.0.0&Referer=https%3A//hotleak.vip/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.4
+    },
+    {
+      "site": "hpjav",
+      "title": "HPJav",
+      "base_url": "https://hpjav.in/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "6 dirs, 5 videos",
+          "elapsed": 0.73,
+          "items": 11,
+          "video_items": 5,
+          "image_items": 0,
+          "description_items": 5,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "47 videos",
+          "elapsed": 0.71,
+          "items": 47,
+          "video_items": 47,
+          "image_items": 36,
+          "description_items": 47,
+          "playable": 1,
+          "sample_url": "https://hpjav.in/censored/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 0.71,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hpjav.in/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.7,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hpjav.in/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.72,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://hpjav.in/censored/",
+          "play_url": "None"
+        }
+      },
+      "notifications": [
+        "HPJav: Access blocked/challenged"
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.68
+    },
+    {
+      "site": "hqporner",
+      "title": "HQPorner",
+      "base_url": "https://hqporner.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "5 dirs, 50 videos",
+          "elapsed": 1.05,
+          "items": 55,
+          "video_items": 50,
+          "image_items": 50,
+          "description_items": 50,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "50 videos",
+          "elapsed": 1.0,
+          "items": 51,
+          "video_items": 50,
+          "image_items": 50,
+          "description_items": 50,
+          "playable": 1,
+          "sample_url": "https://hqporner.com/hdporn/2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "68 categories",
+          "elapsed": 0.8,
+          "items": 68,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hqporner.com//categories",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.69,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hqporner.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.9,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://hqporner.com/hdporn/125572-i_sense_some_steam_around.html",
+          "play_url": "https://mydaddy.cc/video/e7934007d1bd3563ca/"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.6
+    },
+    {
+      "site": "japteenx",
+      "title": "JapTeenX",
+      "base_url": "https://www.japteenx.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "5 dirs, 18 videos",
+          "elapsed": 1.33,
+          "items": 23,
+          "video_items": 18,
+          "image_items": 18,
+          "description_items": 18,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "18 videos",
+          "elapsed": 0.7,
+          "items": 19,
+          "video_items": 18,
+          "image_items": 18,
+          "description_items": 18,
+          "playable": 1,
+          "sample_url": "https://www.japteenx.com/videos?o=mr&type=public&page=2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "9 categories",
+          "elapsed": 0.0,
+          "items": 9,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.japteenx.com/tags",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.1,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.japteenx.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.japteenx.com/video/51691/myfans-full-video-of-beautiful-women-showing-up-explosive-milk-urafumi-japan",
+          "play_url": "https://www.japteenx.com/video/51691/myfans-full-video-of-beautiful-women-showing-up-explosive-milk-urafumi-japan"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.32
+    },
+    {
+      "site": "javbangers",
+      "title": "JAV Bangers",
+      "base_url": "https://www.javbangers.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 30 videos",
+          "elapsed": 1.13,
+          "items": 34,
+          "video_items": 30,
+          "image_items": 30,
+          "description_items": 30,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "Main already returned videos; list probe skipped",
+          "elapsed": 2.19,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.javbangers.com/playlists/?mode=async&function=get_block&block_id=list_playlists_common_playlists_list&sort_by=last_content_date&from=04",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "31 categories",
+          "elapsed": 0.82,
+          "items": 31,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.javbangers.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "58 results for 'test'",
+          "elapsed": 0.8,
+          "items": 58,
+          "video_items": 58,
+          "image_items": 58,
+          "description_items": 58,
+          "playable": 1,
+          "sample_url": "https://www.javbangers.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.68,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.javbangers.com/video/375959/cemd-106-slut-taxi-driver-5",
+          "play_url": "https://www.javbangers.com/video/375959/cemd-106-slut-taxi-driver-5"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.85
+    },
+    {
+      "site": "javgg",
+      "title": "JavGG",
+      "base_url": "https://javgg.co/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "5 dirs, 112 videos",
+          "elapsed": 2.05,
+          "items": 117,
+          "video_items": 112,
+          "image_items": 112,
+          "description_items": 112,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "40 videos",
+          "elapsed": 0.15,
+          "items": 40,
+          "video_items": 40,
+          "image_items": 40,
+          "description_items": 40,
+          "playable": 1,
+          "sample_url": "https://javgg.co/trending/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "7 categories",
+          "elapsed": 0.0,
+          "items": 7,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://javgg.co/tags",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.35,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://javgg.co/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.41,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://javgg.co/jav/blk-463-aaa9/",
+          "play_url": "https://jav-vids.xyz/v/i1elsreb27xn"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.2
+    },
+    {
+      "site": "javguru",
+      "title": "Jav Guru",
+      "base_url": "https://jav.guru/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "8 dirs, 24 videos",
+          "elapsed": 0.38,
+          "items": 32,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "24 videos",
+          "elapsed": 0.19,
+          "items": 25,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 1,
+          "sample_url": "https://jav.guru/category/jav-uncensored/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "1513 categories",
+          "elapsed": 0.53,
+          "items": 1513,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://jav.guru/jav-series/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.51,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://jav.guru/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 2.14,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://jav.guru/864222/020826-001-carib/",
+          "play_url": "https://jav.guru/864222/020826-001-carib/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.06
+    }
+  ]
+}

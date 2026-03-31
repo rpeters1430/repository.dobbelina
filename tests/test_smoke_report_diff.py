@@ -71,3 +71,16 @@ def test_render_markdown_includes_new_failures_section(tmp_path):
 
     assert "## New Failures" in markdown
     assert "example" in markdown
+
+
+def test_compare_reports_classifies_service_unavailable_as_network():
+    previous = make_report("PASS")
+    current = make_report(
+        "FAIL",
+        list_status="FAIL",
+        list_message="List URL unavailable in harness (HTTP 503)",
+    )
+
+    diff = smoke_report_diff.compare_reports(current, previous)
+
+    assert diff["new_failures"][0]["class"] == "NETWORK"

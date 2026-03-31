@@ -1,0 +1,1770 @@
+{
+  "summary": {
+    "generated": "2026-03-29T17:02:54.125213",
+    "started": "2026-03-29T16:58:31.646774",
+    "sites_total": 20,
+    "pass": 19,
+    "warn": 0,
+    "fail": 0,
+    "error": 0,
+    "skip": 1,
+    "blocked_hint": 0,
+    "steps": [
+      "main",
+      "list",
+      "categories",
+      "search",
+      "play"
+    ],
+    "timeout_per_step_sec": 35,
+    "timeout_per_site_sec": 140,
+    "keyword": "test"
+  },
+  "sites": [
+    {
+      "site": "6xtube",
+      "title": "6XTube",
+      "base_url": "http://www.6xtube.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 40 videos",
+          "elapsed": 0.74,
+          "items": 43,
+          "video_items": 40,
+          "image_items": 40,
+          "description_items": 40,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "40 videos",
+          "elapsed": 0.54,
+          "items": 41,
+          "video_items": 40,
+          "image_items": 40,
+          "description_items": 40,
+          "playable": 1,
+          "sample_url": "http://www.6xtube.com/most-recent/page2.html",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "76 categories",
+          "elapsed": 0.5,
+          "items": 76,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "http://www.6xtube.com/channels/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.33,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "http://www.6xtube.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.16,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.6xtube.com/video/kyler-quinn-cream-filled-college-girls-7-scene-4-16447.html",
+          "play_url": "https://images.trendyporn.com/thumbs/6/2/d/1/6/62d168ed854e9.mp4/62d168ed854e9.mp4-4b.jpg"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.54
+    },
+    {
+      "site": "85po",
+      "title": "85po",
+      "base_url": "https://85po.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 60 videos",
+          "elapsed": 1.1,
+          "items": 63,
+          "video_items": 60,
+          "image_items": 60,
+          "description_items": 60,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "60 videos",
+          "elapsed": 0.76,
+          "items": 61,
+          "video_items": 60,
+          "image_items": 60,
+          "description_items": 60,
+          "playable": 1,
+          "sample_url": "https://85po.com/4k/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "60 results for 'test'",
+          "elapsed": 0.75,
+          "items": 61,
+          "video_items": 60,
+          "image_items": 60,
+          "description_items": 60,
+          "playable": 1,
+          "sample_url": "https://85po.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.5,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.85po.com/v/28344/ri-ben-mei-mei-tuo-guang-yi-fu-xiu-shen-cai/",
+          "play_url": "https://www.85po.com/v/28344/ri-ben-mei-mei-tuo-guang-yi-fu-xiu-shen-cai/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.36
+    },
+    {
+      "site": "aagmaalpro",
+      "title": "Aag Maal Pro",
+      "base_url": "https://aagmaal.farm/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 30 videos",
+          "elapsed": 1.76,
+          "items": 33,
+          "video_items": 30,
+          "image_items": 30,
+          "description_items": 30,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "30 videos",
+          "elapsed": 0.6,
+          "items": 31,
+          "video_items": 30,
+          "image_items": 30,
+          "description_items": 30,
+          "playable": 1,
+          "sample_url": "https://aagmaal.dog/page/2/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "87 categories",
+          "elapsed": 0.92,
+          "items": 87,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://aagmaal.farm/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 2.02,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://aagmaal.farm/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.6,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://aagmaal.dog/tamil-astrologer-sex-scandal-part-6/",
+          "play_url": "https://krakenfiles.com/view/8pPwK0PDMN/file.html"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 6.14
+    },
+    {
+      "site": "aagmaal",
+      "title": "Aag Maal",
+      "base_url": "https://aagmaal.bz/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 24 videos",
+          "elapsed": 1.3,
+          "items": 26,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "24 videos",
+          "elapsed": 0.69,
+          "items": 24,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 1,
+          "sample_url": "https://aagmaal.bz/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "8 categories",
+          "elapsed": 0.73,
+          "items": 8,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://aagmaal.bz/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "1 results for 'test'",
+          "elapsed": 1.84,
+          "items": 1,
+          "video_items": 1,
+          "image_items": 0,
+          "description_items": 1,
+          "playable": 1,
+          "sample_url": "https://aagmaal.bz/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.71,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://aagmaal.bz/udhari-ke-badle-2026-hindi-uncut-short-film-watch-free/",
+          "play_url": "https://luluvid.com/d/jkkj5teeetdv"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.52
+    },
+    {
+      "site": "absoluporn",
+      "title": "AbsoluPorn",
+      "base_url": "http://www.absoluporn.com/en",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "6 dirs, 60 videos",
+          "elapsed": 1.1,
+          "items": 66,
+          "video_items": 60,
+          "image_items": 0,
+          "description_items": 60,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "60 videos",
+          "elapsed": 0.42,
+          "items": 61,
+          "video_items": 60,
+          "image_items": 0,
+          "description_items": 60,
+          "playable": 1,
+          "sample_url": "http://www.absoluporn.com/en/wall-note-1.html",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 0.4,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "http://www.absoluporn.com/en",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.41,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "http://www.absoluporn.com/en",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.38,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "http://www.absoluporn.com/en/video4-129931.html",
+          "play_url": "http://87.98.141.200/vidshd/56ea912c4df934c216c352fa8d623af3/17037.mp4"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 2.96
+    },
+    {
+      "site": "allclassic",
+      "title": "AllClassic.Porn",
+      "base_url": "https://allclassic.porn/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 60 videos",
+          "elapsed": 1.43,
+          "items": 63,
+          "video_items": 60,
+          "image_items": 60,
+          "description_items": 60,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "60 videos",
+          "elapsed": 1.05,
+          "items": 61,
+          "video_items": 60,
+          "image_items": 60,
+          "description_items": 60,
+          "playable": 1,
+          "sample_url": "https://allclassic.porn/page/2/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "60 categories",
+          "elapsed": 0.93,
+          "items": 60,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://allclassic.porn/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "84 results for 'test'",
+          "elapsed": 1.04,
+          "items": 85,
+          "video_items": 84,
+          "image_items": 84,
+          "description_items": 84,
+          "playable": 1,
+          "sample_url": "https://allclassic.porn/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.15,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://allclassic.porn/videos/4621/candy-girls-107-backdoor-lover/",
+          "play_url": "https://allclassic.porn/videos/4621/candy-girls-107-backdoor-lover/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.84
+    },
+    {
+      "site": "amateurtv",
+      "title": "Amatuer TV[COLOR white] - webcams",
+      "base_url": "https://www.amateur.tv/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 2,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "150 videos",
+          "elapsed": 0.66,
+          "items": 151,
+          "video_items": 150,
+          "image_items": 150,
+          "description_items": 150,
+          "playable": 1,
+          "sample_url": "https://www.amateur.tv/w",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Play disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": false,
+          "search": false,
+          "play": false
+        },
+        "content_type": "cam",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": true,
+          "search_results_optional": true,
+          "categories_optional": true
+        },
+        "tier": 2
+      },
+      "elapsed": 0.88
+    },
+    {
+      "site": "analdin",
+      "title": "Analdin",
+      "base_url": "https://www.analdin.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 100 videos",
+          "elapsed": 1.68,
+          "items": 103,
+          "video_items": 100,
+          "image_items": 100,
+          "description_items": 100,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "100 videos",
+          "elapsed": 1.25,
+          "items": 101,
+          "video_items": 100,
+          "image_items": 100,
+          "description_items": 100,
+          "playable": 1,
+          "sample_url": "https://www.analdin.com/latest-updates/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "100 results for 'test'",
+          "elapsed": 1.58,
+          "items": 100,
+          "video_items": 100,
+          "image_items": 100,
+          "description_items": 100,
+          "playable": 1,
+          "sample_url": "https://www.analdin.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.2,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.analdin.com/videos/813404/two-mature-ladies-expert-lesbian-masturbation/",
+          "play_url": "https://www.analdin.com/get_file/16/d4e4eb3ab5d9c5f792d5533851c07546/813000/813404/813404hd.mp4/|User-Agent=Mozilla/5.0 (Windows NT 6.2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Safari/537.36&Referer=https://www.analdin.com/videos/813404/two-mature-ladies-expert-lesbian-masturbation/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 2
+      },
+      "elapsed": 5.97
+    },
+    {
+      "site": "animeid",
+      "title": "Animeid Hentai",
+      "base_url": "https://animeidhentai.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "6 dirs, 54 videos",
+          "elapsed": 1.56,
+          "items": 60,
+          "video_items": 54,
+          "image_items": 54,
+          "description_items": 54,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "54 videos",
+          "elapsed": 0.39,
+          "items": 55,
+          "video_items": 54,
+          "image_items": 54,
+          "description_items": 53,
+          "playable": 1,
+          "sample_url": "https://animeidhentai.com/genre/hentai-uncensored/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "96 categories",
+          "elapsed": 1.75,
+          "items": 96,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://animeidhentai.com/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "96 results for 'test'",
+          "elapsed": 1.59,
+          "items": 96,
+          "video_items": 96,
+          "image_items": 96,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://animeidhentai.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.61,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://animeidhentai.com/39744/nagachichi-nagai-san-the-animation-episode-1/",
+          "play_url": "https:\\/\\/cdn.htstreaming.com\\/english\\/Nagachichi%20Nagai-san%20The%20Animation%201%20ENG.srt"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 6.17
+    },
+    {
+      "site": "anybunny",
+      "title": "Anybunny",
+      "base_url": "https://anybunny.org/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 2,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "No reliable list URL discovered from Main; list fallback yielded no videos",
+          "elapsed": 0.73,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://anybunny.org/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "100 categories",
+          "elapsed": 0.54,
+          "items": 100,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://anybunny.org/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "12 results for 'test'",
+          "elapsed": 0.54,
+          "items": 13,
+          "video_items": 12,
+          "image_items": 12,
+          "description_items": 12,
+          "playable": 1,
+          "sample_url": "https://anybunny.org/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.57,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://anybunny.org/too/1864119-fellucia_blow_testing_you",
+          "play_url": "https://anybunny.org/video/mp4/1864119/OF1phQzPbyx_hE4BDreDbA/1774835954/fellucia_blow_testing_you.mp4"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 2.63
+    },
+    {
+      "site": "anysex",
+      "title": "AnySex.com",
+      "base_url": "https://anysex.com/",
+      "overall": "SKIP",
+      "steps": {
+        "main": {
+          "status": "SKIP",
+          "message": "FlareSolverr required but unavailable in harness",
+          "elapsed": 20.72,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "FlareSolverr required but unavailable in harness",
+          "elapsed": 21.06,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "FlareSolverr required but unavailable in harness",
+          "elapsed": 18.52,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "FlareSolverr required but unavailable in harness",
+          "elapsed": 18.78,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "No video item available from list/search",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "FlareSolverr Failed: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/trouble",
+        "FlareSolverr: Cloudflare detected, solving challenge...",
+        "FlareSolverr Failed: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/trouble"
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": true,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 2
+      },
+      "elapsed": 79.29
+    },
+    {
+      "site": "archivebate",
+      "title": "Archivebate",
+      "base_url": "https://archivebate.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 36 videos",
+          "elapsed": 3.4,
+          "items": 38,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "Main already returned videos; list probe skipped",
+          "elapsed": 1.18,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://archivebate.com/platform/Y2hhdHVyYmF0ZQ==",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "No search function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.06,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://archivebate.com/watch/16312747",
+          "play_url": "https://mixdrop.ag/e/q19kg4zxax88r64"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.91
+    },
+    {
+      "site": "ask4porn",
+      "title": "Ask4Porn",
+      "base_url": "https://ask4porn.cc/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "9 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 9,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "FlareSolverr required but unavailable in harness",
+          "elapsed": 19.57,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "FlareSolverr required but unavailable in harness",
+          "elapsed": 19.97,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "FlareSolverr required but unavailable in harness",
+          "elapsed": 18.6,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "No video item available from list/search",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "FlareSolverr Failed: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/trouble",
+        "FlareSolverr: Cloudflare detected, solving challenge...",
+        "FlareSolverr Failed: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/trouble"
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": true,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 58.3
+    },
+    {
+      "site": "avple",
+      "title": "Avple",
+      "base_url": "https://avple.tv/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 0 videos",
+          "elapsed": 18.85,
+          "items": 3,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "List blocked/challenged in harness (FlareSolverr Failed: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/trouble)",
+          "elapsed": 19.31,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://avple.tv/tags/93/1/date",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "136 categories",
+          "elapsed": 0.0,
+          "items": 136,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://avple.tv/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 20.29,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://avple.tv/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "No video item available from list/search",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "FlareSolverr Failed: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/trouble",
+        "FlareSolverr: Cloudflare detected, solving challenge...",
+        "FlareSolverr Failed: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/trouble"
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 58.61
+    },
+    {
+      "site": "awmnet",
+      "title": "AWM Network - [COLOR deeppink]49 sites",
+      "base_url": "https://www.4tube.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "49 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 49,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "120 videos",
+          "elapsed": 0.97,
+          "items": 125,
+          "video_items": 120,
+          "image_items": 120,
+          "description_items": 120,
+          "playable": 1,
+          "sample_url": "https://www.ixxx.com/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "121 categories",
+          "elapsed": 0.94,
+          "items": 121,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.4tube.com/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.38,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.4tube.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 2.75,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.ixxx.com/out/?l=3AASPc4enRuAq3FscUJXVmtOTHR5AtmEaHR0cHM6Ly92aWRlb21hbnlzZXguY29tL3ZpZGVvLzM1MDI2MTEvYXZvbm5hLWRvbWluaWNhLWhhcy1hbi1leHBlcmllbmNlZC1wdXNzeS10aGF0cy13ZWxsLXdvcnRoLXRoZS10cm91YmxlLW9mLXNsaWRpbmcvP3Byb21vPTQ3Mjc5zQOeonRjAc0IG6RkYXRlAdk0eyJhbGwiOiIiLCJvcmllbnRhdGlvbiI6InN0cmFpZ2h0IiwicHJpY2luZyI6ImZyZWUifcDOacm8v8DOAxS8AcDZPVt7IjEiOiJ3cEtRM3hBQmlvSiJ9LHsiMiI6IjNXZFY0TjRwWVNnIn0seyIzIjoiR3JIVG1qWGRVVHcifV0%3D&c=5e71b1a4&v=3&",
+          "play_url": "https://manysex.com/video/3502611/avonna-dominica-has-an-experienced-pussy-thats-well-worth-the-trouble-of-sliding/?promo=47279"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 6.22
+    },
+    {
+      "site": "beeg",
+      "title": "Beeg",
+      "base_url": "https://store.externulls.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 48 videos",
+          "elapsed": 0.52,
+          "items": 52,
+          "video_items": 48,
+          "image_items": 48,
+          "description_items": 48,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "48 videos",
+          "elapsed": 0.6,
+          "items": 49,
+          "video_items": 48,
+          "image_items": 48,
+          "description_items": 48,
+          "playable": 1,
+          "sample_url": "https://store.externulls.com/facts/tag?id=27173&limit=48&offset=48",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "100 categories",
+          "elapsed": 0.26,
+          "items": 100,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://store.externulls.com/tag/recommends?type=other&slug=index",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "No search function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Harness limitation (notify): Error: Unable to parse video data",
+          "elapsed": 0.27,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://store.externulls.com/id=472748322856066&tag_id=98657",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "Error: Unable to parse video data"
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 1.82
+    },
+    {
+      "site": "beemtube",
+      "title": "BeemTube",
+      "base_url": "https://beemtube.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 30 videos",
+          "elapsed": 0.91,
+          "items": 34,
+          "video_items": 30,
+          "image_items": 30,
+          "description_items": 30,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "50 videos",
+          "elapsed": 0.8,
+          "items": 50,
+          "video_items": 50,
+          "image_items": 50,
+          "description_items": 50,
+          "playable": 1,
+          "sample_url": "https://beemtube.com/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "68 categories",
+          "elapsed": 0.27,
+          "items": 68,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://beemtube.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.73,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://beemtube.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.87,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://beemtube.com/videos/20050/addicted-to-step-mom.html",
+          "play_url": "https://beemtube.com/static_files/media/error-video.mp4|referer:https://beemtube.com/videos/20050/addicted-to-step-mom.html"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.76
+    },
+    {
+      "site": "blendporn",
+      "title": "Blendporn",
+      "base_url": "https://www.blendporn.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 24 videos",
+          "elapsed": 0.81,
+          "items": 27,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "24 videos",
+          "elapsed": 0.82,
+          "items": 24,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 1,
+          "sample_url": "https://www.blendporn.com/page2.html",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "55 categories",
+          "elapsed": 0.45,
+          "items": 55,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.blendporn.com/channels/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.23,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.blendporn.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.59,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.blendporn.com/video/haley-reed-selena-ivy-homewrecking-her-pussy-27-03-2026-96284.html",
+          "play_url": "https://videos.blendporn.com/videos/6/9/c/6/4/69c6442e68c72.mp4?md5=HZ0WPMBnzGSRJHG02eECGg&expires=1774836171"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.06
+    },
+    {
+      "site": "bongacams",
+      "title": "BongaCams[COLOR white] - webcams",
+      "base_url": "https://bongacams.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "6 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 6,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "964 videos",
+          "elapsed": 1.49,
+          "items": 964,
+          "video_items": 964,
+          "image_items": 964,
+          "description_items": 964,
+          "playable": 1,
+          "sample_url": "https://tools.bongacams.com/promo.php?c=226355&type=api&api_type=json&categories[]=female",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Play disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": false,
+          "search": false,
+          "play": false
+        },
+        "content_type": "cam",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": true,
+          "search_results_optional": true,
+          "categories_optional": true
+        },
+        "tier": 2
+      },
+      "elapsed": 1.65
+    },
+    {
+      "site": "cam4",
+      "title": "Cam4[COLOR white] - webcams",
+      "base_url": "https://www.cam4.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 2,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "60 videos",
+          "elapsed": 0.69,
+          "items": 61,
+          "video_items": 60,
+          "image_items": 60,
+          "description_items": 60,
+          "playable": 1,
+          "sample_url": "https://www.cam4.com/&gender=female&broadcastType=female_group&broadcastType=solo&broadcastType=male_female_group",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Play disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": false,
+          "search": false,
+          "play": false
+        },
+        "content_type": "cam",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": true,
+          "search_results_optional": true,
+          "categories_optional": true
+        },
+        "tier": 1
+      },
+      "elapsed": 0.83
+    }
+  ]
+}

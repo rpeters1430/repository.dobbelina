@@ -1,0 +1,2459 @@
+{
+  "summary": {
+    "generated": "2026-03-29T19:23:45.475418",
+    "started": "2026-03-29T19:21:05.858947",
+    "sites_total": 28,
+    "pass": 28,
+    "warn": 0,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "blocked_hint": 0,
+    "steps": [
+      "main",
+      "list",
+      "categories",
+      "search",
+      "play"
+    ],
+    "timeout_per_step_sec": 35,
+    "timeout_per_site_sec": 140,
+    "keyword": "test"
+  },
+  "sites": [
+    {
+      "site": "tube8",
+      "title": "Tube8",
+      "base_url": "https://www.tube8.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 0 videos",
+          "elapsed": 2.04,
+          "items": 2,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "No reliable list URL discovered from Main; list fallback yielded no videos",
+          "elapsed": 1.65,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.tube8.com/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "91 categories",
+          "elapsed": 1.81,
+          "items": 91,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.tube8.com/categories.html",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.34,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.tube8.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "No video item available from list/search",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 7.04
+    },
+    {
+      "site": "tubxporn",
+      "title": "TubXporn",
+      "base_url": "https://web.tubxporn.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 36 videos",
+          "elapsed": 0.97,
+          "items": 39,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 36,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "36 videos",
+          "elapsed": 0.79,
+          "items": 36,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 36,
+          "playable": 1,
+          "sample_url": "https://web.tubxporn.com/latest-updates/2/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "21 categories",
+          "elapsed": 0.78,
+          "items": 21,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://web.tubxporn.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "36 results for 'test'",
+          "elapsed": 1.48,
+          "items": 37,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 36,
+          "playable": 1,
+          "sample_url": "https://web.tubxporn.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.43,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://web.tubxporn.com/videos/20478/my-sneaky-stepbrother-got-into-my-phone-and-found-photos-he-shouldn-t-have-seen/",
+          "play_url": "https://d6.vstor.top/whpvid/1774848077/Yv0qu2x72eA9HJqFtMqJwA/20000/20478/20478_1080p.mp4"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.71
+    },
+    {
+      "site": "txxx",
+      "title": "Txxx",
+      "base_url": "https://txxx.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "5 dirs, 60 videos",
+          "elapsed": 1.91,
+          "items": 65,
+          "video_items": 60,
+          "image_items": 60,
+          "description_items": 60,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "60 videos",
+          "elapsed": 1.57,
+          "items": 61,
+          "video_items": 60,
+          "image_items": 60,
+          "description_items": 60,
+          "playable": 1,
+          "sample_url": "https://txxx.com/latest-updates",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "224 categories",
+          "elapsed": 0.94,
+          "items": 224,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://txxx.com/categories",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.47,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://txxx.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.6,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://txxx.com/21592045",
+          "play_url": "https://txxx.ahcdn.com/key=uTosf6MqSgnShcGfHMsXGg,end=1774923685,limit=3/data=Sepbj0/speed=3.0/buffer=532K/referer=none,.txxx.com,.gstatic.com/c13/videos/21592000/21592045/21592045_hq.mp4"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 7.73
+    },
+    {
+      "site": "uflash",
+      "title": "Uflash",
+      "base_url": "http://www.uflash.tv/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "1 dirs, 202 videos",
+          "elapsed": 1.32,
+          "items": 203,
+          "video_items": 202,
+          "image_items": 72,
+          "description_items": 202,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "202 videos",
+          "elapsed": 1.18,
+          "items": 203,
+          "video_items": 202,
+          "image_items": 72,
+          "description_items": 202,
+          "playable": 1,
+          "sample_url": "http://www.uflash.tv/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "248 categories",
+          "elapsed": 1.0,
+          "items": 248,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "http://www.uflash.tv/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "202 results for 'test'",
+          "elapsed": 1.01,
+          "items": 203,
+          "video_items": 202,
+          "image_items": 72,
+          "description_items": 202,
+          "playable": 1,
+          "sample_url": "http://www.uflash.tv/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Harness limitation (notify): Oh oh: Couldn't extract video ID",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "http://www.uflash.tv/#",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "Oh oh: Couldn't extract video ID"
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.76
+    },
+    {
+      "site": "vaginanl",
+      "title": "Vagina.nl [COLOR orange](Dutch)",
+      "base_url": "https://vagina.nl/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 47 videos",
+          "elapsed": 1.62,
+          "items": 50,
+          "video_items": 47,
+          "image_items": 47,
+          "description_items": 47,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "47 videos",
+          "elapsed": 10.66,
+          "items": 48,
+          "video_items": 47,
+          "image_items": 47,
+          "description_items": 47,
+          "playable": 1,
+          "sample_url": "https://vagina.nl/sexfilms/newest/page:2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "57 categories",
+          "elapsed": 0.9,
+          "items": 57,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://vagina.nl/categories",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.24,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://vagina.nl/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://vagina.nl/sexfilms/view/luna-en-vriendin-in-een-intense-orgie",
+          "play_url": "https://vagina.nl/sexfilms/view/luna-en-vriendin-in-een-intense-orgie"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 14.7
+    },
+    {
+      "site": "vipporns",
+      "title": "VIP Porns",
+      "base_url": "https://www.vipporns.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 24 videos",
+          "elapsed": 0.97,
+          "items": 27,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "24 videos",
+          "elapsed": 0.77,
+          "items": 25,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 1,
+          "sample_url": "https://www.vipporns.com/new-porn-video/?mode=async&function=get_block&block_id=list_videos_latest_videos_list&sort_by=post_date&from=2&_=1774837306000",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 0.53,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.vipporns.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.38,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.vipporns.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.39,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.vipporns.com/video/42902/summer-kline-february-2026-fantasy-of-the-month-s7e9-nubilefilms/",
+          "play_url": "https://www.vipporns.com/video/42902/summer-kline-february-2026-fantasy-of-the-month-s7e9-nubilefilms/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.32
+    },
+    {
+      "site": "viralvideosporno",
+      "title": "Viral Videos Porno",
+      "base_url": "https://www.viralvideosporno.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 21 videos",
+          "elapsed": 1.54,
+          "items": 25,
+          "video_items": 21,
+          "image_items": 21,
+          "description_items": 21,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "21 videos",
+          "elapsed": 1.14,
+          "items": 22,
+          "video_items": 21,
+          "image_items": 21,
+          "description_items": 21,
+          "playable": 1,
+          "sample_url": "https://www.viralvideosporno.com/pagina/2/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "251 categories",
+          "elapsed": 1.3,
+          "items": 251,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.viralvideosporno.com/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.69,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.viralvideosporno.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.72,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.viralvideosporno.com/private-zlata-shine-anal-sex-addict/",
+          "play_url": "https://imagetwist.com/xeigd9c5ws5i/Private.-.Zlata.Shine.Anal.Sex.Addict.mp4.jpg"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 6.64
+    },
+    {
+      "site": "watcherotic",
+      "title": "WatchErotic",
+      "base_url": "https://watcherotic.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 100 videos",
+          "elapsed": 1.35,
+          "items": 102,
+          "video_items": 100,
+          "image_items": 100,
+          "description_items": 100,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "100 videos",
+          "elapsed": 1.24,
+          "items": 101,
+          "video_items": 100,
+          "image_items": 100,
+          "description_items": 100,
+          "playable": 1,
+          "sample_url": "https://watcherotic.com/latest-updates/?mode=async&function=get_block&block_id=list_videos_latest_videos_list&sort_by=post_date&from=2&_=1774837316326",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 1.13,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://watcherotic.com/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.44,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://watcherotic.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.17,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://watcherotic.com/video/vanessa-broze-michelle-argyris-devil-seed-2012/",
+          "play_url": "https://t0mbiks.click/t278/default.mp4|referer=https://watcherotic.com/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.6
+    },
+    {
+      "site": "watchmdh",
+      "title": "WatchMDH",
+      "base_url": "https://watchdirty.is/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "1 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 1,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "No reliable list URL discovered from Main; list fallback yielded no videos",
+          "elapsed": 2.24,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://watchdirty.is/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "No search function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "No video item available from list/search",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 2.49
+    },
+    {
+      "site": "watchporn",
+      "title": "WatchPorn",
+      "base_url": "https://watchporn.to/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 35 videos",
+          "elapsed": 0.82,
+          "items": 38,
+          "video_items": 35,
+          "image_items": 35,
+          "description_items": 35,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "35 videos",
+          "elapsed": 0.54,
+          "items": 36,
+          "video_items": 35,
+          "image_items": 35,
+          "description_items": 35,
+          "playable": 1,
+          "sample_url": "https://watchporn.to/latest-updates/?mode=async&function=get_block&block_id=list_videos_latest_videos_list&sort_by=post_date&from=2&_=1774837323889",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "1241 categories",
+          "elapsed": 1.39,
+          "items": 1241,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://watchporn.to/categories/?mode=async&function=get_block&block_id=list_categories_categories_list&sort_by=title&_=",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.4,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://watchporn.to/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.5,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://watchporn.to/video/151714/monique-fuentes-milf-catches-roommate-watching-her-and-collects-rent-with-hardcore-sex/",
+          "play_url": "https://watchporn.to/video/151714/monique-fuentes-milf-catches-roommate-watching-her-and-collects-rent-with-hardcore-sex/"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist.",
+        "notify: "
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.93
+    },
+    {
+      "site": "wimp",
+      "title": "WhereIsMyPorn",
+      "base_url": "https://whereismyporn.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 12 videos",
+          "elapsed": 8.46,
+          "items": 15,
+          "video_items": 12,
+          "image_items": 12,
+          "description_items": 12,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "12 videos",
+          "elapsed": 0.88,
+          "items": 13,
+          "video_items": 12,
+          "image_items": 11,
+          "description_items": 12,
+          "playable": 1,
+          "sample_url": "https://whereismyporn.com/archives/tag/movie",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "1 results for 'test'",
+          "elapsed": 1.25,
+          "items": 1,
+          "video_items": 1,
+          "image_items": 0,
+          "description_items": 1,
+          "playable": 1,
+          "sample_url": "https://whereismyporn.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://whereismyporn.com/archives/712268",
+          "play_url": "https://whereismyporn.com/archives/712268"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 10.82
+    },
+    {
+      "site": "whoreshub",
+      "title": "WhoresHub",
+      "base_url": "https://www.whoreshub.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "6 dirs, 25 videos",
+          "elapsed": 1.34,
+          "items": 31,
+          "video_items": 25,
+          "image_items": 25,
+          "description_items": 25,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "25 videos",
+          "elapsed": 0.71,
+          "items": 26,
+          "video_items": 25,
+          "image_items": 25,
+          "description_items": 25,
+          "playable": 1,
+          "sample_url": "https://www.whoreshub.com/latest-updates/?mode=async&function=get_block&block_id=list_videos_latest_videos_list&sort_by=post_date&from=2&_=1851191692741",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "26 categories",
+          "elapsed": 0.66,
+          "items": 26,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.whoreshub.com/categories/?mode=async&function=get_block&block_id=list_categories_categories_list&sort_by=title&_=",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.03,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.whoreshub.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 2.1,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.whoreshub.com/videos/604553/6166y-2-2026-03-27-08h47m04/",
+          "play_url": "https://www.whoreshub.com/get_file/4/55965aac393507c9d2042532e7da5a74/604000/604553/604553_720p.mp4/?v-acctoken=MTIzMXwzOTIxMXwwfDlmNDI3MmRkMzc0ZWRjYTkxZjU3ODJiMGY2NjNkNDBk72ab7e594ecdfc65|Referer=https://www.whoreshub.com/videos/604553/6166y-2-2026-03-27-08h47m04/&Cookie=kt_tcookie=1; PHPSESSID=7d86f9fae65e19b52a0e29da2fe4225c"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist.",
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 6.11
+    },
+    {
+      "site": "xfreehd",
+      "title": "XFreeHD",
+      "base_url": "https://beta.xfreehd.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 30 videos",
+          "elapsed": 0.59,
+          "items": 34,
+          "video_items": 30,
+          "image_items": 30,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "30 videos",
+          "elapsed": 0.42,
+          "items": 31,
+          "video_items": 30,
+          "image_items": 30,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://beta.xfreehd.com/videos?o=mr&page=2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "73 categories",
+          "elapsed": 0.38,
+          "items": 73,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://beta.xfreehd.com/categories",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.62,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://beta.xfreehd.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.43,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://beta.xfreehd.com/video/983718/gattouzo-grunt-fucks-california-babe-aka-alexa-martens-to-loud-orgasmic-cum-facial",
+          "play_url": "https://lb.xfreehd.com/308b49c8d727dceaa45ceb3fce81f4ea43d2448.mp4|verifypeer=false"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 2.69
+    },
+    {
+      "site": "xhamster",
+      "title": "xHamster",
+      "base_url": "https://xhamster.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "6 dirs, 46 videos",
+          "elapsed": 1.06,
+          "items": 52,
+          "video_items": 46,
+          "image_items": 46,
+          "description_items": 46,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "46 videos",
+          "elapsed": 0.94,
+          "items": 47,
+          "video_items": 46,
+          "image_items": 46,
+          "description_items": 46,
+          "playable": 1,
+          "sample_url": "https://xhamster.com/newest/2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "386 categories",
+          "elapsed": 1.47,
+          "items": 386,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://xhamster.com/categories",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.71,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://xhamster.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.85,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://xhamster.com/videos/hentai-anime-little-red-riding-hood-in-the-forest-xhPWq8Q",
+          "play_url": "https://video-cf.xhcdn.com/lU%2BOMkIC0fOi5bzOW7NuN9P0V6NKhxZIyi8g7k1CEQk%3D/83/1774850400/media=hls4/multi=256x144:144p,426x240:240p,854x480:480p,1280x720:720p/029/226/776/_TPL_.h264.mp4.m3u8"
+        }
+      },
+      "notifications": [
+        "Oh Oh: No video found."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.3
+    },
+    {
+      "site": "xmegadrive",
+      "title": "xMegaDrive",
+      "base_url": "https://www.xmegadrive.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 24 videos",
+          "elapsed": 0.96,
+          "items": 27,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "24 videos",
+          "elapsed": 0.9,
+          "items": 25,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 1,
+          "sample_url": "https://www.xmegadrive.com/latest-updates/2/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "36 categories",
+          "elapsed": 0.91,
+          "items": 36,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.xmegadrive.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "24 results for 'test'",
+          "elapsed": 0.86,
+          "items": 25,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 1,
+          "sample_url": "https://www.xmegadrive.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.87,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.xmegadrive.com/videos/hubby-cleans-wife-s-meaty-pussy-after-her-hung-black-lover-impregnated-her-cuckold/",
+          "play_url": "https://www.xmegadrive.com/get_file/3/8ed11ba5c038dee367ca5d8c190d288cb3bda7cb20/388000/388513/388513.mp4?rnd=1774837356432|Referer=https://www.xmegadrive.com/&Origin=https://www.xmegadrive.com&User-Agent=Mozilla%2F5.0%20%28Windows%20NT%206.3%3B%20WOW64%3B%20rv%3A110.0.0.0%29%20Gecko%2F20100101%20Firefox%2F110.0.0.0"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.76
+    },
+    {
+      "site": "xmoviesforyou",
+      "title": "Xmoviesforyou",
+      "base_url": "https://xmoviesforyou.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 31 videos",
+          "elapsed": 0.37,
+          "items": 34,
+          "video_items": 31,
+          "image_items": 31,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "24 videos",
+          "elapsed": 0.21,
+          "items": 25,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://xmoviesforyou.com/page/2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 0.27,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://xmoviesforyou.com/wp-json/wp/v2/categories?page=1",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "24 results for 'test'",
+          "elapsed": 0.18,
+          "items": 25,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://xmoviesforyou.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://xmoviesforyou.com/stepsiblings-lana-gee-poppy-cox-one-sister-isnt-enough-i-want-both-lana-gee-poppy-cox-double-debut",
+          "play_url": "https://xmoviesforyou.com/stepsiblings-lana-gee-poppy-cox-one-sister-isnt-enough-i-want-both-lana-gee-poppy-cox-double-debut"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 1.3
+    },
+    {
+      "site": "xnxx",
+      "title": "XNXX",
+      "base_url": "https://www.xnxx.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 48 videos",
+          "elapsed": 1.56,
+          "items": 52,
+          "video_items": 48,
+          "image_items": 48,
+          "description_items": 48,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "48 videos",
+          "elapsed": 1.21,
+          "items": 49,
+          "video_items": 48,
+          "image_items": 48,
+          "description_items": 48,
+          "playable": 1,
+          "sample_url": "https://www.xnxx.com/todays-selection/1",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "161 categories",
+          "elapsed": 0.75,
+          "items": 161,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.xnxx.com/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.56,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.xnxx.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.35,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.xnxx.com/video-105sdra5/46784680/0/i_do_custom_videos_on_my_sheer.com_nextdoornurs3",
+          "play_url": "https://hls-cdn77.xnxx-cdn.com/TXgezFVuEFCKxpwGNNhb-w==,1774848163/8c7770f7-1f87-42e8-adcc-3ea725121fdc/0/hls.m3u8"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 5.7
+    },
+    {
+      "site": "xozilla",
+      "title": "Xozilla",
+      "base_url": "https://www.xozilla.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "5 dirs, 100 videos",
+          "elapsed": 1.43,
+          "items": 105,
+          "video_items": 100,
+          "image_items": 100,
+          "description_items": 100,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "100 videos",
+          "elapsed": 1.03,
+          "items": 101,
+          "video_items": 100,
+          "image_items": 100,
+          "description_items": 100,
+          "playable": 1,
+          "sample_url": "https://www.xozilla.com/latest-updates/2/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "185 categories",
+          "elapsed": 0.8,
+          "items": 185,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.xozilla.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.89,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.xozilla.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.98,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.xozilla.com/videos/762669/black-tgirls-compilation-updates-5th-jan-to-9th-may/",
+          "play_url": "https://www.xozilla.com/get_file/19/975a5cfd3bfd2e409edbcf9ae20713d3/762000/762669/762669hd.mp4/"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 5.39
+    },
+    {
+      "site": "xsharings",
+      "title": "XSharings",
+      "base_url": "https://xsharings.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 26 videos",
+          "elapsed": 1.86,
+          "items": 30,
+          "video_items": 26,
+          "image_items": 26,
+          "description_items": 26,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "Main already returned videos; list probe skipped",
+          "elapsed": 0.8,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://twitter.com/xsharings",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "21 categories",
+          "elapsed": 0.39,
+          "items": 21,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://xsharings.com/actors/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.89,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://xsharings.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.77,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://xsharings.com/ivy-ireland-my-name-is-ivy-and-im-a-nympho-hot-fuck/",
+          "play_url": "https://fapsharing.com/embed/hrvqgzizcnio"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.94
+    },
+    {
+      "site": "xtheatre",
+      "title": "Xtheatre",
+      "base_url": "https://pornxtheatre.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 20 videos",
+          "elapsed": 1.3,
+          "items": 24,
+          "video_items": 20,
+          "image_items": 20,
+          "description_items": 20,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "20 videos",
+          "elapsed": 1.89,
+          "items": 21,
+          "video_items": 20,
+          "image_items": 20,
+          "description_items": 20,
+          "playable": 1,
+          "sample_url": "https://pornxtheatre.com/page/2/?filter=date",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "20 categories",
+          "elapsed": 0.82,
+          "items": 20,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://pornxtheatre.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "1 results for 'test'",
+          "elapsed": 1.54,
+          "items": 1,
+          "video_items": 1,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://pornxtheatre.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.72,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://pornxtheatre.com/kinky-milfs-2026/",
+          "play_url": "https://pornxtheatre.com/kinky-milfs-2026/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 6.52
+    },
+    {
+      "site": "xvideos",
+      "title": "xVideos",
+      "base_url": "https://www.xvideos.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "7 dirs, 48 videos",
+          "elapsed": 1.39,
+          "items": 55,
+          "video_items": 48,
+          "image_items": 48,
+          "description_items": 48,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "27 videos",
+          "elapsed": 0.81,
+          "items": 28,
+          "video_items": 27,
+          "image_items": 27,
+          "description_items": 27,
+          "playable": 1,
+          "sample_url": "https://www.xvideos.com/new/1",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "42 categories",
+          "elapsed": 0.82,
+          "items": 42,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.xvideos.com/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.68,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.xvideos.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.xvideos.com/video.ohcldmm7d35/shemale_magic_whisper_-_shelena_grows_futa_cock_in_transgender_threesome_surprise",
+          "play_url": "https://www.xvideos.com/video.ohcldmm7d35/shemale_magic_whisper_-_shelena_grows_futa_cock_in_transgender_threesome_surprise"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 3.95
+    },
+    {
+      "site": "xxdbx",
+      "title": "xxdbx",
+      "base_url": "https://xxdbx.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 36 videos",
+          "elapsed": 1.19,
+          "items": 38,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 36,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "36 videos",
+          "elapsed": 0.96,
+          "items": 37,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 36,
+          "playable": 1,
+          "sample_url": "https://xxdbx.com/?page=2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.74,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://xxdbx.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.86,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://xxdbx.com/view/712426102296",
+          "play_url": "https://d.v1d30.com/p0s8z_0rdv2f5jdq87C5ji3Yg/71242610605/1080.mp4"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.99
+    },
+    {
+      "site": "xxthots",
+      "title": "xxThots",
+      "base_url": "https://xxthots.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 20 videos",
+          "elapsed": 0.83,
+          "items": 22,
+          "video_items": 20,
+          "image_items": 20,
+          "description_items": 20,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "20 videos",
+          "elapsed": 1.68,
+          "items": 21,
+          "video_items": 20,
+          "image_items": 20,
+          "description_items": 20,
+          "playable": 1,
+          "sample_url": "https://xxthots.com/latest-updates/?mode=async&function=get_block&block_id=list_videos_latest_videos_list&sort_by=post_date&from=2&_=1774837389339",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "34 results for 'test'",
+          "elapsed": 1.25,
+          "items": 35,
+          "video_items": 34,
+          "image_items": 34,
+          "description_items": 34,
+          "playable": 1,
+          "sample_url": "https://xxthots.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.71,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://xxthots.com/video/32999/luna-okko-masturbating-with-his-hot-cum-onlyfans-video-leaked/",
+          "play_url": "https://xxthots.com/video/32999/luna-okko-masturbating-with-his-hot-cum-onlyfans-video-leaked/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.72
+    },
+    {
+      "site": "xxxtube",
+      "title": "X-X-X Video",
+      "base_url": "https://x-x-x.tube/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 24 videos",
+          "elapsed": 0.73,
+          "items": 26,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "24 videos",
+          "elapsed": 0.36,
+          "items": 25,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 24,
+          "playable": 1,
+          "sample_url": "https://x-x-x.tube/videos/2/?by=post_date",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "30 results for 'test'",
+          "elapsed": 0.9,
+          "items": 30,
+          "video_items": 30,
+          "image_items": 30,
+          "description_items": 30,
+          "playable": 1,
+          "sample_url": "https://x-x-x.tube/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.29,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://x-x-x.tube/videos/1726219/lina-s-feet-nicknamed-linacarina420-10-09-2025-onlyfans-video-the-aroma-is-strong-on-these-feet/",
+          "play_url": "https://x-x-x.tube/videos/1726219/lina-s-feet-nicknamed-linacarina420-10-09-2025-onlyfans-video-the-aroma-is-strong-on-these-feet/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.52
+    },
+    {
+      "site": "youcrazyx",
+      "title": "YouCrazyX",
+      "base_url": "https://www.youcrazyx.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 28 videos",
+          "elapsed": 0.98,
+          "items": 31,
+          "video_items": 28,
+          "image_items": 28,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "28 videos",
+          "elapsed": 0.81,
+          "items": 29,
+          "video_items": 28,
+          "image_items": 28,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.youcrazyx.com/page2.html",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 0.76,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.youcrazyx.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.82,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.youcrazyx.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.youcrazyx.com/video/legalporno-emy-rouse-25-03-2026-123224.html",
+          "play_url": "https://www.youcrazyx.com/video/legalporno-emy-rouse-25-03-2026-123224.html"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist.",
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 3.64
+    },
+    {
+      "site": "youjizz",
+      "title": "YouJizz",
+      "base_url": "https://www.youjizz.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 24 videos",
+          "elapsed": 1.35,
+          "items": 27,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "24 videos",
+          "elapsed": 1.13,
+          "items": 25,
+          "video_items": 24,
+          "image_items": 24,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.youjizz.com/newest-clips/2.html",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "200 categories",
+          "elapsed": 6.96,
+          "items": 200,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.youjizz.com/tags",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.77,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.youjizz.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.1,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.youjizz.com/videos/a-black-man-with-a-big-dick-invited-two-girls-for-group-anal-fuckuayp8dw-121390291.html",
+          "play_url": "https://cdne-mobile.youjizz.com/videos/4/4/2/b/d/442bddc770763d6d2085d98d4bdb366d1774809123-1920-1080-2772-h264.mp4?validfrom=1774751010&validto=1774923810&rate=532224&hash=hkWJo7ME0txvLBRU6dJwb5Afmjg%3D|Referer=https://www.youjizz.com/videos/a-black-man-with-a-big-dick-invited-two-girls-for-group-anal-fuckuayp8dw-121390291.html"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 11.86
+    },
+    {
+      "site": "youporn",
+      "title": "YouPorn",
+      "base_url": "https://www.youporn.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 29 videos",
+          "elapsed": 1.76,
+          "items": 32,
+          "video_items": 29,
+          "image_items": 29,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "30 videos",
+          "elapsed": 1.6,
+          "items": 30,
+          "video_items": 30,
+          "image_items": 30,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.youporn.com/browse/time/?page=2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "103 categories",
+          "elapsed": 1.4,
+          "items": 103,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.youporn.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "32 results for 'test'",
+          "elapsed": 1.61,
+          "items": 33,
+          "video_items": 32,
+          "image_items": 32,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.youporn.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 2.52,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.youporn.com/watch/220965531/",
+          "play_url": "https://ev-h-ph.ypncdn.com/hls/videos/202412/08/461577781/1080P_4000K_461577781.mp4/master.m3u8?validfrom=1774833820&validto=1774841020&hdl=-1&hash=IAOeC6rfhnkXinhlo2c5mGx4gM4%3D|Referer=https://www.youporn.com/watch/220965531/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 9.16
+    },
+    {
+      "site": "yrprno",
+      "title": "YrPrno",
+      "base_url": "https://www.yrprno.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 20 videos",
+          "elapsed": 1.02,
+          "items": 23,
+          "video_items": 20,
+          "image_items": 20,
+          "description_items": 20,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "20 videos",
+          "elapsed": 0.78,
+          "items": 21,
+          "video_items": 20,
+          "image_items": 20,
+          "description_items": 20,
+          "playable": 1,
+          "sample_url": "https://www.yrprno.com/page2.html",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "58 categories",
+          "elapsed": 0.81,
+          "items": 58,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.yrprno.com/channels/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.65,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.yrprno.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.74,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.yrprno.com/video/legalporno-selena-paige-25-03-2026-125958.html",
+          "play_url": "https://videos.yrprno.com/videos/6/9/c/6/4/69c6442da2959.mp4?md5=Qm3nwUk7wksdgXY7nLOmLw&expires=1774844625"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.27
+    }
+  ]
+}

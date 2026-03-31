@@ -46,6 +46,18 @@ def classify_message(msg: str) -> str:
         for token in ("timeout", "timed out", "connection", "network", "dns")
     ):
         return "NETWORK"
+    if any(
+        token in lowered
+        for token in (
+            "503",
+            "service temporarily unavailable",
+            "temporarily unavailable",
+            "maintenance",
+            "bad gateway",
+            "gateway timeout",
+        )
+    ):
+        return "NETWORK"
     if any(token in lowered for token in ("no videos", "no items", "empty")):
         return "PARSER"
     if any(
