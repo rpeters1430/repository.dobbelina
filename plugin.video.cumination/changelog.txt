@@ -1,3 +1,10 @@
+[B]Version 1.1.350[/B]
+- site fixes with resolveurl updates
+- site fixes
+- site updates
+- fix site health playvids and tubxporn
+- feat: enhance video extraction and playback logic across multiple sites
+
 [B]Version 1.1.349[/B]
 - site fixes
 - site updates
