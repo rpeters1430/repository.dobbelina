@@ -1,21 +1,23 @@
 # Site Profile Audit
 
 - Sites: `168`
-- Tier1 hot: `0`
-- Failing: `3`
-- Warn: `4`
+- Tier1 hot: `1`
+- Failing: `4`
+- Warn: `5`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| anysex | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
+| ask4porn | tier1_hot | FAIL | 1 | video | Y | Y | Y | Y | Y |
+| eporner | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | peachurnet | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| porndoe | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | tubxporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | eroticage | warn | WARN |  | video |  | Y | Y | Y | Y |
 | heavyr | warn | WARN |  | video |  | Y | Y | Y | Y |
 | javhdporn | warn | WARN |  | video |  | Y | Y | Y | Y |
 | pornhoarder | warn | WARN |  | video |  | Y | Y | Y | Y |
+| xhamster | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
-| ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
 | camsoda | tier1 | PASS | 1 | cam |  |  |  |  |  |
 | chaturbate | tier1 | PASS | 1 | cam |  |  |  |  |  |
@@ -39,6 +41,7 @@
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
 | analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
+| anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | avple | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | awmnet | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -50,7 +53,6 @@
 | celebsroulette | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | cumlouder | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | drtuber | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| eporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erogarga | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erome | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eroticmv | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -115,7 +117,6 @@
 | porn4k | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porndish | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornditt | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| porndoe | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | pornez | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porngo | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhat | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -163,7 +164,6 @@
 | whereismyporn | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | whoreshub | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xfreehd | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| xhamster | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xmegadrive | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xmoviesforyou | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xozilla | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -178,15 +178,17 @@
 
 ## Next Batch
 
-- **anysex** (failing, tier=2) | failures: list:FAIL
+- **ask4porn** (tier1_hot, tier=1)
+- **eporner** (failing, tier=None) | failures: list:FAIL
 - **peachurnet** (failing, tier=None) | failures: list:FAIL
+- **porndoe** (failing, tier=2) | failures: list:FAIL
 - **tubxporn** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
 - **eroticage** (warn, tier=None) | failures: play:FAIL
-- **heavyr** (warn, tier=None) | failures: search:FAIL, play:FAIL
+- **heavyr** (warn, tier=None) | failures: categories:FAIL, search:FAIL, play:FAIL
 - **javhdporn** (warn, tier=None) | failures: play:FAIL
 - **pornhoarder** (warn, tier=None) | failures: play:FAIL
+- **xhamster** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
-- **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
 - **camsoda** (tier1, tier=1)
 - **chaturbate** (tier1, tier=1)
@@ -196,5 +198,3 @@
 - **pornhub** (tier1, tier=1)
 - **pornkai** (tier1, tier=1)
 - **spankbang** (tier1, tier=1)
-- **streamate** (tier1, tier=1)
-- **stripchat** (tier1, tier=1)
