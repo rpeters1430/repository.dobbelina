@@ -55,6 +55,36 @@ for mod_name in [
 class _MockAddon:
     def __init__(self, addon_id=None):
         self.addon_id = addon_id or "plugin.video.cumination"
+        self._settings = {
+            "cache_time": "0",
+            "custom_favorites": "false",
+            "favorites_path": "",
+            "customview": "false",
+            "setview": "",
+            "duration_in_name": "false",
+            "quality_in_name": "false",
+            "qualityask": "0",
+            "filter_listing": "",
+            "chaturbate": "false",
+            "chatfemale": "true",
+            "chatmale": "false",
+            "chatcouple": "false",
+            "chattrans": "false",
+            "chatplay": "0",
+            "online_only": "false",
+            "content": "0",
+            "universal_resolvers": "false",
+            "dontask": "true",
+            "no_image": "",
+            "female_keywords": "",
+            "male_keywords": "",
+            "couples_keywords": "",
+            "trans_keywords": "",
+            "sortxt": "0",
+            "fs_enable": "false",
+            "fs_host": "http://127.0.0.1:8191/v1",
+            "pdsection": "0",
+        }
 
     def getAddonInfo(self, key):
         if key == "path":
@@ -66,10 +96,10 @@ class _MockAddon:
         return ""
 
     def getSetting(self, key):
-        return ""
+        return self._settings.get(key, "")
 
     def setSetting(self, key, value):
-        pass
+        self._settings[key] = value
 
     def getLocalizedString(self, string_id):
         return str(string_id)
@@ -79,6 +109,16 @@ sys.modules["xbmcaddon"].Addon = _MockAddon
 sys.modules["kodi_six.xbmcaddon"].Addon = _MockAddon
 
 # Mock essential xbmc functions
+sys.modules["xbmc"].LOGDEBUG = 0
+sys.modules["xbmc"].LOGINFO = 1
+sys.modules["xbmc"].LOGNOTICE = 2
+sys.modules["xbmc"].LOGWARNING = 3
+sys.modules["xbmc"].LOGERROR = 4
+sys.modules["kodi_six.xbmc"].LOGDEBUG = 0
+sys.modules["kodi_six.xbmc"].LOGINFO = 1
+sys.modules["kodi_six.xbmc"].LOGNOTICE = 2
+sys.modules["kodi_six.xbmc"].LOGWARNING = 3
+sys.modules["kodi_six.xbmc"].LOGERROR = 4
 sys.modules["xbmc"].log = lambda *a, **k: None
 sys.modules["kodi_six.xbmc"].log = lambda *a, **k: None
 sys.modules["xbmc"].getInfoLabel = lambda key: "20.0" if "BuildVersion" in key else ""
@@ -91,6 +131,8 @@ sys.modules["xbmc"].getSkinDir = lambda: "skin.estuary"
 sys.modules["kodi_six.xbmc"].getSkinDir = lambda: "skin.estuary"
 sys.modules["xbmc"].getCondVisibility = lambda *a, **k: False
 sys.modules["kodi_six.xbmc"].getCondVisibility = lambda *a, **k: False
+sys.modules["xbmc"].sleep = lambda ms: None
+sys.modules["kodi_six.xbmc"].sleep = lambda ms: None
 
 # Mock xbmcplugin functions
 sys.modules["xbmcplugin"].addDirectoryItem = lambda *a, **k: True
@@ -374,8 +416,8 @@ def analyze_site(site_name: str) -> SiteInfo:
     func_registry = URL_Dispatcher.func_registry
     args_registry = URL_Dispatcher.args_registry
     kwargs_registry = URL_Dispatcher.kwargs_registry
-    default_modes = URL_Dispatcher.default_modes
-    clean_modes = URL_Dispatcher.clean_modes
+    default_modes = getattr(URL_Dispatcher, "default_modes", set())
+    clean_modes = getattr(URL_Dispatcher, "clean_modes", set())
 
     # Find all functions for this site
     site_modes = {

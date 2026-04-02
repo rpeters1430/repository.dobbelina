@@ -9,11 +9,34 @@ Runs the complete smoke testing workflow:
 """
 
 import argparse
+import json
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _python_has_module(python_executable: str, module_name: str) -> bool:
+    result = subprocess.run(
+        [python_executable, '-c', f'import {module_name}'],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+    )
+    return result.returncode == 0
+
+
+def resolve_workflow_python() -> str:
+    """Prefer the current interpreter, but fall back to the repo venv for pytest-driven steps."""
+    candidates = [
+        sys.executable,
+        str(ROOT / '.venv' / 'bin' / 'python'),
+    ]
+    for candidate in candidates:
+        if candidate and Path(candidate).exists() and _python_has_module(candidate, 'pytest'):
+            return candidate
+    return sys.executable
 
 
 def run_command(description: str, cmd: list[str], **kwargs) -> int:
@@ -33,6 +56,16 @@ def run_command(description: str, cmd: list[str], **kwargs) -> int:
 
     print(f"\n✅ {description} COMPLETED")
     return 0
+
+
+def load_smoke_summary() -> dict | None:
+    report_path = ROOT / 'results' / 'smoke_test_report.json'
+    if not report_path.exists():
+        return None
+    try:
+        return json.loads(report_path.read_text(encoding='utf-8')).get('summary', {})
+    except Exception:
+        return None
 
 
 def main():
@@ -61,11 +94,15 @@ def main():
     print("║" + " " * 10 + "Cumination Smoke Test Suite" + " " * 20 + "║")
     print("╚" + "═" * 58 + "╝")
 
+    workflow_python = resolve_workflow_python()
+    if workflow_python != sys.executable:
+        print(f"Using test runner interpreter: {workflow_python}")
+
     # Step 1: Analyze sites
     if not args.skip_analysis:
         rc = run_command(
             "Step 1: Analyzing Site Structures",
-            [sys.executable, 'scripts/analyze_sites.py']
+            [workflow_python, 'scripts/analyze_sites.py']
         )
         if rc != 0:
             return rc
@@ -74,7 +111,7 @@ def main():
 
     # Step 2: Generate tests
     if not args.skip_generation:
-        cmd = [sys.executable, 'scripts/generate_smoke_tests.py']
+        cmd = [workflow_python, 'scripts/generate_smoke_tests.py']
         if args.site:
             cmd.extend(['--site'] + args.site)
 
@@ -88,7 +125,7 @@ def main():
         print("\n⏭️  Skipping test generation (using existing)")
 
     # Step 3: Run tests
-    cmd = [sys.executable, 'scripts/run_smoke_tests.py']
+    cmd = [workflow_python, 'scripts/run_smoke_tests.py']
     if args.site:
         cmd.extend(['--site'] + args.site)
     if args.verbose:
@@ -105,10 +142,18 @@ def main():
     print("Workflow Complete")
     print("=" * 60)
 
-    if rc == 0:
-        print("✅ All tests passed!")
+    summary = load_smoke_summary()
+    if rc == 0 and summary:
+        if summary.get('passed', 0) > 0 and summary.get('failed', 0) == 0 and summary.get('errors', 0) == 0:
+            print("✅ Smoke tests passed for the sites that executed.")
+        elif summary.get('skipped', 0) == summary.get('total', 0):
+            print("⚠️  All smoke tests were skipped - check the report for reasons.")
+        else:
+            print("✅ Smoke test workflow completed.")
+    elif rc == 0:
+        print("✅ Smoke test workflow completed.")
     else:
-        print("⚠️  Some tests failed - check reports for details")
+        print("⚠️  Tests or test setup failed - check reports for details")
 
     print()
     print("Reports available at:")

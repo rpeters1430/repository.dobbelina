@@ -59,6 +59,9 @@ def List(url):
         nodes = list(scope_obj.select(selectors))
         filtered = []
         for node in nodes:
+            # Check if we already found this node's parent (to avoid nesting duplicates)
+            if any(p in nodes for p in node.parents):
+                continue
             link = node.select_one('a[href*="/view_video.php?viewkey="]')
             if link:
                 filtered.append(node)
@@ -68,35 +71,54 @@ def List(url):
         # Fallback: locate anchors directly when container classes change.
         anchors = scope_obj.select('a[href*="/view_video.php?viewkey="]')
         wrapped = []
+        seen_parents = set()
         for anchor in anchors:
             parent = anchor.find_parent(["li", "div", "article"])
-            wrapped.append(parent if parent is not None else anchor)
+            item = parent if parent is not None else anchor
+            item_id = id(item)
+            if item_id not in seen_parents:
+                wrapped.append(item)
+                seen_parents.add(item_id)
         return wrapped
 
     def dedupe_video_items(items):
         deduped = []
-        seen_urls = set()
+        seen_keys = set()
         for item in items:
             link = item.select_one('a[href*="/view_video.php?viewkey="]')
+            # Fix for when item itself is the link
+            if not link and item.name == 'a' and '/view_video.php?viewkey=' in item.get('href', ''):
+                link = item
+
             href = utils.safe_get_attr(link, "href") if link else ""
-            if not href or href in seen_urls:
+            if not href:
                 continue
-            seen_urls.add(href)
+
+            # Extract viewkey for robust deduplication
+            key_match = re.search(r"viewkey=([a-zA-Z0-9]+)", href)
+            key = key_match.group(1) if key_match else href
+
+            if key in seen_keys:
+                continue
+            seen_keys.add(key)
             deduped.append(item)
         return deduped
 
     def collect_search_video_items(soup_obj):
+        # Only use broad containers as search scopes to avoid redundancy.
         search_scopes = soup_obj.select(
             "#searchPageVideoList, #videoSearchResult, #videoSearchWrapper, "
-            "#videoBoxesSearch, .videoBoxesSearch, .search-video-thumbs, "
-            "[class*='search-video-thumbs']"
+            ".search-video-thumbs, ul.videos, div.videos"
         )
         scoped_items = []
         for scope in search_scopes:
+            # Check if this scope is already inside another scope to avoid duplication
+            if any(p in search_scopes for p in scope.parents):
+                continue
             scoped_items.extend(collect_video_items(scope))
-        scoped_items = dedupe_video_items(scoped_items)
+
         if scoped_items:
-            return scoped_items
+            return dedupe_video_items(scoped_items)
         return dedupe_video_items(collect_video_items(soup_obj))
 
     def add_img_headers(img_url):
@@ -263,7 +285,7 @@ def List(url):
                     elif len(parts) == 3:
                         seconds = int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
                     
-                    if seconds > 0 and seconds < 15:
+                    if seconds > 0 and seconds < 60:
                         utils.kodilog("pornhub: Skipping short video '{}' ({}s)".format(title, seconds))
                         continue
                 except (ValueError, TypeError):

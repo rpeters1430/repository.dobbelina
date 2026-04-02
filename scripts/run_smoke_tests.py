@@ -7,6 +7,7 @@ Generates actionable reports showing what works and what's broken.
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from datetime import datetime
@@ -14,6 +15,29 @@ from pathlib import Path
 from typing import Dict, List, Any
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _python_has_module(python_executable: str, module_name: str) -> bool:
+    """Return True if the given interpreter can import the target module."""
+    probe = subprocess.run(
+        [python_executable, '-c', f'import {module_name}'],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+    )
+    return probe.returncode == 0
+
+
+def resolve_test_python() -> str:
+    """Choose a Python interpreter that can run pytest."""
+    candidates = [
+        sys.executable,
+        str(ROOT / '.venv' / 'bin' / 'python'),
+    ]
+    for candidate in candidates:
+        if candidate and Path(candidate).exists() and _python_has_module(candidate, 'pytest'):
+            return candidate
+    return sys.executable
 
 
 def load_site_analysis() -> Dict[str, Any]:
@@ -24,6 +48,21 @@ def load_site_analysis() -> Dict[str, Any]:
         sys.exit(1)
 
     return json.loads(analysis_path.read_text(encoding='utf-8'))
+
+
+def parse_pytest_counts(output: str) -> Dict[str, int]:
+    """Extract pytest summary counts from stdout/stderr."""
+    counts = {
+        'passed': 0,
+        'failed': 0,
+        'skipped': 0,
+        'errors': 0,
+    }
+    for key in counts:
+        match = re.search(rf'(\d+)\s+{key}', output)
+        if match:
+            counts[key] = int(match.group(1))
+    return counts
 
 
 def run_pytest_for_site(site_name: str, test_dir: Path, verbose: bool = False) -> Dict[str, Any]:
@@ -42,13 +81,23 @@ def run_pytest_for_site(site_name: str, test_dir: Path, verbose: bool = False) -
         }
 
     # Run pytest with JSON report
+    python_executable = resolve_test_python()
+    if not _python_has_module(python_executable, 'pytest'):
+        return {
+            'site': site_name,
+            'status': 'ERROR',
+            'reason': f'pytest is not installed for interpreter: {python_executable}',
+            'tests_run': 0,
+            'tests_passed': 0,
+            'tests_failed': 0,
+            'tests_skipped': 0,
+        }
+
     cmd = [
-        sys.executable, '-m', 'pytest',
+        python_executable, '-m', 'pytest',
         str(test_file),
         '--tb=short',
         '-v' if verbose else '-q',
-        '--json-report',
-        '--json-report-file=' + str(ROOT / 'results' / f'pytest_{site_name}.json'),
     ]
 
     try:
@@ -60,22 +109,33 @@ def run_pytest_for_site(site_name: str, test_dir: Path, verbose: bool = False) -
             timeout=60,
         )
 
-        # Parse pytest output
-        passed = result.stdout.count(' PASSED')
-        failed = result.stdout.count(' FAILED')
-        skipped = result.stdout.count(' SKIPPED')
-        total = passed + failed + skipped
-
+        combined_output = '\n'.join(part for part in [result.stdout, result.stderr] if part)
+        counts = parse_pytest_counts(combined_output)
+        passed = counts['passed']
+        failed = counts['failed']
+        skipped = counts['skipped']
+        total = passed + failed + skipped + counts['errors']
         if result.returncode == 0:
-            status = 'PASS'
+            status = 'PASS' if passed > 0 else 'SKIP'
         elif failed > 0:
             status = 'FAIL'
+        elif 'No module named pytest' in combined_output:
+            status = 'ERROR'
+        elif 'error: unrecognized arguments:' in combined_output:
+            status = 'ERROR'
+        elif 'ERROR collecting' in combined_output or 'errors during collection' in combined_output:
+            status = 'ERROR'
+        elif 'SyntaxError' in combined_output or 'ImportError' in combined_output or 'ModuleNotFoundError' in combined_output:
+            status = 'ERROR'
+        elif counts['errors'] > 0:
+            status = 'ERROR'
         else:
             status = 'SKIP'
 
         return {
             'site': site_name,
             'status': status,
+            'reason': '' if status not in ('ERROR', 'SKIP') else combined_output.strip(),
             'tests_run': total,
             'tests_passed': passed,
             'tests_failed': failed,
@@ -341,7 +401,7 @@ def main():
     save_report(report, output_path)
 
     # Exit code based on failures
-    return 0 if report['summary']['failed'] == 0 else 1
+    return 0 if report['summary']['failed'] == 0 and report['summary']['errors'] == 0 else 1
 
 
 if __name__ == '__main__':

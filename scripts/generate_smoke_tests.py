@@ -6,6 +6,7 @@ that match each site's actual implementation and use proper Kodi mocks.
 """
 
 import argparse
+import importlib
 import json
 import sys
 from pathlib import Path
@@ -37,15 +38,17 @@ def generate_test_module(site_info: Dict[str, Any]) -> str:
     # Generate imports
     test_code = f'''"""Smoke tests for {site_name} site"""
 
+import importlib
 import pytest
-from resources.lib.sites import {site_name}
 from resources.lib import utils
+from resources.lib import basics
+from resources.lib import url_dispatcher
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def site_module():
     """Get site module"""
-    return {site_name}
+    return importlib.import_module("resources.lib.sites.{site_name}")
 
 
 @pytest.fixture
@@ -71,7 +74,7 @@ def captured_items():
 
 @pytest.fixture(autouse=True)
 def patch_utils(monkeypatch, captured_items):
-    """Patch utils to capture items instead of calling Kodi"""
+    """Patch dispatcher helpers to capture items instead of calling Kodi"""
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
         captured_items.dirs.append({{
             'name': str(name or ''),
@@ -92,8 +95,14 @@ def patch_utils(monkeypatch, captured_items):
         }})
         return True
 
-    monkeypatch.setattr(utils, 'addDir', fake_add_dir)
-    monkeypatch.setattr(utils, 'addDownLink', fake_add_down)
+    monkeypatch.setattr(url_dispatcher, 'addDir', fake_add_dir)
+    monkeypatch.setattr(url_dispatcher, 'addDownLink', fake_add_down)
+    monkeypatch.setattr(basics, 'addDir', fake_add_dir)
+    monkeypatch.setattr(basics, 'addDownLink', fake_add_down)
+    if hasattr(utils, 'addDir'):
+        monkeypatch.setattr(utils, 'addDir', fake_add_dir)
+    if hasattr(utils, 'addDownLink'):
+        monkeypatch.setattr(utils, 'addDownLink', fake_add_down)
     monkeypatch.setattr(utils, 'eod', lambda *args, **kwargs: None)
 
 
@@ -113,6 +122,8 @@ class TestMain:
         from resources.lib.url_dispatcher import URL_Dispatcher
         if site_object.default_mode:
             URL_Dispatcher.dispatch(site_object.default_mode, {{'url': site_object.url}})
+        else:
+            pytest.skip("Site has no default mode to dispatch")
 
         total_items = len(captured_items.dirs) + len(captured_items.downloads)
         assert total_items > 0, "Main should return at least one directory or video item"
@@ -124,6 +135,8 @@ class TestMain:
         from resources.lib.url_dispatcher import URL_Dispatcher
         if site_object.default_mode:
             URL_Dispatcher.dispatch(site_object.default_mode, {{'url': site_object.url}})
+        else:
+            pytest.skip("Site has no default mode to dispatch")
 
         all_items = captured_items.dirs + captured_items.downloads
         for item in all_items:
@@ -146,13 +159,15 @@ class TestList:
         from resources.lib.url_dispatcher import URL_Dispatcher
         list_mode = None
         for mode in URL_Dispatcher.func_registry.keys():
-            if mode.startswith(f"{{site_object.name}}.") and 'list' in mode.lower():
+            if mode.startswith("{site_name}.") and 'list' in mode.lower():
                 list_mode = mode
                 break
 
         if list_mode:
             URL_Dispatcher.dispatch(list_mode, {{'url': site_object.url}})
             assert len(captured_items.downloads) > 0, "List should return at least one video"
+        else:
+            pytest.skip("No list mode registered for this site")
 
     def test_list_videos_have_metadata(self, site_object, captured_items, mock_gethtml):
         """List videos should have name, url, and image"""
@@ -161,18 +176,22 @@ class TestList:
         from resources.lib.url_dispatcher import URL_Dispatcher
         list_mode = None
         for mode in URL_Dispatcher.func_registry.keys():
-            if mode.startswith(f"{{site_object.name}}.") and 'list' in mode.lower():
+            if mode.startswith("{site_name}.") and 'list' in mode.lower():
                 list_mode = mode
                 break
 
-        if list_mode and captured_items.downloads:
+        if list_mode:
             URL_Dispatcher.dispatch(list_mode, {{'url': site_object.url}})
+            if not captured_items.downloads:
+                pytest.skip("List returned no video items")
             for video in captured_items.downloads:
                 assert video['name'], f"Video missing name: {{video}}"
                 assert video['url'], f"Video missing URL: {{video}}"
                 # Icon is optional but recommended
                 if not video['icon']:
                     pytest.skip("No thumbnail - may be lazy-loaded")
+        else:
+            pytest.skip("No list mode registered for this site")
 
 '''
 
@@ -189,7 +208,7 @@ class TestSearch:
         from resources.lib.url_dispatcher import URL_Dispatcher
         search_mode = None
         for mode in URL_Dispatcher.func_registry.keys():
-            if mode.startswith(f"{{site_object.name}}.") and 'search' in mode.lower():
+            if mode.startswith("{site_name}.") and 'search' in mode.lower():
                 search_mode = mode
                 break
 
@@ -198,6 +217,8 @@ class TestSearch:
             total = len(captured_items.dirs) + len(captured_items.downloads)
             if total == 0:
                 pytest.skip("Search returned no results - may require live site")
+        else:
+            pytest.skip("No search mode registered for this site")
 
 '''
 
@@ -241,13 +262,23 @@ def generate_conftest_fixture() -> str:
     return '''
 # Add to tests/conftest.py or create tests/smoke/conftest.py
 
+import sys
 import pytest
-from resources.lib import utils
+
+KODI_ARGV = ["plugin.video.cumination", "1", ""]
+
+
+@pytest.fixture(autouse=True)
+def _set_kodi_argv(monkeypatch):
+    """Ensure addon imports see Kodi-style argv during smoke tests."""
+    monkeypatch.setattr(sys, 'argv', KODI_ARGV.copy())
 
 
 @pytest.fixture
-def mock_gethtml(monkeypatch):
+def mock_gethtml(monkeypatch, _set_kodi_argv):
     """Mock getHtml to return minimal HTML instead of making real requests"""
+    from resources.lib import utils
+
     def fake_gethtml(url, *args, **kwargs):
         # Return minimal valid HTML
         return """

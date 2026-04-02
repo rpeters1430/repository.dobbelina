@@ -121,8 +121,6 @@ def _format_plot(cam):
     ]
     if cam.get("country"):
         meta.append("[COLOR deeppink]Country:[/COLOR] {}".format(cam["country"].upper()))
-    if cam.get("title"):
-        meta.append("[CR]{}".format(cam["title"]))
     return "[CR]".join(meta)
 
 
@@ -206,8 +204,6 @@ def List(url, page=DEFAULT_PAGE):
         stream_url = _extract_playable_url(cam)
         
         label = cam_username
-        if cam.get("title"):
-            label = "{} - {}".format(cam_username, cam["title"][:80])
         
         if provider == TOP_CAMS_KEY and cam_provider:
             label = "[{}] {}".format(cam_provider.title(), label)
