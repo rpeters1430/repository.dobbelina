@@ -1,3 +1,10 @@
+[B]Version 1.1.351[/B]
+- Add smoke tests for various adult sites
+- site fixes with resolveurl updates
+- site fixes
+- site updates
+- fix site health playvids and tubxporn
+
 [B]Version 1.1.350[/B]
 - site fixes with resolveurl updates
 - site fixes
