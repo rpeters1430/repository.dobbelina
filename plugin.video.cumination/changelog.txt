@@ -1,3 +1,10 @@
+[B]Version 1.1.352[/B]
+- Refactor smoke tests for various sites to use dynamic module imports and update utility patching
+- Add smoke tests for various adult sites
+- site fixes with resolveurl updates
+- site fixes
+- site updates
+
 [B]Version 1.1.351[/B]
 - Add smoke tests for various adult sites
 - site fixes with resolveurl updates
