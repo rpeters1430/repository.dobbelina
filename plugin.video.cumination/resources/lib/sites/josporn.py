@@ -32,11 +32,11 @@ site = AdultSite(
 
 @site.register(default_mode=True)
 def Main(url):
-    site.add_dir("[COLOR hotpink]Latest Updates[/COLOR]", site.url + "latest-updates/", "List", "")
+    site.add_dir("[COLOR hotpink]Latest Updates[/COLOR]", site.url + "videos/", "List", "")
     site.add_dir("[COLOR hotpink]Most Popular[/COLOR]", site.url + "most-popular/", "List", "")
     site.add_dir("[COLOR hotpink]Top Rated[/COLOR]", site.url + "top-rated/", "List", "")
     site.add_dir("[COLOR hotpink]Categories[/COLOR]", site.url + "categories/", "Categories", site.img_cat)
-    site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "latest-updates/", "Search", site.img_search)
+    site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search)
     utils.eod()
 
 
@@ -153,6 +153,6 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        # Search URL structure: site.url + "search/" + keyword + "/"
-        search_url = site.url + "search/" + urllib_parse.quote(keyword) + "/"
+        # Search URL structure: site.url + "search/?text=" + keyword
+        search_url = site.url + "search/?text=" + urllib_parse.quote_plus(keyword)
         List(search_url)

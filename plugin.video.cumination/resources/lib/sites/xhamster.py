@@ -267,6 +267,7 @@ def Playvid(url, name, download=None):
         utils.notify("Oh Oh", "This video was deleted.")
         return
     hexurl = ""
+    videourl = None
     match = re.compile(r'<link rel="preload" href="([^"]+m3u8)"', re.DOTALL).search(
         videopage
     )
@@ -274,8 +275,7 @@ def Playvid(url, name, download=None):
         videourl = match.group(1)
         videourl = videourl.replace(".av1.", ".h264.")
     else:
-        jsondata = videopage.split(">window.initials=")[-1].split(";</script>")[0]
-        jdata = json.loads(jsondata)
+        jdata = _load_initials_json(videopage)
         data = jdata.get("xplayerSettings", {})
         data2 = jdata.get("xplayerSettings2", {})
         sources = data.get("sources", {})
@@ -317,9 +317,11 @@ def Playvid(url, name, download=None):
                 if not videourl:
                     return
 
-    if videourl.startswith("http"):
+    if videourl and videourl.startswith("http"):
         vp.progress.update(75, "[CR]Playing video[CR]")
         vp.play_from_direct_link(videourl)
+    else:
+        utils.notify("Oh Oh", "No playable video found.")
 
 
 @site.register()

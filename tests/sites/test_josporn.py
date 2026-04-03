@@ -19,7 +19,7 @@ def test_josporn_list_parsing(monkeypatch):
                         }))
     
     # Run List
-    josporn.List("https://josporn.club/latest-updates/")
+    josporn.List("https://josporn.club/videos/")
     
     assert len(captured_items) > 0
     # Check a specific item if possible
@@ -65,9 +65,26 @@ def test_josporn_list_pagination(monkeypatch):
                             "name": name, "url": url, "mode": mode
                         }))
 
-    josporn.List("https://josporn.club/latest-updates/")
+    josporn.List("https://josporn.club/videos/")
 
     next_pages = [d for d in captured_dirs if d["name"] == "Next Page"]
     assert len(next_pages) == 1
     assert "/page/2/" in next_pages[0]["url"]
     assert next_pages[0]["mode"] == "List"
+
+
+def test_josporn_search(monkeypatch):
+    """Test that josporn search correctly dispatches with text param."""
+    fixture_path = os.path.join(os.path.dirname(__file__), "..", "fixtures", "sites", "josporn_list.html")
+    with open(fixture_path, "r", encoding="utf-8") as f:
+        html = f.read()
+
+    monkeypatch.setattr(utils, "getHtml", lambda url, **kwargs: html)
+    
+    list_urls = []
+    monkeypatch.setattr(josporn, "List", lambda url, *args, **kwargs: list_urls.append(url))
+    
+    josporn.Search("https://josporn.club/search/", "test keyword")
+    
+    assert len(list_urls) == 1
+    assert "search/?text=test+keyword" in list_urls[0]

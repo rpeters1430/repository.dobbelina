@@ -16,11 +16,11 @@ def set_setting(id, value):
 
 def generate_ua():
     BR_VERS = {
-        "Firefox": ["%s.0" % i for i in range(90, 118)],
-        "Chrome": ["%s.0.0.0" % i for i in range(90, 117)],
-        "Edge": ["%s.0.0.0" % i for i in range(90, 117)],
+        "Firefox": ["%s.0" % i for i in range(115, 125)],
+        "Chrome": ["%s.0.0.0" % i for i in range(115, 124)],
+        "Edge": ["%s.0.0.0" % i for i in range(115, 124)],
     }
-    WIN_VERS = ["Windows NT 10.0", "Windows NT 6.3", "Windows NT 6.2"]
+    WIN_VERS = ["Windows NT 10.0"]
     FEATURES = ["; WOW64", "; Win64; x64", ""]
     RAND_UAS = [
         "Mozilla/5.0 ({os_ver}{feature}; rv:{br_ver}) Gecko/20100101 Firefox/{br_ver}",

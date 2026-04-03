@@ -20,6 +20,7 @@ import re
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 import json
+from resources.lib.sites import xhamster
 
 site = AdultSite(
     "eroticage",
@@ -172,8 +173,7 @@ def Playvid(url, name, download=None):
     if match:
         videourl = match.group(1)
         if "xhamster" in videourl.lower():
-            from resources.lib.sites.xhamster import Playvid as xhamsterPlayvid
-            xhamsterPlayvid(videourl, name, download)
+            xhamster.site.dispatch("xhamster.Playvid", {"url": videourl, "name": name, "download": download})
             return
         if vp.resolveurl.HostedMediaFile(videourl):
             vp.play_from_link_to_resolve(videourl)
