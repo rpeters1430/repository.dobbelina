@@ -100,6 +100,48 @@ def _clean_media_url(media_url):
     return cleaned
 
 
+def _count_private_list_items(html):
+    """Count listing cards that are marked private in the current HTML."""
+    soup = utils.parse_html(html)
+    count = 0
+    for item in soup.select(".item"):
+        classes = item.get("class", [])
+        if "private" in classes or item.select_one(".line-private, .ico-private"):
+            count += 1
+    return count
+
+
+def _build_public_fallback_url(url):
+    """Map latest-updates URLs to their public equivalent, preserving pagination."""
+    parsed = urllib_parse.urlsplit(url)
+    path = parsed.path or "/"
+    if not path.startswith("/latest-updates"):
+        return ""
+    fallback_path = path.replace("/latest-updates", "/public", 1)
+    return urllib_parse.urlunsplit(
+        (parsed.scheme, parsed.netloc, fallback_path, parsed.query, parsed.fragment)
+    )
+
+
+def _resolve_list_url(url):
+    """Use the public feed for anonymous latest-updates requests."""
+    if _has_credentials():
+        return url
+    fallback_url = _build_public_fallback_url(url)
+    return fallback_url or url
+
+
+def _should_retry_public_listing(url, items, html):
+    """Retry with /public/ when latest-updates is mostly private for anonymous users."""
+    if _has_credentials():
+        return False
+    path = (urllib_parse.urlsplit(url).path or "").rstrip("/")
+    if not path.startswith("/latest-updates"):
+        return False
+    private_items = _count_private_list_items(html)
+    return len(items) <= 1 and private_items >= 3
+
+
 def _parse_flashvars(html):
     """Return a dict of flashvars key/value pairs from the given HTML."""
     # Try pattern 1: var flashvars = { key: 'value', ... }
@@ -309,7 +351,7 @@ def _login(force=False):
 def Main():
     site.add_dir(
         "[COLOR hotpink]Latest Updates[/COLOR]",
-        site.url + "latest-updates/",
+        site.url + "public/",
         "List",
         site.img_next,
     )
@@ -331,8 +373,7 @@ def Main():
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search
     )
-    # latest-updates/ is more reliable than public/
-    List(site.url + "latest-updates/")
+    List(site.url + "public/")
 
 
 def _extract_list_items(html):
@@ -544,6 +585,7 @@ def _find_next_page(html, current_url):
 @site.register()
 def List(url):
     """List videos from a ThotHub page."""
+    url = _resolve_list_url(url)
     utils.kodilog("ThotHub List URL: {}".format(url), xbmc.LOGDEBUG)
 
     try:
@@ -556,6 +598,35 @@ def List(url):
 
     # Extract video items
     items = _extract_list_items(listhtml)
+
+    if _should_retry_public_listing(url, items, listhtml):
+        fallback_url = _build_public_fallback_url(url)
+        if fallback_url and fallback_url != url:
+            utils.kodilog(
+                "ThotHub: latest-updates is mostly private, retrying {}".format(
+                    fallback_url
+                ),
+                xbmc.LOGDEBUG,
+            )
+            try:
+                fallback_html = utils.getHtml(fallback_url, site.url)
+            except Exception as err:
+                utils.kodilog(
+                    "ThotHub: public fallback fetch failed: {}".format(err),
+                    xbmc.LOGDEBUG,
+                )
+            else:
+                fallback_items = _extract_list_items(fallback_html)
+                if len(fallback_items) > len(items):
+                    listhtml = fallback_html
+                    items = fallback_items
+                    url = fallback_url
+                    utils.kodilog(
+                        "ThotHub: using public fallback with {} items".format(
+                            len(items)
+                        ),
+                        xbmc.LOGDEBUG,
+                    )
 
     if not items:
         utils.kodilog("ThotHub: No items found on page", xbmc.LOGDEBUG)

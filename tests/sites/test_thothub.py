@@ -140,6 +140,83 @@ def test_search_url_format(monkeypatch):
     assert searched_url[0] == "https://thothub.mx/search/big-tits/"
 
 
+def test_build_public_fallback_url_preserves_page_number():
+    url = "https://thothub.mx/latest-updates/2/"
+    assert thothub._build_public_fallback_url(url) == "https://thothub.mx/public/2/"
+
+
+def test_resolve_list_url_uses_public_for_anonymous_latest(monkeypatch):
+    monkeypatch.setattr(thothub, "_has_credentials", lambda: False)
+    assert (
+        thothub._resolve_list_url("https://thothub.mx/latest-updates/2/")
+        == "https://thothub.mx/public/2/"
+    )
+
+
+def test_resolve_list_url_keeps_latest_for_logged_in_user(monkeypatch):
+    monkeypatch.setattr(thothub, "_has_credentials", lambda: True)
+    assert (
+        thothub._resolve_list_url("https://thothub.mx/latest-updates/2/")
+        == "https://thothub.mx/latest-updates/2/"
+    )
+
+
+def test_list_falls_back_to_public_when_latest_updates_is_mostly_private(monkeypatch):
+    latest_updates_html = """
+    <div class="list-videos">
+        <div id="list_videos_latest_videos_list_items">
+            <div class="item">
+                <a href="https://thothub.mx/videos/1500001/public-video/" title="Public Video">
+                    <img data-original="https://thothub.mx/contents/videos_screenshots/1500000/1500001/320x180/1.jpg"/>
+                </a>
+            </div>
+            <div class="item private">
+                <a href="https://thothub.mx/videos/1500002/private-video-1/" title="Private Video 1">
+                    <span class="line-private"><span class="ico-private">Private</span></span>
+                </a>
+            </div>
+            <div class="item private">
+                <a href="https://thothub.mx/videos/1500003/private-video-2/" title="Private Video 2">
+                    <span class="line-private"><span class="ico-private">Private</span></span>
+                </a>
+            </div>
+            <div class="item private">
+                <a href="https://thothub.mx/videos/1500004/private-video-3/" title="Private Video 3">
+                    <span class="line-private"><span class="ico-private">Private</span></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    """
+    public_html = load_fixture("public_list.html")
+
+    def fake_gethtml(url, referer=None, headers=None):
+        if "/latest-updates/" in url:
+            return latest_updates_html
+        if "/public/" in url:
+            return public_html
+        raise AssertionError("Unexpected URL: {}".format(url))
+
+    downloads = []
+
+    monkeypatch.setattr(thothub.utils, "getHtml", fake_gethtml)
+    monkeypatch.setattr(thothub, "_has_credentials", lambda: False)
+    monkeypatch.setattr(
+        thothub.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, *args, **kwargs: downloads.append(
+            {"name": name, "url": url, "mode": mode, "icon": iconimage}
+        ),
+    )
+    monkeypatch.setattr(thothub.site, "add_dir", lambda *args, **kwargs: None)
+    monkeypatch.setattr(thothub.utils, "eod", lambda: None)
+
+    thothub.List("https://thothub.mx/latest-updates/")
+
+    assert len(downloads) == 3
+    assert "/videos/1430251/" in downloads[0]["url"]
+
+
 def test_main_exposes_navigation(monkeypatch):
     dirs = []
 
@@ -156,7 +233,7 @@ def test_main_exposes_navigation(monkeypatch):
     thothub.Main()
 
     assert len(dirs) == 5
-    assert dirs[0]["url"] == "https://thothub.mx/latest-updates/"
+    assert dirs[0]["url"] == "https://thothub.mx/public/"
     assert dirs[1]["url"] == "https://thothub.mx/public/"
     assert dirs[2]["url"] == "https://thothub.mx/categories/"
     assert dirs[3]["url"] == "https://thothub.mx/models/"

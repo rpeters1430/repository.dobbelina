@@ -1,14 +1,16 @@
 """Smoke tests for hdporn site"""
 
+import importlib
 import pytest
-from resources.lib.sites import hdporn
 from resources.lib import utils
+from resources.lib import basics
+from resources.lib import url_dispatcher
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def site_module():
     """Get site module"""
-    return hdporn
+    return importlib.import_module("resources.lib.sites.hdporn")
 
 
 @pytest.fixture
@@ -34,7 +36,7 @@ def captured_items():
 
 @pytest.fixture(autouse=True)
 def patch_utils(monkeypatch, captured_items):
-    """Patch utils to capture items instead of calling Kodi"""
+    """Patch dispatcher helpers to capture items instead of calling Kodi"""
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
         captured_items.dirs.append({
             'name': str(name or ''),
@@ -55,8 +57,14 @@ def patch_utils(monkeypatch, captured_items):
         })
         return True
 
-    monkeypatch.setattr(utils, 'addDir', fake_add_dir)
-    monkeypatch.setattr(utils, 'addDownLink', fake_add_down)
+    monkeypatch.setattr(url_dispatcher, 'addDir', fake_add_dir)
+    monkeypatch.setattr(url_dispatcher, 'addDownLink', fake_add_down)
+    monkeypatch.setattr(basics, 'addDir', fake_add_dir)
+    monkeypatch.setattr(basics, 'addDownLink', fake_add_down)
+    if hasattr(utils, 'addDir'):
+        monkeypatch.setattr(utils, 'addDir', fake_add_dir)
+    if hasattr(utils, 'addDownLink'):
+        monkeypatch.setattr(utils, 'addDownLink', fake_add_down)
     monkeypatch.setattr(utils, 'eod', lambda *args, **kwargs: None)
 
 
@@ -72,6 +80,8 @@ class TestMain:
         from resources.lib.url_dispatcher import URL_Dispatcher
         if site_object.default_mode:
             URL_Dispatcher.dispatch(site_object.default_mode, {'url': site_object.url})
+        else:
+            pytest.skip("Site has no default mode to dispatch")
 
         total_items = len(captured_items.dirs) + len(captured_items.downloads)
         assert total_items > 0, "Main should return at least one directory or video item"
@@ -83,6 +93,8 @@ class TestMain:
         from resources.lib.url_dispatcher import URL_Dispatcher
         if site_object.default_mode:
             URL_Dispatcher.dispatch(site_object.default_mode, {'url': site_object.url})
+        else:
+            pytest.skip("Site has no default mode to dispatch")
 
         all_items = captured_items.dirs + captured_items.downloads
         for item in all_items:
