@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-04-04T06:46:40.036069",
+    "sites_total": 168,
+    "pass": 161,
+    "warn": 3,
+    "fail": 3,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-04-03T06:56:06.903647",
     "sites_total": 168,
     "pass": 161,
@@ -8,36 +17,24 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-04-02T06:53:57.829354",
-    "sites_total": 168,
-    "pass": 159,
-    "warn": 4,
-    "fail": 4,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
-    "new_failures": 0,
-    "resolved_failures": 2,
+    "new_failures": 1,
+    "resolved_failures": 0,
     "persistent_failures": 2,
-    "improved_sites": 0,
-    "regressions": 0,
-    "step_regressions": 1
+    "improved_sites": 1,
+    "regressions": 1,
+    "step_regressions": 0
   },
-  "new_failures": [],
-  "resolved_failures": [
+  "new_failures": [
     {
-      "site": "speedporn",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "supjav",
-      "previous": "FAIL",
-      "current": "PASS"
+      "site": "javgg",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "Site process timed out after 140s"
     }
   ],
+  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "josporn",
@@ -51,33 +48,30 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "BLOCKED",
-      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177519"
+      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177528"
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
-      "site": "heavyr",
-      "step": "categories",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177519",
-      "class": "BLOCKED"
+      "site": "eroticage",
+      "previous": "WARN",
+      "current": "PASS"
     }
   ],
+  "step_regressions": [],
   "deltas": [
     {
-      "site": "speedporn",
-      "previous": "FAIL",
+      "site": "eroticage",
+      "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "supjav",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
+      "site": "javgg",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
       "detail": ""
     }
   ]
