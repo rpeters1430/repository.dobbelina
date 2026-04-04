@@ -2,8 +2,8 @@
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
 
-**Last Updated**: 2026-03-26
-**Last Sync**: 2026-03-26 - Ported commit 034f9e42 (Fix aagmaal, aagmaal pro)
+**Last Updated**: 2026-04-04
+**Last Sync**: 2026-04-04 - Ported selected fixes from upstream commits cc111fac and 9496ea98
 
 ---
 
@@ -21,6 +21,13 @@
 ## Already Integrated Commits
 
 These upstream commits have been integrated into the fork:
+
+### 2026-04-04 Porting Session
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `9496ea98` | allclassic - fix thumbnails | `manual` | 2026-04-04 | Ported to BS4 scraper by caching AllClassic thumbnails locally via `Thumbnails.cache_img()` |
+| `cc111fac` | fixes #1797, fixes #1801, fixes #1793, fixes #1792, fixes #1790, fixes #1789, fixes #1788 | `manual-partial` | 2026-04-04 | Ported actionable scraper fixes for xhamster, freeomovie, porno365, premiumporn, and xxdbx; did not rename `longvideos` to `wowxxx` or touch fork-specific WatchPorn/PornXP flow |
 
 ### 2026-03-26 Porting Session
 

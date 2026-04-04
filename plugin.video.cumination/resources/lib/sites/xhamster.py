@@ -260,14 +260,15 @@ def List(url):
 
 @site.register()
 def Playvid(url, name, download=None):
+    url = url.replace("/embed/", "/videos/")
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videopage = utils.getHtml(url, site.url, error=True)
-    if "This video was deleted" in videopage:
+    if "This video was deleted" in videopage or "Video is not available" in videopage:
         utils.notify("Oh Oh", "This video was deleted.")
         return
     hexurl = ""
-    videourl = None
+    videourl = ""
     match = re.compile(r'<link rel="preload" href="([^"]+m3u8)"', re.DOTALL).search(
         videopage
     )
@@ -275,36 +276,47 @@ def Playvid(url, name, download=None):
         videourl = match.group(1)
         videourl = videourl.replace(".av1.", ".h264.")
     else:
-        jdata = _load_initials_json(videopage)
-        data = jdata.get("xplayerSettings", {})
-        data2 = jdata.get("xplayerSettings2", {})
-        sources = data.get("sources", {})
-        sources2 = data2.get("sources", {})
-
-        if "hls" in sources:
-            h264src = sources["hls"].get("h264", "")
-            h265src = sources["hls"].get("h265", "")
-            av1src = sources["hls"].get("av1", "")
-            if h264src:
-                hexurl = h264src["url"]
-            elif h265src:
-                hexurl = h265src["url"]
-            elif av1src:
-                hexurl = av1src["url"]
-            else:
-                utils.notify("Oh Oh", "No playable video found.")
-                return
-
-        if hexurl:
-            from resources.lib.decrypters import xhamster_decrypt
-
-            try:
-                videourl = xhamster_decrypt.deobfuscate_url(hexurl)
-            except Exception as e:
-                utils.notify("Oh Oh", "Failed to deobfuscate video URL - {}".format(e))
-                return
+        direct_match = re.compile(
+            r'<video class="player-container.+?src="(http[^"]+)"',
+            re.DOTALL | re.IGNORECASE,
+        ).search(videopage)
+        if direct_match:
+            videourl = direct_match.group(1)
         else:
-            if "standard" in sources2:
+            jdata = _load_initials_json(videopage)
+            data = jdata.get("xplayerSettings", {})
+            data2 = jdata.get("xplayerSettings2", {})
+            sources = data.get("sources", {})
+            sources2 = data2.get("sources", {})
+
+            if "hls" in sources:
+                h264src = sources["hls"].get("h264", "")
+                h265src = sources["hls"].get("h265", "")
+                av1src = sources["hls"].get("av1", "")
+                if h264src:
+                    hexurl = h264src["url"]
+                elif h265src:
+                    hexurl = h265src["url"]
+                elif av1src:
+                    hexurl = av1src["url"]
+                else:
+                    utils.notify("Oh Oh", "No playable video found.")
+                    return
+
+            if hexurl:
+                from resources.lib.decrypters import xhamster_decrypt
+
+                try:
+                    if not hexurl.startswith("http"):
+                        videourl = xhamster_decrypt.deobfuscate_url(hexurl)
+                    else:
+                        enc_string = hexurl.split("/")[3]
+                        dec_string = xhamster_decrypt.deobfuscate_url(enc_string)
+                        videourl = hexurl.replace(enc_string, dec_string)
+                except Exception as e:
+                    utils.notify("Oh Oh", "Failed to deobfuscate video URL - {}".format(e))
+                    return
+            elif "standard" in sources2:
                 src = sources2["standard"].get("h264", "")
                 srcs = {}
                 for s in src:
@@ -317,7 +329,7 @@ def Playvid(url, name, download=None):
                 if not videourl:
                     return
 
-    if videourl and videourl.startswith("http"):
+    if videourl.startswith("http"):
         vp.progress.update(75, "[CR]Playing video[CR]")
         vp.play_from_direct_link(videourl)
     else:

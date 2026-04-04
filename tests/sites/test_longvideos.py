@@ -1,4 +1,4 @@
-"""Tests for longvideos.xxx site implementation."""
+"""Tests for the longvideos module against wow.xxx."""
 
 from pathlib import Path
 
@@ -50,7 +50,7 @@ def test_list_parses_video_items(monkeypatch):
     monkeypatch.setattr(longvideos.utils, "eod", lambda: None)
     monkeypatch.setattr(longvideos.utils, "notify", lambda **k: None)
 
-    longvideos.List("https://www.longvideos.xxx/latest-updates/")
+    longvideos.List("https://www.wow.xxx/latest-updates/")
 
     # Should have 3 videos
     assert len(downloads) == 3
@@ -103,7 +103,7 @@ def test_categories_parses_categories(monkeypatch):
     monkeypatch.setattr(longvideos.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(longvideos.utils, "eod", lambda: None)
 
-    longvideos.Categories("https://www.longvideos.xxx/categories/")
+    longvideos.Categories("https://www.wow.xxx/categories/")
 
     # Should have 3 categories
     assert len(dirs) == 3
@@ -128,7 +128,7 @@ def test_search_without_keyword_shows_search_dialog(monkeypatch):
 
     monkeypatch.setattr(longvideos.site, "search_dir", fake_search_dir)
 
-    longvideos.Search("https://www.longvideos.xxx/search/{}/relevance/")
+    longvideos.Search("https://www.wow.xxx/search/{}/relevance/")
 
     assert len(search_called) == 1
     assert search_called[0][1] == "Search"
@@ -144,7 +144,7 @@ def test_search_with_keyword_calls_list(monkeypatch):
     monkeypatch.setattr(longvideos, "List", fake_list)
 
     longvideos.Search(
-        "https://www.longvideos.xxx/search/{}/relevance/", keyword="test query"
+        "https://www.wow.xxx/search/{}/relevance/", keyword="test query"
     )
 
     assert len(list_calls) == 1
@@ -170,7 +170,7 @@ def test_list_handles_no_data(monkeypatch):
     )
     monkeypatch.setattr(longvideos.utils, "notify", fake_notify)
 
-    longvideos.List("https://www.longvideos.xxx/latest-updates/")
+    longvideos.List("https://www.wow.xxx/latest-updates/")
 
     # Should have no videos and notification shown
     assert len(downloads) == 0
@@ -195,7 +195,7 @@ def test_list_handles_empty_results(monkeypatch):
     monkeypatch.setattr(longvideos.utils, "eod", lambda: None)
     monkeypatch.setattr(longvideos.utils, "notify", lambda **k: None)
 
-    longvideos.List("https://www.longvideos.xxx/latest-updates/")
+    longvideos.List("https://www.wow.xxx/latest-updates/")
 
     # Should have no videos
     assert len(downloads) == 0

@@ -64,6 +64,7 @@ def List(url):
         return
 
     soup = utils.parse_html(listhtml)
+    thumbnails = utils.Thumbnails(site.name)
     cm_lookupinfo = utils.addon_sys + "?mode=" + str("allclassic.Lookupinfo") + "&url="
     cm_related = utils.addon_sys + "?mode=" + str("allclassic.Related") + "&url="
 
@@ -84,6 +85,8 @@ def List(url):
         img_tag = card.select_one("img")
         img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
         img = utils.fix_url(img.replace("&amp;", "&"), site.url) if img else ""
+        if img:
+            img = thumbnails.cache_img(img)
 
         duration = ""
         duration_icon = card.select_one("i.la-clock-o")

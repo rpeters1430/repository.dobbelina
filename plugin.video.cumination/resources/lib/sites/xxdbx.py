@@ -72,8 +72,8 @@ def List(url):
         title_elem = v_div.select_one(".v_title")
         name = utils.cleantext(utils.safe_get_text(title_elem, default=""))
 
-        img_tag = v_div.select_one("img[src]")
-        img = utils.safe_get_attr(img_tag, "src", default="")
+        img_tag = v_div.select_one("img[data-src], img[src]")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"], default="")
         if img and img.startswith("//"):
             img = "https:" + img
 

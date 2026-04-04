@@ -26,8 +26,8 @@ import xbmcgui
 
 site = AdultSite(
     "longvideos",
-    "[COLOR hotpink]LongVideos.xxx[/COLOR]",
-    "https://www.longvideos.xxx/",
+    "[COLOR hotpink]WOW.xxx[/COLOR]",
+    "https://www.wow.xxx/",
     "longvideos.png",
     "longvideos",
 )

@@ -3034,7 +3034,7 @@ def videos_list(
        consistent format.
     """
     if thumbnails:
-        thumbnails = Thumbnails(site.name)
+        th = Thumbnails(site.name)
 
     videolist = re.split(delimiter, html)
     if videolist:
@@ -3058,7 +3058,7 @@ def videos_list(
                 if match:
                     img = fix_url(match.group(1).replace("&amp;", "&"), site.url)
                     if thumbnails:
-                        img = thumbnails.fix_img(img)
+                        img = th.cache_img(img) if thumbnails == "cache" else th.fix_img(img)
             quality = ""
             if re_quality:
                 match = re.search(re_quality, video, flags=re.DOTALL | re.IGNORECASE)
@@ -3247,8 +3247,6 @@ def ToggleDebug():
 class Thumbnails:
     # Download thumbnails to local cache and correct the extensions of WEBP images that were renamed to JPG, which cannot be displayed in KODI 21
     def __init__(self, site):
-        if KODIVER < 21:
-            return
         self.path = os.path.join(profileDir, "thumbnails", site)
         if not os.path.exists(self.path):
             os.makedirs(self.path)
@@ -3279,6 +3277,14 @@ class Thumbnails:
             return img
         thumbnail = urllib_parse.quote(urllib_parse.urlparse(img).path, safe="")
         img_path = os.path.join(self.path, thumbnail).replace(".jpg", ".webp")
+        if os.path.exists(img_path):
+            return img_path
+        Thread(target=self.download_image, args=(img, img_path), daemon=True).start()
+        return img_path
+
+    def cache_img(self, img):
+        thumbnail = urllib_parse.quote(urllib_parse.urlparse(img).path, safe="")
+        img_path = os.path.join(self.path, thumbnail)
         if os.path.exists(img_path):
             return img_path
         Thread(target=self.download_image, args=(img, img_path), daemon=True).start()
