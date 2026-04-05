@@ -2,12 +2,11 @@
 
 - Sites: `168`
 - Tier1 hot: `0`
-- Failing: `3`
+- Failing: `2`
 - Warn: `3`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| javgg | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | tubxporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | heavyr | warn | WARN |  | video |  | Y | Y | Y | Y |
@@ -81,6 +80,7 @@
 | hqporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | japteenx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javbangers | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| javgg | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javguru | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javmoe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javseen | backlog | PASS | 2 | video |  | Y |  | Y | Y |
@@ -178,10 +178,9 @@
 
 ## Next Batch
 
-- **javgg** (failing, tier=None)
 - **josporn** (failing, tier=None) | failures: list:FAIL
 - **tubxporn** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
-- **heavyr** (warn, tier=None) | failures: search:FAIL, play:FAIL
+- **heavyr** (warn, tier=None) | failures: categories:FAIL, search:FAIL, play:FAIL
 - **javhdporn** (warn, tier=None) | failures: play:FAIL
 - **pornhoarder** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
@@ -198,3 +197,4 @@
 - **streamate** (tier1, tier=1)
 - **stripchat** (tier1, tier=1)
 - **xnxx** (tier1, tier=1)
+- **xvideos** (tier1, tier=1)
