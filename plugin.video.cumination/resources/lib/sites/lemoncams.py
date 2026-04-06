@@ -305,7 +305,48 @@ def Playvid(url, name):
     final_url = playable_url + header_str
     
     utils.kodilog("LemonCams: Playing {}".format(final_url), xbmc.LOGDEBUG)
-    
+
+    player = xbmc.Player()
     vp = utils.VideoPlayer(name)
-    vp.IA_check = "IA" # Use inputstream.adaptive for HLS
+    vp.IA_check = "IA"  # Use inputstream.adaptive for HLS
     vp.play_from_direct_link(final_url)
+
+    # Monitor playback status
+    # Wait for playback to start
+    timeout = 30
+    start_time = time.time()
+    while not player.isPlaying() and (time.time() - start_time) < timeout:
+        xbmc.sleep(500)
+
+    if player.isPlaying():
+        utils.kodilog("LemonCams: Monitoring stream for {}".format(name))
+        while player.isPlaying():
+            # Check model status periodically
+            xbmc.sleep(10000)  # Check every 10 seconds
+            try:
+                # Re-fetch model info to check status
+                model_data = _api_get(
+                    {
+                        "action": "view_model",
+                        "model_slug": url.split("/")[-1].split("?")[0],
+                    }
+                )
+
+                if not model_data or "model" not in model_data:
+                    continue
+
+                model_info = model_data["model"]
+                status = model_info.get("status", "").lower()
+                is_private = model_info.get("is_private", False)
+
+                if status == "offline":
+                    utils.notify(header="LemonCams", msg="Model went offline")
+                    player.stop()
+                    break
+                elif is_private:
+                    utils.notify(header="LemonCams", msg="Model went private")
+                    player.stop()
+                    break
+            except Exception as e:
+                utils.kodilog("LemonCams: Error monitoring status: {}".format(e))
+                continue

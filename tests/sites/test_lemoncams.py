@@ -70,8 +70,21 @@ def test_list_uses_real_pagination_and_adds_next_page(monkeypatch):
     ]
 
 
+class MockKodiPlayer:
+    def __init__(self):
+        self._playing = True
+    def isPlaying(self):
+        res = self._playing
+        self._playing = False # Stop after one check to exit loop
+        return res
+    def stop(self):
+        pass
+
+
 def test_playvid_uses_direct_stream(monkeypatch):
     play_calls = []
+
+    monkeypatch.setattr(lemoncams.xbmc, "Player", MockKodiPlayer)
     
     class MockVP:
         def __init__(self, name):
@@ -115,6 +128,7 @@ def test_playvid_searches_if_no_cached_stream(monkeypatch):
 
     monkeypatch.setattr(lemoncams, "_fetch_provider_payload", fake_fetch_payload)
     monkeypatch.setattr(lemoncams.utils, "VideoPlayer", MockVP)
+    monkeypatch.setattr(lemoncams.xbmc, "Player", MockKodiPlayer)
     
     # Test with URL without piped stream
     url = "https://www.lemoncams.com/stripchat/model1"

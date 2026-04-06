@@ -37,6 +37,19 @@ def _ensure_kodi_stubs():
     xbmc.getSkinDir = lambda: "skin.estuary"
     xbmc.getInfoLabel = lambda key: "19.0" if "BuildVersion" in key else ""
     xbmc.getCondVisibility = lambda *args, **kwargs: False
+    xbmc.sleep = _noop
+
+    class _Player:
+        def __init__(self):
+            pass
+
+        def isPlaying(self):
+            return False
+
+        def stop(self):
+            pass
+
+    xbmc.Player = _Player
 
     class _VideoStreamDetail:
         def __init__(self, **kwargs):

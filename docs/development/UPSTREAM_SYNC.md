@@ -2,8 +2,8 @@
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
 
-**Last Updated**: 2026-04-04
-**Last Sync**: 2026-04-04 - Ported selected fixes from upstream commits cc111fac and 9496ea98
+**Last Updated**: 2026-04-06
+**Last Sync**: 2026-04-06 - Ported reallifecams, voyeur-house, and watchporn fixes from upstream commit f12e1d25
 
 ---
 
@@ -21,6 +21,12 @@
 ## Already Integrated Commits
 
 These upstream commits have been integrated into the fork:
+
+### 2026-04-06 Porting Session
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `f12e1d25` | rlc, watchporn fixes #1808 | `manual` | 2026-04-06 | Ported voyeur-house.me and reallifecams.us domain updates to BS4 scraper; ported WatchPorn lookup regex fixes |
 
 ### 2026-04-04 Porting Session
 

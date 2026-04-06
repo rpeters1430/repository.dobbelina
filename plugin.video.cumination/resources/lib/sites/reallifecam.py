@@ -31,15 +31,15 @@ site = AdultSite(
 )
 site2 = AdultSite(
     "vhlife",
-    "[COLOR hotpink]Voyeur-house.cc[/COLOR]",
-    "https://www.voyeur-house.cc/",
+    "[COLOR hotpink]Voyeur-house[/COLOR]",
+    "https://www.voyeur-house.me/",
     "vhlife.png",
     "vhlife",
 )
 site3 = AdultSite(
     "vhlife1",
-    "[COLOR hotpink]Reallifecams[/COLOR]",
-    "https://www.reallifecams.in/",
+    "[COLOR hotpink]Reallifecams.us[/COLOR]",
+    "https://reallifecams.us/",
     "vhlife1.png",
     "vhlife1",
 )
@@ -55,13 +55,11 @@ site4 = AdultSite(
 def getBaselink(url):
     if "reallifecam.to" in url:
         siteurl = site.url
-    elif "voyeur-house.cc" in url:
+    elif "voyeur-house" in url:
         siteurl = site2.url
-    elif "reallifecams." in url:
-        # Use the actual domain from the URL if it's a reallifecams variant
-        parsed = urllib_parse.urlparse(url)
-        siteurl = "{0}://{1}/".format(parsed.scheme, parsed.netloc)
-    elif "camcaps.to" in url or "simpvids.com" in url or "camcaps.tv" in url:
+    elif "reallifecams" in url:
+        siteurl = site3.url
+    elif "camcaps" in url or "simpvids" in url:
         siteurl = site4.url
     else:
         parsed = urllib_parse.urlparse(url)
@@ -81,7 +79,7 @@ def Main(url):
         "Categories",
         site.img_cat,
     )
-    if "camcaps.to" in url or "simpvids.com" in url:
+    if "camcaps" in url or "simpvids" in url:
         site.add_dir(
             "[COLOR hotpink]Search[/COLOR]",
             siteurl + "search/videos/",
