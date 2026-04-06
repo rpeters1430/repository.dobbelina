@@ -1,3 +1,7 @@
+[B]Version 1.1.355[/B]
+- feat: port upstream f12e1d25 - reallifecams, voyeur-house domain updates
+- fix: port upstream f12e1d25 - watchporn lookup info regex fixes
+
 [B]Version 1.1.354[/B]
 - Refactor smoke tests for various sites to improve dispatch handling
 - fix: update user agent versions and improve josporn site integration
