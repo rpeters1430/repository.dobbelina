@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-04-06T07:06:22.981567",
+    "sites_total": 168,
+    "pass": 159,
+    "warn": 5,
+    "fail": 3,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-04-05T06:49:29.705901",
     "sites_total": 168,
     "pass": 162,
@@ -8,31 +17,24 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-04-04T06:46:40.036069",
-    "sites_total": 168,
-    "pass": 161,
-    "warn": 3,
-    "fail": 3,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
-    "new_failures": 0,
-    "resolved_failures": 1,
+    "new_failures": 1,
+    "resolved_failures": 0,
     "persistent_failures": 2,
     "improved_sites": 0,
-    "regressions": 0,
-    "step_regressions": 1
+    "regressions": 3,
+    "step_regressions": 3
   },
-  "new_failures": [],
-  "resolved_failures": [
+  "new_failures": [
     {
-      "site": "javgg",
-      "previous": "FAIL",
-      "current": "PASS"
+      "site": "porndoe",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
     }
   ],
+  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "josporn",
@@ -46,26 +48,56 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "BLOCKED",
-      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177537"
+      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177545"
     }
   ],
   "improved_sites": [],
   "step_regressions": [
     {
-      "site": "heavyr",
-      "step": "categories",
+      "site": "eroticage",
+      "step": "play",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177537",
-      "class": "BLOCKED"
+      "message": "AttributeError: 'NoneType' object has no attribute 'get'",
+      "class": "CODE"
+    },
+    {
+      "site": "porndoe",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "List returned no videos",
+      "class": "PARSER"
+    },
+    {
+      "site": "xhamster",
+      "step": "play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "AttributeError: 'NoneType' object has no attribute 'get'",
+      "class": "CODE"
     }
   ],
   "deltas": [
     {
-      "site": "javgg",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
+      "site": "eroticage",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "porndoe",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "xhamster",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
       "detail": ""
     }
   ]
