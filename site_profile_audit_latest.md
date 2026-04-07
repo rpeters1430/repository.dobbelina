@@ -3,18 +3,16 @@
 - Sites: `168`
 - Tier1 hot: `0`
 - Failing: `3`
-- Warn: `5`
+- Warn: `3`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| porndoe | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
+| peachurnet | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | tubxporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| eroticage | warn | WARN |  | video |  | Y | Y | Y | Y |
 | heavyr | warn | WARN |  | video |  | Y | Y | Y | Y |
 | javhdporn | warn | WARN |  | video |  | Y | Y | Y | Y |
 | pornhoarder | warn | WARN |  | video |  | Y | Y | Y | Y |
-| xhamster | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -55,6 +53,7 @@
 | eporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erogarga | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erome | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| eroticage | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eroticmv | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | familypornhd | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | foxnxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -107,7 +106,6 @@
 | noodlemagazine | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | okxxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | paradisehill | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| peachurnet | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | peekvids | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | perverzija | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pimpbunny | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -117,6 +115,7 @@
 | porn4k | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porndish | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornditt | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| porndoe | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | pornez | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porngo | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhat | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -164,6 +163,7 @@
 | whereismyporn | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | whoreshub | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xfreehd | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| xhamster | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xmegadrive | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xmoviesforyou | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xozilla | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -179,13 +179,11 @@
 ## Next Batch
 
 - **josporn** (failing, tier=None) | failures: list:FAIL
-- **porndoe** (failing, tier=2) | failures: list:FAIL
+- **peachurnet** (failing, tier=None) | failures: list:FAIL
 - **tubxporn** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
-- **eroticage** (warn, tier=None) | failures: play:FAIL
-- **heavyr** (warn, tier=None) | failures: categories:FAIL, search:FAIL, play:FAIL
+- **heavyr** (warn, tier=None) | failures: search:FAIL, play:FAIL
 - **javhdporn** (warn, tier=None) | failures: play:FAIL
 - **pornhoarder** (warn, tier=None) | failures: play:FAIL
-- **xhamster** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
@@ -198,3 +196,5 @@
 - **pornkai** (tier1, tier=1)
 - **spankbang** (tier1, tier=1)
 - **streamate** (tier1, tier=1)
+- **stripchat** (tier1, tier=1)
+- **xnxx** (tier1, tier=1)
