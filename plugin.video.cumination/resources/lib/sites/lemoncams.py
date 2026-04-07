@@ -40,10 +40,11 @@ DEFAULT_PAGE = 1
 TOP_CAMS_KEY = "__top__"
 SUPPORTED_PROVIDERS = {
     "stripchat": "Stripchat",
-    "chaturbate": "Chaturbate",
-    "camsoda": "Camsoda",
-    "cam4": "Cam4",
 }
+
+
+def _is_supported_provider(provider):
+    return (provider or "").strip().lower() in SUPPORTED_PROVIDERS
 
 
 def _api_get(params):
@@ -150,7 +151,7 @@ def _find_model_stream(provider, username, max_pages=5):
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
-        "[COLOR hotpink]Top Cams[/COLOR]",
+        "[COLOR hotpink]Top Stripchat Cams[/COLOR]",
         TOP_CAMS_KEY,
         "List",
         "",
@@ -166,13 +167,13 @@ def Main():
         )
     
     site.add_dir(
-        "[COLOR hotpink]Search Model[/COLOR]",
+        "[COLOR hotpink]Search Stripchat Model[/COLOR]",
         "any",
         "Search",
         site.img_search,
     )
     site.add_dir(
-        "[COLOR hotpink]Open LemonCams URL[/COLOR]",
+        "[COLOR hotpink]Open Stripchat LemonCams URL[/COLOR]",
         "url",
         "Search",
         site.img_search,
@@ -183,6 +184,10 @@ def Main():
 @site.register()
 def List(url, page=DEFAULT_PAGE):
     provider = (url or TOP_CAMS_KEY).strip().lower()
+    if provider != TOP_CAMS_KEY and not _is_supported_provider(provider):
+        utils.notify("LemonCams", "Only Stripchat models are supported")
+        utils.eod()
+        return
     
     payload = _fetch_provider_payload(provider, page)
     cams = []
@@ -253,6 +258,10 @@ def Search(url, keyword=None):
         utils.notify("LemonCams", "Invalid model or URL")
         utils.eod()
         return
+    if not _is_supported_provider(provider):
+        utils.notify("LemonCams", "Only Stripchat models are supported")
+        utils.eod()
+        return
 
     playable_url = _find_model_stream(provider, username)
     if not playable_url:
@@ -276,6 +285,9 @@ def Playvid(url, name):
     provider, username, stream_url = _parse_model_identifier(url)
     if not provider or not username:
         utils.notify("LemonCams", "Could not parse model URL")
+        return
+    if not _is_supported_provider(provider):
+        utils.notify("LemonCams", "Only Stripchat models are supported")
         return
 
     # Use cached stream URL if available, otherwise search for a new one
@@ -306,47 +318,9 @@ def Playvid(url, name):
     
     utils.kodilog("LemonCams: Playing {}".format(final_url), xbmc.LOGDEBUG)
 
-    player = xbmc.Player()
     vp = utils.VideoPlayer(name)
     vp.IA_check = "IA"  # Use inputstream.adaptive for HLS
     vp.play_from_direct_link(final_url)
-
-    # Monitor playback status
-    # Wait for playback to start
-    timeout = 30
-    start_time = time.time()
-    while not player.isPlaying() and (time.time() - start_time) < timeout:
-        xbmc.sleep(500)
-
-    if player.isPlaying():
-        utils.kodilog("LemonCams: Monitoring stream for {}".format(name))
-        while player.isPlaying():
-            # Check model status periodically
-            xbmc.sleep(10000)  # Check every 10 seconds
-            try:
-                # Re-fetch model info to check status
-                model_data = _api_get(
-                    {
-                        "action": "view_model",
-                        "model_slug": url.split("/")[-1].split("?")[0],
-                    }
-                )
-
-                if not model_data or "model" not in model_data:
-                    continue
-
-                model_info = model_data["model"]
-                status = model_info.get("status", "").lower()
-                is_private = model_info.get("is_private", False)
-
-                if status == "offline":
-                    utils.notify(header="LemonCams", msg="Model went offline")
-                    player.stop()
-                    break
-                elif is_private:
-                    utils.notify(header="LemonCams", msg="Model went private")
-                    player.stop()
-                    break
-            except Exception as e:
-                utils.kodilog("LemonCams: Error monitoring status: {}".format(e))
-                continue
+    # Do not block here with a status-monitor loop. Kodi needs the plugin call to
+    # return after playback is handed off, otherwise the busy/play popup can remain
+    # visible over an already-playing stream.

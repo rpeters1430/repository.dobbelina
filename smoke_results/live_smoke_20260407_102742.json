@@ -1,0 +1,90 @@
+{
+  "summary": {
+    "generated": "2026-04-07T10:27:42.866815",
+    "started": "2026-04-07T10:27:42.709724",
+    "sites_total": 1,
+    "pass": 1,
+    "warn": 0,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "blocked_hint": 0,
+    "steps": [
+      "main",
+      "list",
+      "search"
+    ],
+    "timeout_per_step_sec": 20,
+    "timeout_per_site_sec": 60,
+    "keyword": "test"
+  },
+  "sites": [
+    {
+      "site": "lemoncams",
+      "title": "LemonCams[COLOR white] - webcams",
+      "base_url": "https://www.lemoncams.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "7 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 7,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "Webcam list returned no videos in harness context",
+          "elapsed": 0.02,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.lemoncams.com/__top__",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.lemoncams.com/",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like this website is too slow.",
+        "Oh oh: It looks like this website is too slow.",
+        "LemonCams: Model offline or no stream found"
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": false,
+          "search": true,
+          "play": false
+        },
+        "content_type": "cam",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": true,
+          "search_results_optional": false,
+          "categories_optional": true
+        },
+        "tier": 2
+      },
+      "elapsed": 0.16
+    }
+  ]
+}

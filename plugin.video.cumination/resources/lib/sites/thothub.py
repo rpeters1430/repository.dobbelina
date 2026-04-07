@@ -36,6 +36,8 @@ site = AdultSite(
     "thothub.png",
     "thothub",
 )
+# Known mirrors observed upstream: thothub.tube, thothub.to, thothub.lol.
+# Keep the canonical base on .mx and treat other domains as alternates only.
 REFERER_HEADER = site.url
 ORIGIN_HEADER = site.url.rstrip("/")
 UA_HEADER = urllib_parse.quote(utils.USER_AGENT, safe="")
@@ -350,13 +352,16 @@ def _login(force=False):
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
-        "[COLOR hotpink]Latest Updates[/COLOR]",
+        "[COLOR hotpink]Latest Public Updates[/COLOR]",
         site.url + "public/",
         "List",
         site.img_next,
     )
     site.add_dir(
-        "[COLOR hotpink]Public[/COLOR]", site.url + "public/", "List", site.img_next
+        "[COLOR hotpink]Public Videos[/COLOR]",
+        site.url + "public/",
+        "List",
+        site.img_next,
     )
     site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]",
@@ -371,7 +376,10 @@ def Main():
         site.img_cat,
     )
     site.add_dir(
-        "[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search
+        "[COLOR hotpink]Search Public Videos[/COLOR]",
+        site.url + "search/",
+        "Search",
+        site.img_search,
     )
     List(site.url + "public/")
 
@@ -990,7 +998,7 @@ def Playvid(url, name, download=None):
 def Search(url, keyword=None):
     """Search for videos on ThotHub."""
     if not keyword:
-        site.search_dir(url, "Search")
+        site.search_dir(url, "Search public videos only")
     else:
         # ThotHub uses /search/keyword/ format
         keyword_clean = keyword.replace(" ", "-")

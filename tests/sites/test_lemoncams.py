@@ -136,3 +136,41 @@ def test_playvid_searches_if_no_cached_stream(monkeypatch):
     
     assert len(play_calls) == 1
     assert "https://newstream.example/model1.m3u8" in play_calls[0]["url"]
+
+
+def test_search_rejects_non_stripchat_provider(monkeypatch):
+    notifications = []
+
+    monkeypatch.setattr(
+        lemoncams.utils,
+        "notify",
+        lambda header, msg, *args, **kwargs: notifications.append((header, msg)),
+    )
+    monkeypatch.setattr(lemoncams.utils, "eod", lambda: None)
+
+    lemoncams.Search("url", "https://www.lemoncams.com/chaturbate/beckymadsons")
+
+    assert notifications == [("LemonCams", "Only Stripchat models are supported")]
+
+
+def test_playvid_rejects_non_stripchat_provider(monkeypatch):
+    notifications = []
+    play_calls = []
+
+    class MockVP:
+        def __init__(self, name):
+            self.name = name
+        def play_from_direct_link(self, url):
+            play_calls.append(url)
+
+    monkeypatch.setattr(lemoncams.utils, "VideoPlayer", MockVP)
+    monkeypatch.setattr(
+        lemoncams.utils,
+        "notify",
+        lambda header, msg, *args, **kwargs: notifications.append((header, msg)),
+    )
+
+    lemoncams.Playvid("https://www.lemoncams.com/chaturbate/beckymadsons", "beckymadsons")
+
+    assert notifications == [("LemonCams", "Only Stripchat models are supported")]
+    assert play_calls == []
