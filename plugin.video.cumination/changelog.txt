@@ -1,3 +1,11 @@
+[B]Version 1.1.357[/B]
+- Merge pull request #125 from rpeters1430/imgbot
+- feat: enhance video playback handling and support for Stripchat models
+- Site Updates
+- [ImgBot] Optimize images
+- Refactor smoke tests for various sites to improve dispatch handling
+- fix: update user agent versions and improve josporn site integration
+
 [B]Version 1.1.356[/B]
 - feat: enhance video playback handling and support for Stripchat models
 - Site Updates
