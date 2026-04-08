@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-04-08T07:00:37.552134",
+    "sites_total": 168,
+    "pass": 162,
+    "warn": 2,
+    "fail": 3,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-04-07T06:57:27.845597",
     "sites_total": 168,
     "pass": 161,
@@ -8,39 +17,16 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-04-06T07:06:22.981567",
-    "sites_total": 168,
-    "pass": 159,
-    "warn": 5,
-    "fail": 3,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
-    "new_failures": 1,
-    "resolved_failures": 1,
-    "persistent_failures": 2,
-    "improved_sites": 2,
-    "regressions": 1,
-    "step_regressions": 1
+    "new_failures": 0,
+    "resolved_failures": 0,
+    "persistent_failures": 3,
+    "improved_sites": 1,
+    "regressions": 0,
+    "step_regressions": 0
   },
-  "new_failures": [
-    {
-      "site": "peachurnet",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "list: List URL unavailable in harness (HTTP 503)"
-    }
-  ],
-  "resolved_failures": [
-    {
-      "site": "porndoe",
-      "previous": "FAIL",
-      "current": "PASS"
-    }
-  ],
+  "new_failures": [],
+  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "josporn",
@@ -50,59 +36,31 @@
       "message": "list: List URL unavailable in harness (HTTP 503)"
     },
     {
+      "site": "peachurnet",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
+    },
+    {
       "site": "tubxporn",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "BLOCKED",
-      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177554"
+      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177563"
     }
   ],
   "improved_sites": [
     {
-      "site": "eroticage",
-      "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "xhamster",
+      "site": "heavyr",
       "previous": "WARN",
       "current": "PASS"
     }
   ],
-  "step_regressions": [
-    {
-      "site": "peachurnet",
-      "step": "list",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "List URL unavailable in harness (HTTP 503)",
-      "class": "NETWORK"
-    }
-  ],
+  "step_regressions": [],
   "deltas": [
     {
-      "site": "eroticage",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "peachurnet",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "porndoe",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "xhamster",
+      "site": "heavyr",
       "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",

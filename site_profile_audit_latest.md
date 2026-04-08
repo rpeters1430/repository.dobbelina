@@ -3,14 +3,13 @@
 - Sites: `168`
 - Tier1 hot: `0`
 - Failing: `3`
-- Warn: `3`
+- Warn: `2`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | peachurnet | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | tubxporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| heavyr | warn | WARN |  | video |  | Y | Y | Y | Y |
 | javhdporn | warn | WARN |  | video |  | Y | Y | Y | Y |
 | pornhoarder | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
@@ -67,6 +66,7 @@
 | hanime | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hdporn | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | hdporn92 | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| heavyr | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hentai-moon | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hentaidude | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hentaihavenco | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
@@ -181,7 +181,6 @@
 - **josporn** (failing, tier=None) | failures: list:FAIL
 - **peachurnet** (failing, tier=None) | failures: list:FAIL
 - **tubxporn** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
-- **heavyr** (warn, tier=None) | failures: search:FAIL, play:FAIL
 - **javhdporn** (warn, tier=None) | failures: play:FAIL
 - **pornhoarder** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
@@ -198,3 +197,4 @@
 - **streamate** (tier1, tier=1)
 - **stripchat** (tier1, tier=1)
 - **xnxx** (tier1, tier=1)
+- **xvideos** (tier1, tier=1)
