@@ -286,19 +286,26 @@ def _decode_proxy_target(value):
     return base64.urlsafe_b64decode((value + padding).encode("ascii")).decode("utf-8")
 
 
-def _is_allowed_proxy_segment_url(url):
+def _normalize_and_validate_proxy_segment_url(url):
     if not isinstance(url, str) or not url:
-        return False
+        return ""
     try:
         parsed = urlparse(url)
     except Exception:
-        return False
+        return ""
 
     if parsed.scheme not in ("http", "https"):
-        return False
+        return ""
+    if parsed.username or parsed.password:
+        return ""
+    if parsed.port is not None:
+        return ""
+    if parsed.fragment:
+        return ""
+
     host = (parsed.hostname or "").lower()
     if not host:
-        return False
+        return ""
 
     allowed_host_suffixes = (
         "stripchat.com",
@@ -306,10 +313,14 @@ def _is_allowed_proxy_segment_url(url):
         "doppiocdn.com",
         "doppiocdn.net",
     )
-    return any(
-        host == suffix or host.endswith("." + suffix)
-        for suffix in allowed_host_suffixes
-    )
+    if not any(host == suffix or host.endswith("." + suffix) for suffix in allowed_host_suffixes):
+        return ""
+
+    path = parsed.path or "/"
+    if not path.startswith("/"):
+        return ""
+
+    return urlunparse((parsed.scheme, host, path, parsed.params, parsed.query, ""))
 
 
 def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
@@ -785,13 +796,14 @@ def _start_manifest_proxy(selected_url, name):
                 params = parse_qs(parsed_path.query, keep_blank_values=True)
                 encoded = params.get("u", [""])[0]
                 cdn_url = _decode_proxy_target(encoded) if encoded else ""
-                if not cdn_url or not _is_allowed_proxy_segment_url(cdn_url):
+                safe_cdn_url = _normalize_and_validate_proxy_segment_url(cdn_url)
+                if not safe_cdn_url:
                     self.send_response(400)
                     self.end_headers()
                     return
                 try:
                     seg_resp = session.get(
-                        cdn_url,
+                        safe_cdn_url,
                         timeout=HTTP_TIMEOUT_MEDIUM,
                         stream=True,
                         allow_redirects=False,
