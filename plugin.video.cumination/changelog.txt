@@ -1,3 +1,12 @@
+[B]Version 1.1.359[/B]
+- refactor: enhance custom site import handling and remove ignoreCertificateErrors option
+- Merge pull request #126 from rpeters1430/alert-autofix-154
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 154: Full server-side request forgery
+- Merge pull request #125 from rpeters1430/imgbot
+- feat: enhance video playback handling and support for Stripchat models
+- Site Updates
+
 [B]Version 1.1.358[/B]
 - Merge pull request #126 from rpeters1430/alert-autofix-154
 - style: format code with Ruff Formatter
