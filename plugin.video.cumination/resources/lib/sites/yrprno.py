@@ -208,7 +208,7 @@ def Playvid(url, name, download=None):
         name, download, direct_regex=r'source src=["\']([^"\']+)["\']'
     )
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    videohtml = utils.getHtml(url, site.url, ignoreCertificateErrors=True)
+    videohtml = utils.getHtml(url, site.url)
     
     # Try finding the video source directly in the page first
     source_match = re.search(r'<source\s+[^>]*src=["\']([^"\']+)["\']', videohtml, re.IGNORECASE)

@@ -791,7 +791,10 @@ def _start_manifest_proxy(selected_url, name):
                     return
                 try:
                     seg_resp = session.get(
-                        cdn_url, timeout=HTTP_TIMEOUT_MEDIUM, stream=True
+                        cdn_url,
+                        timeout=HTTP_TIMEOUT_MEDIUM,
+                        stream=True,
+                        allow_redirects=False,
                     )
                     self.send_response(seg_resp.status_code)
                     self.send_header(

@@ -29,8 +29,18 @@ profileDir = TRANSLATEPATH(profileDir)
 cookiePath = os.path.join(profileDir, "cookies.lwp")
 if addon.getSetting("custom_favorites") == "true":
     fav_path = addon.getSetting("favorites_path")
-    if fav_path == "":
+    if not fav_path:
         fav_path = profileDir
+    else:
+        fav_path = os.path.normpath(fav_path)
+        _home = os.path.expanduser("~")
+        if not fav_path.startswith(_home + os.sep) and fav_path != _home:
+            xbmc.log(
+                "@@@@Cumination: favorites_path '{}' is outside home directory; "
+                "falling back to profile directory.".format(fav_path),
+                xbmc.LOGWARNING,
+            )
+            fav_path = profileDir
     favoritesdb = os.path.join(fav_path, "favorites.db")
 else:
     favoritesdb = os.path.join(profileDir, "favorites.db")

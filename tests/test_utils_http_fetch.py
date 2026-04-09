@@ -102,7 +102,8 @@ def test_create_ssl_context_is_verified_by_default():
         assert context.minimum_version >= ssl.TLSVersion.TLSv1_2
 
 
-def test_gethtml_only_uses_unverified_context_when_requested(monkeypatch):
+def test_gethtml_always_uses_verified_context(monkeypatch):
+    """Certificate verification is always enforced; ignoreCertificateErrors no longer exists."""
     calls = []
 
     class ContextAwareResponse(FakeResponse):
@@ -119,12 +120,6 @@ def test_gethtml_only_uses_unverified_context_when_requested(monkeypatch):
 
     result = utils._getHtml("https://example.com")
     assert result == "<html>ok</html>"
+    # No explicit context is passed — urllib uses the module-level handler
+    # which is built from _create_ssl_context() and always verifies certs.
     assert calls[-1] is None
-
-    result = utils._getHtml(
-        "https://example.com", ignoreCertificateErrors=True
-    )
-    assert result == "<html>ok</html>"
-    assert calls[-1] is not None
-    assert calls[-1].verify_mode == ssl.CERT_NONE
-    assert calls[-1].check_hostname is False

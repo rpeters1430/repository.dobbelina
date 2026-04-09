@@ -20,6 +20,7 @@ import os.path
 import sys
 import socket
 import importlib
+import importlib.util
 import six
 
 from kodi_six import xbmc, xbmcplugin, xbmcvfs
@@ -86,17 +87,41 @@ def _handle_custom_site_failure(module_name, error, dependency=None):
     )
 
 
+def _import_custom_site(module_name, safe_base):
+    """Import a single custom site module using an explicit file path.
+
+    Avoids adding the custom-sites directory to sys.path (which would let any
+    module in that directory be imported by name from elsewhere).  Instead we
+    resolve the full path, verify it stays within the allowed directory, and
+    load the module directly via importlib machinery.
+    """
+    candidate = os.path.realpath(
+        os.path.join(safe_base, module_name + ".py")
+    )
+    if not candidate.startswith(safe_base + os.sep):
+        raise ImportError(
+            "Rejected custom site '{}': path outside customSitesDir".format(module_name)
+        )
+    if not os.path.isfile(candidate):
+        raise ImportError(
+            "Custom site module not found: {}".format(candidate)
+        )
+    spec = importlib.util.spec_from_file_location(module_name, candidate)
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = mod
+    spec.loader.exec_module(mod)
+
+
 def load_custom_sites():
     custom_site_import_results["loaded"].clear()
     custom_site_import_results["failed"].clear()
     if addon_get_setting("custom_sites") != "true":
         return custom_site_import_results
 
-    if basics.customSitesDir not in sys.path:
-        sys.path.append(basics.customSitesDir)
+    safe_base = os.path.realpath(basics.customSitesDir)
     for module_name in favorites.enabled_custom_sites():
         try:
-            importlib.import_module(module_name)
+            _import_custom_site(module_name, safe_base)
         except ImportError as error:
             dependency = getattr(error, "name", None)
             missing_dependency = (
@@ -292,7 +317,8 @@ def testing_site_list():
 def OpenDownloadFolder(url):
     xbmc.executebuiltin("Dialog.Close(busydialog, true)")
     xbmc.sleep(100)
-    xbmc.executebuiltin("ActivateWindow(Videos, " + url + ")")
+    safe_url = url.replace('"', "").replace(",", "")
+    xbmc.executebuiltin('ActivateWindow(Videos, "{}")'.format(safe_url))
 
 
 @url_dispatcher.register()

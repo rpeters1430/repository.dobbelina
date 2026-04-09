@@ -42,16 +42,15 @@ def test_custom_site_import_failure_reports(monkeypatch):
         def yesno(self, *args, **kwargs):
             return True
 
-    def fake_import(module_name):
+    def fake_import_custom_site(module_name, safe_base):
         if module_name == "custom.bad":
             error = ModuleNotFoundError("No module named 'missing_dependency'")
             error.name = "missing_dependency"
             raise error
-        return object()
 
     monkeypatch.setattr(plugin_default, "favorites", fake_favorites)
     monkeypatch.setattr(plugin_default, "dialog", _Dialog())
-    monkeypatch.setattr(plugin_default.importlib, "import_module", fake_import)
+    monkeypatch.setattr(plugin_default, "_import_custom_site", fake_import_custom_site)
     monkeypatch.setattr(
         plugin_default.utils,
         "kodilog",

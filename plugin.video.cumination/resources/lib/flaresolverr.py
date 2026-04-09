@@ -1,13 +1,39 @@
 import requests
 import time
+from urllib.parse import urlparse
 from kodi_six import xbmc
 from resources.lib.http_timeouts import HTTP_TIMEOUT_CONNECT, HTTP_TIMEOUT_SHORT
+
+_ALLOWED_FS_SCHEMES = ("http", "https")
+_LOCALHOST_HOSTS = {"127.0.0.1", "localhost", "::1"}
+
+
+def _validate_flaresolverr_url(url):
+    """Raise ValueError if url is not a safe FlareSolverr endpoint."""
+    try:
+        parsed = urlparse(url)
+    except Exception:
+        raise ValueError("Invalid FlareSolverr URL: {}".format(url))
+    if parsed.scheme not in _ALLOWED_FS_SCHEMES:
+        raise ValueError(
+            "FlareSolverr URL must use http or https, got: {}".format(parsed.scheme)
+        )
+    host = (parsed.hostname or "").lower()
+    if not host:
+        raise ValueError("FlareSolverr URL has no host: {}".format(url))
+    if host not in _LOCALHOST_HOSTS:
+        xbmc.log(
+            "@@@@Cumination: FlareSolverr configured with non-localhost host '{}'. "
+            "Ensure this is intentional.".format(host),
+            xbmc.LOGWARNING,
+        )
 
 
 class FlareSolverrManager:
     def __init__(self, flaresolverr_url=None, session_id=None):
         self.session = requests.session()
         self.flaresolverr_url = flaresolverr_url or "http://127.0.0.1:8191/v1"
+        _validate_flaresolverr_url(self.flaresolverr_url)
         self.session_id = session_id or "cumination_session_{}".format(int(time.time()))
         self.flaresolverr_session = self.session_id
         self._destroyed = False

@@ -132,7 +132,7 @@ comm -23 <(grep -l "parse_html" plugin.video.cumination/resources/lib/sites/*.py
 
 ## Custom Agents
 
-A `site-debugger` agent is available in `.claude/agents/site-debugger.md`. Use it when investigating new sites, fixing broken site modules, or reverse-engineering video player encryption. It uses Playwright for browser-based exploration and produces a final module using only `getHtml()`/BeautifulSoup (no Playwright in output).
+A `project-upgrade-planner` agent is available in `.claude/agents/project-upgrade-planner.md`. Use it when planning project-wide modernization, assessing technical debt, or creating a comprehensive upgrade roadmap.
 
 ## Common Issues
 

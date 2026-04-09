@@ -566,16 +566,17 @@ def backup_fav():
         return
     progress.update(75, "Writing backup file")
     filename = "cumination-favorites_" + time + ".bak"
+    filepath = os.path.join(path, filename)
     compressbackup = utils.addon.getSetting("compressbackup") == "true"
     if compressbackup:
         import gzip
 
         try:
             if utils.PY3:
-                with gzip.open(path + filename, "wt", encoding="utf-8") as fav_file:
+                with gzip.open(filepath, "wt", encoding="utf-8") as fav_file:
                     json.dump(backup_content, fav_file)
             else:
-                with gzip.open(path + filename, "wb") as fav_file:
+                with gzip.open(filepath, "wb") as fav_file:
                     json.dump(backup_content, fav_file)
         except IOError:
             progress.close()
@@ -587,10 +588,10 @@ def backup_fav():
     else:
         try:
             if utils.PY3:
-                with open(path + filename, "wt", encoding="utf-8") as fav_file:
+                with open(filepath, "wt", encoding="utf-8") as fav_file:
                     json.dump(backup_content, fav_file)
             else:
-                with open(path + filename, "wb") as fav_file:
+                with open(filepath, "wb") as fav_file:
                     json.dump(backup_content, fav_file)
         except IOError:
             progress.close()
@@ -600,7 +601,7 @@ def backup_fav():
             )
             return
     progress.close()
-    utils.dialog.ok("Backup complete", "Backup file: {}".format(path + filename))
+    utils.dialog.ok("Backup complete", "Backup file: {}".format(filepath))
 
 
 @url_dispatcher.register()
@@ -830,6 +831,7 @@ def process_custom_site_zip(path):
                 return False
     extractable = (original_module, original_image, original_about)
     extracted = []
+    safe_base = os.path.realpath(basics.tempDir)
     for e in extractable:
         if e:
             if e not in zip.namelist():
@@ -837,7 +839,13 @@ def process_custom_site_zip(path):
                 utils.kodilog("File not found in archive: {}".format(e))
                 basics.clean_temp()
                 return False
-            zipfile.ZipFile.extract(zip, e, basics.tempDir)
+            target_path = os.path.realpath(os.path.join(basics.tempDir, e))
+            if not target_path.startswith(safe_base + os.sep):
+                zip.close()
+                utils.kodilog("Path traversal detected in archive entry: {}".format(e))
+                basics.clean_temp()
+                return False
+            zip.extract(e, path=basics.tempDir)
             extracted.append(e)
     zip.close()
     if len(extracted) == 0:

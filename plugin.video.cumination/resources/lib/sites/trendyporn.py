@@ -152,7 +152,7 @@ def Playvid(url, name, download=None):
     )
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
-    videohtml = utils.getHtml(url, site.url, ignoreCertificateErrors=True)
+    videohtml = utils.getHtml(url, site.url)
     
     # Try finding the video source directly in the main page first
     match = re.search(r'<source\s+[^>]*src=["\']([^"\']+)["\']', videohtml, re.IGNORECASE)
@@ -167,7 +167,7 @@ def Playvid(url, name, download=None):
         embedlink = utils.safe_get_attr(iframe, "src")
         if embedlink:
             embedlink = "https:" + embedlink if embedlink.startswith("//") else embedlink
-            embedhtml = utils.getHtml(embedlink, url, ignoreCertificateErrors=True)
+            embedhtml = utils.getHtml(embedlink, url)
             vp.play_from_html(embedhtml)
             return
 

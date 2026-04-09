@@ -94,24 +94,20 @@ Request = urllib_request.Request
 handlers = [urllib_request.HTTPBasicAuthHandler(), urllib_request.HTTPHandler()]
 
 
-def _set_minimum_tls_version(context):
-    """Prefer modern TLS without capping newer protocol support."""
+def _create_ssl_context():
+    """Return a secure TLS client context enforcing TLS 1.2 as the minimum."""
+    context = ssl.create_default_context()
+    # Preferred path: ssl.TLSVersion available in Python 3.7+ with modern OpenSSL.
     tls_version = getattr(ssl, "TLSVersion", None)
     if tls_version and hasattr(context, "minimum_version"):
         context.minimum_version = tls_version.TLSv1_2
-
-
-def _create_ssl_context(verify=True):
-    """Create the most secure client context we can, unless explicitly told not to."""
-    if verify:
-        context = ssl.create_default_context()
-        _set_minimum_tls_version(context)
-        return context
-
-    context = ssl.create_default_context()
-    _set_minimum_tls_version(context)
-    context.check_hostname = False
-    context.verify_mode = ssl.CERT_NONE
+    else:
+        # Fallback for older Python/OpenSSL: explicitly disable TLS 1.0 and 1.1
+        # via options flags so insecure protocol versions are never negotiated.
+        for opt in ("OP_NO_TLSv1", "OP_NO_TLSv1_1"):
+            flag = getattr(ssl, opt, None)
+            if flag is not None:
+                context.options |= flag
     return context
 
 
@@ -1028,7 +1024,6 @@ def getHtml(
     NoCookie=None,
     data=None,
     error="return",
-    ignoreCertificateErrors=False,
     timeout=HTTP_TIMEOUT_DEFAULT,
 ):
     return cache.cacheFunction(
@@ -1039,7 +1034,6 @@ def getHtml(
         NoCookie,
         data,
         error,
-        ignoreCertificateErrors,
         timeout,
     )
 
@@ -1051,7 +1045,6 @@ def _getHtml(
     NoCookie=None,
     data=None,
     error="return",
-    ignoreCertificateErrors=False,
     timeout=HTTP_TIMEOUT_DEFAULT,
 ):
     url = urllib_parse.quote(url, r":/%?+&=")
@@ -1073,10 +1066,7 @@ def _getHtml(
 
     response = None
     try:
-        if ignoreCertificateErrors:
-            response = urlopen(req, timeout=timeout, context=_create_ssl_context(False))
-        else:
-            response = urlopen(req, timeout=timeout)
+        response = urlopen(req, timeout=timeout)
     except urllib_error.HTTPError as e:
         kodilog("getHtml HTTPError: {}".format(str(e)), xbmc.LOGDEBUG)
         if error is True:
@@ -1337,7 +1327,6 @@ def get_html_with_cloudflare_retry(
     NoCookie=None,
     data=None,
     error="return",
-    ignoreCertificateErrors=False,
     retry_on_empty=False,
 ):
     """Fetch HTML and retry with FlareSolverr if Cloudflare blocks the request.
@@ -1354,7 +1343,6 @@ def get_html_with_cloudflare_retry(
         NoCookie=NoCookie,
         data=data,
         error=error,
-        ignoreCertificateErrors=ignoreCertificateErrors,
     )
 
     fs_enabled = addon.getSetting("fs_enable") == "true"
@@ -2329,14 +2317,15 @@ def backup_keywords():
         return
     progress.update(75, i18n("write_bkup"))
     filename = "cumination-keywords_" + time + ".bak"
+    filepath = os.path.join(path, filename)
     compressbackup = addon.getSetting("compressbackup") == "true"
     if compressbackup:
         try:
             if PY3:
-                with gzip.open(path + filename, "wt", encoding="utf-8") as fav_file:
+                with gzip.open(filepath, "wt", encoding="utf-8") as fav_file:
                     json.dump(backup_content, fav_file)
             else:
-                with gzip.open(path + filename, "wb") as fav_file:
+                with gzip.open(filepath, "wb") as fav_file:
                     json.dump(backup_content, fav_file)
         except IOError:
             progress.close()
@@ -2345,10 +2334,10 @@ def backup_keywords():
     else:
         try:
             if PY3:
-                with open(path + filename, "wt", encoding="utf-8") as fav_file:
+                with open(filepath, "wt", encoding="utf-8") as fav_file:
                     json.dump(backup_content, fav_file)
             else:
-                with open(path + filename, "wb") as fav_file:
+                with open(filepath, "wb") as fav_file:
                     json.dump(backup_content, fav_file)
         except IOError:
             progress.close()
@@ -2356,7 +2345,7 @@ def backup_keywords():
             return
     progress.close()
     dialog.ok(
-        i18n("bkup_complete"), "{0} {1}".format(i18n("bkup_file"), path + filename)
+        i18n("bkup_complete"), "{0} {1}".format(i18n("bkup_file"), filepath)
     )
 
 
@@ -2456,12 +2445,7 @@ def textBox(heading, announce):
 
         def setControls(self):
             self.win.getControl(self.CONTROL_LABEL).setLabel(heading)
-            try:
-                f = open(announce)
-                text = f.read()
-            except Exception:
-                text = announce
-            self.win.getControl(self.CONTROL_TEXTBOX).setText(str(text))
+            self.win.getControl(self.CONTROL_TEXTBOX).setText(str(announce))
             return
 
     TextBox()
