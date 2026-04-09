@@ -369,18 +369,8 @@ class Net:
                     response = opener.open(req, timeout=timeout)
                 except urllib_error.HTTPError as e:
                     if e.code == 403:
-                        ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_1)
-                        ctx.set_alpn_protocols(['http/1.1'])
-                        handlers = [urllib_request.HTTPSHandler(context=ctx)]
-                        opener = urllib_request.build_opener(*handlers)
-                        try:
-                            response = opener.open(req, timeout=timeout)
-                        except urllib_error.HTTPError:
-                            from resolveurl.resolver import ResolverError
-                            raise ResolverError('Cloudflare challenge')
-                        except urllib_error.URLError:
-                            from resolveurl.resolver import ResolverError
-                            raise ResolverError('Cloudflare challenge')
+                        from resolveurl.resolver import ResolverError
+                        raise ResolverError('Cloudflare challenge')
             else:
                 raise
 
