@@ -264,6 +264,7 @@ def _ssl_socket(sock, user_sslopt, hostname):
         sock = _wrap_sni_socket(sock, sslopt, hostname, check_hostname)
     else:
         sslopt.pop('check_hostname', True)
+        sslopt.setdefault('ssl_version', ssl.PROTOCOL_TLSv1_2)
         sock = ssl.wrap_socket(sock, **sslopt)
 
     if not HAVE_CONTEXT_CHECK_HOSTNAME and check_hostname:
