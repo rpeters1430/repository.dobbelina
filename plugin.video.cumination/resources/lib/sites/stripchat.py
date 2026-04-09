@@ -283,9 +283,7 @@ def _decode_proxy_target(value):
     if not isinstance(value, str) or not value:
         return ""
     padding = "=" * (-len(value) % 4)
-    return base64.urlsafe_b64decode((value + padding).encode("ascii")).decode(
-        "utf-8"
-    )
+    return base64.urlsafe_b64decode((value + padding).encode("ascii")).decode("utf-8")
 
 
 def _is_allowed_proxy_segment_url(url):
@@ -308,7 +306,10 @@ def _is_allowed_proxy_segment_url(url):
         "doppiocdn.com",
         "doppiocdn.net",
     )
-    return any(host == suffix or host.endswith("." + suffix) for suffix in allowed_host_suffixes)
+    return any(
+        host == suffix or host.endswith("." + suffix)
+        for suffix in allowed_host_suffixes
+    )
 
 
 def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
@@ -339,13 +340,13 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
     pending_full_segment_url = None
     pending_part_segments = []
     skip_next_placeholder = False
-    
+
     # Track metrics for logging
     replaced_segments = 0
     replaced_parts = 0
     map_rewrites = 0
     normalized_relative = 0
-    
+
     lines = manifest_text.splitlines()
     for i, line in enumerate(lines):
         stripped = line.strip()
@@ -369,7 +370,11 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
 
         if stripped.startswith("#EXT-X-PART:"):
             duration_match = re.search(r"DURATION=([0-9.]+)", stripped)
-            if duration_match and pending_mouflon_url and ("_part" in pending_mouflon_url or "part" in pending_mouflon_url):
+            if (
+                duration_match
+                and pending_mouflon_url
+                and ("_part" in pending_mouflon_url or "part" in pending_mouflon_url)
+            ):
                 part_url = pending_mouflon_url
                 pending_part_segments.append((duration_match.group(1), part_url))
             pending_mouflon_url = None
@@ -397,9 +402,7 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
                     and ".mp4" in lines[j]
                     and "_part" not in lines[j]
                 ):
-                    found_full_mouflon = lines[j].strip()[
-                        len("#EXT-X-MOUFLON:URI:")
-                    :]
+                    found_full_mouflon = lines[j].strip()[len("#EXT-X-MOUFLON:URI:") :]
                     if not found_full_mouflon.startswith("http"):
                         found_full_mouflon = urljoin(base_url, found_full_mouflon)
                     break
@@ -434,7 +437,7 @@ def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
                 pending_mouflon_url = None
                 pending_full_segment_url = None
                 continue
-            
+
             # If we didn't skip it, and it's a relative URL, make it absolute
             if not stripped.startswith("http"):
                 lines_out.append(urljoin(base_url, stripped))
@@ -632,16 +635,14 @@ def _start_manifest_proxy(selected_url, name):
     import socketserver
 
     selected_url = _normalize_stream_cdn_url(selected_url)
-    utils.kodilog(
-        "Stripchat proxy: starting for {}".format(selected_url[:140])
-    )
+    utils.kodilog("Stripchat proxy: starting for {}".format(selected_url[:140]))
     parsed = urlparse(selected_url)
     base_url = "{0}://{1}{2}/".format(
         parsed.scheme,
         parsed.netloc,
         "/".join(parsed.path.split("/")[:-1]),
     )
-    
+
     # Only signing params belong on child manifests / segment URLs.
     fetch_headers = _stripchat_stream_headers(name)
     if isinstance(STRIPCHAT_PROXY_SESSION_HEADERS, dict):
@@ -716,26 +717,26 @@ def _start_manifest_proxy(selected_url, name):
                     )
                 )
             utils.kodilog(
-                "Stripchat proxy: initial manifest GET {}".format(
-                    upstream_url[:140]
-                )
+                "Stripchat proxy: initial manifest GET {}".format(upstream_url[:140])
             )
             resp = session.get(upstream_url, timeout=HTTP_TIMEOUT_MANIFEST)
-            utils.kodilog(
-                "Stripchat proxy: initial status {}".format(resp.status_code)
-            )
+            utils.kodilog("Stripchat proxy: initial status {}".format(resp.status_code))
             utils.kodilog(
                 "Stripchat proxy: manifest cookies resp={0} session={1}".format(
                     resp.cookies.get_dict(), session.cookies.get_dict()
                 )
             )
-            
+
             # Handle possible pkey expiration (403/404)
             if resp.status_code in (403, 404) and fetch_round["count"] > 1:
-                utils.kodilog("Stripchat proxy: manifest returned {0}, attempting to refresh model details".format(resp.status_code))
+                utils.kodilog(
+                    "Stripchat proxy: manifest returned {0}, attempting to refresh model details".format(
+                        resp.status_code
+                    )
+                )
                 # This is a bit tricky as we don't have easy access to the full logic here
                 # For now, just log it. A better fix involves a more global state.
-            
+
             if resp.status_code != 200:
                 return
 
@@ -767,7 +768,9 @@ def _start_manifest_proxy(selected_url, name):
     _fetch_and_rewrite()
     with state_lock:
         if not state["content"]:
-            utils.kodilog("Stripchat: Manifest proxy initial fetch failed, falling back")
+            utils.kodilog(
+                "Stripchat: Manifest proxy initial fetch failed, falling back"
+            )
             return None
 
     class _ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
@@ -821,7 +824,8 @@ def _start_manifest_proxy(selected_url, name):
                 self.end_headers()
                 self.wfile.write(content)
 
-        def log_message(self, fmt, *args): pass
+        def log_message(self, fmt, *args):
+            pass
 
     srv = _ThreadingHTTPServer(("127.0.0.1", port), ManifestHandler)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
@@ -1421,7 +1425,9 @@ def Playvid(url, name):
             ranked_child_urls = []
             for child_url in child_urls:
                 quality = 0
-                quality_match = re.search(r"_(\d{3,4})p(?:_blurred)?\.m3u8($|\?)", child_url)
+                quality_match = re.search(
+                    r"_(\d{3,4})p(?:_blurred)?\.m3u8($|\?)", child_url
+                )
                 if quality_match:
                     try:
                         quality = int(quality_match.group(1))
@@ -1432,10 +1438,12 @@ def Playvid(url, name):
             ranked_child_urls.sort(key=lambda item: item[0], reverse=True)
 
             for _, child_url in ranked_child_urls:
-                signed_child_url = _ensure_low_latency_playlist(_merge_query(
-                    child_url,
-                    {"psch": psch, "pkey": pkey},
-                ))
+                signed_child_url = _ensure_low_latency_playlist(
+                    _merge_query(
+                        child_url,
+                        {"psch": psch, "pkey": pkey},
+                    )
+                )
                 child_text = _fetch_manifest_text(signed_child_url)
                 if not child_text or "#EXTM3U" not in child_text:
                     continue
@@ -1491,10 +1499,7 @@ def Playvid(url, name):
             signed_label, signed_media_url = _derive_signed_media_candidate(
                 candidate_url, label
             )
-            if (
-                signed_media_url
-                and signed_media_url not in seen_candidate_urls
-            ):
+            if signed_media_url and signed_media_url not in seen_candidate_urls:
                 signed_followups.append((signed_label, signed_media_url))
                 seen_candidate_urls.add(signed_media_url)
         candidates.extend(signed_followups)
@@ -1518,7 +1523,9 @@ def Playvid(url, name):
 
             url_quality_value = 0
             if isinstance(stream_url, str):
-                url_quality = re.search(r"_(\d{3,4})p(?:_blurred)?\.m3u8($|\?)", stream_url)
+                url_quality = re.search(
+                    r"_(\d{3,4})p(?:_blurred)?\.m3u8($|\?)", stream_url
+                )
                 if url_quality:
                     try:
                         url_quality_value = int(url_quality.group(1))
