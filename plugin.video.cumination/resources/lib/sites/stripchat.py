@@ -288,6 +288,29 @@ def _decode_proxy_target(value):
     )
 
 
+def _is_allowed_proxy_segment_url(url):
+    if not isinstance(url, str) or not url:
+        return False
+    try:
+        parsed = urlparse(url)
+    except Exception:
+        return False
+
+    if parsed.scheme not in ("http", "https"):
+        return False
+    host = (parsed.hostname or "").lower()
+    if not host:
+        return False
+
+    allowed_host_suffixes = (
+        "stripchat.com",
+        "stripchat.global",
+        "doppiocdn.com",
+        "doppiocdn.net",
+    )
+    return any(host == suffix or host.endswith("." + suffix) for suffix in allowed_host_suffixes)
+
+
 def _rewrite_mouflon_manifest_for_kodi(manifest_text, base_url=""):
     """Rewrite a MOUFLON HLS manifest so Kodi can play it.
 
@@ -759,7 +782,7 @@ def _start_manifest_proxy(selected_url, name):
                 params = parse_qs(parsed_path.query, keep_blank_values=True)
                 encoded = params.get("u", [""])[0]
                 cdn_url = _decode_proxy_target(encoded) if encoded else ""
-                if not cdn_url:
+                if not cdn_url or not _is_allowed_proxy_segment_url(cdn_url):
                     self.send_response(400)
                     self.end_headers()
                     return
