@@ -313,7 +313,10 @@ def _normalize_and_validate_proxy_segment_url(url):
         "doppiocdn.com",
         "doppiocdn.net",
     )
-    if not any(host == suffix or host.endswith("." + suffix) for suffix in allowed_host_suffixes):
+    if not any(
+        host == suffix or host.endswith("." + suffix)
+        for suffix in allowed_host_suffixes
+    ):
         return ""
 
     path = parsed.path or "/"
