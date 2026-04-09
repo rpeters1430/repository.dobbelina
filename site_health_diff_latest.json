@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-04-09T06:57:27.779886",
+    "sites_total": 168,
+    "pass": 159,
+    "warn": 2,
+    "fail": 6,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-04-08T07:00:37.552134",
     "sites_total": 168,
     "pass": 162,
@@ -8,24 +17,37 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-04-07T06:57:27.845597",
-    "sites_total": 168,
-    "pass": 161,
-    "warn": 3,
-    "fail": 3,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
-    "new_failures": 0,
+    "new_failures": 3,
     "resolved_failures": 0,
     "persistent_failures": 3,
-    "improved_sites": 1,
-    "regressions": 0,
-    "step_regressions": 0
+    "improved_sites": 0,
+    "regressions": 3,
+    "step_regressions": 3
   },
-  "new_failures": [],
+  "new_failures": [
+    {
+      "site": "analdin",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
+    },
+    {
+      "site": "eporner",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
+    },
+    {
+      "site": "porndoe",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
+    }
+  ],
   "resolved_failures": [],
   "persistent_failures": [
     {
@@ -47,23 +69,56 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "BLOCKED",
-      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177563"
+      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177571"
     }
   ],
-  "improved_sites": [
+  "improved_sites": [],
+  "step_regressions": [
     {
-      "site": "heavyr",
-      "previous": "WARN",
-      "current": "PASS"
+      "site": "analdin",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "List returned no videos",
+      "class": "PARSER"
+    },
+    {
+      "site": "eporner",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "List returned no videos",
+      "class": "PARSER"
+    },
+    {
+      "site": "porndoe",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "List returned no videos",
+      "class": "PARSER"
     }
   ],
-  "step_regressions": [],
   "deltas": [
     {
-      "site": "heavyr",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
+      "site": "analdin",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "eporner",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "porndoe",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
       "detail": ""
     }
   ]
