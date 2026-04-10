@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-04-10T07:00:53.560358",
+    "sites_total": 168,
+    "pass": 160,
+    "warn": 3,
+    "fail": 4,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-04-09T06:57:27.779886",
     "sites_total": 168,
     "pass": 159,
@@ -8,47 +17,27 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-04-08T07:00:37.552134",
-    "sites_total": 168,
-    "pass": 162,
-    "warn": 2,
-    "fail": 3,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
-    "new_failures": 3,
-    "resolved_failures": 0,
-    "persistent_failures": 3,
+    "new_failures": 0,
+    "resolved_failures": 2,
+    "persistent_failures": 4,
     "improved_sites": 0,
-    "regressions": 3,
-    "step_regressions": 3
+    "regressions": 1,
+    "step_regressions": 1
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
+      "previous": "FAIL",
+      "current": "PASS"
     },
     {
       "site": "eporner",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
-    },
-    {
-      "site": "porndoe",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
+      "previous": "FAIL",
+      "current": "PASS"
     }
   ],
-  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "josporn",
@@ -65,59 +54,50 @@
       "message": "list: List returned no videos"
     },
     {
+      "site": "porndoe",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
+    },
+    {
       "site": "tubxporn",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "BLOCKED",
-      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177571"
+      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177580"
     }
   ],
   "improved_sites": [],
   "step_regressions": [
     {
-      "site": "analdin",
-      "step": "list",
-      "previous": "PASS",
+      "site": "pmvhaven",
+      "step": "search",
+      "previous": "SKIP",
       "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
-    },
-    {
-      "site": "eporner",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
-    },
-    {
-      "site": "porndoe",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
+      "message": "RuntimeError: Failed to connect to FlareSolverr at http://localhost:8191/v1: HTTPConnectionPool(host='localhost', port=8191): Read timed out. (read timeout=10). Please check if FlareSolverr is running and configured correctly in addon settings.",
+      "class": "NETWORK"
     }
   ],
   "deltas": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "eporner",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "porndoe",
+      "site": "pmvhaven",
       "previous": "PASS",
-      "current": "FAIL",
+      "current": "WARN",
       "kind": "regression",
       "detail": ""
     }

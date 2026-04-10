@@ -2,18 +2,17 @@
 
 - Sites: `168`
 - Tier1 hot: `0`
-- Failing: `6`
-- Warn: `2`
+- Failing: `4`
+- Warn: `3`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
-| eporner | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | peachurnet | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | porndoe | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | tubxporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | javhdporn | warn | WARN |  | video |  | Y | Y | Y | Y |
+| pmvhaven | warn | WARN |  | video |  | Y | Y | Y | Y |
 | pornhoarder | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
@@ -38,6 +37,7 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
+| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -51,6 +51,7 @@
 | celebsroulette | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | cumlouder | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | drtuber | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| eporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erogarga | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erome | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eroticage | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -112,7 +113,6 @@
 | pimpbunny | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | playhdporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | playvids | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| pmvhaven | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porn4k | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porndish | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornditt | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -178,13 +178,12 @@
 
 ## Next Batch
 
-- **analdin** (failing, tier=2) | failures: list:FAIL
-- **eporner** (failing, tier=None) | failures: list:FAIL
 - **josporn** (failing, tier=None) | failures: list:FAIL
 - **peachurnet** (failing, tier=None) | failures: list:FAIL
 - **porndoe** (failing, tier=2) | failures: list:FAIL
 - **tubxporn** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
 - **javhdporn** (warn, tier=None) | failures: play:FAIL
+- **pmvhaven** (warn, tier=None) | failures: search:FAIL
 - **pornhoarder** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
@@ -198,3 +197,4 @@
 - **pornkai** (tier1, tier=1)
 - **spankbang** (tier1, tier=1)
 - **streamate** (tier1, tier=1)
+- **stripchat** (tier1, tier=1)
