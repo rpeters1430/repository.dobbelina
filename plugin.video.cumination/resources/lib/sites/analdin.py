@@ -33,6 +33,8 @@ def _absolute_url(url):
 def _normalize_listing_url(url):
     if not url:
         return site.url + "latest-updates/"
+    if url.rstrip("/") == site.url.rstrip("/"):
+        return site.url + "latest-updates/"
     if url.rstrip("/") == site.url.rstrip("/") + "/videos":
         return site.url + "latest-updates/"
     return url

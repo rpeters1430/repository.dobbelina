@@ -110,6 +110,30 @@ def test_analdin_list_normalizes_legacy_videos_url(monkeypatch):
     assert downloads
 
 
+def test_analdin_list_normalizes_site_root_url(monkeypatch):
+    html = _load_fixture("analdin_list.html")
+    downloads = []
+    seen_urls = []
+
+    def fake_get_html(url, *args, **kwargs):
+        seen_urls.append(url)
+        return html
+
+    monkeypatch.setattr(analdin.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(
+        analdin.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append(url),
+    )
+    monkeypatch.setattr(analdin.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(analdin.utils, "eod", lambda: None)
+
+    analdin.List("https://www.analdin.com/")
+
+    assert seen_urls == ["https://www.analdin.com/latest-updates/"]
+    assert downloads
+
+
 def test_analdin_playvid_prefers_alt_url(monkeypatch):
     html = _load_fixture("analdin_video.html")
 

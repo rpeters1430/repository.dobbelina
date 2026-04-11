@@ -381,6 +381,10 @@ def classify_message(msg: str) -> str:
     if any(
         x in m
         for x in (
+            "age verification",
+            "verify your age",
+            "age estimation",
+            "texas law",
             "cloudflare",
             "cf-block",
             "attention required",
@@ -427,6 +431,12 @@ def probe_url_status(url: str, timeout: int = 8) -> tuple[bool, str]:
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             code = int(getattr(resp, "status", 200) or 200)
+            try:
+                body = resp.read(8192).decode("utf-8", errors="ignore")
+            except Exception:
+                body = ""
+            if classify_message(body) == "BLOCKED":
+                return True, f"HTTP {code} blocked/challenged body"
             return True, f"HTTP {code}"
     except urllib.error.HTTPError as exc:
         code = int(getattr(exc, "code", 0) or 0)
@@ -1078,6 +1088,7 @@ def run_site_child(
             probe.startswith("HTTP 403")
             or probe.startswith("HTTP 429")
             or probe.startswith("HTTP 451")
+            or classify_message(probe) == "BLOCKED"
         ):
             return StepResult(
                 "SKIP",

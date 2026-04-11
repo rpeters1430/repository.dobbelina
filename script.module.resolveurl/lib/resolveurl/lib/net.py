@@ -457,7 +457,9 @@ class Net:
             if e.code == 403 and "cloudflare" in e.hdrs.get("server", ""):
                 import ssl
 
-                ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+                ctx = ssl.create_default_context()
+                if hasattr(ssl, "TLSVersion") and hasattr(ctx, "minimum_version"):
+                    ctx.minimum_version = ssl.TLSVersion.TLSv1_2
                 ctx.set_alpn_protocols(["http/1.1"])
                 handlers = [urllib_request.HTTPSHandler(context=ctx)]
                 opener = urllib_request.build_opener(*handlers)

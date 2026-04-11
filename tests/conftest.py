@@ -359,6 +359,25 @@ def pytest_runtest_setup(item):
         import resources.lib.utils as _utils
 
         _utils.urlopen = _block_network_access
+
+        # Mock Thumbnails class to prevent background threads for image downloading
+        class MockThumbnails:
+            def __init__(self, *args, **kwargs):
+                pass
+
+            def clean(self):
+                pass
+
+            def download_image(self, *args, **kwargs):
+                pass
+
+            def fix_img(self, img):
+                return img
+
+            def cache_img(self, img):
+                return img
+
+        _utils.Thumbnails = MockThumbnails
     except (ImportError, AttributeError):
         # Some unit tests import utils late; allow them to patch manually.
         pass

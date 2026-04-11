@@ -217,7 +217,15 @@ def _can_use_sni():
 
 
 def _wrap_sni_socket(sock, sslopt, hostname, check_hostname):
-    context = ssl.SSLContext(sslopt.get("ssl_version", ssl.PROTOCOL_SSLv23))
+    ssl_version = sslopt.get("ssl_version", None)
+    if ssl_version is not None:
+        context = ssl.SSLContext(ssl_version)
+    else:
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        # PROTOCOL_TLS_CLIENT sets check_hostname=True by default; disable here
+        # because both verify_mode and check_hostname are managed explicitly below.
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
 
     if sslopt.get("cert_reqs", ssl.CERT_NONE) != ssl.CERT_NONE:
         cafile = sslopt.get("ca_certs", None)
@@ -279,9 +287,13 @@ def _ssl_socket(sock, user_sslopt, hostname):
     if _can_use_sni():
         sock = _wrap_sni_socket(sock, sslopt, hostname, check_hostname)
     else:
-        sslopt.pop("check_hostname", True)
-        sslopt.setdefault("ssl_version", ssl.PROTOCOL_TLSv1_2)
-        sock = ssl.wrap_socket(sock, **sslopt)
+        # Non-SNI fallback (Python < 3.2 / Python 2 < 2.7.9).
+        # ssl.wrap_socket() and version-pinning constants were removed in
+        # Python 3.12, so use a modern SSLContext here instead.
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+        sock = context.wrap_socket(sock, server_hostname=hostname)
 
     if not HAVE_CONTEXT_CHECK_HOSTNAME and check_hostname:
         match_hostname(sock.getpeercert(), hostname)
