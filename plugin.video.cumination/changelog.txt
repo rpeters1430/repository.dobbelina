@@ -1,3 +1,9 @@
+[B]Version 1.1.361[/B]
+- cloudbate - new site
+- chaturbate - fix playback (master playlist proxy)
+- chaturbate - context menu: Find recordings featuring model_name on Cloudbate
+- watchporn, naughtyblog - robust BS4 selector updates
+
 [B]Version 1.1.360[/B]
 - Add new site implementations and tests for fyxxr and xxthots
 - Merge pull request #129 from rpeters1430/alert-autofix-104
