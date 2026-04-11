@@ -2,8 +2,8 @@
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
 
-**Last Updated**: 2026-04-06
-**Last Sync**: 2026-04-06 - Ported reallifecams, voyeur-house, and watchporn fixes from upstream commit f12e1d25
+**Last Updated**: 2026-04-11
+**Last Sync**: 2026-04-11 - Ported Chaturbate playback fix (2c04095), Cloudbate integration (f4e0df84), and BS4 selector updates for NaughtyBlog/WatchPorn (ca82fae6, 569d9d6c)
 
 ---
 
@@ -21,6 +21,15 @@
 ## Already Integrated Commits
 
 These upstream commits have been integrated into the fork:
+
+### 2026-04-11 Porting Session
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `2c04095d` | fix chaturbate streams - prefetch master playlist | `manual` | 2026-04-11 | Ported local HTTP proxy server to `chaturbate.py` to handle m3u8 playlists with single-use tokens |
+| `f4e0df84` | cloudbate, chaturbate | `manual` | 2026-04-11 | Added new `cloudbate.py` site module using robust BS4; added Cloudbate recording search to Chaturbate context menu |
+| `ca82fae6` | naughtyblog - fix listing | `manual` | 2026-04-11 | Updated BS4 selector in `naughtyblog.py` to include `div[id^='post-']` for better site coverage |
+| `569d9d6c` | watchporn - fix categories | `manual` | 2026-04-11 | Verified BS4 selector `a.item` in `watchporn.py` already handles the new `class="item thumb"` structure |
 
 ### 2026-04-06 Porting Session
 

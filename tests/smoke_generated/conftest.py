@@ -305,32 +305,15 @@ def _site_name_from_request(request):
 
 def _fixture_candidates(site_name):
     site_dir = ROOT / "tests" / "fixtures" / "sites" / site_name
-    sites_dir = ROOT / "tests" / "fixtures" / "sites"
-    fixtures_dir = ROOT / "tests" / "fixtures"
-
-    named_candidates = [
-        # Preferred names inside a per-site subdirectory
+    candidates = [
         site_dir / "listing.html",
         site_dir / "list.html",
         site_dir / "index.html",
         site_dir / "search.html",
-        # Flat files in tests/fixtures/sites/ (most common layout)
-        sites_dir / f"{site_name}_list.html",
-        sites_dir / f"{site_name}_listing.html",
-        sites_dir / f"{site_name}_home.html",
-        # Legacy flat files directly in tests/fixtures/
-        fixtures_dir / f"{site_name}_list.html",
-        fixtures_dir / f"{site_name}_listing.html",
+        ROOT / "tests" / "fixtures" / f"{site_name}_list.html",
+        ROOT / "tests" / "fixtures" / f"{site_name}_listing.html",
     ]
-
-    found = [p for p in named_candidates if p.exists()]
-
-    # Fallback: any HTML file inside the per-site subdirectory (e.g. explore_new.html,
-    # public_list.html) so non-standard filenames are still picked up.
-    if not found and site_dir.is_dir():
-        found = sorted(site_dir.glob("*.html"))
-
-    return found
+    return [path for path in candidates if path.exists()]
 
 
 @pytest.fixture(autouse=True)

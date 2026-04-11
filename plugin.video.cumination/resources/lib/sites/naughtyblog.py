@@ -86,7 +86,7 @@ def List(url):
         utils.eod()
         return
     soup = utils.parse_html(listhtml)
-    posts = soup.select("article, .post, .post-content")
+    posts = soup.select("article, .post, .post-content, div[id^='post-']")
     if not posts:
         return
     for post in posts:
