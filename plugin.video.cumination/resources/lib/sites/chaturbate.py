@@ -436,6 +436,11 @@ def Playvid(url, name):
 
     if playmode == 0:
         if m3u8stream:
+            from six.moves import urllib_request as _req_moves
+            from six.moves import urllib_parse as _parse_moves
+            _Req = _req_moves.Request
+            _uopen = _req_moves.urlopen
+            _urljoin = _parse_moves.urljoin
             try:
                 global _cb_proxy, _cb_proxy_state
 
@@ -900,7 +905,7 @@ def Playvid(url, name):
             return
 
     elif playmode == 1:
-        if data:
+        if data and m3u8stream and "edge_auth" in data:
             streamserver = "rtmp://{}/live-edge".format(m3u8stream.split("/")[2])
             modelname = data["broadcaster_username"]
             username_full = data["viewer_username"]
