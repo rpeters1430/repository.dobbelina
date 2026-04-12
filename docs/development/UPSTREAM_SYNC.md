@@ -2,8 +2,8 @@
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
 
-**Last Updated**: 2026-04-11
-**Last Sync**: 2026-04-11 - Ported Chaturbate playback fix (2c04095), Cloudbate integration (f4e0df84), and BS4 selector updates for NaughtyBlog/WatchPorn (ca82fae6, 569d9d6c)
+**Last Updated**: 2026-04-12
+**Last Sync**: 2026-04-12 - Ported Chaturbate session reconnect and advanced proxy features (ea0f97ce, 53acf185, 23c2cbb3, 11721a36, ba44c62c, ea3d1e7a, 85b848d4, 5a01bef1, 00bdb746, 28ab198a, 1883c5ae, 47ccca1f)
 
 ---
 
@@ -21,6 +21,23 @@
 ## Already Integrated Commits
 
 These upstream commits have been integrated into the fork:
+
+### 2026-04-12 Porting Session
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `ea0f97ce` | Merge pull request #1818 from Despernal/fix-chaturbate-session-reconnect | `manual` | 2026-04-12 | Integrated advanced Chaturbate proxy with session reconnection, CDN fallback, and segment proxying into our BS4-migrated module. |
+| `53acf185` | chaturbate proxy - invalidate caches on refresh | `manual` | 2026-04-12 | Included in Playvid proxy logic |
+| `23c2cbb3` | chaturbate proxy - lock the reconnect guard | `manual` | 2026-04-12 | Included in Playvid proxy logic |
+| `11721a36` | chaturbate proxy - clean up orphan proxies | `manual` | 2026-04-12 | Included in Playvid proxy logic |
+| `ba44c62c` | chaturbate proxy - proxy segments too | `manual` | 2026-04-12 | Included in Playvid proxy logic |
+| `ea3d1e7a` | chaturbate proxy - delay proxy shutdown | `manual` | 2026-04-12 | Included in Playvid proxy logic |
+| `85b848d4` | chaturbate proxy - serve cached playlists | `manual` | 2026-04-12 | Included in Playvid proxy logic |
+| `5a01bef1` | chaturbate proxy - watchdog for dead ISA | `manual` | 2026-04-12 | Included in Playvid proxy logic |
+| `00bdb746` | chaturbate proxy - fix reconnect thread dying | `manual` | 2026-04-12 | Included in Playvid proxy logic |
+| `28ab198a` | chaturbate proxy - add debug logging | `manual` | 2026-04-12 | Included in Playvid proxy logic (via enh_debug toggle) |
+| `1883c5ae` | chaturbate proxy - retry reconnect on stream switch | `manual` | 2026-04-12 | Included in Playvid proxy logic |
+| `47ccca1f` | chaturbate - proxy chunklists for session reconnect | `manual` | 2026-04-12 | Included in Playvid proxy logic |
 
 ### 2026-04-11 Porting Session
 

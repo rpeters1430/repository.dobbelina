@@ -57,7 +57,8 @@ def List(url):
         html = utils.getHtml(url, site.url, headers=headers)
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in tubxporn: " + str(e))
-        # Fallback with a potential bypass parameter
+        # Fallback with different UA and bypass parameter
+        headers["User-Agent"] = utils.random_ua.get_ua()
         fallback_url = url + ("?" if "?" not in url else "&") + "label_W9dmamG9w9zZg45g93FnLAVbSyd0bBDv=1"
         html = utils.getHtml(fallback_url, site.url, headers=headers)
     if "There are no videos in the list" in html:
@@ -188,7 +189,14 @@ def Search(url, keyword=None):
 
 @site.register()
 def Categories(url):
-    cathtml = utils.getHtml(url)
+    headers = {"User-Agent": utils.USER_AGENT, "Referer": site.url}
+    try:
+        cathtml = utils.getHtml(url, site.url, headers=headers)
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in tubxporn: " + str(e))
+        headers["User-Agent"] = utils.random_ua.get_ua()
+        cathtml = utils.getHtml(url, site.url, headers=headers)
+
     soup = utils.parse_html(cathtml)
     if not soup:
         utils.eod()
@@ -234,22 +242,63 @@ def Playvid(url, name, download=None):
             url + "?label_W9dmamG9w9zZg45g93FnLAVbSyd0bBDv=1", site.url
         )
 
-    match = re.compile(
-        r'div data-c="([^"]+)">\D+(\d+p)<', re.IGNORECASE | re.DOTALL
-    ).findall(videohtml)
-    if match:
-        sources = {x[1]: x[0] for x in match}
-        videolink = utils.prefquality(
-            sources, sort_by=lambda x: int(x[:-1]), reverse=True
+    soup = utils.parse_html(videohtml)
+    
+    # New method: find all a tags with data-c
+    data_c_items = soup.select("a[data-c]")
+    sources = {}
+    for item in data_c_items:
+        data_c = utils.safe_get_attr(item, "data-c")
+        quality_text = utils.safe_get_text(item) or data_c.split(";")[1]
+        if "p" in quality_text:
+            sources[quality_text] = data_c
+
+    # Fallback to old regex if soup select fails
+    if not sources:
+        match = re.compile(
+            r'data-c="([^"]+)">\D*(\d+p)<', re.IGNORECASE | re.DOTALL
+        ).findall(videohtml)
+        if match:
+            sources = {x[1]: x[0] for x in match}
+
+    if sources:
+        data_c = utils.prefquality(
+            sources, sort_by=lambda x: int(x[:-1]) if x[:-1].isdigit() else 0, reverse=True
         )
-        videolink = videolink.split(";")
-        videourl = "https://{0}.vstor.top/whpvid/{1}/{2}/{3}/{4}/{4}_{5}.mp4".format(
-            videolink[7],
-            videolink[5],
-            videolink[6],
-            videolink[4][:-3] + "000",
-            videolink[4],
-            videolink[1],
-        )
-        videourl = videourl.replace("_720p", "")
-        vp.play_from_direct_link(videourl)
+        videolink = data_c.split(";")
+        # Format: hash;quality;size;?;id;timestamp;token;host
+        # e.g. 38a2fe95...;1080p;830500;190;20554;1776024134;rhWOnEDjDEOn8h6V1PssLQ;d2
+        
+        host = videolink[7] if len(videolink) > 7 else "d2"
+        # Try both vstor.top and vstors.top
+        for base_host in ["vstors.top", "vstor.top"]:
+            videourl = "https://{0}.{1}/whpvid/{2}/{3}/{4}/{5}/{5}.mp4".format(
+                host,
+                base_host,
+                videolink[5],
+                videolink[6],
+                str(int(videolink[4]) // 1000 * 1000), # Folder structure usually rounded
+                videolink[4],
+            )
+            # Some versions use a different structure
+            # Let's try to find the actual structure from the video tag if possible
+            video_tag = soup.find("video")
+            if video_tag and utils.safe_get_attr(video_tag, "src"):
+                videourl = utils.safe_get_attr(video_tag, "src")
+                break
+            
+            # Check if this URL is likely valid (basic check)
+            if len(videolink) > 6:
+                 break
+
+        vp.play_from_direct_link(videourl + "|Referer=" + site.url + "&User-Agent=" + utils.USER_AGENT)
+        return
+
+    # Direct video tag fallback
+    video_tag = soup.find("video")
+    if video_tag and utils.safe_get_attr(video_tag, "src"):
+        videourl = utils.safe_get_attr(video_tag, "src")
+        vp.play_from_direct_link(videourl + "|Referer=" + site.url + "&User-Agent=" + utils.USER_AGENT)
+        return
+
+    utils.notify("Error", "Could not find video URL")

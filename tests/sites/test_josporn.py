@@ -9,7 +9,7 @@ def test_josporn_list_parsing(monkeypatch):
         html = f.read()
 
     # Mock getHtml to return our fixture
-    monkeypatch.setattr(utils, "getHtml", lambda url, **kwargs: html)
+    monkeypatch.setattr(utils, "getHtml", lambda url, *args, **kwargs: html)
 
     # We need to capture calls to add_download_link
     captured_items = []
@@ -23,7 +23,7 @@ def test_josporn_list_parsing(monkeypatch):
     
     assert len(captured_items) > 0
     # Check a specific item if possible
-    assert any("anal bliss" in item["name"].lower() for item in captured_items)
+    assert any("red-haired" in item["name"].lower() for item in captured_items)
     assert all(item["mode"] == "Playvid" for item in captured_items)
     assert all("/videos/" in item["url"] for item in captured_items)
 
@@ -33,7 +33,7 @@ def test_josporn_categories_parsing(monkeypatch):
     with open(fixture_path, "r", encoding="utf-8") as f:
         html = f.read()
 
-    monkeypatch.setattr(utils, "getHtml", lambda url, **kwargs: html)
+    monkeypatch.setattr(utils, "getHtml", lambda url, *args, **kwargs: html)
 
     captured_dirs = []
     monkeypatch.setattr(josporn.site, "add_dir", 
@@ -54,7 +54,7 @@ def test_josporn_list_pagination(monkeypatch):
     with open(fixture_path, "r", encoding="utf-8") as f:
         html = f.read()
 
-    monkeypatch.setattr(utils, "getHtml", lambda url, **kwargs: html)
+    monkeypatch.setattr(utils, "getHtml", lambda url, *args, **kwargs: html)
 
     captured_items = []
     captured_dirs = []
@@ -79,7 +79,7 @@ def test_josporn_search(monkeypatch):
     with open(fixture_path, "r", encoding="utf-8") as f:
         html = f.read()
 
-    monkeypatch.setattr(utils, "getHtml", lambda url, **kwargs: html)
+    monkeypatch.setattr(utils, "getHtml", lambda url, *args, **kwargs: html)
     
     list_urls = []
     monkeypatch.setattr(josporn, "List", lambda url, *args, **kwargs: list_urls.append(url))
@@ -88,3 +88,37 @@ def test_josporn_search(monkeypatch):
     
     assert len(list_urls) == 1
     assert "search/?text=test+keyword" in list_urls[0]
+
+
+def test_josporn_playvid_extraction(monkeypatch):
+    """Test that josporn Playvid extracts video URL from Playerjs or video tag."""
+    fixture_path = os.path.join(os.path.dirname(__file__), "..", "fixtures", "sites", "josporn_video.html")
+    with open(fixture_path, "r", encoding="utf-8") as f:
+        html = f.read()
+
+    monkeypatch.setattr(utils, "getHtml", lambda url, *args, **kwargs: html)
+    
+    # Mock VideoPlayer
+    class MockVideoPlayer:
+        def __init__(self, name, download=None):
+            self.played_url = None
+            self.progress = type('MockProgress', (), {'update': lambda *a, **k: None})()
+            
+        def play_from_direct_link(self, url):
+            self.played_url = url
+
+    mock_vp_instance = None
+    def mock_vp_factory(name, download=None):
+        nonlocal mock_vp_instance
+        mock_vp_instance = MockVideoPlayer(name, download)
+        return mock_vp_instance
+
+    monkeypatch.setattr(utils, "VideoPlayer", mock_vp_factory)
+    
+    # Run Playvid
+    josporn.Playvid("https://josporn.club/videos/30348-the-red-haired-bitch/", "Test Video")
+    
+    assert mock_vp_instance is not None
+    assert mock_vp_instance.played_url is not None
+    assert "servisehost.com" in mock_vp_instance.played_url
+    assert ".mp4" in mock_vp_instance.played_url

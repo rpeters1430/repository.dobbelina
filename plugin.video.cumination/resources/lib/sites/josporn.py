@@ -42,7 +42,16 @@ def Main(url):
 
 @site.register()
 def List(url, page=1):
-    html = utils.getHtml(url)
+    headers = {"User-Agent": utils.USER_AGENT, "Referer": site.url}
+    try:
+        html = utils.getHtml(url, site.url, headers=headers)
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in josporn: " + str(e))
+        # Fallback with different UA and bypass param
+        headers["User-Agent"] = utils.random_ua.get_ua()
+        fallback_url = url + ("?" if "?" not in url else "&") + "label_W9dmamG9w9zZg45g93FnLAVbSyd0bBDv=1"
+        html = utils.getHtml(fallback_url, site.url, headers=headers)
+
     if hasattr(html, "select"):
         soup = html
     else:
@@ -90,7 +99,13 @@ def List(url, page=1):
 
 @site.register()
 def Categories(url):
-    html = utils.getHtml(url)
+    headers = {"User-Agent": utils.USER_AGENT, "Referer": site.url}
+    try:
+        html = utils.getHtml(url, site.url, headers=headers)
+    except Exception as e:
+        headers["User-Agent"] = utils.random_ua.get_ua()
+        html = utils.getHtml(url, site.url, headers=headers)
+
     soup = utils.parse_html(html)
     
     # Categories are in .category_tegs or #leftcategories
@@ -124,6 +139,30 @@ def Playvid(url, name, download=None):
     # The site uses pjs player which often has the direct mp4 link in the source
     html = utils.getHtml(url)
     
+    # Try Playerjs extraction
+    # var player = new Playerjs({id:"videoplayer", file:"[240p] https://...mp4,[360p] ..."})
+    pjs_match = re.search(r'new\s+Playerjs\({(?:id:"[^"]+",\s*)?file:"([^"]+)"', html)
+    if pjs_match:
+        file_data = pjs_match.group(1)
+        # file_data can be "[720p] https://url1,[480p] https://url2" or just "https://url"
+        sources = {}
+        if "[" in file_data:
+            qualities = re.findall(r'\[(\d+p)\]\s*([^\s,]+)', file_data)
+            if qualities:
+                sources = {q: u for q, u in qualities}
+        
+        if sources:
+            video_url = utils.prefquality(sources, sort_by=lambda x: int(x[:-1]), reverse=True)
+            if video_url:
+                utils.kodilog("josporn: Found Playerjs video URL: {}".format(video_url))
+                vp.play_from_direct_link(video_url + "|Referer=" + site.url + "&User-Agent=" + utils.USER_AGENT)
+                return
+        elif file_data.startswith("http"):
+            video_url = file_data
+            utils.kodilog("josporn: Found direct Playerjs URL: {}".format(video_url))
+            vp.play_from_direct_link(video_url + "|Referer=" + site.url + "&User-Agent=" + utils.USER_AGENT)
+            return
+
     # Check for <video src="...">
     video_match = re.search(r'<video[^>]+src=["\']\s*([^"\']+)["\']', html, re.IGNORECASE)
     if video_match:
