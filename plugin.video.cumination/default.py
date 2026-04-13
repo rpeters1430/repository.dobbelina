@@ -205,6 +205,23 @@ def INDEX():
         "",
         list_avail=False,
     )
+    url_dispatcher.add_dir(
+        "[COLOR white]Browse by Category[/COLOR]",
+        "",
+        "category_list",
+        basics.cum_image("cum-sites.png"),
+        "",
+        list_avail=False,
+    )
+    if any(x.is_new for x in AdultSite.get_sites()):
+        url_dispatcher.add_dir(
+            "[COLOR green]New Sites[/COLOR]",
+            "",
+            "new_site_list",
+            basics.cum_image("cum-sites.png"),
+            "",
+            list_avail=False,
+        )
     if any(AdultSite.get_testing_sites()):
         url_dispatcher.add_dir(
             "[COLOR white]Testing Sites[/COLOR]",
@@ -272,6 +289,65 @@ def INDEX():
 
 
 @url_dispatcher.register()
+def category_list():
+    categories = set()
+    for x in AdultSite.get_sites():
+        if x.category:
+            categories.add(x.category)
+    
+    for cat in sorted(list(categories)):
+        url_dispatcher.add_dir(
+            "[COLOR white]{}[/COLOR]".format(cat),
+            cat,
+            "browse_category",
+            basics.cum_image("cum-sites.png"),
+            "",
+            list_avail=False,
+        )
+    
+    # Also add an "Uncategorized" section if any exist
+    if any(not x.category for x in AdultSite.get_sites()):
+        url_dispatcher.add_dir(
+            "[COLOR white]Other / Uncategorized[/COLOR]",
+            "None",
+            "browse_category",
+            basics.cum_image("cum-sites.png"),
+            "",
+            list_avail=False,
+        )
+    
+    utils.eod(basics.addon_handle, False)
+
+
+@url_dispatcher.register()
+def browse_category(url):
+    category = url
+    custom_listitems = favorites.get_custom_listitems()
+    custom_listitems_dict = {x[0]: x[1] for x in custom_listitems}
+    
+    sites = list(AdultSite.get_sites())
+    filtered_sites = []
+    
+    for x in sites:
+        if category == "None":
+            if not x.category:
+                filtered_sites.append(x)
+        elif x.category == category:
+            filtered_sites.append(x)
+            
+    for x in sorted(filtered_sites, key=lambda y: y.get_clean_title().lower()):
+        title = x.title
+        if title in custom_listitems_dict:
+            title = "{} [COLOR red]{}[/COLOR]".format(
+                title, "".ljust(custom_listitems_dict[title], "*")
+            )
+        url_dispatcher.add_dir(
+            title, x.url, x.default_mode, x.image, about=x.about, custom=x.custom
+        )
+    utils.eod(basics.addon_handle, False)
+
+
+@url_dispatcher.register()
 def site_list():
     custom_listitems = favorites.get_custom_listitems()
     custom_listitems_dict = {}
@@ -284,6 +360,25 @@ def site_list():
             utils.kodilog(
                 "{0}: {1}".format(utils.i18n("list_custom"), x.title), xbmc.LOGDEBUG
             )
+        title = x.title
+        if title in custom_listitems_dict:
+            title = "{} [COLOR red]{}[/COLOR]".format(
+                title, "".ljust(custom_listitems_dict[title], "*")
+            )
+        url_dispatcher.add_dir(
+            title, x.url, x.default_mode, x.image, about=x.about, custom=x.custom
+        )
+    utils.eod(basics.addon_handle, False)
+
+
+@url_dispatcher.register()
+def new_site_list():
+    custom_listitems = favorites.get_custom_listitems()
+    custom_listitems_dict = {x[0]: x[1] for x in custom_listitems}
+    
+    new_sites = [x for x in AdultSite.get_sites() if x.is_new]
+    
+    for x in sorted(new_sites, key=lambda y: y.get_clean_title().lower()):
         title = x.title
         if title in custom_listitems_dict:
             title = "{} [COLOR red]{}[/COLOR]".format(

@@ -24,62 +24,109 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
 
-site = AdultSite('cloudbate', '[COLOR hotpink]Cloudbate[/COLOR]', 'https://www.cloudbate.com/', 'cloudbate.png', 'cloudbate')
+site = AdultSite(
+    "cloudbate",
+    "[COLOR hotpink]Cloudbate[/COLOR]",
+    "https://www.cloudbate.com/",
+    "cloudbate.png",
+    "cloudbate",
+    category="Cam Models",
+)
 
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir('[COLOR hotpink]Girls[/COLOR]', site.url + 'categories/girls/', 'List', site.img_cat)
-    site.add_dir('[COLOR hotpink]Trans[/COLOR]', site.url + 'categories/trans/', 'List', site.img_cat)
-    site.add_dir('[COLOR hotpink]Couples[/COLOR]', site.url + 'categories/couples/', 'List', site.img_cat)
-    site.add_dir('[COLOR hotpink]Search (models)[/COLOR]', site.url + 'search/{0}/', 'Search', site.img_search)
-    List(site.url + 'latest-updates/')
+    site.add_dir(
+        "[COLOR hotpink]Girls[/COLOR]",
+        site.url + "categories/girls/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Trans[/COLOR]",
+        site.url + "categories/trans/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Couples[/COLOR]",
+        site.url + "categories/couples/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Search (models)[/COLOR]",
+        site.url + "search/{0}/",
+        "Search",
+        site.img_search,
+    )
+    List(site.url + "latest-updates/")
     utils.eod()
 
 
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    
+
     # Modern BS4 implementation
     soup = utils.parse_html(listhtml)
-    
-    # Restrict to main content area to avoid sidebar "Popular Videos"
-    content = soup.select_one('.thumbs.albums-thumbs, .list-videos')
+
+    # Content area check
+    content = soup.select_one(".row-videos, .list-videos, .row")
     if not content:
         content = soup
 
     items_added = 0
-    for item in content.select('.video-block'):
+    # The site uses .item containers for videos, but fixtures might use .video-block
+    for item in content.select(".item, .video-block"):
         try:
-            link = item.select_one('a[href*="/videos/"]')
+            # Video link can contain /video/ or /videos/
+            link = item.select_one('a[href*="/video/"], a[href*="/videos/"]')
             if not link:
                 continue
-            videopage = utils.safe_get_attr(link, 'href')
-            if not videopage.startswith('http'):
+            videopage = utils.safe_get_attr(link, "href")
+            if not videopage.startswith("http"):
                 videopage = urllib_parse.urljoin(site.url, videopage)
-            
-            name = utils.safe_get_attr(link, 'title')
+
+            # Skip model links if accidentally caught (though /video/ should be specific)
+            if "/models/" in videopage:
+                continue
+
+            name = utils.safe_get_attr(link, "title")
             if not name:
                 name = utils.safe_get_text(link)
             name = utils.cleantext(name)
-            
-            img_tag = item.select_one('img')
-            img = utils.safe_get_attr(img_tag, 'data-webp', ['data-src', 'src'])
-            if img and not img.startswith('http'):
+
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "data-webp", ["data-src", "src"])
+            if img and not img.startswith("http"):
                 img = urllib_parse.urljoin(site.url, img)
-            
-            duration_tag = item.select_one('.duration')
+
+            duration_tag = item.select_one(".duration")
             duration = utils.safe_get_text(duration_tag)
-            
+
             cm = []
             quoted_videopage = urllib_parse.quote_plus(videopage)
-            cm.append(('[COLOR deeppink]Lookup info[/COLOR]', 
-                      'RunPlugin({}?mode=cloudbate.Lookupinfo&url={})'.format(utils.addon_sys, quoted_videopage)))
-            cm.append(('[COLOR deeppink]Related videos[/COLOR]', 
-                      'RunPlugin({}?mode=cloudbate.Related&url={})'.format(utils.addon_sys, quoted_videopage)))
-            
-            site.add_download_link(name, videopage, 'Playvid', img, name, duration=duration, contextm=cm)
+            cm.append(
+                (
+                    "[COLOR deeppink]Lookup info[/COLOR]",
+                    "RunPlugin({}?mode=cloudbate.Lookupinfo&url={})".format(
+                        utils.addon_sys, quoted_videopage
+                    ),
+                )
+            )
+            cm.append(
+                (
+                    "[COLOR deeppink]Related videos[/COLOR]",
+                    "RunPlugin({}?mode=cloudbate.Related&url={})".format(
+                        utils.addon_sys, quoted_videopage
+                    ),
+                )
+            )
+
+            site.add_download_link(
+                name, videopage, "Playvid", img, name, duration=duration, contextm=cm
+            )
             items_added += 1
         except Exception as e:
             utils.kodilog("Cloudbate parse error: {}".format(e))

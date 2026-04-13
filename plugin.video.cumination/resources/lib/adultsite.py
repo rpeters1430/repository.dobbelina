@@ -17,6 +17,8 @@ class AdultSite(URL_Dispatcher):
         about=None,
         webcam=False,
         testing=False,
+        category=None,
+        is_new=False,
     ):
         self.default_mode = ""
         self.name = name
@@ -26,6 +28,8 @@ class AdultSite(URL_Dispatcher):
         self.about = about
         self.webcam = webcam
         self.testing = testing
+        self.category = category
+        self.is_new = is_new
         self.custom = False
         self.add_to_instances()
 

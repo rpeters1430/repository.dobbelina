@@ -552,6 +552,43 @@ def resolve_manifest_from_model(stripchat, target: str) -> str:
         print("PLAYWRIGHT_RESOLVED_MANIFEST_URL:", sniffed)
         return sniffed
 
+    browser_probe = sniff_browser_media_with_playwright(browser_url)
+    browser_events = browser_probe.get("events") or []
+    browser_cookies = browser_probe.get("cookies") or {}
+    browser_headers = browser_probe.get("media_headers") or {}
+    browser_manifests = []
+    for event in browser_events:
+        event_url = event.get("url")
+        if not isinstance(event_url, str):
+            continue
+        lower = event_url.lower()
+        if ".m3u8" not in lower:
+            continue
+        if "media-hls." not in lower and "doppiocdn" not in lower:
+            continue
+        if "pkey=" not in lower:
+            continue
+        browser_manifests.append(event_url)
+    if browser_manifests:
+        browser_manifests.sort(
+            key=lambda url: (
+                1 if "media-hls." in url.lower() else 0,
+                1 if "_hls_msn=" in url.lower() else 0,
+                1 if "playlisttype=lowlatency" in url.lower() else 0,
+            ),
+            reverse=True,
+        )
+        resolved = browser_manifests[0]
+        # Seed the proxy session with browser cookies/headers so segment
+        # fetches through the proxy have the same auth as the browser.
+        if browser_cookies:
+            stripchat.STRIPCHAT_PROXY_SESSION_COOKIES = browser_cookies
+            print("PLAYWRIGHT_SESSION_COOKIES_SEEDED:", len(browser_cookies))
+        if browser_headers:
+            stripchat.STRIPCHAT_PROXY_SESSION_HEADERS = browser_headers
+        print("PLAYWRIGHT_EVENT_RESOLVED_MANIFEST_URL:", resolved)
+        return resolved
+
     raise RuntimeError("Failed to resolve stream URL from model input")
 
 

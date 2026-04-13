@@ -26,6 +26,7 @@ site = AdultSite(
     "https://missav.ws/",
     "missav.png",
     "missav",
+    category="JAV",
 )
 
 

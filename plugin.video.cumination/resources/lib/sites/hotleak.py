@@ -29,6 +29,7 @@ site = AdultSite(
     "https://hotleak.vip/",
     "hotleak.png",
     "hotleak",
+    category="Leaks",
 )
 
 
@@ -107,14 +108,14 @@ def List(url, page=1):
 
 def _decrypt_video_url(encrypted_url):
     try:
-        # Remove first 8 chars
-        decrypted = encrypted_url[8:]
+        # Remove first 16 chars
+        decrypted = encrypted_url[16:]
         # Remove last 16 chars
         decrypted = decrypted[:-16]
         # Reverse the string
         decrypted = decrypted[::-1]
         # Base64 decode
-        decrypted = base64.b64decode(decrypted).decode('utf-8')
+        decrypted = base64.b64decode(decrypted).decode("utf-8")
         return decrypted
     except Exception as e:
         utils.kodilog("hotleak: URL decryption failed: {}".format(e))

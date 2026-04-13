@@ -28,6 +28,7 @@ site = AdultSite(
     "https://www.pornhub.com/",
     "pornhub.png",
     "pornhub",
+    category="Video Tubes",
 )
 cookiehdr = {"Cookie": "accessAgeDisclaimerPH=1; accessAgeDisclaimerUK=1"}
 
