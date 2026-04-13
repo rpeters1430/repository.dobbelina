@@ -1,3 +1,11 @@
+[B]Version 1.1.362[/B]
+- Add SunPorno site scraper and tests
+- chore: final cleanup of chaturbate proxy logic
+- fix: josporn/tubxporn extraction and port chaturbate proxy enhancements
+- Add Cloudbate site scraper and related tests
+- Add new site implementations and tests for fyxxr and xxthots
+- Merge pull request #129 from rpeters1430/alert-autofix-104
+
 [B]Version 1.1.361[/B]
 - cloudbate - new site
 - chaturbate - fix playback (master playlist proxy)
