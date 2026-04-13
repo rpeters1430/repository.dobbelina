@@ -881,6 +881,8 @@ def downloadVideo(url, name):
                     break
                 except Exception:
                     pass
+        finally:
+            dp.close()
 
 
 def notify(header=None, msg="", duration=5000, icon=None):
@@ -913,6 +915,7 @@ def refresh():
 
 
 def playvid(videourl, name, download=None, subtitle=None, IA_check="check"):
+    progress.close()
     videourl = videourl.replace("&amp;", "&")
     if download == 1:
         downloadVideo(videourl, name)
@@ -2635,6 +2638,7 @@ class VideoPlayer:
     @_cancellable
     def play_from_html(self, html, url=None):
         if not html:
+            self.progress.close()
             notify(i18n("oh_oh"), i18n("not_found"))
             return
         self.progress.update(40, "[CR]{0}[CR]".format(i18n("srch_host")))
@@ -2687,13 +2691,13 @@ class VideoPlayer:
             self.progress.close()
             return
         if '?login' in videourl:
-            notify(i18n('oh_oh'), i18n('Login required for this quality.'))
             self.progress.close()
+            notify(i18n('oh_oh'), i18n('Login required for this quality.'))
             return
         if videourl.startswith('function/0/'):
             if not license:
-                notify(i18n('oh_oh'), 'Unable to play video: License code not found')
                 self.progress.close()
+                notify(i18n('oh_oh'), 'Unable to play video: License code not found')
                 return
             from resources.lib.decrypters.kvsplayer import kvs_decode
             videourl = kvs_decode(videourl, license)

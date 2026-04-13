@@ -25,11 +25,13 @@ import datetime
 
 site = AdultSite(
     "xhamster",
-    "[COLOR hotpink]xHamster[/COLOR]",
+    "[COLOR hotpink]Xhamster[/COLOR]",
     "https://xhamster.com/",
     "xhamster.png",
     "xhamster",
+    category="Video Tubes",
 )
+
 
 
 @site.register(default_mode=True)

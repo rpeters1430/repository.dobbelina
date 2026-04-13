@@ -28,11 +28,13 @@ from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
     "javbangers",
-    "[COLOR hotpink]JAV Bangers[/COLOR]",
-    "https://www.javbangers.com/",
+    "[COLOR hotpink]JavBangers[/COLOR]",
+    "https://javbangers.com/",
     "javbangers.png",
     "javbangers",
+    category="JAV",
 )
+
 
 getinput = utils._get_keyboard
 jblogged = "true" in utils.addon.getSetting("jblogged")

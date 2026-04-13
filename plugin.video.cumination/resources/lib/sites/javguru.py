@@ -24,11 +24,13 @@ from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
     "javguru",
-    "[COLOR hotpink]Jav Guru[/COLOR]",
+    "[COLOR hotpink]Javguru[/COLOR]",
     "https://jav.guru/",
     "javguru.png",
     "javguru",
+    category="JAV",
 )
+
 
 
 @site.register(default_mode=True)

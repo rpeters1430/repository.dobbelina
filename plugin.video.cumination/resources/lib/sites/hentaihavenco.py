@@ -23,12 +23,14 @@ from resources.lib.adultsite import AdultSite
 from resources.lib.sites.soup_spec import SoupSiteSpec
 
 site = AdultSite(
-    "hentaihavenc",
-    "[COLOR hotpink]Hentaihaven[/COLOR]",
-    "https://hentaihaven.co/",
-    "hh.png",
     "hentaihavenco",
+    "[COLOR hotpink]Hentai Haven.co[/COLOR]",
+    "https://hentaihaven.co/",
+    "hentaihaven.png",
+    "hentaihavenco",
+    category="Hentai",
 )
+
 
 
 VIDEO_LIST_SPEC = SoupSiteSpec(

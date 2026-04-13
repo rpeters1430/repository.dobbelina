@@ -23,7 +23,12 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
-    "xnxx", "[COLOR hotpink]XNXX[/COLOR]", "https://www.xnxx.com/", "xnxx.png", "xnxx"
+    "xnxx",
+    "[COLOR hotpink]XNXX[/COLOR]",
+    "https://www.xnxx.com/",
+    "xnxx.png",
+    "xnxx",
+    category="Video Tubes",
 )
 
 

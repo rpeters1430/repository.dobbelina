@@ -28,7 +28,12 @@ from six.moves import urllib_parse
 
 addon = utils.addon
 site = AdultSite(
-    "beeg", "[COLOR hotpink]Beeg[/COLOR]", "https://store.externulls.com/", "beeg.png", "beeg"
+    "beeg",
+    "[COLOR hotpink]Beeg[/COLOR]",
+    "https://store.externulls.com/",
+    "beeg.png",
+    "beeg",
+    category="Video Tubes",
 )
 
 

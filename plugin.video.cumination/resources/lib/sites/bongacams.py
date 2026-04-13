@@ -27,7 +27,8 @@ site = AdultSite(
     "https://bongacams.com/",
     "bongacams.png",
     "bongacams",
-    True,
+    webcam=True,
+    category="Cam Models",
 )
 
 

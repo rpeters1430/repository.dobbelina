@@ -27,6 +27,7 @@ site = AdultSite(
     "https://porn4k.to/",
     "porn4k.png",
     "porn4k",
+    category="VR",
 )
 
 

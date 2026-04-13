@@ -32,8 +32,8 @@ def test_models_alphabet(monkeypatch):
 
     # Map the URL to the fixture
     # The URL used in spankbang.py is site.url + 'pornstars_alphabet'
-    # site.url is 'https://spankbang.party/'
-    url = "https://spankbang.party/pornstars_alphabet"
+    # site.url is 'https://spankbang.com/'
+    url = "https://spankbang.com/pornstars_alphabet"
     fixture_mapped_get_html(
         monkeypatch, spankbang, {url: "spankbang_models_alphabet.html"}
     )
@@ -45,17 +45,17 @@ def test_models_alphabet(monkeypatch):
 
     assert len(recorder.dirs) == 4
     assert recorder.dirs[0]["name"] == "A"
-    assert recorder.dirs[0]["url"] == "https://spankbang.party/pornstars/a"
+    assert recorder.dirs[0]["url"] == "https://spankbang.com/pornstars/a"
     assert recorder.dirs[0]["mode"] == "spankbang.Models"
 
     assert recorder.dirs[3]["name"] == "D"
-    assert recorder.dirs[3]["url"] == "https://spankbang.party/pornstars/d"
+    assert recorder.dirs[3]["url"] == "https://spankbang.com/pornstars/d"
 
 
 def test_models(monkeypatch):
     recorder = _Recorder()
 
-    url = "https://spankbang.party/pornstars/a"
+    url = "https://spankbang.com/pornstars/a"
     fixture_mapped_get_html(monkeypatch, spankbang, {url: "spankbang_models.html"})
 
     monkeypatch.setattr(spankbang.site, "add_dir", recorder.add_dir)
@@ -69,7 +69,7 @@ def test_models(monkeypatch):
 
     assert "Lexi Lore" in recorder.dirs[0]["name"]
     assert "150" in recorder.dirs[0]["name"]
-    assert recorder.dirs[0]["url"] == "https://spankbang.party/pornstar/lexi+lore"
+    assert recorder.dirs[0]["url"] == "https://spankbang.com/pornstar/lexi+lore"
     assert recorder.dirs[0]["mode"] == "spankbang.List"
 
     assert "Eva Elfie" in recorder.dirs[1]["name"]
@@ -81,7 +81,7 @@ def test_models(monkeypatch):
 
 def test_tags_pagination(monkeypatch):
     recorder = _Recorder()
-    url = "https://spankbang.party/tags"
+    url = "https://spankbang.com/tags"
     fixture_mapped_get_html(monkeypatch, spankbang, {url: "spankbang_tags.html"})
 
     monkeypatch.setattr(spankbang.site, "add_dir", recorder.add_dir)
@@ -101,7 +101,7 @@ def test_tags_pagination(monkeypatch):
     # The fixture has next link to /tags/3
     next_page = [d for d in recorder.dirs if "Next Page" in d["name"]]
     assert len(next_page) == 1
-    assert next_page[0]["url"] == "https://spankbang.party/tags/3"
+    assert next_page[0]["url"] == "https://spankbang.com/tags/3"
     assert (
         next_page[0]["mode"] == "spankbang.Tags"
     )  # Important: It should call Tags recursively, not List

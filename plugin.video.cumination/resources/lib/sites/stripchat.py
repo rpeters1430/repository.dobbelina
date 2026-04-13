@@ -37,7 +37,8 @@ site = AdultSite(
     "https://stripchat.com/",
     "stripchat.png",
     "stripchat",
-    True,
+    webcam=True,
+    category="Cam Models",
 )
 
 # Stripchat's CDN increasingly rejects the addon-wide legacy Firefox UA on

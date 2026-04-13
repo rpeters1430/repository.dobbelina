@@ -34,11 +34,13 @@ def _title_with_episode(title, item):
 
 site = AdultSite(
     "hentaidude",
-    "[COLOR hotpink]Hentaidude[/COLOR]",
-    "https://hentaidude.xxx/",
+    "[COLOR hotpink]Hentai Dude[/COLOR]",
+    "https://hentaidude.com/",
     "hentaidude.png",
     "hentaidude",
+    category="Hentai",
 )
+
 
 
 VIDEO_LIST_SPEC = SoupSiteSpec(

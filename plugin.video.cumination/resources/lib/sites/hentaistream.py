@@ -25,10 +25,12 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "hentaistream",
     "[COLOR hotpink]HentaiStream[/COLOR]",
-    "https://hstream.moe/",
+    "https://hentaistream.com/",
     "hentaistream.png",
     "hentaistream",
+    category="Hentai",
 )
+
 
 
 @site.register(default_mode=True)
@@ -169,7 +171,7 @@ def Playvid(url, name, download=None):
     payload = {"episode_id": videoid}
 
     hstreamhdrs = utils.base_hdrs
-    xsrftoken = get_cookies()
+    xsrftoken = get_cookies(url)
     xsrftoken = urllib_parse.unquote(xsrftoken)
     if not xsrftoken:
         utils.notify("Oh Oh", "No Videos found")
@@ -212,8 +214,12 @@ def Playvid(url, name, download=None):
         vp.play_from_direct_link(videourl)
 
 
-def get_cookies():
+def get_cookies(url=None):
     domain = site.url.split("/")[2]
+    if url:
+        parsed_domain = urllib_parse.urlparse(url).netloc
+        if parsed_domain:
+            domain = parsed_domain
     for cookie in utils.cj:
         if domain in cookie.domain and cookie.name == "XSRF-TOKEN":
             return cookie.value

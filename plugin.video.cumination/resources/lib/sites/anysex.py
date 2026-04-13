@@ -19,11 +19,13 @@ from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
     "anysex",
-    "[COLOR hotpink]AnySex.com[/COLOR]",
+    "[COLOR hotpink]AnySex[/COLOR]",
     "https://anysex.com/",
     "anysex.png",
     "anysex",
+    category="Video Tubes",
 )
+
 
 
 def _absolute_url(url):

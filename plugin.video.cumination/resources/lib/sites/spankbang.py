@@ -25,10 +25,12 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "spankbang",
     "[COLOR hotpink]SpankBang[/COLOR]",
-    "https://spankbang.party/",
+    "https://spankbang.com/",
     "spankbang.png",
     "spankbang",
+    category="Video Tubes",
 )
+
 filterQ = utils.addon.getSetting("spankbang_quality") or "All"
 filterL = utils.addon.getSetting("spankbang_length") or "All"
 

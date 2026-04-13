@@ -25,11 +25,13 @@ import json
 
 site = AdultSite(
     "xvideos",
-    "[COLOR hotpink]xVideos[/COLOR]",
+    "[COLOR hotpink]XVideos[/COLOR]",
     "https://www.xvideos.com/",
-    "xvideos.png",
+    "xv.png",
     "xvideos",
+    category="Video Tubes",
 )
+
 
 
 @site.register(default_mode=True)

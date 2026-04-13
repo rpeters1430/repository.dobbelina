@@ -48,7 +48,7 @@ SITE_FIXTURES = [
         "spankbang",
         spankbang,
         "List",
-        ("https://spankbang.party/new_videos/1/",),
+        ("https://spankbang.com/new_videos/1/",),
         {},
         "sites/spankbang/listing.html",
         True,

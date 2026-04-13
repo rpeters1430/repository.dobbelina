@@ -91,7 +91,7 @@ PLAY_CASES = [
         "name": "spankbang",
         "module": spankbang,
         "func": "Playvid",
-        "url": "https://spankbang.party/abc123",
+        "url": "https://spankbang.com/abc123",
         "fixture": "spankbang_play.html",
         "expect": lambda rec, url: rec.play_from_direct_link
         == "https://cdn.spankbang.com/video720.mp4",
