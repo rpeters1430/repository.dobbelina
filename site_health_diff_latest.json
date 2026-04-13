@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-04-13T07:07:54.117268",
+    "sites_total": 170,
+    "pass": 164,
+    "warn": 2,
+    "fail": 4,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-04-12T06:58:28.027473",
     "sites_total": 169,
     "pass": 163,
@@ -8,32 +17,32 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-04-11T06:44:06.227315",
-    "sites_total": 168,
-    "pass": 162,
-    "warn": 2,
-    "fail": 3,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
-    "new_failures": 0,
-    "resolved_failures": 1,
-    "persistent_failures": 2,
-    "improved_sites": 0,
-    "regressions": 0,
-    "step_regressions": 0
+    "new_failures": 1,
+    "resolved_failures": 0,
+    "persistent_failures": 3,
+    "improved_sites": 1,
+    "regressions": 1,
+    "step_regressions": 2
   },
-  "new_failures": [],
-  "resolved_failures": [
+  "new_failures": [
     {
       "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS"
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
     }
   ],
+  "resolved_failures": [],
   "persistent_failures": [
+    {
+      "site": "cloudbate",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "CODE",
+      "message": "main: TypeError: URL_Dispatcher.add_dir() got an unexpected keyword argument 'lp'"
+    },
     {
       "site": "josporn",
       "previous": "FAIL",
@@ -46,23 +55,67 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "BLOCKED",
-      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177597"
+      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177606"
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [],
+  "improved_sites": [
+    {
+      "site": "stripchat",
+      "previous": "SKIP",
+      "current": "PASS"
+    }
+  ],
+  "step_regressions": [
+    {
+      "site": "analdin",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "List returned no videos",
+      "class": "PARSER"
+    },
+    {
+      "site": "cloudbate",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "TypeError: URL_Dispatcher.add_dir() got an unexpected keyword argument 'lp'",
+      "class": "CODE"
+    }
+  ],
   "deltas": [
     {
       "site": "analdin",
-      "previous": "FAIL",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "hentaihavenc",
+      "previous": "PASS",
+      "current": "MISSING",
+      "kind": "missing_site",
+      "detail": ""
+    },
+    {
+      "site": "hentaihavenco",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "stripchat",
+      "previous": "SKIP",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "cloudbate",
+      "site": "sunporno",
       "previous": "MISSING",
-      "current": "FAIL",
+      "current": "PASS",
       "kind": "new_site",
       "detail": ""
     }

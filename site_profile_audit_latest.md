@@ -1,12 +1,13 @@
 # Site Profile Audit
 
-- Sites: `169`
+- Sites: `170`
 - Tier1 hot: `0`
-- Failing: `3`
+- Failing: `4`
 - Warn: `2`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
+| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | cloudbate | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | tubxporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
@@ -24,7 +25,7 @@
 | pornkai | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | spankbang | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | streamate | tier1 | PASS | 1 | cam |  | Y |  |  |  |
-| stripchat | tier1 | SKIP | 1 | cam |  |  |  |  |  |
+| stripchat | tier1 | PASS | 1 | cam |  |  |  |  |  |
 | xnxx | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | xvideos | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | youporn | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
@@ -35,7 +36,6 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
-| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -69,7 +69,7 @@
 | heavyr | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hentai-moon | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hentaidude | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| hentaihavenco | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
+| hentaihavenco | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hentaistream | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | heroero | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hitprn | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -139,6 +139,7 @@
 | sexyporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | someporn | backlog | PASS | 2 | video |  | Y |  | Y | Y |
 | speedporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| sunporno | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | superporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | supjav | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | sxyprn | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -179,7 +180,8 @@
 
 ## Next Batch
 
-- **cloudbate** (failing, tier=2) | failures: list:FAIL
+- **analdin** (failing, tier=2) | failures: list:FAIL
+- **cloudbate** (failing, tier=2) | failures: main:FAIL
 - **josporn** (failing, tier=None) | failures: list:FAIL
 - **tubxporn** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
 - **javhdporn** (warn, tier=None) | failures: play:FAIL
@@ -198,4 +200,3 @@
 - **streamate** (tier1, tier=1)
 - **stripchat** (tier1, tier=1)
 - **xnxx** (tier1, tier=1)
-- **xvideos** (tier1, tier=1)
