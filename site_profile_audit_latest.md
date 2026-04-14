@@ -7,9 +7,9 @@
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | cloudbate | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| reallifecam | failing | FAIL | 2 | cam |  | Y | Y | Y |  |
 | tubxporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | javhdporn | warn | WARN |  | video |  | Y | Y | Y | Y |
 | pornhoarder | warn | WARN |  | video |  | Y | Y | Y | Y |
@@ -36,6 +36,7 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
+| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -131,7 +132,6 @@
 | porntrex | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornxp | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | premiumporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| reallifecam | backlog | UNKNOWN | 2 | cam |  | Y | Y | Y |  |
 | redtube | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | rule34video | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | seaporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -180,9 +180,9 @@
 
 ## Next Batch
 
-- **analdin** (failing, tier=2) | failures: list:FAIL
 - **cloudbate** (failing, tier=2) | failures: main:FAIL
 - **josporn** (failing, tier=None) | failures: list:FAIL
+- **reallifecam** (failing, tier=2)
 - **tubxporn** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
 - **javhdporn** (warn, tier=None) | failures: play:FAIL
 - **pornhoarder** (warn, tier=None) | failures: play:FAIL

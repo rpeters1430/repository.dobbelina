@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-04-13T07:07:54.117268",
+    "generated": "2026-04-14T07:16:21.299982",
     "sites_total": 170,
     "pass": 164,
     "warn": 2,
@@ -9,32 +9,30 @@
     "skip": 0
   },
   "previous": {
-    "generated": "2026-04-12T06:58:28.027473",
-    "sites_total": 169,
-    "pass": 163,
+    "generated": "2026-04-13T07:07:54.117268",
+    "sites_total": 170,
+    "pass": 164,
     "warn": 2,
-    "fail": 3,
+    "fail": 4,
     "error": 0,
-    "skip": 1
+    "skip": 0
   },
   "summary": {
-    "new_failures": 1,
-    "resolved_failures": 0,
+    "new_failures": 0,
+    "resolved_failures": 1,
     "persistent_failures": 3,
-    "improved_sites": 1,
-    "regressions": 1,
-    "step_regressions": 2
+    "improved_sites": 0,
+    "regressions": 0,
+    "step_regressions": 0
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
+      "previous": "FAIL",
+      "current": "PASS"
     }
   ],
-  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "cloudbate",
@@ -55,68 +53,31 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "BLOCKED",
-      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177606"
+      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177615"
     }
   ],
-  "improved_sites": [
-    {
-      "site": "stripchat",
-      "previous": "SKIP",
-      "current": "PASS"
-    }
-  ],
-  "step_regressions": [
-    {
-      "site": "analdin",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
-    },
-    {
-      "site": "cloudbate",
-      "step": "main",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "TypeError: URL_Dispatcher.add_dir() got an unexpected keyword argument 'lp'",
-      "class": "CODE"
-    }
-  ],
+  "improved_sites": [],
+  "step_regressions": [],
   "deltas": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "hentaihavenc",
-      "previous": "PASS",
-      "current": "MISSING",
-      "kind": "missing_site",
-      "detail": ""
-    },
-    {
-      "site": "hentaihavenco",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "stripchat",
-      "previous": "SKIP",
+      "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "sunporno",
+      "site": "reallifecam",
       "previous": "MISSING",
-      "current": "PASS",
+      "current": "FAIL",
       "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "rlc",
+      "previous": "PASS",
+      "current": "MISSING",
+      "kind": "missing_site",
       "detail": ""
     }
   ]
