@@ -26,7 +26,7 @@ site = AdultSite(
     "hentaihavenco",
     "[COLOR hotpink]Hentai Haven.co[/COLOR]",
     "https://hentaihaven.co/",
-    "hentaihaven.png",
+    "hh.png",
     "hentaihavenco",
     category="Hentai",
 )
