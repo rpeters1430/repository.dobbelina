@@ -1,3 +1,11 @@
+[B]Version 1.1.364[/B]
+- Add new images and update site icons for hentaihavenco and xvideos
+- Refactor site definitions to include category and webcam attributes
+- Add SunPorno site scraper and tests
+- chore: final cleanup of chaturbate proxy logic
+- fix: josporn/tubxporn extraction and port chaturbate proxy enhancements
+- Add Cloudbate site scraper and related tests
+
 [B]Version 1.1.363[/B]
 - Refactor site definitions to include category and webcam attributes
 - Add SunPorno site scraper and tests
