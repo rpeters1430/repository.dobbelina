@@ -1,3 +1,5 @@
+import sys
+import types
 from resources.lib import utils
 from tests.conftest import read_fixture
 
@@ -708,3 +710,48 @@ def test_parse_html_preserves_attributes():
     assert link.get("href") == "/video/123"
     assert link.get("data-id") == "456"
     assert "link" in link.get("class", [])
+
+def test_play_from_kt_player_login_fallback(monkeypatch):
+    """Test that play_from_kt_player filters out login-restricted sources when alternatives exist."""
+    
+    # Mock resolveurl to avoid import errors
+    mock_resolveurl = types.ModuleType("resolveurl")
+    mock_resolveurl.add_plugin_dirs = lambda *args: None
+    monkeypatch.setitem(sys.modules, "resolveurl", mock_resolveurl)
+    
+    # Mock addon.getSetting to prefer higher quality (0 is usually highest)
+    monkeypatch.setattr(utils.addon, "getSetting", lambda id: "0" if id == "qualityask" else "false")
+    
+    # KT player javascript containing both a valid link and a login-required link
+    html = """
+    var flashvars = {
+        video_url: 'https://site.com/480p.mp4',
+        video_url_text: '480p',
+        video_alt_url: 'https://site.com/720p.mp4?login',
+        video_alt_url_text: '720p',
+        license_code: '$536403617696893'
+    };
+    """
+    
+    played_urls = []
+    def fake_playvid(url, name, download=None, IA_check="check"):
+        played_urls.append(url)
+
+    monkeypatch.setattr(utils, "playvid", fake_playvid)
+    
+    # Mockingprefquality to be simple
+    def fake_prefquality(sources, **kwargs):
+        # Simply return the highest p available
+        # But wait, our logic in utils.py filters sources BEFORE calling prefquality
+        return list(sources.values())[0] if len(sources) == 1 else "https://site.com/480p.mp4"
+
+    # We don't need to mock prefquality if it's already working, 
+    # but we need to ensure it's called with filtered sources.
+    
+    vp = utils.VideoPlayer("Test Video")
+    vp.play_from_kt_player(html, "https://site.com/v/123/")
+    
+    # The played URL should be 480p, not 720p?login
+    assert len(played_urls) == 1
+    assert "480p.mp4" in played_urls[0]
+    assert "?login" not in played_urls[0]

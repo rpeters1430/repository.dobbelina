@@ -43,18 +43,18 @@ def test_list_populates_videos(monkeypatch):
     sunporno.List("https://www.sunporno.com/latest")
 
     assert len(recorder.downloads) == 2
-    assert recorder.downloads[0]["name"] == "Video 1"
-    assert recorder.downloads[0]["icon"] == "https://acdn.sunporno.com/1.webp"
-    assert recorder.downloads[0]["duration"] == "10:00"
+    assert recorder.downloads[0]["name"] == "Vasya Sylvia - When reading is out of the question!"
+    assert recorder.downloads[0]["icon"] == "https://acdn.sunporno.com/contents/videos_screenshots/86000/86140/324x182/3.jpg"
+    assert recorder.downloads[0]["duration"] == "24:04"
     
     # Test relative URL resolution
-    assert recorder.downloads[1]["url"] == "https://www.sunporno.com/v/456/video-2/"
-    assert recorder.downloads[1]["icon"] == "https://www.sunporno.com/2.jpg"
+    assert recorder.downloads[1]["url"] == "https://www.sunporno.com/v/98892/busty-blonde-natalia-starr-fucks-her-friend-s-brother-until-her-explodes/"
+    assert recorder.downloads[1]["icon"] == "https://www.sunporno.com/98892_320x180.jpg"
     
     # Test pagination
     assert len(recorder.dirs) == 1
     assert "Next Page (2)" in recorder.dirs[0]["name"]
-    assert recorder.dirs[0]["url"] == "https://www.sunporno.com/trending/2/"
+    assert recorder.dirs[0]["url"] == "https://www.sunporno.com/recent/2/"
 
 
 def test_playvid_detects_kt_player(monkeypatch):

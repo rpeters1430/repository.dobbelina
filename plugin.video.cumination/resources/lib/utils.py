@@ -2679,6 +2679,11 @@ class VideoPlayer:
 
         sources = {qual: videourl for videourl, qual in match}
 
+        # Filter out qualities that require login if others are available
+        available_sources = {k: v for k, v in sources.items() if "?login" not in v}
+        if available_sources:
+            sources = available_sources
+
         if len(sources.keys()) == 1:
             videourl = list(sources.values())[0]
         else:

@@ -70,22 +70,36 @@ def List(url):
         content = soup
 
     items_added = 0
+    # On some versions of the site, .item is the a tag itself, on others it's a wrapper.
     for item in content.select(".item"):
         try:
-            link = item.select_one('a[href*="/v/"]')
+            # Check if the item itself is the link
+            if item.name == "a" and "/v/" in item.get("href", ""):
+                link = item
+            else:
+                link = item.select_one('a[href*="/v/"]')
+            
             if not link:
                 continue
+
             videopage = utils.safe_get_attr(link, "href")
             if not videopage.startswith("http"):
                 videopage = urllib_parse.urljoin(site.url, videopage)
 
-            name = utils.safe_get_attr(link, "title")
+            # Prefer .video-title text over 'title' attribute which often has prefix
+            name_tag = item.select_one(".video-title")
+            if name_tag:
+                name = utils.safe_get_text(name_tag)
+            else:
+                name = utils.safe_get_attr(link, "title")
+            
             if not name:
-                name = utils.safe_get_text(item.select_one(".video-title"))
+                continue
             name = utils.cleantext(name)
 
             img_tag = item.select_one("img")
-            img = utils.safe_get_attr(img_tag, "data-webp", ["src"])
+            # Try data-webp, then data-original, then src
+            img = utils.safe_get_attr(img_tag, "data-webp", ["data-original", "src"])
             if img and not img.startswith("http"):
                 img = urllib_parse.urljoin(site.url, img)
 
@@ -100,9 +114,6 @@ def List(url):
             utils.kodilog("SunPorno parse error: {}".format(e))
             continue
 
-    if items_added == 0:
-        return
-
     # Pagination
     pagination = soup.select_one(".pagination")
     if pagination:
@@ -114,7 +125,6 @@ def List(url):
                     next_url = urllib_parse.urljoin(site.url, next_url)
                 
                 # Extract page number for label
-                # e.g. /trending/2/ -> Next Page (2)
                 parts = next_url.strip("/").split("/")
                 np = parts[-1] if parts[-1].isdigit() else ""
                 
