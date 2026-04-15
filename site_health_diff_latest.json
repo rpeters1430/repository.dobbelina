@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-04-15T07:03:25.410556",
+    "sites_total": 170,
+    "pass": 163,
+    "warn": 2,
+    "fail": 5,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-04-14T07:16:21.299982",
     "sites_total": 170,
     "pass": 164,
@@ -8,31 +17,31 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-04-13T07:07:54.117268",
-    "sites_total": 170,
-    "pass": 164,
-    "warn": 2,
-    "fail": 4,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
-    "new_failures": 0,
-    "resolved_failures": 1,
+    "new_failures": 2,
+    "resolved_failures": 0,
     "persistent_failures": 3,
     "improved_sites": 0,
-    "regressions": 0,
-    "step_regressions": 0
+    "regressions": 2,
+    "step_regressions": 1
   },
-  "new_failures": [],
-  "resolved_failures": [
+  "new_failures": [
     {
       "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS"
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
+    },
+    {
+      "site": "javgg",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "Site process timed out after 140s"
     }
   ],
+  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "cloudbate",
@@ -53,28 +62,86 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "BLOCKED",
-      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177615"
+      "message": "main: RuntimeError: FlareSolverr error (try 3/3): FlareSolverr server error (HTTP 500): {\"status\": \"error\", \"message\": \"Error: Error solving the challenge. Cloudflare has blocked this request. Probably your IP is banned for this site, check in your web browser.\", \"startTimestamp\": 177623"
     }
   ],
   "improved_sites": [],
-  "step_regressions": [],
+  "step_regressions": [
+    {
+      "site": "analdin",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "List returned no videos",
+      "class": "PARSER"
+    }
+  ],
   "deltas": [
     {
       "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
       "detail": ""
     },
     {
-      "site": "reallifecam",
+      "site": "animeid",
+      "previous": "PASS",
+      "current": "MISSING",
+      "kind": "missing_site",
+      "detail": ""
+    },
+    {
+      "site": "animeidhentai",
       "previous": "MISSING",
-      "current": "FAIL",
+      "current": "PASS",
       "kind": "new_site",
       "detail": ""
     },
     {
+      "site": "hdporn",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "javgg",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "porn00",
+      "previous": "PASS",
+      "current": "MISSING",
+      "kind": "missing_site",
+      "detail": ""
+    },
+    {
+      "site": "reallifecam",
+      "previous": "FAIL",
+      "current": "MISSING",
+      "kind": "missing_site",
+      "detail": ""
+    },
+    {
       "site": "rlc",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "whereismyporn",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "wimp",
       "previous": "PASS",
       "current": "MISSING",
       "kind": "missing_site",

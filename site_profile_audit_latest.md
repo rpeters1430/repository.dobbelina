@@ -2,14 +2,15 @@
 
 - Sites: `170`
 - Tier1 hot: `0`
-- Failing: `4`
+- Failing: `5`
 - Warn: `2`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
+| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | cloudbate | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
+| javgg | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| reallifecam | failing | FAIL | 2 | cam |  | Y | Y | Y |  |
 | tubxporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | javhdporn | warn | WARN |  | video |  | Y | Y | Y | Y |
 | pornhoarder | warn | WARN |  | video |  | Y | Y | Y | Y |
@@ -36,8 +37,7 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
-| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
-| animeidhentai | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
+| animeidhentai | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | avple | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -65,7 +65,7 @@
 | fullxcinema | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | fyxxr | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hanime | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| hdporn | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
+| hdporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hdporn92 | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | heavyr | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hentai-moon | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -82,7 +82,6 @@
 | hqporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | japteenx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javbangers | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| javgg | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javguru | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javmoe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javseen | backlog | PASS | 2 | video |  | Y |  | Y | Y |
@@ -132,6 +131,7 @@
 | porntrex | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornxp | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | premiumporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| reallifecam | backlog | UNKNOWN | 2 | cam |  | Y | Y | Y |  |
 | redtube | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | rule34video | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | seaporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -162,7 +162,7 @@
 | watcherotic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | watchmdh | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | watchporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| whereismyporn | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
+| whereismyporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | whoreshub | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xfreehd | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xhamster | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -180,9 +180,10 @@
 
 ## Next Batch
 
+- **analdin** (failing, tier=2) | failures: list:FAIL
 - **cloudbate** (failing, tier=2) | failures: main:FAIL
+- **javgg** (failing, tier=None)
 - **josporn** (failing, tier=None) | failures: list:FAIL
-- **reallifecam** (failing, tier=2)
 - **tubxporn** (failing, tier=None) | failures: main:FAIL, list:FAIL, categories:FAIL, search:FAIL
 - **javhdporn** (warn, tier=None) | failures: play:FAIL
 - **pornhoarder** (warn, tier=None) | failures: play:FAIL
@@ -199,4 +200,3 @@
 - **spankbang** (tier1, tier=1)
 - **streamate** (tier1, tier=1)
 - **stripchat** (tier1, tier=1)
-- **xnxx** (tier1, tier=1)
