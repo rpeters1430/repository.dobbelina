@@ -1,3 +1,11 @@
+[B]Version 1.1.366[/B]
+- chore: update site configurations and enhance video playback tests
+- Enhance SunPorno site scraper and video player functionality
+- Add new images and update site icons for hentaihavenco and xvideos
+- Refactor site definitions to include category and webcam attributes
+- Add SunPorno site scraper and tests
+- chore: final cleanup of chaturbate proxy logic
+
 [B]Version 1.1.365[/B]
 - Enhance SunPorno site scraper and video player functionality
 - Add new images and update site icons for hentaihavenco and xvideos
