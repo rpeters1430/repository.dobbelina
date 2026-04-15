@@ -270,3 +270,14 @@ class TestList:
         else:
             pytest.skip("No list mode registered for this site")
 
+
+class TestPlayback:
+    """Test video playback URL extraction"""
+
+    @pytest.mark.skip(reason="Requires actual video URL from site")
+    def test_playvid_extracts_url(self, site_object, monkeypatch):
+        """Playvid should extract a playable URL"""
+        # This would need a real video URL from the site
+        # and mock HTML fixtures to test properly
+        pass
+

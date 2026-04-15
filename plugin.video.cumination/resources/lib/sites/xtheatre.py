@@ -154,6 +154,7 @@ def XTList(url, page=1):
 
 @site.register()
 def XTVideo(url, name, download=None):
+    """Playvid: Play video for XTTheatre site."""
     vp = utils.VideoPlayer(name, download)
     videohtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(videohtml)

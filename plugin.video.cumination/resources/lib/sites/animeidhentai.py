@@ -22,11 +22,11 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
-    "animeid",
+    "animeidhentai",
     "[COLOR hotpink]Animeid Hentai[/COLOR]",
     "https://animeidhentai.com/",
     "ah.png",
-    "animeid",
+    "animeidhentai",
     category="Hentai",
 )
 

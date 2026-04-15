@@ -241,3 +241,66 @@ class TestMain:
             assert item['name'], f"Item missing name: {item}"
             assert item['mode'], f"Item missing mode: {item}"
 
+
+class TestList:
+    """Test video listing function"""
+
+    def test_list_returns_videos(self, site_object, captured_items, mock_gethtml):
+        """List should return video items"""
+        captured_items.reset()
+
+        if _dispatch_preferred_listing(site_object, captured_items):
+            assert len(captured_items.downloads) > 0, "List should return at least one video"
+        else:
+            pytest.skip("No list mode registered for this site")
+
+    def test_list_videos_have_metadata(self, site_object, captured_items, mock_gethtml):
+        """List videos should have name, url, and image"""
+        captured_items.reset()
+
+        if _dispatch_preferred_listing(site_object, captured_items):
+            if not captured_items.downloads:
+                pytest.skip("List returned no video items")
+            for video in captured_items.downloads:
+                assert video['name'], f"Video missing name: {video}"
+                assert video['url'], f"Video missing URL: {video}"
+                # Icon is optional but recommended
+                if not video['icon']:
+                    pytest.skip("No thumbnail - may be lazy-loaded")
+        else:
+            pytest.skip("No list mode registered for this site")
+
+
+class TestSearch:
+    """Test search functionality"""
+
+    def test_search_returns_results(self, site_object, captured_items, mock_gethtml):
+        """Search should return results for a common keyword"""
+        captured_items.reset()
+
+        from resources.lib.url_dispatcher import URL_Dispatcher
+        search_mode = None
+        for mode in URL_Dispatcher.func_registry.keys():
+            if mode.startswith("animeidhentai.") and 'search' in mode.lower():
+                search_mode = mode
+                break
+
+        if search_mode:
+            URL_Dispatcher.dispatch(search_mode, {'url': site_object.url, 'keyword': 'test'})
+            total = len(captured_items.dirs) + len(captured_items.downloads)
+            if total == 0:
+                pytest.skip("Search returned no results - may require live site")
+        else:
+            pytest.skip("No search mode registered for this site")
+
+
+class TestPlayback:
+    """Test video playback URL extraction"""
+
+    @pytest.mark.skip(reason="Requires actual video URL from site")
+    def test_playvid_extracts_url(self, site_object, monkeypatch):
+        """Playvid should extract a playable URL"""
+        # This would need a real video URL from the site
+        # and mock HTML fixtures to test properly
+        pass
+

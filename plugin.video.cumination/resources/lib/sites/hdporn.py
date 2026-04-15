@@ -21,11 +21,11 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
-    "porn00",
+    "hdporn",
     "[COLOR hotpink]Porn00[/COLOR]",
     "https://www.porn00.org",
     "p00.png",
-    "porn00",
+    "hdporn",
 )
 
 

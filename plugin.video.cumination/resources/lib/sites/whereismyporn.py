@@ -21,11 +21,11 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
-    "wimp",
+    "whereismyporn",
     "[COLOR hotpink]WhereIsMyPorn[/COLOR]",
     "https://whereismyporn.com/",
     "",
-    "wimp",
+    "whereismyporn",
 )
 
 addon = utils.addon

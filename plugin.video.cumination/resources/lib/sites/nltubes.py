@@ -84,6 +84,9 @@ def NLTUBES(url):
 
 
 @site.register()
+@site2.register()
+@site3.register()
+@site4.register()
 def NLVIDEOLIST(url):
     siteurl = getBaselink(url)
     html = utils.getHtml(url, "")
@@ -163,7 +166,11 @@ def NLVIDEOLIST(url):
 
 
 @site.register()
+@site2.register()
+@site3.register()
+@site4.register()
 def NLPLAYVID(url, name, download=None):
+    """Playvid: Play video for NL Tubes sites."""
     siteurl = getBaselink(url)
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
@@ -188,6 +195,9 @@ def NLPLAYVID(url, name, download=None):
 
 
 @site.register()
+@site2.register()
+@site3.register()
+@site4.register()
 def NLSEARCH(url, keyword=None):
     searchUrl = url
     if not keyword:
@@ -199,6 +209,9 @@ def NLSEARCH(url, keyword=None):
 
 
 @site.register()
+@site2.register()
+@site3.register()
+@site4.register()
 def NLCAT(url):
     siteurl = getBaselink(url)
     link = utils.getHtml(url, "")

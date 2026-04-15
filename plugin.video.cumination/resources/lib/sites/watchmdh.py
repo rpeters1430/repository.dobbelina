@@ -70,14 +70,6 @@ def List(url):
         duration = utils.safe_get_text(item.select_one(".duration"))
         quality = utils.safe_get_text(item.select_one(".is-hd, .quality"))
 
-        contextm = [
-            (
-                "[COLOR violet]Related videos[/COLOR]",
-                "RunPlugin({}?mode=watchmdh.List&url={})".format(
-                    utils.addon_sys, urllib_parse.quote_plus(video_url)
-                ),
-            )
-        ]
         site.add_download_link(
             name,
             video_url,
@@ -86,7 +78,6 @@ def List(url):
             name,
             duration=duration,
             quality=quality,
-            contextm=contextm,
         )
 
     next_link = soup.select_one(".pagination a.next, .pagination a[data-block-id]")
@@ -113,23 +104,33 @@ def List(url):
                 next_url = urllib_parse.urljoin(site.url, href)
 
         if next_url:
-            contextm = [
-                (
-                    "[COLOR violet]Goto Page #[/COLOR]",
-                    "RunPlugin({}?mode=watchmdh.List&url={})".format(
-                        utils.addon_sys, urllib_parse.quote_plus(next_url)
-                    ),
-                )
-            ]
             site.add_dir(
                 "[COLOR hotpink]Next Page...[/COLOR]",
                 next_url,
                 "List",
                 site.img_next,
-                contextm=contextm,
             )
 
     utils.eod()
+
+
+@site.register()
+def Playvid(url, name, download=None):
+    vp = utils.VideoPlayer(name, download)
+    vp.progress.update(25, "[CR]Loading video page[CR]")
+
+    try:
+        html = utils.getHtml(url, site.url)
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in watchmdh: " + str(e))
+        vp.progress.close()
+        return
+
+    if not html:
+        vp.progress.close()
+        return
+
+    vp.play_from_kt_player(html, url)
 
 
 @site.register()

@@ -97,6 +97,9 @@ def Main(url):
 
 
 @site.register()
+@site2.register()
+@site3.register()
+@site4.register()
 def List(url):
     siteurl = getBaselink(url)
     listhtml = utils.getHtml(url, "")
@@ -185,6 +188,9 @@ def List(url):
 
 
 @site.register()
+@site2.register()
+@site3.register()
+@site4.register()
 def Search(url, keyword=None):
     searchUrl = url
     if not keyword:
@@ -196,6 +202,9 @@ def Search(url, keyword=None):
 
 
 @site.register()
+@site2.register()
+@site3.register()
+@site4.register()
 def Categories(url):
     siteurl = getBaselink(url)
     cathtml = utils.getHtml(url, "")
@@ -252,7 +261,11 @@ def Categories(url):
 
 
 @site.register()
+@site2.register()
+@site3.register()
+@site4.register()
 def Playvid(url, name, download=None):
+    """Playvid: Play video for Reallifecam sites."""
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videopage = utils.getHtml(url)

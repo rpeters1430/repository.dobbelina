@@ -214,6 +214,7 @@ import json
 import re
 from dataclasses import dataclass, asdict
 from typing import Any, Dict, List, Optional, Set
+from resources.lib.adultsite import AdultSite
 
 
 @dataclass
@@ -231,6 +232,7 @@ class FunctionInfo:
     has_name_param: bool
     has_keyword_param: bool
     source_location: str
+    docstring: str = ""
 
 
 @dataclass
@@ -316,6 +318,7 @@ def analyze_function(func: Any, site_name: str, mode_name: str) -> FunctionInfo:
             has_name_param="name" in params,
             has_keyword_param="keyword" in params,
             source_location=location,
+            docstring=func.__doc__ or "",
         )
     except Exception as e:
         return None
@@ -377,9 +380,14 @@ def analyze_site(site_name: str) -> SiteInfo:
             import_error=f"{type(e).__name__}: {str(e)}",
         )
 
-    # Get site object
-    site = getattr(module, "site", None)
-    if not site:
+    # Get site objects (could be multiple, e.g. nltubes, reallifecam)
+    site_instances = []
+    for attr_name in dir(module):
+        attr = getattr(module, attr_name)
+        if isinstance(attr, AdultSite):
+            site_instances.append(attr)
+
+    if not site_instances:
         return SiteInfo(
             name=site_name,
             display_name="",
@@ -399,15 +407,16 @@ def analyze_site(site_name: str) -> SiteInfo:
             has_play=False,
             source_file=str(file_path),
             source_lines=source_info["source_lines"],
-            import_error="No 'site' object exported",
+            import_error="No AdultSite instances found",
         )
 
-    # Get site attributes
-    display_name = getattr(site, "get_clean_title", lambda: site_name)()
-    base_url = getattr(site, "url", "")
-    icon = getattr(site, "image", "")
-    is_webcam = getattr(site, "webcam", False)
-    default_mode = getattr(site, "default_mode", "")
+    # Use the first site for basic attributes, but aggregate registration
+    main_site = site_instances[0]
+    display_name = getattr(main_site, "get_clean_title", lambda: site_name)()
+    base_url = getattr(main_site, "url", "")
+    icon = getattr(main_site, "image", "")
+    is_webcam = any(getattr(s, "webcam", False) for s in site_instances)
+    default_mode = getattr(main_site, "default_mode", "")
 
     # Analyze registered functions
     from resources.lib.url_dispatcher import URL_Dispatcher
@@ -419,13 +428,20 @@ def analyze_site(site_name: str) -> SiteInfo:
     default_modes = getattr(URL_Dispatcher, "default_modes", set())
     clean_modes = getattr(URL_Dispatcher, "clean_modes", set())
 
-    # Find all functions for this site
-    site_modes = {
-        k: v for k, v in func_registry.items() if k.startswith(f"{site_name}.")
-    }
+    # Find all functions for this site module
+    # We check if it starts with site_name. OR any of the site instance names
+    site_prefixes = {site_name} | {s.name for s in site_instances}
+    
+    site_modes = {}
+    for mode_name, func in func_registry.items():
+        if "." in mode_name:
+            prefix = mode_name.split(".")[0]
+            if prefix in site_prefixes:
+                site_modes[mode_name] = func
 
     for mode_name, func in site_modes.items():
-        func_info = analyze_function(func, site_name, mode_name)
+        prefix = mode_name.split(".")[0]
+        func_info = analyze_function(func, prefix, mode_name)
         if func_info:
             func_info.is_default = mode_name in default_modes
             func_info.is_clean = mode_name in clean_modes
@@ -433,11 +449,23 @@ def analyze_site(site_name: str) -> SiteInfo:
 
     # Detect function types
     func_names_lower = [f.name.lower() for f in registered_funcs]
-    has_main = any("main" in name for name in func_names_lower) or bool(default_mode)
-    has_list = any("list" in name for name in func_names_lower)
-    has_categories = any("cat" in name or "genre" in name for name in func_names_lower)
-    has_search = any("search" in name for name in func_names_lower)
-    has_play = any("play" in name for name in func_names_lower)
+    docstrings_lower = [f.docstring.lower() for f in registered_funcs]
+
+    def has_matching_func(keyword):
+        for name, doc in zip(func_names_lower, docstrings_lower):
+            if keyword in name or keyword in doc:
+                return True
+        return False
+
+    has_main = has_matching_func("main") or bool(default_mode)
+    has_list = has_matching_func("list")
+    has_categories = (
+        has_matching_func("cat")
+        or has_matching_func("genre")
+        or has_matching_func("tag")
+    )
+    has_search = has_matching_func("search")
+    has_play = has_matching_func("play")
 
     return SiteInfo(
         name=site_name,
