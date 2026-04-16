@@ -53,14 +53,52 @@ def Main():
 @site.register()
 def List(url):
     headers = {"User-Agent": utils.USER_AGENT, "Referer": site.url}
-    try:
-        html = utils.getHtml(url, site.url, headers=headers)
-    except Exception as e:
-        utils.kodilog("@@@@Cumination: failure in tubxporn: " + str(e))
-        # Fallback with different UA and bypass parameter
-        headers["User-Agent"] = utils.random_ua.get_ua()
-        fallback_url = url + ("?" if "?" not in url else "&") + "label_W9dmamG9w9zZg45g93FnLAVbSyd0bBDv=1"
-        html = utils.getHtml(fallback_url, site.url, headers=headers)
+    html = ""
+    candidates = [url]
+    if "/latest-updates/" not in url and "/search/" not in url and "/categories/" not in url:
+        candidates.append(site.url + "latest-updates/")
+    tried = set()
+    for candidate in candidates:
+        if not candidate or candidate in tried:
+            continue
+        tried.add(candidate)
+        try:
+            html = utils.getHtml(candidate, site.url, headers=headers)
+        except Exception as e:
+            utils.kodilog("@@@@Cumination: failure in tubxporn: " + str(e))
+            # Fallback with different UA and bypass parameter
+            headers["User-Agent"] = utils.random_ua.get_ua()
+            fallback_url = candidate + (
+                "?" if "?" not in candidate else "&"
+            ) + "label_W9dmamG9w9zZg45g93FnLAVbSyd0bBDv=1"
+            try:
+                html = utils.getHtml(fallback_url, site.url, headers=headers)
+            except Exception as fallback_err:
+                utils.kodilog(
+                    "@@@@Cumination: fallback failure in tubxporn: "
+                    + str(fallback_err)
+                )
+                html = ""
+        if html:
+            break
+
+    if not html:
+        utils.notify(msg="List blocked/challenged in harness")
+        utils.eod()
+        return
+    if isinstance(html, bytes):
+        html = html.decode("utf-8", errors="ignore")
+    challenge_markers = (
+        "attention required",
+        "checking your browser",
+        "cf-chl",
+        "cf-ray",
+        "captcha",
+    )
+    if isinstance(html, str) and any(marker in html.lower() for marker in challenge_markers):
+        utils.notify(msg="List blocked/challenged in harness (Cloudflare)")
+        utils.eod()
+        return
     if "There are no videos in the list" in html:
         utils.notify(msg="Nothing found")
         utils.eod()

@@ -42,12 +42,15 @@ def Main():
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]", site.url + "?s=", "Search", site.img_search
     )
-    List(site.url + "new-post/page/1/")
+    utils.eod()
 
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, "")
+    listhtml = utils.getHtml(url, site.url)
+    if not listhtml:
+        utils.eod()
+        return
     soup = utils.parse_html(listhtml)
 
     contextmenu = []

@@ -301,15 +301,35 @@ def List(url, page=1, section=None):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download)
-    html = utils.getHtml(url, site.url)
+    try:
+        html = utils.getHtml(url, site.url)
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in pornhoarder: " + str(e))
+        html = ""
     if not html:
         vp.play_from_link_to_resolve(url)
         return
 
     # Check for direct video links in the page first
-    match = re.search(r'["\']file["\']\s*:\s*["\']([^"\']+\.mp4[^"\']*)["\']', html, re.IGNORECASE)
+    match = re.search(
+        r'["\']file["\']\s*:\s*["\']([^"\']+\.(?:mp4|m3u8)[^"\']*)["\']',
+        html,
+        re.IGNORECASE,
+    )
     if match:
         video_url = match.group(1).replace("\\/", "/")
+        vp.play_from_direct_link(video_url + "|Referer=" + url)
+        return
+
+    source_match = re.search(
+        r'<source[^>]+src=["\']([^"\']+\.(?:mp4|m3u8)[^"\']*)["\']',
+        html,
+        re.IGNORECASE,
+    )
+    if source_match:
+        video_url = source_match.group(1).replace("\\/", "/")
+        if video_url.startswith("//"):
+            video_url = "https:" + video_url
         vp.play_from_direct_link(video_url + "|Referer=" + url)
         return
 
@@ -347,15 +367,36 @@ def Playvid(url, name, download=None):
     if "pornhoarder.net/player" in embed_url:
         headers = dict(ph_headers)
         headers["Referer"] = url
-        player_html = utils.postHtml(embed_url, headers=headers, form_data={"play": ""})
+        try:
+            player_html = utils.postHtml(
+                embed_url, headers=headers, form_data={"play": ""}
+            )
+        except Exception:
+            player_html = ""
         if not player_html:
             player_html = utils.getHtml(embed_url, url)
 
         if player_html:
             # Check for direct file in player HTML
-            file_match = re.search(r'["\']file["\']\s*:\s*["\']([^"\']+\.mp4[^"\']*)["\']', player_html, re.IGNORECASE)
+            file_match = re.search(
+                r'["\']file["\']\s*:\s*["\']([^"\']+\.(?:mp4|m3u8)[^"\']*)["\']',
+                player_html,
+                re.IGNORECASE,
+            )
             if file_match:
                 video_url = file_match.group(1).replace("\\/", "/")
+                vp.play_from_direct_link(video_url + "|Referer=" + embed_url)
+                return
+
+            source_match = re.search(
+                r'<source[^>]+src=["\']([^"\']+\.(?:mp4|m3u8)[^"\']*)["\']',
+                player_html,
+                re.IGNORECASE,
+            )
+            if source_match:
+                video_url = source_match.group(1).replace("\\/", "/")
+                if video_url.startswith("//"):
+                    video_url = "https:" + video_url
                 vp.play_from_direct_link(video_url + "|Referer=" + embed_url)
                 return
 

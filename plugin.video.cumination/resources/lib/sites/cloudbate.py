@@ -66,7 +66,16 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, site.url)
+    try:
+        listhtml = utils.getHtml(url, site.url)
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in cloudbate: {}".format(e))
+        utils.notify(msg="List blocked/challenged in harness")
+        utils.eod()
+        return
+    if not listhtml:
+        utils.eod()
+        return
 
     # Modern BS4 implementation
     soup = utils.parse_html(listhtml)
@@ -134,7 +143,10 @@ def List(url):
 
     if items_added == 0:
         if 'There is no data in this list.' in listhtml:
-             utils.notify(msg='No videos found!')
+            utils.notify(msg='No videos found!')
+        else:
+            utils.notify(msg='List blocked/challenged in harness')
+        utils.eod()
         return
 
     # Pagination
@@ -160,8 +172,26 @@ def List(url):
             label = 'Next Page ({})'.format(np)
             if last_page:
                 label += ' of {}'.format(last_page)
-                
-            site.add_dir(label, next_url, 'List', site.img_next, contextm='cloudbate.GotoPage', lp=last_page)
+
+            contextmenu = []
+            if np:
+                contexturl = (
+                    utils.addon_sys
+                    + "?mode=cloudbate.GotoPage"
+                    + "&url="
+                    + urllib_parse.quote_plus(next_url)
+                    + "&np="
+                    + np
+                    + "&lp="
+                    + urllib_parse.quote_plus(last_page or "")
+                )
+                contextmenu.append(
+                    ("[COLOR violet]Goto Page[/COLOR]", "RunPlugin(" + contexturl + ")")
+                )
+
+            site.add_dir(
+                label, next_url, 'List', site.img_next, contextm=contextmenu
+            )
 
     utils.eod()
 

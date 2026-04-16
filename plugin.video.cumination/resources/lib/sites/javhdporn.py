@@ -237,7 +237,33 @@ def Search(url, keyword=None):
 def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    videohtml = utils.getHtml(url)
+    try:
+        videohtml = utils.getHtml(url)
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: failure in javhdporn: " + str(e))
+        vp.progress.close()
+        return
+    if not videohtml:
+        vp.progress.close()
+        utils.notify("Oh oh", "No video found")
+        return
+
+    direct_patterns = (
+        r'["\']file["\']\s*:\s*["\']([^"\']+\.(?:mp4|m3u8)[^"\']*)["\']',
+        r'<source[^>]+src=["\']([^"\']+\.(?:mp4|m3u8)[^"\']*)["\']',
+    )
+    for pattern in direct_patterns:
+        match = re.search(pattern, videohtml, re.IGNORECASE)
+        if not match:
+            continue
+        play_url = match.group(1).replace("\\/", "/")
+        if play_url.startswith("//"):
+            play_url = "https:" + play_url
+        vp.play_from_direct_link(
+            "{0}|Referer={1}&User-Agent={2}".format(play_url, site.url, utils.USER_AGENT)
+        )
+        return
+
     m = re.compile(
         r'video-id="([^"]+).+?(?:mpu-data|data-mpu)="([^"]+).+?data-ver="([^"]+)',
         re.DOTALL | re.IGNORECASE,
@@ -247,11 +273,25 @@ def Play(url, name, download=None):
         vp.progress.update(50, "[CR]Loading video page[CR]")
         hdr = utils.base_hdrs
         hdr.update({"Origin": site.url[:-1], "Referer": site.url})
-        r = utils.postHtml(
-            "https://video.javhdporn.net/api/play/", form_data=pdata, headers=hdr
-        )
-        jd = json.loads(r)
-        eurl = dex(m.group(1), jd.get("data"), jd.get("ver"))
+        try:
+            r = utils.postHtml(
+                "https://video.javhdporn.net/api/play/", form_data=pdata, headers=hdr
+            )
+            jd = json.loads(r)
+        except Exception as e:
+            utils.kodilog("@@@@Cumination: javhdporn api/play failure: " + str(e))
+            jd = {}
+        if not jd:
+            vp.progress.close()
+            utils.notify("Oh oh", "No video found")
+            return
+        try:
+            eurl = dex(m.group(1), jd.get("data"), jd.get("ver"))
+        except Exception as e:
+            utils.kodilog("@@@@Cumination: javhdporn decode failure: " + str(e))
+            vp.progress.close()
+            utils.notify("Oh oh", "No video found")
+            return
         eurl = "https:" + eurl if eurl.startswith("//") else eurl
         hdr.pop("Origin")
         vp.progress.update(75, "[CR]Loading embed page[CR]")
