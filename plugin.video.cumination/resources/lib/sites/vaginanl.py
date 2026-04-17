@@ -23,7 +23,9 @@ from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
     "vaginanl",
-    "[COLOR hotpink]Vagina.nl[/COLOR] [COLOR orange](Dutch)[/COLOR]",
+    "[COLOR hotpink]Vagina.nl[/COLOR] [COLOR orange](Dutch,
+    category="Video Tubes",
+)[/COLOR]",
     "https://vagina.nl/",
     "vaginanl.png",
     "vaginanl",

@@ -28,6 +28,7 @@ site = AdultSite(
     "https://www.porndig.com/",
     "porndig.png",
     "porndig",
+    category="Video Tubes",
 )
 site2 = AdultSite(
     "porndig2",

@@ -35,6 +35,7 @@ site = AdultSite(
     "https://pornhd3x.tv/",
     "pornhd3x.png",
     "pornhd3x",
+    category="Video Tubes",
 )
 
 _SOURCE_SECRET = "98126avrbi6m49vd7shxkn985"

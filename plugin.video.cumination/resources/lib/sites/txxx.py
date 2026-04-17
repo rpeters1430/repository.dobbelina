@@ -22,7 +22,8 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
-    "txxx", "[COLOR hotpink]Txxx[/COLOR]", "https://txxx.com/", "txxx.png", "txxx"
+    "txxx", "[COLOR hotpink]Txxx[/COLOR]", "https://txxx.com/", "txxx.png", "txxx",
+    category="Video Tubes",
 )
 site1 = AdultSite(
     "tubepornclassic",

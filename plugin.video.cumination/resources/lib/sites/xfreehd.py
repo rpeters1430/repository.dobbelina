@@ -29,6 +29,7 @@ site = AdultSite(
     "https://beta.xfreehd.com/",
     "xfreehd.png",
     "xfreehd",
+    category="Video Tubes",
 )
 
 getinput = utils._get_keyboard

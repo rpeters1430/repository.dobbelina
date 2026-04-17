@@ -22,7 +22,8 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
-    "porntn", "[COLOR hotpink]PornTN[/COLOR]", "https://porntn.com/", "porntn.png"
+    "porntn", "[COLOR hotpink]PornTN[/COLOR]", "https://porntn.com/", "porntn.png",
+    category="Video Tubes",
 )
 
 

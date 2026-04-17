@@ -23,7 +23,8 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
-    "sextb", "[COLOR hotpink]SEXTB[/COLOR]", "https://sextb.net/", "sextb.png", "sextb"
+    "sextb", "[COLOR hotpink]SEXTB[/COLOR]", "https://sextb.net/", "sextb.png", "sextb",
+    category="Video Tubes",
 )
 enames = {
     "VV": "VideoVard",

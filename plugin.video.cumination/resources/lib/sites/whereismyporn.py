@@ -26,6 +26,7 @@ site = AdultSite(
     "https://whereismyporn.com/",
     "",
     "whereismyporn",
+    category="Video Tubes",
 )
 
 addon = utils.addon

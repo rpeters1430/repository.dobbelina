@@ -31,6 +31,7 @@ site = AdultSite(
     "https://www.whoreshub.com/",
     "whoreshub.png",
     "whoreshub",
+    category="Video Tubes",
 )
 
 whlogged = "true" in utils.addon.getSetting("whlogged")

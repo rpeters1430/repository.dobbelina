@@ -27,6 +27,7 @@ site = AdultSite(
     "https://pimpbunny.com/",
     "pimpbunny.png",
     "pimpbunny",
+    category="Video Tubes",
 )
 
 @site.register(default_mode=True)

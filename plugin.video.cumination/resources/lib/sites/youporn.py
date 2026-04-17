@@ -28,6 +28,7 @@ site = AdultSite(
     "https://www.youporn.com/",
     "youporn.png",
     "youporn",
+    category="Video Tubes",
 )
 cookiehdr = {"Cookie": "age_verified=1"}
 
