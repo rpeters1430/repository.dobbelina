@@ -30,6 +30,7 @@ site = AdultSite(
     "https://javmama.me/",
     "javmoe.png",
     "javmoe",
+    category="JAV & Asian",
 )
 
 enames = {

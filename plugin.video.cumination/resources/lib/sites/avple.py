@@ -28,7 +28,8 @@ from resources.lib.http_timeouts import HTTP_TIMEOUT_DEFAULT
 from six.moves import urllib_parse
 
 site = AdultSite(
-    "avple", "[COLOR hotpink]Avple[/COLOR]", "https://avple.tv/", "avple.png", "avple"
+    "avple", "[COLOR hotpink]Avple[/COLOR]", "https://avple.tv/", "avple.png", "avple",
+    category="JAV & Asian",
 )
 CDN = [
     "q2cyl7.cdnedge.live",

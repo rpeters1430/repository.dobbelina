@@ -28,6 +28,7 @@ site = AdultSite(
     "https://www4.javhdporn.net/",
     "javhdporn.png",
     "javhdporn",
+    category="JAV & Asian",
 )
 
 

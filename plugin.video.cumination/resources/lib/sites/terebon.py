@@ -30,6 +30,7 @@ site = AdultSite(
     "https://b.terebon.net/",
     "terebon.png",
     "terebon",
+    category="JAV & Asian",
 )
 
 

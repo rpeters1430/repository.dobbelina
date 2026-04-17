@@ -23,7 +23,8 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
-    "hpjav", "[COLOR hotpink]HPJav[/COLOR]", "https://hpjav.in/", "hpjav.png", "hpjav"
+    "hpjav", "[COLOR hotpink]HPJav[/COLOR]", "https://hpjav.in/", "hpjav.png", "hpjav",
+    category="JAV & Asian",
 )
 
 

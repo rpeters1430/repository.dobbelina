@@ -26,6 +26,7 @@ site = AdultSite(
     "https://www.japteenx.com/",
     "japteenx.png",
     "japteenx",
+    category="JAV & Asian",
 )
 
 

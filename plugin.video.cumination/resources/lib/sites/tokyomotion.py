@@ -28,6 +28,7 @@ site = AdultSite(
     "https://www.tokyomotion.net/",
     "tokyomotion.png",
     "tokyomotion",
+    category="JAV & Asian",
 )
 
 # Use local artwork for listing items to avoid heavy remote thumb fetches that can
