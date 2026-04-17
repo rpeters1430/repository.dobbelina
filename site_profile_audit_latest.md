@@ -7,7 +7,7 @@
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
+| javgg | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | tubxporn | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
@@ -33,6 +33,7 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
+| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -79,7 +80,6 @@
 | hqporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | japteenx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javbangers | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| javgg | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javguru | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javhdporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javmoe | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -167,7 +167,7 @@
 | xfreehd | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xhamster | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xmegadrive | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| xmoviesforyou | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| xmoviesforyou | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | xozilla | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xsharings | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xtheatre | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -180,7 +180,7 @@
 
 ## Next Batch
 
-- **analdin** (failing, tier=2) | failures: list:FAIL
+- **javgg** (failing, tier=None)
 - **josporn** (failing, tier=None) | failures: list:FAIL
 - **tubxporn** (warn, tier=None) | failures: categories:FAIL
 - **anybunny** (tier1, tier=1)
