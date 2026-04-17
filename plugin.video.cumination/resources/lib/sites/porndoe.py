@@ -21,6 +21,7 @@ site = AdultSite(
     "[COLOR hotpink]PornDoe[/COLOR]",
     "https://porndoe.com/",
     "porndoe.png",
+    category="Video Tubes",
 )
 
 

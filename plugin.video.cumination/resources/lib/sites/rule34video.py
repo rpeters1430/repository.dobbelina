@@ -28,6 +28,7 @@ site = AdultSite(
     "https://rule34video.com/",
     "rule34video.png",
     "rule34video",
+    category="Hentai & Anime",
 )
 
 

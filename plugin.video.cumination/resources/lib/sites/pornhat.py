@@ -28,6 +28,7 @@ site = AdultSite(
     "https://www.pornhat.com/",
     "pornhat.png",
     "pornhat",
+    category="Video Tubes",
 )
 site1 = AdultSite(
     "helloporn",
@@ -35,6 +36,7 @@ site1 = AdultSite(
     "https://hello.porn/",
     "helloporn.png",
     "helloporn",
+    category="Video Tubes",
 )
 site2 = AdultSite(
     "okporn",
@@ -42,6 +44,7 @@ site2 = AdultSite(
     "https://ok.porn/",
     "okporn.png",
     "okporn",
+    category="Video Tubes",
 )
 site4 = AdultSite(
     "pornstarstube",
@@ -49,6 +52,7 @@ site4 = AdultSite(
     "https://pornstars.tube/",
     "pornstarstube.png",
     "pornstarstube",
+    category="Video Tubes",
 )
 site5 = AdultSite(
     "maxporn",
@@ -56,6 +60,7 @@ site5 = AdultSite(
     "https://max.porn/",
     "maxporn.png",
     "maxporn",
+    category="Video Tubes",
 )
 site6 = AdultSite(
     "homoxxx",
@@ -63,6 +68,7 @@ site6 = AdultSite(
     "https://homo.xxx/",
     "homoxxx.png",
     "homoxxx",
+    category="Video Tubes",
 )
 site7 = AdultSite(
     "perfectgirls",
@@ -70,6 +76,7 @@ site7 = AdultSite(
     "https://www.perfectgirls.xxx/",
     "perfectgirls.png",
     "perfectgirls",
+    category="Video Tubes",
 )
 
 

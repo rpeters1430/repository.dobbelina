@@ -32,6 +32,7 @@ site = AdultSite(
     "https://playhdporn.com/",
     "playhdporn.png",
     "playhdporn",
+    category="Video Tubes",
 )
 
 VIDEO_LIST_SPEC = SoupSiteSpec(

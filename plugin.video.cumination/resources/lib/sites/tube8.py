@@ -35,6 +35,7 @@ site = AdultSite(
     "https://www.tube8.com/",
     "tube8.png",
     "tube8",
+    category="Video Tubes",
 )
 cookiehdr = {"Cookie": "age_verified=1"}
 

@@ -31,6 +31,7 @@ site = AdultSite(
     "https://www.xmegadrive.com/",
     "xmegadrive.png",
     "xmegadrive",
+    category="Video Tubes",
 )
 REFERER_HEADER = site.url
 ORIGIN_HEADER = site.url.rstrip("/")

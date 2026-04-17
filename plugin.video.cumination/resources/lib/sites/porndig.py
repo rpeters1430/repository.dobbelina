@@ -28,6 +28,7 @@ site = AdultSite(
     "https://www.porndig.com/",
     "porndig.png",
     "porndig",
+    category="Video Tubes",
 )
 site2 = AdultSite(
     "porndig2",
@@ -35,6 +36,7 @@ site2 = AdultSite(
     "http://www.porndig.com/",
     "porndig.png",
     "porndig",
+    category="Video Tubes",
 )
 
 addon = utils.addon

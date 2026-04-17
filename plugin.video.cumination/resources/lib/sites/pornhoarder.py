@@ -27,6 +27,7 @@ site = AdultSite(
     "https://pornhoarder.io/",
     "pornhoarder.png",
     "pornhoarder",
+    category="Video Tubes",
 )
 
 ph_headers = {

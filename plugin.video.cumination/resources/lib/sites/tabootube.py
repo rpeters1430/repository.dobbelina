@@ -30,6 +30,7 @@ site = AdultSite(
     "https://www.tabootube.xxx/",
     "tabootube.png",
     "tabootube",
+    category="Specialty",
 )
 
 

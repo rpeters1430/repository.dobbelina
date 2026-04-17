@@ -26,6 +26,7 @@ site = AdultSite(
     "https://aagmaal.farm/",
     "aagmaalpro.png",
     "aagmaalpro",
+    category="Specialty",
 )
 
 

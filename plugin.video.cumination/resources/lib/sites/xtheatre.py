@@ -26,6 +26,7 @@ site = AdultSite(
     "https://pornxtheatre.com/",
     "xtheatre.png",
     "xtheatre",
+    category="Video Tubes",
 )
 
 addon = utils.addon

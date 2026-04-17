@@ -29,6 +29,7 @@ site = AdultSite(
     "https://celebsroulette.com/",
     "celebsroulette.png",
     "celebsroulette",
+    category="Specialty",
 )
 
 

@@ -30,6 +30,7 @@ site = AdultSite(
     "https://www.porntrex.com/",
     "pt.png",
     "porntrex",
+    category="Video Tubes",
 )
 
 getinput = utils._get_keyboard

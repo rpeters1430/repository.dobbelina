@@ -27,6 +27,7 @@ site = AdultSite(
     "https://www.homemoviestube.com/",
     "homemoviestube.png",
     "homemoviestube",
+    category="Amateur & Social",
 )
 
 

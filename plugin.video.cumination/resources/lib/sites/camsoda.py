@@ -27,6 +27,7 @@ site = AdultSite(
     "camsoda.png",
     "camsoda",
     True,
+    category="Cams & Live",
 )
 addon = utils.addon
 

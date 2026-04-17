@@ -32,6 +32,7 @@ site = AdultSite(
     "https://archivebate.com/",
     "archivebate.png",
     "archivebate",
+    category="Aggregators",
 )
 
 _PLATFORMS = [

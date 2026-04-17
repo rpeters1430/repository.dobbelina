@@ -32,6 +32,7 @@ site = AdultSite(
     "https://pmvhaven.com/",
     "pmvhaven.png",
     "pmvhaven",
+    category="Specialty",
 )
 
 

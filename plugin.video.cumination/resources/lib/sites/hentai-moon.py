@@ -28,6 +28,7 @@ site = AdultSite(
     "https://hentai-moon.com/",
     "hentai-moon.png",
     "hentai-moon",
+    category="Hentai & Anime",
 )
 
 ajaxlist = "?mode=async&function=get_block&block_id=list_videos_latest_videos_list&sort_by=post_date&from=1"

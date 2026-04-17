@@ -31,6 +31,7 @@ site = AdultSite(
     "http://m.porno365.pics/",
     "porno365.png",
     "porno365",
+    category="Video Tubes",
 )
 porn365_headers = utils.base_hdrs.copy()
 porn365_headers.update(

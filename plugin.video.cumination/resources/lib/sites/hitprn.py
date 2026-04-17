@@ -27,6 +27,7 @@ site = AdultSite(
     "https://www.hitprn.com/",
     "hitprn.png",
     "hitprn",
+    category="Video Tubes",
 )
 
 addon = utils.addon

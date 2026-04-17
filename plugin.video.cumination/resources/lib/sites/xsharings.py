@@ -30,6 +30,7 @@ site = AdultSite(
     "https://xsharings.com/",
     "xsharings.png",
     "xsharings",
+    category="Amateur & Social",
 )
 
 addon = utils.addon

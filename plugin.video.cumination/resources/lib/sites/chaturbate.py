@@ -43,7 +43,7 @@ site = AdultSite(
     "chaturbate.png",
     "chaturbate",
     webcam=True,
-    category="Cam Models",
+    category="Cams & Live",
 )
 
 addon = utils.addon

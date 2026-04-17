@@ -28,6 +28,7 @@ site = AdultSite(
     "https://pornxp.com-mirror.com/",
     "pornxp.png",
     "pornxp",
+    category="Video Tubes",
 )
 
 VIDEO_LIST_SPEC = SoupSiteSpec(

@@ -28,6 +28,7 @@ site = AdultSite(
     "https://pornezoo.net",
     "pornez.png",
     "pornez",
+    category="Video Tubes",
 )
 
 

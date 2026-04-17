@@ -32,6 +32,7 @@ site = AdultSite(
     "streamate.png",
     "streamate",
     True,
+    category="Cams & Live",
 )
 
 

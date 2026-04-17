@@ -30,6 +30,7 @@ site = AdultSite(
     "http://www.uflash.tv/",
     "uflash.png",
     "uflash",
+    category="Video Tubes",
 )
 
 

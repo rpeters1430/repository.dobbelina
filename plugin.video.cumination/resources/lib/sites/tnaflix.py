@@ -29,6 +29,7 @@ site = AdultSite(
     "https://www.tnaflix.com/",
     "tnaflix.png",
     "tnaflix",
+    category="Video Tubes",
 )
 
 

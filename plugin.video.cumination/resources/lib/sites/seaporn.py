@@ -29,6 +29,7 @@ site = AdultSite(
     "https://www.seaporn.org/",
     "seaporn.png",
     "seaporn",
+    category="JAV & Asian",
 )
 
 quality_levels = {

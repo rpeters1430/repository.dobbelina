@@ -28,6 +28,7 @@ site = AdultSite(
     "https://noodlemagazine.com/",
     "noodlemagazine.png",
     "noodlemagazine",
+    category="JAV & Asian",
 )
 
 data = {

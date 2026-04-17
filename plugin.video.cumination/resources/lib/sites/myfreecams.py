@@ -31,6 +31,7 @@ site = AdultSite(
     "myfreecams.png",
     "myfreecams",
     True,
+    category="Cams & Live",
 )
 
 

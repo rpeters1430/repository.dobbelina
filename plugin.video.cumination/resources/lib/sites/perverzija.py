@@ -27,6 +27,7 @@ site = AdultSite(
     "https://tube.perverzija.com/",
     "perverzija.png",
     "perverzija",
+    category="Specialty",
 )
 
 

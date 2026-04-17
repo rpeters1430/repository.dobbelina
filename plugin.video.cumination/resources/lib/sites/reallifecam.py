@@ -28,6 +28,7 @@ site = AdultSite(
     "https://reallifecam.to/",
     "rlc.png",
     "rlc",
+    category="Cams & Live",
 )
 site2 = AdultSite(
     "vhlife",
@@ -35,6 +36,7 @@ site2 = AdultSite(
     "https://www.voyeur-house.me/",
     "vhlife.png",
     "vhlife",
+    category="Cams & Live",
 )
 site3 = AdultSite(
     "vhlife1",
@@ -42,6 +44,7 @@ site3 = AdultSite(
     "https://reallifecams.us/",
     "vhlife1.png",
     "vhlife1",
+    category="Cams & Live",
 )
 site4 = AdultSite(
     "camcaps",
@@ -49,6 +52,7 @@ site4 = AdultSite(
     "https://camcaps.tv/",
     "camcaps.png",
     "camcapsto",
+    category="Cams & Live",
 )
 
 

@@ -28,6 +28,7 @@ site = AdultSite(
     "https://www.cumlouder.com/",
     "cumlouder.png",
     "cumlouder",
+    category="Video Tubes",
 )
 
 

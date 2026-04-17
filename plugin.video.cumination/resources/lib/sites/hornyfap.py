@@ -27,6 +27,7 @@ site = AdultSite(
     "https://hornyfap.tv/",
     "hornyfap.png",
     "hornyfap",
+    category="Video Tubes",
 )
 
 

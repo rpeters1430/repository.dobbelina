@@ -26,7 +26,8 @@ import xbmcgui
 
 
 site = AdultSite(
-    "85po", "[COLOR hotpink]85po[/COLOR]", "https://85po.com/", "85po.png", "85po"
+    "85po", "[COLOR hotpink]85po[/COLOR]", "https://85po.com/", "85po.png", "85po",
+    category="JAV & Asian",
 )
 
 
