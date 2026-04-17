@@ -116,7 +116,7 @@ def Main():
         "Search",
         site.img_search,
     )
-    List(site.url)
+    List(site.url + "page/1")
     utils.eod()
 
 

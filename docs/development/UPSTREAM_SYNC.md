@@ -1,9 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-
-**Last Updated**: 2026-04-12
-**Last Sync**: 2026-04-12 - Ported Chaturbate session reconnect and advanced proxy features (ea0f97ce, 53acf185, 23c2cbb3, 11721a36, ba44c62c, ea3d1e7a, 85b848d4, 5a01bef1, 00bdb746, 28ab198a, 1883c5ae, 47ccca1f)
+**Last Updated**: 2026-04-16
+**Last Sync**: 2026-04-16 - Ported Chaturbate gzipped manifest fix, Spankbang full redesign fix (Tags/Models/Models_alphabet + UA/Referer), XMoviesForYou listing fix, and textBox crash fix.
 
 ---
 
@@ -18,8 +17,20 @@
 
 ---
 
-## Already Integrated Commits
+## Sync Sessions
 
+### 2026-04-16 Cherry-Pick Session
+Integrated latest fixes from upstream `dobbelina/repository.dobbelina` following site redesigns and mmcdn edge changes.
+
+| Upstream Hash | Description | Fork Hash | Date | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `3b358bdb` | xmoviesforyou - fix listing | `manual` | 2026-04-16 | Updated Main to call List with /page/1 suffix |
+| `bc66d38f` | fix crashes on first launch (RuntimeError) | `manual` | 2026-04-16 | Wrapped textBox controls in try/except RuntimeError |
+| `4aa2fd56` | Cloudbate search feature for online Fav | `manual` | 2026-04-16 | Cloudbate context menu already present from prior session |
+| `eb7785cc` | chaturbate - decompress gzipped manifests | `manual` | 2026-04-16 | Added _read_body(); fixed six.moves import for test compat |
+| `986990ac` | spankbang - fix listings after redesign | `manual` | 2026-04-16 | BS4: data-testid selectors for video-item, alphabet-letter, pornstar-link-item; dedup Tags; UA/Referer on Playvid; updated fixtures |
+
+### 2026-04-12 Cherry-Pick Session
 These upstream commits have been integrated into the fork:
 
 ### 2026-04-14 Porting Session

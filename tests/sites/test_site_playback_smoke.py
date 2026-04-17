@@ -93,8 +93,8 @@ PLAY_CASES = [
         "func": "Playvid",
         "url": "https://spankbang.com/abc123",
         "fixture": "spankbang_play.html",
-        "expect": lambda rec, url: rec.play_from_direct_link
-        == "https://cdn.spankbang.com/video720.mp4",
+        "expect": lambda rec, url: isinstance(rec.play_from_direct_link, str)
+        and rec.play_from_direct_link.startswith("https://cdn.spankbang.com/video720.mp4"),
     },
     {
         "name": "porngo",

@@ -28,6 +28,14 @@
     "spankbang": {
       "tier": 1
     },
+    "xmoviesforyou": {
+      "tier": 2,
+      "harness": {
+        "playback_not_testable": true,
+        "search_results_optional": true,
+        "categories_optional": true
+      }
+    },
     "youporn": {
       "tier": 1
     },

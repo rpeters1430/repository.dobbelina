@@ -1,3 +1,10 @@
+[B]Version 1.1.368[/B]
+- utils: fix crashes on first launch with some skins by handling setControls RuntimeError
+- xmoviesforyou: fix broken listings by using /page/1 as base URL
+- chaturbate: handle gzipped manifests from mmcdn edges to fix playback
+- chaturbate: add "Find recordings on Cloudbate" context menu to online favorites
+- spankbang: fix listings by scoping to video-list block and fix playback with Referer/UA
+
 [B]Version 1.1.367[/B]
 - Enhance error handling and improve video link extraction across multiple site scrapers
 - chore: update site configurations and enhance video playback tests

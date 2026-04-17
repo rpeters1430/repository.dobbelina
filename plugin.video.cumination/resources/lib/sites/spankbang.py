@@ -102,6 +102,13 @@ def List(url):
     listhtml = utils.getHtml(url, "")
 
     soup = utils.parse_html(listhtml)
+    # scope to the last video-list block - every page (home, search, model) renders a
+    # trending strip above the actual results using the same video-item markup, so
+    # take only the final block to avoid the trending items leaking into every listing
+    video_list_blocks = soup.select('[data-testid="video-list"]')
+    if video_list_blocks:
+        soup = video_list_blocks[-1]
+
     video_items = soup.select('[data-testid="video-item"]')
     for item in video_items:
         link = item.select_one('a[href*="/video/"]')
@@ -180,23 +187,21 @@ def Tags(url):
     
     soup = utils.parse_html(cathtml)
 
-    # Find all tag links (don't restrict to search_holder as tags are in main_content_container)
     tag_links = soup.select("a.keyword")
+    # the page renders a "Top Tags" strip above the full A-Z list using the same markup,
+    # so each popular tag shows up twice — dedup by href, keep first occurrence
+    seen = set()
     tags = []
     for link in tag_links:
-        try:
-            catpage = utils.safe_get_attr(link, "href")
-            if not catpage:
-                continue
-            name = utils.safe_get_text(link).strip()
-            if name and catpage:
-                tags.append((catpage, name))
-        except Exception as exc:
-            utils.kodilog("spankbang Tags: Failed to parse tag - {}".format(exc))
+        catpage = utils.safe_get_attr(link, "href")
+        if not catpage or catpage in seen:
             continue
+        seen.add(catpage)
+        name = utils.safe_get_text(link).strip()
+        if name:
+            tags.append((catpage, name))
 
-    # Sort by name and add to directory
-    for catpage, name in sorted(tags, key=lambda x: x[1]):
+    for catpage, name in sorted(tags, key=lambda x: x[1].lower()):
         full_url = (
             site.url[:-1] + catpage if not catpage.startswith("http") else catpage
         )
@@ -233,10 +238,11 @@ def Models_alphabet(url):
     cathtml = utils.getHtml(url, "")
     
     soup = utils.parse_html(cathtml)
-    items = soup.select("ul.alphabets li a")
+    # redesigned site uses data-testid="alphabet-letter" on the <a> elements directly
+    items = soup.select('[data-testid="alphabet-letter"]')
     for link in items:
         catpage = utils.safe_get_attr(link, "href")
-        name = utils.safe_get_text(link)
+        name = utils.safe_get_text(link).strip()
         if catpage and name:
             full_url = (
                 site.url[:-1] + catpage if not catpage.startswith("http") else catpage
@@ -250,23 +256,18 @@ def Models(url):
     cathtml = utils.getHtml(url, "")
     
     soup = utils.parse_html(cathtml)
-    items = soup.select("ul.list li")
+    # redesigned site uses data-testid="pornstar-link-item" on the <a> element directly,
+    # with the video count in a nested <span>
+    items = soup.select('[data-testid="pornstar-link-item"]')
     for item in items:
-        link = item.select_one("a")
-        if not link:
-            continue
-
-        catpage = utils.safe_get_attr(link, "href")
-        name = utils.safe_get_text(link)
-
-        videos = ""
-        # Try to find the video count which is usually in a span with class "videos" or just a span
-        span = item.select_one("span.videos") or item.select_one("span")
-        if span:
-            videos = utils.safe_get_text(span).strip()
+        catpage = utils.safe_get_attr(item, "href")
+        span = item.select_one("span")
+        videos = utils.safe_get_text(span).strip() if span else ""
+        full_text = utils.safe_get_text(item)
+        name = full_text.replace(videos, "").strip() if videos else full_text
 
         if catpage and name:
-            name_display = name + "[COLOR hotpink]{}[/COLOR]".format(videos)
+            name_display = name + " [COLOR hotpink]({})[/COLOR]".format(videos) if videos else name
             full_url = (
                 site.url[:-1] + catpage if not catpage.startswith("http") else catpage
             )
@@ -298,6 +299,7 @@ def Playvid(url, name, download=None):
 
     # Clean up escaped characters in URL
     videourl = videourl.replace(r"\u0026", "&").replace("\\/", "/")
+    videourl += "|User-Agent={0}&Referer={1}".format(utils.USER_AGENT, url)
     vp.progress.update(75, "[CR]Playing video[CR]")
     vp.play_from_direct_link(videourl)
 
