@@ -133,7 +133,13 @@
       "Bash(__NEW_LINE_61688f34f14e9159__ cat:*)",
       "Bash(tests/fixtures/sites/aagmaal/categories.html:*)",
       "Bash(tests/fixtures/sites/aagmaalpro/listing.html:*)",
-      "Bash(tests/fixtures/sites/aagmaalpro/categories.html:*)"
+      "Bash(tests/fixtures/sites/aagmaalpro/categories.html:*)",
+      "Bash(sed -n '19,30p' /home/rpeters1428/repository.dobbelina/plugin.video.cumination/resources/lib/sites/analdin.py)",
+      "Bash(sed -n '28,40p' /home/rpeters1428/repository.dobbelina/plugin.video.cumination/resources/lib/sites/85po.py)",
+      "Bash(sed -n '29,50p' /home/rpeters1428/repository.dobbelina/plugin.video.cumination/resources/lib/sites/erogarga.py)",
+      "Bash(ln *)",
+      "Bash(echo \"test\")",
+      "Read(//tmp/**)"
     ],
     "deny": [],
     "ask": []
