@@ -288,34 +288,35 @@ def INDEX():
     utils.eod(basics.addon_handle, False)
 
 
+_CATEGORY_ICONS = {
+    "Video Tubes":      basics.cum_image("pornhub.png"),
+    "Cams & Live":      basics.cum_image("chaturbate.png"),
+    "JAV & Asian":      basics.cum_image("javmoe.png"),
+    "Hentai & Anime":   basics.cum_image("hanime.png"),
+    "Amateur & Social": basics.cum_image("erome.png"),
+    "Specialty":        basics.cum_image("trannyteca.png"),
+    "Aggregators":      basics.cum_image("archivebate.png"),
+}
+
+
 @url_dispatcher.register()
 def category_list():
     categories = set()
     for x in AdultSite.get_sites():
         if x.category:
             categories.add(x.category)
-    
-    for cat in sorted(list(categories)):
+
+    for cat in sorted(categories):
+        icon = _CATEGORY_ICONS.get(cat, basics.cum_image("cum-sites.png"))
         url_dispatcher.add_dir(
             "[COLOR white]{}[/COLOR]".format(cat),
             cat,
             "browse_category",
-            basics.cum_image("cum-sites.png"),
+            icon,
             "",
             list_avail=False,
         )
-    
-    # Also add an "Uncategorized" section if any exist
-    if any(not x.category for x in AdultSite.get_sites()):
-        url_dispatcher.add_dir(
-            "[COLOR white]Other / Uncategorized[/COLOR]",
-            "None",
-            "browse_category",
-            basics.cum_image("cum-sites.png"),
-            "",
-            list_avail=False,
-        )
-    
+
     utils.eod(basics.addon_handle, False)
 
 
