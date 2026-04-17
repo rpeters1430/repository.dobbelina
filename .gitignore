@@ -34,3 +34,4 @@ node_modules/
 .worktrees/
 results/
 scripts/results/
+.worktrees/
