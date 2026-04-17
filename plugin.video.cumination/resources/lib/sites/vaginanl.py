@@ -23,12 +23,11 @@ from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
     "vaginanl",
-    "[COLOR hotpink]Vagina.nl[/COLOR] [COLOR orange](Dutch,
-    category="Video Tubes",
-)[/COLOR]",
+    "[COLOR hotpink]Vagina.nl[/COLOR] [COLOR orange](Dutch)[/COLOR]",
     "https://vagina.nl/",
     "vaginanl.png",
     "vaginanl",
+    category="Video Tubes",
 )
 
 

@@ -24,12 +24,11 @@ from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
     "poldertube",
-    "[COLOR hotpink]Poldertube.nl[/COLOR] [COLOR orange](Dutch,
-    category="Video Tubes",
-)[/COLOR]",
+    "[COLOR hotpink]Poldertube.nl[/COLOR] [COLOR orange](Dutch)[/COLOR]",
     "https://www.poldertube.nl/",
     "poldertube.png",
     "poldertube",
+    category="Video Tubes",
 )
 site2 = AdultSite(
     "sextube",
@@ -37,6 +36,7 @@ site2 = AdultSite(
     "https://www.sextube.nl/",
     "sextube.png",
     "sextube",
+    category="Video Tubes",
 )
 site3 = AdultSite(
     "12milf",
@@ -44,6 +44,7 @@ site3 = AdultSite(
     "https://www.12milf.com/nl/",
     "12milf.png",
     "12milf",
+    category="Video Tubes",
 )
 site4 = AdultSite(
     "porntubenl",
@@ -51,6 +52,7 @@ site4 = AdultSite(
     "https://www.porntube.nl/",
     "porntubenl.png",
     "porntubenl",
+    category="Video Tubes",
 )
 
 

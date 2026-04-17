@@ -31,6 +31,7 @@ site1 = AdultSite(
     "https://tubepornclassic.com/",
     "tubepornclassic.png",
     "tubepornclassic",
+    category="Video Tubes",
 )
 site2 = AdultSite(
     "voyeurhit",
@@ -38,6 +39,7 @@ site2 = AdultSite(
     "https://voyeurhit.com/",
     "voyeurhit.png",
     "voyeurhit",
+    category="Video Tubes",
 )
 site3 = AdultSite(
     "hclips",
@@ -45,12 +47,15 @@ site3 = AdultSite(
     "https://hclips.com/",
     "hclips.png",
     "hclips",
+    category="Video Tubes",
 )
 site4 = AdultSite(
-    "hdzog", "[COLOR hotpink]HD Zog[/COLOR]", "https://hdzog.com/", "hdzog.png", "hdzog"
+    "hdzog", "[COLOR hotpink]HD Zog[/COLOR]", "https://hdzog.com/", "hdzog.png", "hdzog",
+    category="Video Tubes",
 )
 site5 = AdultSite(
-    "vjav", "[COLOR hotpink]Vjav[/COLOR]", "https://vjav.com/", "vjav.png", "vjav"
+    "vjav", "[COLOR hotpink]Vjav[/COLOR]", "https://vjav.com/", "vjav.png", "vjav",
+    category="Video Tubes",
 )
 site6 = AdultSite(
     "shemalez",
@@ -58,6 +63,7 @@ site6 = AdultSite(
     "https://shemalez.com/",
     "shemalez.png",
     "shemalez",
+    category="Video Tubes",
 )
 site7 = AdultSite(
     "upornia",
@@ -65,6 +71,7 @@ site7 = AdultSite(
     "https://upornia.com/",
     "upornia.png",
     "upornia",
+    category="Video Tubes",
 )
 site9 = AdultSite(
     "manysex",
@@ -72,6 +79,7 @@ site9 = AdultSite(
     "https://manysex.com/",
     "manysex.png",
     "manysex",
+    category="Video Tubes",
 )
 site10 = AdultSite(
     "hotmovs",
@@ -79,6 +87,7 @@ site10 = AdultSite(
     "https://hotmovs.com/",
     "hotmovs.png",
     "hotmovs",
+    category="Video Tubes",
 )
 site13 = AdultSite(
     "thegay",
@@ -86,6 +95,7 @@ site13 = AdultSite(
     "https://thegay.com/",
     "thegay.png",
     "thegay",
+    category="Video Tubes",
 )
 site14 = AdultSite(
     "inporn",
@@ -93,6 +103,7 @@ site14 = AdultSite(
     "https://inporn.com/",
     "inporn.png",
     "inporn",
+    category="Video Tubes",
 )
 site15 = AdultSite(
     "desiporn",
@@ -100,6 +111,7 @@ site15 = AdultSite(
     "https://desi-porn.tube/",
     "desiporn.png",
     "desiporn",
+    category="Video Tubes",
 )
 
 
