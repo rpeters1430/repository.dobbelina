@@ -28,6 +28,7 @@ site = AdultSite(
     "https://anybunny.org/",
     "anybunny.png",
     "anybunny",
+    category="Video Tubes",
 )
 
 # Site structure (as of 2026-03):

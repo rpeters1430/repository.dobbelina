@@ -31,6 +31,7 @@ site = AdultSite(
     "https://fyxxr.to/",
     "fyxxr.png",
     "fyxxr",
+    category="Video Tubes",
 )
 
 

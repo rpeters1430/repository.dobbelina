@@ -31,6 +31,7 @@ site = AdultSite(
     "naked.png",
     "naked",
     True,
+    category="Video Tubes",
 )
 
 

@@ -24,7 +24,9 @@ from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
     "poldertube",
-    "[COLOR hotpink]Poldertube.nl[/COLOR] [COLOR orange](Dutch)[/COLOR]",
+    "[COLOR hotpink]Poldertube.nl[/COLOR] [COLOR orange](Dutch,
+    category="Video Tubes",
+)[/COLOR]",
     "https://www.poldertube.nl/",
     "poldertube.png",
     "poldertube",

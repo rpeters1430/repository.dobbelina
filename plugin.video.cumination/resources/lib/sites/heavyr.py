@@ -31,6 +31,7 @@ site = AdultSite(
     "https://www.heavy-r.com/",
     "heavyr.png",
     "heavyr",
+    category="Video Tubes",
 )
 
 VIDEO_LIST_SPEC = SoupSiteSpec(

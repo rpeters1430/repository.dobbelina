@@ -29,6 +29,7 @@ site = AdultSite(
     "https://www.mrsexe.com/",
     "mrsexe.png",
     "mrsexe",
+    category="Video Tubes",
 )
 
 progress = utils.progress

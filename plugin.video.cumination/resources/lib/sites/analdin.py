@@ -21,6 +21,7 @@ site = AdultSite(
     "[COLOR hotpink]Analdin[/COLOR]",
     "https://www.analdin.com/",
     "analdin.png",
+    category="Video Tubes",
 )
 
 
