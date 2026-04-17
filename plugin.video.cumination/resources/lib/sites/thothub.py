@@ -35,6 +35,7 @@ site = AdultSite(
     "https://thothub.mx/",
     "thothub.png",
     "thothub",
+    category="Amateur & Social",
 )
 # Known mirrors observed upstream: thothub.tube, thothub.to, thothub.lol.
 # Keep the canonical base on .mx and treat other domains as alternates only.

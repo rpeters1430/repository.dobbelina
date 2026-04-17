@@ -37,6 +37,7 @@ site = AdultSite(
     "https://www.livecamsrip.com/",
     "livecamrips.png",
     "livecamrips",
+    category="Amateur & Social",
 )
 
 

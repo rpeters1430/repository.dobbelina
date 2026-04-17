@@ -27,6 +27,7 @@ site = AdultSite(
     "https://www.naughtyblog.org/",
     "naughtyblog.png",
     "naughtyblog",
+    category="Amateur & Social",
 )
 
 

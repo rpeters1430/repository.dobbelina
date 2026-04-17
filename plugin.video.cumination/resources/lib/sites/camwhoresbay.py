@@ -32,6 +32,7 @@ site = AdultSite(
     "https://www.camwhoresbay.com/",
     "camwhoresbay.png",
     "camwhoresbay",
+    category="Amateur & Social",
 )
 
 getinput = utils._get_keyboard
