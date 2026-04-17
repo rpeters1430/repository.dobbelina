@@ -25,6 +25,7 @@ site = AdultSite(
     "https://www.playvids.com/",
     "playvids.png",
     "playvids",
+    category="Aggregators",
 )
 
 

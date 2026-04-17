@@ -31,6 +31,7 @@ site = AdultSite(
     "https://www.4tube.com/",
     "awmnet.png",
     "awmnet",
+    category="Aggregators",
 )
 
 sitelist = [
