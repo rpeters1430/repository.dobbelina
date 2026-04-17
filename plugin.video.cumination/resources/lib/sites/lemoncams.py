@@ -32,6 +32,7 @@ site = AdultSite(
     "lemoncams.png",
     "lemoncams",
     True,
+    category="Cams & Live",
 )
 
 API_URL = "https://api-v2-prod.lemoncams.com/main"

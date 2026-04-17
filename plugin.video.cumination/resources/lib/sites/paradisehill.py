@@ -30,6 +30,7 @@ site = AdultSite(
     "https://en.paradisehill.cc/",
     "paradisehill.png",
     "paradisehill",
+    category="Cams & Live",
 )
 
 dialog = utils.dialog

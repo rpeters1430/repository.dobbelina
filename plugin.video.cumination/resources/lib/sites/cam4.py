@@ -29,6 +29,7 @@ site = AdultSite(
     "cam4.png",
     "cam4",
     True,
+    category="Cams & Live",
 )
 IOS_UA = {
     "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML%2C like Gecko) Mobile/15E148"
