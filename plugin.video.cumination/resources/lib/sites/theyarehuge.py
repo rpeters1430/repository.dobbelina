@@ -29,6 +29,7 @@ site = AdultSite(
     "https://www.theyarehuge.com/",
     "theyarehuge.png",
     "theyarehuge",
+    category="Specialty",
 )
 tahlogged = "true" in utils.addon.getSetting("tahlogged")
 getinput = utils._get_keyboard

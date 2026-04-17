@@ -32,6 +32,7 @@ site = AdultSite(
     "https://www.erogarga.com/",
     "erogarga.png",
     "erogarga",
+    category="Specialty",
 )
 site1 = AdultSite(
     "fulltaboo",
@@ -39,6 +40,7 @@ site1 = AdultSite(
     "https://fulltaboo.tv/",
     "fulltaboo.png",
     "fulltaboo",
+    category="Specialty",
 )
 site2 = AdultSite(
     "koreanpm",
@@ -46,6 +48,7 @@ site2 = AdultSite(
     "https://koreanpornmovie.com/",
     "koreanpm.png",
     "koreanpm",
+    category="Specialty",
 )
 
 

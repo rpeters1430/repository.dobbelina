@@ -33,6 +33,7 @@ site = AdultSite(
     "https://peachurnet.com/",
     "peachurnet.png",
     "peachurnet",
+    category="Specialty",
 )
 
 HOME_CACHE: Dict[str, Optional[Iterable]] = {
