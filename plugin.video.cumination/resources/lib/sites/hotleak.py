@@ -29,7 +29,7 @@ site = AdultSite(
     "https://hotleak.vip/",
     "hotleak.png",
     "hotleak",
-    category="Leaks",
+    category="Amateur & Social",
 )
 
 

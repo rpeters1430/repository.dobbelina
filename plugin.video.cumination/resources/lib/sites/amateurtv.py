@@ -29,7 +29,7 @@ site = AdultSite(
     "amateurtv.png",
     "amateurtv",
     webcam=True,
-    category="Cam Models",
+    category="Cams & Live",
 )
 
 

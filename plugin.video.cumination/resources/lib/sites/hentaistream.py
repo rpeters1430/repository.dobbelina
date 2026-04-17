@@ -28,7 +28,7 @@ site = AdultSite(
     "https://hentaistream.com/",
     "hentaistream.png",
     "hentaistream",
-    category="Hentai",
+    category="Hentai & Anime",
 )
 
 
