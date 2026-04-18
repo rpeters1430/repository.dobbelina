@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-04-18T06:52:42.768506",
+    "sites_total": 170,
+    "pass": 166,
+    "warn": 1,
+    "fail": 3,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-04-17T07:03:01.631385",
     "sites_total": 170,
     "pass": 167,
@@ -8,26 +17,24 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-04-16T07:00:15.422076",
-    "sites_total": 170,
-    "pass": 167,
-    "warn": 1,
-    "fail": 2,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
-    "new_failures": 1,
+    "new_failures": 2,
     "resolved_failures": 1,
     "persistent_failures": 1,
     "improved_sites": 0,
-    "regressions": 1,
-    "step_regressions": 0
+    "regressions": 2,
+    "step_regressions": 1
   },
   "new_failures": [
     {
-      "site": "javgg",
+      "site": "noodlemagazine",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
+    },
+    {
+      "site": "whereismyporn",
       "previous": "PASS",
       "current": "FAIL",
       "class": "NETWORK",
@@ -36,7 +43,7 @@
   ],
   "resolved_failures": [
     {
-      "site": "analdin",
+      "site": "javgg",
       "previous": "FAIL",
       "current": "PASS"
     }
@@ -51,17 +58,33 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [],
+  "step_regressions": [
+    {
+      "site": "noodlemagazine",
+      "step": "list",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "List returned no videos",
+      "class": "PARSER"
+    }
+  ],
   "deltas": [
     {
-      "site": "analdin",
+      "site": "javgg",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "javgg",
+      "site": "noodlemagazine",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "whereismyporn",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",

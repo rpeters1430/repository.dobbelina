@@ -2,13 +2,14 @@
 
 - Sites: `170`
 - Tier1 hot: `0`
-- Failing: `2`
+- Failing: `3`
 - Warn: `1`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| javgg | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| noodlemagazine | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| whereismyporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | tubxporn | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
@@ -80,6 +81,7 @@
 | hqporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | japteenx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javbangers | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| javgg | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javguru | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javhdporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javmoe | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -102,7 +104,6 @@
 | netflixporno | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | nltubes | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | nonktube | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| noodlemagazine | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | okxxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | paradisehill | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | peachurnet | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -162,7 +163,6 @@
 | watcherotic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | watchmdh | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | watchporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| whereismyporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | whoreshub | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xfreehd | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xhamster | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -180,8 +180,9 @@
 
 ## Next Batch
 
-- **javgg** (failing, tier=None)
 - **josporn** (failing, tier=None) | failures: list:FAIL
+- **noodlemagazine** (failing, tier=None) | failures: list:FAIL
+- **whereismyporn** (failing, tier=None)
 - **tubxporn** (warn, tier=None) | failures: categories:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
@@ -199,4 +200,3 @@
 - **xnxx** (tier1, tier=1)
 - **xvideos** (tier1, tier=1)
 - **youporn** (tier1, tier=1)
-- **6xtube** (backlog, tier=None)
