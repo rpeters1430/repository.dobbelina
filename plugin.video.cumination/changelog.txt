@@ -1,3 +1,13 @@
+[B]Version 1.1.370[/B]
+- feat: enhance site handling and error management for multiple sites
+- chore: update permissions in settings.local.json to include new Bash commands and file reads
+- test: add category coverage test for all sites
+- chore: fix category tags on multi-site files and missed sites
+- chore: tag Aggregators sites
+- chore: tag Specialty sites
+- chore: tag Amateur & Social sites
+- chore: tag Hentai & Anime sites
+
 [B]Version 1.1.369[/B]
 - chore: update permissions in settings.local.json to include new Bash commands and file reads
 - test: add category coverage test for all sites
