@@ -3,14 +3,16 @@
 - Sites: `170`
 - Tier1 hot: `0`
 - Failing: `3`
-- Warn: `1`
+- Warn: `3`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| motherless | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | noodlemagazine | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| whereismyporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| eroticage | warn | WARN |  | video |  | Y | Y | Y | Y |
 | tubxporn | warn | WARN |  | video |  | Y | Y | Y | Y |
+| xhamster | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -52,7 +54,6 @@
 | eporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erogarga | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erome | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| eroticage | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eroticmv | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | familypornhd | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | foxnxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -93,7 +94,6 @@
 | lemoncams | backlog | PASS | 2 | cam |  | Y |  | Y |  |
 | livecamrips | backlog | PASS | 2 | cam |  | Y |  | Y | Y |
 | longvideos | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| motherless | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | mrsexe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | myfreecams | backlog | PASS | 2 | cam |  | Y |  |  |  |
 | naked | backlog | PASS | 2 | cam |  |  |  |  |  |
@@ -163,9 +163,9 @@
 | watcherotic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | watchmdh | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | watchporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| whereismyporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | whoreshub | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xfreehd | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| xhamster | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xmegadrive | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xmoviesforyou | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | xozilla | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -181,9 +181,11 @@
 ## Next Batch
 
 - **josporn** (failing, tier=None) | failures: list:FAIL
+- **motherless** (failing, tier=None) | failures: list:FAIL
 - **noodlemagazine** (failing, tier=None) | failures: list:FAIL
-- **whereismyporn** (failing, tier=None)
+- **eroticage** (warn, tier=None) | failures: play:FAIL
 - **tubxporn** (warn, tier=None) | failures: categories:FAIL
+- **xhamster** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
@@ -198,5 +200,3 @@
 - **streamate** (tier1, tier=1)
 - **stripchat** (tier1, tier=1)
 - **xnxx** (tier1, tier=1)
-- **xvideos** (tier1, tier=1)
-- **youporn** (tier1, tier=1)
