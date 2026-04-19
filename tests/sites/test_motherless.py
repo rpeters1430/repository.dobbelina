@@ -19,7 +19,7 @@ def test_list_parses_videos(monkeypatch):
     downloads = []
     dirs = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html_data
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
@@ -59,7 +59,7 @@ def test_list_handles_pagination(monkeypatch):
 
     dirs = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html_data
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
@@ -86,7 +86,7 @@ def test_categories_parses_and_sorts(monkeypatch):
 
     dirs = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html_data
 
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):

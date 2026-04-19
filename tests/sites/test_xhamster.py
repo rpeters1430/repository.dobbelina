@@ -331,3 +331,63 @@ def test_list_finds_nested_video_list_props_and_pagination(monkeypatch):
     assert downloads == [{"name": "Nested Video", "url": "/videos/nested-123"}]
     assert dirs
     assert dirs[0]["url"] == "https://xhamster.com/newest/2"
+
+
+def test_playvid_handles_null_hls_sources(monkeypatch):
+    html = """
+    <html>
+      <script>window.initials={"xplayerSettings":{"sources":{"hls":null}}};</script>
+    </html>
+    """
+    notifications = []
+
+    class FakeProgress:
+        def update(self, *args, **kwargs):
+            return None
+
+    class FakeVideoPlayer:
+        def __init__(self, name, download=None):
+            self.progress = FakeProgress()
+
+        def play_from_direct_link(self, url):
+            raise AssertionError("Should not attempt direct playback for null sources")
+
+    monkeypatch.setattr(xhamster.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(xhamster.utils, "VideoPlayer", FakeVideoPlayer)
+    monkeypatch.setattr(
+        xhamster.utils, "notify", lambda title, msg: notifications.append((title, msg))
+    )
+
+    xhamster.Playvid("https://xhamster.com/videos/test", "Test")
+
+    assert notifications == [("Oh Oh", "No playable video found.")]
+
+
+def test_playvid_handles_null_settings(monkeypatch):
+    html = """
+    <html>
+      <script>window.initials={"xplayerSettings":null,"xplayerSettings2":null};</script>
+    </html>
+    """
+    notifications = []
+
+    class FakeProgress:
+        def update(self, *args, **kwargs):
+            return None
+
+    class FakeVideoPlayer:
+        def __init__(self, name, download=None):
+            self.progress = FakeProgress()
+
+        def play_from_direct_link(self, url):
+            raise AssertionError("Should not attempt direct playback for null settings")
+
+    monkeypatch.setattr(xhamster.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(xhamster.utils, "VideoPlayer", FakeVideoPlayer)
+    monkeypatch.setattr(
+        xhamster.utils, "notify", lambda title, msg: notifications.append((title, msg))
+    )
+
+    xhamster.Playvid("https://xhamster.com/videos/test", "Test")
+
+    assert notifications == [("Oh Oh", "No playable video found.")]

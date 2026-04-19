@@ -286,21 +286,32 @@ def Playvid(url, name, download=None):
             videourl = direct_match.group(1)
         else:
             jdata = _load_initials_json(videopage)
-            data = jdata.get("xplayerSettings", {})
-            data2 = jdata.get("xplayerSettings2", {})
-            sources = data.get("sources", {})
-            sources2 = data2.get("sources", {})
+            data = jdata.get("xplayerSettings") or {}
+            data2 = jdata.get("xplayerSettings2") or {}
+            if not isinstance(data, dict):
+                data = {}
+            if not isinstance(data2, dict):
+                data2 = {}
+            sources = data.get("sources") or {}
+            sources2 = data2.get("sources") or {}
+            if not isinstance(sources, dict):
+                sources = {}
+            if not isinstance(sources2, dict):
+                sources2 = {}
 
             if "hls" in sources:
-                h264src = sources["hls"].get("h264", "")
-                h265src = sources["hls"].get("h265", "")
-                av1src = sources["hls"].get("av1", "")
+                hls_sources = sources.get("hls") or {}
+                if not isinstance(hls_sources, dict):
+                    hls_sources = {}
+                h264src = hls_sources.get("h264") or {}
+                h265src = hls_sources.get("h265") or {}
+                av1src = hls_sources.get("av1") or {}
                 if h264src:
-                    hexurl = h264src["url"]
+                    hexurl = h264src.get("url", "") if isinstance(h264src, dict) else ""
                 elif h265src:
-                    hexurl = h265src["url"]
+                    hexurl = h265src.get("url", "") if isinstance(h265src, dict) else ""
                 elif av1src:
-                    hexurl = av1src["url"]
+                    hexurl = av1src.get("url", "") if isinstance(av1src, dict) else ""
                 else:
                     utils.notify("Oh Oh", "No playable video found.")
                     return
@@ -319,10 +330,16 @@ def Playvid(url, name, download=None):
                     utils.notify("Oh Oh", "Failed to deobfuscate video URL - {}".format(e))
                     return
             elif "standard" in sources2:
-                src = sources2["standard"].get("h264", "")
+                standard_sources = sources2.get("standard") or {}
+                if not isinstance(standard_sources, dict):
+                    standard_sources = {}
+                src = standard_sources.get("h264", "")
                 srcs = {}
                 for s in src:
-                    srcs[s["quality"]] = s["url"]
+                    quality = s.get("quality") if isinstance(s, dict) else None
+                    src_url = s.get("url") if isinstance(s, dict) else None
+                    if quality and src_url:
+                        srcs[quality] = src_url
                 videourl = utils.prefquality(
                     srcs,
                     sort_by=lambda x: 2160 if x == "4k" else int(x[:-1]),

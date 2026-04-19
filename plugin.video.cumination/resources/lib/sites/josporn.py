@@ -46,6 +46,12 @@ def List(url, page=1):
     headers = {"User-Agent": utils.USER_AGENT, "Referer": site.url}
     html = ""
     tried_urls = []
+    primary_domain = site.url.rstrip("/")
+    alt_domains = [
+        primary_domain.replace("josporn.club", "josporn.com"),
+        primary_domain.replace("josporn.club", "www.josporn.com"),
+        primary_domain.replace("josporn.club", "www.josporn.club"),
+    ]
     fallback_urls = [url]
     fallback_urls.extend(
         [
@@ -55,6 +61,17 @@ def List(url, page=1):
             site.url + "latest-updates/",
         ]
     )
+    for base in alt_domains:
+        if not base:
+            continue
+        fallback_urls.extend(
+            [
+                base + "/videos/",
+                base + "/most-popular/",
+                base + "/top-rated/",
+                base + "/latest-updates/",
+            ]
+        )
 
     for candidate in fallback_urls:
         if candidate in tried_urls:
@@ -108,6 +125,9 @@ def List(url, page=1):
         if not isinstance(html, (str, bytes)):
             html = ""
         soup = utils.parse_html(html)
+    if not soup:
+        utils.eod()
+        return
     
     # Video items are in .innercont div
     items = soup.select(".innercont")

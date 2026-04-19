@@ -234,34 +234,53 @@ def Categories(url):
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in tubxporn: " + str(e))
         headers["User-Agent"] = utils.random_ua.get_ua()
-        cathtml = utils.getHtml(url, site.url, headers=headers)
+        try:
+            cathtml = utils.getHtml(url, site.url, headers=headers)
+        except Exception as fallback_err:
+            utils.kodilog(
+                "@@@@Cumination: fallback failure in tubxporn categories: "
+                + str(fallback_err)
+            )
+            cathtml = ""
 
     soup = utils.parse_html(cathtml)
     if not soup:
         utils.eod()
         return
 
-    for item in soup.select(".item"):
-        link = item.select_one("a[href]")
+    items = soup.select(".item, .category-item")
+    if not items:
+        items = [a for a in soup.select('a[href*="/categories/"], a[href*="/category/"]')]
+
+    for item in items:
+        link = item if getattr(item, "name", "") == "a" else item.select_one("a[href]")
         if not link:
             continue
 
         caturl = utils.safe_get_attr(link, "href", default="")
-        img_tag = item.select_one("img")
+        img_tag = (
+            link.select_one("img")
+            if getattr(item, "name", "") == "a"
+            else item.select_one("img")
+        )
         img = utils.get_thumbnail(img_tag)
 
-        h2 = item.select_one("h2")
+        h2 = (
+            item.select_one("h2")
+            if getattr(item, "name", "") != "a"
+            else link.select_one("h2")
+        )
         if h2:
-            # Extract name and count from h2 text (e.g., "Category Name (123)")
             full_text = utils.safe_get_text(h2, default="")
-            count_match = re.search(r"\((\d+)\)", full_text)
-            count = count_match.group(1) if count_match else ""
-            name = re.sub(r"\s*\(\d+\)\s*$", "", full_text)
-            name = utils.cleantext(name)
-            if count:
-                name = name + "[COLOR hotpink] ({} videos)[/COLOR]".format(count)
         else:
-            name = utils.cleantext(utils.safe_get_text(link, default=""))
+            full_text = utils.safe_get_text(link, default="")
+        full_text = utils.cleantext(full_text)
+        count_match = re.search(r"\((\d+)\)", full_text)
+        count = count_match.group(1) if count_match else ""
+        name = re.sub(r"\s*\(\d+\)\s*$", "", full_text)
+        name = utils.cleantext(name)
+        if count:
+            name = name + "[COLOR hotpink] ({} videos)[/COLOR]".format(count)
 
         if caturl and name:
             site.add_dir(name, caturl, "List", img)

@@ -58,7 +58,27 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, site.url)
+    headers = {"User-Agent": utils.USER_AGENT, "Referer": site.url}
+    listhtml = ""
+    candidate_urls = [
+        url,
+        url.replace("://motherless.com/", "://www.motherless.com/"),
+        site.url + "videos/recent",
+        "https://www.motherless.com/videos/recent",
+    ]
+    tried = set()
+    for candidate in candidate_urls:
+        if not candidate or candidate in tried:
+            continue
+        tried.add(candidate)
+        try:
+            listhtml = utils.getHtml(candidate, site.url, headers=headers)
+        except Exception as e:
+            utils.kodilog("Motherless: list fetch failed for {}: {}".format(candidate, e))
+            headers["User-Agent"] = utils.random_ua.get_ua()
+            listhtml = ""
+        if listhtml:
+            break
 
     if not listhtml:
         utils.eod()

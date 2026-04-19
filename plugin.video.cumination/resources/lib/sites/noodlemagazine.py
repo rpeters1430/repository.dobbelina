@@ -79,8 +79,13 @@ def List(url, page=1):
             listhtml = ""
         soup = utils.parse_html(listhtml)
     items = soup.select(".item")
+    if not items:
+        items = soup.select(".video-item, article.item, .thumb-item")
+    if not items:
+        items = [a for a in soup.select('a[href*="/video/"]') if a.find("img")]
+
     for item in items:
-        link = item.select_one("a[href]")
+        link = item if getattr(item, "name", "") == "a" else item.select_one("a[href]")
         videopage = utils.safe_get_attr(link, "href", default="")
         if not videopage:
             continue
