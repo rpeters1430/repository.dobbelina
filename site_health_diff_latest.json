@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-04-20T07:08:33.070087",
+    "sites_total": 170,
+    "pass": 167,
+    "warn": 0,
+    "fail": 3,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-04-19T07:01:56.875511",
     "sites_total": 170,
     "pass": 164,
@@ -8,35 +17,26 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-04-18T06:52:42.768506",
-    "sites_total": 170,
-    "pass": 166,
-    "warn": 1,
-    "fail": 3,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
     "new_failures": 1,
     "resolved_failures": 1,
     "persistent_failures": 2,
-    "improved_sites": 0,
-    "regressions": 3,
-    "step_regressions": 3
+    "improved_sites": 3,
+    "regressions": 1,
+    "step_regressions": 1
   },
   "new_failures": [
     {
-      "site": "motherless",
+      "site": "analdin",
       "previous": "PASS",
       "current": "FAIL",
-      "class": "UNKNOWN",
-      "message": "list: List URL unavailable in harness (HTTP 502)"
+      "class": "PARSER",
+      "message": "list: List returned no videos"
     }
   ],
   "resolved_failures": [
     {
-      "site": "whereismyporn",
+      "site": "motherless",
       "previous": "FAIL",
       "current": "PASS"
     }
@@ -57,60 +57,67 @@
       "message": "list: List returned no videos"
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
       "site": "eroticage",
-      "step": "play",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "AttributeError: 'NoneType' object has no attribute 'get'",
-      "class": "CODE"
+      "previous": "WARN",
+      "current": "PASS"
     },
     {
-      "site": "motherless",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List URL unavailable in harness (HTTP 502)",
-      "class": "UNKNOWN"
+      "site": "tubxporn",
+      "previous": "WARN",
+      "current": "PASS"
     },
     {
       "site": "xhamster",
-      "step": "play",
+      "previous": "WARN",
+      "current": "PASS"
+    }
+  ],
+  "step_regressions": [
+    {
+      "site": "analdin",
+      "step": "list",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "AttributeError: 'NoneType' object has no attribute 'get'",
-      "class": "CODE"
+      "message": "List returned no videos",
+      "class": "PARSER"
     }
   ],
   "deltas": [
     {
-      "site": "eroticage",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "motherless",
+      "site": "analdin",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "whereismyporn",
+      "site": "eroticage",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "motherless",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
+      "site": "tubxporn",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
       "site": "xhamster",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]

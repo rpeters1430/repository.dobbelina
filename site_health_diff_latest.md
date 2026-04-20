@@ -1,28 +1,28 @@
 # Site Health Delta
 
-- Current report: `live_smoke_20260419_070156.json`
+- Current report: `live_smoke_20260420_070833.json`
 - Previous report: `live_smoke_latest.json`
 
 ## Snapshot
 
-- Current: `PASS 164` | `WARN 3` | `FAIL 3` | `ERROR 0` | `SKIP 0`
-- Previous: `PASS 166` | `WARN 1` | `FAIL 3` | `ERROR 0` | `SKIP 0`
+- Current: `PASS 167` | `WARN 0` | `FAIL 3` | `ERROR 0` | `SKIP 0`
+- Previous: `PASS 164` | `WARN 3` | `FAIL 3` | `ERROR 0` | `SKIP 0`
 
 ## Delta Summary
 
 - New failures: `1`
 - Resolved failures: `1`
 - Persistent failures: `2`
-- Site regressions: `3`
-- Step regressions: `3`
+- Site regressions: `1`
+- Step regressions: `1`
 
 ## New Failures
 
-- **motherless**: `PASS -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 502)
+- **analdin**: `PASS -> FAIL` (PARSER) | list: List returned no videos
 
 ## Resolved Failures
 
-- **whereismyporn**: `FAIL -> PASS`
+- **motherless**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -31,6 +31,10 @@
 
 ## Step Regressions
 
-- **eroticage** `play`: `PASS -> FAIL` (CODE) | AttributeError: 'NoneType' object has no attribute 'get'
-- **motherless** `list`: `PASS -> FAIL` (UNKNOWN) | List URL unavailable in harness (HTTP 502)
-- **xhamster** `play`: `PASS -> FAIL` (CODE) | AttributeError: 'NoneType' object has no attribute 'get'
+- **analdin** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
+
+## Improvements
+
+- **eroticage**: `WARN -> PASS`
+- **tubxporn**: `WARN -> PASS`
+- **xhamster**: `WARN -> PASS`
