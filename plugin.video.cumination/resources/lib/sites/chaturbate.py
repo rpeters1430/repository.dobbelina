@@ -121,34 +121,38 @@ def Main():
             "",
             "",
         )
-        
+
         # Age-based and region-based submenus
         age_ranges = [
             ("Teen Cams (18+)", 18, 19),
             ("20 to 30 Cams", 20, 30),
             ("30 to 50 Cams", 30, 50),
-            ("Mature Cams (50+)", 50, 200)
+            ("Mature Cams (50+)", 50, 200),
         ]
         for age_label, start, end in age_ranges:
             site.add_dir(
                 "[COLOR hotpink] {} - {}[/COLOR]".format(age_label, label),
-                rapi + "?genders={}&limit=100&from_age={}&to_age={}&offset=0".format(code, start, end),
+                rapi
+                + "?genders={}&limit=100&from_age={}&to_age={}&offset=0".format(
+                    code, start, end
+                ),
                 "List",
                 "",
                 "",
             )
-            
+
         regions = [
             ("North American", "NA"),
             ("South American", "SA"),
             ("Euro Russian", "ER"),
             ("Asian", "AS"),
-            ("Other Region", "O")
+            ("Other Region", "O"),
         ]
         for reg_label, reg_code in regions:
             site.add_dir(
                 "[COLOR hotpink]{} Cams - {}[/COLOR]".format(reg_label, label),
-                rapi + "?genders={}&limit=100&regions={}&offset=0".format(code, reg_code),
+                rapi
+                + "?genders={}&limit=100&regions={}&offset=0".format(code, reg_code),
                 "List",
                 "",
                 "",
@@ -159,6 +163,7 @@ def Main():
 
 # TODO: Consider moving m3u8 proxy logic to a centralized utils helper
 # to handle single-use tokens and absolute URL redirection across sites.
+
 
 def Online(stamp):
     days, weeks, years = None, None, None
@@ -440,7 +445,11 @@ def Playvid(url, name):
             import socket, threading, gzip, zlib  # noqa: E401
             from http.server import BaseHTTPRequestHandler
             from socketserver import TCPServer, ThreadingMixIn
-            from six.moves import urllib_request as _urllib_req, urllib_parse as _urllib_parse
+            from six.moves import (
+                urllib_request as _urllib_req,
+                urllib_parse as _urllib_parse,
+            )
+
             _Req = _urllib_req.Request
             _uopen = _urllib_req.urlopen
             _urljoin = _urllib_parse.urljoin
@@ -465,40 +474,47 @@ def Playvid(url, name):
                         except Exception:
                             pass
                 return raw
+
             try:
                 global _cb_proxy, _cb_proxy_state
 
                 # Debug log for proxy events (toggle via Settings > enh_debug)
-                _dbg_path = os.path.join(utils.TRANSLATEPATH('special://temp'), 'cb_proxy.log')
-                _dbg_on = addon.getSetting('enh_debug') == 'true'
+                _dbg_path = os.path.join(
+                    utils.TRANSLATEPATH("special://temp"), "cb_proxy.log"
+                )
+                _dbg_on = addon.getSetting("enh_debug") == "true"
+
                 def _dbg(msg):
                     if not _dbg_on:
                         return
                     try:
-                        with open(_dbg_path, 'a') as f:
-                            f.write('{} {}\n'.format(time.strftime('%H:%M:%S'), msg))
+                        with open(_dbg_path, "a") as f:
+                            f.write("{} {}\n".format(time.strftime("%H:%M:%S"), msg))
                     except Exception:
                         pass
 
                 # Signal the previous stream's monitor/reconnect threads to exit
                 if _cb_proxy_state is not None:
-                    _dbg('CLEANUP: signalling old state stopping=True')
-                    _cb_proxy_state['stopping'] = True
+                    _dbg("CLEANUP: signalling old state stopping=True")
+                    _cb_proxy_state["stopping"] = True
                     _cb_proxy_state = None
 
                 if _cb_proxy is not None:
-                    _dbg('CLEANUP: shutting down previous proxy {}'.format(
-                        getattr(_cb_proxy, 'server_address', '?')))
+                    _dbg(
+                        "CLEANUP: shutting down previous proxy {}".format(
+                            getattr(_cb_proxy, "server_address", "?")
+                        )
+                    )
                     try:
                         _cb_proxy.shutdown()
-                        _dbg('CLEANUP: shutdown() OK')
+                        _dbg("CLEANUP: shutdown() OK")
                     except Exception as cex1:
-                        _dbg('CLEANUP: shutdown() FAILED: {}'.format(cex1))
+                        _dbg("CLEANUP: shutdown() FAILED: {}".format(cex1))
                     try:
                         _cb_proxy.server_close()
-                        _dbg('CLEANUP: server_close() OK')
+                        _dbg("CLEANUP: server_close() OK")
                     except Exception as cex2:
-                        _dbg('CLEANUP: server_close() FAILED: {}'.format(cex2))
+                        _dbg("CLEANUP: server_close() FAILED: {}".format(cex2))
                     _cb_proxy = None
 
                 headers = HTTP_HEADERS_IPAD.copy()
@@ -510,64 +526,84 @@ def Playvid(url, name):
                 base = m3u8stream.rsplit("/", 1)[0] + "/"
 
                 master_fixed = re.sub(
-                    r'^(?!https?://)(?!#)(.+)$',
+                    r"^(?!https?://)(?!#)(.+)$",
                     lambda m: _urljoin(base, m.group(1)),
-                    master_raw, flags=re.MULTILINE)
+                    master_raw,
+                    flags=re.MULTILINE,
+                )
                 master_fixed = re.sub(
                     r'URI="(?!https?://)(.*?)"',
                     lambda m: 'URI="' + _urljoin(base, m.group(1)) + '"',
-                    master_fixed, flags=re.IGNORECASE)
+                    master_fixed,
+                    flags=re.IGNORECASE,
+                )
 
                 # Bind proxy port first so we can rewrite chunklist URLs
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock.bind(('127.0.0.1', 0))
+                sock.bind(("127.0.0.1", 0))
                 port = sock.getsockname()[1]
                 sock.close()
 
                 # State for session reconnection
                 _proxy_state = {
-                    'stream_url': m3u8stream,
-                    'headers': headers,
-                    'url_map': {},
-                    'last_refresh': 0,
-                    'lock': threading.Lock(),
-                    'chunklist_cache': {},
-                    'seg_cdn_urls': {},
-                    'latest_seg': {},
+                    "stream_url": m3u8stream,
+                    "headers": headers,
+                    "url_map": {},
+                    "last_refresh": 0,
+                    "lock": threading.Lock(),
+                    "chunklist_cache": {},
+                    "seg_cdn_urls": {},
+                    "latest_seg": {},
                 }
 
                 # Populate initial chunklist URL map (type_key -> cdn_url)
                 for _line in master_fixed.splitlines():
                     _line = _line.strip()
-                    if _line and not _line.startswith('#') and 'chunklist_' in _line:
-                        _km = re.search(r'(chunklist_\d+_\w+)', _line)
+                    if _line and not _line.startswith("#") and "chunklist_" in _line:
+                        _km = re.search(r"(chunklist_\d+_\w+)", _line)
                         if _km:
-                            _proxy_state['url_map'][_km.group(1)] = _line
-                for _mi in re.finditer(r'URI="(https?://[^"]*chunklist_[^"]*)"', master_fixed, re.IGNORECASE):
-                    _km = re.search(r'(chunklist_\d+_\w+)', _mi.group(1))
+                            _proxy_state["url_map"][_km.group(1)] = _line
+                for _mi in re.finditer(
+                    r'URI="(https?://[^"]*chunklist_[^"]*)"',
+                    master_fixed,
+                    re.IGNORECASE,
+                ):
+                    _km = re.search(r"(chunklist_\d+_\w+)", _mi.group(1))
                     if _km:
-                        _proxy_state['url_map'][_km.group(1)] = _mi.group(1)
+                        _proxy_state["url_map"][_km.group(1)] = _mi.group(1)
 
-                _dbg('PROXY START port={} keys={}'.format(port, list(_proxy_state['url_map'].keys())))
+                _dbg(
+                    "PROXY START port={} keys={}".format(
+                        port, list(_proxy_state["url_map"].keys())
+                    )
+                )
 
                 # Rewrite only .m3u8 chunklist URLs to go through our proxy
                 master_fixed = re.sub(
-                    r'^(https?://[^\s]+\.m3u8[^\s]*)$',
-                    lambda m: 'http://127.0.0.1:{}/chunklist?url={}'.format(port, urllib_parse.quote(m.group(1), safe='')),
-                    master_fixed, flags=re.MULTILINE)
+                    r"^(https?://[^\s]+\.m3u8[^\s]*)$",
+                    lambda m: "http://127.0.0.1:{}/chunklist?url={}".format(
+                        port, urllib_parse.quote(m.group(1), safe="")
+                    ),
+                    master_fixed,
+                    flags=re.MULTILINE,
+                )
                 master_fixed = re.sub(
                     r'URI="(https?://[^"]+\.m3u8[^"]*)"',
-                    lambda m: 'URI="http://127.0.0.1:{}/chunklist?url={}"'.format(port, urllib_parse.quote(m.group(1), safe='')),
-                    master_fixed, flags=re.IGNORECASE)
-                master_bytes = master_fixed.encode('utf-8')
+                    lambda m: 'URI="http://127.0.0.1:{}/chunklist?url={}"'.format(
+                        port, urllib_parse.quote(m.group(1), safe="")
+                    ),
+                    master_fixed,
+                    flags=re.IGNORECASE,
+                )
+                master_bytes = master_fixed.encode("utf-8")
 
                 def _refresh_session():
                     """Re-fetch master playlist to get fresh session tokens."""
                     now = time.time()
-                    with _proxy_state['lock']:
-                        if now - _proxy_state['last_refresh'] < 2:
+                    with _proxy_state["lock"]:
+                        if now - _proxy_state["last_refresh"] < 2:
                             return False
-                        _proxy_state['last_refresh'] = now
+                        _proxy_state["last_refresh"] = now
                     try:
                         rq = _Req(
                             _proxy_state["stream_url"], headers=_proxy_state["headers"]
@@ -575,113 +611,137 @@ def Playvid(url, name):
                         raw = _read_body(_uopen(rq, timeout=10)).decode(
                             "utf-8", "replace"
                         )
-                        burl = _proxy_state['stream_url'].rsplit('/', 1)[0] + '/'
+                        burl = _proxy_state["stream_url"].rsplit("/", 1)[0] + "/"
                         fixed = re.sub(
-                            r'^(?!https?://)(?!#)(.+)$',
+                            r"^(?!https?://)(?!#)(.+)$",
                             lambda m: _urljoin(burl, m.group(1)),
-                            raw, flags=re.MULTILINE)
+                            raw,
+                            flags=re.MULTILINE,
+                        )
                         fixed = re.sub(
                             r'URI="(?!https?://)(.*?)"',
                             lambda m: 'URI="' + _urljoin(burl, m.group(1)) + '"',
-                            fixed, flags=re.IGNORECASE)
+                            fixed,
+                            flags=re.IGNORECASE,
+                        )
                         new_map = {}
                         for line in fixed.splitlines():
                             line = line.strip()
-                            if line and not line.startswith('#') and 'chunklist_' in line:
-                                km = re.search(r'(chunklist_\d+_\w+)', line)
+                            if (
+                                line
+                                and not line.startswith("#")
+                                and "chunklist_" in line
+                            ):
+                                km = re.search(r"(chunklist_\d+_\w+)", line)
                                 if km:
                                     new_map[km.group(1)] = line
-                        for mi in re.finditer(r'URI="(https?://[^"]*chunklist_[^"]*)"', fixed, re.IGNORECASE):
-                            km = re.search(r'(chunklist_\d+_\w+)', mi.group(1))
+                        for mi in re.finditer(
+                            r'URI="(https?://[^"]*chunklist_[^"]*)"',
+                            fixed,
+                            re.IGNORECASE,
+                        ):
+                            km = re.search(r"(chunklist_\d+_\w+)", mi.group(1))
                             if km:
                                 new_map[km.group(1)] = mi.group(1)
-                        with _proxy_state['lock']:
-                            _proxy_state['url_map'].update(new_map)
-                            _proxy_state['chunklist_cache'].clear()
-                            _proxy_state['seg_cdn_urls'].clear()
-                            _proxy_state['latest_seg'].clear()
-                        _dbg('REFRESH OK new_keys={} caches_cleared'.format(list(new_map.keys())))
+                        with _proxy_state["lock"]:
+                            _proxy_state["url_map"].update(new_map)
+                            _proxy_state["chunklist_cache"].clear()
+                            _proxy_state["seg_cdn_urls"].clear()
+                            _proxy_state["latest_seg"].clear()
+                        _dbg(
+                            "REFRESH OK new_keys={} caches_cleared".format(
+                                list(new_map.keys())
+                            )
+                        )
                         return True
                     except Exception as e:
-                        _dbg('REFRESH FAIL {}'.format(e))
+                        _dbg("REFRESH FAIL {}".format(e))
                         return False
 
                 def _force_stop(reason):
-                    _proxy_state['stopping'] = True
-                    _dbg('FORCE STOP: {}'.format(reason))
+                    _proxy_state["stopping"] = True
+                    _dbg("FORCE STOP: {}".format(reason))
                     try:
-                        xbmc.executebuiltin('PlayerControl(Stop)')
-                        _dbg('PlayerControl(Stop) sent')
+                        xbmc.executebuiltin("PlayerControl(Stop)")
+                        _dbg("PlayerControl(Stop) sent")
                     except Exception as ex2:
-                        _dbg('PlayerControl(Stop) FAILED: {}'.format(ex2))
+                        _dbg("PlayerControl(Stop) FAILED: {}".format(ex2))
                     time.sleep(3)
                     try:
                         _cb_proxy.shutdown()
                     except Exception as sex:
-                        _dbg('shutdown err: {}'.format(sex))
+                        _dbg("shutdown err: {}".format(sex))
                     try:
                         _cb_proxy.server_close()
-                        _dbg('Proxy server shutdown')
+                        _dbg("Proxy server shutdown")
                     except Exception as sex:
-                        _dbg('close err: {}'.format(sex))
+                        _dbg("close err: {}".format(sex))
 
                 def _bg_reconnect():
                     needs_force_stop = True
                     try:
                         for _attempt in range(15):
-                            if _proxy_state.get('stopping'):
-                                _dbg('RECONNECT aborted - proxy stopping')
+                            if _proxy_state.get("stopping"):
+                                _dbg("RECONNECT aborted - proxy stopping")
                                 needs_force_stop = False
                                 return
-                            _dbg('RECONNECT attempt={}/15'.format(_attempt + 1))
+                            _dbg("RECONNECT attempt={}/15".format(_attempt + 1))
                             if _refresh_session():
-                                _dbg('RECONNECT OK attempt={}'.format(_attempt + 1))
-                                with _proxy_state['lock']:
-                                    _proxy_state['reconnecting'] = False
-                                _dbg('WATCHDOG waiting 8s to check ISA')
+                                _dbg("RECONNECT OK attempt={}".format(_attempt + 1))
+                                with _proxy_state["lock"]:
+                                    _proxy_state["reconnecting"] = False
+                                _dbg("WATCHDOG waiting 8s to check ISA")
                                 time.sleep(8)
-                                if _proxy_state.get('stopping'):
+                                if _proxy_state.get("stopping"):
                                     needs_force_stop = False
                                     return
-                                gap = time.time() - _proxy_state.get('last_request', 0)
-                                _dbg('WATCHDOG gap={:.1f}s'.format(gap))
+                                gap = time.time() - _proxy_state.get("last_request", 0)
+                                _dbg("WATCHDOG gap={:.1f}s".format(gap))
                                 if gap > 6:
-                                    _dbg('WATCHDOG over threshold, rechecking in 3s')
+                                    _dbg("WATCHDOG over threshold, rechecking in 3s")
                                     time.sleep(3)
-                                    if _proxy_state.get('stopping'):
+                                    if _proxy_state.get("stopping"):
                                         needs_force_stop = False
                                         return
-                                    gap2 = time.time() - _proxy_state.get('last_request', 0)
-                                    _dbg('WATCHDOG recheck gap={:.1f}s'.format(gap2))
+                                    gap2 = time.time() - _proxy_state.get(
+                                        "last_request", 0
+                                    )
+                                    _dbg("WATCHDOG recheck gap={:.1f}s".format(gap2))
                                     if gap2 > 6:
                                         needs_force_stop = False
-                                        _force_stop('ISA silent {:.0f}s after reconnect'.format(gap2))
+                                        _force_stop(
+                                            "ISA silent {:.0f}s after reconnect".format(
+                                                gap2
+                                            )
+                                        )
                                         return
-                                    _dbg('WATCHDOG OK on recheck -- ISA recovered')
+                                    _dbg("WATCHDOG OK on recheck -- ISA recovered")
                                 else:
-                                    _dbg('WATCHDOG OK -- ISA still active')
+                                    _dbg("WATCHDOG OK -- ISA still active")
                                 needs_force_stop = False
                                 return
                             time.sleep(2)
-                        _dbg('GIVING UP after 15 attempts')
+                        _dbg("GIVING UP after 15 attempts")
                     except Exception as ex:
                         try:
-                            _dbg('RECONNECT THREAD CRASHED: {}'.format(ex))
+                            _dbg("RECONNECT THREAD CRASHED: {}".format(ex))
                         except Exception:
                             pass
                     finally:
-                        if needs_force_stop and not _proxy_state.get('stopping'):
+                        if needs_force_stop and not _proxy_state.get("stopping"):
                             try:
-                                _force_stop('reconnect exhausted')
+                                _force_stop("reconnect exhausted")
                             except Exception:
                                 pass
 
                 def _trigger_reconnect(reason):
-                    with _proxy_state['lock']:
-                        if _proxy_state.get('reconnecting') or _proxy_state.get('stopping'):
+                    with _proxy_state["lock"]:
+                        if _proxy_state.get("reconnecting") or _proxy_state.get(
+                            "stopping"
+                        ):
                             return
-                        _proxy_state['reconnecting'] = True
-                    _dbg('RECONNECT TRIGGERED: {}'.format(reason))
+                        _proxy_state["reconnecting"] = True
+                    _dbg("RECONNECT TRIGGERED: {}".format(reason))
                     t2 = threading.Thread(target=_bg_reconnect)
                     t2.daemon = True
                     t2.start()
@@ -689,130 +749,184 @@ def Playvid(url, name):
                 # Localhost proxy: serves master + proxies chunklists with auto-reconnect
                 class _H(BaseHTTPRequestHandler):
                     def do_GET(self):
-                        if self.path.startswith('/chunklist'):
+                        if self.path.startswith("/chunklist"):
                             parsed = urllib_parse.urlparse(self.path)
                             params = urllib_parse.parse_qs(parsed.query)
-                            req_url = params.get('url', [None])[0]
+                            req_url = params.get("url", [None])[0]
                             if not req_url:
                                 self.send_error(400)
                                 return
-                            km = re.search(r'(chunklist_\d+_\w+)', req_url)
+                            km = re.search(r"(chunklist_\d+_\w+)", req_url)
                             type_key = km.group(1) if km else None
-                            cdn_url = _proxy_state['url_map'].get(type_key, req_url) if type_key else req_url
-                            _proxy_state['last_request'] = time.time()
+                            cdn_url = (
+                                _proxy_state["url_map"].get(type_key, req_url)
+                                if type_key
+                                else req_url
+                            )
+                            _proxy_state["last_request"] = time.time()
 
                             def _fetch_and_absolutize(u):
                                 creq = _Req(u, headers=_proxy_state["headers"])
                                 resp = _uopen(creq, timeout=10)
                                 raw = _read_body(resp).decode("utf-8", "replace")
-                                cbase = u.rsplit('/', 1)[0] + '/'
+                                cbase = u.rsplit("/", 1)[0] + "/"
                                 raw = re.sub(
-                                    r'^(?!https?://)(?!#)(\S+)$',
+                                    r"^(?!https?://)(?!#)(\S+)$",
                                     lambda m: _urljoin(cbase, m.group(1)),
-                                    raw, flags=re.MULTILINE)
+                                    raw,
+                                    flags=re.MULTILINE,
+                                )
                                 raw = re.sub(
                                     r'URI="(?!https?://)([^"]+)"',
-                                    lambda m: 'URI="' + _urljoin(cbase, m.group(1)) + '"',
-                                    raw, flags=re.IGNORECASE)
+                                    lambda m: 'URI="'
+                                    + _urljoin(cbase, m.group(1))
+                                    + '"',
+                                    raw,
+                                    flags=re.IGNORECASE,
+                                )
                                 for _l in raw.splitlines():
                                     _l = _l.strip()
-                                    if _l and not _l.startswith('#') and '.m4s' in _l:
-                                        _sn = _l.rsplit('/', 1)[-1].split('?')[0]
-                                        _proxy_state['seg_cdn_urls'][_sn] = _l
+                                    if _l and not _l.startswith("#") and ".m4s" in _l:
+                                        _sn = _l.rsplit("/", 1)[-1].split("?")[0]
+                                        _proxy_state["seg_cdn_urls"][_sn] = _l
                                         if type_key:
-                                            _proxy_state['latest_seg'][type_key] = _l
+                                            _proxy_state["latest_seg"][type_key] = _l
                                 raw = re.sub(
-                                    r'^(https?://[^\s]+\.m4s[^\s]*)$',
-                                    lambda m: 'http://127.0.0.1:{}/segment?url={}'.format(port, urllib_parse.quote(m.group(1), safe='')),
-                                    raw, flags=re.MULTILINE)
+                                    r"^(https?://[^\s]+\.m4s[^\s]*)$",
+                                    lambda m: "http://127.0.0.1:{}/segment?url={}".format(
+                                        port, urllib_parse.quote(m.group(1), safe="")
+                                    ),
+                                    raw,
+                                    flags=re.MULTILINE,
+                                )
                                 raw = re.sub(
                                     r'URI="(https?://[^"]+\.m4s[^"]*)"',
-                                    lambda m: 'URI="http://127.0.0.1:{}/segment?url={}"'.format(port, urllib_parse.quote(m.group(1), safe='')),
-                                    raw, flags=re.IGNORECASE)
-                                return raw.encode('utf-8')
+                                    lambda m: 'URI="http://127.0.0.1:{}/segment?url={}"'.format(
+                                        port, urllib_parse.quote(m.group(1), safe="")
+                                    ),
+                                    raw,
+                                    flags=re.IGNORECASE,
+                                )
+                                return raw.encode("utf-8")
 
                             try:
                                 data = _fetch_and_absolutize(cdn_url)
                                 if type_key:
-                                    _proxy_state['chunklist_cache'][type_key] = data
+                                    _proxy_state["chunklist_cache"][type_key] = data
                                 self.send_response(200)
-                                self.send_header('Content-Type', 'application/vnd.apple.mpegurl')
-                                self.send_header('Content-Length', str(len(data)))
+                                self.send_header(
+                                    "Content-Type", "application/vnd.apple.mpegurl"
+                                )
+                                self.send_header("Content-Length", str(len(data)))
                                 self.end_headers()
                                 self.wfile.write(data)
                             except Exception as e:
-                                if _proxy_state.get('stopping'):
+                                if _proxy_state.get("stopping"):
                                     try:
-                                        xbmc.executebuiltin('PlayerControl(Stop)')
+                                        xbmc.executebuiltin("PlayerControl(Stop)")
                                     except Exception:
                                         pass
-                                    endlist = b'#EXTM3U\n#EXT-X-ENDLIST\n'
+                                    endlist = b"#EXTM3U\n#EXT-X-ENDLIST\n"
                                     self.send_response(200)
-                                    self.send_header('Content-Type', 'application/vnd.apple.mpegurl')
-                                    self.send_header('Content-Length', str(len(endlist)))
+                                    self.send_header(
+                                        "Content-Type", "application/vnd.apple.mpegurl"
+                                    )
+                                    self.send_header(
+                                        "Content-Length", str(len(endlist))
+                                    )
                                     self.end_headers()
                                     self.wfile.write(endlist)
                                     return
-                                _dbg('CHUNKLIST FAIL type={} err={}'.format(type_key, e))
-                                _trigger_reconnect('chunklist fail type={}: {}'.format(type_key, e))
-                                if type_key and not _proxy_state.get('stopping'):
-                                    new_url = _proxy_state['url_map'].get(type_key)
+                                _dbg(
+                                    "CHUNKLIST FAIL type={} err={}".format(type_key, e)
+                                )
+                                _trigger_reconnect(
+                                    "chunklist fail type={}: {}".format(type_key, e)
+                                )
+                                if type_key and not _proxy_state.get("stopping"):
+                                    new_url = _proxy_state["url_map"].get(type_key)
                                     if new_url and new_url != cdn_url:
                                         try:
                                             data = _fetch_and_absolutize(new_url)
                                             self.send_response(200)
-                                            self.send_header('Content-Type', 'application/vnd.apple.mpegurl')
-                                            self.send_header('Content-Length', str(len(data)))
+                                            self.send_header(
+                                                "Content-Type",
+                                                "application/vnd.apple.mpegurl",
+                                            )
+                                            self.send_header(
+                                                "Content-Length", str(len(data))
+                                            )
                                             self.end_headers()
                                             self.wfile.write(data)
-                                            _dbg('SERVED from refreshed URL type={}'.format(type_key))
+                                            _dbg(
+                                                "SERVED from refreshed URL type={}".format(
+                                                    type_key
+                                                )
+                                            )
                                             return
                                         except Exception:
                                             pass
-                                cached = _proxy_state['chunklist_cache'].get(type_key) if type_key else None
+                                cached = (
+                                    _proxy_state["chunklist_cache"].get(type_key)
+                                    if type_key
+                                    else None
+                                )
                                 if cached:
-                                    _dbg('SERVING CACHED playlist type={}'.format(type_key))
+                                    _dbg(
+                                        "SERVING CACHED playlist type={}".format(
+                                            type_key
+                                        )
+                                    )
                                     self.send_response(200)
-                                    self.send_header('Content-Type', 'application/vnd.apple.mpegurl')
-                                    self.send_header('Content-Length', str(len(cached)))
+                                    self.send_header(
+                                        "Content-Type", "application/vnd.apple.mpegurl"
+                                    )
+                                    self.send_header("Content-Length", str(len(cached)))
                                     self.end_headers()
                                     self.wfile.write(cached)
                                 else:
-                                    endlist = b'#EXTM3U\n#EXT-X-ENDLIST\n'
+                                    endlist = b"#EXTM3U\n#EXT-X-ENDLIST\n"
                                     self.send_response(200)
-                                    self.send_header('Content-Type', 'application/vnd.apple.mpegurl')
-                                    self.send_header('Content-Length', str(len(endlist)))
+                                    self.send_header(
+                                        "Content-Type", "application/vnd.apple.mpegurl"
+                                    )
+                                    self.send_header(
+                                        "Content-Length", str(len(endlist))
+                                    )
                                     self.end_headers()
                                     self.wfile.write(endlist)
-                        elif self.path.startswith('/segment'):
+                        elif self.path.startswith("/segment"):
                             parsed = urllib_parse.urlparse(self.path)
                             params = urllib_parse.parse_qs(parsed.query)
-                            seg_url = params.get('url', [None])[0]
+                            seg_url = params.get("url", [None])[0]
                             if not seg_url:
                                 self.send_error(400)
                                 return
 
                             seg_parsed = urllib_parse.urlparse(seg_url)
-                            if seg_parsed.scheme not in ('http', 'https') or not seg_parsed.netloc:
+                            if (
+                                seg_parsed.scheme not in ("http", "https")
+                                or not seg_parsed.netloc
+                            ):
                                 self.send_error(400)
                                 return
 
                             allowed_hosts = set()
-                            for _u in _proxy_state.get('seg_cdn_urls', {}).values():
+                            for _u in _proxy_state.get("seg_cdn_urls", {}).values():
                                 try:
                                     _p = urllib_parse.urlparse(_u)
                                     if _p.netloc:
                                         allowed_hosts.add(_p.netloc)
                                 except Exception:
                                     pass
-                            for _u in _proxy_state.get('latest_seg', {}).values():
+                            for _u in _proxy_state.get("latest_seg", {}).values():
                                 try:
                                     _p = urllib_parse.urlparse(_u)
                                     if _p.netloc:
                                         allowed_hosts.add(_p.netloc)
                                 except Exception:
                                     pass
-                            for _u in _proxy_state.get('url_map', {}).values():
+                            for _u in _proxy_state.get("url_map", {}).values():
                                 try:
                                     _p = urllib_parse.urlparse(_u)
                                     if _p.netloc:
@@ -824,69 +938,83 @@ def Playvid(url, name):
                                 self.send_error(400)
                                 return
 
-                            seg_name = seg_url.rsplit('/', 1)[-1].split('?')[0]
-                            _proxy_state['last_request'] = time.time()
+                            seg_name = seg_url.rsplit("/", 1)[-1].split("?")[0]
+                            _proxy_state["last_request"] = time.time()
                             try:
-                                sreq = _Req(seg_url, headers=_proxy_state['headers'])
+                                sreq = _Req(seg_url, headers=_proxy_state["headers"])
                                 sresp = _uopen(sreq, timeout=10)
                                 data = sresp.read()
-                                ct = sresp.headers.get('Content-Type', 'video/mp4')
+                                ct = sresp.headers.get("Content-Type", "video/mp4")
                                 self.send_response(200)
-                                self.send_header('Content-Type', ct)
-                                self.send_header('Content-Length', str(len(data)))
+                                self.send_header("Content-Type", ct)
+                                self.send_header("Content-Length", str(len(data)))
                                 self.end_headers()
                                 self.wfile.write(data)
                                 return
                             except Exception as e:
-                                _dbg('SEG FAIL {} {}'.format(seg_name, e))
-                                _trigger_reconnect('segment fail: {}'.format(seg_name))
-                            current_url = _proxy_state['seg_cdn_urls'].get(seg_name)
+                                _dbg("SEG FAIL {} {}".format(seg_name, e))
+                                _trigger_reconnect("segment fail: {}".format(seg_name))
+                            current_url = _proxy_state["seg_cdn_urls"].get(seg_name)
                             if current_url and current_url != seg_url:
                                 try:
-                                    sreq = _Req(current_url, headers=_proxy_state['headers'])
+                                    sreq = _Req(
+                                        current_url, headers=_proxy_state["headers"]
+                                    )
                                     sresp = _uopen(sreq, timeout=10)
                                     data = sresp.read()
-                                    ct = sresp.headers.get('Content-Type', 'video/mp4')
+                                    ct = sresp.headers.get("Content-Type", "video/mp4")
                                     self.send_response(200)
-                                    self.send_header('Content-Type', ct)
-                                    self.send_header('Content-Length', str(len(data)))
+                                    self.send_header("Content-Type", ct)
+                                    self.send_header("Content-Length", str(len(data)))
                                     self.end_headers()
                                     self.wfile.write(data)
-                                    _dbg('SEG FALLBACK OK {}'.format(seg_name))
+                                    _dbg("SEG FALLBACK OK {}".format(seg_name))
                                     return
                                 except Exception as e2:
-                                    _dbg('SEG FALLBACK FAIL {}'.format(e2))
-                            tm = re.search(r'(video|audio)_(\d+)_llhls', seg_name)
+                                    _dbg("SEG FALLBACK FAIL {}".format(e2))
+                            tm = re.search(r"(video|audio)_(\d+)_llhls", seg_name)
                             if tm:
-                                for tk, latest in _proxy_state['latest_seg'].items():
+                                for tk, latest in _proxy_state["latest_seg"].items():
                                     if tm.group(1) in tk and tm.group(2) in tk:
                                         try:
-                                            sreq = _Req(latest, headers=_proxy_state['headers'])
+                                            sreq = _Req(
+                                                latest, headers=_proxy_state["headers"]
+                                            )
                                             sresp = _uopen(sreq, timeout=10)
                                             data = sresp.read()
-                                            ct = sresp.headers.get('Content-Type', 'video/mp4')
+                                            ct = sresp.headers.get(
+                                                "Content-Type", "video/mp4"
+                                            )
                                             self.send_response(200)
-                                            self.send_header('Content-Type', ct)
-                                            self.send_header('Content-Length', str(len(data)))
+                                            self.send_header("Content-Type", ct)
+                                            self.send_header(
+                                                "Content-Length", str(len(data))
+                                            )
                                             self.end_headers()
                                             self.wfile.write(data)
-                                            _dbg('SEG LATEST OK {}'.format(seg_name))
+                                            _dbg("SEG LATEST OK {}".format(seg_name))
                                             return
                                         except Exception as e3:
-                                            _dbg('SEG LATEST FAIL {}'.format(e3))
+                                            _dbg("SEG LATEST FAIL {}".format(e3))
                                             break
                             self.send_error(502)
                             return
                         else:
                             self.send_response(200)
-                            self.send_header('Content-Type', 'application/vnd.apple.mpegurl')
-                            self.send_header('Content-Length', str(len(master_bytes)))
+                            self.send_header(
+                                "Content-Type", "application/vnd.apple.mpegurl"
+                            )
+                            self.send_header("Content-Length", str(len(master_bytes)))
                             self.end_headers()
                             self.wfile.write(master_bytes)
+
                     def do_HEAD(self):
                         self.send_response(200)
-                        self.send_header('Content-Type', 'application/vnd.apple.mpegurl')
+                        self.send_header(
+                            "Content-Type", "application/vnd.apple.mpegurl"
+                        )
                         self.end_headers()
+
                     def log_message(self, *a):
                         pass
 
@@ -894,7 +1022,7 @@ def Playvid(url, name):
                     daemon_threads = True
                     allow_reuse_address = True
 
-                srv = _S(('127.0.0.1', port), _H)
+                srv = _S(("127.0.0.1", port), _H)
                 _cb_proxy = srv
                 _cb_proxy_state = _proxy_state
                 t = threading.Thread(target=srv.serve_forever)
@@ -902,67 +1030,86 @@ def Playvid(url, name):
                 t.start()
 
                 def _monitor_player():
-                    _dbg('MONITOR: thread started for port={}'.format(port))
-                    my_port_tag = ':{}/'.format(port)
+                    _dbg("MONITOR: thread started for port={}".format(port))
+                    my_port_tag = ":{}/".format(port)
                     try:
                         mon = xbmc.Monitor()
                         player = xbmc.Player()
                         confirmed = False
                         for _ in range(30):
-                            if mon.abortRequested() or _proxy_state.get('stopping'):
+                            if mon.abortRequested() or _proxy_state.get("stopping"):
                                 break
                             try:
-                                cur = player.getPlayingFile() if player.isPlaying() else ''
+                                cur = (
+                                    player.getPlayingFile()
+                                    if player.isPlaying()
+                                    else ""
+                                )
                             except Exception:
-                                cur = ''
+                                cur = ""
                             if cur and my_port_tag in cur:
                                 confirmed = True
                                 break
                             if mon.waitForAbort(0.5):
                                 break
                         if not confirmed:
-                            _dbg('MONITOR: never confirmed as active stream within 15s, tearing down')
+                            _dbg(
+                                "MONITOR: never confirmed as active stream within 15s, tearing down"
+                            )
                         else:
-                            _dbg('MONITOR: confirmed active stream, watching for stop')
-                            while not mon.abortRequested() and not _proxy_state.get('stopping'):
+                            _dbg("MONITOR: confirmed active stream, watching for stop")
+                            while not mon.abortRequested() and not _proxy_state.get(
+                                "stopping"
+                            ):
                                 if not player.isPlaying():
-                                    _dbg('MONITOR: player stopped, shutting down proxy')
+                                    _dbg("MONITOR: player stopped, shutting down proxy")
                                     break
                                 try:
                                     cur = player.getPlayingFile()
                                 except Exception:
-                                    cur = ''
+                                    cur = ""
                                 if cur and my_port_tag not in cur:
-                                    _dbg('MONITOR: port={} no longer active (now {}), stopping'.format(port, cur))
+                                    _dbg(
+                                        "MONITOR: port={} no longer active (now {}), stopping".format(
+                                            port, cur
+                                        )
+                                    )
                                     break
                                 if mon.waitForAbort(1):
                                     break
                     except Exception as mex:
-                        _dbg('MONITOR THREAD CRASHED: {}'.format(mex))
-                    _dbg('MONITOR: teardown entered addr={}'.format(
-                        getattr(srv, 'server_address', '?')))
-                    _proxy_state['stopping'] = True
+                        _dbg("MONITOR THREAD CRASHED: {}".format(mex))
+                    _dbg(
+                        "MONITOR: teardown entered addr={}".format(
+                            getattr(srv, "server_address", "?")
+                        )
+                    )
+                    _proxy_state["stopping"] = True
                     try:
                         srv.shutdown()
-                        _dbg('MONITOR: shutdown() OK')
+                        _dbg("MONITOR: shutdown() OK")
                     except Exception as mex2:
-                        _dbg('MONITOR: shutdown err {}'.format(mex2))
+                        _dbg("MONITOR: shutdown err {}".format(mex2))
                     try:
                         srv.server_close()
-                        _dbg('MONITOR: proxy shutdown complete')
+                        _dbg("MONITOR: proxy shutdown complete")
                     except Exception as mex3:
-                        _dbg('MONITOR: close err {}'.format(mex3))
+                        _dbg("MONITOR: close err {}".format(mex3))
 
                 _mt = threading.Thread(target=_monitor_player)
                 _mt.daemon = True
                 _mt.start()
 
-                videourl = 'http://127.0.0.1:{}/master.m3u8|Referer={}'.format(port, urllib_parse.quote(url))
+                videourl = "http://127.0.0.1:{}/master.m3u8|Referer={}".format(
+                    port, urllib_parse.quote(url)
+                )
             except Exception as e:
                 utils.kodilog("Chaturbate proxy error: {}".format(e))
                 fallback_headers = HTTP_HEADERS_IPAD.copy()
-                fallback_headers['Referer'] = url
-                videourl = "{0}|{1}".format(m3u8stream, urllib_parse.urlencode(fallback_headers))
+                fallback_headers["Referer"] = url
+                videourl = "{0}|{1}".format(
+                    m3u8stream, urllib_parse.urlencode(fallback_headers)
+                )
         else:
             utils.notify("Oh oh", "Couldn't find a playable webcam link")
             return
@@ -1256,9 +1403,12 @@ def get_cookie():
             cookiestr = cookie.value
     return cookiestr
 
+
 @site.register()
 def Record(id):
-    url = 'https://www.cloudbate.com/search/{0}/'
-    contexturl = (utils.addon_sys + "?mode=cloudbate.Search&url={}&keyword={}".format(urllib_parse.quote_plus(url), id))
-    xbmc.executebuiltin('Container.Update(' + contexturl + ')')
+    url = "https://www.cloudbate.com/search/{0}/"
+    contexturl = utils.addon_sys + "?mode=cloudbate.Search&url={}&keyword={}".format(
+        urllib_parse.quote_plus(url), id
+    )
+    xbmc.executebuiltin("Container.Update(" + contexturl + ")")
     utils.eod()
