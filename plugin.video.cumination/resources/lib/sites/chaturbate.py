@@ -696,9 +696,26 @@ def Playvid(url, name):
                             if not req_url:
                                 self.send_error(400)
                                 return
+                            def _is_allowed_remote_url(u):
+                                try:
+                                    p = urllib_parse.urlparse(u)
+                                except Exception:
+                                    return False
+                                if p.scheme not in ('http', 'https'):
+                                    return False
+                                if not p.netloc:
+                                    return False
+                                host = (p.hostname or '').lower()
+                                return host == 'chaturbate.com' or host.endswith('.chaturbate.com')
+                            if not _is_allowed_remote_url(req_url):
+                                self.send_error(400)
+                                return
                             km = re.search(r'(chunklist_\d+_\w+)', req_url)
                             type_key = km.group(1) if km else None
                             cdn_url = _proxy_state['url_map'].get(type_key, req_url) if type_key else req_url
+                            if not _is_allowed_remote_url(cdn_url):
+                                self.send_error(400)
+                                return
                             _proxy_state['last_request'] = time.time()
 
                             def _fetch_and_absolutize(u):
