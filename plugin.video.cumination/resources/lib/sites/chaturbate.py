@@ -791,6 +791,39 @@ def Playvid(url, name):
                             if not seg_url:
                                 self.send_error(400)
                                 return
+
+                            seg_parsed = urllib_parse.urlparse(seg_url)
+                            if seg_parsed.scheme not in ('http', 'https') or not seg_parsed.netloc:
+                                self.send_error(400)
+                                return
+
+                            allowed_hosts = set()
+                            for _u in _proxy_state.get('seg_cdn_urls', {}).values():
+                                try:
+                                    _p = urllib_parse.urlparse(_u)
+                                    if _p.netloc:
+                                        allowed_hosts.add(_p.netloc)
+                                except Exception:
+                                    pass
+                            for _u in _proxy_state.get('latest_seg', {}).values():
+                                try:
+                                    _p = urllib_parse.urlparse(_u)
+                                    if _p.netloc:
+                                        allowed_hosts.add(_p.netloc)
+                                except Exception:
+                                    pass
+                            for _u in _proxy_state.get('url_map', {}).values():
+                                try:
+                                    _p = urllib_parse.urlparse(_u)
+                                    if _p.netloc:
+                                        allowed_hosts.add(_p.netloc)
+                                except Exception:
+                                    pass
+
+                            if allowed_hosts and seg_parsed.netloc not in allowed_hosts:
+                                self.send_error(400)
+                                return
+
                             seg_name = seg_url.rsplit('/', 1)[-1].split('?')[0]
                             _proxy_state['last_request'] = time.time()
                             try:
