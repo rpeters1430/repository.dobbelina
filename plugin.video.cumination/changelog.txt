@@ -1,3 +1,11 @@
+[B]Version 1.1.373[/B]
+- security: fix potential command injection and strengthen SSRF protection
+- fix: address potential SSRF in chaturbate.py localhost proxy (fixes #174, #175)
+- Merge pull request #133 from rpeters1430/alert-autofix-173
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 173: Full server-side request forgery
+- feat: enhance site handling and error management for multiple sites
+
 [B]Version 1.1.372[/B]
 - fix: address potential SSRF in chaturbate.py localhost proxy (fixes #174, #175)
 - Merge pull request #133 from rpeters1430/alert-autofix-173
