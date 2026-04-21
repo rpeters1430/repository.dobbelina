@@ -746,6 +746,32 @@ def Playvid(url, name):
                     t2.daemon = True
                     t2.start()
 
+                def _is_safe_url(target_url):
+                    parsed = urllib_parse.urlparse(target_url)
+                    if parsed.scheme not in ("http", "https") or not parsed.netloc:
+                        return False
+
+                    allowed_hosts = set()
+                    with _proxy_state["lock"]:
+                        try:
+                            base_parsed = urllib_parse.urlparse(
+                                _proxy_state["stream_url"]
+                            )
+                            if base_parsed.netloc:
+                                allowed_hosts.add(base_parsed.netloc)
+                        except Exception:
+                            pass
+
+                        for collection in ["seg_cdn_urls", "latest_seg", "url_map"]:
+                            for _u in _proxy_state.get(collection, {}).values():
+                                try:
+                                    _p = urllib_parse.urlparse(_u)
+                                    if _p.netloc:
+                                        allowed_hosts.add(_p.netloc)
+                                except Exception:
+                                    pass
+                    return parsed.netloc in allowed_hosts
+
                 # Localhost proxy: serves master + proxies chunklists with auto-reconnect
                 class _H(BaseHTTPRequestHandler):
                     def do_GET(self):
@@ -763,6 +789,9 @@ def Playvid(url, name):
                                 if type_key
                                 else req_url
                             )
+                            if not _is_safe_url(cdn_url):
+                                self.send_error(400)
+                                return
                             _proxy_state["last_request"] = time.time()
 
                             def _fetch_and_absolutize(u):
@@ -903,38 +932,7 @@ def Playvid(url, name):
                                 self.send_error(400)
                                 return
 
-                            seg_parsed = urllib_parse.urlparse(seg_url)
-                            if (
-                                seg_parsed.scheme not in ("http", "https")
-                                or not seg_parsed.netloc
-                            ):
-                                self.send_error(400)
-                                return
-
-                            allowed_hosts = set()
-                            for _u in _proxy_state.get("seg_cdn_urls", {}).values():
-                                try:
-                                    _p = urllib_parse.urlparse(_u)
-                                    if _p.netloc:
-                                        allowed_hosts.add(_p.netloc)
-                                except Exception:
-                                    pass
-                            for _u in _proxy_state.get("latest_seg", {}).values():
-                                try:
-                                    _p = urllib_parse.urlparse(_u)
-                                    if _p.netloc:
-                                        allowed_hosts.add(_p.netloc)
-                                except Exception:
-                                    pass
-                            for _u in _proxy_state.get("url_map", {}).values():
-                                try:
-                                    _p = urllib_parse.urlparse(_u)
-                                    if _p.netloc:
-                                        allowed_hosts.add(_p.netloc)
-                                except Exception:
-                                    pass
-
-                            if allowed_hosts and seg_parsed.netloc not in allowed_hosts:
+                            if not _is_safe_url(seg_url):
                                 self.send_error(400)
                                 return
 
