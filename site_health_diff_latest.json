@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-04-21T07:07:07.674389",
+    "sites_total": 170,
+    "pass": 168,
+    "warn": 0,
+    "fail": 2,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-04-20T07:08:33.070087",
     "sites_total": 170,
     "pass": 167,
@@ -8,35 +17,31 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-04-19T07:01:56.875511",
-    "sites_total": 170,
-    "pass": 164,
-    "warn": 3,
-    "fail": 3,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
     "new_failures": 1,
-    "resolved_failures": 1,
-    "persistent_failures": 2,
-    "improved_sites": 3,
+    "resolved_failures": 2,
+    "persistent_failures": 1,
+    "improved_sites": 0,
     "regressions": 1,
-    "step_regressions": 1
+    "step_regressions": 0
   },
   "new_failures": [
     {
-      "site": "analdin",
+      "site": "ask4porn",
       "previous": "PASS",
       "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
+      "class": "NETWORK",
+      "message": "Site process timed out after 140s"
     }
   ],
   "resolved_failures": [
     {
-      "site": "motherless",
+      "site": "analdin",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "noodlemagazine",
       "previous": "FAIL",
       "current": "PASS"
     }
@@ -48,74 +53,28 @@
       "current": "FAIL",
       "class": "NETWORK",
       "message": "list: List URL unavailable in harness (HTTP 503)"
-    },
-    {
-      "site": "noodlemagazine",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
     }
   ],
-  "improved_sites": [
-    {
-      "site": "eroticage",
-      "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "tubxporn",
-      "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "xhamster",
-      "previous": "WARN",
-      "current": "PASS"
-    }
-  ],
-  "step_regressions": [
-    {
-      "site": "analdin",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
-    }
-  ],
+  "improved_sites": [],
+  "step_regressions": [],
   "deltas": [
     {
       "site": "analdin",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "ask4porn",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "eroticage",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "motherless",
+      "site": "noodlemagazine",
       "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "tubxporn",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "xhamster",
-      "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""

@@ -1,17 +1,15 @@
 # Site Profile Audit
 
 - Sites: `170`
-- Tier1 hot: `0`
-- Failing: `3`
+- Tier1 hot: `1`
+- Failing: `1`
 - Warn: `0`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
+| ask4porn | tier1_hot | FAIL | 1 | video | Y | Y | Y | Y | Y |
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| noodlemagazine | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
-| ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
 | camsoda | tier1 | PASS | 1 | cam |  |  |  |  |  |
 | chaturbate | tier1 | PASS | 1 | cam |  |  |  |  |  |
@@ -33,6 +31,7 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
+| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -102,6 +101,7 @@
 | netflixporno | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | nltubes | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | nonktube | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| noodlemagazine | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | okxxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | paradisehill | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | peachurnet | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -180,11 +180,9 @@
 
 ## Next Batch
 
-- **analdin** (failing, tier=2) | failures: list:FAIL
+- **ask4porn** (tier1_hot, tier=1)
 - **josporn** (failing, tier=None) | failures: list:FAIL
-- **noodlemagazine** (failing, tier=None) | failures: list:FAIL
 - **anybunny** (tier1, tier=1)
-- **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
 - **camsoda** (tier1, tier=1)
 - **chaturbate** (tier1, tier=1)
@@ -200,3 +198,5 @@
 - **xvideos** (tier1, tier=1)
 - **youporn** (tier1, tier=1)
 - **6xtube** (backlog, tier=None)
+- **85po** (backlog, tier=None)
+- **aagmaal** (backlog, tier=None)
