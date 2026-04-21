@@ -93,7 +93,7 @@ def INDEX():
     if download_path != "" and os.path.exists(download_path):
         utils.addDir(
             "[COLOR hotpink]Whitecream[/COLOR] [COLOR white]Download Folder[/COLOR]",
-            download_path,
+            "",
             4,
             os.path.join(rootDir, "icon.png"),
             "",
@@ -713,11 +713,14 @@ def ONELIST(page=1):
     xbmcplugin.endOfDirectory(utils.addon_handle)
 
 
-@utils.url_dispatcher.register("4", ["url"])
-def OpenDownloadFolder(url):
+@utils.url_dispatcher.register("4")
+def OpenDownloadFolder():
     xbmc.executebuiltin("Dialog.Close(busydialog)")
     xbmc.sleep(100)
-    xbmc.executebuiltin("ActivateWindow(Videos, " + url + ")")
+    download_path = addon.getSetting("download_path")
+    if download_path:
+        safe_url = download_path.replace('"', "").replace(",", "")
+        xbmc.executebuiltin('ActivateWindow(Videos, "{}")'.format(safe_url))
 
 
 @utils.url_dispatcher.register("8")

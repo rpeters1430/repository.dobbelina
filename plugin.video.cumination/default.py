@@ -243,7 +243,7 @@ def INDEX():
     if download_path != "" and xbmcvfs.exists(download_path):
         url_dispatcher.add_dir(
             "[COLOR white]{}[/COLOR]".format(utils.i18n("dnld_folder")),
-            download_path,
+            "",
             "OpenDownloadFolder",
             basics.cum_image("cum-downloads.png"),
             "",
@@ -410,11 +410,15 @@ def testing_site_list():
 
 
 @url_dispatcher.register()
-def OpenDownloadFolder(url):
+def OpenDownloadFolder():
     xbmc.executebuiltin("Dialog.Close(busydialog, true)")
     xbmc.sleep(100)
-    safe_url = url.replace('"', "").replace(",", "")
-    xbmc.executebuiltin('ActivateWindow(Videos, "{}")'.format(safe_url))
+    download_path = addon_get_setting("download_path")
+    if download_path:
+        safe_url = download_path.replace('"', "").replace(",", "")
+        xbmc.executebuiltin('ActivateWindow(Videos, "{}")'.format(safe_url))
+    else:
+        utils.notify(utils.i18n("oh_oh"), utils.i18n("dnld_path"))
 
 
 @url_dispatcher.register()

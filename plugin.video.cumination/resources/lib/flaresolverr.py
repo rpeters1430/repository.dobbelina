@@ -22,11 +22,19 @@ def _validate_flaresolverr_url(url):
     if not host:
         raise ValueError("FlareSolverr URL has no host: {}".format(url))
     if host not in _LOCALHOST_HOSTS:
-        xbmc.log(
-            "@@@@Cumination: FlareSolverr configured with non-localhost host '{}'. "
-            "Ensure this is intentional.".format(host),
-            xbmc.LOGWARNING,
-        )
+        # Check if the user has explicitly allowed remote hosts via a hidden setting
+        if xbmc.getAddonSettings(xbmc.getAddonId()).getSetting("fs_allow_remote") != "true":
+            raise RuntimeError(
+                "FlareSolverr is configured with a remote host '{}'. "
+                "For security, only localhost is allowed by default. "
+                "Please use 127.0.0.1 or localhost.".format(host)
+            )
+        else:
+            xbmc.log(
+                "@@@@Cumination: FlareSolverr configured with non-localhost host '{}'. "
+                "Remote access is enabled via 'fs_allow_remote'.".format(host),
+                xbmc.LOGWARNING,
+            )
 
 
 class FlareSolverrManager:
