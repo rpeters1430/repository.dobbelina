@@ -49,6 +49,30 @@ site = AdultSite(
 addon = utils.addon
 _cb_proxy = None
 _cb_proxy_state = None
+
+_ALLOWED_HOST_SUFFIXES = ("chaturbate.com",)
+
+
+def _host_matches(host, allowed_suffixes):
+    if not host:
+        return False
+    host = host.lower()
+    return any(host == suffix or host.endswith("." + suffix) for suffix in allowed_suffixes)
+
+
+def _is_allowed_chaturbate_url(url):
+    if not url:
+        return False
+    parsed = urllib_parse.urlsplit(url)
+    if parsed.scheme not in ("http", "https"):
+        return False
+    return _host_matches(parsed.hostname, _ALLOWED_HOST_SUFFIXES)
+
+
+def _reject_untrusted_url(url):
+    utils.kodilog("Chaturbate: blocked untrusted URL '{}'".format(url), xbmc.LOGWARNING)
+    utils.notify("Chaturbate", "Blocked non-Chaturbate URL")
+
 HTTP_HEADERS_IPAD = {
     "User-Agent": "Mozilla/5.0 (iPad; CPU OS 8_1 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Version/8.0 Mobile/12B410 Safari/600.1.4"
 }
@@ -190,6 +214,11 @@ def Online(stamp):
 
 @site.register()
 def List(url, page=1):
+    if not _is_allowed_chaturbate_url(url):
+        _reject_untrusted_url(url)
+        utils.eod()
+        return
+
     if "follow=true" in url and "offline=false" in url:
         site.add_dir(
             "[COLOR yellow]Offline Rooms[/COLOR]",
@@ -334,6 +363,11 @@ def List(url, page=1):
 
 @site.register()
 def SList(url):
+    if not _is_allowed_chaturbate_url(url):
+        _reject_untrusted_url(url)
+        utils.eod()
+        return
+
     hdr = utils.base_hdrs.copy()
     hdr.update({"X-Requested-With": "XMLHttpRequest"})
     listhtml = utils._getHtml(url, site.url, headers=hdr)
@@ -396,6 +430,10 @@ def clean_database(showdialog=True):
 
 @site.register()
 def Playvid(url, name):
+    if not _is_allowed_chaturbate_url(url):
+        _reject_untrusted_url(url)
+        return
+
     playmode = int(addon.getSetting("chatplay"))
     try:
         listhtml, used_fs = utils.get_html_with_cloudflare_retry(
@@ -1150,11 +1188,19 @@ def Search(url, keyword=None):
     else:
         title = urllib_parse.quote_plus(keyword)
         url += title
+        if not _is_allowed_chaturbate_url(url):
+            _reject_untrusted_url(url)
+            return
         SList(url)
 
 
 @site.register()
 def topCams(url):
+    if not _is_allowed_chaturbate_url(url):
+        _reject_untrusted_url(url)
+        utils.eod()
+        return
+
     if addon.getSetting("chaturbate") == "true":
         clean_database(False)
     response = utils._getHtml(url)
@@ -1183,6 +1229,11 @@ def topCams(url):
 
 @site.register()
 def Tags(url, page=1):
+    if not _is_allowed_chaturbate_url(url):
+        _reject_untrusted_url(url)
+        utils.eod()
+        return
+
     cat = re.search(r"&g=([^&]*)", url).group(1)
     html = utils.getHtml(url, site.url)
     jdata = json.loads(html)

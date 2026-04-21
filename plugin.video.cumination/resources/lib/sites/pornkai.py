@@ -23,6 +23,9 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from six.moves import urllib_parse
 
+_ALLOWED_HOST_SUFFIXES = ("pornkai.com",)
+_ALLOWED_EMBED_HOST_SUFFIXES = ("xvideos.com", "xh.video")
+
 site = AdultSite(
     "pornkai",
     "[COLOR hotpink]PornKai[/COLOR]",
@@ -31,6 +34,31 @@ site = AdultSite(
     "pornkai",
     category="Video Tubes",
 )
+
+def _host_matches(host, allowed_suffixes):
+    if not host:
+        return False
+    host = host.lower()
+    return any(host == suffix or host.endswith("." + suffix) for suffix in allowed_suffixes)
+
+
+def _is_allowed_site_url(url):
+    if not url:
+        return False
+    parsed = urllib_parse.urlsplit(url)
+    if parsed.scheme not in ("http", "https"):
+        return False
+    return _host_matches(parsed.hostname, _ALLOWED_HOST_SUFFIXES)
+
+
+def _is_allowed_embed_url(url):
+    if not url:
+        return False
+    parsed = urllib_parse.urlsplit(url)
+    if parsed.scheme not in ("http", "https"):
+        return False
+    return _host_matches(parsed.hostname, _ALLOWED_EMBED_HOST_SUFFIXES)
+
 
 
 @site.register(default_mode=True)
@@ -55,6 +83,11 @@ def Main():
 
 @site.register()
 def List(url):
+    if not _is_allowed_site_url(url):
+        utils.notify("PornKai", "Blocked non-PornKai URL")
+        utils.eod()
+        return
+
     html = utils.getHtml(url, site.url)
     if not html:
         utils.eod()
@@ -232,6 +265,10 @@ def _add_next_page(url, results_remaining):
 
 @site.register()
 def Related(url):
+    if not _is_allowed_site_url(url):
+        utils.notify("PornKai", "Blocked non-PornKai URL")
+        return
+
     contexturl = (
         utils.addon_sys
         + "?mode="
@@ -253,6 +290,11 @@ def Search(url, keyword=None):
 
 @site.register()
 def Categories(url):
+    if not _is_allowed_site_url(url):
+        utils.notify("PornKai", "Blocked non-PornKai URL")
+        utils.eod()
+        return
+
     cathtml = utils.getHtml(url)
     if not cathtml:
         utils.eod()
@@ -302,6 +344,10 @@ def Categories(url):
 
 @site.register()
 def Playvid(url, name, download=None):
+    if not _is_allowed_site_url(url):
+        utils.notify("PornKai", "Blocked non-PornKai URL")
+        return
+
     videohtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(videohtml)
     iframe = soup.select_one('.if_cont iframe, #video_container iframe, #player_container iframe')
@@ -309,10 +355,11 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     if iframe:
         vid_url = iframe.get('src', '')
-        if vid_url:
-            if 'xvideos.com' in vid_url or 'xh.video' in vid_url:
-                vp.play_from_link_to_resolve(vid_url)
-                return
+        if vid_url and vid_url.startswith('/'):
+            vid_url = urllib_parse.urljoin(site.url, vid_url)
+        if _is_allowed_embed_url(vid_url):
+            vp.play_from_link_to_resolve(vid_url)
+            return
 
     # Fallback to the original method if iframe not found or src is not a direct link
     vp.play_from_html(videohtml, url)
