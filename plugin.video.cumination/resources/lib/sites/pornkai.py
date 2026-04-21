@@ -35,11 +35,14 @@ site = AdultSite(
     category="Video Tubes",
 )
 
+
 def _host_matches(host, allowed_suffixes):
     if not host:
         return False
     host = host.lower()
-    return any(host == suffix or host.endswith("." + suffix) for suffix in allowed_suffixes)
+    return any(
+        host == suffix or host.endswith("." + suffix) for suffix in allowed_suffixes
+    )
 
 
 def _is_allowed_site_url(url):
@@ -58,7 +61,6 @@ def _is_allowed_embed_url(url):
     if parsed.scheme not in ("http", "https"):
         return False
     return _host_matches(parsed.hostname, _ALLOWED_EMBED_HOST_SUFFIXES)
-
 
 
 @site.register(default_mode=True)
@@ -98,7 +100,9 @@ def List(url):
         markup, results_remaining = _extract_markup_and_meta(html)
     else:
         markup = html
-        results_remaining = 120  # Arbitrary positive value to show next page if HTML pagination exists
+        results_remaining = (
+            120  # Arbitrary positive value to show next page if HTML pagination exists
+        )
 
     soup = utils.parse_html(markup)
     video_items = soup.select("div.thumbnail, article.thumbnail")
@@ -325,7 +329,7 @@ def Categories(url):
         query = ""
         if "?q=" in caturl:
             query = caturl.split("?q=")[-1]
-        
+
         # API is currently 504ing, use HTML search instead
         if query:
             catpage = site.url + "videos?q={}&sort=best&page=1".format(query)
@@ -336,12 +340,6 @@ def Categories(url):
     utils.eod()
 
 
-
-
-
-
-
-
 @site.register()
 def Playvid(url, name, download=None):
     if not _is_allowed_site_url(url):
@@ -350,12 +348,14 @@ def Playvid(url, name, download=None):
 
     videohtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(videohtml)
-    iframe = soup.select_one('.if_cont iframe, #video_container iframe, #player_container iframe')
+    iframe = soup.select_one(
+        ".if_cont iframe, #video_container iframe, #player_container iframe"
+    )
 
     vp = utils.VideoPlayer(name, download)
     if iframe:
-        vid_url = iframe.get('src', '')
-        if vid_url and vid_url.startswith('/'):
+        vid_url = iframe.get("src", "")
+        if vid_url and vid_url.startswith("/"):
             vid_url = urllib_parse.urljoin(site.url, vid_url)
         if _is_allowed_embed_url(vid_url):
             vp.play_from_link_to_resolve(vid_url)

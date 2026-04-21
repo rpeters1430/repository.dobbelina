@@ -57,7 +57,9 @@ def _host_matches(host, allowed_suffixes):
     if not host:
         return False
     host = host.lower()
-    return any(host == suffix or host.endswith("." + suffix) for suffix in allowed_suffixes)
+    return any(
+        host == suffix or host.endswith("." + suffix) for suffix in allowed_suffixes
+    )
 
 
 def _is_allowed_chaturbate_url(url):
@@ -72,6 +74,7 @@ def _is_allowed_chaturbate_url(url):
 def _reject_untrusted_url(url):
     utils.kodilog("Chaturbate: blocked untrusted URL '{}'".format(url), xbmc.LOGWARNING)
     utils.notify("Chaturbate", "Blocked non-Chaturbate URL")
+
 
 HTTP_HEADERS_IPAD = {
     "User-Agent": "Mozilla/5.0 (iPad; CPU OS 8_1 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Version/8.0 Mobile/12B410 Safari/600.1.4"
