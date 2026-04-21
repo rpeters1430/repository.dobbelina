@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <addons>
-<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.372">
+<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.373">
 <requires>
 <import addon="xbmc.python" version="3.0.0" />
 <import addon="script.module.six" />
@@ -50,7 +50,7 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
 <platform>all</platform>
 </extension>
 </addon>
-<addon id="plugin.video.uwc" name="Ultimate Whitecream" version="1.2.48" provider-name="Whitecream, holisticdioxide">
+<addon id="plugin.video.uwc" name="Ultimate Whitecream" version="1.2.49" provider-name="Whitecream, holisticdioxide">
 <requires>
 <import addon="xbmc.python" version="3.0.0" />
 <import addon="script.module.resolveurl" version="5.0.00" />
