@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-04-22T07:03:25.306613",
+    "sites_total": 170,
+    "pass": 168,
+    "warn": 1,
+    "fail": 1,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-04-21T07:07:07.674389",
     "sites_total": 170,
     "pass": 168,
@@ -8,40 +17,18 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-04-20T07:08:33.070087",
-    "sites_total": 170,
-    "pass": 167,
-    "warn": 0,
-    "fail": 3,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
-    "new_failures": 1,
-    "resolved_failures": 2,
+    "new_failures": 0,
+    "resolved_failures": 1,
     "persistent_failures": 1,
     "improved_sites": 0,
     "regressions": 1,
-    "step_regressions": 0
+    "step_regressions": 1
   },
-  "new_failures": [
-    {
-      "site": "ask4porn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "Site process timed out after 140s"
-    }
-  ],
+  "new_failures": [],
   "resolved_failures": [
     {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "noodlemagazine",
+      "site": "ask4porn",
       "previous": "FAIL",
       "current": "PASS"
     }
@@ -56,27 +43,29 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [],
+  "step_regressions": [
+    {
+      "site": "familypornhd",
+      "step": "play",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+      "class": "CODE"
+    }
+  ],
   "deltas": [
     {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
       "site": "ask4porn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "noodlemagazine",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "familypornhd",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
       "detail": ""
     }
   ]

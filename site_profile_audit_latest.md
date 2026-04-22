@@ -1,15 +1,16 @@
 # Site Profile Audit
 
 - Sites: `170`
-- Tier1 hot: `1`
+- Tier1 hot: `0`
 - Failing: `1`
-- Warn: `0`
+- Warn: `1`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| ask4porn | tier1_hot | FAIL | 1 | video | Y | Y | Y | Y | Y |
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| familypornhd | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
+| ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
 | camsoda | tier1 | PASS | 1 | cam |  |  |  |  |  |
 | chaturbate | tier1 | PASS | 1 | cam |  |  |  |  |  |
@@ -51,7 +52,6 @@
 | erome | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eroticage | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eroticmv | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| familypornhd | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | foxnxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | freeomovie | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | freepornvideos | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -180,9 +180,10 @@
 
 ## Next Batch
 
-- **ask4porn** (tier1_hot, tier=1)
 - **josporn** (failing, tier=None) | failures: list:FAIL
+- **familypornhd** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
+- **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
 - **camsoda** (tier1, tier=1)
 - **chaturbate** (tier1, tier=1)
@@ -199,4 +200,3 @@
 - **youporn** (tier1, tier=1)
 - **6xtube** (backlog, tier=None)
 - **85po** (backlog, tier=None)
-- **aagmaal** (backlog, tier=None)
