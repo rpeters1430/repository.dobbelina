@@ -27,16 +27,16 @@
 | Site test files (`tests/sites/test_*.py`) | 181 |
 | Generated smoke files (`tests/smoke_generated/test_smoke_*.py`) | 169 |
 | Fixture files (`tests/fixtures/**`) | 319 |
-| Site modules with direct `tests/sites/test_<site>.py` | 169 / 170 |
+| Site modules with direct `tests/sites/test_<site>.py` | 170 / 170 |
 | Site modules with generated smoke test file | 169 / 170 |
 
 ## Audit conclusions
 
 1. Prior documentation snapshots using older site denominators are outdated against current repository inventory.
 2. Version alignment is now normalized to **1.1.373** across project/development/testing/audit docs.
-3. Two inventory-level test mapping gaps are currently visible:
-   - `hentai-moon` missing direct site test filename pairing.
+3. One inventory-level test mapping gap is currently visible:
    - `sunporno` missing generated smoke test file.
+4. `hentai-moon.py` is covered by `tests/sites/test_hentai_moon.py`; this is a hyphen/underscore filename normalization case, not a missing direct site test.
 
 ## Required maintenance action
 
