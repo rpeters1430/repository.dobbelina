@@ -125,7 +125,9 @@ def build_markdown() -> str:
         for site, desc in issues:
             lines.append(f"- **{site}** — {desc}")
     else:
-        lines.append("- No known issue bullets detected in `docs/development/KNOWN_ISSUES.md`.")
+        lines.append(
+            "- No known issue bullets detected in `docs/development/KNOWN_ISSUES.md`."
+        )
 
     lines.extend(
         [
