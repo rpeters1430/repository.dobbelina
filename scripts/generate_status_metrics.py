@@ -145,7 +145,9 @@ def collect_test_metrics(timeout: int) -> TestMetrics:
         )
     except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
         reason = f"pytest collection unavailable: {exc}"
-        return TestMetrics(total_collected=None, collection_seconds=None, raw_summary=reason)
+        return TestMetrics(
+            total_collected=None, collection_seconds=None, raw_summary=reason
+        )
 
     output = (completed.stdout or "") + (completed.stderr or "")
     lines = [line.strip() for line in output.splitlines() if line.strip()]
@@ -237,7 +239,9 @@ def generate_status_file(timeout: int, analysis_timeout: int) -> StatusMetrics:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate canonical project status metrics")
+    parser = argparse.ArgumentParser(
+        description="Generate canonical project status metrics"
+    )
     parser.add_argument(
         "--pytest-timeout",
         type=int,
