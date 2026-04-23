@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-04-22T07:03:25.306613",
+    "generated": "2026-04-23T07:03:00.840534",
     "sites_total": 170,
     "pass": 168,
     "warn": 1,
@@ -9,30 +9,24 @@
     "skip": 0
   },
   "previous": {
-    "generated": "2026-04-21T07:07:07.674389",
+    "generated": "2026-04-22T07:03:25.306613",
     "sites_total": 170,
     "pass": 168,
-    "warn": 0,
-    "fail": 2,
+    "warn": 1,
+    "fail": 1,
     "error": 0,
     "skip": 0
   },
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 1,
+    "resolved_failures": 0,
     "persistent_failures": 1,
     "improved_sites": 0,
-    "regressions": 1,
-    "step_regressions": 1
+    "regressions": 0,
+    "step_regressions": 0
   },
   "new_failures": [],
-  "resolved_failures": [
-    {
-      "site": "ask4porn",
-      "previous": "FAIL",
-      "current": "PASS"
-    }
-  ],
+  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "josporn",
@@ -43,30 +37,6 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [
-    {
-      "site": "familypornhd",
-      "step": "play",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-      "class": "CODE"
-    }
-  ],
-  "deltas": [
-    {
-      "site": "ask4porn",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "familypornhd",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    }
-  ]
+  "step_regressions": [],
+  "deltas": []
 }
