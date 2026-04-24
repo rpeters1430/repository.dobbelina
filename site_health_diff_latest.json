@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-04-24T07:04:32.144976",
+    "sites_total": 170,
+    "pass": 149,
+    "warn": 2,
+    "fail": 19,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-04-23T07:03:00.840534",
     "sites_total": 170,
     "pass": 168,
@@ -8,24 +17,142 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-04-22T07:03:25.306613",
-    "sites_total": 170,
-    "pass": 168,
-    "warn": 1,
-    "fail": 1,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
-    "new_failures": 0,
+    "new_failures": 18,
     "resolved_failures": 0,
     "persistent_failures": 1,
     "improved_sites": 0,
-    "regressions": 0,
-    "step_regressions": 0
+    "regressions": 20,
+    "step_regressions": 59
   },
-  "new_failures": [],
+  "new_failures": [
+    {
+      "site": "erogarga",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "list: RuntimeError: FlareSolverr error for https://www.erogarga.com/page/2/?filter=latest: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "familypornhd",
+      "previous": "WARN",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://familypornhd.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "freepornvideos",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://www.freepornvideos.xxx/latest-updates/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "hdporn92",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://hdporn92.com/?filter=latest: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "heavyr",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://www.heavy-r.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "javgg",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "list: RuntimeError: FlareSolverr error for https://javgg.co/trending/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "javhdporn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://www4.javhdporn.net/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "jizzbunker",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://jizzbunker.com/straight/trending: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "longvideos",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://www.wow.xxx/latest-updates/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "perverzija",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://tube.perverzija.com/page/1/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "pmvhaven",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://pmvhaven.com/api/videos?limit=32&sort=-releaseDate&page=1&skipCount=true&tagMode=OR&expandTags=false: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "porndish",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://www.porndish.com/page/1/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "rlc",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://reallifecam.to/videos?o=mr: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "spankbang",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://spankbang.com/new_videos/1/?o=new: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "supjav",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "Site process timed out after 140s"
+    },
+    {
+      "site": "thepornarea",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://thepornarea.com/latest-updates/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "whereismyporn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://whereismyporn.com/page/1: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "xmoviesforyou",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "main: RuntimeError: FlareSolverr error for https://xmoviesforyou.com/page/1: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    }
+  ],
   "resolved_failures": [],
   "persistent_failures": [
     {
@@ -37,6 +164,620 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [],
-  "deltas": []
+  "step_regressions": [
+    {
+      "site": "erogarga",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.erogarga.com/page/2/?filter=latest: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "erogarga",
+      "step": "play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.erogarga.com/trofey-2025/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "erogarga",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.erogarga.com/test: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "familypornhd",
+      "step": "categories",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://familypornhd.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "familypornhd",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://familypornhd.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "familypornhd",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://familypornhd.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "familypornhd",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://familypornhd.com/test: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "freepornvideos",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.freepornvideos.xxx/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "freepornvideos",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.freepornvideos.xxx/latest-updates/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "freepornvideos",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.freepornvideos.xxx/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "hdporn92",
+      "step": "categories",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://hdporn92.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "hdporn92",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://hdporn92.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "hdporn92",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://hdporn92.com/?filter=latest: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "hdporn92",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://hdporn92.com/test: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "heavyr",
+      "step": "categories",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.heavy-r.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "heavyr",
+      "step": "list",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.heavy-r.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "heavyr",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.heavy-r.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "heavyr",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.heavy-r.com/index.php?page=videos&section=search&query=test: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "javgg",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://javgg.co/trending/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "javgg",
+      "step": "search",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://javgg.co/test: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "javhdporn",
+      "step": "categories",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www4.javhdporn.net/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "javhdporn",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www4.javhdporn.net/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "javhdporn",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www4.javhdporn.net/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "javhdporn",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www4.javhdporn.net/test/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "jizzbunker",
+      "step": "categories",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://jizzbunker.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "jizzbunker",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://jizzbunker.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "jizzbunker",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://jizzbunker.com/straight/trending: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "jizzbunker",
+      "step": "search",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://jizzbunker.com/searching/?queryString=test: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "longvideos",
+      "step": "categories",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.wow.xxx/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "longvideos",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.wow.xxx/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "longvideos",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.wow.xxx/latest-updates/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "longvideos",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.wow.xxx/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "perverzija",
+      "step": "list",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://tube.perverzija.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "perverzija",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://tube.perverzija.com/page/1/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "perverzija",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://tube.perverzija.com/test: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "pmvhaven",
+      "step": "list",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://pmvhaven.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "pmvhaven",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://pmvhaven.com/api/videos?limit=32&sort=-releaseDate&page=1&skipCount=true&tagMode=OR&expandTags=false: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "pmvhaven",
+      "step": "search",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://pmvhaven.com/test: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "porndish",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.porndish.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "porndish",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.porndish.com/page/1/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "pornhoarder",
+      "step": "play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://pornhoarder.net/player_t.php?video=REV1QVptdHhWeHpVc2ViQjJKMThBa1hhbjBYcEV4WXJIVTg3Yk5RekNtdz0=: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "rlc",
+      "step": "categories",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://reallifecam.to/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "rlc",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://reallifecam.to/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "rlc",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://reallifecam.to/videos?o=mr: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "rlc",
+      "step": "search",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://reallifecam.to/test: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "spankbang",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://spankbang.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "spankbang",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://spankbang.com/new_videos/1/?o=new: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "spankbang",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://spankbang.com/test/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "speedporn",
+      "step": "categories",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://speedporn.net/categories/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "thepornarea",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://thepornarea.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "thepornarea",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://thepornarea.com/latest-updates/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "thepornarea",
+      "step": "search",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://thepornarea.com/test: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "whereismyporn",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://whereismyporn.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "whereismyporn",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://whereismyporn.com/page/1: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "whereismyporn",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://whereismyporn.com/test: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "xmoviesforyou",
+      "step": "categories",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://xmoviesforyou.com/categories: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "xmoviesforyou",
+      "step": "list",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://xmoviesforyou.com/: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "xmoviesforyou",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://xmoviesforyou.com/page/1: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    },
+    {
+      "site": "xmoviesforyou",
+      "step": "search",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://xmoviesforyou.com/search?q=test: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PLAYBACK"
+    }
+  ],
+  "deltas": [
+    {
+      "site": "erogarga",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "familypornhd",
+      "previous": "WARN",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "freepornvideos",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "hdporn92",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "heavyr",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "javgg",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "javhdporn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "jizzbunker",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "longvideos",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "perverzija",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "pmvhaven",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "porndish",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "pornhoarder",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "rlc",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "spankbang",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "speedporn",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "supjav",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "thepornarea",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "whereismyporn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "xmoviesforyou",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    }
+  ]
 }
