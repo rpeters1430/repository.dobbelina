@@ -1,6 +1,4 @@
-import pytest
-from unittest.mock import MagicMock, patch
-import os
+from unittest.mock import patch
 import sys
 from resources.lib import basics
 
@@ -10,7 +8,7 @@ class TestBasicsCoverage:
     def test_addImgLink(self, mock_listitem, mock_add_item):
         mock_add_item.return_value = True
         res = basics.addImgLink("Test Image", "http://image.com/img.jpg", "view_img")
-        assert res == True
+        assert res
         assert mock_add_item.called
         # Check URL construction
         args, kwargs = mock_add_item.call_args
@@ -52,7 +50,8 @@ class TestBasicsCoverage:
     @patch("resources.lib.basics.addon.getSetting")
     def test_addDownLink_del_fav(self, mock_get_setting, mock_listitem, mock_add_item):
         def side_effect(key):
-            if key == "favorder": return "date added"
+            if key == "favorder":
+                return "date added"
             return ""
         mock_get_setting.side_effect = side_effect
         mock_add_item.return_value = True
@@ -76,8 +75,10 @@ class TestBasicsCoverage:
              patch.object(mock_xbmcplugin, "endOfDirectory") as mock_end:
             
             def side_effect(key):
-                if key == "customview": return "true"
-                if key == "setview": return "estuary;55"
+                if key == "customview":
+                    return "true"
+                if key == "setview":
+                    return "estuary;55"
                 return ""
             mock_get_setting.side_effect = side_effect
             
@@ -107,7 +108,7 @@ class TestBasicsCoverage:
         basics.addDir("Category", "http://site.com", "list", "http://icon.jpg")
         assert mock_add_item.called
         args, kwargs = mock_add_item.call_args
-        assert kwargs["isFolder"] == True
+        assert kwargs["isFolder"]
 
     @patch("resources.lib.basics.xbmcplugin.addDirectoryItem")
     @patch("resources.lib.basics.xbmcgui.ListItem")

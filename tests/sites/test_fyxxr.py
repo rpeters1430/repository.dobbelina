@@ -1,6 +1,5 @@
 """Tests for fyxxr.to site implementation."""
 
-import pytest
 from resources.lib.sites import fyxxr
 
 

@@ -1,5 +1,5 @@
 from resources.lib.sites import anybunny
-from tests.conftest import fixture_mapped_get_html, read_fixture
+from tests.conftest import read_fixture
 
 
 class _Recorder:

@@ -1,8 +1,6 @@
 """Tests for LemonCams pagination and playback routing."""
 
-import pytest
 from resources.lib.sites import lemoncams
-from unittest.mock import MagicMock
 
 
 def test_list_uses_real_pagination_and_adds_next_page(monkeypatch):

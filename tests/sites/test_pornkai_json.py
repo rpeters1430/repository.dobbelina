@@ -1,6 +1,5 @@
 
 import json
-import pytest
 from resources.lib.sites import pornkai
 
 def test_extract_markup_and_meta():
