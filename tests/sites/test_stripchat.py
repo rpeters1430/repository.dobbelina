@@ -433,9 +433,9 @@ def test_rewrite_mouflon_prefer_full_segments_with_real_layout():
         manifest, "https://cdn.example.com/", prefer_full_segments=True
     )
     lines = result.splitlines()
-    full_segs = [l for l in lines if l.startswith("https://cdn.example.com/seg") and "_part" not in l]
-    part_segs = [l for l in lines if "_part" in l]
-    placeholders = [l for l in lines if "media.mp4" in l and not l.startswith("#")]
+    full_segs = [line for line in lines if line.startswith("https://cdn.example.com/seg") and "_part" not in line]
+    part_segs = [line for line in lines if "_part" in line]
+    placeholders = [line for line in lines if "media.mp4" in line and not line.startswith("#")]
 
     assert len(full_segs) == 2
     assert "https://cdn.example.com/seg4138.mp4" in full_segs

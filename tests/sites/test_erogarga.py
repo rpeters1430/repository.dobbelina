@@ -492,8 +492,10 @@ def test_play_extra_branches(monkeypatch):
     html_page_with_kl = '<iframe src="https://klcams.com/embed/"></iframe>'
     html_kl_embed = '<iframe src="https://klcams.com/inner/"></iframe>'
     def fake_get_html_kl(url, referer=None, **k):
-        if "erogarga.com/v1" in url: return html_page_with_kl
-        if "klcams.com/embed/" in url: return html_kl_embed
+        if "erogarga.com/v1" in url:
+            return html_page_with_kl
+        if "klcams.com/embed/" in url:
+            return html_kl_embed
         return "packed_data"
     monkeypatch.setattr(erogarga.utils, "getHtml", fake_get_html_kl)
     erogarga.Play("https://www.erogarga.com/v1", "Name")

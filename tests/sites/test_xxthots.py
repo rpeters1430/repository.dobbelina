@@ -1,6 +1,5 @@
 """Tests for xxthots.com site implementation."""
 
-import pytest
 from resources.lib.sites import xxthots
 
 

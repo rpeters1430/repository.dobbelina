@@ -1,4 +1,3 @@
-import pytest
 from resources.lib.sites import sunporno
 from tests.conftest import fixture_mapped_get_html
 

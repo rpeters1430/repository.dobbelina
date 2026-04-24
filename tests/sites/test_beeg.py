@@ -1,7 +1,6 @@
 """Tests for beeg.com site implementation (API-based)."""
 
 import json
-import base64
 from unittest.mock import MagicMock
 
 from resources.lib.sites import beeg

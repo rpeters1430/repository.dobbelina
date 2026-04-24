@@ -1,7 +1,5 @@
 import pytest
 import base64
-import os
-import six
 from resources.lib.jscrypto import jscrypto, pyaes, pkcs7
 
 def test_pkcs7_padding():

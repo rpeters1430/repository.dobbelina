@@ -1,9 +1,8 @@
 
 import pytest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 from resources.lib.sites import hotleak
-from resources.lib import utils
 
 @pytest.fixture
 def site_spec_fixture():

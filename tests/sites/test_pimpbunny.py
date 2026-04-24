@@ -1,4 +1,3 @@
-import pytest
 from pathlib import Path
 from resources.lib.sites import pimpbunny
 

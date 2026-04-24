@@ -1,8 +1,6 @@
 """Comprehensive tests for rule34video site implementation."""
 
 from pathlib import Path
-import pytest
-import re
 from unittest.mock import MagicMock
 
 from resources.lib.sites import rule34video

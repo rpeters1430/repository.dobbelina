@@ -19,12 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import re
 import os
 import sqlite3
-import socket
-import threading
-from http.server import BaseHTTPRequestHandler
-from socketserver import TCPServer, ThreadingMixIn
 from six.moves import urllib_parse
-from six.moves import urllib_request as _req
 import six
 import json
 import random

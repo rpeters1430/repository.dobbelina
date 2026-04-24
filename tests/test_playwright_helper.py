@@ -1,5 +1,4 @@
 import pytest
-import os
 import sys
 import importlib
 from unittest.mock import MagicMock, patch
@@ -25,14 +24,14 @@ def test_is_kodi_runtime_real_logic(monkeypatch):
     
     # When xbmc is in sys.modules
     assert "xbmc" in sys.modules
-    assert ph._is_kodi_runtime() == True
+    assert ph._is_kodi_runtime()
     
     # When xbmc is NOT in sys.modules
     with patch.dict(sys.modules):
         del sys.modules["xbmc"]
         # Mock failed import using __import__
         with patch("builtins.__import__", side_effect=ImportError):
-            assert ph._is_kodi_runtime() == False
+            assert not ph._is_kodi_runtime()
 
 def test_playwright_enabled_logic(ph, monkeypatch):
     # Use the original function for this test
@@ -42,9 +41,9 @@ def test_playwright_enabled_logic(ph, monkeypatch):
     importlib.reload(ph_orig)
     
     monkeypatch.delenv("CUMINATION_ALLOW_PLAYWRIGHT", raising=False)
-    assert ph_orig._playwright_enabled() == False
+    assert not ph_orig._playwright_enabled()
     monkeypatch.setenv("CUMINATION_ALLOW_PLAYWRIGHT", "1")
-    assert ph_orig._playwright_enabled() == True
+    assert ph_orig._playwright_enabled()
 
 def test_fetch_with_playwright_no_stealth(ph, monkeypatch):
     monkeypatch.setattr(ph, "HAS_STEALTH", False)
@@ -88,11 +87,9 @@ def test_sniff_video_url_no_preferred_found(ph):
         assert result == "http://test.com/video.mp4"
 
 def test_sniff_video_url_already_found_early_exit(ph):
-    with patch("resources.lib.playwright_helper.sync_playwright") as mock_sync:
-        mock_page = mock_sync.return_value.__enter__.return_value.chromium.launch.return_value.new_context.return_value.new_page.return_value
+    with patch("resources.lib.playwright_helper.sync_playwright"):
         
         # Found early
-        found_url = ["http://test.com/video.mp4"]
         
         # If we use patch to set the inner found_url... wait, it's a closure.
         # Hard to set. Let's just mock response and wait.

@@ -172,7 +172,7 @@ def Categories(url):
     headers = {"User-Agent": utils.USER_AGENT, "Referer": site.url}
     try:
         html = utils.getHtml(url, site.url, headers=headers)
-    except Exception as e:
+    except Exception:
         headers["User-Agent"] = utils.random_ua.get_ua()
         html = utils.getHtml(url, site.url, headers=headers)
 

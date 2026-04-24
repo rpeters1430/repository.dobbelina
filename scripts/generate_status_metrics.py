@@ -5,6 +5,8 @@ Collects:
 - addon version
 - site counts and migration status
 - test counts from pytest collection
+- per-site inventory with BeautifulSoup/Regex markers
+- top broken sites from KNOWN_ISSUES.md
 
 Writes a single canonical status file at docs/status/STATUS_METRICS.md.
 """
@@ -12,22 +14,47 @@ Writes a single canonical status file at docs/status/STATUS_METRICS.md.
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import re
 import subprocess
+import sys
 import xml.etree.ElementTree as ET
-from dataclasses import dataclass
-from datetime import datetime, timezone
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
 
 ROOT = Path(__file__).resolve().parents[1]
 ADDON_XML = ROOT / "plugin.video.cumination" / "addon.xml"
+CHANGELOG = ROOT / "plugin.video.cumination" / "changelog.txt"
 SITES_DIR = ROOT / "plugin.video.cumination" / "resources" / "lib" / "sites"
+TESTS_DIR = ROOT / "tests"
+KNOWN_ISSUES = ROOT / "docs" / "development" / "KNOWN_ISSUES.md"
 CANONICAL_STATUS = ROOT / "docs" / "status" / "STATUS_METRICS.md"
 
 SITE_FILE_EXCLUDES = {"__init__.py", "soup_spec.py"}
 SITE_ANALYSIS_REPORT = ROOT / "results" / "site_analysis.json"
+
+BS_MARKERS = (
+    "utils.parse_html(",
+    "BeautifulSoup(",
+    ".select(",
+    ".select_one(",
+)
+
+REGEX_MARKERS = (
+    "re.compile(",
+    "re.findall(",
+    "re.finditer(",
+)
+
+
+@dataclass
+class SiteInfo:
+    name: str
+    uses_bs4: bool
+    uses_regex: bool
+    has_tests: bool
 
 
 @dataclass
@@ -37,6 +64,7 @@ class SiteMetrics:
     api_or_cam: int
     migration_complete: int
     migration_pending: int
+    inventory: list[SiteInfo] = field(default_factory=list)
 
 
 @dataclass
@@ -50,14 +78,25 @@ class TestMetrics:
 class StatusMetrics:
     generated_at_utc: str
     version: str
+    changelog_version: str
     sites: SiteMetrics
     tests: TestMetrics
+    known_issues: list[tuple[str, str]] = field(default_factory=list)
 
 
-def parse_version(addon_xml: Path) -> str:
+def parse_versions(addon_xml: Path, changelog: Path) -> tuple[str, str]:
     tree = ET.parse(addon_xml)
     addon = tree.getroot()
-    return addon.attrib.get("version", "unknown")
+    addon_version = addon.attrib.get("version", "unknown")
+
+    changelog_version = "unknown"
+    if changelog.exists():
+        changelog_text = changelog.read_text(encoding="utf-8", errors="ignore")
+        match = re.search(r"\[B\]Version\s+([0-9][^\[]+)\[/B\]", changelog_text)
+        if match:
+            changelog_version = match.group(1).strip()
+    
+    return addon_version, changelog_version
 
 
 def iter_site_files(sites_dir: Path) -> Iterable[Path]:
@@ -66,61 +105,54 @@ def iter_site_files(sites_dir: Path) -> Iterable[Path]:
             yield path
 
 
+def collect_tested_sites() -> set[str]:
+    tested = set()
+    site_tests_dir = TESTS_DIR / "sites"
+    if site_tests_dir.exists():
+        for path in sorted(site_tests_dir.glob("test_*.py")):
+            site_name = path.stem.removeprefix("test_")
+            if site_name:
+                tested.add(site_name)
+
+    smoke_dir = TESTS_DIR / "smoke_generated"
+    if smoke_dir.exists():
+        for path in sorted(smoke_dir.glob("test_smoke_*.py")):
+            site_name = path.stem.removeprefix("test_smoke_")
+            if site_name:
+                tested.add(site_name)
+
+    return tested
+
+
 def calculate_site_metrics(sites_dir: Path) -> SiteMetrics:
     total = 0
     migrated_beautifulsoup = 0
     api_or_cam = 0
+    inventory = []
+    tested_sites = collect_tested_sites()
 
     for site_file in iter_site_files(sites_dir):
         total += 1
         text = site_file.read_text(encoding="utf-8", errors="ignore")
 
-        if "BeautifulSoup" in text:
+        uses_bs4 = any(marker in text for marker in BS_MARKERS)
+        uses_regex = any(marker in text for marker in REGEX_MARKERS)
+        is_cam = bool(re.search(r"siteType\s*=\s*['\"]Cam['\"]", text))
+        
+        if uses_bs4:
             migrated_beautifulsoup += 1
-
-        if re.search(r"siteType\s*=\s*['\"]Cam['\"]", text):
+        if is_cam:
             api_or_cam += 1
 
-    migration_complete = min(total, migrated_beautifulsoup + api_or_cam)
-    migration_pending = max(0, total - migration_complete)
-    return SiteMetrics(
-        total=total,
-        migrated_beautifulsoup=migrated_beautifulsoup,
-        api_or_cam=api_or_cam,
-        migration_complete=migration_complete,
-        migration_pending=migration_pending,
-    )
-
-
-def calculate_site_metrics_from_analysis(timeout: int) -> SiteMetrics | None:
-    cmd = ["python", "scripts/analyze_sites.py"]
-    try:
-        subprocess.run(
-            cmd,
-            cwd=ROOT,
-            check=False,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
+        inventory.append(
+            SiteInfo(
+                name=site_file.stem,
+                uses_bs4=uses_bs4,
+                uses_regex=uses_regex,
+                has_tests=site_file.stem in tested_sites
+            )
         )
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        return None
 
-    if not SITE_ANALYSIS_REPORT.exists():
-        return None
-
-    try:
-        report = json.loads(SITE_ANALYSIS_REPORT.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return None
-
-    sites = report.get("sites", [])
-    if not isinstance(sites, list) or not sites:
-        return None
-
-    total = len(sites)
-    migrated_beautifulsoup = sum(1 for site in sites if site.get("uses_beautifulsoup"))
-    api_or_cam = sum(1 for site in sites if site.get("is_webcam"))
     migration_complete = min(total, migrated_beautifulsoup + api_or_cam)
     migration_pending = max(0, total - migration_complete)
     return SiteMetrics(
@@ -129,11 +161,27 @@ def calculate_site_metrics_from_analysis(timeout: int) -> SiteMetrics | None:
         api_or_cam=api_or_cam,
         migration_complete=migration_complete,
         migration_pending=migration_pending,
+        inventory=inventory,
     )
+
+
+def parse_known_issues(limit: int = 10) -> list[tuple[str, str]]:
+    if not KNOWN_ISSUES.exists():
+        return []
+    issues_text = KNOWN_ISSUES.read_text(encoding="utf-8", errors="ignore")
+    issues: list[tuple[str, str]] = []
+    for line in issues_text.splitlines():
+        line = line.strip()
+        m = re.match(r"^-\s+\*\*(.+?)\*\*\s+[–-]\s+(.+)$", line)
+        if m:
+            issues.append((m.group(1).strip(), m.group(2).strip()))
+        if len(issues) >= limit:
+            break
+    return issues
 
 
 def collect_test_metrics(timeout: int) -> TestMetrics:
-    cmd = ["pytest", "--collect-only", "-q"]
+    cmd = [sys.executable, "-m", "pytest", "--collect-only", "-q"]
     try:
         completed = subprocess.run(
             cmd,
@@ -186,51 +234,81 @@ def render_markdown(metrics: StatusMetrics) -> str:
         else "n/a"
     )
 
-    return f"""# Canonical Status Metrics
+    lines = [
+        "# Canonical Status Metrics",
+        "",
+        "> Source of truth for version, site migration, and test count metrics.",
+        "> Generated by `python scripts/generate_status_metrics.py`.",
+        "> Do not hand-edit metric values.",
+        "",
+        f"- Generated at (UTC): **{metrics.generated_at_utc}**",
+        f"- Addon version: **{metrics.version}**",
+        f"- Latest changelog: **{metrics.changelog_version}**",
+        "",
+        "## Site Migration Status",
+        "",
+        "| Metric | Value |",
+        "| --- | ---: |",
+        f"| Total site modules | {metrics.sites.total} |",
+        f"| BeautifulSoup-migrated modules | {metrics.sites.migrated_beautifulsoup} |",
+        f"| API/Cam modules (migration exempt) | {metrics.sites.api_or_cam} |",
+        f"| Migration complete (`migrated + exempt`) | {metrics.sites.migration_complete}/{metrics.sites.total} |",
+        f"| Migration pending | {metrics.sites.migration_pending} |",
+        "",
+        "## Test Status",
+        "",
+        "| Metric | Value |",
+        "| --- | ---: |",
+        f"| Total tests collected (`pytest --collect-only -q`) | {collected_display} |",
+        f"| Collection duration | {duration_display} |",
+        f"| Collector summary | `{metrics.tests.raw_summary}` |",
+        "",
+        "## Top broken / known issue sites",
+        "",
+    ]
 
-> Source of truth for version, site migration, and test count metrics.
-> Generated by `python scripts/generate_status_metrics.py`.
-> Do not hand-edit metric values.
+    if metrics.known_issues:
+        for site, desc in metrics.known_issues:
+            lines.append(f"- **{site}** — {desc}")
+    else:
+        lines.append("- No known issue bullets detected in `docs/development/KNOWN_ISSUES.md`.")
 
-- Generated at (UTC): **{metrics.generated_at_utc}**
-- Addon version: **{metrics.version}**
+    lines.extend([
+        "",
+        "## Site inventory",
+        "",
+        "| Site | BeautifulSoup marker | Regex marker | Has per-site tests |",
+        "|---|---:|---:|---:|",
+    ])
 
-## Site Migration Status
+    for site in metrics.sites.inventory:
+        bs = "✅" if site.uses_bs4 else "❌"
+        rx = "✅" if site.uses_regex else "❌"
+        tested = "✅" if site.has_tests else "❌"
+        lines.append(f"| `{site.name}` | {bs} | {rx} | {tested} |")
 
-| Metric | Value |
-| --- | ---: |
-| Total site modules | {metrics.sites.total} |
-| BeautifulSoup-migrated modules | {metrics.sites.migrated_beautifulsoup} |
-| API/Cam modules (migration exempt) | {metrics.sites.api_or_cam} |
-| Migration complete (`migrated + exempt`) | {metrics.sites.migration_complete}/{metrics.sites.total} |
-| Migration pending | {metrics.sites.migration_pending} |
+    lines.extend([
+        "",
+        "## Sync Checklist (for PRs that touch status metrics)",
+        "",
+        "- [ ] Ran `python scripts/generate_status_metrics.py`.",
+        "- [ ] Committed updated `docs/status/STATUS_METRICS.md`.",
+        "- [ ] Updated any status docs to reference this canonical file instead of hardcoding numbers.",
+    ])
 
-## Test Status
-
-| Metric | Value |
-| --- | ---: |
-| Total tests collected (`pytest --collect-only -q`) | {collected_display} |
-| Collection duration | {duration_display} |
-| Collector summary | `{metrics.tests.raw_summary}` |
-
-## Sync Checklist (for PRs that touch status metrics)
-
-- [ ] Ran `python scripts/generate_status_metrics.py`.
-- [ ] Committed updated `docs/status/STATUS_METRICS.md`.
-- [ ] Updated any status docs to reference this canonical file instead of hardcoding numbers.
-"""
+    return "\n".join(lines)
 
 
-def generate_status_file(timeout: int, analysis_timeout: int) -> StatusMetrics:
-    site_metrics = calculate_site_metrics_from_analysis(timeout=analysis_timeout)
-    if site_metrics is None:
-        site_metrics = calculate_site_metrics(SITES_DIR)
-
+def generate_status_file(timeout: int) -> StatusMetrics:
+    addon_version, changelog_version = parse_versions(ADDON_XML, CHANGELOG)
+    
     status = StatusMetrics(
-        generated_at_utc=datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
-        version=parse_version(ADDON_XML),
-        sites=site_metrics,
+        generated_at_utc=dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat(),
+        version=addon_version,
+        changelog_version=changelog_version,
+        sites=calculate_site_metrics(SITES_DIR),
         tests=collect_test_metrics(timeout=timeout),
+        known_issues=parse_known_issues(limit=10),
     )
 
     CANONICAL_STATUS.parent.mkdir(parents=True, exist_ok=True)
@@ -249,29 +327,22 @@ def main() -> int:
         help="Timeout in seconds for pytest test collection",
     )
     parser.add_argument(
-        "--analysis-timeout",
-        type=int,
-        default=180,
-        help="Timeout in seconds for site analysis (used for migration status)",
-    )
-    parser.add_argument(
         "--print-json",
         action="store_true",
         help="Print metrics JSON summary to stdout",
     )
     args = parser.parse_args()
 
-    status = generate_status_file(
-        timeout=args.pytest_timeout, analysis_timeout=args.analysis_timeout
-    )
+    status = generate_status_file(timeout=args.pytest_timeout)
     if args.print_json:
+        # Simplified JSON for brevity
         print(
             json.dumps(
                 {
                     "generated_at_utc": status.generated_at_utc,
                     "version": status.version,
-                    "sites": status.sites.__dict__,
-                    "tests": status.tests.__dict__,
+                    "sites_total": status.sites.total,
+                    "tests_collected": status.tests.total_collected,
                     "status_file": str(CANONICAL_STATUS.relative_to(ROOT)),
                 },
                 indent=2,
@@ -283,4 +354,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()
