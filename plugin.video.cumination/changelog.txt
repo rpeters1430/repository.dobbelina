@@ -1,3 +1,15 @@
+[B]Version 1.1.374[/B]
+- Merge pull request #135 from rpeters1430/codex/add-project-health-generation-script
+- refactor: integrate health generator features into canonical status metrics
+- fix: resolve lint errors and FlareSolverr manager AttributeError to unblock CI
+- style: format code with Ruff Formatter
+- Add generated project health report and docs references
+- Merge pull request #136 from rpeters1430/codex/update-documentation-for-version-alignment
+- docs: resolve merge conflicts and fix hentai-moon gap (170/170 direct tests)
+- Merge pull request #137 from rpeters1430/codex/create-version-and-status-file-generator
+- style: format code with Ruff Formatter
+- Add canonical status metrics generator and sync checklist
+
 [B]Version 1.1.373[/B]
 - security: fix potential command injection and strengthen SSRF protection
 - fix: address potential SSRF in chaturbate.py localhost proxy (fixes #174, #175)
