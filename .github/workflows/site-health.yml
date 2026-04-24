@@ -38,6 +38,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-test.txt
 
+      - name: Wait for FlareSolverr
+        run: |
+          echo "Waiting for FlareSolverr to be ready..."
+          for i in $(seq 1 30); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8191/health 2>/dev/null || echo 000)
+            if [ "$STATUS" = "200" ]; then
+              echo "FlareSolverr is ready (attempt $i)"
+              exit 0
+            fi
+            echo "  Attempt $i/30: HTTP $STATUS — waiting 10s..."
+            sleep 10
+          done
+          echo "WARNING: FlareSolverr did not become ready in 300s — FlareSolverr errors will be treated as SKIP in smoke tests"
+
       - name: Run live smoke
         run: |
           python scripts/live_smoke_test.py --out results || true

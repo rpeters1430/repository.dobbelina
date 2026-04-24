@@ -14,6 +14,7 @@ import argparse
 import importlib
 import inspect
 import json
+import os
 import re
 import signal
 import subprocess
@@ -33,6 +34,24 @@ ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_PATH = ROOT / "plugin.video.cumination"
 SITES_DIR = PLUGIN_PATH / "resources" / "lib" / "sites"
 SITE_PROFILES_PATH = ROOT / "config" / "site_profiles.json"
+
+
+def _probe_flaresolverr() -> bool:
+    """Return True if FlareSolverr is reachable and responding at the configured URL.
+
+    Reads FS_HOST from the environment (same default as the Kodi stub).
+    Uses the /health endpoint (FlareSolverr v3+).
+    """
+    host = os.environ.get("FS_HOST", "http://localhost:8191/v1")
+    parsed = urlparse(host)
+    base_url = f"{parsed.scheme}://{parsed.netloc}"
+    health_url = base_url + "/health"
+    req = urllib.request.Request(health_url)
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            return resp.status == 200
+    except (urllib.error.URLError, OSError, ValueError):
+        return False
 
 
 def install_kodi_stubs() -> None:
@@ -561,6 +580,9 @@ def run_site_child(
     profile_supports = site_profile.get("supports", {})
     harness_profile = site_profile.get("harness", {})
 
+    # Determine global FlareSolverr availability (set by run_parent via env var)
+    _fs_globally_available = os.environ.get("FLARESOLVERR_AVAILABLE", "1") != "0"
+
     def supports_step(step_name: str) -> bool:
         return profile_supports.get(step_name, True)
 
@@ -821,6 +843,14 @@ def run_site_child(
             return StepResult(
                 "SKIP",
                 "FlareSolverr required but unavailable in harness",
+                sample_url=res.sample_url,
+                play_url=res.play_url,
+            )
+
+        if not _fs_globally_available and "flaresolverr" in lowered:
+            return StepResult(
+                "SKIP",
+                "FlareSolverr unavailable in harness (global)",
                 sample_url=res.sample_url,
                 play_url=res.play_url,
             )
@@ -1405,6 +1435,13 @@ def run_parent(args: argparse.Namespace) -> int:
         f"  Sites: {len(sites)} | Steps: {steps} | Timeout/step: {args.timeout}s | Keyword: '{args.keyword}'"
     )
     print(f"  Started: {started.strftime('%Y-%m-%d %H:%M:%S')}")
+
+    # Probe FlareSolverr once and propagate availability to child processes via env var.
+    fs_available = _probe_flaresolverr()
+    os.environ["FLARESOLVERR_AVAILABLE"] = "1" if fs_available else "0"
+    print(
+        f"  FlareSolverr: {'available' if fs_available else 'NOT available — FlareSolverr errors will be treated as SKIP'}"
+    )
     print("")
 
     results: list[dict[str, Any]] = []
