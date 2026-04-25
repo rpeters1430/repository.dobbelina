@@ -16,9 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from __future__ import annotations
+
 from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
+from resources.lib.sites.soup_spec import SoupSiteSpec
 
 site = AdultSite(
     "freeuseporn",
@@ -29,12 +32,26 @@ site = AdultSite(
     category="Specialty",
 )
 
+VIDEO_LIST_SPEC = SoupSiteSpec(
+    selectors={
+        "items": "a.group.flex",
+        "url": {"selector": "self", "attr": "href"},
+        "title": {"selector": "img", "attr": "title", "clean": True},
+        "thumbnail": {"selector": "img", "attr": "src"},
+        "duration": {"selector": ".transition-opacity", "text": True},
+        "pagination": {
+            "selector": "a.page-link",
+            "text_matches": ["next", ">", "»"],
+            "attr": "href",
+            "mode": "List",
+        },
+    }
+)
+
 
 @site.register(default_mode=True)
 def Main(url):
-    site.add_dir(
-        "[COLOR hotpink]Tags[/COLOR]", site.url + "tags/", "Tags", site.img_cat
-    )
+    # site.add_dir("[COLOR hotpink]Tags[/COLOR]", site.url + "tags/", "Tags", site.img_cat)
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]",
         site.url + "search/videos/",
@@ -47,56 +64,14 @@ def Main(url):
 
 @site.register()
 def List(url):
+    utils.kodilog("Listing URL: {}".format(url))
     listhtml = utils.getHtml(url, "")
-    soup = utils.parse_html(listhtml)
-    items = soup.select(".item")
-    if not items:
+    if not listhtml:
+        utils.eod()
         return
-    for item in items:
-        link = item.find_parent("a") or item.select_one("a[href]")
-        videopage = utils.safe_get_attr(link, "href", default="")
-        if not videopage:
-            continue
-        img_tag = item.select_one("img")
-        name = utils.cleantext(
-            utils.safe_get_attr(img_tag, "alt", ["title"], default="")
-        )
-        if not name:
-            name = utils.cleantext(
-                utils.safe_get_attr(link, "title", default=utils.safe_get_text(link))
-            )
-        duration = utils.cleantext(
-            utils.safe_get_text(item.select_one(".duration"), default="").strip()
-        )
-        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
-        videopage = urllib_parse.urljoin(site.url, videopage)
 
-        contexturl = (
-            utils.addon_sys
-            + "?mode=freeuseporn.Lookupinfo"
-            + "&url="
-            + urllib_parse.quote_plus(videopage)
-        )
-
-        contextmenu = [
-            ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + contexturl + ")")
-        ]
-
-        site.add_download_link(
-            name,
-            videopage,
-            "Playvid",
-            img,
-            name,
-            duration=duration,
-            contextm=contextmenu,
-        )
-
-    next_link = soup.select_one(".page-link[href], a.page-link[href], a.next[href]")
-    if next_link:
-        next_url = utils.safe_get_attr(next_link, "href", default="")
-        if next_url:
-            site.add_dir("Next Page...", next_url, "List", site.img_next)
+    soup = utils.parse_html(listhtml)
+    VIDEO_LIST_SPEC.run(site, soup, base_url=url, play_mode="Playvid")
     utils.eod()
 
 
@@ -122,13 +97,15 @@ def Tags(url):
     listhtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(listhtml)
     tags = []
+    # Match upstream: href="/search/videos/([^"]+)".+?</i> ([^<]+)<
     for link in soup.select('a[href*="/search/videos/"]'):
-        tag = utils.safe_get_attr(link, "href", default="")
+        tag_url = utils.safe_get_attr(link, "href", default="")
         name = utils.cleantext(utils.safe_get_text(link, default=""))
-        if not tag or not name:
+        if not tag_url or not name:
             continue
-        tag = tag.split("/search/videos/")[-1].strip("/")
+        tag = tag_url.split("/search/videos/")[-1].strip("/")
         tags.append((tag, name))
+
     for tag, name in sorted(tags):
         site.add_dir(name, site.url + "search/videos/", "Search", "", keyword=tag)
     utils.eod()
@@ -136,13 +113,8 @@ def Tags(url):
 
 @site.register()
 def Lookupinfo(url):
-    lookup_list = [
-        (
-            "Tag",
-            r'href="/([^"]+)"><i\s*class="fas\s*fa-(?:th-list|tag)"></i>([^<]+)<',
-            "",
-        )
-    ]
+    # Match upstream: ("Tag", r'href="/search/videos/([^"]+)".+?</i>([^<]+)<', '')
+    lookup_list = [("Tag", r'href="/search/videos/([^"]+)".+?</i>([^<]+)<', "")]
 
     lookupinfo = utils.LookupInfo(site.url, url, "freeuseporn.List", lookup_list)
     lookupinfo.getinfo()

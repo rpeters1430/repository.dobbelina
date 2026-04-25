@@ -16,14 +16,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from __future__ import annotations
+
+import base64
+import json
 import re
+
+from six.moves import urllib_parse
+
 import xbmc
 import xbmcgui
 from resources.lib import utils
-from six.moves import urllib_parse
 from resources.lib.adultsite import AdultSite
-import json
-import base64
 
 try:
     from Cryptodome.Cipher import AES
@@ -52,20 +56,20 @@ def Main():
     )
     site.add_dir(
         "[COLOR hotpink]Studios[/COLOR]",
-        site.url + "studios/",
+        site.url + "categories/",
         "Categories",
         site.img_cat,
     )
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]", site.url + "?s=", "Search", site.img_search
     )
-    List(site.url + "page/1?filter=latest")
+    List(site.url + "video/page/1/?rawx_per_page=24")
 
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url)
-    if "It looks like nothing was found for this search" in listhtml:
+    listhtml = utils.getHtml(url, error=True)
+    if not listhtml or "It looks like nothing was found for this search" in listhtml:
         utils.notify("No results found", "Try a different search term")
         return
 
@@ -76,24 +80,25 @@ def List(url):
     cm.append(
         ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + cm_lookupinfo + ")")
     )
-    cm_related = utils.addon_sys + "?mode=premiumporn.Related&url="
-    cm.append(
-        ("[COLOR deeppink]Related videos[/COLOR]", "RunPlugin(" + cm_related + ")")
-    )
 
     for item in soup.select("[data-post-id], article, .post"):
         link = item.select_one("a[href]")
         videopage = utils.safe_get_attr(link, "href", default="")
         if not videopage:
             continue
+
         name = utils.cleantext(
-            utils.safe_get_text(item.select_one(".title"), default="")
+            utils.safe_get_text(item.select_one(".vc-title, .title"), default="")
         )
         if not name:
             name = utils.cleantext(utils.safe_get_text(link, default=""))
+
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "data-src", ["src", "data-original"])
-        duration = utils.safe_get_text(item.select_one(".duration"), default="")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        duration = utils.safe_get_text(
+            item.select_one(".vc-dur, .duration"), default=""
+        ).strip()
+
         site.add_download_link(
             name,
             videopage,
@@ -104,7 +109,8 @@ def List(url):
             contextm=cm,
         )
 
-    next_link = soup.select_one("a.next.page-link[href]")
+    # Fixed next page selector
+    next_link = soup.select_one(".page-numbers.current + a, a.next.page-numbers, a.next.page-link[href]")
     if next_link:
         next_url = utils.safe_get_attr(next_link, "href", default="")
         if next_url:
@@ -121,21 +127,38 @@ def List(url):
 @site.register()
 def Categories(url):
     cathtml = utils.getHtml(url, site.url)
+    if not cathtml:
+        utils.eod()
+        return
+
     soup = utils.parse_html(cathtml)
-    for item in soup.select(".thumb, .video-block"):
-        link = item.select_one("a[href]")
-        siteurl = utils.safe_get_attr(link, "href", default="")
-        name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+    for item in soup.select("a.thumb, a.video-block, .list-categories a"):
+        siteurl = utils.safe_get_attr(item, "href", default="")
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
-        videos = utils.safe_get_text(
-            item.select_one(".video-datas"), default=""
-        ).strip()
+        img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+        name = utils.safe_get_attr(img_tag, "alt", default=utils.safe_get_text(item))
+        
+        videos = ""
+        count_tag = item.select_one(".video-datas, .count")
+        if count_tag:
+            videos = utils.safe_get_text(count_tag, default="").strip()
+        else:
+            text = utils.safe_get_text(item)
+            match = re.search(r"(\d+)\s+VIDEOS", text, re.IGNORECASE)
+            if match:
+                videos = match.group(1)
+
         if not siteurl or not name:
             continue
-        name = name + "[COLOR hotpink] (" + videos + " videos)[/COLOR]"
+            
+        if videos:
+            name = utils.cleantext(name) + "[COLOR hotpink] (" + videos + " videos)[/COLOR]"
+        else:
+            name = utils.cleantext(name)
+
         site.add_dir(name, siteurl, "List", img)
-    next_link = soup.select_one("a.next.page-link[href]")
+
+    next_link = soup.select_one(".page-numbers.current + a, a.next.page-numbers")
     if next_link:
         site.add_dir(
             "Next Page",
@@ -195,7 +218,90 @@ def decrypt_aes_gcm(payload, key, iv):
 def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     html = utils.getHtml(url)
-    # Prefer direct iframe resolving first to avoid slow/fragile API decrypt calls.
+    if not html:
+        vp.play_from_link_to_resolve(url)
+        return
+
+    match = re.compile(
+        r'data-src="([^"]+)"\s+data-label="([^"]+)"', re.DOTALL | re.IGNORECASE
+    ).findall(html)
+    if match:
+        src = {m[1]: m[0] for m in match}
+        embed_url = utils.selector("Select host", src)
+        if embed_url:
+            if "vidara" in embed_url:
+                id_match = re.search(r"/e/([^\"/]+)", embed_url)
+                if id_match:
+                    video_id = id_match.group(1)
+                    vid_url = "https://vidara.so/api/stream"
+                    data = {"filecode": video_id, "device": "web"}
+                    response = utils.postHtml(
+                        vid_url,
+                        json_data=data,
+                        headers={"Content-Type": "application/json"},
+                    )
+                    if response:
+                        try:
+                            response_json = json.loads(response)
+                            video_url = response_json.get("streaming_url", "")
+                            if video_url:
+                                vp.play_from_direct_link(video_url)
+                                return
+                        except:
+                            pass
+                utils.notify("Oh oh", "Unable to retrieve video URL from Vidara")
+                return
+            elif "bysewihe" in embed_url or "g9r6.com" in embed_url:
+                id_match = re.search(r"/e/([^/]+)", embed_url)
+                if id_match:
+                    video_id = id_match.group(1)
+                    details_url = "https://bysewihe.com/api/videos/{}/embed/details".format(
+                        video_id
+                    )
+                    hdr = utils.base_hdrs.copy()
+                    hdr["X-Embed-Origin"] = "premiumporn.org"
+                    hdr["X-Embed-Parent"] = embed_url
+                    hdr["X-Embed-Referer"] = site.url
+                    details_data = utils.getHtml(details_url, embed_url, headers=hdr)
+                    if details_data:
+                        details_json = json.loads(details_data)
+                        embed = details_json.get("embed_frame_url", "")
+                        api_url = "https://g9r6.com/api/videos/{}/embed/playback".format(
+                            video_id
+                        )
+                        api_data = utils.getHtml(api_url, embed, headers=hdr)
+                        if api_data:
+                            encrypted_data = json.loads(api_data)
+                            playback = encrypted_data["playback"]
+
+                            iv = base64_url_decode(playback["iv"])
+                            payload = base64_url_decode(playback["payload"])
+
+                            key_part1 = base64_url_decode(playback["key_parts"][0])
+                            key_part2 = base64_url_decode(playback["key_parts"][1])
+                            combined_key = key_part1 + key_part2
+
+                            result = decrypt_aes_gcm(payload, combined_key, iv)
+                            try:
+                                src_api = {}
+                                for source in json.loads(result).get("sources", []):
+                                    v_url = source.get("url", "").replace("\\u0026", "&")
+                                    label = source.get("label", "")
+                                    src_api[label] = v_url
+
+                                video_url = utils.prefquality(
+                                    src_api,
+                                    sort_by=lambda x: 2160 if x == "4k" else int(x[:-1]),
+                                    reverse=True,
+                                )
+                                if video_url:
+                                    vp.play_from_direct_link(video_url)
+                                    return
+                            except:
+                                pass
+                vp.play_from_link_to_resolve(embed_url)
+                return
+
     iframematch = re.compile(
         r'<iframe[^>]+src="([^"]+)"', re.DOTALL | re.IGNORECASE
     ).findall(html)
@@ -205,53 +311,6 @@ def Play(url, name, download=None):
             iframe = "https:" + iframe
         vp.play_from_link_to_resolve(iframe)
         return
-
-    try:
-        match = re.compile(
-            r'itemprop="embedURL" content="(https://[^/]+/e/([^/]+)/[^"]+)"',
-            re.DOTALL | re.IGNORECASE,
-        ).findall(html)
-        if match:
-            embed_url = match[0][0]
-            video_id = match[0][1]
-            details_url = "https://bysewihe.com/api/videos/{}/embed/details".format(
-                video_id
-            )
-            hdr = utils.base_hdrs.copy()
-            hdr["X-Embed-Origin"] = "premiumporn.org"
-            hdr["X-Embed-Parent"] = embed_url
-            hdr["X-Embed-Referer"] = site.url
-            details_data = utils.getHtml(details_url, embed_url, headers=hdr)
-            details_json = json.loads(details_data)
-            embed = details_json.get("embed_frame_url", "")
-            api_url = "https://g9r6.com/api/videos/{}/embed/playback".format(video_id)
-            api_data = utils.getHtml(api_url, embed, headers=hdr)
-            encrypted_data = json.loads(api_data)
-
-            playback = encrypted_data["playback"]
-
-            iv = base64_url_decode(playback["iv"])
-            payload = base64_url_decode(playback["payload"])
-
-            key_part1 = base64_url_decode(playback["key_parts"][0])
-            key_part2 = base64_url_decode(playback["key_parts"][1])
-            combined_key = key_part1 + key_part2
-
-            result = decrypt_aes_gcm(payload, combined_key, iv)
-            src = {}
-            for source in json.loads(result).get("sources", []):
-                video_url = source.get("url", "").replace("\\u0026", "&")
-                label = source.get("label", "")
-                src[label] = video_url
-
-            video_url = utils.prefquality(
-                src, sort_by=lambda x: 2160 if x == "4k" else int(x[:-1]), reverse=True
-            )
-            if video_url:
-                vp.play_from_direct_link(video_url)
-                return
-    except Exception as exc:
-        utils.kodilog("premiumporn.Play fallback to resolver after API error: {}".format(exc))
 
     utils.notify("Oh oh", "No video found")
 
@@ -273,10 +332,14 @@ def Lookupinfo(url):
     lookup_list = [
         (
             "Actors",
-            r'<a href="(https://premiumporn.org/actor/[^"]+)" title="([^"]+)">',
+            r'<a href="(https://premiumporn.org/actor/[^/]+/)" class="si-actor-card">.+?class="si-actor-name">([^<]+)</span>',
             "",
         ),
-        ("Studios", r'<a href="(https://premiumporn.org/[^/]+/)" title="([^"]+)">', ""),
+        (
+            "Tags",
+            r'<a href="(https://premiumporn.org/tag/[^"]+)" class="v-tag">([^<]+)<',
+            "",
+        ),
     ]
     lookupinfo = utils.LookupInfo("", url, "premiumporn.List", lookup_list)
     lookupinfo.getinfo()

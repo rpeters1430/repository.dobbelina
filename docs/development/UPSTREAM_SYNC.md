@@ -19,6 +19,13 @@
 
 ## Sync Sessions
 
+### 2026-04-25 Porting Session
+Integrated latest fixes from upstream `dobbelina/repository.dobbelina` addressing site redesigns and internal decryption updates.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `15698f67` | freeuseporn, premiumpoorn - fixes #1842 | `manual` | 2026-04-25 | Ported to BS4 scrapers; added Vidara support and enhanced host selection to PremiumPorn; fixed FreeusePorn redesign. |
+
 ### 2026-04-16 Cherry-Pick Session
 Integrated latest fixes from upstream `dobbelina/repository.dobbelina` following site redesigns and mmcdn edge changes.
 
