@@ -34,16 +34,17 @@ ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_PATH = ROOT / "plugin.video.cumination"
 SITES_DIR = PLUGIN_PATH / "resources" / "lib" / "sites"
 SITE_PROFILES_PATH = ROOT / "config" / "site_profiles.json"
+STUB_FS_HOST = "http://localhost:8191/v1"
 
 
 def _probe_flaresolverr() -> bool:
-    """Return True if FlareSolverr is reachable and responding at the configured URL.
+    """Return True if FlareSolverr is reachable at the same URL used by the Kodi stubs.
 
-    Reads FS_HOST from the environment (same default as the Kodi stub).
+    The child harness currently uses a hardcoded ``fs_host`` value in the Kodi stubs,
+    so the probe must check that same endpoint to keep the availability flag accurate.
     Uses the /health endpoint (FlareSolverr v3+).
     """
-    host = os.environ.get("FS_HOST", "http://localhost:8191/v1")
-    parsed = urlparse(host)
+    parsed = urlparse(STUB_FS_HOST)
     base_url = f"{parsed.scheme}://{parsed.netloc}"
     health_url = base_url + "/health"
     req = urllib.request.Request(health_url)
