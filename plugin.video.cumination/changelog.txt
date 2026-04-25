@@ -1,3 +1,13 @@
+[B]Version 1.1.376[/B]
+- feat: add support for YourLesbians site with video listing and playback functionality
+- fix: update SpankBang URLs and adjust test cases accordingly
+- Merge pull request #139 from rpeters1430/copilot/fix-flaresolverr-errors
+- Update scripts/live_smoke_test.py
+- fix: handle FlareSolverr unavailability in site-health CI action
+- Initial plan
+- chore: remove redundant health generator files after integration
+- Merge pull request #135 from rpeters1430/codex/add-project-health-generation-script
+
 [B]Version 1.1.375[/B]
 - fix: update SpankBang URLs and adjust test cases accordingly
 - Merge pull request #139 from rpeters1430/copilot/fix-flaresolverr-errors
