@@ -25,7 +25,7 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "spankbang",
     "[COLOR hotpink]SpankBang[/COLOR]",
-    "https://spankbang.com/",
+    "https://spankbang.party/",
     "spankbang.png",
     "spankbang",
     category="Video Tubes",
@@ -189,7 +189,7 @@ def Tags(url):
 
     tag_links = soup.select("a.keyword")
     # the page renders a "Top Tags" strip above the full A-Z list using the same markup,
-    # so each popular tag shows up twice — dedup by href, keep first occurrence
+    # so each popular tag shows up twice - dedup by href, keep first occurrence
     seen = set()
     tags = []
     for link in tag_links:
