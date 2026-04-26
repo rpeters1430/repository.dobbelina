@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-04-26T06:59:54.484025",
+    "sites_total": 171,
+    "pass": 154,
+    "warn": 0,
+    "fail": 2,
+    "error": 0,
+    "skip": 15
+  },
+  "previous": {
     "generated": "2026-04-25T06:51:38.930456",
     "sites_total": 170,
     "pass": 153,
@@ -8,125 +17,24 @@
     "error": 0,
     "skip": 15
   },
-  "previous": {
-    "generated": "2026-04-24T07:04:32.144976",
-    "sites_total": 170,
-    "pass": 149,
-    "warn": 2,
-    "fail": 19,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
-    "new_failures": 1,
-    "resolved_failures": 18,
-    "persistent_failures": 1,
-    "improved_sites": 2,
-    "regressions": 1,
-    "step_regressions": 1
+    "new_failures": 0,
+    "resolved_failures": 0,
+    "persistent_failures": 2,
+    "improved_sites": 0,
+    "regressions": 0,
+    "step_regressions": 0
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [],
+  "persistent_failures": [
     {
       "site": "analdin",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "list: List returned no videos"
-    }
-  ],
-  "resolved_failures": [
-    {
-      "site": "erogarga",
-      "previous": "FAIL",
-      "current": "PASS"
     },
-    {
-      "site": "familypornhd",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "freepornvideos",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "hdporn92",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "heavyr",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "javgg",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "javhdporn",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "jizzbunker",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "longvideos",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "perverzija",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "pmvhaven",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "porndish",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "rlc",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "spankbang",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "supjav",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "thepornarea",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "whereismyporn",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "xmoviesforyou",
-      "previous": "FAIL",
-      "current": "SKIP"
-    }
-  ],
-  "persistent_failures": [
     {
       "site": "josporn",
       "previous": "FAIL",
@@ -135,174 +43,14 @@
       "message": "list: List URL unavailable in harness (HTTP 503)"
     }
   ],
-  "improved_sites": [
-    {
-      "site": "pornhoarder",
-      "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "speedporn",
-      "previous": "WARN",
-      "current": "PASS"
-    }
-  ],
-  "step_regressions": [
-    {
-      "site": "analdin",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
-    }
-  ],
+  "improved_sites": [],
+  "step_regressions": [],
   "deltas": [
     {
-      "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "erogarga",
-      "previous": "FAIL",
+      "site": "yourlesbians",
+      "previous": "MISSING",
       "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "familypornhd",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "freepornvideos",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "hdporn92",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "heavyr",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "javgg",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "javhdporn",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "jizzbunker",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "longvideos",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "perverzija",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "pmvhaven",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "porndish",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "pornhoarder",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "rlc",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "spankbang",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "speedporn",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "supjav",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "thepornarea",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "whereismyporn",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "xmoviesforyou",
-      "previous": "FAIL",
-      "current": "SKIP",
-      "kind": "improvement",
+      "kind": "new_site",
       "detail": ""
     }
   ]
