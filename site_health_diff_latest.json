@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-04-26T06:59:54.484025",
+    "generated": "2026-04-27T07:16:18.173812",
     "sites_total": 171,
     "pass": 154,
     "warn": 0,
@@ -9,32 +9,39 @@
     "skip": 15
   },
   "previous": {
-    "generated": "2026-04-25T06:51:38.930456",
-    "sites_total": 170,
-    "pass": 153,
+    "generated": "2026-04-26T06:59:54.484025",
+    "sites_total": 171,
+    "pass": 154,
     "warn": 0,
     "fail": 2,
     "error": 0,
     "skip": 15
   },
   "summary": {
-    "new_failures": 0,
-    "resolved_failures": 0,
-    "persistent_failures": 2,
+    "new_failures": 1,
+    "resolved_failures": 1,
+    "persistent_failures": 1,
     "improved_sites": 0,
-    "regressions": 0,
-    "step_regressions": 0
+    "regressions": 1,
+    "step_regressions": 1
   },
-  "new_failures": [],
-  "resolved_failures": [],
-  "persistent_failures": [
+  "new_failures": [
+    {
+      "site": "peachurnet",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "UNKNOWN",
+      "message": "list: List URL unavailable in harness (HTTP 500)"
+    }
+  ],
+  "resolved_failures": [
     {
       "site": "analdin",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
-    },
+      "current": "PASS"
+    }
+  ],
+  "persistent_failures": [
     {
       "site": "josporn",
       "previous": "FAIL",
@@ -44,13 +51,29 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [],
+  "step_regressions": [
+    {
+      "site": "peachurnet",
+      "step": "list",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "List URL unavailable in harness (HTTP 500)",
+      "class": "UNKNOWN"
+    }
+  ],
   "deltas": [
     {
-      "site": "yourlesbians",
-      "previous": "MISSING",
+      "site": "analdin",
+      "previous": "FAIL",
       "current": "PASS",
-      "kind": "new_site",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "peachurnet",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
       "detail": ""
     }
   ]
