@@ -27,9 +27,27 @@ def test_main_menu(mock_site):
     mock_list.assert_called_once_with("https://yourlesbians.com/")
 
 
+def test_site_category():
+    assert yourlesbians.site.category == "Video Tubes"
+
+
 def test_list_videos(mock_site):
-    with open("tests/fixtures/sites/yourlesbians_list.html", "r", encoding="utf-8") as f:
-        html = f.read()
+    html = """
+    <html><body>
+      <div class="thumbs">
+        <div class="item">
+          <a href="https://yourlesbians.com/video/lene-angelica-plays-with-buttplug/" title="Norwegian Baddie Lene Angelica Plays With Buttplug">
+            <img data-original="https://img.example.com/thumb.jpg" />
+          </a>
+          <span class="time">3:37</span>
+          <span class="qualtiy">HD</span>
+        </div>
+      </div>
+      <div class="pagination">
+        <a href="https://yourlesbians.com/2/">Next</a>
+      </div>
+    </body></html>
+    """
 
     with (
         patch("resources.lib.utils.getHtml", return_value=html),
@@ -54,8 +72,13 @@ def test_list_videos(mock_site):
 
 
 def test_playvid_highest_quality(mock_site):
-    with open("tests/fixtures/sites/yourlesbians_video.html", "r", encoding="utf-8") as f:
-        html = f.read()
+    html = """
+    <script>
+    video_url: 'https://cdn.example.com/480p.mp4'
+    video_alt_url: 'https://cdn.example.com/720p.mp4'
+    video_alt_url2: 'https://cdn.example.com/1080p.mp4'
+    </script>
+    """
 
     mock_vp = MagicMock()
     with (

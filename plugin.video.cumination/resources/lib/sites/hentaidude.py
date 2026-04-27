@@ -310,6 +310,8 @@ def Playvid(url, name, download=None):
             en = decoded_token.get("en")
             iv = decoded_token.get("iv")
             uri = decoded_token.get("uri")
+            if uri and uri.startswith("//"):
+                uri = "https:" + uri
 
             boundary = "----geckoformboundarybfec28fb1c2316e132ff23ab04e3d114"
             data = (

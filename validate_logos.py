@@ -5,6 +5,7 @@ Validates all logos meet Cumination standards and site references are correct
 """
 
 import re
+import ast
 import subprocess
 from pathlib import Path
 from collections import defaultdict
@@ -43,16 +44,6 @@ def check_imagemagick():
 def get_site_configs():
     """Extract all site configurations from site modules"""
     sites = {}
-    # AdultSite(site_id, display_name, base_url, logo_file, about_file, ...)
-    # We need to extract site_id (1st param) and logo_file (4th param)
-    site_pattern = re.compile(
-        r"site\s*=\s*AdultSite\s*\(\s*"
-        r"['\"]([^'\"]+)['\"]"  # site_id (group 1)
-        r"\s*,\s*['\"][^'\"]*['\"]"  # display_name
-        r"\s*,\s*['\"][^'\"]*['\"]"  # base_url
-        r"\s*,\s*['\"]([^'\"]+)['\"]",  # logo_file (group 2)
-        re.DOTALL,
-    )
 
     for site_file in SITES_DIR.glob("*.py"):
         if site_file.name in ("__init__.py", "soup_spec.py"):
@@ -60,12 +51,24 @@ def get_site_configs():
 
         try:
             content = site_file.read_text(encoding="utf-8")
-            content_single = content.replace("\n", " ")
-            match = site_pattern.search(content_single)
+            tree = ast.parse(content, filename=str(site_file))
 
-            if match:
-                site_id = match.group(1)
-                logo_ref = match.group(2)
+            for node in ast.walk(tree):
+                if not isinstance(node, ast.Call):
+                    continue
+                if not isinstance(node.func, ast.Name) or node.func.id != "AdultSite":
+                    continue
+                if len(node.args) < 4:
+                    continue
+                if not all(
+                    isinstance(node.args[idx], ast.Constant)
+                    and isinstance(node.args[idx].value, str)
+                    for idx in (0, 3)
+                ):
+                    continue
+
+                site_id = node.args[0].value
+                logo_ref = node.args[3].value
                 sites[site_id] = {
                     "module": site_file.name,
                     "logo_ref": logo_ref,

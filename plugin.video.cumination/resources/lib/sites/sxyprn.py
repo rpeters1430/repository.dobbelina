@@ -25,7 +25,7 @@ from resources.lib.adultsite import AdultSite
 
 addon = utils.addon
 site = AdultSite(
-    "sxyprn", "[COLOR hotpink]Sxy Prn[/COLOR]", "https://sxyprn.com/", "", "sxyprn",
+    "sxyprn", "[COLOR hotpink]Sxy Prn[/COLOR]", "https://sxyprn.com/", "sxyprn.png", "sxyprn",
     category="Video Tubes",
 )
 

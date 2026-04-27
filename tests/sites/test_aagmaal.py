@@ -68,6 +68,40 @@ def test_list_handles_no_pagination(monkeypatch):
     assert len(dirs) == 0
 
 
+def test_list_handles_new_pagination_wrapper(monkeypatch):
+    """Test that List supports the current vp-pagi-wrap pagination markup."""
+    html = """<html><body>
+    <article class="vp-card">
+        <a class="vp-card__thumb" href="https://aagmaal.bz/test-video/">
+            <img alt="Test Video" src="thumb.jpg"/>
+        </a>
+    </article>
+    <nav class="vp-pagi-wrap">
+        <span class="page-numbers current">4</span>
+        <span class="page-numbers dots">...</span>
+        <a class="page-numbers" href="https://aagmaal.bz/page/12/">12</a>
+        <a class="next page-numbers" href="https://aagmaal.bz/page/5/">Next</a>
+    </nav>
+    </body></html>"""
+
+    dirs = []
+
+    monkeypatch.setattr(aagmaal.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(aagmaal.site, "add_download_link", lambda *a, **k: None)
+    monkeypatch.setattr(
+        aagmaal.site,
+        "add_dir",
+        lambda name, url, mode, icon=None, **k: dirs.append({"name": name, "url": url}),
+    )
+    monkeypatch.setattr(aagmaal.utils, "eod", lambda: None)
+
+    aagmaal.List("https://aagmaal.bz/")
+
+    assert len(dirs) == 1
+    assert "Page 4 of 12" in dirs[0]["name"]
+    assert dirs[0]["url"] == "https://aagmaal.bz/page/5/"
+
+
 def test_categories_parses_footer_widget(monkeypatch):
     """Test that Categories finds the Categories h3 widget and its ul links."""
     html = load_fixture("categories.html")

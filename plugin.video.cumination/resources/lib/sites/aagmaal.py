@@ -68,8 +68,8 @@ def List(url):
 
         site.add_download_link(name, videopage, "Playvid", img, name)
 
-    # .vp-pagination uses a.next.page-numbers
-    vp_nav = soup.select_one(".vp-pagination")
+    # Support both the old and current pagination wrapper classes.
+    vp_nav = soup.select_one(".vp-pagi-wrap, .vp-pagination")
     if vp_nav:
         next_link = vp_nav.select_one("a.next")
         if next_link:

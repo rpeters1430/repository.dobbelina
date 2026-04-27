@@ -5,6 +5,7 @@ Analyze all site logos and site configurations for standardization
 
 import os
 import re
+import ast
 from collections import defaultdict
 
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -17,10 +18,6 @@ IMAGES_DIR = os.path.join(REPO_ROOT, "plugin.video.cumination", "resources", "im
 def get_all_sites():
     """Extract all site configurations from site modules"""
     sites = {}
-    site_pattern = re.compile(
-        r"site\s*=\s*AdultSite\s*\(\s*['\"]([^'\"]+)['\"].*?['\"]([^'\"]+\.(png|jpg|gif|PNG))['\"]",
-        re.DOTALL,
-    )
 
     for filename in os.listdir(SITES_DIR):
         if filename.endswith(".py") and filename not in ("__init__.py", "soup_spec.py"):
@@ -28,12 +25,23 @@ def get_all_sites():
             try:
                 with open(filepath, "r", encoding="utf-8") as f:
                     content = f.read()
-                    # Handle multi-line AdultSite declarations
-                    content_single = content.replace("\n", " ")
-                    match = site_pattern.search(content_single)
-                    if match:
-                        site_id = match.group(1)
-                        logo_file = match.group(2)
+                    tree = ast.parse(content, filename=filepath)
+                    for node in ast.walk(tree):
+                        if not isinstance(node, ast.Call):
+                            continue
+                        if not isinstance(node.func, ast.Name) or node.func.id != "AdultSite":
+                            continue
+                        if len(node.args) < 4:
+                            continue
+                        if not all(
+                            isinstance(node.args[idx], ast.Constant)
+                            and isinstance(node.args[idx].value, str)
+                            for idx in (0, 3)
+                        ):
+                            continue
+
+                        site_id = node.args[0].value
+                        logo_file = node.args[3].value
                         sites[site_id] = {
                             "module": filename,
                             "logo": logo_file,
