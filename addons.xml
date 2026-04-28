@@ -118,7 +118,7 @@ Metadata refreshed for Matrix/Nexus/Omega compatibility
 </assets>
 </extension>
 </addon>
-<addon id="script.module.resolveurl.xxx" version="2.1.44" name="Adult Resolver SMR Extension" provider-name="gujal">
+<addon id="script.module.resolveurl.xxx" version="2.1.45" name="Adult Resolver SMR Extension" provider-name="gujal">
 <requires>
 <import addon="script.module.resolveurl" version="5.1.0" />
 </requires>
