@@ -1,6 +1,6 @@
 # Site Health Delta
 
-- Current report: `live_smoke_20260427_071618.json`
+- Current report: `live_smoke_20260428_071434.json`
 - Previous report: `live_smoke_latest.json`
 
 ## Snapshot
@@ -18,11 +18,11 @@
 
 ## New Failures
 
-- **peachurnet**: `PASS -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 500)
+- **analdin**: `PASS -> FAIL` (PARSER) | list: List returned no videos
 
 ## Resolved Failures
 
-- **analdin**: `FAIL -> PASS`
+- **peachurnet**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -30,4 +30,4 @@
 
 ## Step Regressions
 
-- **peachurnet** `list`: `SKIP -> FAIL` (UNKNOWN) | List URL unavailable in harness (HTTP 500)
+- **analdin** `list`: `PASS -> FAIL` (PARSER) | List returned no videos

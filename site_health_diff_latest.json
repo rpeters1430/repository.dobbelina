@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-04-27T07:16:18.173812",
+    "generated": "2026-04-28T07:14:34.716941",
     "sites_total": 171,
     "pass": 154,
     "warn": 0,
@@ -9,7 +9,7 @@
     "skip": 15
   },
   "previous": {
-    "generated": "2026-04-26T06:59:54.484025",
+    "generated": "2026-04-27T07:16:18.173812",
     "sites_total": 171,
     "pass": 154,
     "warn": 0,
@@ -27,16 +27,16 @@
   },
   "new_failures": [
     {
-      "site": "peachurnet",
+      "site": "analdin",
       "previous": "PASS",
       "current": "FAIL",
-      "class": "UNKNOWN",
-      "message": "list: List URL unavailable in harness (HTTP 500)"
+      "class": "PARSER",
+      "message": "list: List returned no videos"
     }
   ],
   "resolved_failures": [
     {
-      "site": "analdin",
+      "site": "peachurnet",
       "previous": "FAIL",
       "current": "PASS"
     }
@@ -53,27 +53,27 @@
   "improved_sites": [],
   "step_regressions": [
     {
-      "site": "peachurnet",
+      "site": "analdin",
       "step": "list",
-      "previous": "SKIP",
+      "previous": "PASS",
       "current": "FAIL",
-      "message": "List URL unavailable in harness (HTTP 500)",
-      "class": "UNKNOWN"
+      "message": "List returned no videos",
+      "class": "PARSER"
     }
   ],
   "deltas": [
     {
       "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
       "detail": ""
     },
     {
       "site": "peachurnet",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
