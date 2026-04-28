@@ -36,12 +36,7 @@ class PornHubResolver(ResolveUrl):
                    'Cookie': 'accessAgeDisclaimerPH=1; accessAgeDisclaimerUK=1'}
 
         html = self.net.http_GET(web_url, headers=headers).content
-        sources = []
-
-        qvars = re.search(r'qualityItems_[^\[]+(.+?);', html)
-        if qvars:
-            sources = json.loads(qvars.group(1))
-            sources = [(src.get('text'), src.get('url')) for src in sources if src.get('url')]
+        sources = self._extract_quality_items(html)
 
         if not sources:
             sections = re.findall(r'(var\sra[a-z0-9]+=.+?);flash', html)
@@ -60,17 +55,43 @@ class PornHubResolver(ResolveUrl):
                         sources.append((r[0], link))
 
         if not sources:
-            fvars = re.search(r'flashvars_\d+\s*=\s*(.+?);\s', html)
-            if fvars:
-                sources = json.loads(fvars.group(1)).get('mediaDefinitions')
-                sources = [(src.get('quality'), src.get('videoUrl')) for src in sources if
-                           type(src.get('quality')) is not list and src.get('videoUrl')]
+            sources = self._extract_media_definitions(html)
 
         if sources:
-            headers.update({'Origin': host[:-1]})
+            headers.update({'Origin': host_url.rstrip('/')})
             return helpers.pick_source(helpers.sort_sources_list(sources)) + helpers.append_headers(headers)
 
         raise ResolverError('File not found or not Free')
+
+    def _extract_quality_items(self, html):
+        qvars = re.search(r'qualityItems_[^=]*=\s*(\[[\s\S]*?\])\s*;', html)
+        if not qvars:
+            qvars = re.search(r'qualityItems_[^\[]+(\[[\s\S]*?\])\s*;', html)
+        if not qvars:
+            return []
+
+        try:
+            sources = json.loads(qvars.group(1))
+        except ValueError:
+            return []
+
+        return [(src.get('text'), src.get('url')) for src in sources if src.get('url')]
+
+    def _extract_media_definitions(self, html):
+        fvars = re.search(r'flashvars_\d+\s*=\s*(\{[\s\S]*?\})\s*;', html)
+        if not fvars:
+            return []
+
+        try:
+            definitions = json.loads(fvars.group(1)).get('mediaDefinitions') or []
+        except ValueError:
+            return []
+
+        return [
+            (src.get('quality'), src.get('videoUrl'))
+            for src in definitions
+            if type(src.get('quality')) is not list and src.get('videoUrl')
+        ]
 
     def get_url(self, host, media_id):
         return self._default_get_url(host, media_id, template='https://www.{host}/view_video.php?viewkey={media_id}')
