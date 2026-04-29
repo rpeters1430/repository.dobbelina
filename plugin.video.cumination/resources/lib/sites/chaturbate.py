@@ -951,7 +951,9 @@ def Playvid(url, name):
 
                             _proxy_state["last_request"] = time.time()
                             try:
-                                sreq = _Req(resolved_url, headers=_proxy_state["headers"])
+                                sreq = _Req(
+                                    resolved_url, headers=_proxy_state["headers"]
+                                )
                                 sresp = _uopen(sreq, timeout=10)
                                 data = sresp.read()
                                 ct = sresp.headers.get("Content-Type", "video/mp4")
