@@ -251,13 +251,18 @@ def Play(url, name, download=None):
                             pass
                 utils.notify("Oh oh", "Unable to retrieve video URL from Vidara")
                 return
-            elif "bysewihe" in embed_url or "g9r6.com" in embed_url:
-                id_match = re.search(r"/e/([^/]+)", embed_url)
-                if id_match:
-                    video_id = id_match.group(1)
-                    details_url = "https://bysewihe.com/api/videos/{}/embed/details".format(
-                        video_id
-                    )
+            else:
+                parsed_embed = urllib_parse.urlparse(embed_url)
+                embed_host = (parsed_embed.hostname or "").lower()
+                is_bysewihe_host = embed_host == "bysewihe.com" or embed_host.endswith(".bysewihe.com")
+                is_g9r6_host = embed_host == "g9r6.com" or embed_host.endswith(".g9r6.com")
+                if is_bysewihe_host or is_g9r6_host:
+                    id_match = re.search(r"/e/([^/]+)", embed_url)
+                    if id_match:
+                        video_id = id_match.group(1)
+                        details_url = "https://bysewihe.com/api/videos/{}/embed/details".format(
+                            video_id
+                        )
                     hdr = utils.base_hdrs.copy()
                     hdr["X-Embed-Origin"] = "premiumporn.org"
                     hdr["X-Embed-Parent"] = embed_url
