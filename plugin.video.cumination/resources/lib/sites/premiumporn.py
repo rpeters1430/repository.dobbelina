@@ -110,7 +110,9 @@ def List(url):
         )
 
     # Fixed next page selector
-    next_link = soup.select_one(".page-numbers.current + a, a.next.page-numbers, a.next.page-link[href]")
+    next_link = soup.select_one(
+        ".page-numbers.current + a, a.next.page-numbers, a.next.page-link[href]"
+    )
     if next_link:
         next_url = utils.safe_get_attr(next_link, "href", default="")
         if next_url:
@@ -137,7 +139,7 @@ def Categories(url):
         img_tag = item.select_one("img")
         img = utils.safe_get_attr(img_tag, "src", ["data-src"])
         name = utils.safe_get_attr(img_tag, "alt", default=utils.safe_get_text(item))
-        
+
         videos = ""
         count_tag = item.select_one(".video-datas, .count")
         if count_tag:
@@ -150,9 +152,14 @@ def Categories(url):
 
         if not siteurl or not name:
             continue
-            
+
         if videos:
-            name = utils.cleantext(name) + "[COLOR hotpink] (" + videos + " videos)[/COLOR]"
+            name = (
+                utils.cleantext(name)
+                + "[COLOR hotpink] ("
+                + videos
+                + " videos)[/COLOR]"
+            )
         else:
             name = utils.cleantext(name)
 
@@ -251,13 +258,24 @@ def Play(url, name, download=None):
                             pass
                 utils.notify("Oh oh", "Unable to retrieve video URL from Vidara")
                 return
-            elif "bysewihe" in embed_url or "g9r6.com" in embed_url:
-                id_match = re.search(r"/e/([^/]+)", embed_url)
-                if id_match:
-                    video_id = id_match.group(1)
-                    details_url = "https://bysewihe.com/api/videos/{}/embed/details".format(
-                        video_id
-                    )
+            else:
+                parsed_embed = urllib_parse.urlparse(embed_url)
+                embed_host = (parsed_embed.hostname or "").lower()
+                is_bysewihe_host = embed_host == "bysewihe.com" or embed_host.endswith(
+                    ".bysewihe.com"
+                )
+                is_g9r6_host = embed_host == "g9r6.com" or embed_host.endswith(
+                    ".g9r6.com"
+                )
+                if is_bysewihe_host or is_g9r6_host:
+                    id_match = re.search(r"/e/([^/]+)", embed_url)
+                    if id_match:
+                        video_id = id_match.group(1)
+                        details_url = (
+                            "https://bysewihe.com/api/videos/{}/embed/details".format(
+                                video_id
+                            )
+                        )
                     hdr = utils.base_hdrs.copy()
                     hdr["X-Embed-Origin"] = "premiumporn.org"
                     hdr["X-Embed-Parent"] = embed_url
@@ -266,8 +284,10 @@ def Play(url, name, download=None):
                     if details_data:
                         details_json = json.loads(details_data)
                         embed = details_json.get("embed_frame_url", "")
-                        api_url = "https://g9r6.com/api/videos/{}/embed/playback".format(
-                            video_id
+                        api_url = (
+                            "https://g9r6.com/api/videos/{}/embed/playback".format(
+                                video_id
+                            )
                         )
                         api_data = utils.getHtml(api_url, embed, headers=hdr)
                         if api_data:
@@ -285,13 +305,17 @@ def Play(url, name, download=None):
                             try:
                                 src_api = {}
                                 for source in json.loads(result).get("sources", []):
-                                    v_url = source.get("url", "").replace("\\u0026", "&")
+                                    v_url = source.get("url", "").replace(
+                                        "\\u0026", "&"
+                                    )
                                     label = source.get("label", "")
                                     src_api[label] = v_url
 
                                 video_url = utils.prefquality(
                                     src_api,
-                                    sort_by=lambda x: 2160 if x == "4k" else int(x[:-1]),
+                                    sort_by=lambda x: 2160
+                                    if x == "4k"
+                                    else int(x[:-1]),
                                     reverse=True,
                                 )
                                 if video_url:
