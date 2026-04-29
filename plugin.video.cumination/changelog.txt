@@ -1,3 +1,14 @@
+[B]Version 1.1.379[/B]
+- Merge pull request #142 from rpeters1430/copilot/resolve-security-issues
+- Merge pull request #144 from rpeters1430/copilot/fix-gemini-cli-triage-error
+- style: format code with Ruff Formatter
+- fix: add GEMINI_CLI_TRUST_WORKSPACE=true to all Gemini CLI workflow steps
+- fix: resolve SSRF vulnerabilities in chaturbate.py proxy handlers
+- Initial plan
+- Initial plan
+- Merge pull request #140 from rpeters1430/alert-autofix-175
+- Potential fix for code scanning alert no. 175: Full server-side request forgery
+
 [B]Version 1.1.378[/B]
 - Merge pull request #140 from rpeters1430/alert-autofix-175
 - Potential fix for code scanning alert no. 175: Full server-side request forgery
