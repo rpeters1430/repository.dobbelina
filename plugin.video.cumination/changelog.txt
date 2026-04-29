@@ -1,3 +1,11 @@
+[B]Version 1.1.378[/B]
+- Merge pull request #140 from rpeters1430/alert-autofix-175
+- Potential fix for code scanning alert no. 175: Full server-side request forgery
+- feat: refactor PornHubResolver to improve media extraction and add unit tests
+- Add new image asset for YourLesbians in plugin.video.cumination
+- feat: add support for YourLesbians site with video listing and playback functionality
+- fix: update SpankBang URLs and adjust test cases accordingly
+
 [B]Version 1.1.377[/B]
 - Add new image asset for YourLesbians in plugin.video.cumination
 - feat: add support for YourLesbians site with video listing and playback functionality
