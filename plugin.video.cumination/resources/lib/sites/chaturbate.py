@@ -796,11 +796,11 @@ def Playvid(url, name):
                             km = re.search(r"(chunklist_\d+_\w+)", req_url)
                             type_key = km.group(1) if km else None
                             cdn_url = (
-                                _proxy_state["url_map"].get(type_key, req_url)
+                                _proxy_state["url_map"].get(type_key)
                                 if type_key
-                                else req_url
+                                else None
                             )
-                            if not _is_safe_url(cdn_url):
+                            if not cdn_url:
                                 self.send_error(400)
                                 return
                             _proxy_state["last_request"] = time.time()
@@ -943,14 +943,17 @@ def Playvid(url, name):
                                 self.send_error(400)
                                 return
 
-                            if not _is_safe_url(seg_url):
-                                self.send_error(400)
+                            seg_name = seg_url.rsplit("/", 1)[-1].split("?")[0]
+                            resolved_url = _proxy_state["seg_cdn_urls"].get(seg_name)
+                            if not resolved_url:
+                                self.send_error(404)
                                 return
 
-                            seg_name = seg_url.rsplit("/", 1)[-1].split("?")[0]
                             _proxy_state["last_request"] = time.time()
                             try:
-                                sreq = _Req(seg_url, headers=_proxy_state["headers"])
+                                sreq = _Req(
+                                    resolved_url, headers=_proxy_state["headers"]
+                                )
                                 sresp = _uopen(sreq, timeout=10)
                                 data = sresp.read()
                                 ct = sresp.headers.get("Content-Type", "video/mp4")
@@ -963,24 +966,6 @@ def Playvid(url, name):
                             except Exception as e:
                                 _dbg("SEG FAIL {} {}".format(seg_name, e))
                                 _trigger_reconnect("segment fail: {}".format(seg_name))
-                            current_url = _proxy_state["seg_cdn_urls"].get(seg_name)
-                            if current_url and current_url != seg_url:
-                                try:
-                                    sreq = _Req(
-                                        current_url, headers=_proxy_state["headers"]
-                                    )
-                                    sresp = _uopen(sreq, timeout=10)
-                                    data = sresp.read()
-                                    ct = sresp.headers.get("Content-Type", "video/mp4")
-                                    self.send_response(200)
-                                    self.send_header("Content-Type", ct)
-                                    self.send_header("Content-Length", str(len(data)))
-                                    self.end_headers()
-                                    self.wfile.write(data)
-                                    _dbg("SEG FALLBACK OK {}".format(seg_name))
-                                    return
-                                except Exception as e2:
-                                    _dbg("SEG FALLBACK FAIL {}".format(e2))
                             tm = re.search(r"(video|audio)_(\d+)_llhls", seg_name)
                             if tm:
                                 for tk, latest in _proxy_state["latest_seg"].items():
