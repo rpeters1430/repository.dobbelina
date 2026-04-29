@@ -742,8 +742,22 @@ def Playvid(url, name):
                     t2.start()
 
                 def _is_safe_url(target_url):
+                    def _canonical_host_port(parsed_url):
+                        if parsed_url.scheme not in ("http", "https"):
+                            return None
+                        if parsed_url.username or parsed_url.password:
+                            return None
+                        host = parsed_url.hostname
+                        if not host:
+                            return None
+                        port = parsed_url.port
+                        if port is None:
+                            port = 443 if parsed_url.scheme == "https" else 80
+                        return (host.lower(), port)
+
                     parsed = urllib_parse.urlparse(target_url)
-                    if parsed.scheme not in ("http", "https") or not parsed.netloc:
+                    req_host_port = _canonical_host_port(parsed)
+                    if not req_host_port:
                         return False
 
                     allowed_hosts = set()
@@ -752,8 +766,9 @@ def Playvid(url, name):
                             base_parsed = urllib_parse.urlparse(
                                 _proxy_state["stream_url"]
                             )
-                            if base_parsed.netloc:
-                                allowed_hosts.add(base_parsed.netloc)
+                            base_host_port = _canonical_host_port(base_parsed)
+                            if base_host_port:
+                                allowed_hosts.add(base_host_port)
                         except Exception:
                             pass
 
@@ -761,11 +776,12 @@ def Playvid(url, name):
                             for _u in _proxy_state.get(collection, {}).values():
                                 try:
                                     _p = urllib_parse.urlparse(_u)
-                                    if _p.netloc:
-                                        allowed_hosts.add(_p.netloc)
+                                    _hp = _canonical_host_port(_p)
+                                    if _hp:
+                                        allowed_hosts.add(_hp)
                                 except Exception:
                                     pass
-                    return parsed.netloc in allowed_hosts
+                    return req_host_port in allowed_hosts
 
                 # Localhost proxy: serves master + proxies chunklists with auto-reconnect
                 class _H(BaseHTTPRequestHandler):
