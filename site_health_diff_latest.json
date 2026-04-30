@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-04-29T07:12:25.500428",
+    "generated": "2026-04-30T07:27:15.265500",
     "sites_total": 171,
     "pass": 155,
     "warn": 0,
@@ -9,30 +9,24 @@
     "skip": 15
   },
   "previous": {
-    "generated": "2026-04-28T07:14:34.716941",
+    "generated": "2026-04-29T07:12:25.500428",
     "sites_total": 171,
-    "pass": 154,
+    "pass": 155,
     "warn": 0,
-    "fail": 2,
+    "fail": 1,
     "error": 0,
     "skip": 15
   },
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 1,
+    "resolved_failures": 0,
     "persistent_failures": 1,
     "improved_sites": 0,
     "regressions": 0,
     "step_regressions": 0
   },
   "new_failures": [],
-  "resolved_failures": [
-    {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS"
-    }
-  ],
+  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "josporn",
@@ -44,13 +38,5 @@
   ],
   "improved_sites": [],
   "step_regressions": [],
-  "deltas": [
-    {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    }
-  ]
+  "deltas": []
 }
