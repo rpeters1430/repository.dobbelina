@@ -2,11 +2,12 @@
 
 - Sites: `171`
 - Tier1 hot: `0`
-- Failing: `1`
+- Failing: `2`
 - Warn: `0`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
+| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
@@ -32,7 +33,6 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
-| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -48,7 +48,7 @@
 | cumlouder | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | drtuber | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| erogarga | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
+| erogarga | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
 | erome | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eroticage | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eroticmv | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -181,6 +181,7 @@
 
 ## Next Batch
 
+- **analdin** (failing, tier=2) | failures: list:FAIL
 - **josporn** (failing, tier=None) | failures: list:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
@@ -200,4 +201,3 @@
 - **youporn** (tier1, tier=1)
 - **yourlesbians** (tier1, tier=1)
 - **6xtube** (backlog, tier=None)
-- **85po** (backlog, tier=None)
