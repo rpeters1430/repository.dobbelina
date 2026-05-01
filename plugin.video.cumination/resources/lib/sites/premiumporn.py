@@ -134,11 +134,23 @@ def Categories(url):
         return
 
     soup = utils.parse_html(cathtml)
-    for item in soup.select("a.thumb, a.video-block, .list-categories a"):
-        siteurl = utils.safe_get_attr(item, "href", default="")
+    # Target common category container patterns and list links
+    for item in soup.select(".thumb, .video-block, .list-categories a"):
+        link = item if item.name == "a" else item.select_one("a")
+        if not link:
+            continue
+            
+        siteurl = utils.safe_get_attr(link, "href", default="")
+        if not siteurl:
+            continue
+            
         img_tag = item.select_one("img")
         img = utils.safe_get_attr(img_tag, "src", ["data-src"])
-        name = utils.safe_get_attr(img_tag, "alt", default=utils.safe_get_text(item))
+        
+        # Prioritize link title or alt, then text
+        name = utils.safe_get_attr(link, "title") or \
+               utils.safe_get_attr(img_tag, "alt") or \
+               utils.safe_get_text(link)
 
         videos = ""
         count_tag = item.select_one(".video-datas, .count")
@@ -150,7 +162,7 @@ def Categories(url):
             if match:
                 videos = match.group(1)
 
-        if not siteurl or not name:
+        if not name:
             continue
 
         if videos:

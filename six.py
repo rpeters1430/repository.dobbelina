@@ -16,6 +16,7 @@ import types
 import urllib.error as _urllib_error
 import urllib.parse as _urllib_parse
 import urllib.request as _urllib_request
+import urllib.response as _urllib_response
 
 PY2 = False
 PY3 = True
@@ -62,10 +63,15 @@ def print_(*args, **kwargs):  # pragma: no cover - convenience alias
     print(*args, **kwargs)
 
 
+def iteritems(d, **kw):
+    return iter(d.items(**kw))
+
+
 moves = types.ModuleType("six.moves")
 moves.urllib_parse = _urllib_parse
 moves.urllib_request = _urllib_request
 moves.urllib_error = _urllib_error
+moves.urllib_response = _urllib_response
 moves.html_parser = _html_parser
 moves.http_cookiejar = _http_cookiejar
 moves.range = range

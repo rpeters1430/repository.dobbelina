@@ -34,14 +34,14 @@ site = AdultSite(
 
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
-        "items": "a.group.flex",
-        "url": {"selector": "self", "attr": "href"},
+        "items": "a[href*='/videos/']",
+        "url": {"attr": "href"},
         "title": {"selector": "img", "attr": "title", "clean": True},
-        "thumbnail": {"selector": "img", "attr": "src"},
-        "duration": {"selector": ".transition-opacity", "text": True},
+        "thumbnail": {"selector": "img", "attr": "src", "fallback_attrs": ["data-src"]},
+        "duration": {"selector": ".duration, .transition-opacity", "text": True},
         "pagination": {
             "selector": "a.page-link",
-            "text_matches": ["next", ">", "»"],
+            "text_matches": ["next", ">", "»", "Next"],
             "attr": "href",
             "mode": "List",
         },
