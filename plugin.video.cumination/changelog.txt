@@ -1,3 +1,13 @@
+[B]Version 1.1.381[/B]
+- Add urllib.response to six.py and new cookie file for cumination plugin
+- Merge pull request #145 from rpeters1430/alert-autofix-177
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 177: Incomplete URL substring sanitization
+- Merge pull request #142 from rpeters1430/copilot/resolve-security-issues
+- Merge pull request #144 from rpeters1430/copilot/fix-gemini-cli-triage-error
+- style: format code with Ruff Formatter
+- fix: add GEMINI_CLI_TRUST_WORKSPACE=true to all Gemini CLI workflow steps
+
 [B]Version 1.1.380[/B]
 - Merge pull request #145 from rpeters1430/alert-autofix-177
 - style: format code with Ruff Formatter
