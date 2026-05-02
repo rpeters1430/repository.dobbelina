@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-05-02T07:10:52.496939",
+    "sites_total": 171,
+    "pass": 154,
+    "warn": 0,
+    "fail": 1,
+    "error": 0,
+    "skip": 16
+  },
+  "previous": {
     "generated": "2026-05-01T07:25:33.449111",
     "sites_total": 171,
     "pass": 153,
@@ -8,33 +17,22 @@
     "error": 0,
     "skip": 16
   },
-  "previous": {
-    "generated": "2026-04-30T07:27:15.265500",
-    "sites_total": 171,
-    "pass": 155,
-    "warn": 0,
-    "fail": 1,
-    "error": 0,
-    "skip": 15
-  },
   "summary": {
-    "new_failures": 1,
-    "resolved_failures": 0,
+    "new_failures": 0,
+    "resolved_failures": 1,
     "persistent_failures": 1,
     "improved_sites": 0,
-    "regressions": 2,
-    "step_regressions": 1
+    "regressions": 0,
+    "step_regressions": 0
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
+      "previous": "FAIL",
+      "current": "PASS"
     }
   ],
-  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "josporn",
@@ -45,29 +43,13 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [
-    {
-      "site": "analdin",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER"
-    }
-  ],
+  "step_regressions": [],
   "deltas": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "erogarga",
-      "previous": "PASS",
-      "current": "SKIP",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
