@@ -48,6 +48,14 @@ url_dispatcher = URL_Dispatcher("main")
 custom_site_import_results = {"loaded": [], "failed": []}
 
 
+def _safe_child_path(base_dir, filename):
+    base = os.path.realpath(TRANSLATEPATH(base_dir))
+    candidate = os.path.realpath(os.path.join(base, filename))
+    if candidate != base and candidate.startswith(base + os.sep):
+        return candidate
+    raise ValueError("Path escapes expected directory")
+
+
 def _record_custom_site_result(result_type, module_name, **details):
     custom_site_import_results[result_type].append({"module": module_name, **details})
 
@@ -415,7 +423,7 @@ def OpenDownloadFolder():
     xbmc.sleep(100)
     download_path = addon_get_setting("download_path")
     if download_path:
-        safe_url = download_path.replace('"', "").replace(",", "")
+        safe_url = download_path.replace('"', "").replace(",", "").replace(")", "")
         xbmc.executebuiltin('ActivateWindow(Videos, "{}")'.format(safe_url))
     else:
         utils.notify(utils.i18n("oh_oh"), utils.i18n("dnld_path"))
@@ -445,7 +453,16 @@ def openLogUploader():
 def about_site(name, about, custom):
     heading = "{0} {1}".format(utils.i18n("about"), name)
     dir = basics.customSitesDir if custom else basics.aboutDir
-    with open(TRANSLATEPATH(os.path.join(dir, "{}.txt".format(about)))) as f:
+    about_name = os.path.basename(str(about))
+    if about_name != about or about_name in ("", ".", ".."):
+        utils.notify(utils.i18n("oh_oh"), "Invalid about file")
+        return
+    try:
+        about_path = _safe_child_path(dir, "{}.txt".format(about_name))
+    except ValueError:
+        utils.notify(utils.i18n("oh_oh"), "Invalid about file")
+        return
+    with open(about_path) as f:
         announce = f.read()
     utils.textBox(heading, announce)
 

@@ -42,6 +42,28 @@ def test_list_videos(site_spec_fixture):
     # Check Next Page
     mock_add_dir.assert_any_call("Next Page (2)", "https://hornyfap.tv/latest-updates/2/", "List", site_spec.site.img_next, page='2')
 
+
+def test_categories_parses_current_list_categories_markup(site_spec_fixture):
+    site_spec, mock_add_dir, _, mock_get_html = site_spec_fixture
+    mock_get_html.return_value = """
+    <div class="list-categories">
+        <a class="item" href="https://hornyfap.tv/categories/nipple-slip/" title="NIPPLE SLIP">
+            <div class="img"><span class="no-thumb">no image</span></div>
+            <strong class="title">NIPPLE SLIP</strong>
+            <div class="wrap"><div class="videos">2 videos</div><div class="rating positive">100%</div></div>
+        </a>
+        <a class="item" href="https://hornyfap.tv/categories/boobs/" title="Boobs">
+            <strong class="title">Boobs</strong>
+        </a>
+    </div>
+    """
+
+    site_spec.Categories("https://hornyfap.tv/categories/")
+
+    mock_add_dir.assert_any_call("NIPPLE SLIP", "https://hornyfap.tv/categories/nipple-slip/", "List", "")
+    mock_add_dir.assert_any_call("Boobs", "https://hornyfap.tv/categories/boobs/", "List", "")
+
+
 def test_playvid(site_spec_fixture):
     site_spec, _, _, mock_get_html = site_spec_fixture
     

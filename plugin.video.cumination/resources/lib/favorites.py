@@ -445,25 +445,63 @@ def move_fav_to_top(url):
     conn.close()
 
 
+def _swap_rowids(cursor, table, current_id, target_id):
+    if not current_id or not target_id or current_id == target_id:
+        return
+    tmp_id = cursor.execute(
+        "SELECT COALESCE(MAX(rowid), 0) + 1 FROM {}".format(table)
+    ).fetchone()[0]
+    cursor.execute(
+        "UPDATE {} SET rowid = ? WHERE rowid = ?".format(table),
+        (tmp_id, target_id),
+    )
+    cursor.execute(
+        "UPDATE {} SET rowid = ? WHERE rowid = ?".format(table),
+        (target_id, current_id),
+    )
+    cursor.execute(
+        "UPDATE {} SET rowid = ? WHERE rowid = ?".format(table),
+        (current_id, tmp_id),
+    )
+
+
+def _swap_custom_list_rowids(cursor, current_id, target_id):
+    if not current_id or not target_id or current_id == target_id:
+        return
+    tmp_id = cursor.execute(
+        "SELECT COALESCE(MAX(rowid), 0) + 1 FROM custom_lists"
+    ).fetchone()[0]
+    cursor.execute("UPDATE custom_lists SET rowid = ? WHERE rowid = ?", (tmp_id, target_id))
+    cursor.execute(
+        "UPDATE custom_listitems SET list_id = ? WHERE list_id = ?",
+        (str(tmp_id), str(target_id)),
+    )
+    cursor.execute(
+        "UPDATE custom_lists SET rowid = ? WHERE rowid = ?", (target_id, current_id)
+    )
+    cursor.execute(
+        "UPDATE custom_listitems SET list_id = ? WHERE list_id = ?",
+        (str(target_id), str(current_id)),
+    )
+    cursor.execute("UPDATE custom_lists SET rowid = ? WHERE rowid = ?", (current_id, tmp_id))
+    cursor.execute(
+        "UPDATE custom_listitems SET list_id = ? WHERE list_id = ?",
+        (str(current_id), str(tmp_id)),
+    )
+
+
 def move_fav_down(url):
     delete_duplicates()
     conn = sqlite3.connect(favoritesdb)
     conn.text_factory = str
     c = conn.cursor()
-    sql = """DROP TABLE IF EXISTS tmp;
-CREATE TEMP TABLE tmp AS
-SELECT name,
-(SELECT max(ROWID)+1 from favorites) tmp_id,
-cli.ROWID id,
-coalesce((SELECT max(ROWID) from favorites WHERE ROWID<cli.ROWID), cli.ROWID) prev_id,
-coalesce((SELECT min(ROWID) from favorites WHERE ROWID>cli.ROWID), cli.ROWID) next_id
-FROM favorites cli
-WHERE cli.ROWID = (select ROWID from favorites WHERE url = "{}");
-update favorites set ROWID = (SELECT tmp_id FROM tmp) WHERE ROWID = (SELECT prev_id FROM tmp);
-update favorites set ROWID = (SELECT prev_id FROM tmp) WHERE ROWID = (SELECT id FROM tmp);
-update favorites set ROWID = (SELECT id FROM tmp) WHERE ROWID = (SELECT tmp_id FROM tmp);
-DROP TABLE IF EXISTS tmp;""".format(url)
-    c.executescript(sql)
+    row = c.execute("SELECT rowid FROM favorites WHERE url = ?", (url,)).fetchone()
+    if row:
+        current_id = row[0]
+        target = c.execute(
+            "SELECT MAX(rowid) FROM favorites WHERE rowid < ?", (current_id,)
+        ).fetchone()[0]
+        _swap_rowids(c, "favorites", current_id, target)
     conn.commit()
     conn.close()
     xbmc.executebuiltin("Container.Refresh")
@@ -474,20 +512,13 @@ def move_fav_up(url):
     conn = sqlite3.connect(favoritesdb)
     conn.text_factory = str
     c = conn.cursor()
-    sql = """DROP TABLE IF EXISTS tmp;
-CREATE TEMP TABLE tmp AS
-SELECT name,
-(SELECT max(ROWID)+1 from favorites) tmp_id,
-cli.ROWID id,
-coalesce((SELECT max(ROWID) from favorites WHERE ROWID<cli.ROWID), cli.ROWID) prev_id,
-coalesce((SELECT min(ROWID) from favorites WHERE ROWID>cli.ROWID), cli.ROWID) next_id
-FROM favorites cli
-WHERE cli.ROWID = (select ROWID from favorites WHERE url = "{}");
-update favorites set ROWID = (SELECT tmp_id FROM tmp) WHERE ROWID = (SELECT next_id FROM tmp);
-update favorites set ROWID = (SELECT next_id FROM tmp) WHERE ROWID = (SELECT id FROM tmp);
-update favorites set ROWID = (SELECT id FROM tmp) WHERE ROWID = (SELECT tmp_id FROM tmp);
-DROP TABLE IF EXISTS tmp;""".format(url)
-    c.executescript(sql)
+    row = c.execute("SELECT rowid FROM favorites WHERE url = ?", (url,)).fetchone()
+    if row:
+        current_id = row[0]
+        target = c.execute(
+            "SELECT MIN(rowid) FROM favorites WHERE rowid > ?", (current_id,)
+        ).fetchone()[0]
+        _swap_rowids(c, "favorites", current_id, target)
     conn.commit()
     conn.close()
     xbmc.executebuiltin("Container.Refresh")
@@ -1436,97 +1467,78 @@ def edit_list(rowid):
 
 @url_dispatcher.register()
 def moveup_listitem(listitem_id):
+    try:
+        current_id = int(listitem_id)
+    except (TypeError, ValueError):
+        utils.notify("Error", "Invalid list item")
+        return
     conn = sqlite3.connect(favoritesdb)
     c = conn.cursor()
-    sql = """DROP TABLE IF EXISTS tmp;
-CREATE TEMP TABLE tmp AS
-SELECT name,
-(SELECT max(ROWID)+1 from custom_listitems) tmp_id,
-cli.ROWID id,
-coalesce((SELECT max(ROWID) from custom_listitems WHERE list_id = cli.list_id and ROWID<cli.ROWID), cli.ROWID) prev_id,
-coalesce((SELECT min(ROWID) from custom_listitems WHERE list_id = cli.list_id and ROWID>cli.ROWID), cli.ROWID) next_id
-FROM custom_listitems cli
-WHERE cli.ROWID = {};
-update custom_listitems set ROWID = (SELECT tmp_id FROM tmp) WHERE ROWID = (SELECT prev_id FROM tmp);
-update custom_listitems set ROWID = (SELECT prev_id FROM tmp) WHERE ROWID = (SELECT id FROM tmp);
-update custom_listitems set ROWID = (SELECT id FROM tmp) WHERE ROWID = (SELECT tmp_id FROM tmp);
-DROP TABLE IF EXISTS tmp;""".format(listitem_id)
-    c.executescript(sql)
+    row = c.execute(
+        "SELECT list_id FROM custom_listitems WHERE rowid = ?", (current_id,)
+    ).fetchone()
+    if row:
+        target = c.execute(
+            "SELECT MAX(rowid) FROM custom_listitems WHERE list_id = ? AND rowid < ?",
+            (row[0], current_id),
+        ).fetchone()[0]
+        _swap_rowids(c, "custom_listitems", current_id, target)
     conn.commit()
     conn.close()
     xbmc.executebuiltin("Container.Refresh")
-
 
 @url_dispatcher.register()
 def movedown_listitem(listitem_id):
+    try:
+        current_id = int(listitem_id)
+    except (TypeError, ValueError):
+        utils.notify("Error", "Invalid list item")
+        return
     conn = sqlite3.connect(favoritesdb)
     c = conn.cursor()
-    sql = """DROP TABLE IF EXISTS tmp;
-CREATE TEMP TABLE tmp AS
-SELECT name,
-(SELECT max(ROWID)+1 from custom_listitems) tmp_id,
-cli.ROWID id,
-coalesce((SELECT max(ROWID) from custom_listitems WHERE list_id = cli.list_id and ROWID<cli.ROWID), cli.ROWID) prev_id,
-coalesce((SELECT min(ROWID) from custom_listitems WHERE list_id = cli.list_id and ROWID>cli.ROWID), cli.ROWID) next_id
-FROM custom_listitems cli
-WHERE cli.ROWID = {};
-update custom_listitems set ROWID = (SELECT tmp_id FROM tmp) WHERE ROWID = (SELECT next_id FROM tmp);
-update custom_listitems set ROWID = (SELECT next_id FROM tmp) WHERE ROWID = (SELECT id FROM tmp);
-update custom_listitems set ROWID = (SELECT id FROM tmp) WHERE ROWID = (SELECT tmp_id FROM tmp);
-DROP TABLE IF EXISTS tmp;""".format(listitem_id)
-    c.executescript(sql)
+    row = c.execute(
+        "SELECT list_id FROM custom_listitems WHERE rowid = ?", (current_id,)
+    ).fetchone()
+    if row:
+        target = c.execute(
+            "SELECT MIN(rowid) FROM custom_listitems WHERE list_id = ? AND rowid > ?",
+            (row[0], current_id),
+        ).fetchone()[0]
+        _swap_rowids(c, "custom_listitems", current_id, target)
     conn.commit()
     conn.close()
     xbmc.executebuiltin("Container.Refresh")
-
 
 @url_dispatcher.register()
 def moveup_list(rowid):
+    try:
+        current_id = int(rowid)
+    except (TypeError, ValueError):
+        utils.notify("Error", "Invalid list")
+        return
     conn = sqlite3.connect(favoritesdb)
     c = conn.cursor()
-    sql = """DROP TABLE IF EXISTS tmp;
-CREATE TEMP TABLE tmp AS
-SELECT name,
-(SELECT max(ROWID)+1 from custom_lists) tmp_id,
-cli.ROWID id,
-coalesce((SELECT max(ROWID) from custom_lists WHERE ROWID<cli.ROWID), cli.ROWID) prev_id,
-coalesce((SELECT min(ROWID) from custom_lists WHERE ROWID>cli.ROWID), cli.ROWID) next_id
-FROM custom_lists cli
-WHERE cli.ROWID = {};
-update custom_lists set ROWID = (SELECT tmp_id FROM tmp) WHERE ROWID = (SELECT prev_id FROM tmp);
-update custom_listitems set list_id = cast((SELECT tmp_id FROM tmp) as text) WHERE list_id = cast((SELECT prev_id FROM tmp) as text);
-update custom_lists set ROWID = (SELECT prev_id FROM tmp) WHERE ROWID = (SELECT id FROM tmp);
-update custom_listitems set list_id = cast((SELECT prev_id FROM tmp) as text) WHERE list_id = cast((SELECT id FROM tmp) as text);
-update custom_lists set ROWID = (SELECT id FROM tmp) WHERE ROWID = (SELECT tmp_id FROM tmp);
-update custom_listitems set list_id = cast((SELECT id FROM tmp) as text) WHERE list_id = cast((SELECT tmp_id FROM tmp) as text);
-DROP TABLE IF EXISTS tmp;""".format(rowid)
-    c.executescript(sql)
+    target = c.execute(
+        "SELECT MAX(rowid) FROM custom_lists WHERE rowid < ?", (current_id,)
+    ).fetchone()[0]
+    _swap_custom_list_rowids(c, current_id, target)
     conn.commit()
     conn.close()
     xbmc.executebuiltin("Container.Refresh")
 
-
 @url_dispatcher.register()
 def movedown_list(rowid):
+    try:
+        current_id = int(rowid)
+    except (TypeError, ValueError):
+        utils.notify("Error", "Invalid list")
+        return
     conn = sqlite3.connect(favoritesdb)
     c = conn.cursor()
-    sql = """DROP TABLE IF EXISTS tmp;
-CREATE TEMP TABLE tmp AS
-SELECT name,
-(SELECT max(ROWID)+1 from custom_lists) tmp_id,
-cli.ROWID id,
-coalesce((SELECT max(ROWID) from custom_lists WHERE ROWID<cli.ROWID), cli.ROWID) prev_id,
-coalesce((SELECT min(ROWID) from custom_lists WHERE ROWID>cli.ROWID), cli.ROWID) next_id
-FROM custom_lists cli
-WHERE cli.ROWID = {};
-update custom_lists set ROWID = (SELECT tmp_id FROM tmp) WHERE ROWID = (SELECT next_id FROM tmp);
-update custom_listitems set list_id = cast((SELECT tmp_id FROM tmp) as text) WHERE list_id = cast((SELECT next_id FROM tmp) as text);
-update custom_lists set ROWID = (SELECT next_id FROM tmp) WHERE ROWID = (SELECT id FROM tmp);
-update custom_listitems set list_id = cast((SELECT next_id FROM tmp) as text) WHERE list_id = cast((SELECT id FROM tmp) as text);
-update custom_lists set ROWID = (SELECT id FROM tmp) WHERE ROWID = (SELECT tmp_id FROM tmp);
-update custom_listitems set list_id = cast((SELECT id FROM tmp) as text) WHERE list_id = cast((SELECT tmp_id FROM tmp) as text);
-DROP TABLE IF EXISTS tmp;""".format(rowid)
-    c.executescript(sql)
+    target = c.execute(
+        "SELECT MIN(rowid) FROM custom_lists WHERE rowid > ?", (current_id,)
+    ).fetchone()[0]
+    _swap_custom_list_rowids(c, current_id, target)
     conn.commit()
     conn.close()
     xbmc.executebuiltin("Container.Refresh")

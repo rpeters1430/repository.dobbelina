@@ -122,3 +122,20 @@ def test_custom_sites_health_display(monkeypatch):
         "[B]Not attempted[/B]",
         "• Title custom.untried",
     ]
+
+
+def test_safe_child_path_rejects_traversal(tmp_path):
+    import default as plugin_default
+
+    base = tmp_path / "about"
+    base.mkdir()
+
+    safe = plugin_default._safe_child_path(str(base), "site.txt")
+    assert safe.endswith("site.txt")
+
+    try:
+        plugin_default._safe_child_path(str(base), "..\\outside.txt")
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("path traversal was accepted")

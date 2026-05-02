@@ -231,6 +231,30 @@ def test_moveup_and_movedown_listitems(favorites_module, temp_db):
     conn.close()
 
 
+def test_moveup_listitem_rejects_injected_rowid(favorites_module, temp_db):
+    conn = sqlite3.connect(temp_db)
+    c = conn.cursor()
+    c.execute("INSERT INTO custom_lists VALUES (?)", ("List A",))
+    list_id = c.lastrowid
+    c.execute(
+        "INSERT INTO custom_listitems VALUES (?,?,?,?,?)",
+        ("First", "url1", "mode", "img", str(list_id)),
+    )
+    conn.commit()
+    conn.close()
+
+    try:
+        favorites_module.moveup_listitem("1; DELETE FROM custom_listitems; --")
+    except ValueError:
+        pass
+
+    conn = sqlite3.connect(temp_db)
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM custom_listitems")
+    assert c.fetchone()[0] == 1
+    conn.close()
+
+
 def test_moveup_and_movedown_lists(favorites_module, temp_db):
     conn = sqlite3.connect(temp_db)
     c = conn.cursor()

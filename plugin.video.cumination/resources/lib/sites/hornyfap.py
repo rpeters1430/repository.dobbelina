@@ -124,8 +124,11 @@ def Categories(url):
         return
 
     soup = utils.parse_html(html)
-    # The categories are usually in div.list-categories or similar
-    items = soup.select("div.list-categories div.item, div.item a[href*='/categories/']")
+    items = soup.select(
+        ".list-categories a[href*='/categories/'], "
+        "div.list-categories div.item, "
+        "div.item a[href*='/categories/']"
+    )
     
     seen = set()
     for item in items:
@@ -144,9 +147,12 @@ def Categories(url):
         seen.add(cat_url)
         cat_url = urllib_parse.urljoin(site.url, cat_url)
         
-        name = utils.safe_get_text(link_tag)
+        title_tag = link_tag.select_one("strong.title")
+        name = utils.safe_get_text(title_tag)
         if not name:
             name = link_tag.get("title", "")
+        if not name:
+            name = utils.safe_get_text(link_tag)
         
         if not name or name.lower() == "categories":
             continue

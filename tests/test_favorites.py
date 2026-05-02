@@ -338,6 +338,30 @@ class TestFavoritesMovement:
             "https://example.com/video1",
         ]
 
+    def test_move_fav_down_does_not_execute_injected_sql(
+        self, favorites_module, temp_db
+    ):
+        favorites_module.addFav(
+            mode="pornhub.Playvid",
+            name="Video",
+            url='https://example.com/video"; DELETE FROM favorites; --',
+            img="https://example.com/thumb.jpg",
+            duration="10:00",
+            quality="720p",
+        )
+
+        favorites_module.move_fav_down(
+            'https://example.com/video"; DELETE FROM favorites; --'
+        )
+
+        conn = sqlite3.connect(temp_db)
+        c = conn.cursor()
+        c.execute("SELECT COUNT(*) FROM favorites")
+        count = c.fetchone()[0]
+        conn.close()
+
+        assert count == 1
+
 
 class TestFavoritesClear:
     """Test clearing favorites."""
