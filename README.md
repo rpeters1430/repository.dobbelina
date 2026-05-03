@@ -42,12 +42,26 @@ Many modern sites use Cloudflare. To access them:
 
 | Milestone | Progress | Status |
 |-----------|----------|--------|
-| BeautifulSoup Migration | 137/137 Sites | ✅ **100% Complete** |
+| BeautifulSoup Migration | 177/197 Sites | 🚀 **In Progress** |
 | Live Cam Overhaul | All Major Sites | ✅ **Stable** |
-| Testing Coverage | 79.0% | 🚀 **Growing** |
+| Testing Coverage | 3100+ Tests | 🚀 **Growing** |
 | Python 3 Compatibility | Matrix/Nexus/Omega | ✅ **Verified** |
 
 For a detailed roadmap, see [docs/development/MODERNIZATION.md](docs/development/MODERNIZATION.md).
+
+---
+
+## 🌐 Supported Sites & Status
+
+Cumination supports over **197 registered sites**. We actively maintain these scrapers and have migrated the vast majority to robust BeautifulSoup4 parsing.
+
+### Full Inventory
+For a complete list of all supported sites, their direct links, and their technical migration status, please refer to our canonical status report:
+
+👉 **[Full Site Inventory & Status Report](docs/status/STATUS_METRICS.md)**
+
+### Known Issues
+Some sites may experience intermittent issues due to layout changes or anti-bot protection. Notable sites with current issues include **Pornhub**, **Spankbang**, **HQPorner**, and **Naked**. Check the [Status Report](docs/status/STATUS_METRICS.md) for the latest details on broken sites.
 
 ---
 

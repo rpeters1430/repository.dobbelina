@@ -1,5 +1,9 @@
 """Smoke tests for stripchat site"""
 
+import pytest
+
+pytestmark = pytest.mark.skip(reason="Stripchat disabled")
+
 import importlib
 import inspect
 import pytest

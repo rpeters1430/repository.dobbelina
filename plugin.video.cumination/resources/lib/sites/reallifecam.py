@@ -160,6 +160,9 @@ def List(url):
         elif img and img.startswith("/"):
             img = urllib_parse.urljoin(siteurl, img)
 
+        if img:
+            img = utils.get_kodi_url(img, referer=siteurl)
+
         duration_tag = card.select_one(
             ".duration, .time, .video-duration, .clock, .label-duration"
         )
@@ -242,6 +245,9 @@ def Categories(url):
         elif img and img.startswith("/"):
             img = urllib_parse.urljoin(siteurl, img)
 
+        if img and img.startswith("http"):
+            img = utils.get_kodi_url(img, referer=siteurl)
+
         name_tag = container.select_one(".title-truncate, .title, h4, h3, .name")
         if name_tag:
             name = utils.safe_get_text(name_tag)
@@ -292,9 +298,9 @@ def Playvid(url, name, download=None):
             refurl = urllib_parse.urljoin(url, refurl)
 
         # Handle camcaps.tv / camcaps.to / simpvids.com which often lead to vidello
-        if "vidello.net" in refurl or "camcaps.tv" in refurl:
-            # If it's a camcaps.tv embed, it might contain another iframe for vidello
-            if "camcaps.tv/embed/" in refurl:
+        if "vidello.net" in refurl or "camcaps.tv" in refurl or "camcaps.to" in refurl:
+            # If it's a camcaps embed, it might contain another iframe for vidello
+            if "camcaps.tv/embed/" in refurl or "camcaps.to/embed/" in refurl:
                 embed_page = utils.getHtml(refurl)
                 embed_soup = utils.parse_html(embed_page)
                 vidello_iframe = embed_soup.select_one('iframe[src*="vidello.net"]')

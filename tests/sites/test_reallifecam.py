@@ -58,34 +58,35 @@ def test_list_parses_video_items(monkeypatch):
     # Check first video - using data-src and title-truncate
     assert downloads[0]["name"] == "Leora and Paul Bedroom Fun"
     assert "/videos/leora-paul-bedroom-fun-123/" in downloads[0]["url"]
-    assert downloads[0]["icon"] == "https://reallifecam.to/images/thumbs/thumb1.jpg"
+    assert downloads[0]["icon"].startswith("https://reallifecam.to/images/thumbs/thumb1.jpg|")
+    assert "Referer=" in downloads[0]["icon"]
     assert downloads[0]["duration"] == "18:45"
     assert downloads[0]["quality"] == "HD"
 
     # Check second video - using data-original and title class
     assert downloads[1]["name"] == "Nora and Kira Shower Scene"
     assert "/videos/nora-kira-shower-456/" in downloads[1]["url"]
-    assert downloads[1]["icon"] == "https://reallifecam.to/images/thumbs/thumb2.jpg"
+    assert downloads[1]["icon"].startswith("https://reallifecam.to/images/thumbs/thumb2.jpg|")
     assert downloads[1]["duration"] == "25:30"
 
     # Check third video - using direct src and h3 title
     assert downloads[2]["name"] == "Masha Party Night"
     assert "/videos/masha-party-night-789/" in downloads[2]["url"]
-    assert downloads[2]["icon"] == "https://reallifecam.to/images/thumbs/thumb3.jpg"
+    assert downloads[2]["icon"].startswith("https://reallifecam.to/images/thumbs/thumb3.jpg|")
     assert downloads[2]["duration"] == "12:15"
     assert downloads[2]["quality"] == "HD"
 
     # Check fourth video - simpvids style with content-title
     assert downloads[3]["name"] == "Maya and Diego Pool Time"
     assert "https://simpvids.com/videos/maya-diego-pool-321/" in downloads[3]["url"]
-    assert downloads[3]["icon"] == "https://simpvids.com/images/thumbs/thumb4.jpg"
+    assert downloads[3]["icon"].startswith("https://simpvids.com/images/thumbs/thumb4.jpg|")
     assert downloads[3]["duration"] == "33:22"
     assert downloads[3]["quality"] == "HD"
 
     # Check fifth video - minimal info, defaults to 'Video'
     assert downloads[4]["name"] == "Video"
     assert "/videos/late-night-fun-999/" in downloads[4]["url"]
-    assert downloads[4]["icon"] == "https://reallifecam.to/images/thumbs/thumb5.jpg"
+    assert downloads[4]["icon"].startswith("https://reallifecam.to/images/thumbs/thumb5.jpg|")
     assert downloads[4]["duration"] == "08:30"
 
     # Should have pagination
@@ -120,7 +121,7 @@ def test_list_handles_protocol_relative_urls(monkeypatch):
     reallifecam.List("https://reallifecam.to/videos")
 
     assert len(downloads) == 1
-    assert downloads[0]["icon"] == "https://reallifecam.to/images/thumbs/test.jpg"
+    assert downloads[0]["icon"].startswith("https://reallifecam.to/images/thumbs/test.jpg|")
 
 
 def test_list_handles_relative_image_urls(monkeypatch):
@@ -149,7 +150,7 @@ def test_list_handles_relative_image_urls(monkeypatch):
     reallifecam.List("https://reallifecam.to/videos")
 
     assert len(downloads) == 1
-    assert downloads[0]["icon"] == "https://reallifecam.to/images/thumbs/test2.jpg"
+    assert downloads[0]["icon"].startswith("https://reallifecam.to/images/thumbs/test2.jpg|")
 
 
 def test_list_deduplicates_videos(monkeypatch):
@@ -303,7 +304,7 @@ def test_categories_parses_items(monkeypatch):
     assert "Bedroom" in dirs[0]["name"]
     assert "342" in dirs[0]["name"]
     assert "/categories/bedroom" in dirs[0]["url"]
-    assert dirs[0]["icon"] == "https://reallifecam.to/images/cats/bedroom.jpg"
+    assert dirs[0]["icon"].startswith("https://reallifecam.to/images/cats/bedroom.jpg|")
 
     # Check second category
     assert "Bathroom" in dirs[1]["name"]
@@ -317,7 +318,7 @@ def test_categories_parses_items(monkeypatch):
     # Check fourth category - protocol-relative URL
     assert "Living Room" in dirs[3]["name"]
     assert "267" in dirs[3]["name"]
-    assert dirs[3]["icon"] == "https://reallifecam.to/images/cats/living.jpg"
+    assert dirs[3]["icon"].startswith("https://reallifecam.to/images/cats/living.jpg|")
 
     # Check fifth category
     assert "Pool" in dirs[4]["name"]

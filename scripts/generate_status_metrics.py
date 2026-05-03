@@ -32,7 +32,7 @@ TESTS_DIR = ROOT / "tests"
 KNOWN_ISSUES = ROOT / "docs" / "development" / "KNOWN_ISSUES.md"
 CANONICAL_STATUS = ROOT / "docs" / "status" / "STATUS_METRICS.md"
 
-SITE_FILE_EXCLUDES = {"__init__.py", "soup_spec.py"}
+SITE_FILE_EXCLUDES = {"__init__.py", "soup_spec.py", "stripchat.py"}
 SITE_ANALYSIS_REPORT = ROOT / "results" / "site_analysis.json"
 
 BS_MARKERS = (
@@ -55,6 +55,7 @@ class SiteInfo:
     uses_bs4: bool
     uses_regex: bool
     has_tests: bool
+    url: str | None = None
 
 
 @dataclass
@@ -132,26 +133,63 @@ def calculate_site_metrics(sites_dir: Path) -> SiteMetrics:
     tested_sites = collect_tested_sites()
 
     for site_file in iter_site_files(sites_dir):
-        total += 1
         text = site_file.read_text(encoding="utf-8", errors="ignore")
 
         uses_bs4 = any(marker in text for marker in BS_MARKERS)
         uses_regex = any(marker in text for marker in REGEX_MARKERS)
-        is_cam = bool(re.search(r"siteType\s*=\s*['\"]Cam['\"]", text))
+        is_cam_file = bool(re.search(r"siteType\s*=\s*['\"]Cam['\"]", text))
         
-        if uses_bs4:
-            migrated_beautifulsoup += 1
-        if is_cam:
-            api_or_cam += 1
-
-        inventory.append(
-            SiteInfo(
-                name=site_file.stem,
-                uses_bs4=uses_bs4,
-                uses_regex=uses_regex,
-                has_tests=site_file.stem in tested_sites
-            )
+        # Extract all AdultSite registrations
+        # Pattern: AdultSite( "id", "label", "url" ... )
+        registrations = re.findall(
+            r"AdultSite\s*\(\s*['\"](?P<id>.+?)['\"]\s*,\s*['\"](?P<label>.+?)['\"]\s*,\s*['\"](?P<url>.+?)['\"]",
+            text,
+            re.DOTALL
         )
+
+        if not registrations:
+            # Fallback for files that might not use the standard constructor pattern directly or use variables
+            total += 1
+            if uses_bs4:
+                migrated_beautifulsoup += 1
+            if is_cam_file:
+                api_or_cam += 1
+            
+            inventory.append(
+                SiteInfo(
+                    name=site_file.stem,
+                    uses_bs4=uses_bs4,
+                    uses_regex=uses_regex,
+                    has_tests=site_file.stem in tested_sites,
+                    url=None
+                )
+            )
+            continue
+
+        for site_id, site_label, site_url in registrations:
+            total += 1
+            if uses_bs4:
+                migrated_beautifulsoup += 1
+            
+            is_cam_site = is_cam_file
+            if not is_cam_site:
+                # Look for webcam=True near this registration
+                pattern = r"AdultSite\s*\(\s*['\"]{0}['\"].*?webcam\s*=\s*True".format(re.escape(site_id))
+                if re.search(pattern, text, re.DOTALL):
+                    is_cam_site = True
+
+            if is_cam_site:
+                api_or_cam += 1
+
+            inventory.append(
+                SiteInfo(
+                    name=site_id,
+                    uses_bs4=uses_bs4,
+                    uses_regex=uses_regex,
+                    has_tests=site_id in tested_sites or site_file.stem in tested_sites,
+                    url=site_url
+                )
+            )
 
     migration_complete = min(total, migrated_beautifulsoup + api_or_cam)
     migration_pending = max(0, total - migration_complete)
@@ -183,6 +221,8 @@ def parse_known_issues(limit: int = 10) -> list[tuple[str, str]]:
 def collect_test_metrics(timeout: int) -> TestMetrics:
     cmd = [sys.executable, "-m", "pytest", "--collect-only", "-q"]
     try:
+        # On Windows we might need to use the venv python if available
+        # But ROOT / .venv / Scripts / python should be handled by the caller or env
         completed = subprocess.run(
             cmd,
             cwd=ROOT,
@@ -249,9 +289,9 @@ def render_markdown(metrics: StatusMetrics) -> str:
         "",
         "| Metric | Value |",
         "| --- | ---: |",
-        f"| Total site modules | {metrics.sites.total} |",
-        f"| BeautifulSoup-migrated modules | {metrics.sites.migrated_beautifulsoup} |",
-        f"| API/Cam modules (migration exempt) | {metrics.sites.api_or_cam} |",
+        f"| Total registered sites | {metrics.sites.total} |",
+        f"| BeautifulSoup-migrated sites | {metrics.sites.migrated_beautifulsoup} |",
+        f"| API/Cam sites (migration exempt) | {metrics.sites.api_or_cam} |",
         f"| Migration complete (`migrated + exempt`) | {metrics.sites.migration_complete}/{metrics.sites.total} |",
         f"| Migration pending | {metrics.sites.migration_pending} |",
         "",
@@ -277,15 +317,16 @@ def render_markdown(metrics: StatusMetrics) -> str:
         "",
         "## Site inventory",
         "",
-        "| Site | BeautifulSoup marker | Regex marker | Has per-site tests |",
-        "|---|---:|---:|---:|",
+        "| Site | URL | BS4 | Regex | Tests |",
+        "|---|---|---:|---:|---:|",
     ])
 
     for site in metrics.sites.inventory:
         bs = "✅" if site.uses_bs4 else "❌"
         rx = "✅" if site.uses_regex else "❌"
         tested = "✅" if site.has_tests else "❌"
-        lines.append(f"| `{site.name}` | {bs} | {rx} | {tested} |")
+        site_link = f"[`{site.name}`]({site.url})" if site.url else f"`{site.name}`"
+        lines.append(f"| {site_link} | {site.url or 'n/a'} | {bs} | {rx} | {tested} |")
 
     lines.extend([
         "",

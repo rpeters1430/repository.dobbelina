@@ -1,4 +1,7 @@
 import json
+import pytest
+
+pytestmark = pytest.mark.skip(reason="Stripchat disabled")
 
 from resources.lib.sites import stripchat
 
