@@ -1,3 +1,11 @@
+[B]Version 1.1.383[/B]
+- Enhance site handling and metrics reporting
+- feat: enhance favorites management and category parsing
+- Add urllib.response to six.py and new cookie file for cumination plugin
+- Merge pull request #145 from rpeters1430/alert-autofix-177
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 177: Incomplete URL substring sanitization
+
 [B]Version 1.1.382[/B]
 - feat: enhance favorites management and category parsing
 - Add urllib.response to six.py and new cookie file for cumination plugin
