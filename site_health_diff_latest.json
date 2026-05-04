@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-05-04T07:31:54.722944",
+    "sites_total": 171,
+    "pass": 152,
+    "warn": 0,
+    "fail": 2,
+    "error": 0,
+    "skip": 17
+  },
+  "previous": {
     "generated": "2026-05-03T07:19:13.725657",
     "sites_total": 171,
     "pass": 154,
@@ -8,24 +17,23 @@
     "error": 0,
     "skip": 16
   },
-  "previous": {
-    "generated": "2026-05-02T07:10:52.496939",
-    "sites_total": 171,
-    "pass": 154,
-    "warn": 0,
-    "fail": 1,
-    "error": 0,
-    "skip": 16
-  },
   "summary": {
-    "new_failures": 0,
+    "new_failures": 1,
     "resolved_failures": 0,
     "persistent_failures": 1,
     "improved_sites": 0,
-    "regressions": 0,
-    "step_regressions": 0
+    "regressions": 2,
+    "step_regressions": 1
   },
-  "new_failures": [],
+  "new_failures": [
+    {
+      "site": "analdin",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
+    }
+  ],
   "resolved_failures": [],
   "persistent_failures": [
     {
@@ -37,6 +45,30 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [],
-  "deltas": []
+  "step_regressions": [
+    {
+      "site": "analdin",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "List returned no videos",
+      "class": "PARSER"
+    }
+  ],
+  "deltas": [
+    {
+      "site": "analdin",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "stripchat",
+      "previous": "PASS",
+      "current": "SKIP",
+      "kind": "regression",
+      "detail": ""
+    }
+  ]
 }
