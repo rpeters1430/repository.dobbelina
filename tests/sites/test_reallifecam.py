@@ -21,7 +21,7 @@ def test_list_parses_video_items(monkeypatch):
     downloads = []
     dirs = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
@@ -107,7 +107,7 @@ def test_list_handles_protocol_relative_urls(monkeypatch):
 
     downloads = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
@@ -136,7 +136,7 @@ def test_list_handles_relative_image_urls(monkeypatch):
 
     downloads = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
@@ -167,7 +167,7 @@ def test_list_handles_lazy_thumbnail_attributes(monkeypatch):
 
     downloads = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
@@ -201,7 +201,7 @@ def test_list_deduplicates_videos(monkeypatch):
 
     downloads = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
@@ -224,7 +224,7 @@ def test_list_with_pagination(monkeypatch):
 
     dirs = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
@@ -255,7 +255,7 @@ def test_list_without_pagination(monkeypatch):
 
     dirs = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
@@ -278,7 +278,7 @@ def test_list_parses_new_video_format(monkeypatch):
 
     downloads = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
@@ -309,7 +309,7 @@ def test_categories_parses_items(monkeypatch):
 
     dirs = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
@@ -375,7 +375,7 @@ def test_categories_deduplicates_items(monkeypatch):
 
     dirs = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
@@ -412,7 +412,7 @@ def test_categories_parses_camcaps_category_cards(monkeypatch):
 
     dirs = []
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         return html
 
     def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
@@ -494,7 +494,7 @@ def test_playvid_handles_list_embed_response(monkeypatch):
         "https://cdn.example/fallback.mp4",
     ]
 
-    def fake_get_html(url, referer=None):
+    def fake_get_html(url, referer=None, **kwargs):
         if url == "https://example.com/video/1":
             return video_page
         if url == "https://embed.example/video":

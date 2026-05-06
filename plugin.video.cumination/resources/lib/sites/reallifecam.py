@@ -323,7 +323,7 @@ def Playvid(url, name, download=None):
             vp.play_from_link_to_resolve(refurl)
             return
 
-        refpage = utils.getHtml(refurl)
+        refpage = utils.getHtml(refurl, timeout=10)
         if isinstance(refpage, (list, tuple, set)):
             links = [link for link in refpage if isinstance(link, str) and link]
             if links:
@@ -331,43 +331,54 @@ def Playvid(url, name, download=None):
                 return
             refpage = ""
 
+        if not refpage:
+            return
+
         if "/playerz/" in refurl:
-            videourl = re.compile(
-                r'"src":"\.([^"]+)"', re.DOTALL | re.IGNORECASE
-            ).findall(refpage)[0]
-            videourl = refurl.split("/ss.php")[0] + videourl
-            videourlpage = utils.getHtml(videourl)
-            vp.direct_regex = '{"file":"([^"]+)"'
-            vp.play_from_html(videourlpage)
+            src_match = re.compile(r'"src":"\.([^"]+)"', re.DOTALL | re.IGNORECASE).findall(refpage)
+            if src_match:
+                videourl = src_match[0]
+                videourl = refurl.split("/ss.php")[0] + videourl
+                videourlpage = utils.getHtml(videourl)
+                vp.direct_regex = '{"file":"([^"]+)"'
+                vp.play_from_html(videourlpage)
+                return
         else:
-            # More flexible packed script detection (handles cases without > before eval)
+            # More flexible packed script detection
             packed_match = re.compile(
-                r"(eval\s*\(function\(p,a,c,k,e,d\).+?)\s*<\/script>", 
+                r"(eval\s*\(function\(p,a,c,k,e,d\).+?)(?:\s*<\/script>|$)", 
                 re.DOTALL | re.IGNORECASE
             ).findall(refpage)
             
             if packed_match:
-                videourl = unpack(packed_match[0])
-                videolink = re.compile(
-                    '(?:src|file):"([^"]+)"', re.DOTALL | re.IGNORECASE
-                ).findall(videourl)
-                if videolink:
-                    videolink = videolink[0] + "|Referer=" + refurl + "&verifypeer=false"
-                    if videolink.startswith("/") and "vidello" in refurl:
-                        videolink = "https://oracle.vidello.net" + videolink
-                    vp.play_from_direct_link(videolink)
-                    return
+                for packed in packed_match:
+                    try:
+                        unpacked = unpack(packed)
+                        videolink = re.compile(
+                            r'(?:src|file|links)\s*[:=]\s*["\']([^"\']+\.(?:m3u8|mp4)[^"\']*)["\']', 
+                            re.DOTALL | re.IGNORECASE
+                        ).findall(unpacked)
+                        if videolink:
+                            videolink = videolink[0]
+                            if videolink.startswith("//"):
+                                videolink = "https:" + videolink
+                            elif videolink.startswith("/"):
+                                videolink = urllib_parse.urljoin(refurl, videolink)
+                            
+                            videolink = videolink + "|Referer=" + refurl + "&verifypeer=false"
+                            if "vidello" in refurl and not videolink.startswith("https:"):
+                                videolink = "https://oracle.vidello.net" + videolink
+                                
+                            vp.play_from_direct_link(videolink)
+                            return
+                    except:
+                        continue
             
             # If not packed, look for direct file/src links in the iframe page
             videolinks = re.compile(
-                r'(?:src|file)\s*:\s*"([^"]+?\.m3u8[^"]*)"', 
+                r'(?:src|file|links)\s*[:=]\s*["\']([^"\']+\.(?:m3u8|mp4)[^"\']*)["\']', 
                 re.IGNORECASE
             ).findall(refpage)
-            if not videolinks:
-                videolinks = re.compile(
-                    r'(?:src|file)\s*:\s*"([^"]+?\.mp4[^"]*)"', 
-                    re.IGNORECASE
-                ).findall(refpage)
             
             if videolinks:
                 videolink = videolinks[0]
