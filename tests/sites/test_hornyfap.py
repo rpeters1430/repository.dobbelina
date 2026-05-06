@@ -64,6 +64,56 @@ def test_categories_parses_current_list_categories_markup(site_spec_fixture):
     mock_add_dir.assert_any_call("Boobs", "https://hornyfap.tv/categories/boobs/", "List", "")
 
 
+def test_categories_filters_self_link_after_urljoin(site_spec_fixture):
+    site_spec, mock_add_dir, _, mock_get_html = site_spec_fixture
+    mock_get_html.return_value = """
+    <div class="list-categories">
+        <a href="/categories/">Categories</a>
+        <a class="item" href="/categories/boobs/" title="Boobs">
+            <strong class="title">Boobs</strong>
+        </a>
+    </div>
+    """
+
+    site_spec.Categories("https://hornyfap.tv/categories/")
+
+    assert mock_add_dir.call_count == 1
+    mock_add_dir.assert_any_call("Boobs", "https://hornyfap.tv/categories/boobs/", "List", "")
+
+
+def test_list_handles_ajax_category_pagination(site_spec_fixture):
+    site_spec, mock_add_dir, mock_add_download_link, mock_get_html = site_spec_fixture
+    mock_get_html.return_value = """
+    <div class="list-videos">
+        <div class="item">
+            <a href="https://hornyfap.tv/video/1/test-video/" title="Test Video">
+                <img class="thumb" src="/thumb.jpg">
+                <strong class="title">Test Video</strong>
+                <div class="wrap"><div class="duration">4:25</div></div>
+            </a>
+        </div>
+    </div>
+    <div class="pagination">
+        <li class="next">
+            <a href="#videos" data-action="ajax"
+               data-block-id="list_videos_common_videos_list"
+               data-parameters="sort_by:post_date;from:2">Next</a>
+        </li>
+    </div>
+    """
+
+    site_spec.List("https://hornyfap.tv/categories/boobs/")
+
+    assert mock_add_download_link.called
+    mock_add_dir.assert_any_call(
+        "Next Page (2)",
+        "https://hornyfap.tv/categories/boobs/2/",
+        "List",
+        site_spec.site.img_next,
+        page="2",
+    )
+
+
 def test_playvid(site_spec_fixture):
     site_spec, _, _, mock_get_html = site_spec_fixture
     

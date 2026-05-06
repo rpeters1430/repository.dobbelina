@@ -149,12 +149,8 @@ def List(url):
         if not name:
             name = "Video"
 
-        img_tag = card.select_one("img[data-src], img[data-original], img[src]")
-        img = (
-            utils.safe_get_attr(img_tag, "data-src", ["data-original", "src"])
-            if img_tag
-            else None
-        )
+        img_tag = card.select_one("img")
+        img = utils.get_thumbnail(img_tag) if img_tag else None
         if img and img.startswith("//"):
             img = "https:" + img
         elif img and img.startswith("/"):
@@ -219,10 +215,15 @@ def Categories(url):
 
     seen = set()
     containers = soup.select(
-        ".col-sm, .col-sm-6, .category, .category-item, .list-group-item"
+        ".col-sm, .col-sm-6, .category, .category-item, .list-group-item, "
+        ".content-row > div:has(.category-title)"
     )
     for container in containers:
-        link = container.select_one("a[href]")
+        link = (
+            container
+            if container.name == "a" and container.get("href")
+            else container.select_one("a[href]")
+        )
         if not link:
             continue
 
@@ -234,12 +235,8 @@ def Categories(url):
             continue
         seen.add(catpage)
 
-        img_tag = container.select_one("img[data-src], img[data-original], img[src]")
-        img = (
-            utils.safe_get_attr(img_tag, "data-src", ["data-original", "src"])
-            if img_tag
-            else site.img_cat
-        )
+        img_tag = container.select_one("img")
+        img = utils.get_thumbnail(img_tag) if img_tag else site.img_cat
         if img and img.startswith("//"):
             img = "https:" + img
         elif img and img.startswith("/"):

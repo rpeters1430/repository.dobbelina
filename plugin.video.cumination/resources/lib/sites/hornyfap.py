@@ -31,6 +31,38 @@ site = AdultSite(
 )
 
 
+def _paged_url(url, page):
+    parsed = urllib_parse.urlparse(url)
+    parts = [part for part in parsed.path.split("/") if part]
+    if parts and parts[-1].isdigit():
+        parts = parts[:-1]
+    parts.append(str(page))
+    path = "/" + "/".join(parts) + "/"
+    return urllib_parse.urlunparse(
+        (parsed.scheme, parsed.netloc, path, "", "", "")
+    )
+
+
+def _next_page_from_link(url, link_tag):
+    if not link_tag:
+        return "", ""
+
+    href = utils.safe_get_attr(link_tag, "href")
+    if href and href != "#videos":
+        next_url = urllib_parse.urljoin(site.url, href)
+        page_match = re.search(r"/(\d+)/?$", urllib_parse.urlparse(next_url).path)
+        page = page_match.group(1) if page_match else ""
+        return next_url, page
+
+    data_parameters = utils.safe_get_attr(link_tag, "data-parameters")
+    page_match = re.search(r"(?:^|;)from:(\d+)(?:;|$)", data_parameters)
+    if page_match:
+        page = page_match.group(1)
+        return _paged_url(url, page), page
+
+    return "", ""
+
+
 @site.register(default_mode=True)
 def Main(url):
     site.add_dir("Latest Videos", site.url + "latest-updates/", "List", "")
@@ -89,15 +121,13 @@ def List(url, page=1):
 
     # Pagination
     next_page = soup.select_one("li.next a, a.next")
-    if next_page:
-        next_url = next_page.get("href")
-        if next_url:
-            next_url = urllib_parse.urljoin(site.url, next_url)
-            page_match = re.search(r"/(\d+)/$", next_url)
-            np = page_match.group(1) if page_match else str(int(page) + 1)
-            site.add_dir(
-                "Next Page ({})".format(np), next_url, "List", site.img_next, page=np
-            )
+    next_url, np = _next_page_from_link(url, next_page)
+    if next_url:
+        if not np:
+            np = str(int(page) + 1)
+        site.add_dir(
+            "Next Page ({})".format(np), next_url, "List", site.img_next, page=np
+        )
 
     utils.eod()
 
@@ -140,12 +170,16 @@ def Categories(url):
         if not link_tag:
             continue
             
-        cat_url = link_tag.get("href")
-        if not cat_url or cat_url == site.url + "categories/" or cat_url in seen:
+        cat_url = utils.safe_get_attr(link_tag, "href")
+        if not cat_url:
+            continue
+        cat_url = urllib_parse.urljoin(site.url, cat_url)
+        if cat_url.rstrip("/") == (site.url + "categories").rstrip("/"):
+            continue
+        if cat_url in seen:
             continue
         
         seen.add(cat_url)
-        cat_url = urllib_parse.urljoin(site.url, cat_url)
         
         title_tag = link_tag.select_one("strong.title")
         name = utils.safe_get_text(title_tag)

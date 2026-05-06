@@ -153,6 +153,37 @@ def test_list_handles_relative_image_urls(monkeypatch):
     assert downloads[0]["icon"].startswith("https://reallifecam.to/images/thumbs/test2.jpg|")
 
 
+def test_list_handles_lazy_thumbnail_attributes(monkeypatch):
+    """CamCaps-style cards should use lazy thumbnail attributes before placeholders."""
+    html = """
+    <div class="col-sm-6">
+        <a href="/video/123/test-video">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
+                 data-lazy-src="https://camcaps.to/media/videos/tmb/123/1.jpg">
+            <span class="content-title">Test Video</span>
+        </a>
+    </div>
+    """
+
+    downloads = []
+
+    def fake_get_html(url, referer=None):
+        return html
+
+    def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
+        downloads.append({"icon": iconimage})
+
+    monkeypatch.setattr(reallifecam.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(reallifecam.site, "add_download_link", fake_add_download_link)
+    monkeypatch.setattr(reallifecam.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(reallifecam.utils, "eod", lambda: None)
+
+    reallifecam.List("https://camcaps.tv/videos?o=mr")
+
+    assert len(downloads) == 1
+    assert downloads[0]["icon"].startswith("https://camcaps.to/media/videos/tmb/123/1.jpg|")
+
+
 def test_list_deduplicates_videos(monkeypatch):
     """Test that List correctly deduplicates videos with same URL."""
     html = """
@@ -361,6 +392,44 @@ def test_categories_deduplicates_items(monkeypatch):
     assert "Bedroom" in dirs[0]["name"]
 
 
+def test_categories_parses_camcaps_category_cards(monkeypatch):
+    """CamCaps categories use col-sm-4 cards with category-title blocks."""
+    html = """
+    <div class="row content-row">
+        <div class=" col-sm-4 col-md-3 col-lg-3 m-b-20">
+            <a href="/videos/amateur">
+                <div class="thumb-overlay">
+                    <img src="/media/categories/video/8.jpg" title="Amateur" alt="Amateur">
+                    <div class="category-title">
+                        <div class="float-left title-truncate">Amateur</div>
+                        <div class="float-right">6920</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    """
+
+    dirs = []
+
+    def fake_get_html(url, referer=None):
+        return html
+
+    def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
+        dirs.append({"name": name, "url": url, "mode": mode, "icon": iconimage})
+
+    monkeypatch.setattr(reallifecam.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(reallifecam.site, "add_dir", fake_add_dir)
+    monkeypatch.setattr(reallifecam.utils, "eod", lambda: None)
+
+    reallifecam.Categories("https://camcaps.tv/categories")
+
+    assert len(dirs) == 1
+    assert dirs[0]["name"] == "Amateur [COLOR deeppink]6920[/COLOR]"
+    assert dirs[0]["url"] == "https://camcaps.tv/videos/amateur"
+    assert dirs[0]["icon"].startswith("https://camcaps.tv/media/categories/video/8.jpg|")
+
+
 def test_search_without_keyword_shows_dialog(monkeypatch):
     """Test that Search without keyword shows search input dialog."""
     search_called = []
@@ -438,3 +507,39 @@ def test_playvid_handles_list_embed_response(monkeypatch):
     reallifecam.Playvid("https://example.com/video/1", "Name")
 
     assert played_links == [embed_links]
+
+
+def test_playvid_hands_playmogo_embed_to_resolveurl(monkeypatch):
+    """Current CamCaps pages use playmogo embeds, which should go through ResolveURL."""
+    resolved = []
+
+    class MockPlayer:
+        def __init__(self, *args, **kwargs):
+            self.progress = MagicMock()
+            self.resolveurl = MagicMock()
+            self.resolveurl.HostedMediaFile.side_effect = lambda link: "playmogo.com" in link
+
+        def play_from_link_to_resolve(self, source):
+            resolved.append(source)
+
+        def play_from_link_list(self, links):
+            raise AssertionError("unexpected link list path")
+
+        def play_from_direct_link(self, link):
+            raise AssertionError("unexpected direct link path")
+
+        def play_from_html(self, html, url=None):
+            raise AssertionError("unexpected HTML fallback")
+
+    video_page = """
+    <div class="video-embedded">
+        <iframe src="https://playmogo.com/e/tdlz3kh7b74k"></iframe>
+    </div>
+    """
+
+    monkeypatch.setattr(reallifecam.utils, "getHtml", lambda *a, **k: video_page)
+    monkeypatch.setattr(reallifecam.utils, "VideoPlayer", MockPlayer)
+
+    reallifecam.Playvid("https://camcaps.tv/video/1/example", "Name")
+
+    assert resolved == ["https://playmogo.com/e/tdlz3kh7b74k"]
