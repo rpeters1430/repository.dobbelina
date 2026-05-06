@@ -1,3 +1,10 @@
+[B]Version 1.1.385[/B]
+- fix: improve reallifecam scraper and handle modern hosters #147
+- feat: update status metrics and enhance pagination handling in site scripts
+- Enhance site handling and metrics reporting
+- feat: enhance favorites management and category parsing
+- Add urllib.response to six.py and new cookie file for cumination plugin
+
 [B]Version 1.1.384[/B]
 - feat: update status metrics and enhance pagination handling in site scripts
 - Enhance site handling and metrics reporting
