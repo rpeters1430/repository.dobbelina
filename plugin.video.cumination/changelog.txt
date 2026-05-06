@@ -1,3 +1,10 @@
+[B]Version 1.1.386[/B]
+- chore: sync with upstream 2026-05-05
+- fix: improve reallifecam scraper and handle modern hosters #147
+- feat: update status metrics and enhance pagination handling in site scripts
+- Enhance site handling and metrics reporting
+- feat: enhance favorites management and category parsing
+
 [B]Version 1.1.385[/B]
 - fix: improve reallifecam scraper and handle modern hosters #147
 - feat: update status metrics and enhance pagination handling in site scripts
