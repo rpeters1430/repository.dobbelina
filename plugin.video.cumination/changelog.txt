@@ -1,9 +1,23 @@
+[B]Version 1.1.387[/B]
+- chore: bump version to 1.1.386 and fix path traversal security issue
+- chore: sync with upstream 2026-05-05
+- fix: improve reallifecam scraper and handle modern hosters #147
+- feat: update status metrics and enhance pagination handling in site scripts
+- Enhance site handling and metrics reporting
+
 [B]Version 1.1.386[/B]
+<<<<<<< HEAD
 - chore: sync with upstream 2026-05-05
 - fix: improve reallifecam scraper and handle modern hosters #147
 - feat: update status metrics and enhance pagination handling in site scripts
 - Enhance site handling and metrics reporting
 - feat: enhance favorites management and category parsing
+=======
+- fix: improve reallifecam scraper and handle modern hosters #147
+- chore: sync with upstream 2026-05-05 (Chaturbate, FamilyPornHD, WhereIsMyPorn, AWM Network fixes)
+- security: fix path traversal vulnerability in custom site imports
+- fix: normalize path separators for cross-platform security validation
+>>>>>>> 5f598a53 (chore: bump version to 1.1.386 and fix path traversal security issue)
 
 [B]Version 1.1.385[/B]
 - fix: improve reallifecam scraper and handle modern hosters #147
