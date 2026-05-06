@@ -50,6 +50,8 @@ custom_site_import_results = {"loaded": [], "failed": []}
 
 def _safe_child_path(base_dir, filename):
     base = os.path.realpath(TRANSLATEPATH(base_dir))
+    # Normalize backslashes to forward slashes for cross-platform traversal protection
+    filename = filename.replace("\\", "/")
     candidate = os.path.realpath(os.path.join(base, filename))
     if candidate != base and candidate.startswith(base + os.sep):
         return candidate
