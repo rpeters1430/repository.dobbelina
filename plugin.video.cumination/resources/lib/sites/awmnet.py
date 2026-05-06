@@ -429,11 +429,11 @@ def Search(url, keyword=None):
         if "?" not in base_search and not base_search.endswith("/"):
             base_search += "/"
             
-        title = keyword.replace(" ", "%20")
+        title = keyword.replace(" ", "+")
         if "?" in base_search:
             searchUrl = base_search + title
         else:
-            searchUrl = base_search + title + "?pricing=free"
+            searchUrl = base_search + "?s=" + title + "&pricing=free"
         List(searchUrl)
 
 

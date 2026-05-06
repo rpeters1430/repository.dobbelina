@@ -19,6 +19,19 @@
 
 ## Sync Sessions
 
+### 2026-05-05 Porting Session
+Integrated latest fixes from upstream `dobbelina/repository.dobbelina` following site redesigns and internal decryption updates.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `24508090` | chaturbate - py2 import shim for the chunklist proxy | `manual` | 2026-05-05 | Added try/except shims for http.server/socketserver in Chaturbate proxy for Kodi 18.x compatibility. |
+| `5917ea89` | chaturbate - dont stop the player if its on a different proxy | `manual` | 2026-05-05 | Updated _force_stop() to verify active playing file before sending Stop command. |
+| `90ab8b71` | aagmal fixes #1846 | `manual` | 2026-05-05 | Verified BS4 selector already handles `.vp-pagi-wrap`. |
+| `eda238fc` | hentaidude fixes #1839 | `manual` | 2026-05-05 | Verified BS4 implementation already handles protocol-relative (`//`) URLs in decoder. |
+| `95eb617b` | familypornhd - fix playback fixes #1848 | `manual` | 2026-05-05 | Added `watchstreamhd.com` support to FamilyPornHD Playvid. |
+| `6076af30` | whereismyporn fix listing - fixes #1849 | `manual` | 2026-05-05 | Added `data-main-thumb` to thumbnail extraction in WhereIsMyPorn. |
+| `9be860cc` | awm network - fix listing fixes #1850 | `manual` | 2026-05-05 | Updated search URL construction to use `+` encoding and `?s=` query param for consistency. |
+
 ### 2026-04-25 Porting Session
 Integrated latest fixes from upstream `dobbelina/repository.dobbelina` addressing site redesigns and internal decryption updates.
 

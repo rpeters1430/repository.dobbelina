@@ -57,7 +57,9 @@ def List(url):
             continue
         name = utils.cleantext(utils.safe_get_text(link, default=""))
         img_tag = post.select_one("img")
-        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        img = utils.safe_get_attr(
+            img_tag, "src", ["data-main-thumb", "data-src", "data-original"]
+        )
         site.add_download_link(name, videopage, "Playvid", img, name)
 
     next_link = soup.select_one("a.next.page-numbers[href], a.next[href]")
