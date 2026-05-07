@@ -1,3 +1,11 @@
+[B]Version 1.1.390[/B]
+- Add support for DoodStream mirrors with custom resolver
+- fix: add safety check for cache_time setting in utils.py
+- Implement feature X to enhance user experience and optimize performance
+- Add live smoke reports for validation results on 2026-05-05
+- chore: bump version to 1.1.386 and fix path traversal security issue
+- chore: sync with upstream 2026-05-05
+
 [B]Version 1.1.389[/B]
 - fix: add safety check for cache_time setting in utils.py
 - Implement feature X to enhance user experience and optimize performance
