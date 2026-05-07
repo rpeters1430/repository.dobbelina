@@ -60,7 +60,9 @@ from six.moves import (
     urllib_request,
 )
 
-cache = StorageServer.StorageServer("cumination", int(addon.getSetting("cache_time")))
+cache_time_setting = addon.getSetting("cache_time")
+cache_time = int(cache_time_setting) if cache_time_setting else 4
+cache = StorageServer.StorageServer("cumination", cache_time)
 url_dispatcher = URL_Dispatcher("utils")
 
 USER_AGENT = random_ua.get_ua()
