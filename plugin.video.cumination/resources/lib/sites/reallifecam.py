@@ -391,5 +391,11 @@ def Playvid(url, name, download=None):
                 vp.play_from_direct_link(videolink)
                 return
 
+        # Handle DoodStream mirrors (like playmogo.com) found in iframes
+        if any(domain in refurl for domain in utils.DOODSTREAM_DOMAINS):
+            if vp.resolveurl.HostedMediaFile(refurl):
+                vp.play_from_link_to_resolve(refurl)
+                return
+
     # Fallback to direct page scraping
     vp.play_from_html(videopage)

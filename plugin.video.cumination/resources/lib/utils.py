@@ -20,9 +20,11 @@ import base64
 import gzip
 import json
 import os.path
+import random
 import re
 import sqlite3
 import ssl
+import string
 import sys
 import tempfile
 import time
@@ -85,6 +87,46 @@ base_hdrs = {
     "Accept-Language": "en-US,en;q=0.8",
     "Connection": "keep-alive",
 }
+
+DOODSTREAM_DOMAINS = [
+    "dood.watch",
+    "doodstream.com",
+    "dood.to",
+    "dood.so",
+    "dood.cx",
+    "dood.la",
+    "dood.ws",
+    "dood.sh",
+    "doodstream.co",
+    "dood.pm",
+    "dood.wf",
+    "dood.re",
+    "dood.yt",
+    "dooood.com",
+    "dood.stream",
+    "ds2play.com",
+    "doods.pro",
+    "ds2video.com",
+    "d0o0d.com",
+    "do0od.com",
+    "d0000d.com",
+    "d000d.com",
+    "dood.li",
+    "dood.work",
+    "dooodster.com",
+    "vidply.com",
+    "all3do.com",
+    "do7go.com",
+    "doodcdn.io",
+    "doply.net",
+    "vide0.net",
+    "vvide0.com",
+    "d-s.io",
+    "dsvplay.com",
+    "myvidplay.com",
+    "playmogo.com",
+    "playmago.com",
+]
 
 progress = xbmcgui.DialogProgress()
 dialog = xbmcgui.Dialog()
@@ -2756,7 +2798,12 @@ class VideoPlayer:
             ),
         )
         try:
-            link = source.resolve()
+            # Check if this is a DoodStream mirror that might need FlareSolverr support
+            if any(domain in source._url.lower() for domain in DOODSTREAM_DOMAINS):
+                kodilog("Using custom DoodStream resolver for: {}".format(source._url))
+                link = self._solve_doodstream(source._url)
+            else:
+                link = source.resolve()
         except self.resolveurl.resolver.ResolverError:
             link = False  # ResolveURL returns False in some cases when resolving fails
         if not link:
@@ -2914,6 +2961,60 @@ class VideoPlayer:
             except Exception:
                 pass
         return sources
+
+    @_cancellable
+    def _solve_doodstream(self, url):
+        """Custom DoodStream resolver with FlareSolverr support via getHtml."""
+        self.progress.update(55, "[CR]{0}[CR]".format(i18n("load_vpage")))
+        
+        # Ensure we have a /e/ URL for embedding
+        url = url.replace("/d/", "/e/")
+            
+        html = getHtml(url)
+        if not html:
+            return None
+            
+        # Extract token and pass_url_chunk
+        match = re.search(
+            r"""dsplayer\.hotkeys\s*\(\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]+)['"]""",
+            html,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if not match:
+            # Fallback for older patterns
+            match = re.search(
+                r"""dsplayer\.hotkeys[^'"]+['"]([^'"]+).+?function\s*makePlay.+?return[^?]+([^'"]+)""",
+                html,
+                re.DOTALL,
+            )
+            if not match:
+                return None
+            
+        pass_url_chunk = match.group(1)
+        token = match.group(2)
+        
+        # Construct the second URL
+        parsed = urllib_parse.urlparse(url)
+        base_url = "{}://{}".format(parsed.scheme, parsed.netloc)
+        pass_url = urllib_parse.urljoin(base_url, pass_url_chunk)
+        
+        # Fetch the second part
+        pass_html = getHtml(pass_url, url)
+        if not pass_html:
+            return None
+            
+        # Decode and construct final link
+        # DoodStream uses a simple append of random characters
+        t = string.ascii_letters + string.digits
+        final_url = pass_html + "".join([random.choice(t) for _ in range(10)]) + token + str(int(time.time() * 1000))
+            
+        # Add headers for Kodi player
+        # Use current user agent as FlareSolverr might have updated it
+        domain = urllib_parse.urlparse(url).netloc
+        cookies = get_cookies_string(domain)
+        cookie_str = "&Cookie={}".format(urllib_parse.quote(cookies)) if cookies else ""
+        
+        return "{}|Referer={}&User-Agent={}{}".format(final_url, urllib_parse.quote(url), urllib_parse.quote(USER_AGENT), cookie_str)
 
 
 def showimage(url):
