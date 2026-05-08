@@ -2,12 +2,14 @@
 
 - Sites: `171`
 - Tier1 hot: `0`
-- Failing: `1`
+- Failing: `3`
 - Warn: `0`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
+| jizzbunker | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| motherless | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -84,14 +86,12 @@
 | javhdporn | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
 | javmoe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javseen | backlog | PASS | 2 | video |  | Y |  | Y | Y |
-| jizzbunker | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
 | justfullporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | justporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | kissjav | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | lemoncams | backlog | PASS | 2 | cam |  | Y |  | Y |  |
 | livecamrips | backlog | PASS | 2 | cam |  | Y |  | Y | Y |
 | longvideos | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
-| motherless | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | mrsexe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | myfreecams | backlog | PASS | 2 | cam |  | Y |  |  |  |
 | naked | backlog | PASS | 2 | cam |  |  |  |  |  |
@@ -181,7 +181,9 @@
 
 ## Next Batch
 
+- **jizzbunker** (failing, tier=2) | failures: list:FAIL
 - **josporn** (failing, tier=None) | failures: list:FAIL
+- **motherless** (failing, tier=None)
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
@@ -199,5 +201,3 @@
 - **xvideos** (tier1, tier=1)
 - **youporn** (tier1, tier=1)
 - **yourlesbians** (tier1, tier=1)
-- **6xtube** (backlog, tier=None)
-- **85po** (backlog, tier=None)
