@@ -52,7 +52,7 @@ def Main():
         "",
         "",
     )
-    bu = "https://tools.bongacams.com/promo.php?c=226355&type=api&api_type=json&categories[]="
+    bu = "https://tools.bongacash.com/promo.php?c=226355&type=api&api_type=json&categories[]="
     if female:
         site.add_dir(
             "[COLOR hotpink]Female[/COLOR]", "{0}female".format(bu), "List", "", ""
@@ -118,6 +118,8 @@ def Main():
 def _loads_json(data):
     if not data:
         return None
+    if isinstance(data, (list, dict)):
+        return data
     payload = data.strip()
     if not payload:
         return None
@@ -136,7 +138,7 @@ def List(url):
     if utils.addon.getSetting("chaturbate") == "true":
         clean_database(False)
 
-    data = utils._getHtml(url)
+    data, _ = utils.get_html_with_cloudflare_retry(url)
     model_list = _loads_json(data)
     if not isinstance(model_list, list):
         utils.notify(site.name, "No models available")
@@ -333,7 +335,7 @@ def List2(url):
     if utils.addon.getSetting("chaturbate") == "true":
         clean_database(False)
     headers = {"X-Requested-With": "XMLHttpRequest"}
-    data = utils._getHtml(url, site.url, headers=headers)
+    data, _ = utils.get_html_with_cloudflare_retry(url, site.url, headers=headers)
     payload = _loads_json(data) or {}
     items = payload.get("result", {}).get("chatActivities", [])
     for item in items:
@@ -389,7 +391,7 @@ def List3(url):
     if utils.addon.getSetting("chaturbate") == "true":
         clean_database(False)
     headers = {"X-Requested-With": "XMLHttpRequest"}
-    data = utils._getHtml(url, site.url, headers=headers)
+    data, _ = utils.get_html_with_cloudflare_retry(url, site.url, headers=headers)
     payload = _loads_json(data) or {}
     items = payload.get("result", {}).get("contestItems", [])
     for item in items:

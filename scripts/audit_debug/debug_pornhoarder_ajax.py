@@ -1,0 +1,70 @@
+import sys
+import os
+import re
+import importlib
+import json
+import ssl
+
+# Disable SSL verification for debug script
+ssl._create_default_https_context = ssl._create_unverified_context
+
+# Add the project root to sys.path
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(ROOT)
+sys.path.append(os.path.join(ROOT, 'script.module.resolveurl', 'lib'))
+
+import scripts.stub_kodi
+
+from resources.lib import utils
+
+# Monkey-patch SSL context creation to avoid cert errors in local environment
+def unverified_ssl_context():
+    return ssl._create_unverified_context()
+utils._create_ssl_context = unverified_ssl_context
+
+# Re-create the opener with the unverified context
+import urllib.request as urllib_request
+utils.handlers = [urllib_request.HTTPBasicAuthHandler(), urllib_request.HTTPHandler()]
+utils.handlers.append(urllib_request.HTTPSHandler(context=utils._create_ssl_context()))
+utils.opener = urllib_request.build_opener(*utils.handlers)
+utils.urllib_request.install_opener(utils.opener)
+utils.urlopen = utils.opener.open
+
+site_pornhoarder = importlib.import_module("resources.lib.sites.pornhoarder")
+
+def test_pornhoarder_ajax():
+    print("Testing pornhoarder AJAX...")
+    site_url = "https://pornhoarder.io/"
+    
+    headers = {
+        "Origin": site_url[:-1],
+        "User-Agent": utils.USER_AGENT,
+        "X-Requested-With": "XMLHttpRequest",
+        "Referer": site_url,
+    }
+    
+    data = site_pornhoarder.Createdata(page=1, search="mom")
+    
+    print(f"POSTing to {site_url}ajax_search.php with data: {data}")
+    try:
+        listhtml = utils.postHtml(
+            f"{site_url}ajax_search.php",
+            form_data=data,
+            headers=headers,
+        )
+        if listhtml:
+             print(f"Received HTML length: {len(listhtml)}")
+             print(f"HTML snippet: {listhtml[:500]}")
+             soup = utils.parse_html(listhtml)
+             items = soup.select("article, .video")
+             print(f"Found {len(items)} items")
+             for item in items[:3]:
+                 link = item.select_one("a")
+                 print(f"Item: {link.get('href') if link else 'No link'}")
+        else:
+             print("Received empty response")
+    except Exception as e:
+        print(f"Error in AJAX request: {e}")
+
+if __name__ == "__main__":
+    test_pornhoarder_ajax()

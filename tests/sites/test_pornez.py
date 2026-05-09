@@ -26,23 +26,25 @@ def test_main_adds_nav_and_calls_list(monkeypatch):
 
 def test_list_parses_items_skips_livecams_and_adds_next(monkeypatch):
     html = """
-    <div data-post-id="111">
-      <img data-src="https://img/1.jpg" />
+    <div class="video-block">
+      <img src="https://img/1.jpg" />
       <a href="https://pornezoo.net/v/1" title="First title"></a>
       <span class="duration">11:11</span>
     </div>
-    <div data-post-id="222">
-      <img data-src="https://img/2.jpg" />
+    <div class="video-block">
+      <img src="https://img/2.jpg" />
       <a href="https://pornezoo.net/v/2" title="Live Cams"></a>
       <span class="duration">00:00</span>
     </div>
-    <a href="https://pornezoo.net/page/3/">&raquo;</a>
+    <div class="pagination">
+        <a href="https://pornezoo.net/page/3/">&raquo;</a>
+    </div>
     <a class="page-link" href="https://pornezoo.net/page/9/">9</a>
     """
     downloads = []
     dirs = []
 
-    monkeypatch.setattr(pornez.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(pornez.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (html, ""))
     monkeypatch.setattr(pornez.utils, "eod", lambda: None)
     monkeypatch.setattr(
         pornez.site,
@@ -78,7 +80,7 @@ def test_cat_search_and_context_related(monkeypatch):
     search_calls = []
     builtins = []
 
-    monkeypatch.setattr(pornez.utils, "getHtml", lambda *a, **k: cat_html)
+    monkeypatch.setattr(pornez.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (cat_html, ""))
     monkeypatch.setattr(pornez.utils, "eod", lambda: None)
     monkeypatch.setattr(
         pornez.site,
@@ -130,15 +132,15 @@ def test_play_resolve_and_direct_paths(monkeypatch):
         def __init__(self, *_args, **_kwargs):
             self.resolveurl = _Resolver(False)
 
-    monkeypatch.setattr(
-        pornez.utils,
-        "getHtml",
-        lambda url, *a, **k: (
-            '<iframe src="https://embed/player"></iframe>'
-            if "watch" in url
-            else '<source src="https://cdn/video.mp4">'
-        ),
-    )
+    def fake_get_html_cf(url, *a, **k):
+        return '<iframe src="https://embed/player"></iframe>', ""
+        
+    def fake_get_html(url, *a, **k):
+        return '<video><source src="https://cdn/video.mp4"></video>'
+
+    monkeypatch.setattr(pornez.utils, "get_html_with_cloudflare_retry", fake_get_html_cf)
+    monkeypatch.setattr(pornez.utils, "getHtml", fake_get_html)
+    
     monkeypatch.setattr(pornez.utils, "VideoPlayer", _Player)
     pornez.Play("https://pornezoo.net/watch/1", "Name")
 

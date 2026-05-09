@@ -84,6 +84,8 @@ def List(url, page=1):
         img = utils.safe_get_attr(video_tag, "poster") if video_tag else None
         if img and img.startswith("//"):
             img = "https:" + img
+        if not img:
+            img = site.image
 
         # Debug: Log first few thumbnails
         if len(seen) <= 3:

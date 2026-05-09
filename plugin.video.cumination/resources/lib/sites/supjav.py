@@ -52,11 +52,15 @@ def Main():
 @site.register()
 def List(url):
     try:
-        listhtml = utils.getHtml(url)
+        listhtml, _ = utils.get_html_with_cloudflare_retry(url)
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in supjav: " + str(e))
         return None
 
+    if not listhtml:
+        utils.eod()
+        return None
+    
     soup = utils.parse_html(listhtml)
     cookiestring = get_cookies()
 
@@ -144,7 +148,10 @@ def Search(url, keyword=None):
 
 @site.register()
 def Cat(url):
-    cathtml = utils.getHtml(url)
+    cathtml, _ = utils.get_html_with_cloudflare_retry(url)
+    if not cathtml:
+        utils.eod()
+        return
     soup = utils.parse_html(cathtml)
 
     menu_items = soup.select(
@@ -167,7 +174,9 @@ def Cat(url):
 
 @site.register()
 def Playvid(url, name, download=None):
-    videopage = utils.getHtml(url, site.url)
+    videopage, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+    if not videopage:
+        return
     soup = utils.parse_html(videopage)
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")

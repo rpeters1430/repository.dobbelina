@@ -60,14 +60,14 @@ def List(url):
         return
 
     # Find all video articles
-    articles = soup.find_all("article", attrs={"video-uid": True})
+    articles = soup.find_all("article", attrs={"data-video-id": True})
 
     for article in articles:
         link = article.find("a", href=True, title=True)
         if not link:
             continue
 
-        videourl = utils.safe_get_attr(link, "href")
+        videourl = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, "href"))
         name = utils.safe_get_attr(link, "title")
 
         if not videourl or not name:

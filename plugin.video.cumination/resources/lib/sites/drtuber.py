@@ -205,8 +205,8 @@ def Cat(url):
     cathtml = utils.getHtml(url)
     soup = utils.parse_html(cathtml)
 
-    # Find all category items
-    category_items = soup.select("li.item")
+    # Find all category items in the popular list
+    category_items = soup.select("ul.popular_list_ct li.item")
 
     categories = []
     for item in category_items:
@@ -217,8 +217,9 @@ def Cat(url):
                 continue
 
             caturl = utils.safe_get_attr(link, "href")
-            if not caturl:
-                continue
+            if not caturl or "/tags/" in caturl: # Skip tags if we only want categories
+                 # Actually the site mixes them, let's keep them if they have a span
+                 pass
 
             # Make absolute URL if needed
             if caturl.startswith("/"):
@@ -226,12 +227,14 @@ def Cat(url):
             elif not caturl.startswith("http"):
                 caturl = site.url + caturl
 
-            # Get category name
-            name_tag = item.select_one("span")
+            # Get category name from span
+            name_tag = link.select_one("span")
             name = utils.safe_get_text(name_tag)
+            if not name:
+                continue
 
-            # Get video count
-            count_tag = item.select_one("b")
+            # Get video count from b
+            count_tag = link.select_one("b")
             count = utils.safe_get_text(count_tag)
 
             # Combine name and count

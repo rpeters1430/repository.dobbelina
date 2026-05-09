@@ -49,7 +49,7 @@ def Main():
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]", site.url + "?s=", "Search", site.img_search
     )
-    List(site.url + "porn-channels/latest-videos/page/1/")
+    List(site.url + "porno-channel/latest-xxx-videos/")
     utils.eod()
 
 

@@ -54,11 +54,12 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url)
-    soup = utils.parse_html(listhtml)
-    if not soup:
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url)
+    if not listhtml:
         utils.eod()
         return
+
+    soup = utils.parse_html(listhtml)
 
     container = soup.select_one(".video-listing-filter") or soup
     videos = container.select("div.item-thumbnail")
@@ -123,11 +124,12 @@ def List(url):
 
 
 def _taxonomy(url, fragment):
-    html = utils.getHtml(url)
-    soup = utils.parse_html(html)
-    if not soup:
+    html, _ = utils.get_html_with_cloudflare_retry(url)
+    if not html:
         utils.eod()
         return
+
+    soup = utils.parse_html(html)
 
     seen = set()
     for link in soup.select(f'a[href*="{fragment}"]'):
@@ -194,7 +196,11 @@ def Search(url, keyword=None):
 @site.register()
 def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download, IA_check="skip")
-    videohtml = utils.getHtml(url)
+    videohtml, _ = utils.get_html_with_cloudflare_retry(url)
+    if not videohtml:
+        utils.notify("Oh oh", "No video found")
+        return
+
     match = re.compile(
         r'"player-embed"\s*>\s*?<iframe.*?src="([^"]+)"', re.IGNORECASE | re.DOTALL
     ).search(videohtml)

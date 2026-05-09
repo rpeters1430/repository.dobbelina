@@ -39,7 +39,7 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, site.url)
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     if not listhtml:
         utils.eod()
         return
@@ -94,4 +94,8 @@ def List(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download, direct_regex=None)
+    # The site is heavily Cloudflare-protected
+    html, _ = utils.get_html_with_cloudflare_retry(url, url)
+    if not html:
+        return
     vp.play_from_site_link(url, url)

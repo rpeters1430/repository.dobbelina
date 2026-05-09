@@ -28,14 +28,14 @@ from six.moves import urllib_parse
 site = AdultSite(
     "porno365",
     "[COLOR hotpink]Porno365[/COLOR]",
-    "http://m.porno365.pics/",
+    "https://porno365.club/",
     "porno365.png",
     "porno365",
     category="Video Tubes",
 )
 porn365_headers = utils.base_hdrs.copy()
 porn365_headers.update(
-    {"User-Agent": "Mozilla/5.0 (Android 7.0; Mobile; rv:54.0) Gecko/54.0 Firefox/54.0"}
+    {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
 )
 
 
@@ -43,16 +43,16 @@ porn365_headers.update(
 def Main():
     site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]",
-        site.url + "categories",
+        site.url,
         "Categories",
         site.img_cat,
     )
     site.add_dir(
-        "[COLOR hotpink]Pornstars[/COLOR]", site.url + "models", "Models", site.img_cat
+        "[COLOR hotpink]Pornstars[/COLOR]", site.url + "models/", "Models", site.img_cat
     )
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]",
-        site.url + "search/?q=",
+        site.url + "?do=search&subaction=search&story=",
         "Search",
         site.img_search,
     )
@@ -63,22 +63,29 @@ def Main():
 @site.register()
 def List(url):
     html = utils.getHtml(url, site.url, headers=porn365_headers)
-    if "404 :(</h1>" in html:
-        utils.notify(msg="Nothing found")
+    if not html:
         utils.eod()
         return
 
     soup = utils.parse_html(html)
-    items = soup.select("li[id] .image") or soup.select("a.image")
+    items = soup.select("div.thumb")
 
-    for link in items:
-        videopage = urljoin(site.url, utils.safe_get_attr(link, "href"))
+    for item in items:
+        link_tag = item.select_one("a.th-title") or item.select_one("div.th-img a")
+        if not link_tag:
+            continue
+            
+        videopage = urljoin(site.url, utils.safe_get_attr(link_tag, "href"))
         name = utils.cleantext(
-            utils.safe_get_attr(link, "alt") or utils.safe_get_text(link, default="")
+            utils.safe_get_attr(link_tag, "title") or utils.safe_get_text(link_tag, default="")
         )
-        img_tag = link.select_one("img")
-        img = utils.get_thumbnail(img_tag)
-        duration = utils.safe_get_text(link.select_one(".duration"), default="")
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src")
+        if img and not img.startswith("http"):
+            img = urljoin(site.url, img)
+            
+        duration = utils.safe_get_text(item.select_one(".th-time"), default="").strip()
+        
         site.add_download_link(
             name,
             videopage,
@@ -86,19 +93,17 @@ def List(url):
             img,
             name,
             duration=duration,
-            contextm="porno365.Related",
         )
 
-    next_link = soup.select_one("a.next_link")
+    # Pagination
+    next_link = soup.select_one(".navigation a:-soup-contains('Next'), .navigation a:-soup-contains('»')")
     if next_link:
         np_url = urljoin(site.url, utils.safe_get_attr(next_link, "href"))
-        np_num = utils.safe_get_text(next_link, default="").strip()
         site.add_dir(
-            "Next Page ({})".format(np_num or ""),
+            "Next Page",
             np_url,
             "List",
             site.img_next,
-            contextm="porno365.GotoPage",
         )
 
     utils.eod()

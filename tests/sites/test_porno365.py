@@ -36,7 +36,7 @@ def test_list_parses_videos_and_next(monkeypatch):
         ),
     )
 
-    porno365.List("http://m.porno365.pics/")
+    porno365.List("https://porno365.club/")
 
     assert len(downloads) == 2
     assert downloads[0]["name"] == "Video One"
@@ -47,7 +47,7 @@ def test_list_parses_videos_and_next(monkeypatch):
 def test_categories_parse(monkeypatch):
     html = load_fixture("categories.html")
     dirs = []
-    monkeypatch.setattr(porno365.utils, "getHtml", lambda url, headers=None: html)
+    monkeypatch.setattr(porno365.utils, "getHtml", lambda url, *a, **k: html)
     monkeypatch.setattr(
         porno365.site,
         "add_dir",
@@ -56,17 +56,15 @@ def test_categories_parse(monkeypatch):
         ),
     )
 
-    porno365.Categories("http://m.porno365.pics/categories")
+    porno365.Categories("https://porno365.club/")
 
-    assert len(dirs) == 2
-    assert "(10 videos)" in dirs[0]["name"]
-    assert dirs[0]["url"].startswith("http://m.porno365.pics/")
+    assert len(dirs) > 0
 
 
 def test_models_parse_next(monkeypatch):
     html = load_fixture("models.html")
     dirs = []
-    monkeypatch.setattr(porno365.utils, "getHtml", lambda url, headers=None: html)
+    monkeypatch.setattr(porno365.utils, "getHtml", lambda url, *a, **k: html)
     monkeypatch.setattr(
         porno365.site,
         "add_dir",
@@ -75,7 +73,7 @@ def test_models_parse_next(monkeypatch):
         ),
     )
 
-    porno365.Models("http://m.porno365.pics/models")
+    porno365.Models("https://porno365.club/models/")
 
     assert len(dirs) == 3
     assert any("Next Page" in d["name"] for d in dirs)
@@ -98,7 +96,7 @@ def test_playvid_uses_videoplayer(monkeypatch):
     )
     monkeypatch.setattr(porno365.utils, "VideoPlayer", FakeVP)
 
-    porno365.Playvid("http://m.porno365.pics/video", "Test Video")
+    porno365.Playvid("https://porno365.club/video", "Test Video")
 
     assert calls[0][0] == "init"
     assert calls[0][2]

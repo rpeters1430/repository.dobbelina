@@ -43,88 +43,14 @@ def Main(url):
 
 @site.register()
 def List(url, page=1):
-    headers = {"User-Agent": utils.USER_AGENT, "Referer": site.url}
-    html = ""
-    tried_urls = []
-    primary_domain = site.url.rstrip("/")
-    alt_domains = [
-        primary_domain.replace("josporn.club", "josporn.com"),
-        primary_domain.replace("josporn.club", "www.josporn.com"),
-        primary_domain.replace("josporn.club", "www.josporn.club"),
-    ]
-    fallback_urls = [url]
-    fallback_urls.extend(
-        [
-            site.url + "videos/",
-            site.url + "most-popular/",
-            site.url + "top-rated/",
-            site.url + "latest-updates/",
-        ]
-    )
-    for base in alt_domains:
-        if not base:
-            continue
-        fallback_urls.extend(
-            [
-                base + "/videos/",
-                base + "/most-popular/",
-                base + "/top-rated/",
-                base + "/latest-updates/",
-            ]
-        )
-
-    for candidate in fallback_urls:
-        if candidate in tried_urls:
-            continue
-        tried_urls.append(candidate)
-        try:
-            html = utils.getHtml(candidate, site.url, headers=headers)
-        except Exception as e:
-            utils.kodilog("@@@@Cumination: failure in josporn: " + str(e))
-            headers["User-Agent"] = utils.random_ua.get_ua()
-            bypass_url = candidate + (
-                "?" if "?" not in candidate else "&"
-            ) + "label_W9dmamG9w9zZg45g93FnLAVbSyd0bBDv=1"
-            try:
-                html = utils.getHtml(bypass_url, site.url, headers=headers)
-            except Exception as e2:
-                utils.kodilog(
-                    "@@@@Cumination: fallback failure in josporn: " + str(e2)
-                )
-                html = ""
-        if isinstance(html, bytes):
-            html = html.decode("utf-8", errors="ignore")
-        if not html:
-            continue
-        text = html.lower() if isinstance(html, str) else ""
-        if (
-            "503 service unavailable" in text
-            or "temporarily unavailable" in text
-            or "attention required" in text
-            or "cloudflare" in text
-            or "captcha" in text
-        ):
-            continue
-        break
+    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
 
     if not html:
-        utils.notify(msg="List blocked/challenged in harness")
+        utils.notify(msg="List blocked/challenged")
         utils.eod()
         return
 
-    if isinstance(html, str):
-        lowered = html.lower()
-        if "503 service unavailable" in lowered or "temporarily unavailable" in lowered:
-            utils.notify(msg="List blocked/challenged in harness (HTTP 503)")
-            utils.eod()
-            return
-
-    if hasattr(html, "select"):
-        soup = html
-    else:
-        if not isinstance(html, (str, bytes)):
-            html = ""
-        soup = utils.parse_html(html)
+    soup = utils.parse_html(html)
     if not soup:
         utils.eod()
         return
@@ -169,12 +95,11 @@ def List(url, page=1):
 
 @site.register()
 def Categories(url):
-    headers = {"User-Agent": utils.USER_AGENT, "Referer": site.url}
-    try:
-        html = utils.getHtml(url, site.url, headers=headers)
-    except Exception:
-        headers["User-Agent"] = utils.random_ua.get_ua()
-        html = utils.getHtml(url, site.url, headers=headers)
+    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+
+    if not html:
+        utils.eod()
+        return
 
     soup = utils.parse_html(html)
     
@@ -207,7 +132,10 @@ def Playvid(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
     
     # The site uses pjs player which often has the direct mp4 link in the source
-    html = utils.getHtml(url)
+    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+    if not html:
+        utils.notify("Error", "Could not load video page")
+        return
     
     # Try Playerjs extraction
     # var player = new Playerjs({id:"videoplayer", file:"[240p] https://...mp4,[360p] ..."})

@@ -398,7 +398,7 @@ def List(channel, section, page=0):
             img = utils.get_thumbnail(img_tag)
 
             # Get duration
-            duration_tag = section_item.select_one('[class*="tion"], .duration')
+            duration_tag = section_item.select_one('.duration, [class*="time"], [class*="dur"]')
             if duration_tag:
                 # Check for span inside duration tag
                 span = duration_tag.select_one("span")

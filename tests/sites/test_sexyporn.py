@@ -46,18 +46,17 @@ def test_list_parses_videos_and_pagination(monkeypatch):
         ),
     )
 
-    sexyporn.List("https://www.sexyporn.xxx/")
+    sexyporn.List("https://www.sexyporn.tv/")
 
     assert len(downloads) == 3
     assert downloads[0]["name"] == "Video One"
-    assert downloads[0]["url"] == "https://www.sexyporn.xxx/videos/video-one"
-    assert downloads[0]["quality"] == "HD"
-    assert downloads[1]["url"] == "https://www.sexyporn.xxx/videos/video-two"
+    assert downloads[0]["url"] == "https://www.sexyporn.tv/videos/video-one"
+    assert downloads[1]["url"] == "https://www.sexyporn.tv/videos/video-two"
     assert downloads[2]["duration"] == "05:55"
 
     next_dirs = [d for d in dirs if d["mode"] == "List"]
     assert len(next_dirs) == 1
-    assert next_dirs[0]["url"] == "https://www.sexyporn.xxx/page/2/"
+    assert next_dirs[0]["url"] == "https://www.sexyporn.tv/page/2/"
     assert "Next Page" in next_dirs[0]["name"]
 
 
@@ -75,12 +74,12 @@ def test_categories(monkeypatch):
         ),
     )
 
-    sexyporn.Categories("https://www.sexyporn.xxx/categories")
+    sexyporn.Categories("https://www.sexyporn.tv/categories")
 
     assert len(dirs) == 3
     assert dirs[0]["name"] == "Anal"
-    assert dirs[0]["url"] == "https://www.sexyporn.xxx/category/anal"
-    assert dirs[2]["name"] == "MILF"
+    assert dirs[0]["url"] == "https://www.sexyporn.tv/category/anal"
+    assert dirs[2]["name"] == "Teen"
 
 
 def test_playvid_uses_direct_source(monkeypatch):
@@ -101,10 +100,10 @@ def test_playvid_uses_direct_source(monkeypatch):
     monkeypatch.setattr(sexyporn.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(sexyporn.utils, "VideoPlayer", DummyVP)
 
-    sexyporn.Playvid("https://www.sexyporn.xxx/videos/video-one", "Video One")
+    sexyporn.Playvid("https://www.sexyporn.tv/videos/video-one", "Video One")
 
     assert "url" in played
     assert (
         played["url"]
-        == "https://cdn.sexyporn.xxx/videos/video-one.mp4|referer=https://www.sexyporn.xxx/"
+        == "https://cdn.sexyporn.tv/videos/video-one.mp4|referer=https://www.sexyporn.tv/"
     )

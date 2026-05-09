@@ -117,11 +117,23 @@ def List(url):
         if not href:
             continue
         video_url = urllib_parse.urljoin(site.url, href)
-        img_tag = anchor.find("img")
+        
+        # Find the main thumbnail image, avoiding UI icons
+        img_tag = anchor.select_one("img.imgresdif") or anchor.find("img", attrs={"src": re.compile(r"cdnclouder|thumb")})
+        if not img_tag:
+            # Fallback to the largest image or last image if class is missing
+            imgs = anchor.find_all("img")
+            if imgs:
+                img_tag = imgs[-1]
+                
         thumb = utils.get_thumbnail(img_tag)
         title = utils.cleantext(utils.safe_get_attr(img_tag, "alt"))
         if not title:
             title = utils.cleantext(utils.safe_get_attr(anchor, "title") or "")
+        if not title:
+            # Fallback to slug from URL
+            title = utils.cleantext(video_url.split("-", 1)[-1].replace("_", " ").title())
+        
         if not title:
             continue
 

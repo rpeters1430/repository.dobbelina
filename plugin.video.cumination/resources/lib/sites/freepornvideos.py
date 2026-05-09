@@ -259,7 +259,7 @@ def Playvid(url, name, download=None):
             setting_valid="qualityask",
             sort_by=lambda x: 1081
             if x == "4k"
-            else (int(x[:-1]) if x[:-1].isdigit() else 0),
+            else int("".join([y for y in x if y.isdigit()]) or 0),
             reverse=True,
         )
         if videourl:

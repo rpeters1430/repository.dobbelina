@@ -156,38 +156,37 @@ def Cat(url):
         utils.eod()
         return
 
-    catsec = soup.select_one(".categorie, #categories, .categories-list")
-    if not catsec:
-        # Try finding all links that look like category links
-        cat_links = soup.select('a[href*="/cat-"]')
-        if cat_links:
-            # Create a dummy container to reuse the logic below
-            from bs4 import BeautifulSoup
-            catsec = BeautifulSoup("", "html.parser").new_tag("div")
-            for link in cat_links:
-                catsec.append(link)
-        else:
-            utils.eod()
-            return
+    # Find categories and tags which are typically links with class 'link1b'
+    # and href starting with '../en/wall-'
+    cat_links = soup.select('a.link1b[href*="wall-"]')
+    if not cat_links:
+        # Fallback to broader search if class changed
+        cat_links = soup.select('a[href*="/wall-"]')
 
-    for link in catsec.select("a[href]"):
+    for link in cat_links:
         caturl = utils.safe_get_attr(link, "href", default="")
+        if "wall-main" in caturl or "wall-date" in caturl or "wall-note" in caturl or "wall-time" in caturl:
+            continue # Skip main sorting walls
+            
         if caturl.startswith(".."):
             caturl = caturl[2:]
         catpage = site.url[:-3] + caturl
 
         name = utils.cleantext(utils.safe_get_text(link, default=""))
-        if not name:
+        if not name or len(name) < 2:
             continue
 
         items = ""
-        li = link.find_parent("li")
-        if li:
-            count_elem = li.find("span")
-            items = utils.safe_get_text(count_elem, default="")
+        # The count is often in parentheses after the link or in the next text node
+        next_sibling = link.next_sibling
+        if next_sibling and isinstance(next_sibling, str):
+            count_match = re.search(r'\((\d+)\)', next_sibling)
+            if count_match:
+                items = count_match.group(1)
 
         label = name + " [COLOR deeppink]" + items + "[/COLOR]" if items else name
         site.add_dir(label, catpage, "List", "")
+    
     xbmcplugin.addSortMethod(utils.addon_handle, xbmcplugin.SORT_METHOD_TITLE)
     utils.eod()
 

@@ -34,19 +34,20 @@ site = AdultSite(
 
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
-        "items": [".grid-box-img", "article.group"],
-        "url": {"selector": "a", "attr": "href"},
+        "items": "a.group",
+        "url": {"attr": "href"},
         "title": {
-            "selector": ["a[title]", "h3 a", "a"],
+            "selector": "h3",
             "attr": "title",
             "text": True,
             "clean": True,
         },
         "thumbnail": {
-            "transform": lambda v, item: utils.get_thumbnail(item.select_one("img"))
+            "selector": "img",
+            "attr": "src",
         },
         "pagination": {
-            "selector": "a.next.page-numbers, a[href*='?page='], a[href*='/page/']",
+            "selector": "a.primary-btn, a.next.page-numbers",
             "attr": "href",
             "text_matches": ["next"],
         },

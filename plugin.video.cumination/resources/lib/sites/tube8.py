@@ -37,7 +37,7 @@ site = AdultSite(
     "tube8",
     category="Video Tubes",
 )
-cookiehdr = {"Cookie": "age_verified=1"}
+cookiehdr = {"Cookie": "age_verified=1; access=1; accessPH=1"}
 
 
 @site.register(default_mode=True)

@@ -67,17 +67,16 @@ def Main(url):
 @site.register()
 def List(url, page=1):
     try:
-        listhtml = utils.getHtml(url, "")
+        listhtml, _ = utils.get_html_with_cloudflare_retry(url, "")
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in noodlemagazine: " + str(e))
         return None
 
-    if hasattr(listhtml, "select"):
-        soup = listhtml
-    else:
-        if not isinstance(listhtml, (str, bytes)):
-            listhtml = ""
-        soup = utils.parse_html(listhtml)
+    if not listhtml:
+        utils.eod()
+        return
+    
+    soup = utils.parse_html(listhtml)
     items = soup.select(".item")
     if not items:
         items = soup.select(".video-item, article.item, .thumb-item")

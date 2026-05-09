@@ -83,30 +83,25 @@ def _extract_video_image(link, siteurl):
 
 
 def _parse_video_items(soup, siteurl):
-    selector = (
-        "article a[href], a.video-link[href], a[href*='/watch/'], "
-        "a[href*='/pornvideo/'], a[href*='/videos/']"
-    )
-    for link in soup.select(selector):
+    # Modern site structure uses .video class
+    items = soup.select(".video, article")
+    for item in items:
+        link = item.select_one('a[href*="/watch/"], a[href*="/pornvideo/"], a[href*="/videos/"], a[href*="/video/"]')
+        if not link:
+            continue
+            
         videourl = utils.safe_get_attr(link, "href", default="")
-        if not videourl or not any(
-            marker in videourl
-            for marker in ("/watch/", "/pornvideo/", "/videos/", "/video/")
-        ):
-            continue
-
         videourl = urllib_parse.urljoin(siteurl, videourl)
-        img = _extract_video_image(link, siteurl)
+        
+        img = _extract_video_image(item, siteurl)
 
-        name = utils.cleantext(utils.safe_get_text(link.select_one("h1"), default=""))
-        if not name:
-            name = utils.cleantext(utils.safe_get_attr(link, "title", default=""))
+        name_tag = item.select_one(".video-title, h1, h2, h3")
+        name = utils.cleantext(utils.safe_get_text(name_tag) or utils.safe_get_attr(link, "title"))
+        
         if not name:
             continue
 
-        duration = utils.safe_get_text(link.select_one(".length"), default="")
-        if not duration:
-            duration = utils.safe_get_text(link.select_one(".video-length"), default="")
+        duration = utils.safe_get_text(item.select_one(".length, .video-length, .duration"), default="")
 
         site.add_download_link(name, videourl, "Playvid", img, name, duration=duration)
 
@@ -127,30 +122,38 @@ def _add_next_page_from_soup(soup, url, mode, siteurl=None):
         if not next_page:
             next_page = utils.safe_get_attr(next_link, "data-page", default="").strip()
         if not next_page:
-            next_page = utils.safe_get_text(next_link, default="").strip()
-        if not next_page:
             href = utils.safe_get_attr(next_link, "href", default="")
             match = re.search(r"(?:[?&]page=|/page/)(\d+)", href)
             if match:
                 next_page = match.group(1)
+        if not next_page:
+            text = utils.safe_get_text(next_link, default="").strip()
+            if text.isdigit():
+                next_page = text
 
     if next_page:
-        if mode == "List" and siteurl:
-            site.add_dir(
-                "Next Page ({})".format(next_page),
-                url,
-                mode,
-                site.img_next,
-                page=int(next_page),
-                section=siteurl,
-            )
-        else:
-            site.add_dir(
-                "Next Page ({})".format(next_page),
-                next_url,
-                mode,
-                site.img_next,
-            )
+        try:
+            page_num = int(next_page)
+        except (ValueError, TypeError):
+            page_num = 0
+            
+        if page_num > 0:
+            if mode == "List" and siteurl:
+                site.add_dir(
+                    "Next Page ({})".format(page_num),
+                    url,
+                    mode,
+                    site.img_next,
+                    page=page_num,
+                    section=siteurl,
+                )
+            else:
+                site.add_dir(
+                    "Next Page ({})".format(page_num),
+                    next_url,
+                    mode,
+                    site.img_next,
+                )
 
 
 def Createdata(page=1, search="", sort="0", date="0"):

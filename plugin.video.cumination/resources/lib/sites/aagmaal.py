@@ -106,16 +106,29 @@ def Playvid(url, name, download=None):
     videopage = utils.getHtml(url, site.url)
     soup = utils.parse_html(videopage)
 
-    # Find hosted links with title and target attributes
+    # Find hosted links in the content area
     links = {}
-    for a in soup.select("a[title][href][target]"):
-        link_url = utils.safe_get_attr(a, "href")
-        link_title = utils.safe_get_attr(a, "title")
-        if link_url and link_title and vp.resolveurl.HostedMediaFile(link_url):
-            links[link_title] = link_url
+    content = soup.select_one(".vp-video-post-content, .entry-content, #content")
+    if content:
+        for a in content.select("a[href]"):
+            link_url = utils.safe_get_attr(a, "href")
+            if link_url and vp.resolveurl.HostedMediaFile(link_url):
+                # Use link text or parent text as title if title attribute is missing
+                link_title = utils.safe_get_attr(a, "title") or utils.safe_get_text(a)
+                if not link_title or len(link_title) < 3:
+                    # Try to get text from preceding siblings (e.g. "LULU DOWNLOAD LINKS")
+                    prev = a.find_previous(string=True)
+                    if prev:
+                        link_title = prev.strip().split("\n")[-1].strip()
+                
+                if not link_title:
+                    link_title = link_url.split("//")[-1].split("/")[0]
+                
+                links[link_title] = link_url
 
     if not links:
-        for a in soup.select('a.external[href], a[class*="external"][href]'):
+        # Fallback to any external links
+        for a in soup.select('a.external[href], a[class*="external"][href], a[href*="http"]'):
             link_url = utils.safe_get_attr(a, "href")
             if link_url and vp.resolveurl.HostedMediaFile(link_url):
                 links[link_url] = link_url

@@ -35,8 +35,14 @@ site = AdultSite(
 def Main():
     site.add_dir("[COLOR hotpink]4K[/COLOR]", site.url + "4k/", "List", site.img_cat)
     site.add_dir(
+        "[COLOR hotpink]Categories[/COLOR]",
+        site.url + "en/tags/",
+        "Categories",
+        site.img_cat,
+    )
+    site.add_dir(
         "[COLOR hotpink]Search[/COLOR]",
-        site.url + "en/search/videos/{}/",
+        site.url + "en/search/{}/",
         "Search",
         site.img_search,
     )
@@ -248,3 +254,24 @@ def Related(url):
         + urllib_parse.quote_plus(url)
     )
     xbmc.executebuiltin("Container.Update(" + contexturl + ")")
+
+
+@site.register()
+def Categories(url):
+    html = utils.getHtml(url)
+    soup = utils.parse_html(html)
+    
+    # Tags are usually in a list or cloud
+    tags = soup.select('ul.list-tags li a, div.tags a')
+    if not tags:
+        # Fallback to broader search
+        tags = soup.select('a[href*="/en/tags/"]')
+
+    for tag in tags:
+        name = utils.safe_get_text(tag)
+        href = utils.safe_get_attr(tag, "href")
+        if name and href and name.lower() != "tags":
+            tag_url = urllib_parse.urljoin(url, href)
+            site.add_dir(name, tag_url, "List", site.img_cat)
+            
+    utils.eod()

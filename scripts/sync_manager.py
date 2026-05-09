@@ -22,7 +22,7 @@ if sys.platform == "win32":
 UPSTREAM_REMOTE = "https://github.com/dobbelina/repository.dobbelina.git"
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SYNC_FILE = REPO_ROOT / "docs" / "development" / "UPSTREAM_SYNC.md"
-AUDIT_FILE = REPO_ROOT / "bs4_migration_audit.csv"
+AUDIT_FILE = REPO_ROOT / "docs" / "status" / "bs4_migration_audit.csv"
 SITES_DIR = REPO_ROOT / "plugin.video.cumination" / "resources" / "lib" / "sites"
 
 

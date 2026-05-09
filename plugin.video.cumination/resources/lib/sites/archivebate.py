@@ -57,11 +57,18 @@ def _livewire_list(url):
     csrf = csrf_match.group(1)
 
     wire_match = re.search(
-        r'wire:initial-data="([^"]+)"[^>]*wire:init="loadVideos"', resp.text
+        r'wire:initial-data="([^"]+)"[^>]*wire:init="([^"]+)"', resp.text
     )
     if not wire_match:
-        return None, None
-    wire_state = json.loads(htmlmod.unescape(wire_match.group(1)))
+        # Try finding initial data without wire:init as fallback
+        wire_match = re.search(r'wire:initial-data="([^"]+)"', resp.text)
+        if not wire_match:
+            return None, None
+        wire_state = json.loads(htmlmod.unescape(wire_match.group(1)))
+        method_name = "loadVideos" # Default fallback
+    else:
+        wire_state = json.loads(htmlmod.unescape(wire_match.group(1)))
+        method_name = wire_match.group(2)
 
     component_name = wire_state["fingerprint"]["name"]
     payload = {
@@ -69,7 +76,7 @@ def _livewire_list(url):
         "serverMemo": wire_state["serverMemo"],
         "updates": [{
             "type": "callMethod",
-            "payload": {"id": "lw1", "method": "loadVideos", "params": []},
+            "payload": {"id": "lw1", "method": method_name, "params": []},
         }],
     }
 

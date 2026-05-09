@@ -52,7 +52,10 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url)
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url)
+    if not listhtml:
+        utils.eod()
+        return
     soup = utils.parse_html(listhtml)
 
     # Find all article elements with video items
@@ -149,7 +152,10 @@ def List(url):
 
 @site.register()
 def Cat(url):
-    cathtml = utils.getHtml(url)
+    cathtml, _ = utils.get_html_with_cloudflare_retry(url)
+    if not cathtml:
+        utils.eod()
+        return
     soup = utils.parse_html(cathtml)
 
     # Find all article elements with category items
@@ -239,7 +245,7 @@ def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     try:
-        videohtml = utils.getHtml(url)
+        videohtml, _ = utils.get_html_with_cloudflare_retry(url)
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in javhdporn: " + str(e))
         vp.progress.close()

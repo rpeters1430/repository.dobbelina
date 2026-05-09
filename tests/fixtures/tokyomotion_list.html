@@ -1,18 +1,23 @@
 <html>
 <body>
+  <div class="col-xs-12">
     <div class="well well-sm">
-        <a href="/video/abc123" title="First Video">
+        <a class="thumb_img" href="/video/abc123" title="First Video">
             <img data-src="https://cdn.tokyo-motion.net/img/first.jpg" />
             <span class="duration">10:01</span>
-            <span class="quality">HD</span>
         </a>
+        <a class="thumb_title" title="First Video" href="/video/abc123">First Video</a>
     </div>
+  </div>
+  <div class="col-xs-12">
     <div class="well well-sm">
-        <a href="/video/def456" title="Second Clip">
-            <img data-src="https://cdn.tokyo-motion.net/img/second.jpg" />
+        <a class="thumb_img" href="/video/def456" title="Second Clip">
+            <img src="https://cdn.tokyo-motion.net/img/second.jpg" />
             <span class="duration">05:59</span>
         </a>
+        <a class="thumb_title" title="Second Clip" href="/video/def456">Second Clip</a>
     </div>
-    <a class="prevnext" href="/videos?type=public&amp;o=mr&amp;page=2">Next</a>
+  </div>
+  <a aria-label="Next" href="/videos?type=public&amp;o=mr&amp;page=2">»</a>
 </body>
 </html>

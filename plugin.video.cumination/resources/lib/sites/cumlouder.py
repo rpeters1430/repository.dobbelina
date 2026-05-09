@@ -151,111 +151,158 @@ def Playvid(url, name, download=None):
 @site.register()
 def Categories(url):
     nextpg = True
-    match = []
     while nextpg:
         cathtml = utils.getHtml(url, site.url)
-        match += re.compile(
-            r'tag-url.+?href="([^"]+).+?data-src="([^"]+).+?goria">\s*(.*?)\s*<.+?dad">([^<]+)',
-            re.DOTALL | re.IGNORECASE,
-        ).findall(cathtml)
-        np = re.compile(
-            r'class="btn-pagination"\s*itemprop="name"\s*href="([^"]+)">Next',
-            re.DOTALL | re.IGNORECASE,
-        ).search(cathtml)
-        if np:
-            url = site.url[:-1] + np.group(1)
+        soup = utils.parse_html(cathtml)
+        
+        items = soup.select(".tag-item, .item")
+        for item in items:
+            link = item.select_one('a[class*="tag-url"], a[href*="/category/"]')
+            if not link:
+                continue
+            catpage = utils.safe_get_attr(link, "href")
+            name_tag = item.select_one(".tag-name, .categoria, h2")
+            name = utils.safe_get_text(name_tag)
+            
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+            
+            videos_tag = item.select_one(".tag-count, .cantidad")
+            videos = utils.safe_get_text(videos_tag)
+
+            if catpage.startswith("/"):
+                catpage = site.url[:-1] + catpage
+            if img.startswith("//"):
+                img = "https:" + img
+            
+            label = name
+            if videos:
+                label += " [COLOR deeppink]" + videos + " Videos[/COLOR]"
+            site.add_dir(label, catpage, "List", img)
+            
+        np_link = soup.select_one('.btn-pagination[itemprop="name"][href]')
+        if np_link and "Next" in utils.safe_get_text(np_link):
+            url = urllib_parse.urljoin(site.url, utils.safe_get_attr(np_link, "href"))
         else:
             nextpg = False
-    match = sorted(match, key=lambda x: x[2])
-    for catpage, img, name, videos in match:
-        if catpage.startswith("/"):
-            catpage = site.url[:-1] + catpage
-        if img.startswith("//"):
-            img = "https:" + img
-        name = name + " [COLOR deeppink]" + videos + " Videos[/COLOR]"
-        site.add_dir(name, catpage, "List", img)
+            
     utils.eod()
 
 
 @site.register()
 def Channels(url):
     nextpg = True
-    match = []
     while nextpg:
         cathtml = utils.getHtml(url, site.url)
-        match += re.compile(
-            r'channel-url.+?href="([^"]+).+?data-src="([^"]+).+?alt="([^"]+).+?videos\s.+?\s([^<]+)',
-            re.DOTALL | re.IGNORECASE,
-        ).findall(cathtml)
-        np = re.compile(
-            r'class="btn-pagination"\s*itemprop="name"\s*href="([^"]+)">Next',
-            re.DOTALL | re.IGNORECASE,
-        ).search(cathtml)
-        if np:
-            url = site.url[:-1] + np.group(1)
+        soup = utils.parse_html(cathtml)
+        
+        items = soup.select(".channel-item, .item")
+        for item in items:
+            link = item.select_one('a[class*="channel-url"], a[href*="/channel/"]')
+            if not link:
+                continue
+            catpage = utils.safe_get_attr(link, "href")
+            
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+            name = utils.safe_get_attr(img_tag, "alt")
+            
+            videos_tag = item.select_one(".videos-count, .cantidad")
+            videos = utils.safe_get_text(videos_tag)
+
+            if catpage.startswith("/"):
+                catpage = site.url[:-1] + catpage
+            if img.startswith("//"):
+                img = "https:" + img
+            
+            label = name
+            if videos:
+                label += " [COLOR deeppink]" + videos + "[/COLOR]"
+            site.add_dir(label, catpage, "List", img)
+
+        np_link = soup.select_one('.btn-pagination[itemprop="name"][href]')
+        if np_link and "Next" in utils.safe_get_text(np_link):
+            url = urllib_parse.urljoin(site.url, utils.safe_get_attr(np_link, "href"))
         else:
             nextpg = False
-    match = sorted(match, key=lambda x: x[2])
-    for catpage, img, name, videos in match:
-        if catpage.startswith("/"):
-            catpage = site.url[:-1] + catpage
-        if img.startswith("//"):
-            img = "https:" + img
-        name = name + " [COLOR deeppink]" + videos + "[/COLOR]"
-        site.add_dir(name, catpage, "List", img)
+            
     utils.eod()
 
 
 @site.register()
 def Series(url):
     nextpg = True
-    match = []
     while nextpg:
         cathtml = utils.getHtml(url, site.url)
-        match += re.compile(
-            r'<div\s*itemprop.+?href="([^"]+).+?data-src="([^"]+).+?name">([^<]+).+?p>([^<]+)',
-            re.DOTALL | re.IGNORECASE,
-        ).findall(cathtml)
-        np = re.compile(
-            r'class="btn-pagination"\s*itemprop="name"\s*href="([^"]+)">Next',
-            re.DOTALL | re.IGNORECASE,
-        ).search(cathtml)
-        if np:
-            url = site.url[:-1] + np.group(1)
+        soup = utils.parse_html(cathtml)
+        
+        items = soup.select(".serie-item, .item")
+        for item in items:
+            link = item.select_one('a[href*="/series/"]')
+            if not link:
+                continue
+            catpage = utils.safe_get_attr(link, "href")
+            
+            img_tag = item.select_one("img")
+            img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+            
+            name_tag = item.select_one(".name, h2")
+            name = utils.safe_get_text(name_tag)
+            
+            videos_tag = item.select_one(".videos-count, p")
+            videos = utils.safe_get_text(videos_tag)
+
+            if catpage.startswith("/"):
+                catpage = site.url[:-1] + catpage
+            if img.startswith("//"):
+                img = "https:" + img
+            
+            label = name.title()
+            if videos:
+                label += " [COLOR deeppink]" + videos + "[/COLOR]"
+            site.add_dir(label, catpage, "List", img)
+
+        np_link = soup.select_one('.btn-pagination[itemprop="name"][href]')
+        if np_link and "Next" in utils.safe_get_text(np_link):
+            url = urllib_parse.urljoin(site.url, utils.safe_get_attr(np_link, "href"))
         else:
             nextpg = False
-    match = sorted(match, key=lambda x: x[2])
-    for catpage, img, name, videos in match:
-        if catpage.startswith("/"):
-            catpage = site.url[:-1] + catpage
-        if img.startswith("//"):
-            img = "https:" + img
-        name = name.title() + " [COLOR deeppink]" + videos + "[/COLOR]"
-        site.add_dir(name, catpage, "List", img)
+            
     utils.eod()
 
 
 @site.register()
 def Girls(url):
     cathtml = utils.getHtml(url, site.url)
-    match = re.compile(
-        r'girl-url.+?href="([^"]+).+?data-src="([^"]+).+?alt="([^"]+).+?videos\s.+?\s([^<]+)',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(cathtml)
-    for catpage, img, name, videos in match:
+    soup = utils.parse_html(cathtml)
+    
+    items = soup.select(".girl-item, .item")
+    for item in items:
+        link = item.select_one('a[class*="girl-url"], a[href*="/girl/"]')
+        if not link:
+            continue
+        catpage = utils.safe_get_attr(link, "href")
+        
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        name = utils.safe_get_attr(img_tag, "alt")
+        
+        videos_tag = item.select_one(".videos-count, .cantidad")
+        videos = utils.safe_get_text(videos_tag)
+
         if catpage.startswith("/"):
             catpage = site.url[:-1] + catpage
         if img.startswith("//"):
             img = "https:" + img
-        name = name + " [COLOR deeppink]" + videos + "[/COLOR]"
-        site.add_dir(name, catpage, "List", img)
+            
+        label = name
+        if videos:
+            label += " [COLOR deeppink]" + videos + "[/COLOR]"
+        site.add_dir(label, catpage, "List", img)
 
-    np = re.compile(
-        r'class="btn-pagination"\s*itemprop="name"\s*href="([^"]+)">Next',
-        re.DOTALL | re.IGNORECASE,
-    ).search(cathtml)
-    if np:
-        site.add_dir("Next Page", site.url[:-1] + np.group(1), "Girls", site.img_next)
+    np_link = soup.select_one('.btn-pagination[itemprop="name"][href]')
+    if np_link and "Next" in utils.safe_get_text(np_link):
+        site.add_dir("Next Page", urllib_parse.urljoin(site.url, utils.safe_get_attr(np_link, "href")), "Girls", site.img_next)
 
     utils.eod()
 

@@ -88,7 +88,7 @@ def List(url):
     soup = utils.parse_html(listhtml)
 
     cards = soup.select(
-        ".card.video, .card.not_show, article.card.video, article.card.not_show"
+        ".card.video, .card.itemVideo, .card.not_show, article.card.video, article.card.not_show"
     )
     if not cards:
         cards = soup.select(".card")

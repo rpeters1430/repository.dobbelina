@@ -57,17 +57,17 @@ echo "Integrated Commits Check"
 echo "================================================"
 echo ""
 
-# Read already integrated commits from UPSTREAM_SYNC.md
-if [ -f "$REPO_ROOT/UPSTREAM_SYNC.md" ]; then
-    echo "Checking UPSTREAM_SYNC.md for already integrated commits..."
+# Read already integrated commits from docs/development/UPSTREAM_SYNC.md
+if [ -f "$REPO_ROOT/docs/development/UPSTREAM_SYNC.md" ]; then
+    echo "Checking docs/development/UPSTREAM_SYNC.md for already integrated commits..."
     echo ""
 
     integrated_count=0
     truly_new_count=0
 
     echo "$new_commits" | while read hash message; do
-        if grep -q "$hash" "$REPO_ROOT/UPSTREAM_SYNC.md"; then
-            echo "✅ $hash - Already tracked in UPSTREAM_SYNC.md"
+        if grep -q "$hash" "$REPO_ROOT/docs/development/UPSTREAM_SYNC.md"; then
+            echo "✅ $hash - Already tracked in docs/development/UPSTREAM_SYNC.md"
             integrated_count=$((integrated_count + 1))
         else
             echo "🆕 $hash - NEW (not yet integrated)"
@@ -75,7 +75,7 @@ if [ -f "$REPO_ROOT/UPSTREAM_SYNC.md" ]; then
         fi
     done
 else
-    echo "⚠️  UPSTREAM_SYNC.md not found. All commits shown are potentially new."
+    echo "⚠️  docs/development/UPSTREAM_SYNC.md not found. All commits shown are potentially new."
 fi
 
 echo ""
@@ -87,7 +87,7 @@ echo "1. Review commits listed as 🆕 NEW above"
 echo "2. For each commit you want to integrate:"
 echo "   git cherry-pick -x <hash>"
 echo ""
-echo "3. After cherry-picking, update UPSTREAM_SYNC.md with:"
+echo "3. After cherry-picking, update docs/development/UPSTREAM_SYNC.md with:"
 echo "   | \`<upstream-hash>\` | Message | \`<fork-hash>\` | $(date +%Y-%m-%d) | Cherry-picked with -x |"
 echo ""
 echo "4. Run tests:"

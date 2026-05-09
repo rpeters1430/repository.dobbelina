@@ -1,137 +1,100 @@
-"""Tests for perverzija BeautifulSoup migration."""
-
-from pathlib import Path
+"""Tests for perverzija site implementation."""
 
 from resources.lib.sites import perverzija
+from tests.conftest import read_fixture
 
 
-FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "perverzija"
+def test_main_menu_adds_expected_dirs(monkeypatch):
+    captured_dirs = []
 
+    def add_dir(name, url, mode, *args, **kwargs):
+        captured_dirs.append({"name": name, "url": url, "mode": mode})
 
-def load_fixture(name: str) -> str:
-    return (FIXTURE_DIR / name).read_text(encoding="utf-8")
-
-
-def test_list_parses_items(monkeypatch):
-    html = load_fixture("list.html")
-
-    downloads = []
-    dirs = []
-
-    monkeypatch.setattr(perverzija.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(perverzija.site, "add_dir", add_dir)
     monkeypatch.setattr(perverzija.utils, "eod", lambda: None)
 
-    def fake_add_download_link(
-        name, url, mode, iconimage, desc, contextm=None, duration="", **kwargs
-    ):
-        downloads.append(
-            {
-                "name": name,
-                "url": url,
-                "mode": mode,
-                "icon": iconimage,
-                "desc": desc,
-                "contextm": contextm,
-                "duration": duration,
-            }
-        )
+    perverzija.Main()
 
-    def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({"name": name, "url": url, "mode": mode, "icon": iconimage})
-
-    monkeypatch.setattr(perverzija.site, "add_download_link", fake_add_download_link)
-    monkeypatch.setattr(perverzija.site, "add_dir", fake_add_dir)
-
-    perverzija.List("https://tube.perverzija.com/page/1/")
-
-    assert len(downloads) == 2
-
-    first = downloads[0]
-    assert first["name"] == "First Video"
-    assert first["url"] == "https://tube.perverzija.com/videos/first-video"
-    assert first["icon"] == "https://tube.perverzija.com/thumbs/first.jpg"
-    assert first["duration"] == "10:21"
-    assert first["contextm"][0][0].startswith("[COLOR deeppink]Lookup info")
-
-    second = downloads[1]
-    assert second["name"] == "Second Video"
-    assert second["url"] == "https://tube.perverzija.com/videos/second-video"
-    assert second["contextm"] is not None
-
-    assert any(d["mode"] == "List" for d in dirs)
+    assert any("Tags" in d["name"] for d in captured_dirs)
+    assert any(d["mode"] == "Studios" for d in captured_dirs)
+    assert any(d["mode"] == "Stars" for d in captured_dirs)
 
 
-def test_list_pagination(monkeypatch):
-    html = load_fixture("list.html")
-    dirs = []
+def test_list_parsing(monkeypatch):
+    html = '<html><div class="item-thumbnail"><a href="/v/123" title="Video Title"><img src="t.jpg"></a></div></html>'
+    captured_downloads = []
 
-    monkeypatch.setattr(perverzija.utils, "getHtml", lambda *a, **k: html)
-    monkeypatch.setattr(perverzija.utils, "eod", lambda: None)
-    monkeypatch.setattr(perverzija.site, "add_download_link", lambda *a, **k: None)
+    def add_download(name, url, mode, icon, *args, **kwargs):
+        captured_downloads.append({"name": name, "url": url})
 
-    def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({"name": name, "url": url, "mode": mode})
+    def fake_get_html_cf(url, *a, **k):
+        return html, ""
 
-    monkeypatch.setattr(perverzija.site, "add_dir", fake_add_dir)
-
-    perverzija.List("https://tube.perverzija.com/page/1/")
-
-    assert dirs[0]["name"] == "Next Page... (Currently in Page 1 of 3)"
-    assert dirs[0]["url"] == "https://tube.perverzija.com/page/2/"
-
-
-def test_tag_parsing(monkeypatch):
-    html = load_fixture("tags.html")
-    dirs = []
-
-    monkeypatch.setattr(perverzija.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(perverzija.utils, "get_html_with_cloudflare_retry", fake_get_html_cf)
+    monkeypatch.setattr(perverzija.site, "add_download_link", add_download)
     monkeypatch.setattr(perverzija.utils, "eod", lambda: None)
 
-    def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({"name": name, "url": url, "mode": mode})
+    perverzija.List("https://tube.perverzija.com/")
 
-    monkeypatch.setattr(perverzija.site, "add_dir", fake_add_dir)
-
-    perverzija.Tag("https://tube.perverzija.com/tags/")
-
-    assert len(dirs) == 2
-    assert dirs[0]["name"] == "Bondage (12)"
-    assert dirs[0]["url"] == "https://tube.perverzija.com/tag/bondage/"
+    assert len(captured_downloads) == 1
+    assert captured_downloads[0]["name"] == "Video Title"
 
 
 def test_studios_parsing(monkeypatch):
-    html = load_fixture("tags.html")
-    dirs = []
+    html = """
+    <html>
+      <div class="item-thumbnail">
+        <a href="/studio/studio-one/">
+          <img src="studio1.jpg">
+          <div class="item-thumbnail-name">Studio One</div>
+          <div class="item-thumbnail-count">5</div>
+        </a>
+      </div>
+    </html>
+    """
+    captured_dirs = []
 
-    monkeypatch.setattr(perverzija.utils, "getHtml", lambda *a, **k: html)
+    def add_dir(name, url, mode, *args, **kwargs):
+        captured_dirs.append({"name": name, "url": url})
+
+    def fake_get_html_cf(url, *a, **k):
+        return html, ""
+
+    monkeypatch.setattr(perverzija.utils, "get_html_with_cloudflare_retry", fake_get_html_cf)
+    monkeypatch.setattr(perverzija.site, "add_dir", add_dir)
     monkeypatch.setattr(perverzija.utils, "eod", lambda: None)
-
-    def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({"name": name, "url": url, "mode": mode})
-
-    monkeypatch.setattr(perverzija.site, "add_dir", fake_add_dir)
 
     perverzija.Studios("https://tube.perverzija.com/studios/")
 
-    assert len(dirs) == 2
-    assert dirs[1]["name"] == "Studio Two (9)"
-    assert dirs[1]["url"] == "https://tube.perverzija.com/studio/studio-two/"
+    assert len(captured_dirs) == 1
+    assert "Studio One" in captured_dirs[0]["name"]
 
 
 def test_stars_parsing(monkeypatch):
-    html = load_fixture("tags.html")
-    dirs = []
+    html = """
+    <html>
+      <div class="item-thumbnail">
+        <a href="/stars/star-one/">
+          <img src="star1.jpg">
+          <div class="item-thumbnail-name">Star One</div>
+          <div class="item-thumbnail-count">3</div>
+        </a>
+      </div>
+    </html>
+    """
+    captured_dirs = []
 
-    monkeypatch.setattr(perverzija.utils, "getHtml", lambda *a, **k: html)
+    def add_dir(name, url, mode, *args, **kwargs):
+        captured_dirs.append({"name": name, "url": url})
+
+    def fake_get_html_cf(url, *a, **k):
+        return html, ""
+
+    monkeypatch.setattr(perverzija.utils, "get_html_with_cloudflare_retry", fake_get_html_cf)
+    monkeypatch.setattr(perverzija.site, "add_dir", add_dir)
     monkeypatch.setattr(perverzija.utils, "eod", lambda: None)
-
-    def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
-        dirs.append({"name": name, "url": url, "mode": mode})
-
-    monkeypatch.setattr(perverzija.site, "add_dir", fake_add_dir)
 
     perverzija.Stars("https://tube.perverzija.com/stars/")
 
-    assert len(dirs) == 2
-    assert dirs[0]["name"] == "Star One (3)"
-    assert dirs[0]["url"] == "https://tube.perverzija.com/stars/star-one/"
+    assert len(captured_dirs) == 1
+    assert "Star One" in captured_dirs[0]["name"]

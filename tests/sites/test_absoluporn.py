@@ -68,4 +68,5 @@ def test_cat_parses_categories(monkeypatch):
 
     assert len(dirs) == 2
     assert "Category One" in dirs[0]["name"]
-    assert dirs[0]["url"].endswith("/cat-1.html")
+    assert dirs[0]["url"].endswith("/wall-cat1/")
+

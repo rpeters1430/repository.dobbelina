@@ -11,7 +11,7 @@ def _normalized_site(site_name):
 
 
 def _collect_bs4_sites(root):
-    csv_path = root / "bs4_migration_audit.csv"
+    csv_path = root / "docs" / "status" / "bs4_migration_audit.csv"
     with csv_path.open(newline="") as handle:
         reader = csv.DictReader(handle)
         return [

@@ -46,7 +46,10 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url)
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url)
+    if not listhtml:
+        utils.eod()
+        return
     
     soup = utils.parse_html(listhtml)
 
@@ -118,7 +121,10 @@ def List(url):
 
 @site.register()
 def Cat(url):
-    listhtml = utils.getHtml(url)
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url)
+    if not listhtml:
+        utils.eod()
+        return
     
     soup = utils.parse_html(listhtml)
 
@@ -162,7 +168,10 @@ def Search(url, keyword=None):
 
 @site.register()
 def Play(url, name, download=None):
-    listhtml = utils.getHtml(url, url)
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url, url)
+    if not listhtml:
+        utils.notify("Oh oh", "No video found")
+        return
     
     soup = utils.parse_html(listhtml)
 

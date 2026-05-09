@@ -72,6 +72,10 @@ def List(url):
     filtersQ = {"All": "", "4k": "uhd", "1080p": "fhd", "720p": "hd"}
     filtersL = {"All": "", "10+min": 10, "20+min": 20, "40+min": 40}
 
+    # Safely get current filter values
+    curr_filterQ = filterQ if filterQ in filtersQ else "All"
+    curr_filterL = filterL if filterL in filtersL else "All"
+
     # Parse URL to preserve existing parameters
     parsed = urllib_parse.urlparse(url)
     params = urllib_parse.parse_qs(parsed.query)
@@ -86,12 +90,12 @@ def List(url):
         params["o"] = ["new"]
 
     # Apply quality filter to all non-search pages
-    if not is_search_page and "q" not in params and filtersQ[filterQ]:
-        params["q"] = [filtersQ[filterQ]]
+    if not is_search_page and "q" not in params and filtersQ[curr_filterQ]:
+        params["q"] = [filtersQ[curr_filterQ]]
 
     # Apply length filter to all non-search pages
-    if not is_search_page and "d" not in params and filtersL[filterL]:
-        params["d"] = [str(filtersL[filterL])]
+    if not is_search_page and "d" not in params and filtersL[curr_filterL]:
+        params["d"] = [str(filtersL[curr_filterL])]
 
     # Rebuild URL with parameters
     query_string = urllib_parse.urlencode(params, doseq=True)

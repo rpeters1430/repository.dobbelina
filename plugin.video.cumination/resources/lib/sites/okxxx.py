@@ -90,7 +90,7 @@ def Main():
         "[COLOR hotpink]Trending[/COLOR]", site.url + "trending/", "List", site.img_cat
     )
     site.add_dir(
-        "[COLOR hotpink]Newest[/COLOR]",
+        "[COLOR hotpink]Latest[/COLOR]",
         site.url,
         "List",
         site.img_cat,
@@ -103,13 +103,13 @@ def Main():
     )
     site.add_dir(
         "[COLOR hotpink]Most Viewed[/COLOR]",
-        site.url + "most-popular/",
+        site.url + "popular/",
         "List",
         site.img_cat,
     )
     site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]",
-        site.url + "categories/",
+        site.url + "tags/",
         "Categories",
         site.img_cat,
     )

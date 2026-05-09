@@ -104,7 +104,8 @@ def List(url, page=1):
         utils.eod()
         return
 
-    cards = soup.select("div.well.well-sm") if soup else []
+    # Find all video cards in the main grid (within col columns)
+    cards = soup.select('div[class*="col-"] .well.well-sm') if soup else []
     if not cards:
         # Fallback to regex parsing if the layout is not as expected.
         match = re.compile(

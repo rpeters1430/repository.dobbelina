@@ -60,7 +60,7 @@ try {
     Write-Host "================================================"
     Write-Host ""
 
-    $syncFile = Join-Path $repoRoot "UPSTREAM_SYNC.md"
+    $syncFile = Join-Path $repoRoot "docs/development/UPSTREAM_SYNC.md"
     if (Test-Path $syncFile) {
         Write-Host "Checking UPSTREAM_SYNC.md for already integrated commits..."
         Write-Host ""

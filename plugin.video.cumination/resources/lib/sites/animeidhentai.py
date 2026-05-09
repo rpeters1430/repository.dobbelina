@@ -40,7 +40,7 @@ def animeidhentai_main():
         site.img_cat,
     )
     site.add_dir(
-        "[COLOR hotpink]Genres[/COLOR]", site.url, "animeidhentai_genres", site.img_cat
+        "[COLOR hotpink]Genres[/COLOR]", site.url + "genres/", "animeidhentai_genres", site.img_cat
     )
     site.add_dir(
         "[COLOR hotpink]Trending[/COLOR]",
@@ -69,26 +69,26 @@ def animeidhentai_list(url):
         return
 
     for article in soup.select("article"):
-        link = article.select_one("a.link-co[href]") or article.select_one("a[href]")
+        link = article.select_one("a.lnk-blk[href]") or article.select_one("a[href]")
         if not link:
             continue
             
         # Try to find a better title than just the link text
-        title_tag = article.select_one(".title, h2, h3")
+        title_tag = article.select_one(".ttl, .title, h2, h3")
         if title_tag:
             title = utils.safe_get_text(title_tag, default="")
         else:
-            title = utils.safe_get_text(link, default="")
-            
-        # If title is still just "play now" or similar, try link title attribute
-        if title.lower() in ["play now", "play"]:
-            title = utils.safe_get_attr(link, "title", default=title)
+            title = utils.safe_get_attr(link, "aria-label") or utils.safe_get_attr(link, "title")
             
         if not title:
+            img_tag = article.select_one("img")
+            title = utils.safe_get_attr(img_tag, "alt")
+            
+        if not title or title.lower() in ["play now", "play", "watch now"]:
             continue
 
         thumbnail = utils.safe_get_attr(article.select_one("img"), "src", ["data-src"])
-        meta_block = article.find(attrs={"class": re.compile(r"\bmgr\b")})
+        meta_block = article.select_one(".meta") or article.find(attrs={"class": re.compile(r"\bmgr\b")})
         meta_text = utils.safe_get_text(meta_block, default="")
 
         quality = ""
@@ -159,11 +159,16 @@ def animeidhentai_genres(url):
 
     entries = []
     for article in soup.select("article"):
-        name = utils.cleantext(
-            utils.safe_get_text(article.select_one(".link-co"), default="")
-        )
+        # The genre name is usually in .ttl or img alt on the /genres/ page
+        title_tag = article.select_one(".ttl, .title, h2, h3")
+        name = utils.safe_get_text(title_tag, default="")
+        if not name:
+            img_tag = article.select_one("img")
+            name = utils.safe_get_attr(img_tag, "alt")
+            
         count = utils.safe_get_text(article.select_one(".fwb"), default="")
-        link = utils.safe_get_attr(article.select_one("a[href]"), "href", default="")
+        link_tag = article.select_one("a[href*='/genre/']")
+        link = utils.safe_get_attr(link_tag, "href", default="")
         thumb = utils.safe_get_attr(article.select_one("img"), "src", ["data-src"])
 
         if not name or not link:
@@ -171,6 +176,14 @@ def animeidhentai_genres(url):
 
         label = f"{name} [COLOR cyan]{count} Videos[/COLOR]" if count else name
         entries.append((label, link, thumb))
+
+    if not entries:
+        # Fallback to any genre links
+        for a in soup.select("a[href*='/genre/']"):
+            name = utils.cleantext(utils.safe_get_text(a))
+            link = utils.safe_get_attr(a, "href")
+            if name and link and name.lower() not in ["view more", "play now", "watch now"]:
+                entries.append((name, link, ""))
 
     for label, link, thumb in sorted(entries, key=lambda x: x[0].lower()):
         site.add_dir(label, link, "animeidhentai_list", thumb)

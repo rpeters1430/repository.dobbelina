@@ -31,7 +31,7 @@ def test_main_builds_menu_and_lists_latest(monkeypatch):
     assert any(d["mode"] == "Actors" and "Pornstars" in d["name"] for d in dirs)
     assert any(d["mode"] == "Actors" and "Channels" in d["name"] for d in dirs)
     assert any(d["mode"] == "Search" for d in dirs)
-    assert list_calls == ["https://fullporner.org/porn-channels/latest-videos/page/1/"]
+    assert list_calls == ["https://fullporner.org/porno-channel/latest-xxx-videos/"]
     assert eod_calls == [True]
 
 

@@ -23,7 +23,7 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "aagmaalpro",
     "[COLOR hotpink]Aag Maal Pro[/COLOR]",
-    "https://aagmaal.farm/",
+    "https://aagmaal.dog/",
     "aagmaalpro.png",
     "aagmaalpro",
     category="Specialty",
@@ -50,7 +50,7 @@ def List(url):
     listhtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(listhtml)
 
-    for item in soup.select("div.recent-item"):
+    for item in soup.select("div.recent-item, article"):
         thumb_div = item.select_one(".post-thumbnail")
         link = thumb_div.select_one("a[href]") if thumb_div else None
         if not link:
@@ -65,7 +65,7 @@ def List(url):
         img_tag = item.select_one("img")
         img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
 
-        title_tag = item.select_one("h3.post-box-title a") or item.select_one("h3 a")
+        title_tag = item.select_one("h3.post-box-title a") or item.select_one("h3 a") or item.select_one("h2.title a")
         name = utils.safe_get_text(title_tag) or utils.safe_get_attr(img_tag, "title", ["alt"])
         if not name:
             name = "Video"
@@ -101,12 +101,13 @@ def List2(url):
     listhtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(listhtml)
 
-    for item in soup.select("article"):
-        title_div = item.select_one('div.title, h2.title, div[class*="title"]')
+    for item in soup.select("article, div.recent-item"):
+        title_div = item.select_one('div.title, h2.title, h3.post-box-title, div[class*="title"]')
         if not title_div:
-            continue
-
-        link = title_div.select_one("a")
+            link = item.select_one("a[href]")
+        else:
+            link = title_div.select_one("a")
+            
         if not link:
             continue
 
@@ -154,23 +155,43 @@ def Playvid(url, name, download=None):
     videopage = utils.getHtml(url, site.url)
     soup = utils.parse_html(videopage)
 
-    # Find links with title, href, and target attributes
+    # Find hosted links in the content area
     links = {}
-    for a in soup.select("a[title][href][target]"):
-        link_url = utils.safe_get_attr(a, "href")
-        link_title = utils.safe_get_attr(a, "title")
-        if link_url and link_title and vp.resolveurl.HostedMediaFile(link_url):
-            links[link_title] = link_url
+    content = soup.select_one(".vp-video-post-content, .entry-content, #content")
+    if content:
+        for a in content.select("a[href]"):
+            link_url = utils.safe_get_attr(a, "href")
+            if link_url and vp.resolveurl.HostedMediaFile(link_url):
+                link_title = utils.safe_get_attr(a, "title") or utils.safe_get_text(a)
+                if not link_title or len(link_title) < 3:
+                    prev = a.find_previous(string=True)
+                    if prev:
+                        link_title = prev.strip().split("\n")[-1].strip()
+                
+                if not link_title:
+                    link_title = link_url.split("//")[-1].split("/")[0]
+                
+                links[link_title] = link_url
+
+    if not links:
+        # Fallback to any external links
+        for a in soup.select('a.external[href], a[class*="external"][href], a[href*="http"]'):
+            link_url = utils.safe_get_attr(a, "href")
+            if link_url and vp.resolveurl.HostedMediaFile(link_url):
+                links[link_url] = link_url
 
     if links:
         videourl = utils.selector("Select link", links)
 
     if not videourl:
-        r = re.search(r'<iframe\s*loading="lazy"\s*src="([^"]+)', videopage)
-        if not r:
-            r = re.search(r'<iframe.+?src="(http[^"]+)', videopage)
-        if r:
-            videourl = r.group(1)
+        for pattern in [
+            r'<iframe[^>]*\s+loading="lazy"\s+src="([^"]+)"',
+            r'<iframe[^>]*\s+src="(http[^"]+)"',
+        ]:
+            match = re.search(pattern, videopage, re.DOTALL | re.IGNORECASE)
+            if match:
+                videourl = match.group(1)
+                break
 
     if not videourl:
         utils.notify("Oh Oh", "No Videos found")

@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
+from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
@@ -121,11 +122,14 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download, regex='"([^"]+)"')
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videopage = utils.getHtml(url, site.url)
-    eurls = re.compile(r"""<iframe[^<]+?src='([^']+)""").findall(videopage)
+    eurls = re.compile(r"""<iframe[^<]+?src=['"]([^'"]+)['"]""").findall(videopage)
     sources = {}
     for eurl in eurls:
-        if vp.resolveurl.HostedMediaFile(eurl):
-            sources.update({eurl.split("/")[2]: eurl})
+        if eurl.startswith("//"):
+            eurl = "https:" + eurl
+        hoster = urllib_parse.urlparse(eurl).netloc
+        if hoster and vp.resolveurl.HostedMediaFile(eurl):
+            sources.update({hoster: eurl})
     videourl = utils.selector("Select Hoster", sources)
     vp.play_from_link_to_resolve(videourl)
 

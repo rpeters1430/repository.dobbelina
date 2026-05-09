@@ -75,9 +75,23 @@ def List(url):
     soup = utils.parse_html(listhtml)
 
     # Find all video links on listing cards.
-    video_links = soup.select(
+    # Video pages usually have a slug after the category, e.g. /censored/video-slug/
+    # Category pages are just /censored/, /uncensored/, etc.
+    all_links = soup.select(
         'a[href*="/censored/"], a[href*="/uncensored/"], a[href*="/amature/"], a[href*="/fc2ppv/"], a[href*="/vr/"]'
     )
+    
+    video_links = []
+    for link in all_links:
+        href = utils.safe_get_attr(link, "href")
+        if not href:
+            continue
+        
+        # Check if it looks like a video page (more than just the category part)
+        path = urllib_parse.urlparse(href).path.strip("/")
+        parts = path.split("/")
+        if len(parts) >= 2:
+            video_links.append(link)
 
     for link in video_links:
         videopage = utils.safe_get_attr(link, "href")
@@ -159,16 +173,47 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     videopage = utils.getHtml(url, site.url)
-    videopage += utils.get_packed_data(videopage)
+    
+    # Extract packed data
+    packed_data = utils.get_packed_data(videopage)
+    all_data = videopage + packed_data
+    
+    # Look for common embed patterns
+    # 1. Direct URLs in scripts or attributes
+    eurls = re.findall(r'https?://[^"\'\s>]+/(?:embed|e|v|f)/[a-zA-Z0-9]+', all_data)
+    
+    # 2. URLs in iframe src
+    iframes = re.findall(r'<iframe.+?src="([^"]+)"', all_data)
+    eurls.extend(iframes)
 
-    eurls = re.compile(r'id="embed"\s*src="([^"]+)').findall(videopage)
     sources = {}
     for eurl in eurls:
+        if eurl.startswith("//"):
+            eurl = "https:" + eurl
+        
+        # Basic cleanup
+        eurl = eurl.split('"')[0].split("'")[0]
+        
+        parsed = urllib_parse.urlparse(eurl)
+        hoster = parsed.netloc
+        if not hoster:
+            continue
+            
         if vp.resolveurl.HostedMediaFile(eurl):
-            sources.update({eurl.split("/")[2]: eurl})
-    videourl = utils.selector("Select Hoster", sources)
+            # Use hoster as label, or part of the URL if hoster is repeated
+            label = hoster
+            if label in sources and sources[label] != eurl:
+                label = "{0} ({1})".format(hoster, parsed.path.split('/')[1])
+            sources[label] = eurl
 
-    vp.play_from_link_to_resolve(videourl)
+    if sources:
+        videourl = utils.selector("Select Hoster", sources)
+        if videourl:
+            vp.play_from_link_to_resolve(videourl)
+            return
+
+    vp.progress.close()
+    utils.notify("Oh Oh", "No playable Videos found")
 
 
 def hpjav_decode(a1):

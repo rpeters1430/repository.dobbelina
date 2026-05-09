@@ -43,7 +43,11 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url)
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url)
+    if not listhtml:
+        utils.eod()
+        return
+    
     soup = utils.parse_html(listhtml)
     for item in soup.select(".video-block, [data-post-id], article, .video-item, .item"):
         link = item.select_one("a.infos[href], a[href][title], a[href]")
@@ -115,7 +119,10 @@ def List(url):
 
 @site.register()
 def Cat(url):
-    cathtml = utils.getHtml(url)
+    cathtml, _ = utils.get_html_with_cloudflare_retry(url)
+    if not cathtml:
+        utils.eod()
+        return
     soup = utils.parse_html(cathtml)
     matches = []
     for link in soup.select("a.btn.btn-grey[href]"):
@@ -154,7 +161,9 @@ def ContextRelated(url):
 @site.register()
 def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download)
-    videohtml = utils.getHtml(url)
+    videohtml, _ = utils.get_html_with_cloudflare_retry(url)
+    if not videohtml:
+        return
     soup = utils.parse_html(videohtml)
     
     # Try to find embed URL (myvidplay or others)

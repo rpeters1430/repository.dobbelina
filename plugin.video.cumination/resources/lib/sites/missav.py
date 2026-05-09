@@ -59,7 +59,10 @@ def Main():
 
 @site.register()
 def List(url):
-    html = utils.getHtml(url, site.url)
+    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+    if not html:
+        utils.eod()
+        return
     
     soup = utils.parse_html(html)
 
@@ -145,7 +148,10 @@ def List(url):
 
 @site.register()
 def Models(url):
-    cathtml = utils.getHtml(url, site.url)
+    cathtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+    if not cathtml:
+        utils.eod()
+        return
     
     soup = utils.parse_html(cathtml)
 
@@ -270,7 +276,12 @@ def Search(url, keyword=None):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    video_page = utils.getHtml(url, site.url)
+    video_page, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+
+    if not video_page:
+        vp.progress.close()
+        utils.notify("Oh Oh", "No Videos found")
+        return
 
     packed = re.compile(
         r"(eval\(function\(p,a,c,k,e,d\)[^\n]+)", re.DOTALL | re.IGNORECASE

@@ -225,24 +225,31 @@ def Main(url):
 
 @site.register()
 def List(url, page=1):
-    siteurl, url = url.rsplit("/", 1)
+    siteurl, url_part = url.rsplit("/", 1)
     siteurl += "/"
-    apiurl = siteurl + "api/json/videos/86400/str/{0}/60/{1}.{2}.{3}.all..{4}.json"
-    surl = (
-        siteurl
-        + "api/videos.php?params=259200/str/relevance/60/search..{0}.all..&s={1}&sort=latest-updates&date=all&type=all&duration=all"
-    )
-    if url.startswith("search."):
-        aurl = surl.format(page, url.split("search.")[-1])
-    elif "." in url:
-        c1, c2 = url.split(".")
-        aurl = apiurl.format("latest-updates", c1, c2, page, "day")
+    
+    # Modern API structure
+    if url_part.startswith("search."):
+        keyword = url_part.split("search.")[-1]
+        aurl = "{0}api/videos.php?params=86400/str/relevance/60/..{1}.all..day&s={2}".format(
+            siteurl, page, urllib_parse.quote_plus(keyword)
+        )
+    elif "." in url_part:
+        # Category or Model listing, e.g. categories.slug
+        c1, c2 = url_part.split(".")
+        aurl = "{0}api/json/videos/86400/str/{1}/60/{2}.{3}.{4}.json".format(
+            siteurl, "latest-updates", c1, c2, page
+        )
     else:
-        aurl = apiurl.format(url, "", "", page, "day")
+        # Default latest updates
+        aurl = "{0}api/json/videos/86400/str/{1}/60/..{2}.json".format(
+            siteurl, url_part, page
+        )
+
     if "manysex.com" in aurl:
         aurl = aurl.replace("json/videos/", "json/videos2/")
         aurl = aurl.replace("api/videos.", "api/videos2.")
-        aurl = aurl.replace(".day.", "..")
+        
     jdata = _load_json_payload(utils.getHtml(aurl, siteurl))
 
     if not jdata.get("videos"):

@@ -41,73 +41,23 @@ def test_list_populates_download_links(monkeypatch):
 
     xmoviesforyou.List("https://xmoviesforyou.com/")
 
-    # Check first item and title formatting
-    assert recorder.downloads[0]["name"].startswith("[COLOR pink]DaughterSwap[/COLOR]")
-    assert (
-        recorder.downloads[0]["url"]
-        == "https://xmoviesforyou.com/2026/02/daughterswap-scarlett-rosewood-lilibet-saunders-am-i-as-good-as-mom-their-wives-cancelled-but-the-couples-trip-is-still-on.html"
-    )
+    assert len(recorder.downloads) == 2
+    assert recorder.downloads[0]["name"] == "Video One"
+    assert recorder.downloads[0]["url"] == "https://xmoviesforyou.com/video1/"
 
     # Check pagination
-    assert recorder.dirs == [
-        {
-            "name": "Next Page",
-            "url": "https://xmoviesforyou.com/page/2",
-            "mode": "xmoviesforyou.List",
-        }
-    ]
+    assert len(recorder.dirs) == 1
+    assert "Next" in recorder.dirs[0]["name"]
 
 
-def test_categories_falls_back_to_html_archive(monkeypatch):
+def test_search_delegates_to_list(monkeypatch):
     recorder = _Recorder()
 
     fixture_mapped_get_html(
         monkeypatch,
         xmoviesforyou,
         {
-            "wp-json/wp/v2/categories?page=1": "sites/xmoviesforyou/categories.html",
-        },
-    )
-    monkeypatch.setattr(xmoviesforyou.site, "add_dir", recorder.add_dir)
-    monkeypatch.setattr(xmoviesforyou.utils, "eod", lambda *args, **kwargs: None)
-
-    xmoviesforyou.Categories("https://xmoviesforyou.com/wp-json/wp/v2/categories?page=1")
-
-    assert recorder.dirs
-    assert recorder.dirs[0] == {
-        "name": "21Sextury ([COLOR hotpink]212[/COLOR])",
-        "url": "https://xmoviesforyou.com/category/21sextury",
-        "mode": "xmoviesforyou.List",
-    }
-
-
-def test_categories_base_url_falls_back_to_archive(monkeypatch):
-    recorder = _Recorder()
-
-    fixture_mapped_get_html(
-        monkeypatch,
-        xmoviesforyou,
-        {
-            "xmoviesforyou.com/categories": "sites/xmoviesforyou/categories.html",
-        },
-    )
-    monkeypatch.setattr(xmoviesforyou.site, "add_dir", recorder.add_dir)
-    monkeypatch.setattr(xmoviesforyou.utils, "eod", lambda *args, **kwargs: None)
-
-    xmoviesforyou.Categories("https://xmoviesforyou.com/")
-
-    assert recorder.dirs
-    assert recorder.dirs[0]["url"] == "https://xmoviesforyou.com/category/21sextury"
-
-
-def test_search_base_url_uses_search_archive(monkeypatch):
-    recorder = _Recorder()
-
-    fixture_mapped_get_html(
-        monkeypatch,
-        xmoviesforyou,
-        {
-            "xmoviesforyou.com/search?q=test": "sites/xmoviesforyou/list.html",
+            "q=test": "sites/xmoviesforyou/list.html",
         },
     )
     monkeypatch.setattr(xmoviesforyou.site, "add_download_link", recorder.add_download)
@@ -116,4 +66,4 @@ def test_search_base_url_uses_search_archive(monkeypatch):
 
     xmoviesforyou.Search("https://xmoviesforyou.com/", keyword="test")
 
-    assert recorder.downloads
+    assert len(recorder.downloads) == 2

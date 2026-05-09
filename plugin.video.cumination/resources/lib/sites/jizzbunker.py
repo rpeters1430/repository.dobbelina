@@ -36,18 +36,17 @@ site = AdultSite(
 
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
-        "items": "figure",
-        "url": {"selector": "figcaption a", "attr": "href"},
-        "title": {"selector": "figcaption a", "text": True, "clean": True},
+        "items": "a.video-card",
+        "url": {"attr": "href"},
+        "title": {"selector": ".video-card__title", "text": True, "clean": True},
         "thumbnail": {
-            "selector": "a.img img",
-            "attr": "data-original",
-            "fallback_attrs": ["src"],
+            "selector": ".video-card__thumb img",
+            "attr": "src",
         },
-        "duration": {"selector": "li.dur time", "text": True},
+        "duration": {"selector": ".video-card__duration", "text": True},
         "pagination": {
             "selector": ".pagination a",
-            "text_matches": ["next", "→"],
+            "text_matches": ["next", "→", ">"],
             "attr": "href",
             "mode": "List",
         },
@@ -64,26 +63,26 @@ def Main():
         site.img_cat,
     )
     site.add_dir(
-        "[COLOR hotpink]Newest[/COLOR]",
-        site.url + "straight/latest",
+        "[COLOR hotpink]Popular[/COLOR]",
+        site.url + "straight/popular1",
         "List",
         site.img_cat,
     )
     site.add_dir(
-        "[COLOR hotpink]Top Rated[/COLOR]",
-        site.url + "straight/top-rated",
+        "[COLOR hotpink]Newest[/COLOR]",
+        site.url + "newest",
         "List",
         site.img_cat,
     )
     site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]",
-        site.url + "straight/categories",
+        site.url + "channels",
         "Categories",
         site.img_cat,
     )
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]",
-        site.url + "searching/",
+        site.url + "search?query=",
         "Search",
         site.img_search,
     )
@@ -108,10 +107,7 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        # Jizzbunker uses /searching/?queryString=%QUERY%
-        search_url = (
-            site.url + "searching/?queryString=" + urllib_parse.quote_plus(keyword)
-        )
+        search_url = site.url + "search?query=" + urllib_parse.quote_plus(keyword)
         List(search_url)
 
 
@@ -123,27 +119,23 @@ def Categories(url):
         return
 
     soup = utils.parse_html(html)
-    cat_items = soup.select(".category-item, a[href*='/category/']")
+    # Categories are in a grid of links
+    cat_items = soup.select("a.category-card, a[href*='/category/']")
 
     entries = []
     for anchor in cat_items:
-        if anchor.name != "a":
-            anchor = anchor.select_one("a")
-        if not anchor:
-            continue
-
         href = utils.safe_get_attr(anchor, "href")
         if not href:
             continue
 
-        name = utils.safe_get_text(anchor)
+        name = utils.safe_get_text(anchor.select_one(".category-card__title")) or utils.safe_get_text(anchor)
         if not name:
             name = utils.safe_get_attr(anchor, "title")
         if not name:
             continue
 
         img_tag = anchor.select_one("img")
-        img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
+        img = utils.safe_get_attr(img_tag, "src")
 
         entries.append((name, urllib_parse.urljoin(site.url, href), img))
 
@@ -162,15 +154,16 @@ def Playvid(url, name, download=None):
         return
 
     # Check for direct MP4 links or quality sources in script
-    match = re.search(r"video_url:\s*[\"']([^\"']+)[\"']", html)
+    # Look for video_url or similar in scripts
+    match = re.search(r"video_url\s*[:=]\s*[\"']([^\"']+)[\"']", html)
     if match:
-        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        vp.play_from_direct_link(match.group(1).replace("\\/", "/") + "|Referer=" + url)
         return
 
     # Look for HLS sources
-    match = re.search(r"video_url_hls:\s*[\"']([^\"']+)[\"']", html)
+    match = re.search(r"video_url_hls\s*[:=]\s*[\"']([^\"']+)[\"']", html)
     if match:
-        vp.play_from_direct_link(match.group(1) + "|Referer=" + url)
+        vp.play_from_direct_link(match.group(1).replace("\\/", "/") + "|Referer=" + url)
         return
 
     vp.play_from_link_to_resolve(url)

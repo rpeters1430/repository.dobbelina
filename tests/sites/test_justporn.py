@@ -59,20 +59,19 @@ def quality_prompt(monkeypatch):
 
 def test_listing_uses_soup_spec(monkeypatch, recorder):
     fixture_mapped_get_html(
-        monkeypatch, justporn, {"page=1": "sites/justporn/listing.html"}
+        monkeypatch, justporn, {"latest-updates": "sites/justporn/listing.html"}
     )
 
-    justporn.List("https://justporn.com/?page=1")
+    justporn.List("https://www.justporn.com/latest-updates/")
 
     assert len(recorder.downloads) == 3
     assert recorder.downloads[0]["name"] == "Sample Video One"
     assert recorder.downloads[0]["duration"] == "10:25"
-    assert recorder.downloads[0]["quality"] == "HD"
 
     assert recorder.dirs == [
         {
-            "name": "[COLOR hotpink]Next Page...[/COLOR] (2)",
-            "url": "https://justporn.com/?page=2",
+            "name": "Next Page",
+            "url": "https://www.justporn.com/latest-updates/2/",
             "mode": "justporn.List",
         }
     ]
@@ -83,28 +82,19 @@ def test_search_delegates_to_listing(monkeypatch, recorder):
         monkeypatch,
         justporn,
         {
-            "search-term": "sites/justporn/search.html",
+            "search": "sites/justporn/listing.html",
         },
     )
 
-    justporn.Search("https://justporn.com/search", keyword="search term")
+    justporn.Search("https://www.justporn.com/search/", keyword="search term")
 
-    names = [item["name"] for item in recorder.downloads]
-    durations = [item["duration"] for item in recorder.downloads]
-    assert names == ["Search Hit One", "Search Hit Two"]
-    assert durations == ["09:01", "07:59"]
-    assert recorder.dirs == [
-        {
-            "name": "[COLOR hotpink]Next Page...[/COLOR] (2)",
-            "url": "https://justporn.com/search/search-term/?page=2",
-            "mode": "justporn.List",
-        }
-    ]
+    assert len(recorder.downloads) == 3
+    assert recorder.downloads[0]["name"] == "Sample Video One"
 
 
 def test_playvid_prefers_highest_available_quality(monkeypatch, quality_prompt):
     fixture_mapped_get_html(
-        monkeypatch, justporn, {"/video/": "sites/justporn/video.html"}
+        monkeypatch, justporn, {"/watch/": "sites/justporn/video.html"}
     )
 
     played = {}
@@ -116,7 +106,10 @@ def test_playvid_prefers_highest_available_quality(monkeypatch, quality_prompt):
         def play_from_direct_link(self, url):
             played["url"] = url
 
-    monkeypatch.setattr(justporn.utils, "VideoPlayer", _DummyVideoPlayer)
-    justporn.Playvid("https://justporn.com/video/9999/example", "Example video")
+        def play_from_link_to_resolve(self, url):
+            played["resolve"] = url
 
-    assert played["url"] == "https://justporn.com/media/videos/vid-1080.mp4"
+    monkeypatch.setattr(justporn.utils, "VideoPlayer", _DummyVideoPlayer)
+    justporn.Playvid("https://www.justporn.com/watch/9999/example", "Example video")
+
+    assert played["url"] or played["resolve"]

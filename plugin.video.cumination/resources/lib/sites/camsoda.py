@@ -122,7 +122,7 @@ def Main():
 def List(url, page):
     if utils.addon.getSetting("chaturbate") == "true":
         clean_database(False)
-    response = utils._getHtml(url + "&p={}".format(page))
+    response, _ = utils.get_html_with_cloudflare_retry(url + "&p={}".format(page))
     jd = json.loads(response)
     camgirls = jd.get("userList")
     for camgirl in camgirls:
@@ -188,9 +188,10 @@ def clean_database(showdialog=True):
 def Playvid(url, name):
     if "m3u8" not in url:
         url = url + "?username=guest_" + str(random.randrange(100, 55555))
-        response = json.loads(utils._getHtml(url))
+        response_data, _ = utils.get_html_with_cloudflare_retry(url)
+        response = json.loads(response_data)
         data = response.get("stream")
-        if len(data.get("edge_servers", [])) > 0:
+        if data and len(data.get("edge_servers", [])) > 0:
             videourl = (
                 "https://"
                 + random.choice(data["edge_servers"])

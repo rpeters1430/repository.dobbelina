@@ -201,7 +201,7 @@ def List(url, page=1):
     if not isinstance(page, int):
         page = 1
 
-    listhtml = utils._getHtml(url)
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url)
     listhtml = json.loads(listhtml)
     models = listhtml.get("rooms")
     for model in models:
@@ -331,7 +331,7 @@ def List(url, page=1):
 def SList(url):
     hdr = utils.base_hdrs.copy()
     hdr.update({"X-Requested-With": "XMLHttpRequest"})
-    listhtml = utils._getHtml(url, site.url, headers=hdr)
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url, site.url, headers=hdr)
     jlist = json.loads(listhtml)
     for model in jlist.get("online", []):
         img = "https://thumb.live.mmcdn.com/riw/{}.jpg".format(model)
@@ -1173,7 +1173,7 @@ def Search(url, keyword=None):
 def topCams(url):
     if addon.getSetting("chaturbate") == "true":
         clean_database(False)
-    response = utils._getHtml(url)
+    response, _ = utils.get_html_with_cloudflare_retry(url)
     jsonTop = json.loads(response)["top"]
     for iTop in jsonTop:
         subject = (
@@ -1200,7 +1200,7 @@ def topCams(url):
 @site.register()
 def Tags(url, page=1):
     cat = re.search(r"&g=([^&]*)", url).group(1)
-    html = utils.getHtml(url, site.url)
+    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     jdata = json.loads(html)
     total = jdata["total"]
     for tag in jdata["hashtags"]:
@@ -1245,7 +1245,7 @@ def onlineFav(url):
         "https://chaturbate.com/affiliates/api/onlinerooms/?format=json&wm="
         + random.choice(wmArray)
     )
-    data_chat = utils._getHtml(chaturbate_url, "")
+    data_chat, _ = utils.get_html_with_cloudflare_retry(chaturbate_url, "")
     model_list = json.loads(data_chat)
     model_lookup = {item["username"]: item for item in model_list}
     conn = sqlite3.connect(utils.favoritesdb)
@@ -1331,7 +1331,7 @@ def login():
     url = "https://chaturbate.com/followed-cams/"
     loginurl = "https://chaturbate.com/auth/login/?next=/followed-cams/"
 
-    loginhtml = utils._getHtml(url, site.url)
+    loginhtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     if "<h1>Chaturbate Login</h1>" not in loginhtml:
         return
 
@@ -1366,10 +1366,10 @@ def login():
 @site.register()
 def Unfollow(id):
     url = "https://chaturbate.com/follow/unfollow/{}/".format(id)
-    html = utils._getHtml(url, site.url)
+    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     if "<h1>Chaturbate Login</h1>" in html:
         login()
-        html = utils._getHtml(url, site.url)
+        html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     soup = utils.parse_html(html)
     token_input = soup.find("input", attrs={"name": "csrfmiddlewaretoken"})
     if not token_input:
@@ -1389,10 +1389,10 @@ def Unfollow(id):
 @site.register()
 def Follow(id):
     url = "https://chaturbate.com/follow/follow/{}/".format(id)
-    html = utils._getHtml(url, site.url)
+    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     if "<h1>Chaturbate Login</h1>" in html:
         login()
-        html = utils._getHtml(url, site.url)
+        html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     soup = utils.parse_html(html)
     token_input = soup.find("input", attrs={"name": "csrfmiddlewaretoken"})
     if not token_input:

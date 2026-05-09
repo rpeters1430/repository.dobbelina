@@ -25,7 +25,7 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "sexyporn",
     "[COLOR hotpink]SexyPorn[/COLOR]",
-    "https://www.sexyporn.xxx/",
+    "https://www.sexyporn.tv/",
     "sexyporn.png",
     "sexyporn",
     category="Video Tubes",
@@ -35,14 +35,32 @@ site = AdultSite(
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
-        "[COLOR hotpink]Categories[/COLOR]",
-        urllib_parse.urljoin(site.url, "categories"),
+        "[COLOR hotpink]Popular[/COLOR]",
+        site.url + "best/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Newest[/COLOR]",
+        site.url + "recent/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Pornstars[/COLOR]",
+        site.url + "actors/",
+        "Categories",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Genres[/COLOR]",
+        site.url + "tags/",
         "Categories",
         site.img_cat,
     )
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]",
-        urllib_parse.urljoin(site.url, "search"),
+        site.url + "search/",
         "Search",
         site.img_search,
     )
@@ -58,39 +76,47 @@ def List(url):
         utils.eod()
         return
 
-    for item in soup.select(".video-item"):
-        link = item.select_one("a.video-link[href]") or item.select_one("a[href]")
+    # Video items are in div elements with data-liz attribute (obfuscated class names)
+    items = soup.select("div[data-liz]")
+
+    for item in items:
+        link = item.select_one("a[href]")
         if not link:
             continue
 
-        videourl = urllib_parse.urljoin(
+        videopage = urllib_parse.urljoin(
             site.url, utils.safe_get_attr(link, "href", default="")
         )
-        name = utils.cleantext(
-            utils.safe_get_attr(
-                link, "title", default=utils.safe_get_text(link, default="")
-            )
-        )
-        if not videourl or not name:
+        
+        # Extract name from slug or title attribute
+        name = utils.safe_get_attr(link, "title")
+        if not name:
+            slug = videopage.rstrip("/").split("/")[-1]
+            # remove leading ID part if present (e.g. 88813172-)
+            name = re.sub(r"^\d+-", "", slug).replace("-", " ").title()
+            
+        if not videopage or not name:
             continue
 
-        thumb = utils.get_thumbnail(item.select_one("img"))
-        duration = utils.safe_get_text(item.select_one(".duration"), default="")
-        quality = "HD" if item.find(string=re.compile(r"\bHD\b", re.IGNORECASE)) else ""
+        img_tag = item.select_one("img")
+        thumb = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        if thumb and not thumb.startswith("http"):
+            thumb = urllib_parse.urljoin(site.url, thumb)
+            
+        duration = utils.safe_get_text(item.select_one(".jenifer"), default="")
 
         site.add_download_link(
-            name, videourl, "Playvid", thumb, name, duration=duration, quality=quality
+            name, videopage, "Playvid", thumb, name, duration=duration
         )
 
-    pagination = soup.select_one('a[rel="next"]') or soup.select_one("a.next[href]")
+    pagination = soup.select_one("#paginator")
     if pagination:
-        next_url = urllib_parse.urljoin(
-            url, utils.safe_get_attr(pagination, "href", default="")
-        )
-        page_match = re.search(r"(\d+)(?!.*\d)", next_url)
-        page_num = page_match.group(1) if page_match else ""
-        label = f"Next Page ({page_num})" if page_num else "Next Page"
-        site.add_dir(label, next_url, "List", site.img_next)
+        next_link = pagination.select_one("li.next.page a")
+        if next_link:
+            next_url = urllib_parse.urljoin(
+                url, utils.safe_get_attr(next_link, "href", default="")
+            )
+            site.add_dir("Next Page", next_url, "List", site.img_next)
     utils.eod()
 
 
@@ -102,14 +128,28 @@ def Categories(url):
         utils.eod()
         return
 
-    for link in soup.select(".category-list a[href], a.category[href]"):
+    # Look for category containers
+    for container in soup.select(".maryanne, .category-list-container li"):
+        link = container if container.name == "a" else container.select_one("a[href]")
+        if not link:
+            continue
+            
         caturl = urllib_parse.urljoin(
             site.url, utils.safe_get_attr(link, "href", default="")
         )
-        name = utils.cleantext(utils.safe_get_text(link, default=""))
+        
+        name_tag = container.select_one(".becky") or link
+        name = utils.cleantext(utils.safe_get_text(name_tag, default=""))
+        
         if not caturl or not name:
             continue
-        site.add_dir(name, caturl, "List", "")
+            
+        img_tag = container.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+        if img and not img.startswith("http"):
+            img = urllib_parse.urljoin(site.url, img)
+            
+        site.add_dir(name, caturl, "List", img)
     utils.eod()
 
 
@@ -118,8 +158,11 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
+        # Site uses POST for search but we can try GET if supported, 
+        # otherwise we'd need to update AdultSite to support POST in search
         query = keyword.replace(" ", "+")
-        search_url = urllib_parse.urljoin(site.url, f"search/?s={query}")
+        # Most WP sites support /?s=query
+        search_url = urllib_parse.urljoin(site.url, f"?s={query}")
         List(search_url)
 
 
@@ -142,13 +185,15 @@ def Playvid(url, name, download=None):
         if iframe:
             iframe_url = utils.safe_get_attr(iframe, "src", default="")
             if iframe_url:
+                if iframe_url.startswith("//"):
+                    iframe_url = "https:" + iframe_url
                 vp.play_from_link_to_resolve(iframe_url)
                 return
 
-    # Fallback to regex if soup parsing fails
-    match = re.search(r'source src="([^"]+)"', videohtml)
+    # Fallback to regex for direct sources in script
+    match = re.search(r'["\']?file["\']?\s*[:=]\s*["\']([^"\']+\.mp4[^"\']*)["\']', videohtml)
     if match:
         vp.play_from_direct_link(match.group(1) + "|referer=" + site.url)
         return
 
-    utils.notify("Oh oh", "Couldn't find a playable link")
+    vp.play_from_link_to_resolve(url)

@@ -91,7 +91,8 @@ def test_list_handles_pagination(monkeypatch):
     # Verify pagination was added
     next_pages = [d for d in dirs if "Next Page" in d["name"]]
     assert len(next_pages) == 1
-    assert next_pages[0]["url"] == "/page/2"
+    assert next_pages[0]["url"] == "/page/2/"
+
     assert next_pages[0]["mode"] == "List"
     # Should have goto page context menu
     assert next_pages[0]["contextm"] is not None

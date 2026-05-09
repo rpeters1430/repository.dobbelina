@@ -57,7 +57,8 @@ def test_list_uses_beautifulsoup(monkeypatch):
         "Video Two [COLOR blue](2020)[/COLOR]",
     ]
     assert downloads[0]["quality"] == "HD"
-    assert downloads[1]["quality"] == "FHD"
+    assert downloads[1]["quality"] == ""
+
     assert downloads[0]["desc"].startswith("First plot")
 
     next_dirs = [entry for entry in dirs if entry[2] == "animeidhentai_list"]

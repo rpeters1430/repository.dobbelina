@@ -35,7 +35,7 @@ def _title_with_episode(title, item):
 site = AdultSite(
     "hentaidude",
     "[COLOR hotpink]Hentai Dude[/COLOR]",
-    "https://hentaidude.com/",
+    "https://hentaidude.xxx/",
     "hentaidude.png",
     "hentaidude",
     category="Hentai & Anime",

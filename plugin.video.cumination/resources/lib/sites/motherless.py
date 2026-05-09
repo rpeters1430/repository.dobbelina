@@ -58,28 +58,7 @@ def Main():
 
 @site.register()
 def List(url):
-    headers = {"User-Agent": utils.USER_AGENT, "Referer": site.url}
-    listhtml = ""
-    candidate_urls = [
-        url,
-        url.replace("://motherless.com/", "://www.motherless.com/"),
-        site.url + "videos/recent",
-        "https://www.motherless.com/videos/recent",
-    ]
-    tried = set()
-    for candidate in candidate_urls:
-        if not candidate or candidate in tried:
-            continue
-        tried.add(candidate)
-        try:
-            listhtml = utils.getHtml(candidate, site.url, headers=headers)
-        except Exception as e:
-            utils.kodilog("Motherless: list fetch failed for {}: {}".format(candidate, e))
-            headers["User-Agent"] = utils.random_ua.get_ua()
-            listhtml = ""
-        if listhtml:
-            break
-
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     if not listhtml:
         utils.eod()
         return
@@ -184,7 +163,7 @@ def Search(url, keyword=None):
 
 @site.register()
 def Categories(url):
-    cathtml = utils.getHtml(url, site.url)
+    cathtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
 
     if not cathtml:
         utils.eod()
@@ -238,7 +217,7 @@ def Categories(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
-    html = utils.getHtml(url, site.url)
+    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     if not html:
         vp.play_from_link_to_resolve(url)
         return

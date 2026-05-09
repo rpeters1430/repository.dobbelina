@@ -84,19 +84,22 @@ def test_cat_parses_categories(monkeypatch):
     """Test that Cat function parses category listings."""
     html = """
     <html>
-    <li class="item">
-        <a href="/categories/amateur">
-            <span>Amateur</span>
-            <b>1234 videos</b>
-        </a>
-    </li>
-    <li class="item">
-        <a href="/categories/milf">
-            <span>MILF</span>
-            <b>5678 videos</b>
-        </a>
-    </li>
+    <ul class="popular_list_ct">
+        <li class="item">
+            <a href="/categories/amateur">
+                <span>Amateur</span>
+                <b>1234 videos</b>
+            </a>
+        </li>
+        <li class="item">
+            <a href="/categories/milf">
+                <span>MILF</span>
+                <b>5678 videos</b>
+            </a>
+        </li>
+    </ul>
     </html>
+
     """
 
     dirs = []

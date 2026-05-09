@@ -146,21 +146,41 @@ def List2(url, section):
         site.add_dir("Videos", url, "List2", "", section="vids")
     else:
         listhtml = utils.getHtml(url, site.url)
-        items = listhtml.split('<div class="media-group')
-        if len(items) > 1:
-            items.pop(0)
-            itemcount = 0
-            for item in items:
-                item = item.split('class="clearfix"')[0]
-                if 'class="video"' in item and section == "vids":
+        soup = utils.parse_html(listhtml)
+        
+        media_groups = soup.select(".media-group")
+        itemcount = 0
+        for group in media_groups:
+            # Check for videos in this group
+            video_elems = group.select(".video")
+            if section == "vids":
+                for video in video_elems:
                     itemcount += 1
-                    img, surl, hd, duration = re.findall(
-                        r"""poster="([^"]+).+?source\s*src="([^"]+).+?label='([^']+).+?class="duration"\s*>([^<]+)""",
-                        item,
-                        re.DOTALL,
-                    )[0]
-                    img += "|Referer={0}".format(site.url)
-                    surl += "|Referer={0}".format(site.url)
+                    video_tag = video.select_one("video")
+                    if not video_tag:
+                        continue
+                    
+                    img = utils.safe_get_attr(video_tag, "poster")
+                    if img and img.startswith("//"):
+                        img = "https:" + img
+                    elif img and not img.startswith("http"):
+                        img = site.url[:-1] + img
+                    if img:
+                        img += "|Referer={0}".format(site.url)
+                    
+                    source_tag = video_tag.select_one("source")
+                    surl = utils.safe_get_attr(source_tag, "src")
+                    if surl and surl.startswith("//"):
+                        surl = "https:" + surl
+                    elif surl and not surl.startswith("http"):
+                        surl = site.url[:-1] + surl
+                    if surl:
+                        surl += "|Referer={0}".format(site.url)
+                    
+                    hd = utils.safe_get_attr(source_tag, "label")
+                    duration_tag = video.select_one(".duration")
+                    duration = utils.safe_get_text(duration_tag)
+                    
                     site.add_download_link(
                         "Video {0}".format(itemcount),
                         surl,
@@ -169,15 +189,18 @@ def List2(url, section):
                         duration=duration,
                         quality=hd,
                     )
-                elif 'class="video"' not in item and section == "pics":
-                    img = re.search(
-                        r'class="img-front(?:\s*lasyload)?"\s*(?:data-)?src="([^"]+)',
-                        item,
-                        re.DOTALL,
-                    )
+            elif section == "pics":
+                # Find all images that are NOT part of a video poster
+                images = group.select('img[class*="img-front"]')
+                for image in images:
+                    itemcount += 1
+                    img = utils.safe_get_attr(image, "data-src", ["src"])
+                    if img and img.startswith("//"):
+                        img = "https:" + img
+                    elif img and not img.startswith("http"):
+                        img = site.url[:-1] + img
                     if img:
-                        itemcount += 1
-                        img = img.group(1) + "|Referer={0}".format(site.url)
+                        img += "|Referer={0}".format(site.url)
                         site.add_img_link("Photo {0}".format(itemcount), img, "Showpic")
 
     utils.eod()
