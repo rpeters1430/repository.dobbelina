@@ -2,14 +2,16 @@
 
 - Sites: `171`
 - Tier1 hot: `0`
-- Failing: `3`
-- Warn: `0`
+- Failing: `4`
+- Warn: `1`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
 | jizzbunker | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| motherless | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| porngo | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
+| pornhd3x | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -92,6 +94,7 @@
 | lemoncams | backlog | PASS | 2 | cam |  | Y |  | Y |  |
 | livecamrips | backlog | PASS | 2 | cam |  | Y |  | Y | Y |
 | longvideos | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
+| motherless | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | mrsexe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | myfreecams | backlog | PASS | 2 | cam |  | Y |  |  |  |
 | naked | backlog | PASS | 2 | cam |  |  |  |  |  |
@@ -117,11 +120,8 @@
 | pornditt | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porndoe | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | pornez | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| porngo | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhat | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| pornhd3x | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhits | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| pornhoarder | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | pornmz | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porno1hu | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porno365 | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -183,7 +183,9 @@
 
 - **jizzbunker** (failing, tier=2) | failures: list:FAIL
 - **josporn** (failing, tier=None) | failures: list:FAIL
-- **motherless** (failing, tier=None)
+- **porngo** (failing, tier=None) | failures: list:FAIL
+- **pornhoarder** (failing, tier=2) | failures: list:FAIL
+- **pornhd3x** (warn, tier=None) | failures: search:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
@@ -199,5 +201,3 @@
 - **stripchat** (tier1, tier=1)
 - **xnxx** (tier1, tier=1)
 - **xvideos** (tier1, tier=1)
-- **youporn** (tier1, tier=1)
-- **yourlesbians** (tier1, tier=1)
