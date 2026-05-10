@@ -86,6 +86,8 @@ def List(url):
         name = utils.cleantext(name)
         if not name:
             continue
+        if "Native Text" in name or "Native Text" in utils.safe_get_text(item, ""):
+            continue
         img_tag = item.find("img")
         img = utils.safe_get_attr(
             img_tag, "data-original", ["data-src", "data-lazy", "src"]

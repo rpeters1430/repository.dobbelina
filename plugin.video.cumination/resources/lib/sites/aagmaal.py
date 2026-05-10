@@ -137,6 +137,11 @@ def Playvid(url, name, download=None):
         videourl = utils.selector("Select link", links)
 
     if not videourl:
+        iframe = soup.select_one("article iframe[data-src], iframe[data-src]")
+        if iframe:
+            videourl = utils.safe_get_attr(iframe, "data-src")
+
+    if not videourl:
         for pattern in [
             r'<iframe[^>]*\s+loading="lazy"\s+src="([^"]+)"',
             r'<iframe[^>]*\s+src="(http[^"]+)"',

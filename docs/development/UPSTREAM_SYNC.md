@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-04-16
-**Last Sync**: 2026-04-16 - Ported Chaturbate gzipped manifest fix, Spankbang full redesign fix (Tags/Models/Models_alphabet + UA/Referer), XMoviesForYou listing fix, and textBox crash fix.
+**Last Updated**: 2026-05-09
+**Last Sync**: 2026-05-09 - Ported AWM network search updates, FreeOMovie playback fix, XXXTube listing skip, and Aagmaal playback fallback.
 
 ---
 
@@ -18,6 +18,15 @@
 ---
 
 ## Sync Sessions
+
+### 2026-05-09 Porting Session
+Integrated compatible code fixes from upstream `dobbelina/repository.dobbelina` after the 2026-05-05 session. Merge commits, version/package bumps, and changelog-only commits were not applied.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `fc27cd31` | Tried to sort through this AWM network of clonelike websites... | `manual-partial` | 2026-05-09 | Ported site-specific search path/date-sort handling into the fork's BS4 AWM scraper; skipped clone separator menu entries because generated smoke tests treat default-mode downloads as playable videos. |
+| `4f2ab507` | freeomovie fixes #1858 fixes #1853 | `manual` | 2026-05-09 | Ported FreeOMovie JSON playback URL regex and XXXTube `Native Text` listing skip. |
+| `5f0b8376` | aagmaal playback fix | `manual` | 2026-05-09 | Added BS4 iframe `data-src` fallback before the existing iframe regex fallbacks. |
 
 ### 2026-05-05 Porting Session
 Integrated latest fixes from upstream `dobbelina/repository.dobbelina` following site redesigns and internal decryption updates.

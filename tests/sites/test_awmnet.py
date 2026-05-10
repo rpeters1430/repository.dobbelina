@@ -266,8 +266,9 @@ def test_search_with_keyword(monkeypatch):
     awmnet.Search("https://www.fuq.com/search/", keyword="asian milf")
 
     assert len(list_calls) == 1
-    assert "asian+milf" in list_calls[0]
-    assert "&pricing=free" in list_calls[0]
+    assert "asian%20milf" in list_calls[0]
+    assert "?pricing=free" in list_calls[0]
+    assert "filter%5Border_by%5D=date" in list_calls[0]
 
 
 def test_getbaselink_extracts_site_url(monkeypatch):

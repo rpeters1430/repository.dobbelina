@@ -158,7 +158,7 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(
         name,
         download=download,
-        regex=r'data-embed-url="([^"]+)"',
+        regex=r'"url":"([^"]+)"',
         direct_regex=None,
     )
     vp.play_from_site_link(url, url)

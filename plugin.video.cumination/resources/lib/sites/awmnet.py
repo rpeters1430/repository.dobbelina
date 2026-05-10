@@ -282,7 +282,6 @@ sitelist = [
     ],
 ]
 
-
 def getBaselink(url):
     if not url:
         return sitelist[0][2]
@@ -318,9 +317,31 @@ def SiteMain(url):
         "[COLOR hotpink]Pornstars[/COLOR]", siteurl + "pornstar", "Tags", site.img_cat
     )
     site.add_dir("[COLOR hotpink]Tags[/COLOR]", siteurl + "a-z", "Tags", site.img_cat)
-    site.add_dir(
-        "[COLOR hotpink]Search[/COLOR]", siteurl + "search/", "Search", site.img_search
-    )
+    if any(
+        domain in siteurl
+        for domain in [
+            "bbwpornvideos",
+            "forhertube",
+            "ixxx",
+            "pornmd",
+            "stocking-tease",
+            "tubegalore",
+        ]
+    ):
+        search_url = siteurl + "c/"
+    elif "gaymaletube" in siteurl:
+        search_url = siteurl + "cat/"
+    elif "lupoporno" in siteurl:
+        search_url = siteurl + "en/categorie/"
+    elif "modelgalore" in siteurl or "tubepornstars" in siteurl:
+        search_url = siteurl + "search/a/"
+    elif "sambaporno" in siteurl:
+        search_url = siteurl + "en/cat/"
+    elif "toroporno" in siteurl:
+        search_url = siteurl + "en/categorias/"
+    else:
+        search_url = siteurl + "category/"
+    site.add_dir("[COLOR hotpink]Search[/COLOR]", search_url, "Search", site.img_search)
     List(siteurl + "new?pricing=free")
 
 
@@ -424,16 +445,11 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        # Ensure url ends with slash if it doesn't have query params
         base_search = url
-        if "?" not in base_search and not base_search.endswith("/"):
+        if not base_search.endswith("/"):
             base_search += "/"
-            
-        title = keyword.replace(" ", "+")
-        if "?" in base_search:
-            searchUrl = base_search + title
-        else:
-            searchUrl = base_search + "?s=" + title + "&pricing=free"
+        title = keyword.replace(" ", "%20")
+        searchUrl = base_search + title + "?pricing=free&filter%5Border_by%5D=date"
         List(searchUrl)
 
 
