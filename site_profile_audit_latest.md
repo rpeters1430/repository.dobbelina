@@ -7,11 +7,11 @@
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| jizzbunker | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
+| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
+| hentaidude | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | josporn | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| porngo | failing | FAIL |  | video |  | Y | Y | Y | Y |
-| pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
-| pornhd3x | warn | WARN |  | video |  | Y | Y | Y | Y |
+| motherless | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| xfreehd | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -24,7 +24,7 @@
 | pornkai | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | spankbang | tier1 | SKIP | 1 | video | Y | Y | Y | Y | Y |
 | streamate | tier1 | PASS | 1 | cam |  | Y |  |  |  |
-| stripchat | tier1 | SKIP | 1 | cam |  |  |  |  |  |
+| stripchat | tier1 | PASS | 1 | cam |  |  |  |  |  |
 | xnxx | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | xvideos | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | youporn | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
@@ -36,7 +36,6 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
-| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -70,7 +69,6 @@
 | hdporn92 | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
 | heavyr | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
 | hentai-moon | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| hentaidude | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hentaihavenco | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hentaistream | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | heroero | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -88,13 +86,13 @@
 | javhdporn | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
 | javmoe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javseen | backlog | PASS | 2 | video |  | Y |  | Y | Y |
+| jizzbunker | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | justfullporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | justporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| kissjav | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
+| kissjav | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
 | lemoncams | backlog | PASS | 2 | cam |  | Y |  | Y |  |
 | livecamrips | backlog | PASS | 2 | cam |  | Y |  | Y | Y |
 | longvideos | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
-| motherless | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | mrsexe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | myfreecams | backlog | PASS | 2 | cam |  | Y |  |  |  |
 | naked | backlog | PASS | 2 | cam |  |  |  |  |  |
@@ -120,8 +118,11 @@
 | pornditt | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porndoe | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | pornez | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| porngo | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhat | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| pornhd3x | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhits | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| pornhoarder | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | pornmz | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porno1hu | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porno365 | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -165,7 +166,6 @@
 | watchporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | whereismyporn | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
 | whoreshub | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| xfreehd | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xhamster | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xmegadrive | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xmoviesforyou | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
@@ -181,11 +181,11 @@
 
 ## Next Batch
 
-- **jizzbunker** (failing, tier=2) | failures: list:FAIL
+- **analdin** (failing, tier=2) | failures: list:FAIL
+- **hentaidude** (failing, tier=None) | failures: main:FAIL, list:FAIL, search:FAIL
 - **josporn** (failing, tier=None) | failures: list:FAIL
-- **porngo** (failing, tier=None) | failures: list:FAIL
-- **pornhoarder** (failing, tier=2) | failures: list:FAIL
-- **pornhd3x** (warn, tier=None) | failures: search:FAIL
+- **motherless** (failing, tier=None) | failures: list:FAIL
+- **xfreehd** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
