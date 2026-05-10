@@ -1,3 +1,11 @@
+[B]Version 1.1.392[/B]
+- Update upstream sync tracking and enhance site-specific handling
+- Misc Updates to Sites
+- Add support for DoodStream mirrors with custom resolver
+- fix: add safety check for cache_time setting in utils.py
+- Implement feature X to enhance user experience and optimize performance
+- Add live smoke reports for validation results on 2026-05-05
+
 [B]Version 1.1.391[/B]
 - Misc Updates to Sites
 - Add support for DoodStream mirrors with custom resolver
