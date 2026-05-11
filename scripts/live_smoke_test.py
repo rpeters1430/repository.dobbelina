@@ -1426,7 +1426,13 @@ def parse_child_json(raw: str) -> dict[str, Any]:
 
 
 def run_parent(args: argparse.Namespace) -> int:
-    sites = args.site if args.site else discover_site_names()
+    all_sites = args.site if args.site else discover_site_names()
+
+    if args.tier:
+        sites = [s for s in all_sites if get_site_profile(s).get("tier") == args.tier]
+    else:
+        sites = all_sites
+
     steps = [s.strip() for s in args.steps.split(",") if s.strip()]
     started = datetime.now()
 
@@ -1731,6 +1737,7 @@ def parse_args() -> argparse.Namespace:
         default=140,
         help="Timeout for each site subprocess (seconds)",
     )
+    parser.add_argument("--tier", type=int, help="Filter sites by tier (e.g., 1)")
     parser.add_argument("--out", default=str(ROOT / "results"), help="Output directory")
     parser.add_argument("--run-site", help=argparse.SUPPRESS)
     return parser.parse_args()

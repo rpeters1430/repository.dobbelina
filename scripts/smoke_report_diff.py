@@ -125,10 +125,13 @@ class SiteDelta:
 
 
 def compare_reports(
-    current_report: dict[str, Any], previous_report: dict[str, Any] | None
+    current_report: dict[str, Any],
+    previous_report: dict[str, Any] | None,
+    stability_data: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     current_sites = get_sites(current_report)
     previous_sites = get_sites(previous_report or {})
+    stability = stability_data or {}
 
     deltas: list[SiteDelta] = []
     new_failures: list[dict[str, Any]] = []
@@ -143,6 +146,11 @@ def compare_reports(
         previous = previous_sites.get(name)
         current_status = current.get("overall", "MISSING") if current else "MISSING"
         previous_status = previous.get("overall", "MISSING") if previous else "MISSING"
+
+        # Stability check
+        site_stability = stability.get(name, {})
+        stability_score = site_stability.get("stability_score", 1.0)
+        is_flaky = stability_score < 0.7 and len(site_stability.get("history", [])) >= 3
 
         if previous is None:
             deltas.append(SiteDelta(name, previous_status, current_status, "new_site"))
@@ -166,6 +174,8 @@ def compare_reports(
                     "current": current_status,
                     "class": failure_class(current),
                     "message": site_failure_message(current),
+                    "is_flaky": is_flaky,
+                    "stability_score": stability_score,
                 }
             )
         elif prev_is_fail and not curr_is_fail:
@@ -305,11 +315,36 @@ def render_markdown(diff: dict[str, Any], current_path: Path, previous_path: Pat
     lines.append("")
 
     sections = [
-        ("New Failures", diff["new_failures"], lambda item: f"- **{item['site']}**: `{item['previous']} -> {item['current']}` ({item['class']}) | {item['message']}"),
-        ("Resolved Failures", diff["resolved_failures"], lambda item: f"- **{item['site']}**: `{item['previous']} -> {item['current']}`"),
-        ("Persistent Failures", diff["persistent_failures"], lambda item: f"- **{item['site']}**: `{item['previous']} -> {item['current']}` ({item['class']}) | {item['message']}"),
-        ("Step Regressions", diff["step_regressions"], lambda item: f"- **{item['site']}** `{item['step']}`: `{item['previous']} -> {item['current']}` ({item['class']}) | {item['message']}"),
-        ("Improvements", diff["improved_sites"], lambda item: f"- **{item['site']}**: `{item['previous']} -> {item['current']}`"),
+        (
+            "New Failures",
+            diff["new_failures"],
+            lambda item: f"- **{item['site']}**: `{item['previous']} -> {item['current']}` ({item['class']}) | {item['message']}"
+            + (
+                f" ⚠️ [FLAKY: {item['stability_score']:.1%}]"
+                if item.get("is_flaky")
+                else ""
+            ),
+        ),
+        (
+            "Resolved Failures",
+            diff["resolved_failures"],
+            lambda item: f"- **{item['site']}**: `{item['previous']} -> {item['current']}`",
+        ),
+        (
+            "Persistent Failures",
+            diff["persistent_failures"],
+            lambda item: f"- **{item['site']}**: `{item['previous']} -> {item['current']}` ({item['class']}) | {item['message']}",
+        ),
+        (
+            "Step Regressions",
+            diff["step_regressions"],
+            lambda item: f"- **{item['site']}** `{item['step']}`: `{item['previous']} -> {item['current']}` ({item['class']}) | {item['message']}",
+        ),
+        (
+            "Improvements",
+            diff["improved_sites"],
+            lambda item: f"- **{item['site']}**: `{item['previous']} -> {item['current']}`",
+        ),
     ]
 
     for title, items, formatter in sections:
@@ -324,6 +359,29 @@ def render_markdown(diff: dict[str, Any], current_path: Path, previous_path: Pat
     return "\n".join(lines).rstrip() + "\n"
 
 
+def update_stability(
+    stability_data: dict[str, Any], current_sites: dict[str, Any]
+) -> dict[str, Any]:
+    new_data = dict(stability_data)
+    for site_name, site in current_sites.items():
+        if site_name not in new_data:
+            new_data[site_name] = {"history": [], "stability_score": 1.0}
+
+        history = new_data[site_name].get("history", [])
+        status = site.get("overall", "FAIL")
+        history.append(status)
+        if len(history) > 10:
+            history = history[-10:]
+
+        new_data[site_name]["history"] = history
+        # Simple score: ratio of PASS to total in history
+        passes = sum(1 for s in history if s == "PASS")
+        new_data[site_name]["stability_score"] = (
+            passes / len(history) if history else 1.0
+        )
+    return new_data
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Compare live smoke reports.")
     parser.add_argument("--current", help="Current smoke report JSON path")
@@ -332,6 +390,14 @@ def parse_args() -> argparse.Namespace:
         "--results-dir",
         default="results",
         help="Directory used to auto-detect the latest report",
+    )
+    parser.add_argument(
+        "--stability-in",
+        help="Path to previous stability JSON",
+    )
+    parser.add_argument(
+        "--stability-out",
+        help="Path to save updated stability JSON",
     )
     parser.add_argument(
         "--json-out",
@@ -347,12 +413,28 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     results_dir = Path(args.results_dir)
-    current_path = Path(args.current) if args.current else find_latest_report(results_dir)
+    current_path = (
+        Path(args.current) if args.current else find_latest_report(results_dir)
+    )
     previous_path = Path(args.previous) if args.previous else None
 
     current_report = load_report(current_path)
-    previous_report = load_report(previous_path) if previous_path and previous_path.exists() else None
-    diff = compare_reports(current_report, previous_report)
+    previous_report = (
+        load_report(previous_path) if previous_path and previous_path.exists() else None
+    )
+
+    stability_data = {}
+    if args.stability_in and Path(args.stability_in).exists():
+        stability_data = json.loads(Path(args.stability_in).read_text(encoding="utf-8"))
+
+    diff = compare_reports(current_report, previous_report, stability_data)
+
+    if args.stability_out:
+        updated_stability = update_stability(stability_data, get_sites(current_report))
+        Path(args.stability_out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.stability_out).write_text(
+            json.dumps(updated_stability, indent=2), encoding="utf-8"
+        )
 
     if args.json_out:
         json_out = Path(args.json_out)

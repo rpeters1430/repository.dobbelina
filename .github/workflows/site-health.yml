@@ -11,6 +11,7 @@ jobs:
     timeout-minutes: 60
     permissions:
       contents: write
+      issues: write
 
     services:
       flaresolverr:
@@ -52,7 +53,11 @@ jobs:
           done
           echo "WARNING: FlareSolverr did not become ready in 300s — FlareSolverr errors will be treated as SKIP in smoke tests"
 
-      - name: Run live smoke
+      - name: Run Tier 1 live smoke
+        run: |
+          python scripts/live_smoke_test.py --tier 1 --out results || true
+
+      - name: Run remaining live smoke
         run: |
           python scripts/live_smoke_test.py --out results || true
 
@@ -79,19 +84,19 @@ jobs:
           if [ -f /tmp/site-health/live_smoke_latest.json ]; then
             PREVIOUS_JSON="/tmp/site-health/live_smoke_latest.json"
           fi
-
-          if [ -n "${PREVIOUS_JSON}" ]; then
-            python scripts/smoke_report_diff.py \
-              --current "${CURRENT_JSON}" \
-              --previous "${PREVIOUS_JSON}" \
-              --json-out results/site_health_diff_latest.json \
-              --md-out results/site_health_diff_latest.md
-          else
-            python scripts/smoke_report_diff.py \
-              --current "${CURRENT_JSON}" \
-              --json-out results/site_health_diff_latest.json \
-              --md-out results/site_health_diff_latest.md
+          
+          STABILITY_IN=""
+          if [ -f /tmp/site-health/stability.json ]; then
+            STABILITY_IN="/tmp/site-health/stability.json"
           fi
+
+          python scripts/smoke_report_diff.py \
+            --current "${CURRENT_JSON}" \
+            ${PREVIOUS_JSON:+--previous "${PREVIOUS_JSON}"} \
+            ${STABILITY_IN:+--stability-in "${STABILITY_IN}"} \
+            --stability-out results/stability.json \
+            --json-out results/site_health_diff_latest.json \
+            --md-out results/site_health_diff_latest.md
 
           cp "${CURRENT_JSON}" results/site_health_latest.json
           cp "${CURRENT_MD}" results/site_health_latest.md
@@ -103,6 +108,44 @@ jobs:
             --smoke-report "${CURRENT_JSON}" \
             --json-out results/site_profile_audit_latest.json \
             --md-out results/site_profile_audit_latest.md
+
+      - name: Generate triage requests
+        run: |
+          python scripts/generate_triage_requests.py \
+            --diff results/site_health_diff_latest.json \
+            --out results/triage_requests.json
+
+      - name: Automated Triage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ ! -f results/triage_requests.json ]; then
+            echo "No triage requests found."
+            exit 0
+          fi
+          
+          COUNT=$(jq 'length' results/triage_requests.json)
+          if [ "$COUNT" -eq 0 ]; then
+            echo "No regressions to triage."
+            exit 0
+          fi
+          
+          echo "Triaging $COUNT regressions..."
+          jq -c '.[]' results/triage_requests.json | while read -r req; do
+            SITE=$(echo "$req" | jq -r '.site')
+            TITLE="[Site Health] Regression: $SITE"
+            BODY=$(echo "$req" | jq -r '.description')
+            
+            # Check if an open issue already exists
+            EXISTING=$(gh issue list --state open --search "$TITLE" --json number --jq '.[0].number')
+            if [ -n "$EXISTING" ]; then
+              echo "Issue #$EXISTING already exists for $SITE, skipping."
+              continue
+            fi
+            
+            echo "Creating issue for $SITE..."
+            gh issue create --title "$TITLE" --body "$BODY" --label "status/needs-triage,bug"
+          done
 
       - name: Publish job summary
         run: |
@@ -121,6 +164,8 @@ jobs:
             results/site_health_diff_latest.md
             results/site_profile_audit_latest.json
             results/site_profile_audit_latest.md
+            results/stability.json
+            results/triage_requests.json
             results/live_smoke_*.json
             results/live_smoke_*.md
           if-no-files-found: error
@@ -137,10 +182,11 @@ jobs:
           cp results/site_health_diff_latest.md /tmp/site-health/site_health_diff_latest.md
           cp results/site_profile_audit_latest.json /tmp/site-health/site_profile_audit_latest.json
           cp results/site_profile_audit_latest.md /tmp/site-health/site_profile_audit_latest.md
+          cp results/stability.json /tmp/site-health/stability.json
 
           git -C /tmp/site-health config user.name "github-actions[bot]"
           git -C /tmp/site-health config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git -C /tmp/site-health add live_smoke_latest.json live_smoke_latest.md site_health_diff_latest.json site_health_diff_latest.md site_profile_audit_latest.json site_profile_audit_latest.md
+          git -C /tmp/site-health add .
           if git -C /tmp/site-health diff --cached --quiet; then
             echo "No site health changes to persist."
             exit 0
