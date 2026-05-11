@@ -225,6 +225,8 @@ def compare_reports(
                         "current": current_step_status,
                         "message": current_step.get("message", ""),
                         "class": classify_message(current_step.get("message", "")),
+                        "is_flaky": is_flaky,
+                        "stability_score": stability_score,
                     }
                 )
 
