@@ -1,24 +1,20 @@
 # Site Health Delta
 
-- Current report: `live_smoke_20260511_074327.json`
+- Current report: `live_smoke_20260512_072909.json`
 - Previous report: `live_smoke_latest.json`
 
 ## Snapshot
 
 - Current: `PASS 153` | `WARN 0` | `FAIL 3` | `ERROR 0` | `SKIP 15`
-- Previous: `PASS 152` | `WARN 0` | `FAIL 4` | `ERROR 0` | `SKIP 15`
+- Previous: `PASS 153` | `WARN 0` | `FAIL 3` | `ERROR 0` | `SKIP 15`
 
 ## Delta Summary
 
 - New failures: `0`
-- Resolved failures: `1`
+- Resolved failures: `0`
 - Persistent failures: `3`
 - Site regressions: `0`
 - Step regressions: `0`
-
-## Resolved Failures
-
-- **analdin**: `FAIL -> PASS`
 
 ## Persistent Failures
 
