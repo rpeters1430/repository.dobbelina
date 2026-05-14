@@ -1,6 +1,6 @@
 """
     Plugin for ResolveURL
-    Copyright (C) 2020 gujal
+    Copyright (C) 2026 gujal
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,34 +16,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import json
+import binascii
+import re
 from six.moves import urllib_parse
-from resolveurl import common
 from resolveurl.lib import helpers
+from resolveurl import common
 from resolveurl.resolver import ResolveUrl, ResolverError
 
 
-class BitchuteResolver(ResolveUrl):
-
-    name = 'Bitchute'
-    domains = ['bitchute.com']
-    pattern = r'(?://|\.)(bitchute\.com)/(?:video|embed)/([\w-]+)/'
+class VidSonicResolver(ResolveUrl):
+    name = 'VidSonic'
+    domains = ['vidsonic.net']
+    pattern = r'(?://|\.)(vidsonic\.net)/(?:e|d)/([0-9a-zA-Z]+)'
 
     def get_media_url(self, host, media_id):
-        api_url = 'https://api.bitchute.com/api/beta/video/media'
-        payload = {"video_id": media_id}
-        ref = urllib_parse.urljoin(self.get_url(host, media_id), '/')
+        web_url = self.get_url(host, media_id)
+        ref = urllib_parse.urljoin(web_url, '/')
         headers = {
-            'User-Agent': common.RAND_UA,
-            'Origin': ref[:-1],
-            'Referer': ref
+            'User-Agent': common.FF_USER_AGENT,
+            'Referer': ref,
+            'Origin': ref[:-1]
         }
-        res = self.net.http_POST(api_url, form_data=payload, headers=headers, jdata=True).content
-        if res:
-            video = json.loads(res).get('media_url')
-            return video + helpers.append_headers(headers)
-
+        html = self.net.http_GET(web_url, headers=headers).content
+        r = re.search(r"const\s*_0x1\s*=\s*'([^']+)", html)
+        if r:
+            src = binascii.unhexlify(r.group(1).replace('|', '')).decode()[::-1]
+            return src + helpers.append_headers(headers)
         raise ResolverError('Video Link Not Found')
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, 'https://www.{host}/video/{media_id}')
+        return self._default_get_url(host, media_id, 'https://{host}/e/{media_id}')

@@ -1,0 +1,1343 @@
+{
+  "summary": {
+    "generated": "2026-05-10T20:53:42.970151",
+    "started": "2026-05-10T20:50:11.716135",
+    "sites_total": 16,
+    "pass": 15,
+    "warn": 0,
+    "fail": 1,
+    "error": 0,
+    "skip": 0,
+    "blocked_hint": 0,
+    "steps": [
+      "main",
+      "list",
+      "categories",
+      "search",
+      "play"
+    ],
+    "timeout_per_step_sec": 35,
+    "timeout_per_site_sec": 140,
+    "keyword": "test"
+  },
+  "sites": [
+    {
+      "site": "anybunny",
+      "title": "Anybunny",
+      "base_url": "https://anybunny.org/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 2,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "No reliable list URL discovered from Main; list fallback yielded no videos",
+          "elapsed": 0.84,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://anybunny.org/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "100 categories",
+          "elapsed": 0.52,
+          "items": 100,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://anybunny.org/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "115 results for 'test'",
+          "elapsed": 0.49,
+          "items": 116,
+          "video_items": 115,
+          "image_items": 115,
+          "description_items": 115,
+          "playable": 1,
+          "sample_url": "https://anybunny.org/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.54,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://anybunny.org/too/3546575-testing_your_intercourse_toys_with_anal_penetration",
+          "play_url": "https://anybunny.org/video/mp4/3546575/lvt4K4ZG_pxTtWb-HXma2Q/1778478614/testing_your_intercourse_toys_with_anal_penetration.mp4"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 2.61
+    },
+    {
+      "site": "ask4porn",
+      "title": "Ask4Porn",
+      "base_url": "https://ask4porn.cc/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "9 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 9,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "List URL blocked/challenged in harness (HTTP 200 blocked/challenged body)",
+          "elapsed": 3.06,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://ask4porn.cc/?filter=latest",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 1.85,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://ask4porn.cc/tags/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 2.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://ask4porn.cc/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "No video item available from list/search",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": true,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 7.07
+    },
+    {
+      "site": "cam4",
+      "title": "Cam4[COLOR white] - webcams",
+      "base_url": "https://www.cam4.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "2 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 2,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "60 videos",
+          "elapsed": 1.36,
+          "items": 61,
+          "video_items": 60,
+          "image_items": 60,
+          "description_items": 60,
+          "playable": 1,
+          "sample_url": "https://www.cam4.com/&gender=female&broadcastType=female_group&broadcastType=solo&broadcastType=male_female_group",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Play disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": false,
+          "search": false,
+          "play": false
+        },
+        "content_type": "cam",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": true,
+          "search_results_optional": true,
+          "categories_optional": true
+        },
+        "tier": 1
+      },
+      "elapsed": 1.53
+    },
+    {
+      "site": "camsoda",
+      "title": "Camsoda[COLOR white] - webcams",
+      "base_url": "https://www.camsoda.com",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "7 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 7,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "List disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Play disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": false,
+          "categories": false,
+          "search": false,
+          "play": false
+        },
+        "content_type": "cam",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": true,
+          "search_results_optional": true,
+          "categories_optional": true
+        },
+        "tier": 1
+      },
+      "elapsed": 0.17
+    },
+    {
+      "site": "chaturbate",
+      "title": "Chaturbate[COLOR white] - webcams",
+      "base_url": "https://chaturbate.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "18 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 18,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "List disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Play disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": false,
+          "categories": false,
+          "search": false,
+          "play": false
+        },
+        "content_type": "cam",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": true,
+          "search_results_optional": true,
+          "categories_optional": true
+        },
+        "tier": 1
+      },
+      "elapsed": 0.14
+    },
+    {
+      "site": "missav",
+      "overall": "FAIL",
+      "error_type": "timeout",
+      "error": "Site process timed out after 140s",
+      "steps": {},
+      "elapsed": 140.05
+    },
+    {
+      "site": "porndig",
+      "title": "Porndig [COLOR white]Professional",
+      "base_url": "https://www.porndig.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 36 videos",
+          "elapsed": 0.99,
+          "items": 40,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 36,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "36 videos",
+          "elapsed": 0.43,
+          "items": 37,
+          "video_items": 36,
+          "image_items": 36,
+          "description_items": 36,
+          "playable": 1,
+          "sample_url": "https://www.porndig.com/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 1.21,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.porndig.com/videos/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "No search function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.64,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.porndig.com/videos/254464/luke-la-fox-elana-bunnz-and-remy-woods-fighting-for-derek-s-bbc.html",
+          "play_url": "https://video-cdn.porndig.com/videos/423590_oc4EpnznQ2B0h9Kg/qid4935v1_h264_16000_2160.mp4?md5=8OYogmWTWVu2aJlEos1H9g&expires=1778478768"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 4.43
+    },
+    {
+      "site": "pornhub",
+      "title": "PornHub",
+      "base_url": "https://www.pornhub.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 29 videos",
+          "elapsed": 2.18,
+          "items": 33,
+          "video_items": 29,
+          "image_items": 29,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "30 videos",
+          "elapsed": 2.21,
+          "items": 32,
+          "video_items": 30,
+          "image_items": 30,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.pornhub.com/video?o=cm&page=2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "114 categories",
+          "elapsed": 1.58,
+          "items": 114,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.pornhub.com/categories",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.36,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.pornhub.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.pornhub.com/view_video.php?viewkey=69de335ce4b60",
+          "play_url": "https://www.pornhub.com/view_video.php?viewkey=69de335ce4b60"
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like the page does not exist."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 7.5
+    },
+    {
+      "site": "pornkai",
+      "title": "PornKai",
+      "base_url": "https://pornkai.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 120 videos",
+          "elapsed": 1.02,
+          "items": 123,
+          "video_items": 120,
+          "image_items": 120,
+          "description_items": 120,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "120 videos",
+          "elapsed": 0.69,
+          "items": 121,
+          "video_items": 120,
+          "image_items": 120,
+          "description_items": 120,
+          "playable": 1,
+          "sample_url": "https://pornkai.com/videos?q=porn&sort=new&page=2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "92 categories",
+          "elapsed": 0.54,
+          "items": 92,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://pornkai.com/all-categories",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "12 results for 'test'",
+          "elapsed": 0.59,
+          "items": 13,
+          "video_items": 12,
+          "image_items": 12,
+          "description_items": 12,
+          "playable": 1,
+          "sample_url": "https://pornkai.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.34,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://pornkai.com/view?key=up6228869&click_index=0",
+          "play_url": "https://pornkai.com/view?key=up6228869&click_index=0"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 4.37
+    },
+    {
+      "site": "spankbang",
+      "title": "SpankBang",
+      "base_url": "https://spankbang.party/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "5 dirs, 64 videos",
+          "elapsed": 0.93,
+          "items": 69,
+          "video_items": 64,
+          "image_items": 64,
+          "description_items": 64,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "3 videos",
+          "elapsed": 0.73,
+          "items": 3,
+          "video_items": 3,
+          "image_items": 3,
+          "description_items": 3,
+          "playable": 1,
+          "sample_url": "https://spankbang.party/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.28,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://spankbang.party/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.47,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://spankbang.party/a4iyo/video/dream+forbidden+pleasures+with+chinese+concubine",
+          "play_url": "https://vdownload-41.sb-cd.com/1/7/17007360-480p.mp4?secure=OCbGggvPxRpU_t1Qu3niQg,1778514782&m=41&d=1&_tid=17007360|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36&Referer=https://spankbang.party/a4iyo/video/dream+forbidden+pleasures+with+chinese+concubine"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": true,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 2.62
+    },
+    {
+      "site": "streamate",
+      "title": "streamate.com[COLOR white] - webcams",
+      "base_url": "http://www.streamate.com",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 3,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "Webcam list returned no videos in harness context",
+          "elapsed": 0.53,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://member.naiadsystems.com/search/v3/performers?domain=streamate.com&from=0&size=100&filters=gender:f,ff,mf,tm2f,g%3Bonline:true&genderSetting=f",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Play disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like this website is too slow.",
+        "streamate: No models available"
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": false,
+          "search": false,
+          "play": false
+        },
+        "content_type": "cam",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": true,
+          "search_results_optional": true,
+          "categories_optional": true
+        },
+        "tier": 1
+      },
+      "elapsed": 0.7
+    },
+    {
+      "site": "stripchat",
+      "title": "stripchat.com[COLOR white] - webcams",
+      "base_url": "https://stripchat.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 3,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "SKIP",
+          "message": "List disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Play disabled by site profile",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": false,
+          "categories": false,
+          "search": false,
+          "play": false
+        },
+        "content_type": "cam",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": true,
+          "search_results_optional": true,
+          "categories_optional": true
+        },
+        "tier": 1
+      },
+      "elapsed": 0.27
+    },
+    {
+      "site": "xnxx",
+      "title": "XNXX",
+      "base_url": "https://www.xnxx.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "4 dirs, 48 videos",
+          "elapsed": 1.83,
+          "items": 52,
+          "video_items": 48,
+          "image_items": 48,
+          "description_items": 48,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "47 videos",
+          "elapsed": 1.03,
+          "items": 48,
+          "video_items": 47,
+          "image_items": 47,
+          "description_items": 47,
+          "playable": 1,
+          "sample_url": "https://www.xnxx.com/todays-selection/1",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "161 categories",
+          "elapsed": 0.83,
+          "items": 161,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.xnxx.com/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.58,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.xnxx.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.39,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.xnxx.com/video-1bpd8l99/47783170/0/hot_wife_in_missionary_position_spread_her_legs_and_get_big_cum_load_in_pussy",
+          "play_url": "https://hls-cdn77.xnxx-cdn.com/3Qu3gR5_-nipWwoNX-guIw==,1778482389/eeba1450-8aac-4d8e-86d9-b4adbd8d525c/0/hls.m3u8"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 5.84
+    },
+    {
+      "site": "xvideos",
+      "title": "XVideos",
+      "base_url": "https://www.xvideos.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "7 dirs, 48 videos",
+          "elapsed": 1.64,
+          "items": 55,
+          "video_items": 48,
+          "image_items": 48,
+          "description_items": 48,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "27 videos",
+          "elapsed": 0.77,
+          "items": 28,
+          "video_items": 27,
+          "image_items": 27,
+          "description_items": 27,
+          "playable": 1,
+          "sample_url": "https://www.xvideos.com/new/1",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "42 categories",
+          "elapsed": 0.78,
+          "items": 42,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.xvideos.com/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.59,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.xvideos.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.xvideos.com/video.oufavdbe077/omg_my_stepsis_tricked_me_to_cum_in_her_-_lexis_star",
+          "play_url": "https://www.xvideos.com/video.oufavdbe077/omg_my_stepsis_tricked_me_to_cum_in_her_-_lexis_star"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 3.96
+    },
+    {
+      "site": "youporn",
+      "title": "YouPorn",
+      "base_url": "https://www.youporn.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 30 videos",
+          "elapsed": 1.96,
+          "items": 33,
+          "video_items": 30,
+          "image_items": 30,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "33 videos",
+          "elapsed": 1.67,
+          "items": 33,
+          "video_items": 33,
+          "image_items": 33,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.youporn.com/browse/time/?page=2",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "PASS",
+          "message": "102 categories",
+          "elapsed": 1.59,
+          "items": 102,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://www.youporn.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "32 results for 'test'",
+          "elapsed": 2.3,
+          "items": 33,
+          "video_items": 32,
+          "image_items": 32,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.youporn.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 2.36,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.youporn.com/watch/230356641/",
+          "play_url": "https://ev-h-ph.ypncdn.com/hls/videos/201906/19/230404112/1080P_4000K_230404112.mp4/master.m3u8?validfrom=1778468003&validto=1778475203&hdl=-1&hash=CHXVCGjSGLfzzRbKRHe%2BacApWQ4%3D|Referer=https://www.youporn.com/watch/230356641/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 10.08
+    },
+    {
+      "site": "yourlesbians",
+      "title": "YourLesbians",
+      "base_url": "https://yourlesbians.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "7 dirs, 49 videos",
+          "elapsed": 10.1,
+          "items": 56,
+          "video_items": 49,
+          "image_items": 49,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "49 videos",
+          "elapsed": 4.38,
+          "items": 50,
+          "video_items": 49,
+          "image_items": 49,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://yourlesbians.com/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 1.18,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://yourlesbians.com/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "23 results for 'test'",
+          "elapsed": 2.53,
+          "items": 24,
+          "video_items": 23,
+          "image_items": 23,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://yourlesbians.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.53,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://yourlesbians.com/video/naughty-footage-sensuallove/",
+          "play_url": "https://yourlesbians.com/get_file/9/63558fa633b80311a2dabfcab0f3216c/12000/12658/12658_720p.mp4/?v-acctoken=MTUzM3wzMzB8MHw0Y2MwNmMwYzY0MDgxNDFmNWYyOWVkOTNlOGE1ZGE4Zg8b3436849fb98d66|Referer=https://yourlesbians.com/video/naughty-footage-sensuallove/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 1
+      },
+      "elapsed": 19.91
+    }
+  ]
+}

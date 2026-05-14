@@ -1,0 +1,380 @@
+{
+  "summary": {
+    "generated": "2026-05-10T21:15:17.578741",
+    "started": "2026-05-10T21:15:00.029482",
+    "sites_total": 4,
+    "pass": 2,
+    "warn": 0,
+    "fail": 2,
+    "error": 0,
+    "skip": 0,
+    "blocked_hint": 0,
+    "steps": [
+      "main",
+      "list",
+      "categories",
+      "search",
+      "play"
+    ],
+    "timeout_per_step_sec": 35,
+    "timeout_per_site_sec": 140,
+    "keyword": "test"
+  },
+  "sites": [
+    {
+      "site": "analdin",
+      "title": "Analdin",
+      "base_url": "https://www.analdin.com/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 100 videos",
+          "elapsed": 1.89,
+          "items": 103,
+          "video_items": 100,
+          "image_items": 100,
+          "description_items": 100,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "100 videos",
+          "elapsed": 1.18,
+          "items": 101,
+          "video_items": 100,
+          "image_items": 100,
+          "description_items": 100,
+          "playable": 1,
+          "sample_url": "https://www.analdin.com/latest-updates/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "PASS",
+          "message": "100 results for 'test'",
+          "elapsed": 1.24,
+          "items": 100,
+          "video_items": 100,
+          "image_items": 100,
+          "description_items": 100,
+          "playable": 1,
+          "sample_url": "https://www.analdin.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "PASS",
+          "message": "Playback URL resolved",
+          "elapsed": 1.07,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 1,
+          "sample_url": "https://www.analdin.com/videos/680907/transsexual-beauty-pounded-by-black-guy-in-butt-fucking-hole/",
+          "play_url": "https://www.analdin.com/get_file/4/89e857a261d0c35b8cf9ad6b37666239/680000/680907/680907hd.mp4/|User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0&Referer=https://www.analdin.com/videos/680907/transsexual-beauty-pounded-by-black-guy-in-butt-fucking-hole/"
+        }
+      },
+      "notifications": [],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        },
+        "tier": 2
+      },
+      "elapsed": 5.55
+    },
+    {
+      "site": "hentaidude",
+      "title": "Hentai Dude",
+      "base_url": "https://hentaidude.xxx/",
+      "overall": "PASS",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "24 dirs, 20 videos",
+          "elapsed": 1.85,
+          "items": 44,
+          "video_items": 20,
+          "image_items": 20,
+          "description_items": 20,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "PASS",
+          "message": "20 videos",
+          "elapsed": 1.26,
+          "items": 21,
+          "video_items": 20,
+          "image_items": 20,
+          "description_items": 19,
+          "playable": 1,
+          "sample_url": "https://hentaidude.xxx/genre/uncensored-hentai/page/1/?m_orderby=latest",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "No categories function exposed",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.6,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hentaidude.xxx/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "Harness limitation (notify): Notify: No videos found",
+          "elapsed": 0.89,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://hentaidude.xxx/watch/my-mother/",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "Notify: No videos found"
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.77
+    },
+    {
+      "site": "josporn",
+      "title": "josporn.com",
+      "base_url": "https://josporn.club/",
+      "overall": "FAIL",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "5 dirs, 0 videos",
+          "elapsed": 0.0,
+          "items": 5,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "FAIL",
+          "message": "List URL unavailable in harness (HTTP 503)",
+          "elapsed": 1.52,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://josporn.club/most-popular/",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 0.5,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://josporn.club/categories/",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 0.53,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://josporn.club/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "No video item available from list/search",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like this website is down.",
+        "Oh oh: It looks like this website is down.",
+        "notify: "
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 2.68
+    },
+    {
+      "site": "motherless",
+      "title": "Motherless",
+      "base_url": "https://motherless.com/",
+      "overall": "FAIL",
+      "steps": {
+        "main": {
+          "status": "PASS",
+          "message": "3 dirs, 0 videos",
+          "elapsed": 0.91,
+          "items": 3,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        },
+        "list": {
+          "status": "FAIL",
+          "message": "List URL unavailable in harness (HTTP 503)",
+          "elapsed": 1.46,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://motherless.com/videos/recent",
+          "play_url": ""
+        },
+        "categories": {
+          "status": "SKIP",
+          "message": "Categories returned no items",
+          "elapsed": 0.78,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://motherless.com/categories",
+          "play_url": ""
+        },
+        "search": {
+          "status": "SKIP",
+          "message": "Search returned no videos",
+          "elapsed": 1.23,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "https://motherless.com/",
+          "play_url": ""
+        },
+        "play": {
+          "status": "SKIP",
+          "message": "No video item available from list/search",
+          "elapsed": 0.0,
+          "items": 0,
+          "video_items": 0,
+          "image_items": 0,
+          "description_items": 0,
+          "playable": 0,
+          "sample_url": "",
+          "play_url": ""
+        }
+      },
+      "notifications": [
+        "Oh oh: It looks like this website is down.",
+        "Oh oh: It looks like this website is down.",
+        "Oh oh: It looks like this website is down."
+      ],
+      "profile": {
+        "supports": {
+          "main": true,
+          "list": true,
+          "categories": true,
+          "search": true,
+          "play": true
+        },
+        "content_type": "video",
+        "requires_flaresolverr": false,
+        "harness": {
+          "playback_not_testable": false,
+          "search_results_optional": false,
+          "categories_optional": false
+        }
+      },
+      "elapsed": 4.53
+    }
+  ]
+}

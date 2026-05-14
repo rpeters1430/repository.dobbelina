@@ -1,6 +1,6 @@
 """
     Plugin for ResolveURL
-    Copyright (C) 2022 shellc0de
+    Copyright (C) 2026 gujal
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,18 +20,17 @@ from resolveurl.plugins.__resolve_generic__ import ResolveGeneric
 from resolveurl.lib import helpers
 
 
-class DropLoadResolver(ResolveGeneric):
-    name = 'DropLoad'
-    domains = ['dropload.io', 'dropload.tv', 'dropload.pro', 'dropload.co', 'dr0pstream.com']
-    pattern = r'(?://|\.)(dr[0o]p(?:load|stream)\.(?:io|tv|com?|pro))/(?:embed-|e/|d/)?([0-9a-zA-Z]+)'
+class BrainZapsResolver(ResolveGeneric):
+    name = 'BrainZaps'
+    domains = ['brainzaps.tv']
+    pattern = r'(?://|\.)(brainzaps\.tv)/(?:embed-)?([0-9a-zA-Z]+)'
 
     def get_media_url(self, host, media_id):
         return helpers.get_media_url(
             self.get_url(host, media_id),
-            patterns=[r'''sources:\s*\[{\s*file:\s*["'](?P<url>[^"']+)'''],
-            generic_patterns=False,
-            referer=False
+            patterns=[r'''sources:\s*\[{\s*src:\s*"(?P<url>[^"]+)'''],
+            generic_patterns=False
         )
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://{host}/e/{media_id}')
+        return self._default_get_url(host, media_id, template='https://{host}/embed-{media_id}.html')
