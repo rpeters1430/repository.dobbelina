@@ -71,13 +71,26 @@ jobs:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN || github.token }}'
         run: |-
           echo '🔍 Finding unlabeled issues and issues marked for triage...'
-          ISSUES="$(gh issue list \
+          # Search for unlabeled issues
+          UNLABELED="$(gh issue list \
             --state 'open' \
-            --search 'no:label label:"status/needs-triage"' \
+            --search 'no:label' \
             --json number,title,body \
             --limit '100' \
             --repo "${GITHUB_REPOSITORY}"
           )"
+          
+          # Search for issues explicitly marked for triage
+          NEEDS_TRIAGE="$(gh issue list \
+            --state 'open' \
+            --search 'label:status/needs-triage' \
+            --json number,title,body \
+            --limit '100' \
+            --repo "${GITHUB_REPOSITORY}"
+          )"
+
+          # Combine and deduplicate
+          ISSUES="$(echo "${UNLABELED} ${NEEDS_TRIAGE}" | jq -s 'add | unique_by(.number)')"
 
           echo '📝 Setting output for GitHub Actions...'
           echo "issues_to_triage=${ISSUES}" >> "${GITHUB_OUTPUT}"
