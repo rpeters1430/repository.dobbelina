@@ -1,14 +1,19 @@
-Version 5.1.195 (Mar 30, 2026)
+Version 5.1.198 (May 03, 2026)
 - Code Base Changes:
-    - None
+    - update net.py to report cloudflare challenge correctly
+    - support using external cloudrequest module
 
 - Resolvers Added:
-    - goodstreamcc
+    - abyss
+    - anonmp4
 
 - Resolvers Fixed/Updated:
-    - filelions
-    - gofile
-    - videa
+    - byse
+    - dropload
+    - hdvid
+    - mixdrop
+    - streamix
+    - voe
 
 - Resolvers Removed
     - None
