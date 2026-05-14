@@ -67,6 +67,21 @@ def main() -> int:
             }
         )
 
+    # Identify persistent failures
+    for failure in diff.get("persistent_failures", []):
+        requests.append(
+            {
+                "site": failure["site"],
+                "type": "PERSISTENT_FAILURE",
+                "priority": "MEDIUM",
+                "previous": failure["previous"],
+                "current": failure["current"],
+                "class": failure["class"],
+                "message": failure["message"],
+                "description": f"Site {failure['site']} is a persistent failure ({failure['previous']} -> {failure['current']}).\nError class: {failure['class']}\nMessage: {failure['message']}",
+            }
+        )
+
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(requests, indent=2), encoding="utf-8")

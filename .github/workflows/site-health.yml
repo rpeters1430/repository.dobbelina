@@ -133,7 +133,16 @@ jobs:
           echo "Triaging $COUNT regressions..."
           jq -c '.[]' results/triage_requests.json | while read -r req; do
             SITE=$(echo "$req" | jq -r '.site')
-            TITLE="[Site Health] Regression: $SITE"
+            TYPE=$(echo "$req" | jq -r '.type')
+            
+            if [ "$TYPE" = "REGRESSION" ]; then
+              TITLE="[Site Health] Regression: $SITE"
+            elif [ "$TYPE" = "STEP_REGRESSION" ]; then
+              TITLE="[Site Health] Step Regression: $SITE"
+            else
+              TITLE="[Site Health] Persistent Failure: $SITE"
+            fi
+            
             BODY=$(echo "$req" | jq -r '.description')
             
             # Check if an open issue already exists
