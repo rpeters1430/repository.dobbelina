@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <addons>
-<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.392">
+<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.393">
 <requires>
 <import addon="xbmc.python" version="3.0.0" />
 <import addon="script.module.six" />
@@ -119,7 +119,7 @@ Metadata refreshed for Matrix/Nexus/Omega compatibility
 </assets>
 </extension>
 </addon>
-<addon id="script.module.resolveurl.xxx" version="2.1.44" name="Adult Resolver SMR Extension" provider-name="gujal">
+<addon id="script.module.resolveurl.xxx" version="2.1.45" name="Adult Resolver SMR Extension" provider-name="gujal">
 <requires>
 <import addon="script.module.resolveurl" version="5.1.0" />
 </requires>
