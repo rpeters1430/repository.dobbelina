@@ -1,3 +1,14 @@
+[B]Version 1.1.394[/B]
+- fix: update permissions and enhance site module auto-discovery in CLAUDE.md
+- fix: repair xfreehd private-video filter and speedporn hoster extraction
+- feat: enhance FlareSolverr integration and error handling across multiple sites
+- fix: use multi-line output and compact JSON for triage issues
+- fix: correct issue search query in scheduled triage workflow
+- feat: update status metrics with latest addon version and migration data
+- Add live smoke report and update site health and stability data
+- feat: enable automated triage for persistent site failures
+- feat: add stability indicators to report comparison
+
 [B]Version 1.1.393[/B]
 - feat: enhance FlareSolverr integration and error handling across multiple sites
 - fix: use multi-line output and compact JSON for triage issues
