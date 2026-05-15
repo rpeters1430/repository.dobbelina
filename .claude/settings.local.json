@@ -139,7 +139,8 @@
       "Bash(sed -n '29,50p' /home/rpeters1428/repository.dobbelina/plugin.video.cumination/resources/lib/sites/erogarga.py)",
       "Bash(ln *)",
       "Bash(echo \"test\")",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(gh issue *)"
     ],
     "deny": [],
     "ask": []

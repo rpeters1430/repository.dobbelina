@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Kodi addon repository for adult content. The primary addon is **Cumination** (`plugin.video.cumination`), providing access to ~163 adult video sites through Kodi's plugin system. This is a fork that tracks upstream (dobbelina/repository.dobbelina).
+Kodi addon repository for adult content. The primary addon is **Cumination** (`plugin.video.cumination`), providing access to ~170 adult video sites through Kodi's plugin system. This is a fork that tracks upstream (dobbelina/repository.dobbelina).
 
 Other addons in the repo: `plugin.video.uwc` (legacy fork), `repository.dobbelina` (repo installer), `script.video.F4mProxy` (HLS/F4M helper).
 
@@ -48,7 +48,7 @@ Kodi calls `plugin://plugin.video.cumination/?mode=sitename.Function&url=...` �
 - **`adultsite.py`** - `AdultSite` base class. Maintains a `WeakSet` of all instances for auto-discovery. Each site gets an isolated mode namespace.
 - **`default.py`** - Entry point. Imports `resources.lib.sites.*` which triggers module-level `AdultSite(...)` instantiation, auto-registering each site.
 - **`utils.py`** - HTTP (`getHtml`), BeautifulSoup helpers (`parse_html`, `safe_get_attr`, `safe_get_text`, `soup_videos_list`), Kodi UI utilities.
-- **`sites/__init__.py`** - `__all__` list controls which site modules are loaded. New sites must be added here.
+- **`sites/__init__.py`** - Auto-discovers all `.py` files in the directory as site modules. No manual `__all__` maintenance needed. Sites listed in `EXCLUDED_SITE_MODULES` (e.g. `luxuretv.py`, `missav.py`, `stripchat.py`) are intentionally hidden from the Kodi listing but still exist on disk.
 - **`sites/soup_spec.py`** - `SoupSiteSpec` dataclass for declarative selector-based video listing.
 - **`favorites.py`** - SQLite-backed favorites and custom site management.
 - **`http_timeouts.py`** - Named timeout constants: `SHORT`=5s, `MANIFEST`=8s, `CONNECT`=10s, `PREFETCH`=12s, `MEDIUM`=15s, `DEFAULT`=30s, `LONG`=60s. Use these instead of magic numbers in site modules.
@@ -95,19 +95,21 @@ For declarative selector-based sites, see `SoupSiteSpec` in `sites/soup_spec.py`
 
 - `tests/conftest.py` - Kodi mocks (xbmc, xbmcaddon, xbmcvfs, xbmcplugin) and sys.path setup
 - `tests/fixtures/sites/` - Saved HTML from real sites for regression testing
-- `tests/sites/test_*.py` - Site-specific parsing tests
+- `tests/sites/test_*.py` - Site-specific parsing tests (hand-written, one per site)
+- `tests/smoke_generated/test_smoke_*.py` - Auto-generated smoke tests (run against live sites); regenerate with `python scripts/generate_smoke_tests.py`
 - `tests/test_utils.py` - BeautifulSoup helper tests
 
 ## Creating a New Site
 
 1. Create `plugin.video.cumination/resources/lib/sites/[sitename].py` using the pattern above
-2. Add `'sitename'` to `__all__` in `resources/lib/sites/__init__.py`
-3. Add icon PNG to `resources/media/` (optional)
-4. Save HTML fixtures to `tests/fixtures/sites/`
-5. Write tests in `tests/sites/test_[sitename].py`
-6. Run: `pytest tests/sites/test_[sitename].py -v`
+2. Add icon PNG to `resources/media/` (optional)
+3. Save HTML fixtures to `tests/fixtures/sites/`
+4. Write tests in `tests/sites/test_[sitename].py`
+5. Run: `pytest tests/sites/test_[sitename].py -v`
 
-If the site doesn't appear in Kodi: verify `AdultSite(...)` is at module level, a function has `@site.register(default_mode=True)`, and the module is in `__init__.py`'s `__all__`.
+The module is auto-discovered — no changes to `__init__.py` needed. To intentionally hide a site from the Kodi listing without deleting it, add its filename to `EXCLUDED_SITE_MODULES` in `sites/__init__.py`.
+
+If the site doesn't appear in Kodi: verify `AdultSite(...)` is at module level and a function has `@site.register(default_mode=True)`.
 
 ## BeautifulSoup
 
@@ -124,7 +126,9 @@ Standalone scripts for development and debugging — all use Playwright or `requ
 
 - `live_smoke_test.py` / `smoke_check.py` / `run_smoke_tests.py` - Live-fetch site health checks; outputs to `results/` and `smoke_results/`
 - `smoke_report_diff.py` - Diff two smoke result files to spot regressions
-- `debug_stripchat_proxy.py` / `sniff_stripchat.py` - Stripchat-specific stream/API probing
+- `generate_smoke_tests.py` - Regenerate `tests/smoke_generated/` from current site inventory
+- `generate_status_metrics.py` - Recompute status metrics written to `docs/status/STATUS_METRICS.md`
+- `sniff_stripchat.py` - Stripchat-specific stream/API probing
 - `playwright_sniff.py` / `playwright_listing_probe.py` - Playwright-based network sniffing for Cloudflare-protected sites
 - `codegen.py` - Scaffold boilerplate for a new site module
 
