@@ -27,6 +27,18 @@ STEP_STATUS_RANK = {
 
 def classify_message(msg: str) -> str:
     lowered = (msg or "").lower()
+    if "flaresolverr" in lowered and any(
+        token in lowered
+        for token in (
+            "not available",
+            "unavailable",
+            "check if flaresolverr is running",
+            "failed to connect",
+            "connection refused",
+            "no connection could be made",
+        )
+    ):
+        return "ENV"
     if any(
         token in lowered
         for token in (

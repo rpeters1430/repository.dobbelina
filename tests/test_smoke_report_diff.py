@@ -84,3 +84,19 @@ def test_compare_reports_classifies_service_unavailable_as_network():
     diff = smoke_report_diff.compare_reports(current, previous)
 
     assert diff["new_failures"][0]["class"] == "NETWORK"
+
+
+def test_compare_reports_classifies_flaresolverr_outage_as_env():
+    previous = make_report("PASS")
+    current = make_report(
+        "FAIL",
+        list_status="FAIL",
+        list_message=(
+            "RuntimeError: FlareSolverr error for https://example.test: "
+            "Check if FlareSolverr is running at http://localhost:8191/v1"
+        ),
+    )
+
+    diff = smoke_report_diff.compare_reports(current, previous)
+
+    assert diff["new_failures"][0]["class"] == "ENV"

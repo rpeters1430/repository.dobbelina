@@ -12,6 +12,8 @@ jobs:
     permissions:
       contents: write
       issues: write
+    env:
+      FLARESOLVERR_URL: http://localhost:8191/v1
 
     services:
       flaresolverr:
@@ -43,23 +45,44 @@ jobs:
         run: |
           echo "Waiting for FlareSolverr to be ready..."
           for i in $(seq 1 30); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8191/health 2>/dev/null || echo 000)
-            if [ "$STATUS" = "200" ]; then
+            HEALTH_STATUS=$(curl -s -o /tmp/flaresolverr-health -w "%{http_code}" http://localhost:8191/health 2>/dev/null || echo 000)
+            API_STATUS=$(curl -s -o /tmp/flaresolverr-api -w "%{http_code}" \
+              -H "Content-Type: application/json" \
+              -d '{"cmd":"sessions.list"}' \
+              "$FLARESOLVERR_URL" 2>/dev/null || echo 000)
+            if [ "$HEALTH_STATUS" = "200" ] || { [ "$API_STATUS" = "200" ] && grep -q '"sessions"' /tmp/flaresolverr-api; }; then
               echo "FlareSolverr is ready (attempt $i)"
               exit 0
             fi
-            echo "  Attempt $i/30: HTTP $STATUS — waiting 10s..."
+            echo "  Attempt $i/30: health HTTP $HEALTH_STATUS, api HTTP $API_STATUS — waiting 10s..."
             sleep 10
           done
-          echo "WARNING: FlareSolverr did not become ready in 300s — FlareSolverr errors will be treated as SKIP in smoke tests"
+          echo "ERROR: FlareSolverr did not become ready in 300s"
+          echo "Health response:"
+          cat /tmp/flaresolverr-health || true
+          echo "API response:"
+          cat /tmp/flaresolverr-api || true
+          exit 1
 
       - name: Run Tier 1 live smoke
         run: |
-          python scripts/live_smoke_test.py --tier 1 --out results || true
+          set +e
+          python scripts/live_smoke_test.py --tier 1 --out results --require-flaresolverr
+          CODE=$?
+          set -e
+          if [ "$CODE" -eq 2 ]; then
+            exit "$CODE"
+          fi
 
       - name: Run remaining live smoke
         run: |
-          python scripts/live_smoke_test.py --out results || true
+          set +e
+          python scripts/live_smoke_test.py --out results --require-flaresolverr
+          CODE=$?
+          set -e
+          if [ "$CODE" -eq 2 ]; then
+            exit "$CODE"
+          fi
 
       - name: Prepare previous baseline
         env:

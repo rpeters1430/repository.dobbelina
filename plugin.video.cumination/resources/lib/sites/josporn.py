@@ -43,7 +43,9 @@ def Main(url):
 
 @site.register()
 def List(url, page=1):
-    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+    html, _ = utils.get_html_with_cloudflare_retry(
+        url, site.url, retry_on_empty=True
+    )
 
     if not html:
         utils.notify(msg="List blocked/challenged")
@@ -95,7 +97,9 @@ def List(url, page=1):
 
 @site.register()
 def Categories(url):
-    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+    html, _ = utils.get_html_with_cloudflare_retry(
+        url, site.url, retry_on_empty=True
+    )
 
     if not html:
         utils.eod()
@@ -132,7 +136,9 @@ def Playvid(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
     
     # The site uses pjs player which often has the direct mp4 link in the source
-    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+    html, _ = utils.get_html_with_cloudflare_retry(
+        url, site.url, retry_on_empty=True
+    )
     if not html:
         utils.notify("Error", "Could not load video page")
         return

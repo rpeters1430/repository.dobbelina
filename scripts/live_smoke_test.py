@@ -34,24 +34,53 @@ ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_PATH = ROOT / "plugin.video.cumination"
 SITES_DIR = PLUGIN_PATH / "resources" / "lib" / "sites"
 SITE_PROFILES_PATH = ROOT / "config" / "site_profiles.json"
-STUB_FS_HOST = "http://localhost:8191/v1"
+DEFAULT_FS_HOST = "http://localhost:8191/v1"
+
+
+def _get_flaresolverr_url() -> str:
+    return (
+        os.environ.get("FLARESOLVERR_URL")
+        or os.environ.get("FS_HOST")
+        or DEFAULT_FS_HOST
+    )
 
 
 def _probe_flaresolverr() -> bool:
     """Return True if FlareSolverr is reachable at the same URL used by the Kodi stubs.
 
-    The child harness currently uses a hardcoded ``fs_host`` value in the Kodi stubs,
-    so the probe must check that same endpoint to keep the availability flag accurate.
-    Uses the /health endpoint (FlareSolverr v3+).
+    The health endpoint is checked first, then the real v1 API is probed so older
+    or differently configured FlareSolverr instances are still recognized.
     """
-    parsed = urlparse(STUB_FS_HOST)
+    fs_url = _get_flaresolverr_url()
+    parsed = urlparse(fs_url)
     base_url = f"{parsed.scheme}://{parsed.netloc}"
     health_url = base_url + "/health"
-    req = urllib.request.Request(health_url)
     try:
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            return resp.status == 200
+        health_req = urllib.request.Request(health_url)
+        with urllib.request.urlopen(health_req, timeout=5) as resp:
+            if resp.status == 200:
+                return True
+    except urllib.error.HTTPError:
+        pass
     except (urllib.error.URLError, OSError, ValueError):
+        pass
+
+    payload = json.dumps({"cmd": "sessions.list"}).encode("utf-8")
+    req = urllib.request.Request(
+        fs_url,
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            if resp.status != 200:
+                return False
+            data = json.loads(resp.read().decode("utf-8", errors="ignore") or "{}")
+            return isinstance(data, dict) and (
+                data.get("status") == "ok" or "sessions" in data
+            )
+    except (urllib.error.URLError, OSError, ValueError, json.JSONDecodeError):
         return False
 
 
@@ -113,7 +142,7 @@ def install_kodi_stubs() -> None:
                 "trans_keywords": "",
                 "sortxt": "0",
                 "fs_enable": "true",
-                "fs_host": "http://localhost:8191/v1",
+                "fs_host": _get_flaresolverr_url(),
             }
 
         def getAddonInfo(self, key):
@@ -398,6 +427,17 @@ def translate_kodi_strings(text: str) -> str:
 
 def classify_message(msg: str) -> str:
     m = (msg or "").lower()
+    if "flaresolverr" in m and any(
+        x in m
+        for x in (
+            "not available",
+            "unavailable",
+            "check if flaresolverr is running",
+            "failed to connect",
+            "connection refused",
+        )
+    ):
+        return "ENV"
     if any(
         x in m
         for x in (
@@ -1442,6 +1482,7 @@ def run_parent(args: argparse.Namespace) -> int:
         f"  Sites: {len(sites)} | Steps: {steps} | Timeout/step: {args.timeout}s | Keyword: '{args.keyword}'"
     )
     print(f"  Started: {started.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"  FlareSolverr URL: {_get_flaresolverr_url()}")
 
     # Probe FlareSolverr once and propagate availability to child processes via env var.
     fs_available = _probe_flaresolverr()
@@ -1449,6 +1490,13 @@ def run_parent(args: argparse.Namespace) -> int:
     print(
         f"  FlareSolverr: {'available' if fs_available else 'NOT available — FlareSolverr errors will be treated as SKIP'}"
     )
+    if args.require_flaresolverr and not fs_available:
+        print("")
+        print(
+            "ERROR: FlareSolverr is required for this site-health run "
+            "but is not usable."
+        )
+        return 2
     print("")
 
     results: list[dict[str, Any]] = []
@@ -1740,6 +1788,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--tier", type=int, help="Filter sites by tier (e.g., 1)")
     parser.add_argument("--out", default=str(ROOT / "results"), help="Output directory")
     parser.add_argument("--run-site", help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--require-flaresolverr",
+        action="store_true",
+        help="Fail before running sites if the configured FlareSolverr API is unavailable",
+    )
     return parser.parse_args()
 
 

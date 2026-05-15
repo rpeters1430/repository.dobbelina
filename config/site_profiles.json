@@ -262,6 +262,14 @@
     "analdin": {
       "tier": 2
     },
+    "josporn": {
+      "tier": 2,
+      "requires_flaresolverr": true
+    },
+    "motherless": {
+      "tier": 2,
+      "requires_flaresolverr": true
+    },
     "porndoe": {
       "tier": 2
     },

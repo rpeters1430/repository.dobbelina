@@ -58,7 +58,9 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+    listhtml, _ = utils.get_html_with_cloudflare_retry(
+        url, site.url, retry_on_empty=True
+    )
     if not listhtml:
         utils.eod()
         return
@@ -163,7 +165,9 @@ def Search(url, keyword=None):
 
 @site.register()
 def Categories(url):
-    cathtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+    cathtml, _ = utils.get_html_with_cloudflare_retry(
+        url, site.url, retry_on_empty=True
+    )
 
     if not cathtml:
         utils.eod()
@@ -217,7 +221,9 @@ def Categories(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
-    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+    html, _ = utils.get_html_with_cloudflare_retry(
+        url, site.url, retry_on_empty=True
+    )
     if not html:
         vp.play_from_link_to_resolve(url)
         return
