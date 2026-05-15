@@ -1,3 +1,14 @@
+[B]Version 1.1.393[/B]
+- feat: enhance FlareSolverr integration and error handling across multiple sites
+- fix: use multi-line output and compact JSON for triage issues
+- fix: correct issue search query in scheduled triage workflow
+- feat: update status metrics with latest addon version and migration data
+- Add live smoke report and update site health and stability data
+- feat: enable automated triage for persistent site failures
+- feat: add stability indicators to report comparison
+- feat: enhance site health checks and triage request generation - Added tier filtering for smoke tests - Improved stability tracking in smoke report comparisons - Introduced automated triage request generation based on health regressions - Added new smoke tests for sunporno and yourlesbians sites - Updated existing tests for hentaihavenco and stripchat
+- Update upstream sync tracking and enhance site-specific handling
+
 [B]Version 1.1.392[/B]
 - Update upstream sync tracking and enhance site-specific handling
 - Misc Updates to Sites
