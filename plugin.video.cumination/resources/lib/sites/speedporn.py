@@ -288,6 +288,21 @@ def Playvid(url, name, download=None):
         vp.play_from_direct_link(source_match.group(1))
         return
 
+    soup = utils.parse_html(videopage)
+    embed_links = [
+        a["href"]
+        for a in soup.select("a[href^='http']")
+        if any(
+            host in a["href"]
+            for host in ("doply.net", "voe.sx", "mixdrop.", "luluvid.com",
+                         "doodstream.", "streamtape.", "frdl.", "my.rpmplay.",
+                         "upstream.to", "vidlox.", "filemoon.", "vudeo.")
+        )
+    ]
+    if embed_links:
+        vp.play_from_link_list(embed_links)
+        return
+
     vp.play_from_html(videopage, url)
 
 

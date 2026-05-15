@@ -107,7 +107,7 @@ def List(url):
         if not videourl.startswith("http"):
             videourl = site.url[:-1] + videourl
 
-        title_tag = item.select_one(".title-new")
+        title_tag = item.select_one(".video-title-new") or item.select_one(".title-new")
         name = utils.cleantext(utils.safe_get_text(title_tag))
 
         img_tag = item.select_one("img")
@@ -118,15 +118,14 @@ def List(url):
         duration_tag = item.select_one(".duration-new")
         duration = utils.safe_get_text(duration_tag)
 
-        # HD and Private status are often in badges or labels
-        badges = item.select(".badge, span[class*='label']")
+        badges = item.select(".badge, span[class*='label'], div[class*='label'], [class*='private']")
         hd = ""
         is_private = False
         for badge in badges:
             text = utils.safe_get_text(badge).upper()
             if "HD" in text:
                 hd = "HD"
-            if "PRIVATE" in text:
+            if "PRIVATE" in text or "label-private" in " ".join(badge.get("class", [])):
                 is_private = True
 
         if is_private:
