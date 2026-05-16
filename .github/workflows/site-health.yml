@@ -138,6 +138,29 @@ jobs:
             --diff results/site_health_diff_latest.json \
             --out results/triage_requests.json
 
+      - name: Ensure site health labels
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ensure_label() {
+            local name="$1"
+            local color="$2"
+            local description="$3"
+            if gh label view "$name" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+              return 0
+            fi
+            gh label create "$name" --color "$color" --description "$description" --repo "${GITHUB_REPOSITORY}"
+          }
+
+          ensure_label "site-health" "5319e7" "Automated site health issue"
+          ensure_label "site-health/new-failure" "b60205" "Site newly failed in health checks"
+          ensure_label "site-health/regression" "d93f0b" "Site health regressed from a healthier state"
+          ensure_label "site-health/step-regression" "fbca04" "One site health step regressed"
+          ensure_label "site-health/persistent-failure" "cfd3d7" "Failure persisted across health checks"
+          ensure_label "failure/network" "006b75" "Network or availability failure"
+          ensure_label "failure/parser" "c2e0c6" "Parser or listing extraction failure"
+          ensure_label "failure/playback" "f9d0c4" "Playback resolution failure"
+
       - name: Automated Triage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -167,16 +190,34 @@ jobs:
             fi
             
             BODY=$(echo "$req" | jq -r '.description')
+            LABELS=$(echo "$req" | jq -r '(.labels // ["status/needs-triage","bug"]) | join(",")')
+            COMMENT=$(echo "$req" | jq -r '.comment // ""')
+            COMMENT_MARKER=$(printf '%s\n' "$COMMENT" | sed -n '1p')
             
             # Check if an open issue already exists
             EXISTING=$(gh issue list --state open --search "$TITLE" --json number --jq '.[0].number')
             if [ -n "$EXISTING" ]; then
-              echo "Issue #$EXISTING already exists for $SITE, skipping."
+              echo "Issue #$EXISTING already exists for $SITE, updating labels/comment if needed."
+              gh issue edit "$EXISTING" --add-label "$LABELS"
+              if [ -n "$COMMENT" ]; then
+                HAS_COMMENT=$(gh issue view "$EXISTING" --json comments --jq --arg marker "$COMMENT_MARKER" '[.comments[].body | contains($marker)] | any')
+                if [ "$HAS_COMMENT" != "true" ]; then
+                  COMMENT_FILE=$(mktemp)
+                  printf '%s\n' "$COMMENT" > "$COMMENT_FILE"
+                  gh issue comment "$EXISTING" --body-file "$COMMENT_FILE"
+                fi
+              fi
               continue
             fi
             
             echo "Creating issue for $SITE..."
-            gh issue create --title "$TITLE" --body "$BODY" --label "status/needs-triage,bug"
+            ISSUE_URL=$(gh issue create --title "$TITLE" --body "$BODY" --label "$LABELS")
+            ISSUE_NUMBER="${ISSUE_URL##*/}"
+            if [ -n "$COMMENT" ]; then
+              COMMENT_FILE=$(mktemp)
+              printf '%s\n' "$COMMENT" > "$COMMENT_FILE"
+              gh issue comment "$ISSUE_NUMBER" --body-file "$COMMENT_FILE"
+            fi
           done
 
       - name: Publish job summary

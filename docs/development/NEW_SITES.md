@@ -10,6 +10,7 @@ This file tracks sites identified for potential implementation. Recent audit sho
 | **Analdin** | Tube | Easy | ✅ | **Integrated** |
 | **PornDoe** | Tube | Medium | ✅ | **Integrated** |
 | **AnySex.com** | Tube | Medium | ✅ | **Integrated** (Requires FlareSolverr) |
+| **PornoBae** | Tube | Easy | ✅ | **Integrated** - marked as new in addon |
 
 ## 🟡 Tier 2 - Medium (Requires FlareSolverr / Cloudflare)
 *Cloudflare protected (403/503) or Meta-Search.*
@@ -38,3 +39,4 @@ This file tracks sites identified for potential implementation. Recent audit sho
 | **PornDoe** | Tube | ✅ Added Mar 2026 |
 | **AnySex.com** | Tube | ✅ Added Mar 2026 |
 | **ArchiveBate** | Aggregator | ✅ Added Mar 2026 |
+| **PornoBae** | Tube | ✅ Added May 2026 |

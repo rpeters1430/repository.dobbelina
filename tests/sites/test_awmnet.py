@@ -347,6 +347,36 @@ def test_sitemain_creates_menu_structure(monkeypatch):
     assert len(list_calls) == 1
     assert "new?pricing=free" in list_calls[0]
 
+
+def test_sitemain_uses_ixxx_search_path(monkeypatch):
+    dirs = []
+
+    monkeypatch.setattr(
+        awmnet.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
+    monkeypatch.setattr(awmnet, "List", lambda url: None)
+
+    awmnet.SiteMain("https://www.ixxx.com/")
+
+    search_dir = [item for item in dirs if item["mode"] == "Search"][0]
+    assert search_dir["url"] == "https://www.ixxx.com/search/"
+
+
+def test_list_notifies_when_no_items(monkeypatch):
+    notifications = []
+
+    monkeypatch.setattr(awmnet.utils, "getHtml", lambda *a, **k: "<html></html>")
+    monkeypatch.setattr(awmnet.utils, "notify", lambda **kwargs: notifications.append(kwargs))
+
+    result = awmnet.List("https://www.ixxx.com/new?pricing=free")
+
+    assert result == ""
+    assert notifications == [{"msg": "No models found!"}]
+
     def test_playvid_uses_vlink_referer(monkeypatch):
         """Test that Playvid uses the video page URL as Referer, not the API URL."""
         # This simulates 4tube redirecting to fapnfuck CDN, but requiring 4tube Referer

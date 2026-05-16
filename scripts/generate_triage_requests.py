@@ -8,6 +8,72 @@ from pathlib import Path
 
 
 SKIP_CLASSES = {"ENV"}
+BASE_LABELS = ["status/needs-triage", "bug", "site-health"]
+CLASS_LABELS = {
+    "NETWORK": "failure/network",
+    "PARSER": "failure/parser",
+    "PLAYBACK": "failure/playback",
+}
+CLASS_FIX_HINTS = {
+    "NETWORK": [
+        "Rerun the live smoke for the single site to confirm the HTTP status is stable and not a temporary block.",
+        "Check whether the base/list URL changed, now redirects, or requires Cloudflare/FlareSolverr handling.",
+        "If the site is intermittently unavailable, update the site health profile instead of changing parser code.",
+    ],
+    "PARSER": [
+        "Fetch the failing list/search page HTML and compare selectors against the current site markup.",
+        "Update the site module's listing selectors and add a focused fixture test for the new structure.",
+        "Confirm the scraper still adds playable video items, thumbnails, and descriptions in the live smoke harness.",
+    ],
+    "PLAYBACK": [
+        "Reproduce the failing video page and inspect whether the hoster, player config, or source JSON changed.",
+        "Update the playback extraction path or resolver integration, then add a focused playback fixture test.",
+        "Verify the resolved URL includes required headers such as User-Agent, Referer, and Origin when needed.",
+    ],
+}
+
+
+def labels_for(item: dict, request_type: str) -> list[str]:
+    labels = list(BASE_LABELS)
+    if request_type == "REGRESSION":
+        labels.extend(["site-health/regression", "site-health/new-failure"])
+    elif request_type == "STEP_REGRESSION":
+        labels.append("site-health/step-regression")
+    elif request_type == "PERSISTENT_FAILURE":
+        labels.append("site-health/persistent-failure")
+
+    class_label = CLASS_LABELS.get(item.get("class"))
+    if class_label:
+        labels.append(class_label)
+    return labels
+
+
+def comment_for(item: dict, request_type: str) -> str:
+    site = item["site"]
+    failure_class = item.get("class", "UNKNOWN")
+    message = item.get("message", "")
+    marker = f"<!-- site-health-triage:{site}:{request_type}:{failure_class} -->"
+    hints = CLASS_FIX_HINTS.get(
+        failure_class,
+        [
+            "Rerun the single-site live smoke test to confirm the failure is still current.",
+            "Inspect the failing step in the site module and add or update a focused regression test.",
+        ],
+    )
+    step = item.get("step")
+    step_line = f"- Failing step: `{step}`\n" if step else ""
+    hint_lines = "\n".join(f"- {hint}" for hint in hints)
+    return (
+        f"{marker}\n"
+        "Automated site-health triage notes:\n\n"
+        f"- Classification: `{request_type}` / `{failure_class}`\n"
+        f"{step_line}"
+        f"- Reported message: `{message}`\n"
+        f"- Reproduce locally: `.venv\\Scripts\\python.exe scripts\\live_smoke_test.py --site {site} --steps main,list,categories,search,play --keyword test --timeout 45 --site-timeout 220`\n\n"
+        "Possible fix path:\n"
+        f"{hint_lines}\n\n"
+        "If the reproduce command now passes, close this as stale or note the transient condition in the issue."
+    )
 
 
 def is_environment_failure(item: dict) -> bool:
@@ -61,6 +127,8 @@ def build_requests(diff: dict) -> list[dict]:
                 "current": failure["current"],
                 "class": failure["class"],
                 "message": failure["message"],
+                "labels": labels_for(failure, "REGRESSION"),
+                "comment": comment_for(failure, "REGRESSION"),
                 "description": f"Site {failure['site']} regressed from {failure['previous']} to {failure['current']}.\nError class: {failure['class']}\nMessage: {failure['message']}",
             }
         )
@@ -80,6 +148,8 @@ def build_requests(diff: dict) -> list[dict]:
                 "current": reg["current"],
                 "class": reg["class"],
                 "message": reg["message"],
+                "labels": labels_for(reg, "STEP_REGRESSION"),
+                "comment": comment_for(reg, "STEP_REGRESSION"),
                 "description": f"Site {reg['site']} experienced a regression in the '{reg['step']}' step ({reg['previous']} -> {reg['current']}).\nError class: {reg['class']}\nMessage: {reg['message']}",
             }
         )
@@ -98,6 +168,8 @@ def build_requests(diff: dict) -> list[dict]:
                 "current": failure["current"],
                 "class": failure["class"],
                 "message": failure["message"],
+                "labels": labels_for(failure, "PERSISTENT_FAILURE"),
+                "comment": comment_for(failure, "PERSISTENT_FAILURE"),
                 "description": f"Site {failure['site']} is a persistent failure ({failure['previous']} -> {failure['current']}).\nError class: {failure['class']}\nMessage: {failure['message']}",
             }
         )

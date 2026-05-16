@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-05-09
-**Last Sync**: 2026-05-09 - Ported AWM network search updates, FreeOMovie playback fix, XXXTube listing skip, and Aagmaal playback fallback.
+**Last Updated**: 2026-05-16
+**Last Sync**: 2026-05-16 - Ported latest AWM network, BongaCams, and Chaturbate recording-search fixes from upstream through `5aca0219`.
 
 ---
 
@@ -18,6 +18,20 @@
 ---
 
 ## Sync Sessions
+
+### 2026-05-16 Porting Session
+Reviewed upstream `dobbelina/repository.dobbelina` commits after the 2026-05-09 session (`5f0b8376..5aca0219`). Version/package bumps and changelog-only commits were not applied.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `ea00f3aa` | 2026-05-10 Bumped to v.1.1.182 | skipped | 2026-05-16 | Version/package bump only; fork handles packaging separately. |
+| `8f8716e6` | Update chaturbate.py | `manual-already-present` | 2026-05-16 | Verified multi-proxy Chaturbate playback handling already existed in fork. |
+| `a2802ae3` | Merge pull request #1860 from spamgbh-cmyk/master | skipped | 2026-05-16 | Merge commit; functional changes reviewed through child commits. |
+| `e8c66515` | chaturbate capture multiple streams | skipped | 2026-05-16 | Changelog-only commit. |
+| `d5986d69` | Add files via upload | `manual` | 2026-05-16 | Ported BongaCams online favorites, GeoLocked labels, context menu, playback username fallback, offline/GeoLocked handling, and redesigned contest payload parsing while preserving fork Cloudflare helpers. |
+| `342ae49c` | Add files via upload | `manual-already-present` | 2026-05-16 | Verified Chaturbate simultaneous stream proxy logic was already present in fork. |
+| `a59d0d84` | Merge pull request #1862 from camilt/master | skipped | 2026-05-16 | Merge commit; functional changes reviewed through `5aca0219`. |
+| `5aca0219` | AWM network, bongacams, chaturbate fixes | `manual` | 2026-05-16 | Ported AWM iXXX search path and empty listing notification; ported Chaturbate Record selector for Cloudbate/iXXX searches. |
 
 ### 2026-05-09 Porting Session
 Integrated compatible code fixes from upstream `dobbelina/repository.dobbelina` after the 2026-05-05 session. Merge commits, version/package bumps, and changelog-only commits were not applied.

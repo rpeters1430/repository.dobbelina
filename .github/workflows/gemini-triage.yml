@@ -147,13 +147,24 @@ jobs:
             // Set the labels
             const issueNumber = process.env.ISSUE_NUMBER;
             if (selectedLabels && selectedLabels.length > 0) {
+              const currentIssue = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+              });
+              const protectedLabels = currentIssue.data.labels
+                .map((label) => typeof label === 'string' ? label : label.name)
+                .filter((label) => label && (label.startsWith('site-health') || label.startsWith('failure/')))
+                .filter((label) => availableLabels.includes(label));
+              const labelsToSet = Array.from(new Set([...selectedLabels, ...protectedLabels])).sort();
+
               await github.rest.issues.setLabels({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issueNumber,
-                labels: selectedLabels,
+                labels: labelsToSet,
               });
-              core.info(`Successfully set labels: ${selectedLabels.join(',')}`);
+              core.info(`Successfully set labels: ${labelsToSet.join(',')}`);
             } else {
               core.info(`Failed to determine labels to set. There may not be enough information in the issue or pull request.`)
             }

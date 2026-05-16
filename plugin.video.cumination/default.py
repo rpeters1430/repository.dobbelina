@@ -309,6 +309,17 @@ _CATEGORY_ICONS = {
 }
 
 
+def _site_display_title(site_obj, custom_listitems_dict=None):
+    title = site_obj.title
+    if site_obj.is_new:
+        title = "[COLOR lime][NEW][/COLOR] {}".format(title)
+    if custom_listitems_dict and site_obj.title in custom_listitems_dict:
+        title = "{} [COLOR red]{}[/COLOR]".format(
+            title, "".ljust(custom_listitems_dict[site_obj.title], "*")
+        )
+    return title
+
+
 @url_dispatcher.register()
 def category_list():
     categories = set()
@@ -347,11 +358,7 @@ def browse_category(url):
             filtered_sites.append(x)
             
     for x in sorted(filtered_sites, key=lambda y: y.get_clean_title().lower()):
-        title = x.title
-        if title in custom_listitems_dict:
-            title = "{} [COLOR red]{}[/COLOR]".format(
-                title, "".ljust(custom_listitems_dict[title], "*")
-            )
+        title = _site_display_title(x, custom_listitems_dict)
         url_dispatcher.add_dir(
             title, x.url, x.default_mode, x.image, about=x.about, custom=x.custom
         )
@@ -371,11 +378,7 @@ def site_list():
             utils.kodilog(
                 "{0}: {1}".format(utils.i18n("list_custom"), x.title), xbmc.LOGDEBUG
             )
-        title = x.title
-        if title in custom_listitems_dict:
-            title = "{} [COLOR red]{}[/COLOR]".format(
-                title, "".ljust(custom_listitems_dict[title], "*")
-            )
+        title = _site_display_title(x, custom_listitems_dict)
         url_dispatcher.add_dir(
             title, x.url, x.default_mode, x.image, about=x.about, custom=x.custom
         )
@@ -390,11 +393,7 @@ def new_site_list():
     new_sites = [x for x in AdultSite.get_sites() if x.is_new]
     
     for x in sorted(new_sites, key=lambda y: y.get_clean_title().lower()):
-        title = x.title
-        if title in custom_listitems_dict:
-            title = "{} [COLOR red]{}[/COLOR]".format(
-                title, "".ljust(custom_listitems_dict[title], "*")
-            )
+        title = _site_display_title(x, custom_listitems_dict)
         url_dispatcher.add_dir(
             title, x.url, x.default_mode, x.image, about=x.about, custom=x.custom
         )

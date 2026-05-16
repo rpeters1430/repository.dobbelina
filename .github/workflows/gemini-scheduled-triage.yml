@@ -32,12 +32,38 @@ jobs:
     permissions:
       contents: 'read'
       id-token: 'write'
-      issues: 'read'
+      issues: 'write'
       pull-requests: 'read'
     outputs:
       available_labels: '${{ steps.get_labels.outputs.available_labels }}'
       triaged_issues: '${{ env.TRIAGED_ISSUES }}'
     steps:
+      - name: 'Ensure site health labels'
+        if: |-
+          ${{ github.event_name != 'pull_request' }}
+        env:
+          GITHUB_REPOSITORY: '${{ github.repository }}'
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN || github.token }}'
+        run: |-
+          ensure_label() {
+            local name="$1"
+            local color="$2"
+            local description="$3"
+            if gh label view "$name" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+              return 0
+            fi
+            gh label create "$name" --color "$color" --description "$description" --repo "${GITHUB_REPOSITORY}"
+          }
+
+          ensure_label "site-health" "5319e7" "Automated site health issue"
+          ensure_label "site-health/new-failure" "b60205" "Site newly failed in health checks"
+          ensure_label "site-health/regression" "d93f0b" "Site health regressed from a healthier state"
+          ensure_label "site-health/step-regression" "fbca04" "One site health step regressed"
+          ensure_label "site-health/persistent-failure" "cfd3d7" "Failure persisted across health checks"
+          ensure_label "failure/network" "006b75" "Network or availability failure"
+          ensure_label "failure/parser" "c2e0c6" "Parser or listing extraction failure"
+          ensure_label "failure/playback" "f9d0c4" "Playback resolution failure"
+
       - name: 'Get repository labels'
         id: 'get_labels'
         uses: 'actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd' # ratchet:actions/github-script@v8.0.0
@@ -219,6 +245,17 @@ jobs:
                 continue;
               }
 
+              const currentIssue = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+              });
+              const protectedLabels = currentIssue.data.labels
+                .map((label) => typeof label === 'string' ? label : label.name)
+                .filter((label) => label && (label.startsWith('site-health') || label.startsWith('failure/')))
+                .filter((label) => availableLabels.includes(label));
+              labelsToSet = Array.from(new Set([...labelsToSet, ...protectedLabels])).sort();
+
               core.debug(`Setting labels on issue #${issueNumber} to ${labelsToSet.join(', ')} (${issue.explanation || 'no explanation'})`)
 
               await github.rest.issues.setLabels({
@@ -227,4 +264,29 @@ jobs:
                 issue_number: issueNumber,
                 labels: labelsToSet,
               });
+
+              const commentBody = (issue.comment_body || '').trim();
+              if (commentBody) {
+                const commentMarker = commentBody.split('\n')[0].trim();
+                const existingComments = await github.paginate(github.rest.issues.listComments, {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                  per_page: 100,
+                });
+                const hasComment = existingComments.some((comment) =>
+                  comment.body && comment.body.includes(commentMarker)
+                );
+                if (!hasComment) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issueNumber,
+                    body: commentBody,
+                  });
+                  core.info(`Added triage comment to issue #${issueNumber}.`);
+                } else {
+                  core.info(`Skipping issue #${issueNumber} comment - marker already present.`);
+                }
+              }
             }

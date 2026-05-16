@@ -1399,9 +1399,28 @@ def get_cookie():
 
 @site.register()
 def Record(id):
-    url = "https://www.cloudbate.com/search/{0}/"
-    contexturl = utils.addon_sys + "?mode=cloudbate.Search&url={}&keyword={}".format(
-        urllib_parse.quote_plus(url), id
+    import xbmcgui
+
+    search_engines = [
+        {
+            "name": "Cloudbate",
+            "url": "https://www.cloudbate.com/search/{0}/",
+            "search": "?mode=cloudbate.Search&url={}&keyword={}",
+        },
+        {
+            "name": "iXXX",
+            "url": "https://www.ixxx.com/search/{0}/",
+            "search": "?mode=awmnet.Search&url={}&keyword={}",
+        },
+    ]
+    selection = xbmcgui.Dialog().select(
+        "Select site for search", [engine["name"] for engine in search_engines]
     )
-    xbmc.executebuiltin("Container.Update(" + contexturl + ")")
+    if selection != -1:
+        engine = search_engines[selection]
+        target_url = engine["url"].format(id)
+        contexturl = utils.addon_sys + engine["search"].format(
+            urllib_parse.quote_plus(target_url), id
+        )
+        xbmc.executebuiltin("Container.Update(" + contexturl + ")")
     utils.eod()

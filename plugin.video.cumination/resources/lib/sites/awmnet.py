@@ -322,13 +322,14 @@ def SiteMain(url):
         for domain in [
             "bbwpornvideos",
             "forhertube",
-            "ixxx",
             "pornmd",
             "stocking-tease",
             "tubegalore",
         ]
     ):
         search_url = siteurl + "c/"
+    elif "ixxx" in siteurl:
+        search_url = siteurl + "search/"
     elif "gaymaletube" in siteurl:
         search_url = siteurl + "cat/"
     elif "lupoporno" in siteurl:
@@ -353,6 +354,9 @@ def List(url):
 
     # Find all video items with item-link class
     items = soup.select('a.item-link, a[class*="item-link"]')
+    if not items:
+        utils.notify(msg="No models found!")
+        return ""
 
     seen = set()
     for item in items:
