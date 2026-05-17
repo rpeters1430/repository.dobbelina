@@ -1,3 +1,12 @@
+[B]Version 1.1.396[/B]
+- Add script to automatically bump version numbers in add-on XML files
+- Merge pull request #157 from rpeters1430/copilot/fix-github-actions-failure
+- fix: force label create in health workflows
+- Initial plan
+- feat: Enhance search functionality and add new site support
+- fix: update permissions and enhance site module auto-discovery in CLAUDE.md
+- fix: repair xfreehd private-video filter and speedporn hoster extraction
+
 [B]Version 1.1.395[/B]
 - feat: Enhance search functionality and add new site support
 - fix: update permissions and enhance site module auto-discovery in CLAUDE.md
