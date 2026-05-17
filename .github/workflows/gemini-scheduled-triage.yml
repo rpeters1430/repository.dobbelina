@@ -52,7 +52,7 @@ jobs:
             if gh label view "$name" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
               return 0
             fi
-            gh label create "$name" --color "$color" --description "$description" --repo "${GITHUB_REPOSITORY}"
+            gh label create "$name" --color "$color" --description "$description" --repo "${GITHUB_REPOSITORY}" --force
           }
 
           ensure_label "site-health" "5319e7" "Automated site health issue"
