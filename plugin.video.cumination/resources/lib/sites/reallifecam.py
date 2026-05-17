@@ -371,7 +371,7 @@ def Playvid(url, name, download=None):
                                 
                             vp.play_from_direct_link(videolink)
                             return
-                    except:
+                    except Exception:
                         continue
             
             # If not packed, look for direct file/src links in the iframe page

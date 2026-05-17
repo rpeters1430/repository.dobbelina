@@ -266,7 +266,7 @@ def Play(url, name, download=None):
                             if video_url:
                                 vp.play_from_direct_link(video_url)
                                 return
-                        except:
+                        except Exception:
                             pass
                 utils.notify("Oh oh", "Unable to retrieve video URL from Vidara")
                 return
@@ -333,7 +333,7 @@ def Play(url, name, download=None):
                                 if video_url:
                                     vp.play_from_direct_link(video_url)
                                     return
-                            except:
+                            except Exception:
                                 pass
                 vp.play_from_link_to_resolve(embed_url)
                 return

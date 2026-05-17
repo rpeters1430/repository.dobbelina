@@ -49,9 +49,6 @@ jobs:
             local name="$1"
             local color="$2"
             local description="$3"
-            if gh label view "$name" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-              return 0
-            fi
             gh label create "$name" --color "$color" --description "$description" --repo "${GITHUB_REPOSITORY}" --force
           }
 
@@ -179,7 +176,8 @@ jobs:
       needs.triage.outputs.available_labels != '' &&
       needs.triage.outputs.available_labels != '[]' &&
       needs.triage.outputs.triaged_issues != '' &&
-      needs.triage.outputs.triaged_issues != '[]'
+      needs.triage.outputs.triaged_issues != '[]' &&
+      needs.triage.outputs.triaged_issues != 'null'
     permissions:
       contents: 'read'
       issues: 'write'

@@ -17,13 +17,13 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
           ref: ${{ github.ref }}
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -36,74 +36,7 @@ jobs:
           BEFORE_SHA: ${{ github.event.before }}
           AFTER_SHA: ${{ github.sha }}
         run: |
-          python - <<'PY'
-          import os
-          import pathlib
-          import subprocess
-          import xml.etree.ElementTree as ET
-
-          def bump_version(version: str) -> str:
-              parts = version.split(".")
-              for i in range(len(parts) - 1, -1, -1):
-                  if parts[i].isdigit():
-                      parts[i] = str(int(parts[i]) + 1)
-                      return ".".join(parts)
-              return version + ".1"
-
-          before = os.environ.get("BEFORE_SHA", "").strip()
-          after = os.environ.get("AFTER_SHA", "").strip()
-          if not before or set(before) == {"0"}:
-              changed = subprocess.check_output(
-                  ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", after],
-                  text=True,
-              ).splitlines()
-          else:
-              try:
-                  changed = subprocess.check_output(
-                      ["git", "diff", "--name-only", before, after],
-                      text=True,
-                      stderr=subprocess.PIPE,
-                  ).splitlines()
-              except subprocess.CalledProcessError:
-                  # Fallback if before commit is not available (e.g., shallow clone)
-                  print(f"Warning: Could not diff {before}..{after}, using current commit only")
-                  changed = subprocess.check_output(
-                      ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", after],
-                      text=True,
-                  ).splitlines()
-          changed_set = set(changed)
-
-          addon_dirs = set()
-          for raw_path in changed:
-              path = pathlib.Path(raw_path)
-              if not path.parts:
-                  continue
-              top = pathlib.Path(path.parts[0])
-              if (top / "addon.xml").is_file():
-                  addon_dirs.add(top)
-
-          bumped = []
-          for addon_dir in sorted(addon_dirs):
-              addon_xml_rel = f"{addon_dir.as_posix()}/addon.xml"
-              if addon_xml_rel in changed_set:
-                  print(f"Skipping {addon_dir}: addon.xml already changed in commit.")
-                  continue
-              addon_xml = addon_dir / "addon.xml"
-              tree = ET.parse(addon_xml)
-              root = tree.getroot()
-              current = root.get("version")
-              if not current:
-                  continue
-              new_version = bump_version(current)
-              root.set("version", new_version)
-              tree.write(addon_xml, encoding="utf-8", xml_declaration=True)
-              bumped.append((str(addon_dir), current, new_version))
-
-          for addon_dir, current, new_version in bumped:
-              print(f"Bumped {addon_dir}: {current} -> {new_version}")
-          if not bumped:
-              print("No add-on directories changed; no version bump needed.")
-          PY
+          python scripts/auto_bump_versions.py
 
       - name: Update Changelog
         if: github.event_name == 'push' && github.actor != 'github-actions[bot]'

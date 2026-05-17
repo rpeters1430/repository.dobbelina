@@ -17,7 +17,7 @@ import os
 import sqlite3
 import json
 import re
-from six.moves import urllib_parse, urllib_error
+from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 

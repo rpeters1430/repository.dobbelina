@@ -1,6 +1,6 @@
 """Tests for heavyr site implementation."""
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from resources.lib.sites import heavyr
 
 

@@ -1,7 +1,6 @@
 """Tests for perverzija site implementation."""
 
 from resources.lib.sites import perverzija
-from tests.conftest import read_fixture
 
 
 def test_main_menu_adds_expected_dirs(monkeypatch):

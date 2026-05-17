@@ -21,8 +21,6 @@ from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.sites.soup_spec import SoupSiteSpec
 from six.moves import urllib_parse
-import xbmc
-import xbmcgui
 
 
 site = AdultSite(

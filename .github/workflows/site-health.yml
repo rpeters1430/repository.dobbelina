@@ -25,12 +25,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: "3.11"
           cache: "pip"
@@ -38,11 +38,13 @@ jobs:
 
       - name: Install dependencies
         run: |
+          set -euo pipefail
           python -m pip install --upgrade pip
           pip install -r requirements-test.txt
 
       - name: Wait for FlareSolverr
         run: |
+          set -euo pipefail
           echo "Waiting for FlareSolverr to be ready..."
           for i in $(seq 1 30); do
             HEALTH_STATUS=$(curl -s -o /tmp/flaresolverr-health -w "%{http_code}" http://localhost:8191/health 2>/dev/null || echo 000)
@@ -87,8 +89,9 @@ jobs:
       - name: Prepare previous baseline
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
-          set -eu
+          set -euo pipefail
           mkdir -p /tmp/site-health
           if git ls-remote --exit-code --heads origin site-health >/dev/null 2>&1; then
             git clone --depth 1 --branch site-health "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" /tmp/site-health
@@ -100,7 +103,7 @@ jobs:
 
       - name: Build site health diff
         run: |
-          set -eu
+          set -euo pipefail
           CURRENT_JSON="$(ls -1t results/live_smoke_*.json | head -n 1)"
           CURRENT_MD="${CURRENT_JSON%.json}.md"
           PREVIOUS_JSON=""
@@ -126,6 +129,7 @@ jobs:
 
       - name: Build site profile audit
         run: |
+          set -euo pipefail
           CURRENT_JSON="$(ls -1t results/live_smoke_*.json | head -n 1)"
           python scripts/site_profile_audit.py \
             --smoke-report "${CURRENT_JSON}" \
@@ -134,21 +138,21 @@ jobs:
 
       - name: Generate triage requests
         run: |
+          set -euo pipefail
           python scripts/generate_triage_requests.py \
             --diff results/site_health_diff_latest.json \
             --out results/triage_requests.json
 
       - name: Ensure site health labels
         env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           ensure_label() {
             local name="$1"
             local color="$2"
             local description="$3"
-            if gh label view "$name" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-              return 0
-            fi
             gh label create "$name" --color "$color" --description "$description" --repo "${GITHUB_REPOSITORY}" --force
           }
 
@@ -163,8 +167,10 @@ jobs:
 
       - name: Automated Triage
         env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           if [ ! -f results/triage_requests.json ]; then
             echo "No triage requests found."
             exit 0
@@ -195,39 +201,40 @@ jobs:
             COMMENT_MARKER=$(printf '%s\n' "$COMMENT" | sed -n '1p')
             
             # Check if an open issue already exists
-            EXISTING=$(gh issue list --state open --search "$TITLE" --json number --jq '.[0].number')
+            EXISTING=$(gh issue list --state open --search "$TITLE" --json number --jq '.[0].number' --repo "${GITHUB_REPOSITORY}")
             if [ -n "$EXISTING" ]; then
               echo "Issue #$EXISTING already exists for $SITE, updating labels/comment if needed."
-              gh issue edit "$EXISTING" --add-label "$LABELS"
+              gh issue edit "$EXISTING" --add-label "$LABELS" --repo "${GITHUB_REPOSITORY}"
               if [ -n "$COMMENT" ]; then
-                HAS_COMMENT=$(gh issue view "$EXISTING" --json comments --jq --arg marker "$COMMENT_MARKER" '[.comments[].body | contains($marker)] | any')
+                HAS_COMMENT=$(gh issue view "$EXISTING" --json comments --jq --arg marker "$COMMENT_MARKER" '[.comments[].body | contains($marker)] | any' --repo "${GITHUB_REPOSITORY}")
                 if [ "$HAS_COMMENT" != "true" ]; then
                   COMMENT_FILE=$(mktemp)
                   printf '%s\n' "$COMMENT" > "$COMMENT_FILE"
-                  gh issue comment "$EXISTING" --body-file "$COMMENT_FILE"
+                  gh issue comment "$EXISTING" --body-file "$COMMENT_FILE" --repo "${GITHUB_REPOSITORY}"
                 fi
               fi
               continue
             fi
             
             echo "Creating issue for $SITE..."
-            ISSUE_URL=$(gh issue create --title "$TITLE" --body "$BODY" --label "$LABELS")
+            ISSUE_URL=$(gh issue create --title "$TITLE" --body "$BODY" --label "$LABELS" --repo "${GITHUB_REPOSITORY}")
             ISSUE_NUMBER="${ISSUE_URL##*/}"
             if [ -n "$COMMENT" ]; then
               COMMENT_FILE=$(mktemp)
               printf '%s\n' "$COMMENT" > "$COMMENT_FILE"
-              gh issue comment "$ISSUE_NUMBER" --body-file "$COMMENT_FILE"
+              gh issue comment "$ISSUE_NUMBER" --body-file "$COMMENT_FILE" --repo "${GITHUB_REPOSITORY}"
             fi
           done
 
       - name: Publish job summary
         run: |
+          set -euo pipefail
           cat results/site_health_diff_latest.md >> "${GITHUB_STEP_SUMMARY}"
           printf '\n\n' >> "${GITHUB_STEP_SUMMARY}"
           cat results/site_profile_audit_latest.md >> "${GITHUB_STEP_SUMMARY}"
 
       - name: Upload site health artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@4ced58f991e913c63d972efb31053aa0693026a4 # v4.6.1
         with:
           name: site-health
           path: |
@@ -248,7 +255,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set -eu
+          set -euo pipefail
           cp results/site_health_latest.json /tmp/site-health/live_smoke_latest.json
           cp results/site_health_latest.md /tmp/site-health/live_smoke_latest.md
           cp results/site_health_diff_latest.json /tmp/site-health/site_health_diff_latest.json
