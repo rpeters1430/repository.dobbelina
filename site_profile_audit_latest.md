@@ -1,14 +1,16 @@
 # Site Profile Audit
 
-- Sites: `171`
-- Tier1 hot: `0`
-- Failing: `2`
+- Sites: `172`
+- Tier1 hot: `1`
+- Failing: `3`
 - Warn: `0`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
+| porndig | tier1_hot | WARN | 1 | video |  | Y | Y | Y | Y |
 | analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | hentaidude | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| speedporn | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -16,7 +18,6 @@
 | chaturbate | tier1 | PASS | 1 | cam |  |  |  |  |  |
 | luxuretv | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | missav | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
-| porndig | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | pornhub | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | pornkai | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | spankbang | tier1 | SKIP | 1 | video | Y | Y | Y | Y | Y |
@@ -48,7 +49,7 @@
 | cumlouder | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | drtuber | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| erogarga | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
+| erogarga | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | erome | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eroticage | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eroticmv | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -125,6 +126,7 @@
 | pornmz | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porno1hu | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porno365 | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| pornobae | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornone | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornroom | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porntn | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -138,7 +140,6 @@
 | sextb | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | sexyporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | someporn | backlog | PASS | 2 | video |  | Y |  | Y | Y |
-| speedporn | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | sunporno | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | superporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | supjav | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
@@ -181,8 +182,10 @@
 
 ## Next Batch
 
+- **porndig** (tier1_hot, tier=1) | failures: play:FAIL
 - **analdin** (failing, tier=2) | failures: list:FAIL
 - **hentaidude** (failing, tier=None) | failures: main:FAIL, list:FAIL, search:FAIL
+- **speedporn** (failing, tier=2)
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
@@ -190,7 +193,6 @@
 - **chaturbate** (tier1, tier=1)
 - **luxuretv** (tier1, tier=1)
 - **missav** (tier1, tier=1)
-- **porndig** (tier1, tier=1)
 - **pornhub** (tier1, tier=1)
 - **pornkai** (tier1, tier=1)
 - **spankbang** (tier1, tier=1)
@@ -200,4 +202,3 @@
 - **xvideos** (tier1, tier=1)
 - **youporn** (tier1, tier=1)
 - **yourlesbians** (tier1, tier=1)
-- **6xtube** (backlog, tier=None)
