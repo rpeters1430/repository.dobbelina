@@ -234,7 +234,7 @@ jobs:
           cat results/site_profile_audit_latest.md >> "${GITHUB_STEP_SUMMARY}"
 
       - name: Upload site health artifacts
-        uses: actions/upload-artifact@4ced58f991e913c63d972efb31053aa0693026a4 # v4.6.1
+        uses: actions/upload-artifact@v4
         with:
           name: site-health
           path: |
