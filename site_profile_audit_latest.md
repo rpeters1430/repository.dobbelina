@@ -1,16 +1,17 @@
 # Site Profile Audit
 
 - Sites: `172`
-- Tier1 hot: `1`
+- Tier1 hot: `0`
 - Failing: `3`
-- Warn: `0`
+- Warn: `2`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| porndig | tier1_hot | WARN | 1 | video |  | Y | Y | Y | Y |
-| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | hentaidude | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| pornhat | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | speedporn | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
+| okxxx | warn | WARN |  | video |  | Y | Y | Y | Y |
+| porngo | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -18,6 +19,7 @@
 | chaturbate | tier1 | PASS | 1 | cam |  |  |  |  |  |
 | luxuretv | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | missav | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
+| porndig | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | pornhub | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | pornkai | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | spankbang | tier1 | SKIP | 1 | video | Y | Y | Y | Y | Y |
@@ -34,6 +36,7 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
+| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -104,7 +107,6 @@
 | nltubes | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | nonktube | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | noodlemagazine | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| okxxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | paradisehill | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | peachurnet | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | peekvids | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -118,8 +120,6 @@
 | pornditt | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porndoe | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | pornez | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| porngo | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| pornhat | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhd3x | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhits | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhoarder | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
@@ -182,10 +182,11 @@
 
 ## Next Batch
 
-- **porndig** (tier1_hot, tier=1) | failures: play:FAIL
-- **analdin** (failing, tier=2) | failures: list:FAIL
 - **hentaidude** (failing, tier=None) | failures: main:FAIL, list:FAIL, search:FAIL
+- **pornhat** (failing, tier=None) | failures: main:FAIL
 - **speedporn** (failing, tier=2)
+- **okxxx** (warn, tier=None) | failures: play:FAIL
+- **porngo** (warn, tier=None) | failures: search:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
@@ -193,6 +194,7 @@
 - **chaturbate** (tier1, tier=1)
 - **luxuretv** (tier1, tier=1)
 - **missav** (tier1, tier=1)
+- **porndig** (tier1, tier=1)
 - **pornhub** (tier1, tier=1)
 - **pornkai** (tier1, tier=1)
 - **spankbang** (tier1, tier=1)
@@ -200,5 +202,3 @@
 - **stripchat** (tier1, tier=1)
 - **xnxx** (tier1, tier=1)
 - **xvideos** (tier1, tier=1)
-- **youporn** (tier1, tier=1)
-- **yourlesbians** (tier1, tier=1)

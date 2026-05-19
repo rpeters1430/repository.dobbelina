@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-05-19T07:58:30.797765",
+    "sites_total": 172,
+    "pass": 153,
+    "warn": 2,
+    "fail": 3,
+    "error": 0,
+    "skip": 14
+  },
+  "previous": {
     "generated": "2026-05-18T15:37:10.187321",
     "sites_total": 172,
     "pass": 154,
@@ -8,94 +17,118 @@
     "error": 0,
     "skip": 14
   },
-  "previous": {
-    "generated": "2026-05-16T07:11:01.610138",
-    "sites_total": 171,
-    "pass": 154,
-    "warn": 0,
-    "fail": 2,
-    "error": 0,
-    "skip": 15
-  },
   "summary": {
     "new_failures": 1,
-    "resolved_failures": 0,
+    "resolved_failures": 1,
     "persistent_failures": 2,
     "improved_sites": 1,
-    "regressions": 2,
-    "step_regressions": 1
+    "regressions": 3,
+    "step_regressions": 3
   },
   "new_failures": [
     {
-      "site": "speedporn",
+      "site": "pornhat",
       "previous": "PASS",
       "current": "FAIL",
       "class": "NETWORK",
-      "message": "Site process timed out after 140s",
+      "message": "main: Timed out after 35s",
       "is_flaky": false,
-      "stability_score": 0.875
+      "stability_score": 1.0
     }
   ],
-  "resolved_failures": [],
-  "persistent_failures": [
+  "resolved_failures": [
     {
       "site": "analdin",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos"
-    },
+      "current": "PASS"
+    }
+  ],
+  "persistent_failures": [
     {
       "site": "hentaidude",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "ENV",
-      "message": "main: RuntimeError: FlareSolverr error for https://hentaidude.xxx/page/1/?m_orderby=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1"
+      "message": "main: RuntimeError: FlareSolverr error for https://hentaidude.xxx/page/1/?m_orderby=latest: Expecting value: line 1 column 1 (char 0). Check if FlareSolverr is running at http://localhost:8191/v1"
+    },
+    {
+      "site": "speedporn",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "Site process timed out after 140s"
     }
   ],
   "improved_sites": [
     {
-      "site": "erogarga",
-      "previous": "SKIP",
+      "site": "porndig",
+      "previous": "WARN",
       "current": "PASS"
     }
   ],
   "step_regressions": [
     {
-      "site": "porndig",
+      "site": "okxxx",
       "step": "play",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "Play function executed but no playback URL captured (no notifications)",
-      "class": "PLAYBACK",
+      "message": "Timed out after 35s",
+      "class": "NETWORK",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "porngo",
+      "step": "search",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "Timed out after 35s",
+      "class": "NETWORK",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "pornhat",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Timed out after 35s",
+      "class": "NETWORK",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "erogarga",
-      "previous": "SKIP",
+      "site": "analdin",
+      "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "porndig",
+      "site": "okxxx",
       "previous": "PASS",
       "current": "WARN",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "pornobae",
-      "previous": "MISSING",
+      "site": "porndig",
+      "previous": "WARN",
       "current": "PASS",
-      "kind": "new_site",
+      "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "speedporn",
+      "site": "porngo",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "pornhat",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
