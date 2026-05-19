@@ -53,6 +53,27 @@ def _normalize_section(section):
         return 0
 
 
+def _extract_player_redirect(playerpage, player_url):
+    if not playerpage:
+        return ""
+
+    match = re.search(
+        r"window\.location\s*=\s*['\"]([^'\"]+)['\"]",
+        playerpage,
+        re.IGNORECASE,
+    )
+    if not match:
+        match = re.search(
+            r"<meta[^>]+http-equiv=['\"]?refresh['\"]?[^>]+content=['\"][^'\"]*url=([^'\"]+)",
+            playerpage,
+            re.IGNORECASE,
+        )
+    if not match:
+        return ""
+
+    return urllib_parse.urljoin(player_url, match.group(1).strip())
+
+
 @site.register(default_mode=True)
 @site2.register(default_mode=True)
 def Main(name):
@@ -456,6 +477,13 @@ def Playvid(url, name, download=None):
     match = re.compile(
         r"window.player_args.push\((.+?)\);", re.DOTALL | re.IGNORECASE
     ).findall(playerpage)
+    if not match:
+        redirect_url = _extract_player_redirect(playerpage, player_url)
+        if redirect_url and redirect_url != player_url:
+            playerpage = utils.getHtml(redirect_url, url)
+            match = re.compile(
+                r"window.player_args.push\((.+?)\);", re.DOTALL | re.IGNORECASE
+            ).findall(playerpage)
     if not match:
         vp.progress.close()
         return

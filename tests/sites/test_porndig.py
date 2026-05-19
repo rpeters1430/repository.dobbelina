@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import json
+from unittest.mock import MagicMock
 
 from resources.lib.sites import porndig
 
@@ -211,3 +212,58 @@ def test_list_defaults_invalid_section_to_video_listing(monkeypatch):
 def test_parse_json_returns_empty_string_on_invalid_payload():
     """Malformed JSON should fail closed instead of raising."""
     assert porndig.ParseJson("not json") == ""
+
+
+def test_playvid_follows_removed_player_redirect(monkeypatch):
+    """Removed player pages redirect to a related player that still has sources."""
+    video_url = "https://www.porndig.com/videos/248452/removed.html"
+    player_url = "https://videos.porndig.com/player/index/558110/1035/13798/0/auto/0/slug/1"
+    redirect_url = "https://videos.porndig.com/player/index/494181/1035/13798"
+    video_html = '<iframe src="{}" data-url=""></iframe>'.format(player_url)
+    removed_player = """
+        <script>
+            function redir() {
+                window.location = "https://videos.porndig.com/player/index/494181/1035/13798";
+            }
+        </script>
+    """
+    redirected_player = """
+        <script>
+            window.player_args.push({
+                "src": [
+                    {"codec": "AUTO", "src": "https://video-cdn.porndig.com/master.mpd"},
+                    {
+                        "codec": "h264",
+                        "srcSet": [
+                            {"label": "720p", "src": "https://video-cdn.porndig.com/720.mp4"},
+                            {"label": "360p", "src": "https://video-cdn.porndig.com/360.mp4"}
+                        ]
+                    }
+                ]
+            });
+        </script>
+    """
+
+    def fake_get_html(url, referer=None):
+        if url == video_url:
+            return video_html
+        if url == player_url:
+            return removed_player
+        if url == redirect_url:
+            return redirected_player
+        raise AssertionError("unexpected url: {}".format(url))
+
+    monkeypatch.setattr(porndig.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(
+        porndig.utils,
+        "selector",
+        lambda title, links, **kwargs: links["720p"],
+    )
+    mock_vp_class = MagicMock()
+    monkeypatch.setattr(porndig.utils, "VideoPlayer", mock_vp_class)
+
+    porndig.Playvid(video_url, "Removed")
+
+    mock_vp_class.return_value.play_from_direct_link.assert_called_once_with(
+        "https://video-cdn.porndig.com/720.mp4"
+    )
