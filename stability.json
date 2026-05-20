@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "FAIL",
       "PASS",
       "PASS",
       "PASS",
@@ -115,7 +114,8 @@
       "FAIL",
       "FAIL",
       "FAIL",
-      "PASS"
+      "PASS",
+      "FAIL"
     ],
     "stability_score": 0.5
   },
@@ -428,11 +428,11 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.2
+    "stability_score": 0.3
   },
   "erome": {
     "history": [
@@ -981,13 +981,13 @@
       "FAIL",
       "FAIL",
       "FAIL",
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.4
+    "stability_score": 0.5
   },
   "justfullporn": {
     "history": [
@@ -1116,13 +1116,13 @@
       "FAIL",
       "FAIL",
       "FAIL",
-      "FAIL",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "mrsexe": {
     "history": [
@@ -1299,8 +1299,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "WARN"
+      "WARN",
+      "PASS"
     ],
     "stability_score": 0.9
   },
@@ -1448,8 +1448,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -1524,8 +1524,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "WARN"
+      "WARN",
+      "PASS"
     ],
     "stability_score": 0.9
   },
@@ -1539,8 +1539,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "FAIL"
+      "FAIL",
+      "PASS"
     ],
     "stability_score": 0.9
   },
@@ -1881,13 +1881,13 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
       "PASS",
+      "FAIL",
       "FAIL",
       "FAIL"
     ],
-    "stability_score": 0.7
+    "stability_score": 0.6
   },
   "streamate": {
     "history": [
@@ -2316,8 +2316,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -2566,6 +2566,7 @@
   },
   "pornobae": {
     "history": [
+      "PASS",
       "PASS",
       "PASS"
     ],
