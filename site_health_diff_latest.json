@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-05-21T07:48:41.819580",
+    "sites_total": 172,
+    "pass": 156,
+    "warn": 0,
+    "fail": 2,
+    "error": 0,
+    "skip": 14
+  },
+  "previous": {
     "generated": "2026-05-20T07:44:08.780979",
     "sites_total": 172,
     "pass": 155,
@@ -8,105 +17,43 @@
     "error": 0,
     "skip": 14
   },
-  "previous": {
-    "generated": "2026-05-19T07:58:30.797765",
-    "sites_total": 172,
-    "pass": 153,
-    "warn": 2,
-    "fail": 3,
-    "error": 0,
-    "skip": 14
-  },
   "summary": {
-    "new_failures": 1,
+    "new_failures": 0,
     "resolved_failures": 1,
     "persistent_failures": 2,
-    "improved_sites": 2,
-    "regressions": 1,
-    "step_regressions": 1
+    "improved_sites": 0,
+    "regressions": 0,
+    "step_regressions": 0
   },
-  "new_failures": [
-    {
-      "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
-      "is_flaky": true,
-      "stability_score": 0.5
-    }
-  ],
+  "new_failures": [],
   "resolved_failures": [
     {
-      "site": "pornhat",
+      "site": "speedporn",
       "previous": "FAIL",
       "current": "PASS"
     }
   ],
   "persistent_failures": [
     {
+      "site": "analdin",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos"
+    },
+    {
       "site": "hentaidude",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "ENV",
       "message": "main: RuntimeError: FlareSolverr error for https://hentaidude.xxx/page/1/?m_orderby=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1"
-    },
-    {
-      "site": "speedporn",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "Site process timed out after 140s"
     }
   ],
-  "improved_sites": [
-    {
-      "site": "okxxx",
-      "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "porngo",
-      "previous": "WARN",
-      "current": "PASS"
-    }
-  ],
-  "step_regressions": [
-    {
-      "site": "analdin",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER",
-      "is_flaky": true,
-      "stability_score": 0.5
-    }
-  ],
+  "improved_sites": [],
+  "step_regressions": [],
   "deltas": [
     {
-      "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "okxxx",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "porngo",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "pornhat",
+      "site": "speedporn",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
