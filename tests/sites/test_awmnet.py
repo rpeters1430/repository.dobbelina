@@ -363,8 +363,7 @@ def test_sitemain_uses_ixxx_search_path(monkeypatch):
     awmnet.SiteMain("https://www.ixxx.com/")
 
     search_dir = [item for item in dirs if item["mode"] == "Search"][0]
-    assert search_dir["url"] == "https://www.ixxx.com/search/"
-
+    assert search_dir["url"] == "https://www.ixxx.com/search/a/"
 
 def test_list_notifies_when_no_items(monkeypatch):
     notifications = []

@@ -146,7 +146,8 @@ def test_playvid_selects_quality_and_plays(monkeypatch):
 
     freepornvideos.Playvid("https://www.freepornvideos.xxx/v/1", "Video One")
 
-    assert vp.direct == "https://cdn.example.com/2160.m3u8"
+    assert vp.direct == "https://cdn.example.com/2160.m3u8|verifypeer=false"
+
     assert vp.resolve is None
 
 

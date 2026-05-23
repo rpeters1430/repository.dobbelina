@@ -31,6 +31,7 @@ site = AdultSite(
     "freepornvideos.png",
     "freepornvideos",
     category="Video Tubes",
+    is_new=True,
 )
 
 
@@ -58,12 +59,12 @@ def List(url):
         if not img_url.startswith("http"):
             return img_url
         if "freepornvideos" in img_url:
-            return "{}|Referer={}&User-Agent={}".format(
+            return "{}|Referer={}&User-Agent={}&verifypeer=false".format(
                 img_url, site.url, utils.USER_AGENT
             )
         return img_url
 
-    listhtml = utils.getHtml(url)
+    listhtml = utils.getHtml(url, ignore_ssl=True)
     if "There is no data in this list." in listhtml:
         utils.notify(msg="No videos found!")
         return
@@ -199,7 +200,7 @@ def Search(url, keyword=None):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    videopage = utils.getHtml(url, site.url)
+    videopage = utils.getHtml(url, site.url, ignore_ssl=True)
 
     # Try multiple patterns for video source extraction
     sources = {}
@@ -264,6 +265,8 @@ def Playvid(url, name, download=None):
         )
         if videourl:
             vp.progress.update(75, "[CR]Video found[CR]")
+            if "|verifypeer=false" not in videourl:
+                videourl += "|verifypeer=false"
             vp.play_from_direct_link(videourl)
     else:
         utils.kodilog("FreePornVideos: No video sources found, trying resolveurl")

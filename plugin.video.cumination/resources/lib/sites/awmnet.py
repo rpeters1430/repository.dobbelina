@@ -329,7 +329,7 @@ def SiteMain(url):
     ):
         search_url = siteurl + "c/"
     elif "ixxx" in siteurl:
-        search_url = siteurl + "search/"
+        search_url = siteurl + "search/a/"
     elif "gaymaletube" in siteurl:
         search_url = siteurl + "cat/"
     elif "lupoporno" in siteurl:

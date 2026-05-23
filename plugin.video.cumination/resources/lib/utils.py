@@ -1072,7 +1072,19 @@ def getHtml(
     data=None,
     error="return",
     timeout=HTTP_TIMEOUT_DEFAULT,
+    ignore_ssl=False,
 ):
+    if ignore_ssl:
+        return _getHtml(
+            url,
+            referer,
+            headers,
+            NoCookie,
+            data,
+            error,
+            timeout,
+            ignore_ssl=True,
+        )
     return cache.cacheFunction(
         _getHtml,
         url,
@@ -1093,6 +1105,7 @@ def _getHtml(
     data=None,
     error="return",
     timeout=HTTP_TIMEOUT_DEFAULT,
+    ignore_ssl=False,
 ):
     url = urllib_parse.quote(url, r":/%?+&=")
 
@@ -1113,7 +1126,18 @@ def _getHtml(
 
     response = None
     try:
-        response = urlopen(req, timeout=timeout)
+        if ignore_ssl and PY3:
+            import ssl
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            response = urlopen(req, timeout=timeout, context=ctx)
+        elif ignore_ssl and PY2:
+            import ssl
+            ctx = ssl._create_unverified_context()
+            response = urlopen(req, timeout=timeout, context=ctx)
+        else:
+            response = urlopen(req, timeout=timeout)
     except urllib_error.HTTPError as e:
         kodilog("getHtml HTTPError: {}".format(str(e)), xbmc.LOGDEBUG)
         if error is True:

@@ -1272,6 +1272,21 @@ def onlineFav(url):
             tags = tags if utils.PY3 else tags.encode("utf8")
             subject += "[CR][CR]" + tags
 
+            id = model["username"]
+            contextrecord = (
+                utils.addon_sys
+                + "?mode=chaturbate.Record&id="
+                + urllib_parse.quote_plus(id)
+            )
+            contextmenu = [
+                (
+                    "[COLOR violet]Find recordings featuring [/COLOR]{}[COLOR violet] on Cloudbate[/COLOR]".format(
+                        id
+                    ),
+                    "RunPlugin(" + contextrecord + ")",
+                )
+            ]
+
             site.add_download_link(
                 name + current_show,
                 url,
@@ -1280,6 +1295,7 @@ def onlineFav(url):
                 utils.cleantext(subject),
                 noDownload=True,
                 fav="del",
+                contextm=contextmenu,
             )
     utils.eod()
 
