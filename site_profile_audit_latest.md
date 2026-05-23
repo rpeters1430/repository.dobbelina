@@ -1,12 +1,13 @@
 # Site Profile Audit
 
-- Sites: `172`
+- Sites: `171`
 - Tier1 hot: `0`
-- Failing: `1`
+- Failing: `2`
 - Warn: `0`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
+| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | hentaidude | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
@@ -32,7 +33,6 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
-| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -120,7 +120,6 @@
 | porngo | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhat | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhd3x | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| pornhits | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhoarder | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | pornmz | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porno1hu | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -182,6 +181,7 @@
 
 ## Next Batch
 
+- **analdin** (failing, tier=2) | failures: list:FAIL
 - **hentaidude** (failing, tier=None) | failures: main:FAIL, list:FAIL, search:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
@@ -201,4 +201,3 @@
 - **youporn** (tier1, tier=1)
 - **yourlesbians** (tier1, tier=1)
 - **6xtube** (backlog, tier=None)
-- **85po** (backlog, tier=None)
