@@ -49,6 +49,24 @@ def test_compare_reports_detects_resolved_failure():
     assert diff["resolved_failures"][0]["site"] == "example"
 
 
+def test_compare_reports_marks_persistent_failures_as_flaky():
+    previous = make_report("FAIL", list_status="FAIL", list_message="List returned no videos")
+    current = make_report("FAIL", list_status="FAIL", list_message="List returned no videos")
+    stability = {
+        "example": {
+            "history": ["PASS", "FAIL", "FAIL"],
+            "stability_score": 1 / 3,
+        }
+    }
+
+    diff = smoke_report_diff.compare_reports(current, previous, stability)
+
+    assert diff["summary"]["persistent_failures"] == 1
+    assert diff["persistent_failures"][0]["site"] == "example"
+    assert diff["persistent_failures"][0]["is_flaky"] is True
+    assert diff["persistent_failures"][0]["stability_score"] == 1 / 3
+
+
 def test_compare_reports_detects_step_regression_without_site_failure():
     previous = make_report("PASS", list_status="PASS", list_message="10 videos")
     current = make_report("WARN", list_status="FAIL", list_message="Playback URL resolved")

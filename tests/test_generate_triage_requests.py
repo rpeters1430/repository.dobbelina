@@ -129,3 +129,23 @@ def test_build_requests_labels_persistent_failures():
         "failure/playback",
     ]
     assert "hoster, player config, or source JSON changed" in requests[0]["comment"]
+
+
+def test_build_requests_skips_flaky_persistent_failures():
+    diff = {
+        "new_failures": [],
+        "step_regressions": [],
+        "persistent_failures": [
+            {
+                "site": "example",
+                "previous": "FAIL",
+                "current": "FAIL",
+                "class": "PARSER",
+                "message": "List returned no videos",
+                "is_flaky": True,
+                "stability_score": 0.33,
+            }
+        ],
+    }
+
+    assert generate_triage_requests.build_requests(diff) == []

@@ -206,6 +206,8 @@ def compare_reports(
                     "current": current_status,
                     "class": failure_class(current),
                     "message": site_failure_message(current),
+                    "is_flaky": is_flaky,
+                    "stability_score": stability_score,
                 }
             )
         elif overall_rank(current_status) < overall_rank(previous_status):
@@ -347,7 +349,12 @@ def render_markdown(diff: dict[str, Any], current_path: Path, previous_path: Pat
         (
             "Persistent Failures",
             diff["persistent_failures"],
-            lambda item: f"- **{item['site']}**: `{item['previous']} -> {item['current']}` ({item['class']}) | {item['message']}",
+            lambda item: f"- **{item['site']}**: `{item['previous']} -> {item['current']}` ({item['class']}) | {item['message']}"
+            + (
+                f" ⚠️ [FLAKY: {item['stability_score']:.1%}]"
+                if item.get("is_flaky")
+                else ""
+            ),
         ),
         (
             "Step Regressions",
