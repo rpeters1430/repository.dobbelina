@@ -1,3 +1,13 @@
+[B]Version 1.1.398[/B]
+- Refactor code structure and remove redundant sections for improved readability and maintainability
+- Fix Porndig removed-player playback redirect
+- Merge pull request #158 from rpeters1430/copilot/task-47281316-1078529106-c7d5a470-2e5b-4ed6-99ac-d664cd72090d
+- fix: refresh site-health workflow action versions
+- fix: update site-health upload-artifact action reference
+- Add script to automatically bump version numbers in add-on XML files
+- Merge pull request #157 from rpeters1430/copilot/fix-github-actions-failure
+- fix: force label create in health workflows
+
 [B]Version 1.1.397[/B]
 - Fix Porndig removed-player playback redirect
 - Merge pull request #158 from rpeters1430/copilot/task-47281316-1078529106-c7d5a470-2e5b-4ed6-99ac-d664cd72090d
