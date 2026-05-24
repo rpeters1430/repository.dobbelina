@@ -283,6 +283,8 @@ def List(url, page=1):
                         site.img_next,
                         npage,
                     )
+    if not seen:
+        utils.notify('CamWhoresBay', 'No videos found on this page')
     utils.eod()
 
 
@@ -452,7 +454,10 @@ def Search(url, keyword=None):
     else:
         title = keyword.replace(" ", "+")
         searchUrl = searchUrl.format(title)
-        List(searchUrl)
+        try:
+            List(searchUrl)
+        except:
+            utils.notify('CamWhoresBay', 'Search failed!')
 
 
 @site.register()

@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-05-16
-**Last Sync**: 2026-05-16 - Ported latest AWM network, BongaCams, and Chaturbate recording-search fixes from upstream through `5aca0219`.
+**Last Updated**: 2026-05-24
+**Last Sync**: 2026-05-24 - Ported new sites (yespornvip, hypnotube), rule34video Lookupinfo, camwhoresbay/drtuber search fixes, premiumporn bysewihe API fix through `46308729`.
 
 ---
 
@@ -18,6 +18,28 @@
 ---
 
 ## Sync Sessions
+
+### 2026-05-24 Porting Session
+Reviewed upstream `dobbelina/repository.dobbelina` commits after the 2026-05-16 session (`5aca0219..46308729`). Version/package bumps, merge commits, and icon-only uploads were not applied. Large cam site rewrites (bongacams, cam4, chaturbate optional players) deferred to a future session.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `dff3a9fc` | 2026-05-24 Bumped to v.1.1.184 | skipped | 2026-05-24 | Version/package bump only. |
+| `9aaa22fa` | Merge pull request #1864 from camilt/master | skipped | 2026-05-24 | Merge commit; functional changes reviewed through child commits. |
+| `46308729` | yespornvip - Fixed pagination | `manual` | 2026-05-24 | Created yespornvip.py (new site, issue #1665) incorporating both the initial add (`a83182c1`) and the pagination fix. |
+| `d227c835` | xxxxvideos - thumbnails fix, fixes #1867 | skipped | 2026-05-24 | Fork uses BS4 `safe_get_attr` with `src` fallback — already handled. |
+| `e8dfeda7` | rule34video - added lookupinfo fixes #1865 | `manual` | 2026-05-24 | Added `Lookupinfo` context menu function and `quote_plus` import to fork's BS4 rule34video. |
+| `3ebbbcb4` | pornhits removed fixes #1866 | skipped | 2026-05-24 | pornhits.py never existed in this fork. |
+| `a83182c1` | #1665 (yespornvip initial add) | `manual` | 2026-05-24 | Included in `46308729` entry above. |
+| `0d9a18da` | #1665 (icon upload) | skipped | 2026-05-24 | Icon-only commit. |
+| `3463ae28` | #1665 (empty) | skipped | 2026-05-24 | Empty commit. |
+| `f5089ba0` | camwhoresbay, drtuber, awmnet fixes + chaturbate search engines | `manual-partial` | 2026-05-24 | Ported camwhoresbay empty-result notify and search exception; ported drtuber search exception. AWM and chaturbate context-menu search engines deferred (large rewrite). |
+| `13a54052` | hypnotube new site (#1802) | `manual` | 2026-05-24 | Created hypnotube.py (new site). |
+| `29379c18` | Add files via upload (icon) | skipped | 2026-05-24 | Icon-only commit. |
+| `8b477422` | Add files via upload (icon) | skipped | 2026-05-24 | Icon-only commit. |
+| `652c8c26` | premiumporn #1811 fixed playback | `manual` | 2026-05-24 | Updated bysewihe embed API: new origin (`rupertisdivingintoocean.com`), fingerprint body, replaced g9r6.com endpoint. |
+| `dc179b0f` | bongacams/cam4/chaturbate optional players + online favorites | deferred | 2026-05-24 | Large rewrite of bongacams, cam4 (login/followed/favorites), chaturbate optional players. Deferred — needs careful merge against fork's BS4/Cloudflare versions. |
+| `aec0f07a` | 2026-05-17 Bumped to v.1.1.183 | skipped | 2026-05-24 | Version/package bump only. |
 
 ### 2026-05-16 Porting Session
 Reviewed upstream `dobbelina/repository.dobbelina` commits after the 2026-05-09 session (`5f0b8376..5aca0219`). Version/package bumps and changelog-only commits were not applied.

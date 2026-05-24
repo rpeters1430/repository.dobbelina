@@ -20,7 +20,7 @@ import re
 import time
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote_plus
 
 site = AdultSite(
     "rule34video",
@@ -88,8 +88,11 @@ def List(url):
         duration = utils.safe_get_text(duration_tag, default="")
 
         if videopage and name:
+            cm = []
+            cm_lookupinfo = (utils.addon_sys + "?mode=" + str('rule34video.Lookupinfo') + "&url=" + quote_plus(videopage))
+            cm.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin(' + cm_lookupinfo + ')'))
             site.add_download_link(
-                name, videopage, "Playvid", img, name, duration=duration, quality=hd
+                name, videopage, "Playvid", img, name, duration=duration, quality=hd, contextm=cm
             )
 
     # Handle pagination using BeautifulSoup
@@ -346,3 +349,15 @@ def Playvid(url, name, download=None):
     if "kt_player('kt_player'" in vpage:
         vp.progress.update(60, "[CR]{0}[CR]".format("kt_player detected"))
         vp.play_from_kt_player(vpage, url)
+
+
+@site.register()
+def Lookupinfo(url):
+    lookup_list = [
+        ("Artist", r'video_meta_pill" href="https://rule34video.com/(models/[^"]+)">.+?alt="([^"]+)"', ''),
+        ("Categorie", r'video_meta_pill" href="https://rule34video.com/(categories/[^"]+)">.+?alt="([^"]+)"', ''),
+        ("Uploaded by", r'video_meta_pill" href="https://rule34video.com/(members/[^"]+)">.+?alt="([^"]+)"', ''),
+        ("Tag", r'class="tag_item" href="https://rule34video.com/(tags/[^"]+)">([^<]+)<', ''),
+    ]
+    lookupinfo = utils.LookupInfo(site.url, url, 'rule34video.List', lookup_list)
+    lookupinfo.getinfo()
