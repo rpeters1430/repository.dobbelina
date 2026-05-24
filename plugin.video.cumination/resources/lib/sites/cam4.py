@@ -172,7 +172,7 @@ def List(url, page=1):
     c.close()
 
     perPage_setting = utils.addon.getSetting('cam4per_page')
-    perPage = int(perPage_setting) if perPage_setting and perPage_setting.strip() else 60
+    perPage = int(perPage_setting) if perPage_setting and perPage_setting.strip().isdigit() else 60
     if not perPage_setting:
         utils.addon.setSetting("cam4per_page", str(perPage))
 

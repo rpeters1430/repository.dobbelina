@@ -48,7 +48,7 @@ def test_list_parses_json(monkeypatch):
 
 
 def test_playvid_parses_json(monkeypatch):
-    """Test that Playvid correctly parses stream info JSON."""
+    """Test that Playvid correctly parses stream info JSON (classic player mode)."""
     mock_play_data = {"cdnURL": "https://stream.cam4.com/playlist.m3u8"}
 
     play_calls = []
@@ -64,6 +64,7 @@ def test_playvid_parses_json(monkeypatch):
         cam4.utils, "_getHtml", lambda *a, **k: json.dumps(mock_play_data)
     )
     monkeypatch.setattr(cam4.utils, "VideoPlayer", FakeVideoPlayer)
+    monkeypatch.setattr(cam4.utils.addon, "getSetting", lambda x: "Playvid_classic" if x == "cam4player" else "false")
 
     cam4.Playvid("Model1", "Model1")
 

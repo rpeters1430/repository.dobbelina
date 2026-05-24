@@ -20,7 +20,7 @@ import re
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('hypnotube', '[COLOR hotpink]HypnoTube[/COLOR]', 'https://hypnotube.com/', 'hypnotube.webp', 'hypnotube')
+site = AdultSite('hypnotube', '[COLOR hotpink]HypnoTube[/COLOR]', 'https://hypnotube.com/', 'hypnotube.webp', 'hypnotube', category='Specialty')
 
 
 @site.register(default_mode=True)
