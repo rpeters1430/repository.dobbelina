@@ -200,12 +200,31 @@ def List(url, page=1):
     if not isinstance(page, int):
         page = 1
 
+    conn = sqlite3.connect(utils.favoritesdb)
+    conn.text_factory = str
+    c = conn.cursor()
+    c.execute("SELECT url FROM favorites WHERE mode='chaturbate.Playvid'")
+    favorite = [row[0] for row in c.fetchall()]
+    c.close()
+
     listhtml, _ = utils.get_html_with_cloudflare_retry(url)
     listhtml = json.loads(listhtml)
     models = listhtml.get("rooms")
     for model in models:
-        name = model.get("username")
-        videopage = "{0}{1}/".format(bu, name)
+        if model.get('is_following'):
+            name = '[COLOR hotpink]♥[/COLOR]'
+            fav = 'del'
+        else:
+            name = ''
+            fav = 'add'
+        if any(model['username'] in username for username in favorite):
+            name += '[COLOR yellow]★[/COLOR]'
+            fav = 'del'
+        else:
+            name += ''
+            fav = 'add'
+        name += model.get('username')
+        videopage = "{0}{1}/".format(bu, model.get('username'))
         age = model.get("display_age")
         age = "Unknown" if age is None else age
         location = model.get("location")
@@ -305,6 +324,7 @@ def List(url, page=1):
             img,
             subject,
             contextm=contextmenu,
+            fav=fav,
             noDownload=True,
         )
 

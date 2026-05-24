@@ -38,7 +38,7 @@ Reviewed upstream `dobbelina/repository.dobbelina` commits after the 2026-05-16 
 | `29379c18` | Add files via upload (icon) | skipped | 2026-05-24 | Icon-only commit. |
 | `8b477422` | Add files via upload (icon) | skipped | 2026-05-24 | Icon-only commit. |
 | `652c8c26` | premiumporn #1811 fixed playback | `manual` | 2026-05-24 | Updated bysewihe embed API: new origin (`rupertisdivingintoocean.com`), fingerprint body, replaced g9r6.com endpoint. |
-| `dc179b0f` | bongacams/cam4/chaturbate optional players + online favorites | deferred | 2026-05-24 | Large rewrite of bongacams, cam4 (login/followed/favorites), chaturbate optional players. Deferred — needs careful merge against fork's BS4/Cloudflare versions. |
+| `dc179b0f` | bongacams/cam4/chaturbate optional players + online favorites | `manual` | 2026-05-24 | chaturbate: ★/♥ favorites markers in List + fav param. bongacams: optional player (Adaptive/Proxy/Classic), player toggle in Main, ★ markers in List. cam4: optional player, ★ markers in List, onlineFav, Playvid_Adaptive/proxy/classic, urllib_parse import. Login/followedCams deferred (needs account testing). |
 | `aec0f07a` | 2026-05-17 Bumped to v.1.1.183 | skipped | 2026-05-24 | Version/package bump only. |
 
 ### 2026-05-16 Porting Session

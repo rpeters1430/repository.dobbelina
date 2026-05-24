@@ -34,6 +34,23 @@ site = AdultSite(
 
 @site.register(default_mode=True)
 def Main():
+    player = utils.addon.getSetting('bongaPlayer')
+    if not player:
+        utils.addon.setSetting('bongaPlayer', 'Playvid_Adaptive')
+        player = 'Playvid_Adaptive'
+    pretty_name = {
+        'Playvid_Adaptive': 'Adaptive',
+        'Playvid_proxy': 'Proxy',
+        'Playvid_classic': 'Classic'
+    }.get(player)
+    site.add_download_link(
+        'Current player: [COLOR fuchsia][B]{0}[/B][/COLOR] - [COLOR red][B]Change[/B][/COLOR]'.format(pretty_name),
+        site.url,
+        'Playvid_change',
+        '',
+        '',
+        noDownload=True
+    )
     female = utils.addon.getSetting("chatfemale") == "true"
     male = utils.addon.getSetting("chatmale") == "true"
     couple = utils.addon.getSetting("chatcouple") == "true"
@@ -206,6 +223,13 @@ def List(url):
     if utils.addon.getSetting("chaturbate") == "true":
         clean_database(False)
 
+    conn = sqlite3.connect(utils.favoritesdb)
+    conn.text_factory = str
+    c = conn.cursor()
+    c.execute("SELECT url FROM favorites WHERE mode='bongacams.Playvid'")
+    favorite = [row[0] for row in c.fetchall()]
+    c.close()
+
     data, _ = utils.get_html_with_cloudflare_retry(url)
     model_list = _loads_json(data)
     if not isinstance(model_list, list):
@@ -218,7 +242,13 @@ def List(url):
         if img and not img.startswith("http"):
             img = "https:" + img
         username = model.get("username")
-        name = model.get("display_name", username)
+        if any(username in u for u in favorite):
+            prefix = '[COLOR yellow]★ [/COLOR]'
+            fav = 'del'
+        else:
+            prefix = ''
+            fav = 'add'
+        name = prefix + model.get("display_name", username)
         age = model.get("display_age", "??")
         name += " [COLOR hotpink][{}][/COLOR]".format(age)
         if model.get("hd_cam"):
@@ -231,6 +261,7 @@ def List(url):
             img,
             subject.encode("utf-8") if utils.PY2 else subject,
             contextm=_cloudbate_context(username, name),
+            fav=fav,
             noDownload=True,
         )
     utils.eod()
@@ -263,10 +294,35 @@ def clean_database(showdialog=True):
 
 
 @site.register()
+def Playvid_change(url, name):
+    import xbmc
+    current = utils.addon.getSetting('bongaPlayer')
+    if current == 'Playvid_Adaptive':
+        utils.addon.setSetting('bongaPlayer', 'Playvid_proxy')
+        utils.notify('Player switched', 'Now using Proxy mode')
+    elif current == 'Playvid_proxy':
+        utils.addon.setSetting('bongaPlayer', 'Playvid_classic')
+        utils.notify('Player switched', 'Now using Classic mode')
+    elif current == 'Playvid_classic':
+        utils.addon.setSetting('bongaPlayer', 'Playvid_Adaptive')
+        utils.notify('Player switched', 'Now using Adaptive mode')
+    xbmc.executebuiltin('Container.Refresh')
+
+
+@site.register()
 def Playvid(url, name):
     if url is None or url == "":
         utils.notify(name, "Model Offline", icon="thumb")
         return
+    player = utils.addon.getSetting('bongaPlayer')
+    if player == 'Playvid_proxy':
+        return Playvid_proxy(url, name)
+    elif player == 'Playvid_classic':
+        return Playvid_classic(url, name)
+    return Playvid_Adaptive(url, name)
+
+
+def Playvid_Adaptive(url, name):
 
     vp = utils.VideoPlayer(name)
     vp.progress.update(25, "[CR]Loading video page[CR]")
@@ -336,6 +392,14 @@ def Playvid(url, name):
     )
     vp.progress.update(75, "[CR]Found Stream[CR]")
     vp.play_from_direct_link(videourl)
+
+
+def Playvid_proxy(url, name):
+    Playvid_Adaptive(url, name)
+
+
+def Playvid_classic(url, name):
+    Playvid_Adaptive(url, name)
 
 
 @site.register()
