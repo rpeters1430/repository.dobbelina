@@ -7,8 +7,8 @@
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | hentaidude | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| speedporn | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -33,6 +33,7 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
+| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -138,7 +139,6 @@
 | sextb | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | sexyporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | someporn | backlog | PASS | 2 | video |  | Y |  | Y | Y |
-| speedporn | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | sunporno | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | superporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | supjav | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
@@ -181,8 +181,8 @@
 
 ## Next Batch
 
-- **analdin** (failing, tier=2) | failures: list:FAIL
 - **hentaidude** (failing, tier=None) | failures: main:FAIL, list:FAIL, search:FAIL
+- **speedporn** (failing, tier=2)
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)

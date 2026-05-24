@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "FAIL",
       "PASS",
       "FAIL",
       "FAIL",
@@ -115,9 +114,10 @@
       "FAIL",
       "FAIL",
       "PASS",
-      "FAIL"
+      "FAIL",
+      "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "animeidhentai": {
     "history": [
@@ -424,7 +424,7 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -432,7 +432,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.6
+    "stability_score": 0.7
   },
   "erome": {
     "history": [
@@ -977,7 +977,7 @@
   "josporn": {
     "history": [
       "FAIL",
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -987,7 +987,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.8
+    "stability_score": 0.9
   },
   "justfullporn": {
     "history": [
@@ -1112,8 +1112,8 @@
   "motherless": {
     "history": [
       "FAIL",
-      "FAIL",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1122,7 +1122,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.7
+    "stability_score": 0.8
   },
   "mrsexe": {
     "history": [
@@ -1295,8 +1295,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1444,8 +1444,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1520,8 +1520,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1535,8 +1535,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1877,7 +1877,6 @@
   "speedporn": {
     "history": [
       "PASS",
-      "PASS",
       "FAIL",
       "PASS",
       "FAIL",
@@ -1885,9 +1884,10 @@
       "FAIL",
       "PASS",
       "PASS",
-      "PASS"
+      "PASS",
+      "FAIL"
     ],
-    "stability_score": 0.6
+    "stability_score": 0.5
   },
   "streamate": {
     "history": [
@@ -2312,8 +2312,8 @@
   "xfreehd": {
     "history": [
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2566,6 +2566,7 @@
   },
   "pornobae": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
