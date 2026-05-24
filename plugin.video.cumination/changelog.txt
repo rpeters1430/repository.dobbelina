@@ -1,3 +1,13 @@
+[B]Version 1.1.399[/B]
+- fix: resolve test failures from upstream port
+- feat: port optional players, favorites markers for chaturbate/bongacams/cam4
+- feat: port upstream fixes and new sites (2026-05-24 sync through 46308729)
+- feat: add support for flaky persistent failures in report comparison and triage request generation
+- Refactor code structure and remove redundant sections for improved readability and maintainability
+- Fix Porndig removed-player playback redirect
+- Merge pull request #158 from rpeters1430/copilot/task-47281316-1078529106-c7d5a470-2e5b-4ed6-99ac-d664cd72090d
+- fix: refresh site-health workflow action versions
+
 [B]Version 1.1.398[/B]
 - Refactor code structure and remove redundant sections for improved readability and maintainability
 - Fix Porndig removed-player playback redirect
