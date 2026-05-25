@@ -122,3 +122,41 @@ def test_playvid_handles_missing_hls_source(monkeypatch):
 
     assert play_calls == []
     assert notifications == [("Oh oh", "Couldn't find a playable webcam link")]
+
+
+def test_remembers_llhls_media_urls_from_uri_attributes():
+    state = {
+        "seg_cdn_urls": {},
+        "latest_seg": {},
+    }
+    playlist = """
+#EXTM3U
+#EXT-X-MAP:URI="https://edge.example.com/live/init_0_video_123_llhls.m4s?session=s1"
+#EXT-X-PART:DURATION=0.8,URI="https://edge.example.com/live/part_0_4307_0_video_123_llhls.m4s?session=s1"
+#EXTINF:1.6,
+https://edge.example.com/live/seg_0_4307_video_123_llhls.m4s?session=s1
+#EXT-X-PRELOAD-HINT:TYPE=PART,URI="https://edge.example.com/live/part_0_4308_0_video_123_llhls.m4s?session=s1"
+"""
+
+    chaturbate._cb_remember_playlist_media_urls(state, playlist, "chunklist_0_video")
+
+    assert (
+        state["seg_cdn_urls"]["init_0_video_123_llhls.m4s"]
+        == "https://edge.example.com/live/init_0_video_123_llhls.m4s?session=s1"
+    )
+    assert (
+        state["seg_cdn_urls"]["part_0_4307_0_video_123_llhls.m4s"]
+        == "https://edge.example.com/live/part_0_4307_0_video_123_llhls.m4s?session=s1"
+    )
+    assert (
+        state["seg_cdn_urls"]["part_0_4308_0_video_123_llhls.m4s"]
+        == "https://edge.example.com/live/part_0_4308_0_video_123_llhls.m4s?session=s1"
+    )
+    assert (
+        state["seg_cdn_urls"]["seg_0_4307_video_123_llhls.m4s"]
+        == "https://edge.example.com/live/seg_0_4307_video_123_llhls.m4s?session=s1"
+    )
+    assert (
+        state["latest_seg"]["chunklist_0_video"]
+        == "https://edge.example.com/live/part_0_4308_0_video_123_llhls.m4s?session=s1"
+    )

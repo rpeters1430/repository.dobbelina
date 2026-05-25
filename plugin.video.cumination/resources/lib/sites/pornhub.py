@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
+import json
+from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
@@ -31,6 +33,150 @@ site = AdultSite(
     category="Video Tubes",
 )
 cookiehdr = {"Cookie": "accessAgeDisclaimerPH=1; accessAgeDisclaimerUK=1"}
+
+
+def _extract_json_assignment(html, name_pattern):
+    match = re.search(
+        r"{0}\s*=\s*".format(name_pattern),
+        html,
+        re.DOTALL | re.IGNORECASE,
+    )
+    if not match:
+        return None
+    decoder = json.JSONDecoder()
+    try:
+        value, _ = decoder.raw_decode(html[match.end():].lstrip())
+        return value
+    except ValueError:
+        return None
+
+
+def _source_quality_value(source):
+    label = str(source[0] or "")
+    digits = "".join(ch for ch in label if ch.isdigit())
+    return int(digits) if digits else 0
+
+
+def _extract_media_sources(html):
+    sources = []
+
+    quality_items = _extract_json_assignment(html, r"(?:var\s+)?qualityItems_\d+")
+    if isinstance(quality_items, list):
+        sources.extend(
+            (src.get("text"), src.get("url"))
+            for src in quality_items
+            if isinstance(src, dict) and src.get("url")
+        )
+
+    flashvars = _extract_json_assignment(html, r"flashvars_\d+")
+    if isinstance(flashvars, dict):
+        for src in flashvars.get("mediaDefinitions", []):
+            if not isinstance(src, dict):
+                continue
+            quality = src.get("quality")
+            video_url = src.get("videoUrl")
+            if isinstance(quality, list) or not video_url:
+                continue
+            sources.append((quality, video_url))
+
+    cleaned = []
+    seen_urls = set()
+    for quality, video_url in sources:
+        if video_url in seen_urls:
+            continue
+        seen_urls.add(video_url)
+        cleaned.append((quality, video_url))
+    return cleaned
+
+
+def _select_media_source(sources):
+    if not sources:
+        return ""
+    return sorted(sources, key=_source_quality_value)[-1][1]
+
+
+def _headers_suffix(video_page_url):
+    headers = {
+        "User-Agent": utils.USER_AGENT,
+        "Referer": site.url,
+        "Cookie": cookiehdr["Cookie"],
+        "Origin": site.url.rstrip("/"),
+    }
+    return "|" + urllib_parse.urlencode(headers)
+
+
+def add_img_headers(img_url):
+    if not img_url:
+        return img_url
+    if "|" in img_url:
+        return img_url
+    if img_url.startswith("//"):
+        img_url = "https:" + img_url
+    if not img_url.startswith("http"):
+        return img_url
+    if any(domain in img_url for domain in ("phncdn.com", "ttcache.com")):
+        return "{}|Referer={}&User-Agent={}".format(
+            img_url, site.url, utils.USER_AGENT
+        )
+    return img_url
+
+
+def _resolve_video_url(url):
+    html = utils.getHtml(url, site.url, cookiehdr)
+    video_url = _select_media_source(_extract_media_sources(html))
+    if video_url:
+        return video_url + _headers_suffix(url)
+    return ""
+
+
+def _is_media_preview_url(value):
+    if not value:
+        return False
+    clean_value = value.split("?", 1)[0].lower()
+    return clean_value.endswith(".mp4") or clean_value.endswith(".webm")
+
+
+def _thumb_from_data_path(img_tag, fallback_url=""):
+    path = utils.safe_get_attr(img_tag, "data-path")
+    if not path:
+        return ""
+    path = path.replace("{index}", "1")
+    if path.startswith("//"):
+        return "https:" + path
+    if path.startswith("http"):
+        return path
+
+    fallback_match = re.match(r"(https?://[^/]+)", fallback_url or "")
+    host = fallback_match.group(1) if fallback_match else "https://pix-fl.phncdn.com"
+    return host + path
+
+
+def _extract_thumbnail(item, link):
+    img_tag = item.select_one("img")
+    attr_names = [
+        "data-thumb-url",
+        "data-mediumthumb",
+        "data-image",
+        "data-src",
+        "data-lazy-src",
+        "data-img",
+        "data-poster",
+        "poster",
+        "src",
+    ]
+    for source in (img_tag, item, link):
+        if not source:
+            continue
+        for attr in attr_names:
+            img = utils.safe_get_attr(source, attr)
+            if img and not _is_media_preview_url(img):
+                return add_img_headers(img)
+
+    fallback = utils.safe_get_attr(img_tag, "data-image", ["src"]) if img_tag else ""
+    img = _thumb_from_data_path(img_tag, fallback) if img_tag else ""
+    if img and not _is_media_preview_url(img):
+        return add_img_headers(img)
+    return ""
 
 
 @site.register(default_mode=True)
@@ -121,21 +267,6 @@ def List(url):
         if scoped_items:
             return dedupe_video_items(scoped_items)
         return dedupe_video_items(collect_video_items(soup_obj))
-
-    def add_img_headers(img_url):
-        if not img_url:
-            return img_url
-        if "|" in img_url:
-            return img_url
-        if img_url.startswith("//"):
-            img_url = "https:" + img_url
-        if not img_url.startswith("http"):
-            return img_url
-        if "phncdn.com" in img_url or "ttcache.com" in img_url:
-            return "{}|Referer={}&User-Agent={}".format(
-                img_url, site.url, utils.USER_AGENT
-            )
-        return img_url
 
     cm_production = utils.addon_sys + "?mode=" + str("pornhub.ContextProduction")
     cm_min_length = utils.addon_sys + "?mode=" + str("pornhub.ContextMinLength")
@@ -247,26 +378,7 @@ def List(url):
                 img_tag = item.select_one("img")
                 title = utils.safe_get_attr(img_tag, "alt")
 
-            # Extract thumbnail image
-            img_tag = item.select_one("img")
-            img = utils.safe_get_attr(
-                img_tag,
-                "data-thumb-url",
-                ["data-mediumthumb", "data-src", "data-lazy-src", "data-img", "src"],
-            )
-            if not img:
-                img = utils.safe_get_attr(
-                    item,
-                    "data-thumb-url",
-                    ["data-mediumthumb", "data-img", "data-src", "data-lazy-src"],
-                )
-            if not img and link:
-                img = utils.safe_get_attr(
-                    link,
-                    "data-thumb-url",
-                    ["data-mediumthumb", "data-img", "data-src", "data-lazy-src"],
-                )
-            img = add_img_headers(img)
+            img = _extract_thumbnail(item, link)
 
             # Extract duration
             duration_tag = item.select_one('.duration, [data-title="Video Duration"]')
@@ -404,6 +516,10 @@ def Categories(url):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
+    direct_url = _resolve_video_url(url)
+    if direct_url:
+        vp.play_from_direct_link(direct_url)
+        return
     vp.play_from_link_to_resolve(url)
 
 

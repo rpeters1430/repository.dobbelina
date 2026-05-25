@@ -124,6 +124,7 @@ DOODSTREAM_DOMAINS = [
     "d-s.io",
     "dsvplay.com",
     "myvidplay.com",
+    "nowplay.to",
     "playmogo.com",
     "playmago.com",
 ]

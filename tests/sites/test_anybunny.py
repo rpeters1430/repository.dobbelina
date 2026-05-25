@@ -194,13 +194,18 @@ def test_playvid_uses_iframe_fallback(monkeypatch):
 
 
 def test_main_populates_directories(monkeypatch):
-    """Main() creates exactly 2 top-level directories."""
+    """Main() creates top-level directories and loads a default video feed."""
     recorder = _Recorder()
+    list_calls = []
+
     monkeypatch.setattr(anybunny.site, "add_dir", recorder.add_dir)
+    monkeypatch.setattr(anybunny, "List", lambda url: list_calls.append(url))
     monkeypatch.setattr(anybunny.utils, "eod", lambda *args, **kwargs: None)
 
     anybunny.Main()
 
-    assert len(recorder.dirs) == 2
+    assert len(recorder.dirs) == 3
+    assert any("Featured" in d["name"] for d in recorder.dirs)
     assert any("Categories" in d["name"] for d in recorder.dirs)
     assert any("Search" in d["name"] for d in recorder.dirs)
+    assert list_calls == [anybunny.DEFAULT_LIST_URL]

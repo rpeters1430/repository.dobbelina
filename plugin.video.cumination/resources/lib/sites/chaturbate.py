@@ -48,6 +48,28 @@ HTTP_HEADERS_IPAD = {
 }
 
 
+def _cb_media_name(media_url):
+    return media_url.rsplit("/", 1)[-1].split("?")[0]
+
+
+def _cb_remember_media_url(proxy_state, media_url, type_key=None):
+    if not media_url or ".m4s" not in media_url:
+        return
+    media_name = _cb_media_name(media_url)
+    proxy_state["seg_cdn_urls"][media_name] = media_url
+    if type_key and re.search(r"^(seg|part)_", media_name):
+        proxy_state["latest_seg"][type_key] = media_url
+
+
+def _cb_remember_playlist_media_urls(proxy_state, playlist, type_key=None):
+    for line in playlist.splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and ".m4s" in line:
+            _cb_remember_media_url(proxy_state, line, type_key)
+    for match in re.finditer(r'URI="(https?://[^"]+\.m4s[^"]*)"', playlist, re.I):
+        _cb_remember_media_url(proxy_state, match.group(1), type_key)
+
+
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
@@ -847,13 +869,9 @@ def Playvid(url, name):
                                     raw,
                                     flags=re.IGNORECASE,
                                 )
-                                for _l in raw.splitlines():
-                                    _l = _l.strip()
-                                    if _l and not _l.startswith("#") and ".m4s" in _l:
-                                        _sn = _l.rsplit("/", 1)[-1].split("?")[0]
-                                        _proxy_state["seg_cdn_urls"][_sn] = _l
-                                        if type_key:
-                                            _proxy_state["latest_seg"][type_key] = _l
+                                _cb_remember_playlist_media_urls(
+                                    _proxy_state, raw, type_key
+                                )
                                 raw = re.sub(
                                     r"^(https?://[^\s]+\.m4s[^\s]*)$",
                                     lambda m: "http://127.0.0.1:{}/segment?url={}".format(
@@ -968,6 +986,8 @@ def Playvid(url, name):
 
                             seg_name = seg_url.rsplit("/", 1)[-1].split("?")[0]
                             resolved_url = _proxy_state["seg_cdn_urls"].get(seg_name)
+                            if not resolved_url and _is_safe_url(seg_url):
+                                resolved_url = seg_url
                             if not resolved_url:
                                 self.send_error(404)
                                 return

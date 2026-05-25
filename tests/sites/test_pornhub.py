@@ -375,6 +375,54 @@ def test_list_parses_all_search_result_wrappers(monkeypatch):
     ]
 
 
+def test_list_uses_data_image_and_ignores_media_preview_src(monkeypatch):
+    html = """
+    <html><body>
+    <div class="pcVideoListItem">
+        <a href="/view_video.php?viewkey=phdataimage" title="Data Image Video">
+            <img
+                data-image="https://pix-fl.phncdn.com/videos/202605/07/thumb.png"
+                data-mediabook="https://kw.phncdn.com/videos/202605/07/preview.webm"
+                src="https://pix-fl.phncdn.com/videos/202605/07/preview.mp4">
+            <div class="duration">10:00</div>
+        </a>
+    </div>
+    <div class="pcVideoListItem">
+        <a href="/view_video.php?viewkey=phdatapath" title="Data Path Video">
+            <img
+                data-mediabook="https://kw.phncdn.com/videos/202605/07/preview.webm"
+                data-path="/c6251/videos/202605/07/48168725/thumb{index}.jpg"
+                src="https://pix-fl.phncdn.com/videos/202605/07/preview.mp4">
+            <div class="duration">11:00</div>
+        </a>
+    </div>
+    </body></html>
+    """
+    downloads = []
+
+    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(
+        pornhub.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append(
+            {"name": name, "icon": iconimage}
+        ),
+    )
+    monkeypatch.setattr(pornhub.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(pornhub.utils, "eod", lambda: None)
+
+    pornhub.List("https://www.pornhub.com/video?o=cm")
+
+    assert downloads[0]["icon"].startswith(
+        "https://pix-fl.phncdn.com/videos/202605/07/thumb.png|"
+    )
+    assert downloads[1]["icon"].startswith(
+        "https://pix-fl.phncdn.com/c6251/videos/202605/07/48168725/thumb1.jpg|"
+    )
+    assert ".mp4" not in downloads[0]["icon"]
+    assert ".webm" not in downloads[1]["icon"]
+
+
 def test_playvid_calls_video_player(monkeypatch):
     """Test that Playvid initializes VideoPlayer and calls resolve."""
     video_player_calls = []
@@ -389,7 +437,11 @@ def test_playvid_calls_video_player(monkeypatch):
         def play_from_link_to_resolve(self, url):
             video_player_calls.append(("play", url))
 
+        def play_from_direct_link(self, url):
+            video_player_calls.append(("direct", url))
+
     monkeypatch.setattr(pornhub.utils, "VideoPlayer", FakeVideoPlayer)
+    monkeypatch.setattr(pornhub, "_resolve_video_url", lambda url: "")
 
     pornhub.Playvid(
         "https://www.pornhub.com/view_video.php?viewkey=ph12345",
@@ -403,6 +455,48 @@ def test_playvid_calls_video_player(monkeypatch):
         "play",
         "https://www.pornhub.com/view_video.php?viewkey=ph12345",
     )
+
+
+def test_playvid_uses_direct_media_definitions(monkeypatch):
+    video_player_calls = []
+    html = """
+    <script>
+    flashvars_123 = {
+      "mediaDefinitions": [
+        {"quality": "240", "videoUrl": "https://cdn.example.com/240.mp4"},
+        {"quality": "720", "videoUrl": "https://cdn.example.com/720.mp4"}
+      ]
+    };
+    </script>
+    """
+
+    class FakeVideoPlayer:
+        def __init__(self, name, download):
+            self.progress = type(
+                "P",
+                (),
+                {"update": lambda *a, **k: None, "close": lambda *a, **k: None},
+            )()
+
+        def play_from_link_to_resolve(self, url):
+            video_player_calls.append(("resolve", url))
+
+        def play_from_direct_link(self, url):
+            video_player_calls.append(("direct", url))
+
+    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(pornhub.utils, "VideoPlayer", FakeVideoPlayer)
+
+    pornhub.Playvid(
+        "https://www.pornhub.com/view_video.php?viewkey=ph12345",
+        "Test Video",
+        download=None,
+    )
+
+    assert len(video_player_calls) == 1
+    assert video_player_calls[0][0] == "direct"
+    assert video_player_calls[0][1].startswith("https://cdn.example.com/720.mp4|")
+    assert "Referer=https%3A%2F%2Fwww.pornhub.com%2F" in video_player_calls[0][1]
 
 
 def test_list_extracts_page_title(monkeypatch):

@@ -30,6 +30,7 @@ site = AdultSite(
     "anybunny",
     category="Video Tubes",
 )
+DEFAULT_LIST_URL = site.url + "top/indian"
 
 # Site structure (as of 2026-03):
 # - /new/ and /top/ are 404 for plain HTTP; only category pages (/top/{Name})
@@ -88,11 +89,15 @@ def _extract_playerjs_best_url(html_content):
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
+        "[COLOR hotpink]Featured[/COLOR]", DEFAULT_LIST_URL, "List", site.img_cat
+    )
+    site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]", site.url, "Categories2", site.img_cat
     )
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]", site.url + "top/", "Search", site.img_search
     )
+    List(DEFAULT_LIST_URL)
     utils.eod()
 
 

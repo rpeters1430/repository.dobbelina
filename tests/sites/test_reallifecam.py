@@ -543,3 +543,41 @@ def test_playvid_hands_playmogo_embed_to_resolveurl(monkeypatch):
     reallifecam.Playvid("https://camcaps.tv/video/1/example", "Name")
 
     assert resolved == ["https://playmogo.com/e/tdlz3kh7b74k"]
+
+
+def test_playvid_hands_nowplay_embed_to_resolveurl(monkeypatch):
+    """Current CamCaps pages can use nowplay.to DoodStream mirrors."""
+    resolved = []
+
+    class MockPlayer:
+        def __init__(self, *args, **kwargs):
+            self.progress = MagicMock()
+            self.resolveurl = MagicMock()
+            self.resolveurl.HostedMediaFile.side_effect = (
+                lambda link: "nowplay.to" in link
+            )
+
+        def play_from_link_to_resolve(self, source):
+            resolved.append(source)
+
+        def play_from_link_list(self, links):
+            raise AssertionError("unexpected link list path")
+
+        def play_from_direct_link(self, link):
+            raise AssertionError("unexpected direct link path")
+
+        def play_from_html(self, html, url=None):
+            raise AssertionError("unexpected HTML fallback")
+
+    video_page = """
+    <div class="video-embedded">
+        <iframe src="https://nowplay.to/embrikgfauqud4q"></iframe>
+    </div>
+    """
+
+    monkeypatch.setattr(reallifecam.utils, "getHtml", lambda *a, **k: video_page)
+    monkeypatch.setattr(reallifecam.utils, "VideoPlayer", MockPlayer)
+
+    reallifecam.Playvid("https://camcaps.tv/video/355058/example", "Name")
+
+    assert resolved == ["https://nowplay.to/embrikgfauqud4q"]
