@@ -1,3 +1,12 @@
+[B]Version 1.1.400[/B]
+- feat: enhance site functionality and add new media handling for various sites
+- Add debugging and testing scripts for Analdin site
+- fix: resolve test failures from upstream port
+- feat: port optional players, favorites markers for chaturbate/bongacams/cam4
+- feat: port upstream fixes and new sites (2026-05-24 sync through 46308729)
+- feat: add support for flaky persistent failures in report comparison and triage request generation
+- Refactor code structure and remove redundant sections for improved readability and maintainability
+
 [B]Version 1.1.399[/B]
 - fix: resolve test failures from upstream port
 - feat: port optional players, favorites markers for chaturbate/bongacams/cam4
