@@ -244,20 +244,22 @@ class FlareSolverrManager:
 
                 # Return a pseudo-response object that mimics requests.Response
                 class MockResponse:
-                    def __init__(self, sol):
+                    def __init__(self, sol, raw_json=None):
                         self.text = sol.get("response", "")
                         self.status_code = sol.get("status", 200)
                         self.url = sol.get("url", url)
                         self.headers = sol.get("headers", {})
+                        self.raw_json = raw_json
 
                     def json(self):
                         import json
+
                         return json.loads(self.text)
 
                     def close(self):
                         pass
 
-                return MockResponse(solution)
+                return MockResponse(solution, raw_json=response_json)
 
             except (requests.exceptions.RequestException, ValueError) as e:
                 if try_count >= tries:

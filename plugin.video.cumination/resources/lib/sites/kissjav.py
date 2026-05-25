@@ -31,6 +31,7 @@ site = AdultSite(
     "kissjav.png",
     "kissjav",
     category="JAV & Asian",
+    requires_flaresolverr=True,
 )
 
 

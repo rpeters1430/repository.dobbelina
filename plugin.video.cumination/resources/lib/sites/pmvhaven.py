@@ -28,11 +28,12 @@ from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
     "pmvhaven",
-    "[COLOR hotpink]PMVHaven[/COLOR]",
+    "[COLOR hotpink]PMV Haven[/COLOR]",
     "https://pmvhaven.com/",
     "pmvhaven.png",
     "pmvhaven",
     category="Specialty",
+    requires_flaresolverr=True,
 )
 
 

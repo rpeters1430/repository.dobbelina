@@ -28,6 +28,7 @@ site = AdultSite(
     "motherless.png",
     "motherless",
     category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 

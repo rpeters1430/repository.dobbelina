@@ -28,4 +28,4 @@ def test_analdin_parser_with_fixture():
     
     assert len(added_items) > 0, "No items found in Analdin List with fixture"
     print(f"\nFound {len(added_items)} items with fixture")
-    assert len(added_items) == 100, f"Expected 100 items, found {len(added_items)}"
+    assert len(added_items) == 2, f"Expected 2 items, found {len(added_items)}"

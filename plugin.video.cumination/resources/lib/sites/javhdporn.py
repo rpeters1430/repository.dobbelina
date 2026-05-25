@@ -24,11 +24,12 @@ from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
     "javhdporn",
-    "[COLOR hotpink]JavHD Porn[/COLOR]",
-    "https://www4.javhdporn.net/",
+    "[COLOR hotpink]JAVHDPorn[/COLOR]",
+    "https://javhdporn.net/",
     "javhdporn.png",
     "javhdporn",
     category="JAV & Asian",
+    requires_flaresolverr=True,
 )
 
 

@@ -23,7 +23,6 @@ from six.moves import urllib_parse
 import xbmc
 import xbmcgui
 
-
 site = AdultSite(
     "freepornvideos",
     "[COLOR hotpink]FreePornVideos[/COLOR]",
@@ -31,6 +30,7 @@ site = AdultSite(
     "freepornvideos.png",
     "freepornvideos",
     category="Video Tubes",
+    requires_flaresolverr=True,
     is_new=True,
 )
 

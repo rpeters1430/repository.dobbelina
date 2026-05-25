@@ -79,6 +79,7 @@ def _ensure_kodi_stubs():
                 "paradisehill": "false",
                 "hcaptcha": "false",
                 "proxy_use": "false",
+                "cuminationage": "true",
             }
 
         def getAddonInfo(self, key):
@@ -153,6 +154,12 @@ def _ensure_kodi_stubs():
     class _Dialog:
         def notification(self, *args, **kwargs):
             pass
+
+        def ok(self, *args, **kwargs):
+            return True
+
+        def yesno(self, *args, **kwargs):
+            return True
 
     class _DialogProgress:
         def create(self, *args, **kwargs):

@@ -29,6 +29,7 @@ site = AdultSite(
     "rlc.png",
     "rlc",
     category="Cams & Live",
+    requires_flaresolverr=True,
 )
 site2 = AdultSite(
     "vhlife",

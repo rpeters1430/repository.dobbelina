@@ -30,6 +30,7 @@ site = AdultSite(
     "longvideos.png",
     "longvideos",
     category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 

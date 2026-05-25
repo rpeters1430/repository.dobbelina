@@ -24,10 +24,11 @@ from six.moves import urllib_parse
 site = AdultSite(
     "pornhoarder",
     "[COLOR hotpink]PornHoarder[/COLOR]",
-    "https://pornhoarder.io/",
+    "https://pornhoarder.tv/",
     "pornhoarder.png",
     "pornhoarder",
     category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 ph_headers = {

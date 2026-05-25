@@ -27,6 +27,7 @@ site = AdultSite(
     "whereismyporn.png",
     "whereismyporn",
     category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 addon = utils.addon

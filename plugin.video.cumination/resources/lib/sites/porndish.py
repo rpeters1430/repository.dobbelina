@@ -22,11 +22,12 @@ from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
     "porndish",
-    "[COLOR hotpink]Porndish[/COLOR]",
-    "https://www.porndish.com/",
+    "[COLOR hotpink]PornDish[/COLOR]",
+    "https://porndish.com/",
     "porndish.png",
     "porndish",
     category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 

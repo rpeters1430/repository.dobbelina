@@ -27,6 +27,7 @@ site = AdultSite(
     "missav.png",
     "missav",
     category="JAV",
+    requires_flaresolverr=True,
 )
 
 

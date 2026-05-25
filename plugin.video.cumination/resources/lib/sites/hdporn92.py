@@ -26,11 +26,12 @@ import json
 
 site = AdultSite(
     "hdporn92",
-    "[COLOR hotpink]Hdporn92[/COLOR]",
+    "[COLOR hotpink]HDPorn92[/COLOR]",
     "https://hdporn92.com/",
     "hdporn92.png",
     "hdporn92",
     category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 

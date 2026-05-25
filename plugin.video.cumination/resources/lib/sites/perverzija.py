@@ -24,10 +24,11 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "perverzija",
     "[COLOR hotpink]Perverzija[/COLOR]",
-    "https://tube.perverzija.com/",
+    "https://www.perverzija.com/",
     "perverzija.png",
     "perverzija",
-    category="Specialty",
+    category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 

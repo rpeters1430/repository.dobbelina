@@ -29,6 +29,7 @@ site = AdultSite(
     "spankbang.png",
     "spankbang",
     category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 filterQ = utils.addon.getSetting("spankbang_quality") or "All"

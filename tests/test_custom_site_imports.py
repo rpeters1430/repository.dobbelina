@@ -2,12 +2,26 @@ import sys
 import types
 
 
+def _load_default_module():
+    import importlib.util
+    import sys
+    from pathlib import Path
+    
+    # Use the absolute path to default.py to ensure we load the correct one
+    plugin_path = Path(__file__).resolve().parents[1] / "plugin.video.cumination" / "default.py"
+    spec = importlib.util.spec_from_file_location("plugin_default", str(plugin_path))
+    mod = importlib.util.module_from_spec(spec)
+    # We don't want to register it in sys.modules yet, or maybe we do?
+    # Let's just execute it.
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def test_custom_site_import_failure_reports(monkeypatch):
-    sys.modules.setdefault("requests", types.SimpleNamespace())
-    sys.modules.setdefault(
-        "resources.lib.sites", types.ModuleType("resources.lib.sites")
-    )
-    sys.modules.setdefault(
+    monkeypatch.setitem(sys.modules, "requests", types.SimpleNamespace())
+    monkeypatch.setitem(sys.modules, "resources.lib.sites", types.ModuleType("resources.lib.sites"))
+    monkeypatch.setitem(
+        sys.modules,
         "websocket",
         types.SimpleNamespace(
             WebSocket=lambda: types.SimpleNamespace(
@@ -18,11 +32,8 @@ def test_custom_site_import_failure_reports(monkeypatch):
             ),
         ),
     )
-    xbmcgui = sys.modules.get("kodi_six.xbmcgui")
-    if xbmcgui and not hasattr(xbmcgui.Dialog, "yesno"):
-        setattr(xbmcgui.Dialog, "yesno", lambda *args, **kwargs: True)
-    import default as plugin_default
-
+    
+    plugin_default = _load_default_module()
     plugin_default.addon.setSetting("custom_sites", "true")
 
     disabled_modules = []
@@ -71,7 +82,7 @@ def test_custom_site_import_failure_reports(monkeypatch):
 
 
 def test_custom_sites_health_display(monkeypatch):
-    import default as plugin_default
+    plugin_default = _load_default_module()
 
     enabled_sites = [
         "custom.good",
@@ -125,7 +136,7 @@ def test_custom_sites_health_display(monkeypatch):
 
 
 def test_safe_child_path_rejects_traversal(tmp_path):
-    import default as plugin_default
+    plugin_default = _load_default_module()
 
     base = tmp_path / "about"
     base.mkdir()

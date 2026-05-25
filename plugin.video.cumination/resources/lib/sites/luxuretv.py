@@ -23,10 +23,11 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "luxuretv",
     "[COLOR hotpink]LuxureTV[/COLOR]",
-    "https://en.luxuretv.com/",
+    "https://www.luxuretv.com/",
     "luxuretv.png",
     "luxuretv",
     category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 

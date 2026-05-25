@@ -26,6 +26,7 @@ site = AdultSite(
     "supjav.png",
     "supjav",
     category="JAV & Asian",
+    requires_flaresolverr=True,
 )
 surl = "https://lk1.supremejav.com/supjav.php"
 enames = {

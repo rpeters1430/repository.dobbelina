@@ -22,7 +22,6 @@ from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.sites.soup_spec import SoupSiteSpec
-
 site = AdultSite(
     "xmoviesforyou",
     "[COLOR hotpink]Xmoviesforyou[/COLOR]",
@@ -30,6 +29,7 @@ site = AdultSite(
     "xmoviesforyou.png",
     "xmoviesforyou",
     category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 VIDEO_LIST_SPEC = SoupSiteSpec(

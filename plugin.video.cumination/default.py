@@ -147,7 +147,7 @@ def load_custom_sites():
     return custom_site_import_results
 
 
-load_custom_sites()
+# load_custom_sites() moved to __main__ block for testability
 
 
 @url_dispatcher.register()
@@ -313,6 +313,8 @@ def _site_display_title(site_obj, custom_listitems_dict=None):
     title = site_obj.title
     if site_obj.is_new:
         title = "[COLOR lime][NEW][/COLOR] {}".format(title)
+    if hasattr(site_obj, "requires_flaresolverr") and site_obj.requires_flaresolverr:
+        title = "{} [COLOR orange][FS][/COLOR]".format(title)
     if custom_listitems_dict and site_obj.title in custom_listitems_dict:
         title = "{} [COLOR red]{}[/COLOR]".format(
             title, "".ljust(custom_listitems_dict[site_obj.title], "*")
@@ -486,43 +488,20 @@ def change():
     utils.textBox(heading, announce)
 
 
-if not addon_get_setting("cuminationage") == "true":
-    age = dialog.yesno(
-        utils.i18n("warn"),
-        utils.i18n("warn_msg"),
-        nolabel=utils.i18n("exit"),
-        yeslabel=utils.i18n("enter"),
-    )
-    if age:
-        addon.setSetting("cuminationage", "true")
-else:
-    age = True
-
-
-def process_queries(argv):
-    if sys.argv:
-        argv = sys.argv
-    queries = utils.parse_query(argv[2])
-    mode = queries.get("mode", None)
-    widget = bool(queries.get("widget", ""))
-    if widget:
-        ins = AdultSite.get_site_by_name(mode.split(".")[0])
-        ins.widget = True
-    url_dispatcher.dispatch(mode, queries)
-
-
-def main(argv=None):
-    if addon_get_setting("enh_debug") == "true":
-        from resources.lib import exception_logger
-
-        with exception_logger.log_exception():
-            process_queries(argv)
-    else:
-        process_queries(argv)
-
-
 if __name__ == "__main__":
-    if pin.CheckPin():
+    if not addon_get_setting("cuminationage") == "true":
+        age = dialog.yesno(
+            utils.i18n("warn"),
+            utils.i18n("warn_msg"),
+            nolabel=utils.i18n("exit"),
+            yeslabel=utils.i18n("enter"),
+        )
         if age:
-            change()
-            sys.exit(main())
+            addon.setSetting("cuminationage", "true")
+    else:
+        age = True
+
+    if age and pin.CheckPin():
+        load_custom_sites()
+        change()
+        sys.exit(main())

@@ -26,11 +26,12 @@ import json
 
 site = AdultSite(
     "familypornhd",
-    "[COLOR hotpink]Familypornhd[/COLOR]",
+    "[COLOR hotpink]FamilyPornHD[/COLOR]",
     "https://familypornhd.com/",
     "familypornhd.png",
     "familypornhd",
-    category="Specialty",
+    category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 

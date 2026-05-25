@@ -27,11 +27,12 @@ from resources.lib.sites.soup_spec import SoupSiteSpec
 
 site = AdultSite(
     "jizzbunker",
-    "[COLOR hotpink]Jizzbunker[/COLOR]",
+    "[COLOR hotpink]JizzBunker[/COLOR]",
     "https://jizzbunker.com/",
     "jizzbunker.png",
     "jizzbunker",
     category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 VIDEO_LIST_SPEC = SoupSiteSpec(

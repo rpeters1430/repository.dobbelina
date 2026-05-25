@@ -28,6 +28,7 @@ site = AdultSite(
     "josporn.png",
     "josporn",
     category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 

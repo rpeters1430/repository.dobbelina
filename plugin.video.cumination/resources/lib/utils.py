@@ -1325,30 +1325,23 @@ def flaresolve(url, referer):
     flaresolverr = None
     try:
         flaresolverr = FlareSolverrManager(fs_host)
+        # FlareSolverrManager handles API errors and session management
         response = flaresolverr.request(url)
-        listjson = response.json()
 
-        # Check if the request was successful
-        if listjson.get("status") == "error":
-            error_msg = listjson.get("message", "Unknown FlareSolverr error")
-            raise RuntimeError("FlareSolverr failed: {}".format(error_msg))
-
-        solution = listjson.get("solution", {})
-        status = solution.get("status")
-
-        if status != 200:
+        if response.status_code != 200:
             raise RuntimeError(
                 "FlareSolverr solved challenge but got HTTP {} from website".format(
-                    status
+                    response.status_code
                 )
             )
 
-        listhtml = solution.get("response", "")
+        listhtml = response.text
         if not listhtml:
             raise RuntimeError("FlareSolverr returned empty response")
 
         # Save cookies from FlareSolverr for future requests
-        savecookies(listjson)
+        if hasattr(response, "raw_json") and response.raw_json:
+            savecookies(response.raw_json)
 
         kodilog("FlareSolverr successfully bypassed Cloudflare for: {}".format(url))
         return listhtml

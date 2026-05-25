@@ -19,6 +19,7 @@ class AdultSite(URL_Dispatcher):
         testing=False,
         category=None,
         is_new=False,
+        requires_flaresolverr=False,
     ):
         self.default_mode = ""
         self.name = name
@@ -30,6 +31,7 @@ class AdultSite(URL_Dispatcher):
         self.testing = testing
         self.category = category
         self.is_new = is_new
+        self.requires_flaresolverr = requires_flaresolverr
         self.custom = False
         self.add_to_instances()
 

@@ -33,6 +33,7 @@ site = AdultSite(
     "erogarga.png",
     "erogarga",
     category="Specialty",
+    requires_flaresolverr=True,
 )
 site1 = AdultSite(
     "fulltaboo",
