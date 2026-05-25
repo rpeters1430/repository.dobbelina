@@ -1,6 +1,6 @@
 # Site Profile Audit
 
-- Sites: `171`
+- Sites: `173`
 - Tier1 hot: `0`
 - Failing: `2`
 - Warn: `0`
@@ -14,7 +14,7 @@
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
 | camsoda | tier1 | PASS | 1 | cam |  |  |  |  |  |
 | chaturbate | tier1 | PASS | 1 | cam |  |  |  |  |  |
-| luxuretv | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
+| luxuretv | tier1 | SKIP | 1 | video | Y | Y | Y | Y | Y |
 | missav | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | porndig | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | pornhub | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
@@ -77,6 +77,7 @@
 | hotleak | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hpjav | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hqporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| hypnotube | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | japteenx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javbangers | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javgg | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
@@ -175,6 +176,7 @@
 | xxdbx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xxthots | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | xxxtube | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| yespornvip | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | youcrazyx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | youjizz | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | yrprno | backlog | PASS |  | video |  | Y | Y | Y | Y |

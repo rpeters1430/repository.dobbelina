@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "PASS",
       "FAIL",
       "FAIL",
       "FAIL",
@@ -115,6 +114,7 @@
       "FAIL",
       "PASS",
       "FAIL",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.4
@@ -423,7 +423,7 @@
     "history": [
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -432,7 +432,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.7
+    "stability_score": 0.8
   },
   "erome": {
     "history": [
@@ -976,7 +976,7 @@
   },
   "josporn": {
     "history": [
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -987,7 +987,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "justfullporn": {
     "history": [
@@ -1090,9 +1090,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "SKIP"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "missav": {
     "history": [
@@ -1111,8 +1111,8 @@
   },
   "motherless": {
     "history": [
-      "FAIL",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1122,7 +1122,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.8
+    "stability_score": 0.9
   },
   "mrsexe": {
     "history": [
@@ -1294,8 +1294,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1443,8 +1443,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1519,8 +1519,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1534,8 +1534,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1876,7 +1876,6 @@
   },
   "speedporn": {
     "history": [
-      "PASS",
       "FAIL",
       "PASS",
       "FAIL",
@@ -1885,9 +1884,10 @@
       "PASS",
       "PASS",
       "PASS",
+      "FAIL",
       "FAIL"
     ],
-    "stability_score": 0.5
+    "stability_score": 0.4
   },
   "streamate": {
     "history": [
@@ -2311,8 +2311,8 @@
   },
   "xfreehd": {
     "history": [
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2572,6 +2572,19 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
+      "PASS"
+    ],
+    "stability_score": 1.0
+  },
+  "hypnotube": {
+    "history": [
+      "PASS"
+    ],
+    "stability_score": 1.0
+  },
+  "yespornvip": {
+    "history": [
       "PASS"
     ],
     "stability_score": 1.0

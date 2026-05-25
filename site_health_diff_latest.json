@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-05-25T08:08:06.963529",
+    "sites_total": 173,
+    "pass": 156,
+    "warn": 0,
+    "fail": 2,
+    "error": 0,
+    "skip": 15
+  },
+  "previous": {
     "generated": "2026-05-24T07:40:48.799068",
     "sites_total": 171,
     "pass": 155,
@@ -8,41 +17,16 @@
     "error": 0,
     "skip": 14
   },
-  "previous": {
-    "generated": "2026-05-23T07:23:15.602312",
-    "sites_total": 171,
-    "pass": 155,
-    "warn": 0,
-    "fail": 2,
-    "error": 0,
-    "skip": 14
-  },
   "summary": {
-    "new_failures": 1,
-    "resolved_failures": 1,
-    "persistent_failures": 1,
+    "new_failures": 0,
+    "resolved_failures": 0,
+    "persistent_failures": 2,
     "improved_sites": 0,
     "regressions": 1,
     "step_regressions": 0
   },
-  "new_failures": [
-    {
-      "site": "speedporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "Site process timed out after 140s",
-      "is_flaky": true,
-      "stability_score": 0.6
-    }
-  ],
-  "resolved_failures": [
-    {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS"
-    }
-  ],
+  "new_failures": [],
+  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "hentaidude",
@@ -52,23 +36,39 @@
       "message": "main: RuntimeError: FlareSolverr error for https://hentaidude.xxx/page/1/?m_orderby=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "is_flaky": true,
       "stability_score": 0.0
+    },
+    {
+      "site": "speedporn",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "Site process timed out after 140s",
+      "is_flaky": true,
+      "stability_score": 0.5
     }
   ],
   "improved_sites": [],
   "step_regressions": [],
   "deltas": [
     {
-      "site": "analdin",
-      "previous": "FAIL",
+      "site": "hypnotube",
+      "previous": "MISSING",
       "current": "PASS",
-      "kind": "improvement",
+      "kind": "new_site",
       "detail": ""
     },
     {
-      "site": "speedporn",
+      "site": "luxuretv",
       "previous": "PASS",
-      "current": "FAIL",
+      "current": "SKIP",
       "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "yespornvip",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
       "detail": ""
     }
   ]
