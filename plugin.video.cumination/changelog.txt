@@ -1,3 +1,12 @@
+[B]Version 1.1.402[/B]
+- Add unit tests for default entry point behavior
+- Enhance site configurations and FlareSolverr integration across multiple sites
+- feat: enhance site functionality and add new media handling for various sites
+- Add debugging and testing scripts for Analdin site
+- fix: resolve test failures from upstream port
+- feat: port optional players, favorites markers for chaturbate/bongacams/cam4
+- feat: port upstream fixes and new sites (2026-05-24 sync through 46308729)
+
 [B]Version 1.1.401[/B]
 - Enhance site configurations and FlareSolverr integration across multiple sites
 - feat: enhance site functionality and add new media handling for various sites
