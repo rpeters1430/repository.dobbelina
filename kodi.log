@@ -1,0 +1,1510 @@
+﻿2026-05-26 06:33:43.286 T:47085    info <general>: -----------------------------------------------------------------------
+2026-05-26 06:33:43.286 T:47085    info <general>: Starting Kodi (21.3 (21.3.0) Git:20260416-nogitfound). Platform: Linux x86 64-bit
+2026-05-26 06:33:43.286 T:47085    info <general>: Using Release Kodi x64
+2026-05-26 06:33:43.286 T:47085    info <general>: Kodi compiled 2026-04-16 by GCC 15.2.1 for Linux x86 64-bit version 6.19.0 (398080)
+2026-05-26 06:33:43.286 T:47085    info <general>: Running on CachyOS rolling, kernel: Linux x86 64-bit version 7.0.9-1-cachyos
+2026-05-26 06:33:43.292 T:47085    info <general>: FFmpeg version/source: 6.0.1-Kodi
+2026-05-26 06:33:43.292 T:47085    info <general>: Host CPU: AMD Ryzen 7 6800H with Radeon Graphics         , 16 cores available
+2026-05-26 06:33:43.292 T:47085    info <general>: special://xbmc/ is mapped to: /usr/share/kodi
+2026-05-26 06:33:43.292 T:47085    info <general>: special://xbmcbin/ is mapped to: /usr/lib/kodi
+2026-05-26 06:33:43.292 T:47085    info <general>: special://xbmcbinaddons/ is mapped to: /usr/lib/kodi/addons
+2026-05-26 06:33:43.292 T:47085    info <general>: special://masterprofile/ is mapped to: /home/rpeters1428/.kodi/userdata
+2026-05-26 06:33:43.292 T:47085    info <general>: special://envhome/ is mapped to: /home/rpeters1428
+2026-05-26 06:33:43.292 T:47085    info <general>: special://home/ is mapped to: /home/rpeters1428/.kodi
+2026-05-26 06:33:43.292 T:47085    info <general>: special://temp/ is mapped to: /home/rpeters1428/.kodi/temp
+2026-05-26 06:33:43.292 T:47085    info <general>: special://logpath/ is mapped to: /home/rpeters1428/.kodi/temp
+2026-05-26 06:33:43.292 T:47085    info <general>: Webserver extra whitelist paths: 
+2026-05-26 06:33:43.292 T:47085    info <general>: The executable running is: /usr/lib/kodi/kodi.bin
+2026-05-26 06:33:43.292 T:47085    info <general>: Local hostname: cachyos-x8664
+2026-05-26 06:33:43.292 T:47085    info <general>: Log File is located: /home/rpeters1428/.kodi/temp/kodi.log
+2026-05-26 06:33:43.292 T:47085    info <general>: -----------------------------------------------------------------------
+2026-05-26 06:33:43.293 T:47085    info <general>: loading settings
+2026-05-26 06:33:43.293 T:47085    info <general>: special://profile/ is mapped to: special://masterprofile/
+2026-05-26 06:33:43.299 T:47085    info <general>: No settings file to load (special://xbmc/system/advancedsettings.xml)
+2026-05-26 06:33:43.299 T:47085    info <general>: No settings file to load (special://masterprofile/advancedsettings.xml)
+2026-05-26 06:33:43.299 T:47085    info <general>: Default Video Player: VideoPlayer
+2026-05-26 06:33:43.299 T:47085    info <general>: Default Audio Player: paplayer
+2026-05-26 06:33:43.299 T:47085    info <general>: Enabled debug logging due to GUI setting (2)
+2026-05-26 06:33:43.299 T:47085   debug <general>: CSkinSettings: no <skinsettings> tag found
+2026-05-26 06:33:43.299 T:47085    info <general>: New Cache GUI Settings (replacement of cache in advancedsettings.xml) are:
+                                                     Buffer Mode: 4
+                                                     Memory Size: 20 MB
+                                                     Read Factor: 4.00 x 
+                                                     Chunk Size : 131072 bytes
+2026-05-26 06:33:43.300 T:47085    info <general>: creating subdirectories
+2026-05-26 06:33:43.300 T:47085    info <general>: userdata folder: special://masterprofile/
+2026-05-26 06:33:43.300 T:47085    info <general>: recording folder: 
+2026-05-26 06:33:43.300 T:47085    info <general>: screenshots folder: 
+2026-05-26 06:33:43.303 T:47085    info <general>: Running database version Addons33
+2026-05-26 06:33:43.305 T:47085   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
+2026-05-26 06:33:43.306 T:47085   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
+2026-05-26 06:33:43.319 T:47085   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
+2026-05-26 06:33:43.321 T:47085   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
+2026-05-26 06:33:43.326 T:47085   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
+2026-05-26 06:33:43.326 T:47085   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
+2026-05-26 06:33:43.332 T:47085   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/home/rpeters1428/.kodi/addons/metadata.common.fanart.tv/'
+2026-05-26 06:33:43.332 T:47085   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.18 at '/home/rpeters1428/.kodi/addons/metadata.generic.albums/'
+2026-05-26 06:33:43.334 T:47085   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.0 at '/home/rpeters1428/.kodi/addons/metadata.themoviedb.org.python/'
+2026-05-26 06:33:43.335 T:47085   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.6 at '/home/rpeters1428/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
+2026-05-26 06:33:43.336 T:47085   debug <general>: CAddonMgr::FindAddons: Addon 'service.xbmc.versioncheck' already present with version 0.5.27+matrix.1 at '/usr/share/kodi/addons/service.xbmc.versioncheck/' replaced with version 0.5.30+matrix.1 at '/home/rpeters1428/.kodi/addons/service.xbmc.versioncheck/'
+2026-05-26 06:33:43.337 T:47085   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.18 at '/home/rpeters1428/.kodi/addons/metadata.album.universal/'
+2026-05-26 06:33:43.339 T:47085   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.21 at '/home/rpeters1428/.kodi/addons/metadata.artists.universal/'
+2026-05-26 06:33:43.345 T:47085    info <general>: CAddonMgr::FindAddons: audioencoder.kodi.builtin.aac v1.0.2 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: audioencoder.kodi.builtin.wma v1.0.2 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: game.controller.default v1.0.46 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: game.controller.keyboard v1.1.47 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: game.controller.mouse v1.0.30 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: game.controller.snes v1.0.46 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: inputstream.adaptive v21.5.18 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: inputstream.rtmp v21.1.2 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.global.audioengine v1.1.1 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.global.filesystem v1.1.9 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.global.general v1.0.5 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.global.gui v5.15.0 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.global.main v2.0.2 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.global.network v1.0.4 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.global.tools v1.0.4 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.audiodecoder v4.0.0 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.audioencoder v3.0.0 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.game v3.0.2 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.imagedecoder v3.0.1 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.inputstream v3.3.0 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.peripheral v3.0.2 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.pvr v8.3.0 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.screensaver v2.2.0 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.vfs v3.0.1 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.videocodec v2.1.0 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.visualization v4.0.0 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: kodi.resource v1.0.0 installed
+2026-05-26 06:33:43.346 T:47085    info <general>: CAddonMgr::FindAddons: metadata.album.universal v3.1.18 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: metadata.artists.universal v4.3.21 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: metadata.common.allmusic.com v3.2.2 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: metadata.common.fanart.tv v3.6.5 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: metadata.common.musicbrainz.org v2.2.4 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: metadata.common.theaudiodb.com v2.0.3 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: metadata.generic.albums v1.0.18 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: metadata.generic.artists v1.0.18 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: metadata.local v1.0.1 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: metadata.themoviedb.org.python v3.2.0 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: metadata.tvshows.themoviedb.org.python v1.7.6 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: plugin.video.cumination v1.1.364 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: repository.dobbelina v1.0.6 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: repository.xbmc.org v3.4.0 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: resource.images.weathericons.default v1.1.9 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: resource.language.en_gb v2.0.2 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: resource.uisounds.kodi v1.0.1 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: screensaver.xbmc.builtin.black v1.0.34 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: screensaver.xbmc.builtin.dim v1.0.66 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: script.common.plugin.cache v3.0.0 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: script.module.beautifulsoup4 v4.12.2 installed
+2026-05-26 06:33:43.347 T:47085    info <general>: CAddonMgr::FindAddons: script.module.certifi v2023.5.7 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: script.module.chardet v5.1.0 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: script.module.idna v3.10.0 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: script.module.inputstreamhelper v0.8.5 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: script.module.kodi-six v0.1.3.1 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: script.module.pil v5.1.0 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: script.module.pycryptodome v3.4.3 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: script.module.requests v2.31.0 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: script.module.resolveurl v5.1.199 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: script.module.resolveurl.xxx v2.1.44 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: script.module.six v1.16.0+matrix.1 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: script.module.soupsieve v2.4.1 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: script.module.urllib3 v2.2.3 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: script.module.websocket v1.6.4 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: service.xbmc.versioncheck v0.5.30+matrix.1 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: skin.estuary v4.0.0 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: webinterface.default v21.x-1.0.1 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: xbmc.addon v21.3.0 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: xbmc.core v0.1.0 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: xbmc.gui v5.17.0 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: xbmc.json v13.5.0 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: xbmc.metadata v2.1.0 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: xbmc.python v3.0.1 installed
+2026-05-26 06:33:43.348 T:47085    info <general>: CAddonMgr::FindAddons: xbmc.webinterface v1.0.0 installed
+2026-05-26 06:33:43.349 T:47085   debug <general>: CFavourites::Load - no system favourites found, skipping
+2026-05-26 06:33:43.349 T:47085   debug <general>: CFavourites::Load - no userdata favourites found, skipping
+2026-05-26 06:33:43.350 T:47085   debug <general>: DBus method call to org.freedesktop.ConsoleKit.Manager.CanStop at /org/freedesktop/ConsoleKit/Manager of org.freedesktop.ConsoleKit failed: org.freedesktop.DBus.Error.ServiceUnknown - The name is not activatable
+2026-05-26 06:33:43.350 T:47085    info <general>: Selected Logind/UPower as PowerSyscall
+2026-05-26 06:33:43.407 T:47085   debug <general>: LogindUPowerSyscall - inhibit lock taken, fd 14
+2026-05-26 06:33:43.408 T:47085   error <general>: DBus error: org.freedesktop.DBus.Error.InvalidArgs - No such property “OnLowBattery”
+2026-05-26 06:33:43.409 T:47085    info <general>: Selected UPower as PowerSyscall
+2026-05-26 06:33:43.410 T:47085   error <general>: DBus error: org.freedesktop.DBus.Error.InvalidArgs - No such property “CanSuspend”
+2026-05-26 06:33:43.410 T:47085   error <general>: DBus error: org.freedesktop.DBus.Error.InvalidArgs - No such property “CanHibernate”
+2026-05-26 06:33:43.412 T:47085   debug <general>: Selected UDisks2 as storage provider
+2026-05-26 06:33:43.413 T:47085   debug <general>: UDisks2: Daemon version 2.11.1
+2026-05-26 06:33:43.413 T:47085   debug <general>: UDisks2: Querying available devices
+2026-05-26 06:33:43.416 T:47085    info <general>: CKeyboardLayoutManager: loading keyboard layouts from special://xbmc/system/keyboardlayouts...
+2026-05-26 06:33:43.416 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Arabic QWERTY" successfully loaded
+2026-05-26 06:33:43.417 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Bulgarian ЯВЕРТЪ" successfully loaded
+2026-05-26 06:33:43.417 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Bulgarian АБВ" successfully loaded
+2026-05-26 06:33:43.417 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Chinese BasePY" successfully loaded
+2026-05-26 06:33:43.417 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Croatian QWERTY" successfully loaded
+2026-05-26 06:33:43.417 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Czech QWERTZ" successfully loaded
+2026-05-26 06:33:43.417 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Danish QWERTY" successfully loaded
+2026-05-26 06:33:43.417 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "English QWERTY" successfully loaded
+2026-05-26 06:33:43.417 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "English AZERTY" successfully loaded
+2026-05-26 06:33:43.417 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "English ABC" successfully loaded
+2026-05-26 06:33:43.417 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Estonian QWERTY" successfully loaded
+2026-05-26 06:33:43.417 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "French AZERTY" successfully loaded
+2026-05-26 06:33:43.418 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "German QWERTZ" successfully loaded
+2026-05-26 06:33:43.418 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "German ABC" successfully loaded
+2026-05-26 06:33:43.418 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Greek QWERTY" successfully loaded
+2026-05-26 06:33:43.418 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Hebrew QWERTY" successfully loaded
+2026-05-26 06:33:43.418 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Hebrew ABC" successfully loaded
+2026-05-26 06:33:43.418 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Hungarian QWERTZ" successfully loaded
+2026-05-26 06:33:43.418 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Icelandic QWERTY" successfully loaded
+2026-05-26 06:33:43.418 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Italian QWERTY" successfully loaded
+2026-05-26 06:33:43.418 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Italian ABC" successfully loaded
+2026-05-26 06:33:43.418 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Korean ㄱㄴㄷ" successfully loaded
+2026-05-26 06:33:43.418 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Lithuanian AZERTY" successfully loaded
+2026-05-26 06:33:43.418 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Lithuanian QWERTY" successfully loaded
+2026-05-26 06:33:43.418 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Norwegian QWERTY" successfully loaded
+2026-05-26 06:33:43.419 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Persian QWERTY" successfully loaded
+2026-05-26 06:33:43.419 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Polish QWERTY" successfully loaded
+2026-05-26 06:33:43.419 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Portuguese (Brazil) QWERTY" successfully loaded
+2026-05-26 06:33:43.419 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Portuguese (Portugal) QWERTY" successfully loaded
+2026-05-26 06:33:43.419 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Romanian QWERTY" successfully loaded
+2026-05-26 06:33:43.419 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Russian ЙЦУКЕН" successfully loaded
+2026-05-26 06:33:43.419 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Russian АБВ" successfully loaded
+2026-05-26 06:33:43.419 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Silesian QWERTY" successfully loaded
+2026-05-26 06:33:43.420 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Slovak QWERTZ" successfully loaded
+2026-05-26 06:33:43.420 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Slovak QWERTY" successfully loaded
+2026-05-26 06:33:43.420 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Slovak ABC" successfully loaded
+2026-05-26 06:33:43.420 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Slovenian QWERTZ" successfully loaded
+2026-05-26 06:33:43.420 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Spanish QWERTY" successfully loaded
+2026-05-26 06:33:43.420 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Swedish QWERTY" successfully loaded
+2026-05-26 06:33:43.420 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Thai Kedmanee" successfully loaded
+2026-05-26 06:33:43.420 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Turkish QWERTY" successfully loaded
+2026-05-26 06:33:43.421 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Ukrainian ЙЦУКЕН" successfully loaded
+2026-05-26 06:33:43.421 T:47085   debug <general>: CKeyboardLayoutManager: keyboard layout "Ukrainian АБВ" successfully loaded
+2026-05-26 06:33:43.421 T:47085   debug <general>: CApplication::CreateGUI - trying to init wayland windowing system
+2026-05-26 06:33:43.498 T:47085    info <general>: InitWindowSystem: Connecting to Wayland server
+2026-05-26 06:33:43.498 T:47085   debug <general>: Wayland connection: Waiting for global interfaces
+2026-05-26 06:33:43.504 T:47085   debug <general>: Binding Wayland protocol wl_compositor version 4 (server has version 6)
+2026-05-26 06:33:43.504 T:47085   debug <general>: Binding Wayland protocol wl_shm version 1 (server has version 2)
+2026-05-26 06:33:43.504 T:47085   debug <general>: Binding Wayland protocol wp_presentation version 1 (server has version 2)
+2026-05-26 06:33:43.504 T:47085   debug <general>: Binding Wayland protocol wl_output version 3 (server has version 4)
+2026-05-26 06:33:43.504 T:47085   debug <general>: Wayland connection: Roundtrip complete
+2026-05-26 06:33:43.505 T:47085    info <general>: Wayland presentation clock: 1
+2026-05-26 06:33:43.506 T:47085    info <general>: UpdateResolutions: User wanted output "Default", we now have "Samsung Display Corp. eDP-1-0x4171" size 302x189 mm with 1 mode(s):
+2026-05-26 06:33:43.506 T:47085    info <general>: UpdateResolutions: - 2880x1800 @90.001 Hz pixel ratio 0.999 current
+2026-05-26 06:33:43.533 T:47085    info <general>: EGL_VERSION = 1.5
+2026-05-26 06:33:43.533 T:47085    info <general>: EGL_VENDOR = Mesa Project
+2026-05-26 06:33:43.533 T:47085    info <general>: EGL_EXTENSIONS = EGL_ANDROID_blob_cache EGL_ANDROID_native_fence_sync EGL_EXT_buffer_age EGL_EXT_config_select_group EGL_EXT_create_context_robustness EGL_EXT_image_dma_buf_import EGL_EXT_image_dma_buf_import_modifiers EGL_EXT_present_opaque EGL_EXT_query_reset_notification_strategy EGL_EXT_surface_compression EGL_EXT_swap_buffers_with_damage EGL_IMG_context_priority EGL_KHR_cl_event2 EGL_KHR_config_attribs EGL_KHR_context_flush_control EGL_KHR_create_context EGL_KHR_create_context_no_error EGL_KHR_fence_sync EGL_KHR_get_all_proc_addresses EGL_KHR_gl_colorspace EGL_KHR_gl_renderbuffer_image EGL_KHR_gl_texture_2D_image EGL_KHR_gl_texture_3D_image EGL_KHR_gl_texture_cubemap_image EGL_KHR_image_base EGL_KHR_no_config_context EGL_KHR_reusable_sync EGL_KHR_surfaceless_context EGL_KHR_swap_buffers_with_damage EGL_EXT_pixel_format_float EGL_KHR_wait_sync EGL_MESA_configless_context EGL_MESA_gl_interop EGL_MESA_image_dma_buf_export EGL_MESA_query_driver EGL_MESA_x11_native_visual_id 
+2026-05-26 06:33:43.533 T:47085    info <general>: EGL_CLIENT_EXTENSIONS = EGL_EXT_platform_base EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_KHR_platform_x11 EGL_EXT_platform_x11 EGL_EXT_platform_device EGL_MESA_platform_surfaceless EGL_EXT_explicit_device EGL_KHR_platform_wayland EGL_EXT_platform_wayland EGL_KHR_platform_gbm EGL_MESA_platform_gbm EGL_EXT_platform_xcb
+2026-05-26 06:33:43.533 T:47085   debug <general>: EGL Config Attributes:
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_BUFFER_SIZE: 32
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_ALPHA_SIZE: 2
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_BLUE_SIZE: 10
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_GREEN_SIZE: 10
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_RED_SIZE: 10
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_DEPTH_SIZE: 16
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_STENCIL_SIZE: 0
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_CONFIG_CAVEAT: 0x3038
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_CONFIG_ID: 2
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_LEVEL: 0
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_MAX_PBUFFER_HEIGHT: 4096
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_MAX_PBUFFER_PIXELS: 0
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_MAX_PBUFFER_WIDTH: 4096
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_NATIVE_RENDERABLE: 1
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_NATIVE_VISUAL_ID: 808669761
+2026-05-26 06:33:43.533 T:47085   debug <general>:   EGL_NATIVE_VISUAL_TYPE: 0x3038
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_SAMPLES: 0
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_SAMPLE_BUFFERS: 0
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_SURFACE_TYPE: 5
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_TRANSPARENT_TYPE: 0x3038
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_TRANSPARENT_BLUE_VALUE: 0
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_TRANSPARENT_GREEN_VALUE: 0
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_TRANSPARENT_RED_VALUE: 0
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_BIND_TO_TEXTURE_RGB: 1
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_BIND_TO_TEXTURE_RGBA: 1
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_MIN_SWAP_INTERVAL: 0
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_MAX_SWAP_INTERVAL: 1
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_LUMINANCE_SIZE: 0
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_ALPHA_MASK_SIZE: 0
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_COLOR_BUFFER_TYPE: 0x308e
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_RENDERABLE_TYPE: 77
+2026-05-26 06:33:43.534 T:47085   debug <general>:   EGL_CONFORMANT: 77
+2026-05-26 06:33:43.534 T:47085    info <general>: RetroPlayer[RENDER]: Registering renderer factory for DMA
+2026-05-26 06:33:43.534 T:47085    info <general>: RetroPlayer[RENDER]: Registering renderer factory for OpenGL
+2026-05-26 06:33:43.546 T:47085   debug <general>: Vaapi2 EGL interop test results: general yes, deepColor yes
+2026-05-26 06:33:43.549 T:47085   debug <general>: libva info: VA-API version 1.23.0
+2026-05-26 06:33:43.549 T:47085   debug <general>: libva info: Trying to open /usr/lib/dri/radeonsi_drv_video.so
+2026-05-26 06:33:43.549 T:47085   debug <general>: libva info: Found init function __vaDriverInit_1_23
+2026-05-26 06:33:43.557 T:47085   debug <general>: libva info: va_openDriver() returns 0
+2026-05-26 06:33:43.557 T:47085    info <general>: VAAPI::Close - closing decoder context
+2026-05-26 06:33:43.558 T:47085   debug <general>: CDMAHeapBufferObject::Register unable to open /dev/dma_heap/reserved: No such file or directory
+2026-05-26 06:33:43.558 T:47085   debug <general>: CDMAHeapBufferObject::Register unable to open /dev/dma_heap/linux,cma: No such file or directory
+2026-05-26 06:33:43.558 T:47085   debug <general>: CDMAHeapBufferObject::Register unable to open /dev/dma_heap/system: Permission denied
+2026-05-26 06:33:43.558 T:47085    info <general>: CApplication::CreateGUI - using the wayland windowing system
+2026-05-26 06:33:43.558 T:47085    info <general>: Checking resolution 16
+2026-05-26 06:33:43.558 T:47085    info <general>: CreateNewWindow: Starting full screen size 2880x1800
+2026-05-26 06:33:43.558 T:47085   debug <general>: Wayland connection: Waiting for global interfaces
+2026-05-26 06:33:43.558 T:47085   debug <general>: Binding Wayland protocol wl_compositor version 4 (server has version 6)
+2026-05-26 06:33:43.558 T:47085   debug <general>: Binding Wayland protocol wl_shm version 1 (server has version 2)
+2026-05-26 06:33:43.558 T:47085   debug <general>: Binding Wayland protocol wl_subcompositor version 1 (server has version 1)
+2026-05-26 06:33:43.559 T:47085   debug <general>: Wayland connection: Roundtrip complete
+2026-05-26 06:33:43.559 T:47085   debug <general>: Wayland connection: Waiting for global interfaces
+2026-05-26 06:33:43.559 T:47085   debug <general>: Binding Wayland protocol wl_seat version 5 (server has version 10)
+2026-05-26 06:33:43.559 T:47085   debug <general>: Wayland connection: Waiting for global interfaces
+2026-05-26 06:33:43.559 T:47085   debug <general>: Binding Wayland protocol wl_data_device_manager version 3 (server has version 3)
+2026-05-26 06:33:43.559 T:47085   debug <general>: Wayland connection: Roundtrip complete
+2026-05-26 06:33:43.559 T:47085   debug <general>: Skipped 1 duplicate messages..
+2026-05-26 06:33:43.559 T:47085   debug <general>: UpdateSizeVariables: Set size 2880x1800 scale 1 excluding decorations with state activated,fullscreen
+2026-05-26 06:33:43.559 T:47085    info <general>: UpdateSizeVariables: Surface size changed: 0x0 -> 2880x1800
+2026-05-26 06:33:43.559 T:47085    info <general>: UpdateSizeVariables: Buffer size changed: 0x0 -> 2880x1800
+2026-05-26 06:33:43.559 T:47085    info <general>: UpdateSizeVariables: Configured size changed: 0x0 -> 2880x1800
+2026-05-26 06:33:43.559 T:47085   debug <general>: Wayland connection: Waiting for global interfaces
+2026-05-26 06:33:43.560 T:47085   debug <general>: Binding Wayland protocol xdg_wm_base version 1 (server has version 6)
+2026-05-26 06:33:43.560 T:47085   debug <general>: Wayland connection: Roundtrip complete
+2026-05-26 06:33:43.560 T:47085   debug <general>: Wayland seat seat0 gained capability keyboard
+2026-05-26 06:33:43.560 T:47085   debug <general>: Wayland seat seat0 gained capability pointer
+2026-05-26 06:33:43.561 T:47085   debug <general>: Key repeat rate: 25 cps, delay 600 ms
+2026-05-26 06:33:43.562 T:47085   debug <general>: [xkb] Compiling xkb_keycodes "evdev_aliases(qwerty)"
+                                                   
+2026-05-26 06:33:43.562 T:47085   debug <general>: [xkb] Compiling xkb_types "complete"
+                                                   
+2026-05-26 06:33:43.562 T:47085   debug <general>: [xkb] Compiling xkb_compatibility "complete"
+                                                   
+2026-05-26 06:33:43.562 T:47085   debug <general>: [xkb] Compiling xkb_symbols "pc_us_inet(evdev)"
+                                                   
+2026-05-26 06:33:43.565 T:47085   debug <general>: [xkb] created compose table from locale C with path /usr/share/X11/locale/en_US.UTF-8/Compose
+                                                   
+2026-05-26 06:33:43.565 T:47085   debug <general>: OnConfigure: Initial configure serial 12034: size 1800x1125 state fullscreen
+2026-05-26 06:33:43.565 T:47085   debug <general>: UpdateSizeVariables: Set size 1800x1125 scale 1 including decorations with state fullscreen
+2026-05-26 06:33:43.565 T:47085    info <general>: UpdateSizeVariables: Surface size changed: 2880x1800 -> 1800x1125
+2026-05-26 06:33:43.565 T:47085    info <general>: UpdateSizeVariables: Buffer size changed: 2880x1800 -> 1800x1125
+2026-05-26 06:33:43.565 T:47085    info <general>: UpdateSizeVariables: Configured size changed: 2880x1800 -> 1800x1125
+2026-05-26 06:33:43.565 T:47085   debug <general>: AckConfigure: Acking serial 12034
+2026-05-26 06:33:43.565 T:47085   debug <general>: CWindowDecorator::SetState: Setting full surface size 1800x1125 scale 1 (main surface size 1800x1125), decorations active: false
+2026-05-26 06:33:43.565 T:47085   debug <general>: CWindowDecorator::SetState: Resetting decorations
+2026-05-26 06:33:43.565 T:47085   debug <general>: ApplyOpaqueRegion: Setting opaque region size 1800x1125
+2026-05-26 06:33:43.565 T:47128   debug <general>: Thread Wayland message pump start, auto delete: false
+2026-05-26 06:33:43.566 T:47128   debug <general>: Starting Wayland message pump
+2026-05-26 06:33:43.571 T:47085    info <general>: CRenderSystemGL::InitRenderSystem - Version: 4.6 (Core Profile) Mesa 26.1.1-arch2.1, Major: 4, Minor: 6
+2026-05-26 06:33:43.571 T:47085    info <general>: GL_VENDOR = AMD
+2026-05-26 06:33:43.571 T:47085    info <general>: GL_RENDERER = AMD Radeon Graphics (radeonsi, rembrandt, ACO, DRM 3.64, 7.0.9-1-cachyos)
+2026-05-26 06:33:43.571 T:47085    info <general>: GL_VERSION = 4.6 (Core Profile) Mesa 26.1.1-arch2.1
+2026-05-26 06:33:43.571 T:47085    info <general>: GL_SHADING_LANGUAGE_VERSION = 4.60
+2026-05-26 06:33:43.571 T:47085    info <general>: GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX = 8325424
+2026-05-26 06:33:43.571 T:47085    info <general>: GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX = 524288
+2026-05-26 06:33:43.571 T:47085    info <general>: GL_EXTENSIONS = GL_AMD_conservative_depth GL_AMD_depth_clamp_separate GL_AMD_draw_buffers_blend GL_AMD_framebuffer_multisample_advanced GL_AMD_gpu_shader_int64 GL_AMD_multi_draw_indirect GL_AMD_performance_monitor GL_AMD_pinned_memory GL_AMD_query_buffer_object GL_AMD_seamless_cubemap_per_texture GL_AMD_shader_stencil_export GL_AMD_shader_trinary_minmax GL_AMD_texture_texture4 GL_AMD_vertex_shader_layer GL_AMD_vertex_shader_viewport_index GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ARB_ES2_compatibility GL_ARB_ES3_1_compatibility GL_ARB_ES3_2_compatibility GL_ARB_ES3_compatibility GL_ARB_arrays_of_arrays GL_ARB_base_instance GL_ARB_bindless_texture GL_ARB_blend_func_extended GL_ARB_buffer_storage GL_ARB_clear_buffer_object GL_ARB_clear_texture GL_ARB_clip_control GL_ARB_color_buffer_float GL_ARB_compressed_texture_pixel_storage GL_ARB_compute_shader GL_ARB_compute_variable_group_size GL_ARB_conditional_render_inverted GL_ARB_conservative_depth GL_ARB_copy_buffer GL_ARB_copy_image GL_ARB_cull_distance GL_ARB_debug_output GL_ARB_depth_buffer_float GL_ARB_depth_clamp GL_ARB_derivative_control GL_ARB_direct_state_access GL_ARB_draw_buffers GL_ARB_draw_buffers_blend GL_ARB_draw_elements_base_vertex GL_ARB_draw_indirect GL_ARB_draw_instanced GL_ARB_enhanced_layouts GL_ARB_explicit_attrib_location GL_ARB_explicit_uniform_location GL_ARB_fragment_coord_conventions GL_ARB_fragment_layer_viewport GL_ARB_fragment_shader GL_ARB_framebuffer_no_attachments GL_ARB_framebuffer_object GL_ARB_framebuffer_sRGB GL_ARB_get_program_binary GL_ARB_get_texture_sub_image GL_ARB_gl_spirv GL_ARB_gpu_shader5 GL_ARB_gpu_shader_fp64 GL_ARB_gpu_shader_int64 GL_ARB_half_float_pixel GL_ARB_half_float_vertex GL_ARB_indirect_parameters GL_ARB_instanced_arrays GL_ARB_internalformat_query GL_ARB_internalformat_query2 GL_ARB_invalidate_subdata GL_ARB_map_buffer_alignment GL_ARB_map_buffer_range GL_ARB_multi_bind GL_ARB_multi_draw_indirect GL_ARB_occlusion_query2 GL_ARB_parallel_shader_compile GL_ARB_pipeline_statistics_query GL_ARB_pixel_buffer_object GL_ARB_point_sprite GL_ARB_polygon_offset_clamp GL_ARB_post_depth_coverage GL_ARB_program_interface_query GL_ARB_provoking_vertex GL_ARB_query_buffer_object GL_ARB_robust_buffer_access_behavior GL_ARB_robustness GL_ARB_sample_shading GL_ARB_sampler_objects GL_ARB_seamless_cube_map GL_ARB_seamless_cubemap_per_texture GL_ARB_separate_shader_objects GL_ARB_shader_atomic_counter_ops GL_ARB_shader_atomic_counters GL_ARB_shader_ballot GL_ARB_shader_bit_encoding GL_ARB_shader_clock GL_ARB_shader_draw_parameters GL_ARB_shader_group_vote GL_ARB_shader_image_load_store GL_ARB_shader_image_size GL_ARB_shader_objects GL_ARB_shader_precision GL_ARB_shader_stencil_export GL_ARB_shader_storage_buffer_object GL_ARB_shader_subroutine GL_ARB_shader_texture_image_samples GL_ARB_shader_texture_lod GL_ARB_shader_viewport_layer_array GL_ARB_shading_language_420pack GL_ARB_shading_language_include GL_ARB_shading_language_packing GL_ARB_sparse_buffer GL_ARB_sparse_texture GL_ARB_sparse_texture2 GL_ARB_sparse_texture_clamp GL_ARB_spirv_extensions GL_ARB_stencil_texturing GL_ARB_sync GL_ARB_tessellation_shader GL_ARB_texture_barrier GL_ARB_texture_border_clamp GL_ARB_texture_buffer_object GL_ARB_texture_buffer_object_rgb32 GL_ARB_texture_buffer_range GL_ARB_texture_compression_bptc GL_ARB_texture_compression_rgtc GL_ARB_texture_cube_map_array GL_ARB_texture_filter_anisotropic GL_ARB_texture_filter_minmax GL_ARB_texture_float GL_ARB_texture_gather GL_ARB_texture_mirror_clamp_to_edge GL_ARB_texture_multisample GL_ARB_texture_non_power_of_two GL_ARB_texture_query_levels GL_ARB_texture_query_lod GL_ARB_texture_rectangle GL_ARB_texture_rg GL_ARB_texture_rgb10_a2ui GL_ARB_texture_stencil8 GL_ARB_texture_storage GL_ARB_texture_storage_multisample GL_ARB_texture_swizzle GL_ARB_texture_view GL_ARB_timer_query GL_ARB_transform_feedback2 GL_ARB_transform_feedback3 GL_ARB_transform_feedback_instanced GL_ARB_transform_feedback_overflow_query GL_ARB_uniform_buffer_object GL_ARB_vertex_array_bgra GL_ARB_vertex_array_object GL_ARB_vertex_attrib_64bit GL_ARB_vertex_attrib_binding GL_ARB_vertex_buffer_object GL_ARB_vertex_shader GL_ARB_vertex_type_10f_11f_11f_rev GL_ARB_vertex_type_2_10_10_10_rev GL_ARB_viewport_array GL_ATI_blend_equation_separate GL_ATI_meminfo GL_ATI_texture_float GL_ATI_texture_mirror_once GL_EXT_EGL_image_storage GL_EXT_EGL_image_storage_compression GL_EXT_EGL_sync GL_EXT_abgr GL_EXT_blend_equation_separate GL_EXT_debug_label GL_EXT_demote_to_helper_invocation GL_EXT_depth_bounds_test GL_EXT_draw_buffers2 GL_EXT_draw_instanced GL_EXT_framebuffer_blit GL_EXT_framebuffer_multisample GL_EXT_framebuffer_multisample_blit_scaled GL_EXT_framebuffer_object GL_EXT_framebuffer_sRGB GL_EXT_memory_object GL_EXT_memory_object_fd GL_EXT_mesh_shader GL_EXT_packed_depth_stencil GL_EXT_packed_float GL_EXT_pixel_buffer_object GL_EXT_polygon_offset_clamp GL_EXT_provoking_vertex GL_EXT_semaphore GL_EXT_semaphore_fd GL_EXT_shader_clock GL_EXT_shader_image_load_formatted GL_EXT_shader_image_load_store GL_EXT_shader_integer_mix GL_EXT_shader_samples_identical GL_EXT_texture_array GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc GL_EXT_texture_filter_anisotropic GL_EXT_texture_filter_minmax GL_EXT_texture_integer GL_EXT_texture_mirror_clamp GL_EXT_texture_sRGB GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_EXT_texture_sRGB_decode GL_EXT_texture_shadow_lod GL_EXT_texture_shared_exponent GL_EXT_texture_snorm GL_EXT_texture_storage GL_EXT_texture_swizzle GL_EXT_timer_query GL_EXT_transform_feedback GL_EXT_vertex_array_bgra GL_EXT_vertex_attrib_64bit GL_EXT_window_rectangles GL_IBM_multimode_draw_arrays GL_INTEL_blackhole_render GL_KHR_blend_equation_advanced GL_KHR_context_flush_control GL_KHR_debug GL_KHR_no_error GL_KHR_parallel_shader_compile GL_KHR_robust_buffer_access_behavior GL_KHR_robustness GL_KHR_shader_subgroup GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_MESA_pack_invert GL_MESA_shader_integer_functions GL_MESA_texture_const_bandwidth GL_MESA_texture_signed_rgba GL_NVX_gpu_memory_info GL_NV_alpha_to_coverage_dither_control GL_NV_compute_shader_derivatives GL_NV_conditional_render GL_NV_copy_image GL_NV_depth_clamp GL_NV_packed_depth_stencil GL_NV_shader_atomic_int64 GL_NV_texture_barrier GL_NV_timeline_semaphore GL_OES_EGL_image GL_S3_s3tc 
+2026-05-26 06:33:43.595 T:47085    info <general>: SetResolutionExternal: Kodi asked to switch mode to 1800x1125 @90.001 Hz on output "Samsung Display Corp. eDP-1-0x4171" full screen
+2026-05-26 06:33:43.595 T:47085   debug <general>: SetResolutionExternal: Resolved output "Samsung Display Corp. eDP-1-0x4171" to bound Wayland global 64
+2026-05-26 06:33:43.595 T:47085   debug <general>: SetResolutionExternal: Setting full-screen with refresh rate 90.001
+2026-05-26 06:33:43.595 T:47085   debug <general>: Wayland connection: Waiting for global interfaces
+2026-05-26 06:33:43.595 T:47085   debug <general>: Binding Wayland protocol zwp_idle_inhibit_manager_v1 version 1 (server has version 1)
+2026-05-26 06:33:43.595 T:47085   debug <general>: Wayland connection: Roundtrip complete
+2026-05-26 06:33:43.595 T:47085    info <general>: GetOSScreenSaverImpl: Using idle-inhibit-unstable-v1 protocol for screen saver inhibition
+2026-05-26 06:33:43.595 T:47085   debug <general>: guilib: Fill viewport on change for solving rendering passes
+2026-05-26 06:33:43.678 T:47085    info <general>: GL: Enabling VSYNC
+2026-05-26 06:33:43.679 T:47085   debug <general>: ProcessMessages: Output hotplug, re-reading resolutions
+2026-05-26 06:33:43.679 T:47085    info <general>: UpdateResolutions: User wanted output "Default", we now have "Samsung Display Corp. eDP-1-0x4171" size 302x189 mm with 1 mode(s):
+2026-05-26 06:33:43.679 T:47085    info <general>: UpdateResolutions: - 2880x1800 @90.001 Hz pixel ratio 0.999 current
+2026-05-26 06:33:43.679 T:47085   debug <general>: ProcessMessages: Configure serial 12036: size 1800x1125 state fullscreen
+2026-05-26 06:33:43.679 T:47085   debug <general>: SetResolutionInternal: Set size for serial 12036: 1800x1125 including decoration at scale 1 state fullscreen
+2026-05-26 06:33:43.679 T:47085   debug <general>: SetResolutionInternal: Queued change to resolution 17 surface size 1800x1125 scale 1 state fullscreen
+2026-05-26 06:33:43.679 T:47085    info <general>: load keymapping
+2026-05-26 06:33:43.680 T:47085    info <general>: Loading special://xbmc/system/keymaps/appcommand.xml
+2026-05-26 06:33:43.680 T:47085    info <general>: Loading special://xbmc/system/keymaps/customcontroller.AppleRemote.xml
+2026-05-26 06:33:43.680 T:47128   debug <general>: Entering output "Samsung Display Corp. eDP-1-0x4171" with scale 2 and 242.135 dpi
+2026-05-26 06:33:43.680 T:47128   debug <general>: UpdateTouchDpi: Computed average dpi of 242.135 for touch handler
+2026-05-26 06:33:43.680 T:47128   debug <general>: Chose selection MIME type text/plain;charset=utf-8 out of offered text/html, text/plain, text/plain;charset=utf-8, application/x-kde-onlyReplaceEmpty
+2026-05-26 06:33:43.680 T:47085    info <general>: Loading special://xbmc/system/keymaps/customcontroller.Harmony.xml
+2026-05-26 06:33:43.681 T:47085    info <general>: Loading special://xbmc/system/keymaps/customcontroller.SiriRemote.xml
+2026-05-26 06:33:43.682 T:47085    info <general>: Loading special://xbmc/system/keymaps/gamepad.xml
+2026-05-26 06:33:43.683 T:47085    info <general>: Loading special://xbmc/system/keymaps/joystick.xml
+2026-05-26 06:33:43.684 T:47085    info <general>: Loading special://xbmc/system/keymaps/keyboard.xml
+2026-05-26 06:33:43.685 T:47085    info <general>: Loading special://xbmc/system/keymaps/mouse.xml
+2026-05-26 06:33:43.686 T:47085    info <general>: Loading special://xbmc/system/keymaps/remote.xml
+2026-05-26 06:33:43.687 T:47085    info <general>: Loading special://xbmc/system/keymaps/touchscreen.xml
+2026-05-26 06:33:43.688 T:47085    info <general>: GUI format 2880x1800, Display Samsung Display Corp. eDP-1-0x4171: 2880x1800 @ 90.00Hz
+2026-05-26 06:33:43.688 T:47137   debug <general>: Thread ActiveAE start, auto delete: false
+2026-05-26 06:33:43.688 T:47138   debug <general>: Thread AESink start, auto delete: false
+2026-05-26 06:33:43.688 T:47137   debug <general>: [threads] name: 'AESink' priority: '0'
+2026-05-26 06:33:43.688 T:47137    info <general>: Found 1 Lists of Devices
+2026-05-26 06:33:43.689 T:47137    info <general>: Enumerated PIPEWIRE devices:
+2026-05-26 06:33:43.689 T:47137    info <general>:     Device 1
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_deviceName      : Default
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_displayName     : Default
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_displayNameExtra: Default Output Device (PIPEWIRE)
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_deviceType      : AE_DEVTYPE_PCM
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_channels        : FL, FR
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_sampleRates     : 5512,8000,11025,16000,22050,32000,44100,48000,64000,88200,96000,176400,192000,384000
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_dataFormats     : AE_FMT_RAW,AE_FMT_U8,AE_FMT_S16NE,AE_FMT_S24NE4,AE_FMT_S32NE,AE_FMT_S24NE3,AE_FMT_FLOAT
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_streamTypes     : No passthrough capabilities
+2026-05-26 06:33:43.689 T:47137    info <general>:     Device 2
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_deviceName      : alsa_output.pci-0000_34_00.6.HiFi__Speaker__sink
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_displayName     : Ryzen HD Audio Controller Speaker
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_displayNameExtra: Ryzen HD Audio Controller Speaker (PIPEWIRE)
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_deviceType      : AE_DEVTYPE_PCM
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_channels        : FL, FR
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_sampleRates     : 5512,8000,11025,16000,22050,32000,44100,48000,64000,88200,96000,176400,192000,384000
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_dataFormats     : AE_FMT_RAW,AE_FMT_U8,AE_FMT_S16NE,AE_FMT_S24NE4,AE_FMT_S32NE,AE_FMT_S24NE3,AE_FMT_FLOAT
+2026-05-26 06:33:43.689 T:47137    info <general>:         m_streamTypes     : No passthrough capabilities
+2026-05-26 06:33:43.689 T:47137 warning <general>: ValidateOutputDevices: audio output device setting has been updated from 'Default' to 'PIPEWIRE:Default|Default Output Device (PIPEWIRE)'
+2026-05-26 06:33:43.689 T:47138    info <general>: CActiveAESink::OpenSink - initialize sink
+2026-05-26 06:33:43.689 T:47138   debug <general>: CActiveAESink::OpenSink - trying to open device PIPEWIRE:Default
+2026-05-26 06:33:43.689 T:47138   debug <general>: CPipewireStream::StateChanged - stream state changed unconnected -> connecting
+2026-05-26 06:33:43.691 T:47138   debug <general>: CAESinkPipewire::Initialize - rate: 44100
+2026-05-26 06:33:43.691 T:47138   debug <general>: CAESinkPipewire::Initialize - channels: 2
+2026-05-26 06:33:43.691 T:47138   debug <general>: CAESinkPipewire::Initialize - format: f32
+2026-05-26 06:33:43.691 T:47138   debug <general>: CAESinkPipewire::Initialize - samplesize: 4
+2026-05-26 06:33:43.691 T:47138   debug <general>: CAESinkPipewire::Initialize - framesize: 8
+2026-05-26 06:33:43.691 T:47138   debug <general>: CAESinkPipewire::Initialize - latency: 2205/44100 (0.017s)
+2026-05-26 06:33:43.691 T:47138   debug <general>: CAESinkPipewire::Initialize - waiting
+2026-05-26 06:33:43.692 T:47100   debug <general>: CPipewireStream::StateChanged - stream state changed connecting -> paused
+2026-05-26 06:33:43.692 T:47138   debug <general>: CAESinkPipewire::Initialize - initialized
+2026-05-26 06:33:43.692 T:47138   debug <general>: CActiveAESink::OpenSink - PIPEWIRE Initialized:
+2026-05-26 06:33:43.692 T:47138   debug <general>:   Output Device : Default
+2026-05-26 06:33:43.692 T:47138   debug <general>:   Sample Rate   : 44100
+2026-05-26 06:33:43.692 T:47138   debug <general>:   Sample Format : AE_FMT_FLOAT
+2026-05-26 06:33:43.692 T:47138   debug <general>:   Channel Count : 2
+2026-05-26 06:33:43.692 T:47138   debug <general>:   Channel Layout: FL, FR
+2026-05-26 06:33:43.692 T:47138   debug <general>:   Frames        : 2205
+2026-05-26 06:33:43.692 T:47138   debug <general>:   Frame Size    : 8
+2026-05-26 06:33:43.693 T:47085    info <general>: CLangInfo: loading resource.language.en_gb language information...
+2026-05-26 06:33:43.693 T:47085   debug <general>: trying to set locale to en_US.UTF-8
+2026-05-26 06:33:43.694 T:47085    info <general>: global locale set to en_US.UTF-8
+2026-05-26 06:33:43.694 T:47085    info <general>: CLangInfo: loading resource.language.en_gb language strings...
+2026-05-26 06:33:43.699 T:47085   debug <general>: LocalizeStrings: loaded 4428 strings from file resource://resource.language.en_gb/strings.po
+2026-05-26 06:33:43.700 T:47085   debug <general>: LocalizeStrings: loaded 3 strings from file /usr/share/kodi/addons/audioencoder.kodi.builtin.aac/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.700 T:47085   debug <general>: LocalizeStrings: loaded 3 strings from file /usr/share/kodi/addons/audioencoder.kodi.builtin.wma/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.701 T:47085   debug <general>: LocalizeStrings: loaded 18 strings from file /usr/share/kodi/addons/game.controller.default/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.702 T:47085   debug <general>: LocalizeStrings: loaded 141 strings from file /usr/share/kodi/addons/game.controller.keyboard/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.703 T:47100   debug <general>: CPipewireNode::Info - node 51 changed
+2026-05-26 06:33:43.704 T:47085   debug <general>: LocalizeStrings: loaded 11 strings from file /usr/share/kodi/addons/game.controller.mouse/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.704 T:47085   debug <general>: LocalizeStrings: loaded 13 strings from file /usr/share/kodi/addons/game.controller.snes/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.705 T:47085   debug <general>: LocalizeStrings: loaded 60 strings from file /usr/share/kodi/addons/inputstream.adaptive/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.705 T:47100   debug <general>: CPipewireStream::StateChanged - stream state changed paused -> streaming
+2026-05-26 06:33:43.705 T:47100   debug <general>: CPipewireStream::StateChanged - stream node 73
+2026-05-26 06:33:43.705 T:47085   debug <general>: LocalizeStrings: loaded 0 strings from file /usr/share/kodi/addons/inputstream.rtmp/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.706 T:47100   debug <general>: CPipewireNode::Info - node 51 changed
+2026-05-26 06:33:43.706 T:47085   debug <general>: LocalizeStrings: loaded 17 strings from file /home/rpeters1428/.kodi/addons/metadata.album.universal/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.706 T:47085   debug <general>: LocalizeStrings: loaded 32 strings from file /home/rpeters1428/.kodi/addons/metadata.artists.universal/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.707 T:47085   debug <general>: LocalizeStrings: loaded 17 strings from file /home/rpeters1428/.kodi/addons/metadata.generic.albums/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.708 T:47085   debug <general>: LocalizeStrings: loaded 15 strings from file /usr/share/kodi/addons/metadata.generic.artists/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.708 T:47085   debug <general>: LocalizeStrings: loaded 24 strings from file /home/rpeters1428/.kodi/addons/metadata.themoviedb.org.python/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.709 T:47085   debug <general>: LocalizeStrings: loaded 35 strings from file /home/rpeters1428/.kodi/addons/metadata.tvshows.themoviedb.org.python/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.710 T:47085   debug <general>: POParser: PO file has Win Style Line Endings. Converted in memory to Linux LF for file: /home/rpeters1428/.kodi/addons/plugin.video.cumination/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.710 T:47085   debug <general>: LocalizeStrings: loaded 168 strings from file /home/rpeters1428/.kodi/addons/plugin.video.cumination/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.711 T:47085   debug <general>: LocalizeStrings: loaded 0 strings from file /usr/share/kodi/addons/repository.xbmc.org/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.712 T:47085   debug <general>: LocalizeStrings: loaded 3 strings from file /usr/share/kodi/addons/screensaver.xbmc.builtin.dim/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.713 T:47085   debug <general>: LocalizeStrings: loaded 7 strings from file /home/rpeters1428/.kodi/addons/script.common.plugin.cache/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.716 T:47085   debug <general>: LocalizeStrings: loaded 91 strings from file /home/rpeters1428/.kodi/addons/script.module.inputstreamhelper/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.717 T:47085   debug <general>: LocalizeStrings: loaded 104 strings from file /home/rpeters1428/.kodi/addons/script.module.resolveurl/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.719 T:47085   debug <general>: LocalizeStrings: loaded 22 strings from file /home/rpeters1428/.kodi/addons/service.xbmc.versioncheck/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.720 T:47139   debug <general>: Thread JobWorker start, auto delete: true
+2026-05-26 06:33:43.720 T:47139   debug <general>: [threads] name: 'JobWorker' priority: '1'
+2026-05-26 06:33:43.720 T:47139   debug <general>: Initialize, updating databases...
+2026-05-26 06:33:43.721 T:47139    info <general>: Running database version Addons33
+2026-05-26 06:33:43.723 T:47139    info <general>: Running database version ViewModes6
+2026-05-26 06:33:43.725 T:47139    info <general>: Running database version Textures13
+2026-05-26 06:33:43.727 T:47139    info <general>: Running database version MyMusic83
+2026-05-26 06:33:43.730 T:47139    info <general>: Running database version MyVideos131
+2026-05-26 06:33:43.731 T:47139    info <general>: Running database version TV46
+2026-05-26 06:33:43.732 T:47139    info <general>: Running database version Epg16
+2026-05-26 06:33:43.732 T:47139   debug <general>: Initialize, updating databases... DONE
+2026-05-26 06:33:43.750 T:47085    info <general>: Unloaded skin
+2026-05-26 06:33:43.751 T:47085    info <general>:   load skin from: /usr/share/kodi/addons/skin.estuary/ (version: 4.0.0)
+2026-05-26 06:33:43.751 T:47085    info <general>:   load fonts for skin...
+2026-05-26 06:33:43.751 T:47085    info <general>: Loading skin includes from /usr/share/kodi/addons/skin.estuary/xml/Includes.xml
+2026-05-26 06:33:43.781 T:47085    info <general>: LoadFontsFromFile: Loading <fontset> with name 'Default' from '/usr/share/kodi/addons/skin.estuary/xml/Font.xml'
+2026-05-26 06:33:43.790 T:47085   debug <general>: LocalizeStrings: loaded 166 strings from file /usr/share/kodi/addons/skin.estuary/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:43.790 T:47085    info <general>: LoadTimers: Trying to load skin timers from /usr/share/kodi/addons/skin.estuary/xml/Timers.xml
+2026-05-26 06:33:43.791 T:47085    info <general>:   load new skin...
+2026-05-26 06:33:43.791 T:47085    info <general>: Loading custom window XMLs from skin path /usr/share/kodi/addons/skin.estuary/xml
+2026-05-26 06:33:43.795 T:47085   debug <general>: Load Skin XML: 4.72 ms
+2026-05-26 06:33:43.795 T:47085    info <general>:   initialize new skin...
+2026-05-26 06:33:43.795 T:47085   debug <general>: guilib: Fill viewport on change for solving rendering passes
+2026-05-26 06:33:43.795 T:47085    info <general>: Loading skin file: Custom_1109_TopBarOverlay.xml, load type: LOAD_ON_GUI_INIT
+2026-05-26 06:33:43.801 T:47085   debug <general>: OpenBundle - Opened bundle /usr/share/kodi/addons/skin.estuary/media/Textures.xbt
+2026-05-26 06:33:43.801 T:47085    info <general>: Loading skin file: DialogBusy.xml, load type: LOAD_ON_GUI_INIT
+2026-05-26 06:33:43.802 T:47085    info <general>: Loading skin file: DialogNotification.xml, load type: LOAD_ON_GUI_INIT
+2026-05-26 06:33:43.802 T:47085    info <general>: Loading skin file: DialogSeekBar.xml, load type: LOAD_ON_GUI_INIT
+2026-05-26 06:33:43.809 T:47085    info <general>: Loading skin file: DialogExtendedProgressBar.xml, load type: LOAD_ON_GUI_INIT
+2026-05-26 06:33:43.809 T:47085    info <general>: Loading skin file: Pointer.xml, load type: LOAD_ON_GUI_INIT
+2026-05-26 06:33:43.810 T:47085    info <general>: Loading skin file: DialogBusy.xml, load type: LOAD_ON_GUI_INIT
+2026-05-26 06:33:43.810 T:47085    info <general>: Loading skin file: DialogVolumeBar.xml, load type: LOAD_ON_GUI_INIT
+2026-05-26 06:33:43.810 T:47085    info <general>: Loading resource://resource.uisounds.kodi/sounds.xml
+2026-05-26 06:33:43.829 T:47085    info <general>:   skin loaded...
+2026-05-26 06:33:43.829 T:47085   debug <general>: Activating window ID: 12997
+2026-05-26 06:33:43.829 T:47085   debug <general>: ------ Window Init () ------
+2026-05-26 06:33:43.829 T:47085   debug <general>: Activating window ID: 12999
+2026-05-26 06:33:43.829 T:47085   debug <general>: ------ Window Init (Startup.xml) ------
+2026-05-26 06:33:43.829 T:47085    info <general>: Loading skin file: Startup.xml, load type: LOAD_EVERY_TIME
+2026-05-26 06:33:43.829 T:47085   debug <general>: Activating window ID: 10000
+2026-05-26 06:33:43.829 T:47085   debug <general>: ------ Window Deinit (Startup.xml) ------
+2026-05-26 06:33:43.829 T:47085   debug <general>: ------ Window Init (Home.xml) ------
+2026-05-26 06:33:43.829 T:47085    info <general>: Loading skin file: Home.xml, load type: KEEP_IN_MEMORY
+2026-05-26 06:33:43.861 T:47085   debug <general>: CDirectoryProvider[addons://]: refreshing..
+2026-05-26 06:33:43.861 T:47085   debug <general>: CDirectoryProvider[addons://sources/video/]: refreshing..
+2026-05-26 06:33:43.861 T:47085   debug <general>: CDirectoryProvider[addons://sources/audio/]: refreshing..
+2026-05-26 06:33:43.861 T:47085   debug <general>: CDirectoryProvider[addons://sources/game/]: refreshing..
+2026-05-26 06:33:43.861 T:47085   debug <general>: CDirectoryProvider[addons://sources/executable/]: refreshing..
+2026-05-26 06:33:43.861 T:47148   debug <general>: Thread JobWorker start, auto delete: true
+2026-05-26 06:33:43.861 T:47148   debug <general>: [threads] name: 'JobWorker' priority: '1'
+2026-05-26 06:33:43.861 T:47085   debug <general>: CDirectoryProvider[addons://sources/image/]: refreshing..
+2026-05-26 06:33:43.861 T:47139   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:33:43.861 T:47149   debug <general>: Thread JobWorker start, auto delete: true
+2026-05-26 06:33:43.861 T:47149   debug <general>: [threads] name: 'JobWorker' priority: '1'
+2026-05-26 06:33:43.861 T:47085   debug <general>: CDirectoryProvider[library://video/]: refreshing..
+2026-05-26 06:33:43.861 T:47085   debug <general>: CDirectoryProvider[sources://video/]: refreshing..
+2026-05-26 06:33:43.861 T:47085   debug <general>: CDirectoryProvider[special://videoplaylists/]: refreshing..
+2026-05-26 06:33:43.861 T:47085   debug <general>: CDirectoryProvider[favourites://]: refreshing..
+2026-05-26 06:33:43.862 T:47085   debug <general>: CDirectoryProvider[sources://pictures/]: refreshing..
+2026-05-26 06:33:43.862 T:47085   debug <general>: CDirectoryProvider[addons://sources/game/]: refreshing..
+2026-05-26 06:33:43.863 T:47148   debug <general>: CMultiPathDirectory::GetDirectory(multipath://special%3a%2f%2fprofile%2fplaylists%2fvideo/special%3a%2f%2fprofile%2fplaylists%2fmixed/)
+2026-05-26 06:33:43.863 T:47148   debug <general>: Getting Directory (special://profile/playlists/video)
+2026-05-26 06:33:43.863 T:47148   debug <general>: Getting Directory (special://profile/playlists/mixed)
+2026-05-26 06:33:43.863 T:47148   debug <general>: CMultiPathDirectory::MergeItems, items = 0
+2026-05-26 06:33:43.864 T:47148   debug <general>: CRecentlyAddedJob::UpdateMusic() - Running RecentlyAdded home screen update
+2026-05-26 06:33:43.867 T:47148   debug <general>: GetRecentlyAddedAlbumSongs() query: SELECT songview.*, songartistview.* FROM (SELECT idAlbum, dateAdded FROM album ORDER BY dateAdded DESC LIMIT 10) AS recentalbums JOIN songview ON songview.idAlbum = recentalbums.idAlbum JOIN songartistview ON songview.idSong = songartistview.idSong ORDER BY recentalbums.dateAdded DESC, songview.idAlbum DESC, songview.idSong, songartistview.idRole, songartistview.iOrder 
+2026-05-26 06:33:43.867 T:47148   debug <general>: GetRecentlyAddedAlbums query: SELECT albumview.*, albumartistview.* FROM (SELECT idAlbum FROM album WHERE strAlbum != '' ORDER BY dateAdded DESC LIMIT 10) AS recentalbums JOIN albumview ON albumview.idAlbum = recentalbums.idAlbum JOIN albumartistview ON albumview.idAlbum = albumartistview.idAlbum ORDER BY dateAdded DESC, albumview.idAlbum desc, albumartistview.iOrder 
+2026-05-26 06:33:43.868 T:47148   debug <general>: CRecentlyAddedJob::UpdateVideos() - Running RecentlyAdded home screen update
+2026-05-26 06:33:43.868 T:47085   debug <general>: JSONRPC: JSON schema type definition references an unknown type Setting.Details.Setting
+2026-05-26 06:33:43.868 T:47085 warning <general>: JSONRPC: Could not parse type "Setting.Details.SettingList"
+2026-05-26 06:33:43.868 T:47085    info <general>: JSONRPC: Adding type "Setting.Details.SettingList" to list of incomplete definitions (waiting for "Setting.Details.Setting")
+2026-05-26 06:33:43.868 T:47085    info <general>: JSONRPC: Resolving incomplete types/methods referencing Setting.Details.Setting
+2026-05-26 06:33:43.872 T:47148   debug <general>: CRecentlyAddedJob::UpdateTotal() - Running RecentlyAdded home screen update
+2026-05-26 06:33:43.874 T:47085    info <general>: JSONRPC v13.5.0: Successfully initialized
+2026-05-26 06:33:43.874 T:47085    info <general>: [Media Detection] starting service for optical media detection
+2026-05-26 06:33:43.874 T:47150   debug <general>: Thread DetectDVDMedia start, auto delete: false
+2026-05-26 06:33:43.874 T:47150   debug <general>: Compiled with libcdio Version 0.20300
+2026-05-26 06:33:43.875 T:47150   debug <general>: Thread DetectDVDMedia 140023315822272 terminating
+2026-05-26 06:33:43.876 T:47085   debug <general>: LoadMappings: loaded node "Motorola Nyxboard Hybrid"
+2026-05-26 06:33:43.876 T:47085   debug <general>: LoadMappings: loaded node "CEC Adapter"
+2026-05-26 06:33:43.876 T:47085   debug <general>: LoadMappings: loaded node "Pulse-Eight CEC Adapter"
+2026-05-26 06:33:43.876 T:47085   debug <general>: LoadMappings: loaded node "iMON HID device"
+2026-05-26 06:33:43.876 T:47085   debug <general>: LoadMappings: loaded node "WETEK Play remote"
+2026-05-26 06:33:43.876 T:47085   debug <general>: LoadMappings: loaded node "OSMC RF Remote"
+2026-05-26 06:33:43.876 T:47085   debug <general>: Skipped 1 duplicate messages..
+2026-05-26 06:33:43.876 T:47085   debug <general>: LoadMappings: loaded node "joystick"
+2026-05-26 06:33:43.876 T:47085   debug <general>: LoadMappings: loaded node "keyboard"
+2026-05-26 06:33:43.876 T:47085   debug <general>: LoadMappings: loaded node "mouse"
+2026-05-26 06:33:43.876 T:47152   debug <general>: Thread PeripBusUSBUdev start, auto delete: false
+2026-05-26 06:33:43.876 T:47085   debug <general>: [threads] name: 'PeripBusUSBUdev' priority: '1'
+2026-05-26 06:33:43.877 T:47152   debug <general>: Process - initialised udev monitor
+2026-05-26 06:33:43.877 T:47153   debug <general>: Thread PeripBusCEC start, auto delete: false
+2026-05-26 06:33:43.877 T:47085   debug <general>: [threads] name: 'PeripBusCEC' priority: '1'
+2026-05-26 06:33:43.877 T:47154   debug <general>: Thread PeripBusAddon start, auto delete: false
+2026-05-26 06:33:43.877 T:47085   debug <general>: [threads] name: 'PeripBusAddon' priority: '1'
+2026-05-26 06:33:43.877 T:47085   debug <general>: GetMappingForDevice - device (0000:0000) mapped to keyboard (type = keyboard)
+2026-05-26 06:33:43.877 T:47085   debug <general>: Initialise - initialised peripheral on 'keyboard' with 1 features and 0 sub devices
+2026-05-26 06:33:43.877 T:47085    info <general>: Register - new keyboard device registered on application->keyboard: Keyboard (0000:0000)
+2026-05-26 06:33:43.877 T:47085   debug <general>: GetMappingForDevice - device (0000:0000) mapped to mouse (type = mouse)
+2026-05-26 06:33:43.877 T:47085   debug <general>: Initialise - initialised peripheral on 'mouse' with 1 features and 0 sub devices
+2026-05-26 06:33:43.877 T:47085    info <general>: Register - new mouse device registered on application->mouse: Mouse (0000:0000)
+2026-05-26 06:33:43.877 T:47155   debug <general>: Thread PeripEventScan start, auto delete: false
+2026-05-26 06:33:43.877 T:47085   debug <general>: ContextMenuManager: addon menus reloaded.
+2026-05-26 06:33:43.877 T:47085    info <general>: Loading player core factory settings from special://xbmc/system/playercorefactory.xml.
+2026-05-26 06:33:43.877 T:47085   debug <general>: CPlayerCoreConfig::<ctor>: created player VideoPlayer
+2026-05-26 06:33:43.877 T:47085   debug <general>: CPlayerCoreConfig::<ctor>: created player PAPlayer
+2026-05-26 06:33:43.877 T:47085   debug <general>: CPlayerCoreConfig::<ctor>: created player RetroPlayer
+2026-05-26 06:33:43.877 T:47085   debug <general>: CPlayerSelectionRule::Initialize: creating rule: system rules
+2026-05-26 06:33:43.877 T:47085   debug <general>: CPlayerSelectionRule::Initialize: creating rule: mms/udp
+2026-05-26 06:33:43.877 T:47085   debug <general>: CPlayerSelectionRule::Initialize: creating rule: lastfm/shout
+2026-05-26 06:33:43.877 T:47085   debug <general>: CPlayerSelectionRule::Initialize: creating rule: rtmp
+2026-05-26 06:33:43.877 T:47085   debug <general>: CPlayerSelectionRule::Initialize: creating rule: rtsp
+2026-05-26 06:33:43.877 T:47085   debug <general>: CPlayerSelectionRule::Initialize: creating rule: streams
+2026-05-26 06:33:43.877 T:47085   debug <general>: CPlayerSelectionRule::Initialize: creating rule: aacp/sdp
+2026-05-26 06:33:43.878 T:47085   debug <general>: CPlayerSelectionRule::Initialize: creating rule: mp2
+2026-05-26 06:33:43.878 T:47085   debug <general>: CPlayerSelectionRule::Initialize: creating rule: dvd
+2026-05-26 06:33:43.878 T:47085   debug <general>: CPlayerSelectionRule::Initialize: creating rule: discimage
+2026-05-26 06:33:43.878 T:47085   debug <general>: CPlayerSelectionRule::Initialize: creating rule: sdp/asf
+2026-05-26 06:33:43.878 T:47085   debug <general>: CPlayerSelectionRule::Initialize: creating rule: nsv
+2026-05-26 06:33:43.878 T:47085   debug <general>: CPlayerSelectionRule::Initialize: creating rule: radio
+2026-05-26 06:33:43.878 T:47085    info <general>: Loaded playercorefactory configuration
+2026-05-26 06:33:43.878 T:47085    info <general>: Loading player core factory settings from special://masterprofile/playercorefactory.xml.
+2026-05-26 06:33:43.878 T:47085    info <general>: special://masterprofile/playercorefactory.xml does not exist. Skipping.
+2026-05-26 06:33:43.878 T:47085    info <general>: removing tempfiles
+2026-05-26 06:33:43.878 T:47085   debug <general>: CRepositoryUpdater: closest next update check at 04/14/2026 2:34:30 AM (in 0s)
+2026-05-26 06:33:43.878 T:47085   debug <general>: CRepositoryUpdater: checking in 1ms
+2026-05-26 06:33:43.878 T:47157   debug <general>: Thread Timer start, auto delete: false
+2026-05-26 06:33:43.878 T:47085   debug <general>: CServiceAddonManager: starting script.common.plugin.cache
+2026-05-26 06:33:43.878 T:47158   debug <general>: Thread LanguageInvoker start, auto delete: false
+2026-05-26 06:33:43.879 T:47085   debug <general>: CServiceAddonManager: starting service.xbmc.versioncheck
+2026-05-26 06:33:43.879 T:47158   debug <general>: initializing python engine.
+2026-05-26 06:33:43.879 T:47159   debug <general>: Thread LanguageInvoker start, auto delete: false
+2026-05-26 06:33:43.879 T:47085    info <general>: initialize done
+2026-05-26 06:33:43.879 T:47159   debug <general>: initializing python engine.
+2026-05-26 06:33:43.879 T:47085    info <general>: Running the application...
+2026-05-26 06:33:43.879 T:47157   debug <general>: CRepositoryUpdater: running scheduled update
+2026-05-26 06:33:43.879 T:47157   debug <general>: Thread Timer 140022913169088 terminating
+2026-05-26 06:33:43.879 T:47149   debug <general>: CRepositoryUpdateJob[repository.dobbelina] checking for updates.
+2026-05-26 06:33:43.880 T:47085   debug <general>: NetworkMessage - Starting network services
+2026-05-26 06:33:43.880 T:47149   debug <general>: CurlFile::Open - <https://rpeters1430.github.io/repository.dobbelina/addons.xml.md5>
+2026-05-26 06:33:43.880 T:47149   debug <general>: easy_acquire - Created session to https://rpeters1430.github.io
+2026-05-26 06:33:43.880 T:47085   debug <general>: CZeroconfAvahi::clientCallback: client is up and running
+2026-05-26 06:33:43.881 T:47085    info <general>: starting zeroconf publishing
+2026-05-26 06:33:43.881 T:47163   debug <general>: Thread EventServer start, auto delete: false
+2026-05-26 06:33:43.881 T:47163    info <general>: ES: Starting UDP Event server on port 9777
+2026-05-26 06:33:43.881 T:47163    info <general>: UDP: Listening on port 9777 (ipv6 : false)
+2026-05-26 06:33:43.882 T:47085    info <general>: JSONRPC Server: Successfully initialized
+2026-05-26 06:33:43.882 T:47164   debug <general>: Thread TCPServer start, auto delete: false
+2026-05-26 06:33:43.882 T:47165   debug <general>: Thread WSDiscoveryListenerUDP start, auto delete: false
+2026-05-26 06:33:43.882 T:47085   debug <general>: [threads] name: 'WSDiscoveryListenerUDP' priority: '1'
+2026-05-26 06:33:43.882 T:47085    info <general>: CWSDiscoveryListenerUDP::Start - Started
+2026-05-26 06:33:43.896 T:47148   debug <general>: CRepositoryUpdateJob[repository.xbmc.org] checking for updates.
+2026-05-26 06:33:43.897 T:47148   debug <general>: CurlFile::Open - <https://mirrors.kodi.tv/addons/omega/addons.xml.gz?sha256>
+2026-05-26 06:33:43.897 T:47148   debug <general>: easy_acquire - Created session to https://mirrors.kodi.tv
+2026-05-26 06:33:43.904 T:47158   debug <general>: CPythonInvoker(0, /home/rpeters1428/.kodi/addons/script.common.plugin.cache/resources/lib/entry_point.py): start processing
+2026-05-26 06:33:43.904 T:47159   debug <general>: CPythonInvoker(1, /home/rpeters1428/.kodi/addons/service.xbmc.versioncheck/resources/lib/runner.py): start processing
+2026-05-26 06:33:43.927 T:47158   debug <general>: -->Python Interpreter Initialized<--
+2026-05-26 06:33:43.927 T:47158   debug <general>: 
+                                                   
+2026-05-26 06:33:43.927 T:47158   debug <general>: CPythonInvoker(0, /home/rpeters1428/.kodi/addons/script.common.plugin.cache/resources/lib/entry_point.py): the source file to load is "/home/rpeters1428/.kodi/addons/script.common.plugin.cache/resources/lib/entry_point.py"
+2026-05-26 06:33:43.927 T:47158   debug <general>: CPythonInvoker(0): full python path:
+2026-05-26 06:33:43.927 T:47158   debug <general>: CPythonInvoker(0):   custom python path:
+2026-05-26 06:33:43.927 T:47158   debug <general>: CPythonInvoker(0):     /home/rpeters1428/.kodi/addons/script.common.plugin.cache/resources/lib
+2026-05-26 06:33:43.927 T:47158   debug <general>: CPythonInvoker(0):   default python path:
+2026-05-26 06:33:43.927 T:47158   debug <general>: CPythonInvoker(0):     /usr/lib/python314.zip
+2026-05-26 06:33:43.927 T:47158   debug <general>: CPythonInvoker(0):     /usr/lib/python3.14
+2026-05-26 06:33:43.927 T:47158   debug <general>: CPythonInvoker(0):     /usr/lib/python3.14/lib-dynload
+2026-05-26 06:33:43.927 T:47158   debug <general>: CPythonInvoker(0):     /usr/lib/python3.14/site-packages
+2026-05-26 06:33:43.927 T:47158   debug <general>: CPythonInvoker(0): adding args:
+2026-05-26 06:33:43.927 T:47158   debug <general>: CPythonInvoker(0):  
+2026-05-26 06:33:43.927 T:47158   debug <general>: CPythonInvoker(0, /home/rpeters1428/.kodi/addons/script.common.plugin.cache/resources/lib/entry_point.py): entering source directory /home/rpeters1428/.kodi/addons/script.common.plugin.cache/resources/lib
+2026-05-26 06:33:43.927 T:47158   debug <general>: CPythonInvoker(0, /home/rpeters1428/.kodi/addons/script.common.plugin.cache/resources/lib/entry_point.py): instantiating addon using automatically obtained id of "script.common.plugin.cache" dependent on version 3.0.1 of the xbmc.python api
+2026-05-26 06:33:43.929 T:47159   debug <general>: -->Python Interpreter Initialized<--
+2026-05-26 06:33:43.929 T:47159   debug <general>: 
+                                                   
+2026-05-26 06:33:43.929 T:47159   debug <general>: CPythonInvoker(1, /home/rpeters1428/.kodi/addons/service.xbmc.versioncheck/resources/lib/runner.py): the source file to load is "/home/rpeters1428/.kodi/addons/service.xbmc.versioncheck/resources/lib/runner.py"
+2026-05-26 06:33:43.929 T:47159   debug <general>: CPythonInvoker(1): full python path:
+2026-05-26 06:33:43.929 T:47159   debug <general>: CPythonInvoker(1):   custom python path:
+2026-05-26 06:33:43.929 T:47159   debug <general>: CPythonInvoker(1):     /home/rpeters1428/.kodi/addons/service.xbmc.versioncheck/resources/lib
+2026-05-26 06:33:43.929 T:47159   debug <general>: CPythonInvoker(1):   default python path:
+2026-05-26 06:33:43.929 T:47159   debug <general>: CPythonInvoker(1):     /usr/lib/python314.zip
+2026-05-26 06:33:43.929 T:47159   debug <general>: CPythonInvoker(1):     /usr/lib/python3.14
+2026-05-26 06:33:43.929 T:47159   debug <general>: CPythonInvoker(1):     /usr/lib/python3.14/lib-dynload
+2026-05-26 06:33:43.929 T:47159   debug <general>: CPythonInvoker(1):     /usr/lib/python3.14/site-packages
+2026-05-26 06:33:43.929 T:47159   debug <general>: CPythonInvoker(1): adding args:
+2026-05-26 06:33:43.929 T:47159   debug <general>: CPythonInvoker(1):  
+2026-05-26 06:33:43.929 T:47159   debug <general>: CPythonInvoker(1, /home/rpeters1428/.kodi/addons/service.xbmc.versioncheck/resources/lib/runner.py): entering source directory /home/rpeters1428/.kodi/addons/service.xbmc.versioncheck/resources/lib
+2026-05-26 06:33:43.929 T:47159   debug <general>: CPythonInvoker(1, /home/rpeters1428/.kodi/addons/service.xbmc.versioncheck/resources/lib/runner.py): instantiating addon using automatically obtained id of "service.xbmc.versioncheck" dependent on version 3.0.0 of the xbmc.python api
+2026-05-26 06:33:43.931 T:47139   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2) ORDER BY repo.addonID, addons.addonID returned 798 rows in 69 ms
+2026-05-26 06:33:43.950 T:47085   debug <general>: ------ Window Init () ------
+2026-05-26 06:33:43.951 T:47085   debug <general>: ------ Window Init (Pointer.xml) ------
+2026-05-26 06:33:43.954 T:47139   debug <general>: CAddonDatabase::GetAddons took 93 ms
+2026-05-26 06:33:43.957 T:47139   debug <general>: CAddonMgr::GetAvailableUpdatesOrOutdatedAddons took 95 ms
+2026-05-26 06:33:43.959 T:47139   debug <general>: CZeroconfAvahi::doPublishService identifier: servers.eventserver type: _xbmc-events._udp name:Kodi (cachyos-x8664) port:9777
+2026-05-26 06:33:43.960 T:47139   debug <general>: CZeroconfAvahi::addService() named: Kodi (cachyos-x8664) type: _xbmc-events._udp port:9777
+2026-05-26 06:33:43.960 T:47139   debug <general>: CZeroconfAvahi::doPublishService identifier: servers.jsonrpc-tcp type: _xbmc-jsonrpc._tcp name:Kodi (cachyos-x8664) port:9090
+2026-05-26 06:33:43.960 T:47139   debug <general>: CZeroconfAvahi::addService() named: Kodi (cachyos-x8664) type: _xbmc-jsonrpc._tcp port:9090
+2026-05-26 06:33:43.966 T:47085   debug <general>: ApplyNextState: Applying next state: serial 12036 configured size 1800x1125 scale 1 state fullscreen
+2026-05-26 06:33:43.966 T:47085   debug <general>: UpdateSizeVariables: Set size 1800x1125 scale 1 including decorations with state fullscreen
+2026-05-26 06:33:43.966 T:47085   debug <general>: SetContextSize: Resetting render system to 1800x1125
+2026-05-26 06:33:43.968 T:47085    info <general>: GL: Maximum texture width: 16384
+2026-05-26 06:33:43.968 T:47085   debug <general>: AckConfigure: Acking serial 12036
+2026-05-26 06:33:43.968 T:47085    info <general>: Loading controller layout: /usr/share/kodi/addons/game.controller.mouse/resources/layout.xml
+2026-05-26 06:33:43.989 T:47085   debug <general>: ProcessMessages: Configure serial 12043: size 1800x1125 state activated,fullscreen
+2026-05-26 06:33:43.989 T:47085   debug <general>: SetResolutionInternal: Set size for serial 12043: 1800x1125 including decoration at scale 2 state activated,fullscreen
+2026-05-26 06:33:43.989 T:47085   debug <general>: SetResolutionInternal: Resolved actual (maximum) refresh rate to 90.001 Hz on output "Samsung Display Corp. eDP-1-0x4171"
+2026-05-26 06:33:43.989 T:47085   debug <general>: SetResolutionInternal: Queued change to resolution 18 surface size 1800x1125 scale 2 state activated,fullscreen
+2026-05-26 06:33:44.001 T:47085   debug <general>: ApplyNextState: Applying next state: serial 12043 configured size 1800x1125 scale 2 state activated,fullscreen
+2026-05-26 06:33:44.001 T:47085   debug <general>: CWindowDecorator::SetState: Setting full surface size 1800x1125 scale 1 (main surface size 1800x1125), decorations active: false
+2026-05-26 06:33:44.001 T:47085   debug <general>: UpdateSizeVariables: Set size 1800x1125 scale 2 including decorations with state activated,fullscreen
+2026-05-26 06:33:44.001 T:47085    info <general>: UpdateSizeVariables: Buffer size changed: 1800x1125 -> 3600x2250
+2026-05-26 06:33:44.001 T:47085    info <general>: UpdateSizeVariables: Buffer scale changed: 1 -> 2
+2026-05-26 06:33:44.001 T:47085    info <general>: ApplyBufferScale: Setting Wayland buffer scale to 2
+2026-05-26 06:33:44.001 T:47085   debug <general>: CWindowDecorator::SetState: Setting full surface size 1800x1125 scale 2 (main surface size 1800x1125), decorations active: false
+2026-05-26 06:33:44.001 T:47085   debug <general>: CWindowDecorator::SetState: Buffer scale changed, reloading cursor theme
+2026-05-26 06:33:44.001 T:47085   debug <general>: CWindowDecorator::SetState: Resetting decorations
+2026-05-26 06:33:44.001 T:47085   debug <general>: SetContextSize: Updating egl_window size to 3600x2250
+2026-05-26 06:33:44.001 T:47085   debug <general>: SetContextSize: Resetting render system to 3600x2250
+2026-05-26 06:33:44.003 T:47085    info <general>: GL: Maximum texture width: 16384
+2026-05-26 06:33:44.003 T:47085   debug <general>: AckConfigure: Acking serial 12043
+2026-05-26 06:33:44.023 T:47168   debug <general>: [StorageClient-3.0.0] Service loaded, starting server ...
+2026-05-26 06:33:44.060 T:47148   debug <general>: CurlFile::Open - <https://mirrors.kodi.tv/addons/omega/addons.xml.gz>
+2026-05-26 06:33:44.082 T:47159   debug <general>: Version Check: Version 0.5.30+matrix.1 started
+2026-05-26 06:33:44.096 T:47149   debug <general>: CurlFile::Open - <https://rpeters1430.github.io/repository.dobbelina/addons.xml>
+2026-05-26 06:33:44.234 T:47149   debug <general>: CRepository: invalidating cached art for 'plugin.video.cumination'
+2026-05-26 06:33:44.235 T:47149   debug <general>: CRepository: invalidating cached art for 'plugin.video.uwc'
+2026-05-26 06:33:44.238 T:47149   debug <general>: CRepository: invalidating cached art for 'script.module.resolveurl.xxx'
+2026-05-26 06:33:44.285 T:47101    info <general>: Loading special://xbmc/system/Lircmap.xml
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'mceusb'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'XboxDVDDongle'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'Microsoft_Xbox'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'PinnacleSysPCTVRemote'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'anysee'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'iMON-PAD'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'Antec_Veris_RM200'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'MCE_via_iMON'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'TwinHanRemote'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'linux-input-layer'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Linking remote mapping for 'linux-input-layer' to 'cx23885_remote'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'mediacenter'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'devinput'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'devinput-32'
+2026-05-26 06:33:44.287 T:47101    info <general>: * Adding remote mapping for device 'devinput-64'
+2026-05-26 06:33:44.288 T:47101   debug <general>: CIRTranslator::Load - no userdata Lircmap.xml found, skipping
+2026-05-26 06:33:44.387 T:47085   debug <general>: LogindUPowerSyscall - Received unknown signal NameAcquired
+2026-05-26 06:33:44.414 T:47149   debug <general>: Recaching image '/home/rpeters1428/.kodi/addons/plugin.video.cumination/icon.png' to '3/3ddb9358.png':
+2026-05-26 06:33:44.414 T:47149   debug <general>: cached image 'special://masterprofile/Thumbnails/3/3ddb9358.png' size 512x512
+2026-05-26 06:33:44.902 T:47162   debug <general>: CZeroconfAvahi::groupCallback: Service successfully established
+2026-05-26 06:33:46.328 T:47148   debug <general>: Skipped 1 duplicate messages..
+2026-05-26 06:33:46.328 T:47148   debug <general>: CCurlFile::Open - <https://mirrors.kodi.tv/addons/omega/addons.xml.gz> Effective URL is https://ftp.halifax.rwth-aachen.de/xbmc/addons/omega/addons.xml.gz
+2026-05-26 06:33:47.841 T:47148   debug <general>: CRepository 'https://mirrors.kodi.tv/addons/omega/addons.xml.gz' is gzip. decompressing
+2026-05-26 06:33:48.205 T:47148   debug <general>: CRepository: invalidating cached art for 'script.module.web-pdb'
+2026-05-26 06:33:48.205 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.zh_tw'
+2026-05-26 06:33:48.206 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.tr_tr'
+2026-05-26 06:33:48.207 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.uk_ua'
+2026-05-26 06:33:48.207 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.uz_uz'
+2026-05-26 06:33:48.208 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.vi_vn'
+2026-05-26 06:33:48.208 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.zh_cn'
+2026-05-26 06:33:48.208 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.szl'
+2026-05-26 06:33:48.209 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.ta_in'
+2026-05-26 06:33:48.209 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.te_in'
+2026-05-26 06:33:48.209 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.tg_tj'
+2026-05-26 06:33:48.210 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.th_th'
+2026-05-26 06:33:48.210 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.sl_si'
+2026-05-26 06:33:48.211 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.sq_al'
+2026-05-26 06:33:48.211 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.sr_rs'
+2026-05-26 06:33:48.211 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.sr_rs@latin'
+2026-05-26 06:33:48.211 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.sv_se'
+2026-05-26 06:33:48.212 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.ro_ro'
+2026-05-26 06:33:48.212 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.ru_ru'
+2026-05-26 06:33:48.212 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.si_lk'
+2026-05-26 06:33:48.212 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.sk_sk'
+2026-05-26 06:33:48.213 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.nl_nl'
+2026-05-26 06:33:48.213 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.os_os'
+2026-05-26 06:33:48.213 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.pl_pl'
+2026-05-26 06:33:48.213 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.pt_br'
+2026-05-26 06:33:48.213 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.pt_pt'
+2026-05-26 06:33:48.214 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.ms_my'
+2026-05-26 06:33:48.214 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.mt_mt'
+2026-05-26 06:33:48.214 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.my_mm'
+2026-05-26 06:33:48.214 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.nb_no'
+2026-05-26 06:33:48.215 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.lv_lv'
+2026-05-26 06:33:48.215 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.mi'
+2026-05-26 06:33:48.215 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.mk_mk'
+2026-05-26 06:33:48.215 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.ml_in'
+2026-05-26 06:33:48.215 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.mn_mn'
+2026-05-26 06:33:48.216 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.it_it'
+2026-05-26 06:33:48.216 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.ja_jp'
+2026-05-26 06:33:48.216 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.kn_in'
+2026-05-26 06:33:48.216 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.ko_kr'
+2026-05-26 06:33:48.216 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.lt_lt'
+2026-05-26 06:33:48.217 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.hu_hu'
+2026-05-26 06:33:48.217 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.hy_am'
+2026-05-26 06:33:48.217 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.id_id'
+2026-05-26 06:33:48.217 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.is_is'
+2026-05-26 06:33:48.217 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.gl_es'
+2026-05-26 06:33:48.217 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.he_il'
+2026-05-26 06:33:48.218 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.hi_in'
+2026-05-26 06:33:48.218 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.hr_hr'
+2026-05-26 06:33:48.218 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.ga_ie'
+2026-05-26 06:33:48.218 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.fil'
+2026-05-26 06:33:48.218 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.fo_fo'
+2026-05-26 06:33:48.219 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.fr_ca'
+2026-05-26 06:33:48.219 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.fr_fr'
+2026-05-26 06:33:48.219 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.eu_es'
+2026-05-26 06:33:48.219 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.fa_af'
+2026-05-26 06:33:48.219 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.fa_ir'
+2026-05-26 06:33:48.220 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.fi_fi'
+2026-05-26 06:33:48.220 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.es_ar'
+2026-05-26 06:33:48.220 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.es_es'
+2026-05-26 06:33:48.220 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.es_mx'
+2026-05-26 06:33:48.220 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.et_ee'
+2026-05-26 06:33:48.220 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.eo'
+2026-05-26 06:33:48.221 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.el_gr'
+2026-05-26 06:33:48.221 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.en_au'
+2026-05-26 06:33:48.221 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.en_nz'
+2026-05-26 06:33:48.221 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.en_us'
+2026-05-26 06:33:48.221 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.cy_gb'
+2026-05-26 06:33:48.222 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.da_dk'
+2026-05-26 06:33:48.222 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.de_de'
+2026-05-26 06:33:48.222 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.bg_bg'
+2026-05-26 06:33:48.222 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.bs_ba'
+2026-05-26 06:33:48.222 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.ca_es'
+2026-05-26 06:33:48.222 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.cs_cz'
+2026-05-26 06:33:48.223 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.ar_sa'
+2026-05-26 06:33:48.223 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.ast_es'
+2026-05-26 06:33:48.223 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.az_az'
+2026-05-26 06:33:48.224 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.be_by'
+2026-05-26 06:33:48.224 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.af_za'
+2026-05-26 06:33:48.226 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.language.am_et'
+2026-05-26 06:33:48.226 T:47148   debug <general>: CRepository: invalidating cached art for 'script.service.hue'
+2026-05-26 06:33:48.226 T:47148   debug <general>: CRepository: invalidating cached art for 'script.service.playbackresumer'
+2026-05-26 06:33:48.226 T:47148   debug <general>: CRepository: invalidating cached art for 'plugin.video.nlhardwareinfo'
+2026-05-26 06:33:48.227 T:47148   debug <general>: CRepository: invalidating cached art for 'plugin.video.retrospect'
+2026-05-26 06:33:48.227 T:47148   debug <general>: CRepository: invalidating cached art for 'plugin.video.powerunlimited'
+2026-05-26 06:33:48.228 T:47148   debug <general>: CRepository: invalidating cached art for 'plugin.video.ripe'
+2026-05-26 06:33:48.229 T:47148   debug <general>: CRepository: invalidating cached art for 'metadata.universal'
+2026-05-26 06:33:48.229 T:47148   debug <general>: CRepository: invalidating cached art for 'plugin.video.youtube'
+2026-05-26 06:33:48.229 T:47148   debug <general>: CRepository: invalidating cached art for 'resource.images.studios.white'
+2026-05-26 06:33:48.230 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.xbox.360'
+2026-05-26 06:33:48.230 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.vb'
+2026-05-26 06:33:48.230 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.vectrex'
+2026-05-26 06:33:48.230 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.wiimote'
+2026-05-26 06:33:48.230 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.ws'
+2026-05-26 06:33:48.230 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.sg1000'
+2026-05-26 06:33:48.231 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.sms'
+2026-05-26 06:33:48.231 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.snes.mouse'
+2026-05-26 06:33:48.231 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.snes.super.scope'
+2026-05-26 06:33:48.231 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.saturn.virtua.gun.eu'
+2026-05-26 06:33:48.231 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.saturn.virtua.gun.japan'
+2026-05-26 06:33:48.231 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.saturn.virtua.gun.us'
+2026-05-26 06:33:48.232 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.saturn.mouse'
+2026-05-26 06:33:48.232 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.saturn.multitap'
+2026-05-26 06:33:48.232 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.saturn.twin.stick'
+2026-05-26 06:33:48.232 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.saturn.arcade.racer'
+2026-05-26 06:33:48.232 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.saturn.mission.stick'
+2026-05-26 06:33:48.233 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.saturn.mission.sticks'
+2026-05-26 06:33:48.233 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.saturn.3d.japan'
+2026-05-26 06:33:48.233 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.saturn.3d.western'
+2026-05-26 06:33:48.233 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.ps.multitap'
+2026-05-26 06:33:48.233 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.psp'
+2026-05-26 06:33:48.233 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.remote'
+2026-05-26 06:33:48.234 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.saturn'
+2026-05-26 06:33:48.234 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.ps.guncon.japan'
+2026-05-26 06:33:48.234 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.ps.guncon.western'
+2026-05-26 06:33:48.234 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.ps.mouse'
+2026-05-26 06:33:48.234 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.pokemini'
+2026-05-26 06:33:48.234 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.ps.dualanalog'
+2026-05-26 06:33:48.235 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.ps.dualshock'
+2026-05-26 06:33:48.235 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.ps.gamepad'
+2026-05-26 06:33:48.235 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.pce'
+2026-05-26 06:33:48.235 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.pcfx'
+2026-05-26 06:33:48.235 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.pcfx.mouse'
+2026-05-26 06:33:48.235 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.odyssey2'
+2026-05-26 06:33:48.236 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.ouya'
+2026-05-26 06:33:48.236 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.osmc.remote'
+2026-05-26 06:33:48.236 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.nes'
+2026-05-26 06:33:48.236 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.nes.four.score'
+2026-05-26 06:33:48.236 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.ngp'
+2026-05-26 06:33:48.237 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.n64'
+2026-05-26 06:33:48.237 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.nds'
+2026-05-26 06:33:48.237 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.konami.justifier.snes'
+2026-05-26 06:33:48.238 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.msx.joystick'
+2026-05-26 06:33:48.239 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.msx.keyboard'
+2026-05-26 06:33:48.240 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.joystick.2button'
+2026-05-26 06:33:48.240 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.joystick.4button'
+2026-05-26 06:33:48.240 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.konami.justifier.player2'
+2026-05-26 06:33:48.241 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.konami.justifier.ps'
+2026-05-26 06:33:48.241 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.genesis.mouse'
+2026-05-26 06:33:48.241 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.gravis.gamepad'
+2026-05-26 06:33:48.241 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.intellivision'
+2026-05-26 06:33:48.241 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.genesis.teamplayer'
+2026-05-26 06:33:48.241 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.gba'
+2026-05-26 06:33:48.242 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.genesis.6button'
+2026-05-26 06:33:48.242 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.genesis.3button'
+2026-05-26 06:33:48.242 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.elektronika.bk'
+2026-05-26 06:33:48.242 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.gameboy'
+2026-05-26 06:33:48.242 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.gamecube'
+2026-05-26 06:33:48.242 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.gamegear'
+2026-05-26 06:33:48.243 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.atari.xges.xg1'
+2026-05-26 06:33:48.243 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.colecovision'
+2026-05-26 06:33:48.243 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.dreamcast'
+2026-05-26 06:33:48.243 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.atari.lynx'
+2026-05-26 06:33:48.243 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.atari.xges.keyboard'
+2026-05-26 06:33:48.244 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.atari.5200'
+2026-05-26 06:33:48.244 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.atari.7800.gamepad'
+2026-05-26 06:33:48.244 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.atari.7800.proline'
+2026-05-26 06:33:48.244 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.atari.800'
+2026-05-26 06:33:48.244 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.amstrad.keyboard'
+2026-05-26 06:33:48.245 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.arcade.neogeo'
+2026-05-26 06:33:48.245 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.atari.2600'
+2026-05-26 06:33:48.245 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.3do.gamegun'
+2026-05-26 06:33:48.245 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.amiga.cd32'
+2026-05-26 06:33:48.245 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.amstrad.joystick'
+2026-05-26 06:33:48.245 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.amiga.pro.joystick'
+2026-05-26 06:33:48.246 T:47148   debug <general>: CRepository: invalidating cached art for 'game.controller.3do'
+2026-05-26 06:33:48.246 T:47148   debug <general>: CRepository: invalidating cached art for 'script.artistslideshow'
+2026-05-26 06:33:48.246 T:47148   debug <general>: CRepository: invalidating cached art for 'script.punchplay'
+2026-05-26 06:33:48.246 T:47148   debug <general>: CRepository: invalidating cached art for 'plugin.video.mlbtv'
+2026-05-26 06:33:48.247 T:47148   debug <general>: CRepository: invalidating cached art for 'script.xbmcbackup'
+2026-05-26 06:33:48.247 T:47148   debug <general>: CRepository: invalidating cached art for 'script.radioparadise'
+2026-05-26 06:33:48.247 T:47148   debug <general>: CRepository: invalidating cached art for 'plugin.video.piped'
+2026-05-26 06:33:48.247 T:47148   debug <general>: CRepository: invalidating cached art for 'weather.ozweather'
+2026-05-26 06:33:48.248 T:47148   debug <general>: CRepository: invalidating cached art for 'plugin.audio.ampache'
+2026-05-26 06:33:48.496 T:47148   debug <general>: CRepositoryUpdater: done.
+2026-05-26 06:33:48.496 T:47148   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:33:48.500 T:47148   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2) ORDER BY repo.addonID, addons.addonID returned 804 rows in 3 ms
+2026-05-26 06:33:48.519 T:47148   debug <general>: CAddonDatabase::GetAddons took 22 ms
+2026-05-26 06:33:48.521 T:47148   debug <general>: CAddonMgr::GetAvailableUpdatesOrOutdatedAddons took 25 ms
+2026-05-26 06:33:48.523 T:47148   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:33:48.525 T:47148   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2) ORDER BY repo.addonID, addons.addonID returned 804 rows in 2 ms
+2026-05-26 06:33:48.541 T:47148   debug <general>: CAddonDatabase::GetAddons took 17 ms
+2026-05-26 06:33:48.542 T:47148   debug <general>: CAddonMgr::GetAvailableUpdatesOrOutdatedAddons took 19 ms
+2026-05-26 06:33:48.783 T:47148   debug <general>: CurlFile::Open - <https://rpeters1430.github.io/repository.dobbelina/script.module.resolveurl.xxx/script.module.resolveurl.xxx-2.1.45.zip>
+2026-05-26 06:33:49.093 T:47159   debug <general>: Version Check: Version installed {'major': 21, 'minor': 3, 'revision': '20260416-nogitfound', 'tag': 'stable'}
+2026-05-26 06:33:49.093 T:47159   debug <general>: Version Check: Version available  {'major': '21', 'minor': '0', 'tag': 'stable', 'tagversion': '', 'revision': '20240406-60c4500054', 'extrainfo': 'final', 'addon_support': 'yes'}
+2026-05-26 06:33:49.093 T:47159   debug <general>: Version Check: There is no newer stable available
+2026-05-26 06:33:49.093 T:47159   debug <general>: CPythonInvoker(1, /home/rpeters1428/.kodi/addons/service.xbmc.versioncheck/resources/lib/runner.py): script successfully run
+2026-05-26 06:33:49.093 T:47159   debug <general>: onExecutionDone(1, /home/rpeters1428/.kodi/addons/service.xbmc.versioncheck/resources/lib/runner.py)
+2026-05-26 06:33:49.099 T:47159   debug <general>: .
+2026-05-26 06:33:49.103 T:47148   debug <general>: CAddonMgr::UnloadAddon: script.module.resolveurl.xxx unloaded
+2026-05-26 06:33:49.103 T:47148   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:33:49.107 T:47148   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2) ORDER BY repo.addonID, addons.addonID returned 804 rows in 4 ms
+2026-05-26 06:33:49.109 T:47159   debug <general>: Python interpreter stopped
+2026-05-26 06:33:49.109 T:47159   debug <general>: Thread LanguageInvoker 140022896383680 terminating
+2026-05-26 06:33:49.135 T:47148   debug <general>: CAddonDatabase::GetAddons took 31 ms
+2026-05-26 06:33:49.138 T:47148   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fscript.module.resolveurl.xxx-2.1.45.zip/script.module.resolveurl.xxx/ to /home/rpeters1428/.kodi/addons/temp/8698ed2a-8f84-4d72-bd68-597c6b5c6f3a
+2026-05-26 06:33:49.166 T:47148   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
+2026-05-26 06:33:49.166 T:47148   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
+2026-05-26 06:33:49.173 T:47148   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
+2026-05-26 06:33:49.173 T:47148   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
+2026-05-26 06:33:49.177 T:47148   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
+2026-05-26 06:33:49.178 T:47148   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
+2026-05-26 06:33:49.178 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/home/rpeters1428/.kodi/addons/metadata.common.fanart.tv/'
+2026-05-26 06:33:49.178 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.18 at '/home/rpeters1428/.kodi/addons/metadata.generic.albums/'
+2026-05-26 06:33:49.179 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.0 at '/home/rpeters1428/.kodi/addons/metadata.themoviedb.org.python/'
+2026-05-26 06:33:49.179 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.6 at '/home/rpeters1428/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
+2026-05-26 06:33:49.180 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'service.xbmc.versioncheck' already present with version 0.5.27+matrix.1 at '/usr/share/kodi/addons/service.xbmc.versioncheck/' replaced with version 0.5.30+matrix.1 at '/home/rpeters1428/.kodi/addons/service.xbmc.versioncheck/'
+2026-05-26 06:33:49.181 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.18 at '/home/rpeters1428/.kodi/addons/metadata.album.universal/'
+2026-05-26 06:33:49.181 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.21 at '/home/rpeters1428/.kodi/addons/metadata.artists.universal/'
+2026-05-26 06:33:49.183 T:47148    info <general>: CAddonMgr::FindAddon: script.module.resolveurl.xxx v2.1.45 installed
+2026-05-26 06:33:49.183 T:47148   debug <general>: CAddonMgr: script.module.resolveurl.xxx successfully loaded
+2026-05-26 06:33:49.202 T:47148   debug <general>: CAddonMgr::GetCompatibleVersions took 0 ms
+2026-05-26 06:33:49.202 T:47148   debug <general>: ADDONS: unpinned Addon: [script.module.resolveurl.xxx] Origin: [repository.dobbelina] Version: [2.1.45]
+2026-05-26 06:33:49.202 T:47149   debug <general>: ContextMenuManager: addon menus reloaded.
+2026-05-26 06:33:49.203 T:47085   debug <general>: CDirectoryProvider[addons://]: refreshing..
+2026-05-26 06:33:49.203 T:47085   debug <general>: CDirectoryProvider[addons://sources/video/]: refreshing..
+2026-05-26 06:33:49.203 T:47085   debug <general>: CDirectoryProvider[addons://sources/audio/]: refreshing..
+2026-05-26 06:33:49.203 T:47085   debug <general>: CDirectoryProvider[addons://sources/game/]: refreshing..
+2026-05-26 06:33:49.203 T:47085   debug <general>: CDirectoryProvider[addons://sources/executable/]: refreshing..
+2026-05-26 06:33:49.203 T:47085   debug <general>: CDirectoryProvider[addons://sources/image/]: refreshing..
+2026-05-26 06:33:49.203 T:47085   debug <general>: CDirectoryProvider[addons://sources/game/]: refreshing..
+2026-05-26 06:33:49.204 T:47139   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:33:49.210 T:47139   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2) ORDER BY repo.addonID, addons.addonID returned 804 rows in 6 ms
+2026-05-26 06:33:49.236 T:47139   debug <general>: CAddonDatabase::GetAddons took 32 ms
+2026-05-26 06:33:49.239 T:47139   debug <general>: CAddonMgr::GetAvailableUpdatesOrOutdatedAddons took 35 ms
+2026-05-26 06:33:49.479 T:47148   debug <general>: CurlFile::Open - <https://rpeters1430.github.io/repository.dobbelina/plugin.video.cumination/plugin.video.cumination-1.1.401.zip>
+2026-05-26 06:33:49.982 T:47148   debug <general>: CAddonMgr::UnloadAddon: plugin.video.cumination unloaded
+2026-05-26 06:33:49.982 T:47148   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:33:49.985 T:47148   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2) ORDER BY repo.addonID, addons.addonID returned 804 rows in 3 ms
+2026-05-26 06:33:50.005 T:47148   debug <general>: CAddonDatabase::GetAddons took 22 ms
+2026-05-26 06:33:50.009 T:47148   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fplugin.video.cumination-1.1.401.zip/plugin.video.cumination/ to /home/rpeters1428/.kodi/addons/temp/5b5ebe48-6270-405d-ba8f-9909ce3518b3
+2026-05-26 06:33:50.260 T:47148   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
+2026-05-26 06:33:50.260 T:47148   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
+2026-05-26 06:33:50.269 T:47148   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
+2026-05-26 06:33:50.269 T:47148   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
+2026-05-26 06:33:50.271 T:47148   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
+2026-05-26 06:33:50.271 T:47148   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
+2026-05-26 06:33:50.272 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/home/rpeters1428/.kodi/addons/metadata.common.fanart.tv/'
+2026-05-26 06:33:50.272 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.18 at '/home/rpeters1428/.kodi/addons/metadata.generic.albums/'
+2026-05-26 06:33:50.273 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.0 at '/home/rpeters1428/.kodi/addons/metadata.themoviedb.org.python/'
+2026-05-26 06:33:50.273 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.6 at '/home/rpeters1428/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
+2026-05-26 06:33:50.274 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'service.xbmc.versioncheck' already present with version 0.5.27+matrix.1 at '/usr/share/kodi/addons/service.xbmc.versioncheck/' replaced with version 0.5.30+matrix.1 at '/home/rpeters1428/.kodi/addons/service.xbmc.versioncheck/'
+2026-05-26 06:33:50.274 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.18 at '/home/rpeters1428/.kodi/addons/metadata.album.universal/'
+2026-05-26 06:33:50.275 T:47148   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.21 at '/home/rpeters1428/.kodi/addons/metadata.artists.universal/'
+2026-05-26 06:33:50.276 T:47148    info <general>: CAddonMgr::FindAddon: plugin.video.cumination v1.1.401 installed
+2026-05-26 06:33:50.277 T:47148   debug <general>: CAddonMgr: plugin.video.cumination successfully loaded
+2026-05-26 06:33:50.277 T:47148   debug <general>: POParser: PO file has Win Style Line Endings. Converted in memory to Linux LF for file: /home/rpeters1428/.kodi/addons/plugin.video.cumination/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:50.277 T:47149   debug <general>: ContextMenuManager: addon menus reloaded.
+2026-05-26 06:33:50.277 T:47148   debug <general>: LocalizeStrings: loaded 168 strings from file /home/rpeters1428/.kodi/addons/plugin.video.cumination/resources/language/resource.language.en_gb/strings.po
+2026-05-26 06:33:50.279 T:47085   debug <general>: CDirectoryProvider[addons://]: refreshing..
+2026-05-26 06:33:50.279 T:47085   debug <general>: CDirectoryProvider[addons://sources/video/]: refreshing..
+2026-05-26 06:33:50.279 T:47085   debug <general>: CDirectoryProvider[addons://sources/audio/]: refreshing..
+2026-05-26 06:33:50.279 T:47085   debug <general>: CDirectoryProvider[addons://sources/game/]: refreshing..
+2026-05-26 06:33:50.279 T:47085   debug <general>: CDirectoryProvider[addons://sources/executable/]: refreshing..
+2026-05-26 06:33:50.279 T:47085   debug <general>: CDirectoryProvider[addons://sources/image/]: refreshing..
+2026-05-26 06:33:50.295 T:47148   debug <general>: CAddonMgr::GetCompatibleVersions took 0 ms
+2026-05-26 06:33:50.296 T:47148   debug <general>: ADDONS: unpinned Addon: [plugin.video.cumination] Origin: [repository.dobbelina] Version: [1.1.401]
+2026-05-26 06:33:50.296 T:47148   debug <general>: CRepositoryUpdater: closest next update check at 05/26/2026 12:33:48 PM (in 21598s)
+2026-05-26 06:33:50.296 T:47148   debug <general>: CRepositoryUpdater: checking in 21598000ms
+2026-05-26 06:33:50.296 T:47209   debug <general>: Thread Timer start, auto delete: false
+2026-05-26 06:33:50.297 T:47085   debug <general>: CDirectoryProvider[addons://]: refreshing..
+2026-05-26 06:33:50.297 T:47085   debug <general>: CDirectoryProvider[addons://sources/video/]: refreshing..
+2026-05-26 06:33:50.298 T:47085   debug <general>: CDirectoryProvider[addons://sources/audio/]: refreshing..
+2026-05-26 06:33:50.298 T:47085   debug <general>: CDirectoryProvider[addons://sources/game/]: refreshing..
+2026-05-26 06:33:50.298 T:47085   debug <general>: CDirectoryProvider[addons://sources/executable/]: refreshing..
+2026-05-26 06:33:50.298 T:47085   debug <general>: CDirectoryProvider[addons://sources/image/]: refreshing..
+2026-05-26 06:33:50.298 T:47148   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:33:50.307 T:47148   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2) ORDER BY repo.addonID, addons.addonID returned 804 rows in 8 ms
+2026-05-26 06:33:50.333 T:47148   debug <general>: CAddonDatabase::GetAddons took 34 ms
+2026-05-26 06:33:50.338 T:47148   debug <general>: CAddonMgr::GetAvailableUpdatesOrOutdatedAddons took 40 ms
+2026-05-26 06:33:50.380 T:47139   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:33:50.385 T:47139   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2) ORDER BY repo.addonID, addons.addonID returned 804 rows in 4 ms
+2026-05-26 06:33:50.408 T:47139   debug <general>: CAddonDatabase::GetAddons took 27 ms
+2026-05-26 06:33:50.411 T:47139   debug <general>: CAddonMgr::GetAvailableUpdatesOrOutdatedAddons took 132 ms
+2026-05-26 06:33:51.377 T:47148   debug <general>: Recaching image '/home/rpeters1428/.kodi/addons/plugin.video.cumination/fanart.jpg' to 'd/d4e9ee3e.jpg':
+2026-05-26 06:33:51.377 T:47148   debug <general>: cached image 'special://masterprofile/Thumbnails/d/d4e9ee3e.jpg' size 1920x1079
+2026-05-26 06:33:53.118 T:47085   debug <general>: ProcessMouse: trying mouse action leftclick
+2026-05-26 06:33:53.118 T:47085   debug <general>: Activating window ID: 10040
+2026-05-26 06:33:53.426 T:47085   debug <general>: ------ Window Deinit (Home.xml) ------
+2026-05-26 06:33:53.426 T:47085   debug <general>: FreeVisualisation() done
+2026-05-26 06:33:53.436 T:47085   debug <general>: ------ Window Init (AddonBrowser.xml) ------
+2026-05-26 06:33:53.436 T:47085    info <general>: Loading skin file: AddonBrowser.xml, load type: KEEP_IN_MEMORY
+2026-05-26 06:33:53.452 T:47085   debug <general>: CGUIMediaWindow::GetDirectory (addons://repos/)
+2026-05-26 06:33:53.452 T:47085   debug <general>:   ParentPath = []
+2026-05-26 06:33:53.453 T:47279   debug <general>: Thread BackgroundLoader start, auto delete: false
+2026-05-26 06:33:53.453 T:47085   debug <general>: [threads] name: 'BackgroundLoader' priority: '1'
+2026-05-26 06:33:53.454 T:47279   debug <general>: Thread BackgroundLoader 140022088005312 terminating
+2026-05-26 06:33:53.463 T:47148   debug <general>: Recaching image '/usr/share/kodi/addons/repository.xbmc.org/icon.png' to '4/477a9f25.jpg':
+2026-05-26 06:33:53.464 T:47148   debug <general>: cached image 'special://masterprofile/Thumbnails/4/477a9f25.jpg' size 256x256
+2026-05-26 06:33:55.011 T:47085   debug <general>: ProcessMouse: trying mouse action rightclick
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerCoreFactory::GetPlayers(addons://repository.dobbelina/)
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: system rules
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: matches rule: system rules
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: mms/udp
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: lastfm/shout
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: rtmp
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: rtsp
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: streams
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: dvd
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: discimage
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: sdp/asf
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: nsv
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: radio
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerCoreFactory::GetPlayers: matched 0 rules with players
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerCoreFactory::GetPlayers: adding videodefaultplayer (VideoPlayer)
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerCoreFactory::GetPlayers: for video=true, audio=false
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerCoreFactory::GetPlayers: for video=true, audio=true
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerCoreFactory::GetPlayers: added 1 players
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerCoreFactory::GetPlayers(addons://repository.dobbelina/)
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: system rules
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: matches rule: system rules
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: mms/udp
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: lastfm/shout
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: rtmp
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: rtsp
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: streams
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: dvd
+2026-05-26 06:33:55.014 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: discimage
+2026-05-26 06:33:55.015 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: sdp/asf
+2026-05-26 06:33:55.015 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: nsv
+2026-05-26 06:33:55.015 T:47085   debug <general>: CPlayerSelectionRule::GetPlayers: considering rule: radio
+2026-05-26 06:33:55.015 T:47085   debug <general>: CPlayerCoreFactory::GetPlayers: matched 0 rules with players
+2026-05-26 06:33:55.015 T:47085   debug <general>: CPlayerCoreFactory::GetPlayers: adding videodefaultplayer (VideoPlayer)
+2026-05-26 06:33:55.015 T:47085   debug <general>: CPlayerCoreFactory::GetPlayers: for video=true, audio=false
+2026-05-26 06:33:55.015 T:47085   debug <general>: CPlayerCoreFactory::GetPlayers: for video=true, audio=true
+2026-05-26 06:33:55.015 T:47085   debug <general>: CPlayerCoreFactory::GetPlayers: added 1 players
+2026-05-26 06:33:55.015 T:47085    info <general>: Loading skin file: DialogContextMenu.xml, load type: KEEP_IN_MEMORY
+2026-05-26 06:33:55.016 T:47085   debug <general>: ------ Window Init (DialogContextMenu.xml) ------
+2026-05-26 06:33:56.218 T:47085   debug <general>: ProcessMouse: trying mouse action leftclick
+2026-05-26 06:33:56.463 T:47085   debug <general>: ------ Window Deinit (DialogContextMenu.xml) ------
+2026-05-26 06:33:56.473 T:47085   debug <general>: ------ Window Init (DialogExtendedProgressBar.xml) ------
+2026-05-26 06:33:56.474 T:47139   debug <general>: CRepositoryUpdateJob[repository.dobbelina] checking for updates.
+2026-05-26 06:33:56.474 T:47139   debug <general>: CurlFile::Open - <https://rpeters1430.github.io/repository.dobbelina/addons.xml.md5>
+2026-05-26 06:33:56.527 T:47139   debug <general>: CRepositoryUpdateJob[repository.dobbelina] checksum not changed.
+2026-05-26 06:33:56.527 T:47139   debug <general>: CRepositoryUpdater: done.
+2026-05-26 06:33:56.528 T:47139   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:33:56.534 T:47139   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2) ORDER BY repo.addonID, addons.addonID returned 804 rows in 6 ms
+2026-05-26 06:33:56.563 T:47139   debug <general>: CAddonDatabase::GetAddons took 34 ms
+2026-05-26 06:33:56.565 T:47139   debug <general>: CAddonMgr::GetAvailableUpdatesOrOutdatedAddons took 38 ms
+2026-05-26 06:33:56.569 T:47139   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:33:56.574 T:47139   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2) ORDER BY repo.addonID, addons.addonID returned 804 rows in 4 ms
+2026-05-26 06:33:56.597 T:47085   debug <general>: ------ Window Deinit (DialogExtendedProgressBar.xml) ------
+2026-05-26 06:33:56.598 T:47139   debug <general>: CAddonDatabase::GetAddons took 28 ms
+2026-05-26 06:33:56.600 T:47139   debug <general>: CAddonMgr::GetAvailableUpdatesOrOutdatedAddons took 32 ms
+2026-05-26 06:33:56.603 T:47209   debug <general>: Thread Timer 140022913169088 terminating
+2026-05-26 06:33:56.604 T:47139   debug <general>: CRepositoryUpdater: closest next update check at 05/26/2026 12:33:48 PM (in 21592s)
+2026-05-26 06:33:56.604 T:47139   debug <general>: CRepositoryUpdater: checking in 21592000ms
+2026-05-26 06:33:56.604 T:47280   debug <general>: Thread Timer start, auto delete: false
+2026-05-26 06:33:56.607 T:47085   debug <general>: CGUIMediaWindow::GetDirectory (addons://repos/)
+2026-05-26 06:33:56.607 T:47085   debug <general>:   ParentPath = [addons://repos/]
+2026-05-26 06:33:56.608 T:47281   debug <general>: Thread waiting start, auto delete: false
+2026-05-26 06:33:56.608 T:47281   debug <general>: Thread waiting 140022079612608 terminating
+2026-05-26 06:33:56.609 T:47282   debug <general>: Thread BackgroundLoader start, auto delete: false
+2026-05-26 06:33:56.609 T:47085   debug <general>: [threads] name: 'BackgroundLoader' priority: '1'
+2026-05-26 06:33:56.610 T:47282   debug <general>: Thread BackgroundLoader 140022088005312 terminating
+2026-05-26 06:33:57.455 T:47085   debug <general>: ProcessMouse: trying mouse action leftclick
+2026-05-26 06:33:57.456 T:47085   debug <general>: CGUIMediaWindow::GetDirectory (addons://repository.dobbelina/)
+2026-05-26 06:33:57.456 T:47085   debug <general>:   ParentPath = [addons://repos/]
+2026-05-26 06:33:57.456 T:47283   debug <general>: Thread waiting start, auto delete: false
+2026-05-26 06:33:57.457 T:47283   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:33:57.457 T:47283   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (2) ORDER BY repo.addonID, addons.addonID returned 7 rows in 0 ms
+2026-05-26 06:33:57.458 T:47283   debug <general>: CAddonDatabase::GetAddons took 0 ms
+2026-05-26 06:33:57.458 T:47283   debug <general>: Thread waiting 140022079612608 terminating
+2026-05-26 06:33:57.459 T:47284   debug <general>: Thread BackgroundLoader start, auto delete: false
+2026-05-26 06:33:57.459 T:47085   debug <general>: [threads] name: 'BackgroundLoader' priority: '1'
+2026-05-26 06:33:57.460 T:47284   debug <general>: Thread BackgroundLoader 140022088005312 terminating
+2026-05-26 06:33:57.487 T:47128   debug <general>: Presentation: Frame was discarded by compositor
+2026-05-26 06:33:58.833 T:47085   debug <general>: ProcessMouse: trying mouse action leftclick
+2026-05-26 06:33:58.833 T:47085   debug <general>: CGUIMediaWindow::GetDirectory (addons://repos/)
+2026-05-26 06:33:58.833 T:47085   debug <general>:   ParentPath = []
+2026-05-26 06:33:58.833 T:47286   debug <general>: Thread waiting start, auto delete: false
+2026-05-26 06:33:58.834 T:47286   debug <general>: Thread waiting 140022079612608 terminating
+2026-05-26 06:33:58.835 T:47287   debug <general>: Thread BackgroundLoader start, auto delete: false
+2026-05-26 06:33:58.835 T:47085   debug <general>: [threads] name: 'BackgroundLoader' priority: '1'
+2026-05-26 06:33:58.836 T:47287   debug <general>: Thread BackgroundLoader 140022088005312 terminating
+2026-05-26 06:34:00.033 T:47085   debug <general>: ProcessMouse: trying mouse action leftclick
+2026-05-26 06:34:00.033 T:47085   debug <general>: CGUIMediaWindow::GetDirectory (addons://)
+2026-05-26 06:34:00.033 T:47085   debug <general>:   ParentPath = []
+2026-05-26 06:34:00.034 T:47341   debug <general>: Thread waiting start, auto delete: false
+2026-05-26 06:34:00.035 T:47341   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:34:00.045 T:47341   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2) ORDER BY repo.addonID, addons.addonID returned 804 rows in 9 ms
+2026-05-26 06:34:00.070 T:47341   debug <general>: CAddonDatabase::GetAddons took 35 ms
+2026-05-26 06:34:00.072 T:47341   debug <general>: CAddonMgr::GetAvailableUpdatesOrOutdatedAddons took 38 ms
+2026-05-26 06:34:00.074 T:47341   debug <general>: Thread waiting 140022079612608 terminating
+2026-05-26 06:34:00.076 T:47342   debug <general>: Thread BackgroundLoader start, auto delete: false
+2026-05-26 06:34:00.076 T:47085   debug <general>: [threads] name: 'BackgroundLoader' priority: '1'
+2026-05-26 06:34:00.077 T:47342   debug <general>: Thread BackgroundLoader 140022088005312 terminating
+2026-05-26 06:34:02.341 T:47085   debug <general>: ProcessMouse: trying mouse action leftclick
+2026-05-26 06:34:02.342 T:47085   debug <general>: CGUIMediaWindow::GetDirectory (addons://user/)
+2026-05-26 06:34:02.342 T:47085   debug <general>:   ParentPath = [addons://]
+2026-05-26 06:34:02.342 T:47343   debug <general>: Thread waiting start, auto delete: false
+2026-05-26 06:34:02.343 T:47343   debug <general>: Thread waiting 140022079612608 terminating
+2026-05-26 06:34:02.344 T:47344   debug <general>: Thread BackgroundLoader start, auto delete: false
+2026-05-26 06:34:02.344 T:47085   debug <general>: [threads] name: 'BackgroundLoader' priority: '1'
+2026-05-26 06:34:02.344 T:47344   debug <general>: Thread BackgroundLoader 140022088005312 terminating
+2026-05-26 06:34:04.865 T:47128   debug <general>: Presentation: Frame was discarded by compositor
+2026-05-26 06:34:04.946 T:47346   debug <general>: Thread Timer start, auto delete: false
+2026-05-26 06:34:04.998 T:47085   debug <general>: Keyboard: scancode: 0x1, sym: 0x1b (escape), unicode: 0x1b, modifier: 0x0
+2026-05-26 06:34:04.998 T:47085    info <general>: Loading controller layout: /usr/share/kodi/addons/game.controller.keyboard/resources/layout.xml
+2026-05-26 06:34:05.013 T:47346   debug <general>: Thread Timer 140022079612608 terminating
+2026-05-26 06:34:05.031 T:47085   debug <general>: Keyboard: scancode: 0x1, sym: 0x1b (escape), unicode: 0x1b, modifier: 0x0
+2026-05-26 06:34:05.032 T:47085   debug <general>: HandleKey: escape (0xf01b) pressed, window 10040, action is PreviousMenu
+2026-05-26 06:34:05.032 T:47085   debug <general>: CGUIWindowManager::PreviousWindow: Deactivate
+2026-05-26 06:34:05.033 T:47085   debug <general>: ------ Window Deinit (Pointer.xml) ------
+2026-05-26 06:34:05.346 T:47085   debug <general>: ------ Window Deinit (AddonBrowser.xml) ------
+2026-05-26 06:34:05.346 T:47085   debug <general>: FreeVisualisation() done
+2026-05-26 06:34:05.355 T:47085   debug <general>: CGUIWindowManager::PreviousWindow: Activate new
+2026-05-26 06:34:05.355 T:47085   debug <general>: ------ Window Init (Home.xml) ------
+2026-05-26 06:34:05.356 T:47085   debug <general>: CDirectoryProvider[addons://]: refreshing..
+2026-05-26 06:34:05.356 T:47085   debug <general>: CDirectoryProvider[addons://sources/video/]: refreshing..
+2026-05-26 06:34:05.356 T:47085   debug <general>: CDirectoryProvider[addons://sources/audio/]: refreshing..
+2026-05-26 06:34:05.356 T:47085   debug <general>: CDirectoryProvider[addons://sources/game/]: refreshing..
+2026-05-26 06:34:05.356 T:47085   debug <general>: CDirectoryProvider[addons://sources/executable/]: refreshing..
+2026-05-26 06:34:05.356 T:47085   debug <general>: CDirectoryProvider[addons://sources/image/]: refreshing..
+2026-05-26 06:34:05.356 T:47085   debug <general>: CDirectoryProvider[addons://sources/game/]: refreshing..
+2026-05-26 06:34:05.358 T:47139   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:34:05.368 T:47139   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2) ORDER BY repo.addonID, addons.addonID returned 804 rows in 9 ms
+2026-05-26 06:34:05.402 T:47139   debug <general>: CAddonDatabase::GetAddons took 43 ms
+2026-05-26 06:34:05.408 T:47139   debug <general>: CAddonMgr::GetAvailableUpdatesOrOutdatedAddons took 51 ms
+2026-05-26 06:34:05.455 T:47128   debug <general>: Presentation: Frame was discarded by compositor
+2026-05-26 06:34:06.028 T:47347   debug <general>: Thread Timer start, auto delete: false
+2026-05-26 06:34:06.069 T:47085   debug <general>: Keyboard: scancode: 0x1, sym: 0x1b (escape), unicode: 0x1b, modifier: 0x0
+2026-05-26 06:34:06.078 T:47347   debug <general>: Thread Timer 140022079612608 terminating
+2026-05-26 06:34:06.087 T:47085   debug <general>: Keyboard: scancode: 0x1, sym: 0x1b (escape), unicode: 0x1b, modifier: 0x0
+2026-05-26 06:34:06.087 T:47085   debug <general>: HandleKey: escape (0xf01b) pressed, window 10000, action is PreviousMenu
+2026-05-26 06:34:06.088 T:47085   debug <general>: CGUIWindowManager::PreviousWindow: Deactivate
+2026-05-26 06:34:06.992 T:47085   debug <general>: ------ Window Init (Pointer.xml) ------
+2026-05-26 06:34:09.150 T:47085   debug <general>: ProcessMouse: trying mouse action leftclick
+2026-05-26 06:34:09.150 T:47085   debug <general>: Activating window ID: 10025
+2026-05-26 06:34:09.462 T:47085   debug <general>: ------ Window Deinit (Home.xml) ------
+2026-05-26 06:34:09.462 T:47085   debug <general>: FreeVisualisation() done
+2026-05-26 06:34:09.473 T:47085   debug <general>: ------ Window Init (MyVideoNav.xml) ------
+2026-05-26 06:34:09.473 T:47085    info <general>: Loading skin file: MyVideoNav.xml, load type: KEEP_IN_MEMORY
+2026-05-26 06:34:09.511 T:47085   debug <general>: CGUIMediaWindow::GetDirectory (plugin://plugin.video.cumination/)
+2026-05-26 06:34:09.511 T:47085   debug <general>:   ParentPath = [plugin://plugin.video.cumination/]
+2026-05-26 06:34:09.512 T:47444   debug <general>: Thread waiting start, auto delete: false
+2026-05-26 06:34:09.529 T:47139   debug <general>: CAddonDatabase::SetLastUsed[plugin.video.cumination] took 17 ms
+2026-05-26 06:34:09.529 T:47444   debug <general>: CScriptRunner: running add-on script Cumination('plugin://plugin.video.cumination/', '1', '')
+2026-05-26 06:34:09.529 T:47445   debug <general>: Thread LanguageInvoker start, auto delete: false
+2026-05-26 06:34:09.529 T:47445   debug <general>: initializing python engine.
+2026-05-26 06:34:09.529 T:47445   debug <general>: CPythonInvoker(2, /home/rpeters1428/.kodi/addons/plugin.video.cumination/default.py): start processing
+2026-05-26 06:34:09.542 T:47445   debug <general>: -->Python Interpreter Initialized<--
+2026-05-26 06:34:09.542 T:47445   debug <general>: 
+                                                   
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2, /home/rpeters1428/.kodi/addons/plugin.video.cumination/default.py): the source file to load is "/home/rpeters1428/.kodi/addons/plugin.video.cumination/default.py"
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2): full python path:
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):   custom python path:
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/plugin.video.cumination
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.common.plugin.cache/resources/lib/storage_server/
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.module.beautifulsoup4/lib
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.module.certifi/lib
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.module.chardet/lib
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.module.idna/lib
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.module.inputstreamhelper/lib
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.module.kodi-six/libs
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.module.requests/lib
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.module.resolveurl.xxx/lib
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.module.resolveurl/lib
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.module.six/lib
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.module.soupsieve/lib
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.module.urllib3/lib
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /home/rpeters1428/.kodi/addons/script.module.websocket/lib
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):   default python path:
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /usr/lib/python314.zip
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /usr/lib/python3.14
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /usr/lib/python3.14/lib-dynload
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):     /usr/lib/python3.14/site-packages
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2): adding args:
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):  plugin://plugin.video.cumination/
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):  1
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):  
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2):  resume:false
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2, /home/rpeters1428/.kodi/addons/plugin.video.cumination/default.py): entering source directory /home/rpeters1428/.kodi/addons/plugin.video.cumination
+2026-05-26 06:34:09.542 T:47445   debug <general>: CPythonInvoker(2, /home/rpeters1428/.kodi/addons/plugin.video.cumination/default.py): instantiating addon using automatically obtained id of "plugin.video.cumination" dependent on version 3.0.0 of the xbmc.python api
+2026-05-26 06:34:09.612 T:47085   debug <general>: ------ Window Init (DialogBusy.xml) ------
+2026-05-26 06:34:09.615 T:47445   debug <CAddonSettings[0@plugin.video.cumination]>: trying to load setting definitions from old format...
+2026-05-26 06:34:09.627 T:47445   debug <CSettingsManager>: requested setting (backup_favorites) was not found.
+2026-05-26 06:34:09.627 T:47445   debug <CSettingsManager>: requested setting (backup_keywords) was not found.
+2026-05-26 06:34:09.627 T:47445   debug <CSettingsManager>: requested setting (cache_time) was not found.
+2026-05-26 06:34:09.627 T:47445   debug <CSettingsManager>: requested setting (changelog_seen_version) was not found.
+2026-05-26 06:34:09.627 T:47445   debug <CSettingsManager>: requested setting (chatcouple) was not found.
+2026-05-26 06:34:09.627 T:47445   debug <CSettingsManager>: requested setting (chatfemale) was not found.
+2026-05-26 06:34:09.627 T:47445   debug <CSettingsManager>: requested setting (chatmale) was not found.
+2026-05-26 06:34:09.627 T:47445   debug <CSettingsManager>: requested setting (chatplay) was not found.
+2026-05-26 06:34:09.627 T:47445   debug <CSettingsManager>: requested setting (chattrans) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (chaturbate) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (clear_cache) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (clear_cookies) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (clear_favorites) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (clear_keywords) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (compressbackup) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (content) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (cuminationage) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (custom_favorites) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (custom_sites) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (customview) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (debuglog) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (disable_all_custom_sites) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (disable_custom_site) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (dontask) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (download_path) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (duration_in_name) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (enable_all_custom_sites) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (enable_custom_site) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (enh_debug) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (favorites_path) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (filter_hosters) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (filter_listing) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (fs_enable) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (fs_host) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (install_custom_site) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (install_custom_sites_from_folder) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (item.limit) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (list_custom_sites) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (m3u8_use_ia) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (open_smr_settings) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (paradisehill) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (posterfanart) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (quality_in_name) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (qualityask) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (restore_favorites) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (restore_keywords) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (sessionid) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (setpin) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (sortwxf) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (sortxt) was not found.
+2026-05-26 06:34:09.628 T:47445   debug <CSettingsManager>: requested setting (startlog) was not found.
+2026-05-26 06:34:09.629 T:47445   debug <CSettingsManager>: requested setting (stripchat_best) was not found.
+2026-05-26 06:34:09.629 T:47445   debug <CSettingsManager>: requested setting (stripchat_mirror) was not found.
+2026-05-26 06:34:09.629 T:47445   debug <CSettingsManager>: requested setting (stripchat_proxy) was not found.
+2026-05-26 06:34:09.629 T:47445   debug <CSettingsManager>: requested setting (thothub_password) was not found.
+2026-05-26 06:34:09.629 T:47445   debug <CSettingsManager>: requested setting (thothub_username) was not found.
+2026-05-26 06:34:09.629 T:47445   debug <CSettingsManager>: requested setting (uninstall_custom_site) was not found.
+2026-05-26 06:34:09.629 T:47445   debug <CSettingsManager>: requested setting (universal_resolvers) was not found.
+2026-05-26 06:34:09.819 T:47445   debug <CAddonSettings[0@plugin.video.cumination]>: trying to load setting definitions from old format...
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (backup_favorites) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (backup_keywords) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (cache_time) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (changelog_seen_version) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (chatcouple) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (chatfemale) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (chatmale) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (chatplay) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (chattrans) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (chaturbate) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (clear_cache) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (clear_cookies) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (clear_favorites) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (clear_keywords) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (compressbackup) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (content) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (cuminationage) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (custom_favorites) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (custom_sites) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (customview) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (debuglog) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (disable_all_custom_sites) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (disable_custom_site) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (dontask) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (download_path) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (duration_in_name) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (enable_all_custom_sites) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (enable_custom_site) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (enh_debug) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (favorites_path) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (filter_hosters) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (filter_listing) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (fs_enable) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (fs_host) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (install_custom_site) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (install_custom_sites_from_folder) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (item.limit) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (list_custom_sites) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (m3u8_use_ia) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (open_smr_settings) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (paradisehill) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (posterfanart) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (quality_in_name) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (qualityask) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (restore_favorites) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (restore_keywords) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (sessionid) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (setpin) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (sortwxf) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (sortxt) was not found.
+2026-05-26 06:34:09.844 T:47445   debug <CSettingsManager>: requested setting (startlog) was not found.
+2026-05-26 06:34:09.845 T:47445   debug <CSettingsManager>: requested setting (stripchat_best) was not found.
+2026-05-26 06:34:09.845 T:47445   debug <CSettingsManager>: requested setting (stripchat_mirror) was not found.
+2026-05-26 06:34:09.845 T:47445   debug <CSettingsManager>: requested setting (stripchat_proxy) was not found.
+2026-05-26 06:34:09.845 T:47445   debug <CSettingsManager>: requested setting (thothub_password) was not found.
+2026-05-26 06:34:09.845 T:47445   debug <CSettingsManager>: requested setting (thothub_username) was not found.
+2026-05-26 06:34:09.845 T:47445   debug <CSettingsManager>: requested setting (uninstall_custom_site) was not found.
+2026-05-26 06:34:09.845 T:47445   debug <CSettingsManager>: requested setting (universal_resolvers) was not found.
+2026-05-26 06:34:09.855 T:47445   debug <CAddonSettings[0@plugin.video.cumination]>: trying to load setting definitions from old format...
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (backup_favorites) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (backup_keywords) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (cache_time) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (changelog_seen_version) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (chatcouple) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (chatfemale) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (chatmale) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (chatplay) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (chattrans) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (chaturbate) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (clear_cache) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (clear_cookies) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (clear_favorites) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (clear_keywords) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (compressbackup) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (content) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (cuminationage) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (custom_favorites) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (custom_sites) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (customview) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (debuglog) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (disable_all_custom_sites) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (disable_custom_site) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (dontask) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (download_path) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (duration_in_name) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (enable_all_custom_sites) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (enable_custom_site) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (enh_debug) was not found.
+2026-05-26 06:34:09.880 T:47445   debug <CSettingsManager>: requested setting (favorites_path) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (filter_hosters) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (filter_listing) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (fs_enable) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (fs_host) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (install_custom_site) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (install_custom_sites_from_folder) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (item.limit) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (list_custom_sites) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (m3u8_use_ia) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (open_smr_settings) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (paradisehill) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (posterfanart) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (quality_in_name) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (qualityask) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (restore_favorites) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (restore_keywords) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (sessionid) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (setpin) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (sortwxf) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (sortxt) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (startlog) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (stripchat_best) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (stripchat_mirror) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (stripchat_proxy) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (thothub_password) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (thothub_username) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (uninstall_custom_site) was not found.
+2026-05-26 06:34:09.881 T:47445   debug <CSettingsManager>: requested setting (universal_resolvers) was not found.
+2026-05-26 06:34:10.234 T:47445   debug <CSettingsManager>: requested setting (tahlogged) was not found.
+2026-05-26 06:34:10.308 T:47445   debug <CSettingsManager>: requested setting (spankbang_quality) was not found.
+2026-05-26 06:34:10.308 T:47445   debug <CSettingsManager>: requested setting (spankbang_length) was not found.
+2026-05-26 06:34:10.384 T:47445   debug <CSettingsManager>: requested setting (jblogged) was not found.
+2026-05-26 06:34:10.834 T:47445   debug <CSettingsManager>: requested setting (htvlogged) was not found.
+2026-05-26 06:34:10.975 T:47445   debug <CSettingsManager>: requested setting (cblogged) was not found.
+2026-05-26 06:34:11.000 T:47445   debug <CSettingsManager>: requested setting (cam4logged) was not found.
+2026-05-26 06:34:11.017 T:47445   debug <CSettingsManager>: requested setting (ptlogged) was not found.
+2026-05-26 06:34:11.017 T:47445   debug <CSettingsManager>: requested setting (ptlength) was not found.
+2026-05-26 06:34:11.029 T:47445   debug <CSettingsManager>: requested setting (xflogged) was not found.
+2026-05-26 06:34:11.039 T:47445   debug <CSettingsManager>: requested setting (whlogged) was not found.
+2026-05-26 06:34:11.061 T:47445   debug <CSettingsManager>: requested setting (pincode) was not found.
+2026-05-26 06:34:11.061 T:47445   debug <CSettingsManager>: requested setting (logintime) was not found.
+2026-05-26 06:34:11.068 T:47445   debug <CAddonSettings[0@plugin.video.cumination]>: trying to load setting definitions from old format...
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (backup_favorites) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (backup_keywords) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (cache_time) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (changelog_seen_version) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (chatcouple) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (chatfemale) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (chatmale) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (chatplay) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (chattrans) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (chaturbate) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (clear_cache) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (clear_cookies) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (clear_favorites) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (clear_keywords) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (compressbackup) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (content) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (cuminationage) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (custom_favorites) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (custom_sites) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (customview) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (debuglog) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (disable_all_custom_sites) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (disable_custom_site) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (dontask) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (download_path) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (duration_in_name) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (enable_all_custom_sites) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (enable_custom_site) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (enh_debug) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (favorites_path) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (filter_hosters) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (filter_listing) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (fs_enable) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (fs_host) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (install_custom_site) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (install_custom_sites_from_folder) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (item.limit) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (list_custom_sites) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (m3u8_use_ia) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (open_smr_settings) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (paradisehill) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (posterfanart) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (quality_in_name) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (qualityask) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (restore_favorites) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (restore_keywords) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (sessionid) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (setpin) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (sortwxf) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (sortxt) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (startlog) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (stripchat_best) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (stripchat_mirror) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (stripchat_proxy) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (thothub_password) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (thothub_username) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (uninstall_custom_site) was not found.
+2026-05-26 06:34:11.089 T:47445   debug <CSettingsManager>: requested setting (universal_resolvers) was not found.
+2026-05-26 06:34:11.092 T:47085   debug <general>: Activating window ID: 10147
+2026-05-26 06:34:11.092 T:47085   debug <general>: ------ Window Init (DialogTextViewer.xml) ------
+2026-05-26 06:34:11.092 T:47085    info <general>: Loading skin file: DialogTextViewer.xml, load type: KEEP_IN_MEMORY
+2026-05-26 06:34:13.500 T:47085   debug <general>: ProcessMouse: trying mouse action leftclick
+2026-05-26 06:34:13.735 T:47085   debug <general>: ------ Window Deinit (DialogTextViewer.xml) ------
+2026-05-26 06:34:14.115 T:47445   error <general>: EXCEPTION Thrown (PythonToCppException) : -->Python callback/script returned the following error<--
+                                                    - NOTE: IGNORING THIS CAN LEAD TO MEMORY LEAKS!
+                                                   Error Type: <class 'NameError'>
+                                                   Error Contents: name 'main' is not defined
+                                                   Traceback (most recent call last):
+                                                     File "/home/rpeters1428/.kodi/addons/plugin.video.cumination/default.py", line 507, in <module>
+                                                       sys.exit(main())
+                                                                ^^^^
+                                                   NameError: name 'main' is not defined. Did you mean: 'min'?
+                                                   -->End of Python script error report<--
+                                                   
+2026-05-26 06:34:14.115 T:47445   debug <general>: onExecutionDone(2, /home/rpeters1428/.kodi/addons/plugin.video.cumination/default.py)
+2026-05-26 06:34:14.126 T:47085   debug <general>: ------ Window Init (DialogNotification.xml) ------
+2026-05-26 06:34:14.134 T:47445   debug <general>: .
+2026-05-26 06:34:14.217 T:47445   debug <general>: Skipped 2 duplicate messages..
+2026-05-26 06:34:14.217 T:47445   debug <general>: Python interpreter stopped
+2026-05-26 06:34:14.217 T:47445   debug <general>: Thread LanguageInvoker 140022896383680 terminating
+2026-05-26 06:34:14.226 T:47444   error <general>: GetDirectory - Error getting plugin://plugin.video.cumination/
+2026-05-26 06:34:14.226 T:47444   debug <general>: Thread waiting 140022071219904 terminating
+2026-05-26 06:34:14.235 T:47085   debug <general>: ------ Window Deinit (DialogBusy.xml) ------
+2026-05-26 06:34:14.246 T:47085   error <general>: CGUIMediaWindow::GetDirectory(plugin://plugin.video.cumination/) failed
+2026-05-26 06:34:14.246 T:47085   debug <general>: CGUIMediaWindow::GetDirectory ()
+2026-05-26 06:34:14.246 T:47085   debug <general>:   ParentPath = [plugin://plugin.video.cumination/]
+2026-05-26 06:34:14.248 T:47509   debug <general>: Thread waiting start, auto delete: false
+2026-05-26 06:34:14.248 T:47509   debug <general>: Thread waiting 140022071219904 terminating
+2026-05-26 06:34:14.249 T:47510   debug <general>: Thread BackgroundLoader start, auto delete: false
+2026-05-26 06:34:14.249 T:47085   debug <general>: [threads] name: 'BackgroundLoader' priority: '1'
+2026-05-26 06:34:14.250 T:47510   debug <general>: Thread BackgroundLoader 140022071219904 terminating
+2026-05-26 06:34:14.758 T:47128   debug <general>: Presentation: Frame was discarded by compositor
+2026-05-26 06:34:17.226 T:47511   debug <general>: Skipped 1 duplicate messages..
+2026-05-26 06:34:17.226 T:47511   debug <general>: Thread Timer start, auto delete: false
+2026-05-26 06:34:17.277 T:47085   debug <general>: Keyboard: scancode: 0x1, sym: 0x1b (escape), unicode: 0x1b, modifier: 0x0
+2026-05-26 06:34:17.345 T:47511   debug <general>: Thread Timer 140022079612608 terminating
+2026-05-26 06:34:17.363 T:47085   debug <general>: Keyboard: scancode: 0x1, sym: 0x1b (escape), unicode: 0x1b, modifier: 0x0
+2026-05-26 06:34:17.363 T:47085   debug <general>: HandleKey: escape (0xf01b) pressed, window 10025, action is PreviousMenu
+2026-05-26 06:34:17.363 T:47085   debug <general>: CGUIWindowManager::PreviousWindow: Deactivate
+2026-05-26 06:34:17.363 T:47085   debug <general>: ------ Window Deinit (Pointer.xml) ------
+2026-05-26 06:34:17.440 T:47128   debug <general>: Presentation: Frame was discarded by compositor
+2026-05-26 06:34:17.676 T:47085   debug <general>: ------ Window Deinit (MyVideoNav.xml) ------
+2026-05-26 06:34:17.676 T:47085   debug <general>: FreeVisualisation() done
+2026-05-26 06:34:17.684 T:47085   debug <general>: CGUIWindowManager::PreviousWindow: Activate new
+2026-05-26 06:34:17.684 T:47085   debug <general>: ------ Window Init (Home.xml) ------
+2026-05-26 06:34:17.684 T:47085   debug <general>: CDirectoryProvider[addons://]: refreshing..
+2026-05-26 06:34:17.684 T:47085   debug <general>: CDirectoryProvider[addons://sources/video/]: refreshing..
+2026-05-26 06:34:17.684 T:47085   debug <general>: CDirectoryProvider[addons://sources/audio/]: refreshing..
+2026-05-26 06:34:17.684 T:47085   debug <general>: CDirectoryProvider[addons://sources/game/]: refreshing..
+2026-05-26 06:34:17.684 T:47085   debug <general>: CDirectoryProvider[addons://sources/executable/]: refreshing..
+2026-05-26 06:34:17.684 T:47085   debug <general>: CDirectoryProvider[addons://sources/image/]: refreshing..
+2026-05-26 06:34:17.685 T:47085   debug <general>: CDirectoryProvider[addons://sources/game/]: refreshing..
+2026-05-26 06:34:17.687 T:47149   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-05-26 06:34:17.688 T:47512   debug <general>: Thread JobWorker start, auto delete: true
+2026-05-26 06:34:17.688 T:47512   debug <general>: [threads] name: 'JobWorker' priority: '1'
+2026-05-26 06:34:17.698 T:47149   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2) ORDER BY repo.addonID, addons.addonID returned 804 rows in 10 ms
+2026-05-26 06:34:17.741 T:47149   debug <general>: CAddonDatabase::GetAddons took 54 ms
+2026-05-26 06:34:17.745 T:47149   debug <general>: CAddonMgr::GetAvailableUpdatesOrOutdatedAddons took 60 ms
+2026-05-26 06:34:17.873 T:47128   debug <general>: Presentation: Frame was discarded by compositor
+2026-05-26 06:34:18.247 T:47085   debug <general>: CheckIdle - Closing session to https://mirrors.kodi.tv (easy=0x7f59b80b4570, multi=0x7f59b8003300)
+2026-05-26 06:34:18.253 T:47128   debug <general>: Presentation: Frame was discarded by compositor
+2026-05-26 06:34:18.703 T:47085   debug <general>: Skipped 4 duplicate messages..
+2026-05-26 06:34:18.703 T:47085   debug <general>: ------ Window Init (Pointer.xml) ------
+2026-05-26 06:34:19.740 T:47085   debug <general>: ProcessMouse: trying mouse action leftclick
+2026-05-26 06:34:19.740 T:47085   debug <general>: Activating window ID: 10111
+2026-05-26 06:34:19.740 T:47085   debug <general>: ------ Window Init (DialogButtonMenu.xml) ------
+2026-05-26 06:34:19.740 T:47085    info <general>: Loading skin file: DialogButtonMenu.xml, load type: KEEP_IN_MEMORY
+2026-05-26 06:34:19.841 T:47085   debug <general>: ------ Window Deinit (DialogNotification.xml) ------
+2026-05-26 06:34:21.425 T:47085   debug <general>: ProcessMouse: trying mouse action leftclick
+2026-05-26 06:34:21.466 T:47085    info <general>: Stopping the application...
+2026-05-26 06:34:21.466 T:47085    info <general>: Stopping player
+2026-05-26 06:34:21.466 T:47085    info <general>: Storing total System Uptime
+2026-05-26 06:34:21.466 T:47085    info <general>: Saving settings
+2026-05-26 06:34:21.468 T:47085    info <general>: Saving skin settings
+2026-05-26 06:34:21.469 T:47085    info <general>: Stopping all
+2026-05-26 06:34:21.469 T:47149   debug <general>: Thread JobWorker 140024201516736 terminating (autodelete)
+2026-05-26 06:34:21.469 T:47512   debug <general>: Thread JobWorker 140022059681472 terminating (autodelete)
+2026-05-26 06:34:21.469 T:47148   debug <general>: Thread JobWorker 140024209909440 terminating (autodelete)
+2026-05-26 06:34:21.469 T:47139   debug <general>: Thread JobWorker 140024219682496 terminating (autodelete)
+2026-05-26 06:34:21.469 T:47085   debug <general>: NetworkMessage - Signaling network services to stop
+2026-05-26 06:34:21.469 T:47085    info <general>: ES: Stopping event server
+2026-05-26 06:34:21.469 T:47085   debug <general>: CZeroconfAvahi::doRemoveService named: servers.jsonrpc-tcp
+2026-05-26 06:34:21.919 T:47163    info <general>: ES: UDP Event server stopped
+2026-05-26 06:34:21.919 T:47163   debug <general>: Thread EventServer 140022862812864 terminating
+2026-05-26 06:34:21.919 T:47164   debug <general>: Thread TCPServer 140022510515904 terminating
+2026-05-26 06:34:21.996 T:47165   debug <general>: Thread WSDiscoveryListenerUDP 140022502123200 terminating
+2026-05-26 06:34:21.997 T:47085    info <general>: CWSDiscoveryListenerUDP::Stop - Stopped
+2026-05-26 06:34:21.997 T:47085   debug <general>: NetworkMessage - Waiting for network services to stop
+2026-05-26 06:34:21.997 T:47085    info <general>: stopping zeroconf publishing
+2026-05-26 06:34:21.997 T:47085   debug <general>: CServiceAddonManager: stopping script.common.plugin.cache.
+2026-05-26 06:34:21.998 T:47085   debug <general>: CPythonInvoker(0, /home/rpeters1428/.kodi/addons/script.common.plugin.cache/resources/lib/entry_point.py): trigger Monitor abort request
+2026-05-26 06:34:22.091 T:47168   debug <general>: StorageServer-3.0.0 Closed down
+2026-05-26 06:34:22.092 T:47158   debug <general>: CPythonInvoker(0, /home/rpeters1428/.kodi/addons/script.common.plugin.cache/resources/lib/entry_point.py): script successfully run
+2026-05-26 06:34:22.092 T:47158   debug <general>: onExecutionDone(0, /home/rpeters1428/.kodi/addons/script.common.plugin.cache/resources/lib/entry_point.py)
+2026-05-26 06:34:22.099 T:47158   debug <general>: Python interpreter interrupted by user
+2026-05-26 06:34:22.099 T:47085   debug <general>: CPythonInvoker(0, /home/rpeters1428/.kodi/addons/script.common.plugin.cache/resources/lib/entry_point.py): script termination took 102ms
+2026-05-26 06:34:22.099 T:47085   debug <general>: CServiceAddonManager: stopping service.xbmc.versioncheck.
+2026-05-26 06:34:22.099 T:47158   debug <general>: Thread LanguageInvoker 140022904776384 terminating
+2026-05-26 06:34:22.099 T:47085    info <general>: CServiceAddonManager: failed to stop service.xbmc.versioncheck (may have ended)
+2026-05-26 06:34:22.099 T:47137   debug <general>: Thread ActiveAE 140024236467904 terminating
+2026-05-26 06:34:22.124 T:47138   debug <general>: Thread AESink 140024228075200 terminating
+2026-05-26 06:34:22.327 T:47100   debug <general>: CPipewireStream::Drained
+2026-05-26 06:34:22.342 T:47085    info <general>: Application stopped
+2026-05-26 06:34:22.543 T:47155   debug <general>: Thread PeripEventScan 140023273858752 terminating
+2026-05-26 06:34:22.618 T:47152   debug <general>: Thread PeripBusUSBUdev 140023299036864 terminating
+2026-05-26 06:34:22.619 T:47153   debug <general>: Thread PeripBusCEC 140023290644160 terminating
+2026-05-26 06:34:22.619 T:47154   debug <general>: Thread PeripBusAddon 140023282251456 terminating
+2026-05-26 06:34:22.890 T:47085    info <general>: unload skin
+2026-05-26 06:34:22.891 T:47085   debug <general>: ------ Window Deinit () ------
+2026-05-26 06:34:22.891 T:47085   debug <general>: ------ Window Deinit (DialogButtonMenu.xml) ------
+2026-05-26 06:34:22.891 T:47085   debug <general>: ------ Window Deinit (Home.xml) ------
+2026-05-26 06:34:22.891 T:47085   debug <general>: FreeVisualisation() done
+2026-05-26 06:34:22.896 T:47085   debug <general>: Skipped 3 duplicate messages..
+2026-05-26 06:34:22.896 T:47085   debug <general>: ------ Window Deinit (Pointer.xml) ------
+2026-05-26 06:34:22.896 T:47085 warning <general>: Cleanup: Having to cleanup texture lists/focus.png
+2026-05-26 06:34:22.896 T:47085   debug <general>: CloseBundle - Closed bundle
+2026-05-26 06:34:22.910 T:47085    info <general>: Unloaded skin
+2026-05-26 06:34:22.910 T:47085   debug <general>: Stopping Wayland message pump
+2026-05-26 06:34:22.910 T:47128   debug <general>: Wayland message pump stopped
+2026-05-26 06:34:22.910 T:47128   debug <general>: Thread Wayland message pump 140024869811904 terminating
+2026-05-26 06:34:22.912 T:47085    info <general>: unload sections
+2026-05-26 06:34:22.914 T:47085    info <general>: CWSDiscoveryListenerUDP::Stop - Stopped
+2026-05-26 06:34:22.914 T:47085   debug <general>: LogindUPowerSyscall - delay lock sleep released
+2026-05-26 06:34:22.915 T:47280   debug <general>: Thread Timer 140022913169088 terminating
+2026-05-26 06:34:22.915 T:47085   debug <general>: object 0 --> 0 instances
+2026-05-26 06:34:22.915 T:47085   debug <general>: object 1 --> 0 instances
+2026-05-26 06:34:22.915 T:47085   debug <general>: object 2 --> 0 instances
+2026-05-26 06:34:22.915 T:47085   debug <general>: object 3 --> 0 instances
+2026-05-26 06:34:22.915 T:47085   debug <general>: object 4 --> 0 instances
+2026-05-26 06:34:22.915 T:47085   debug <general>: object 5 --> 0 instances
+2026-05-26 06:34:22.915 T:47085   debug <general>: object 6 --> 0 instances
+2026-05-26 06:34:22.915 T:47085   debug <general>: object 7 --> 0 instances
+2026-05-26 06:34:22.915 T:47085   debug <general>: object 8 --> 0 instances
+2026-05-26 06:34:22.916 T:47085   debug <general>: object 9 --> 0 instances
+2026-05-26 06:34:22.988 T:47101   debug <general>: Thread Lirc 140025505261248 terminating
+2026-05-26 06:34:22.989 T:47097   debug <general>: Thread Announce 140025522992832 terminating
+2026-05-26 06:34:22.990 T:47085    info <general>: Exiting the application...

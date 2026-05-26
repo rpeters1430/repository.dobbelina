@@ -488,6 +488,15 @@ def change():
     utils.textBox(heading, announce)
 
 
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv
+    query = argv[2] if len(argv) > 2 else ""
+    queries = utils.parse_query(query)
+    mode = queries.get("mode", None)
+    url_dispatcher.dispatch(mode, queries)
+
+
 if __name__ == "__main__":
     if not addon_get_setting("cuminationage") == "true":
         age = dialog.yesno(
