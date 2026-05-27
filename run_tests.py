@@ -88,6 +88,48 @@ def find_python_executable():
     return sys.executable
 
 
+# Mapping of site IDs to their corresponding test module names
+# This is needed because some modules host multiple sites (e.g., reallifecam.py hosts rlc, camcaps, etc.)
+SITE_TO_TEST_MAPPING = {
+    # reallifecam.py
+    "rlc": "reallifecam",
+    "vhlife": "reallifecam",
+    "vhlife1": "reallifecam",
+    "camcaps": "reallifecam",
+    "simpvids": "reallifecam",
+    # erogarga.py
+    "fulltaboo": "erogarga",
+    "koreanpm": "erogarga",
+    # nltubes.py
+    "poldertube": "nltubes",
+    "sextube": "nltubes",
+    "12milf": "nltubes",
+    "porntubenl": "nltubes",
+    # porndig.py
+    "porndig2": "porndig",
+    # pornhat.py
+    "helloporn": "pornhat",
+    "okporn": "pornhat",
+    "pornstarstube": "pornhat",
+    "maxporn": "pornhat",
+    "homoxxx": "pornhat",
+    "perfectgirls": "pornhat",
+    # txxx.py
+    "tubepornclassic": "txxx",
+    "voyeurhit": "txxx",
+    "hclips": "txxx",
+    "hdzog": "txxx",
+    "vjav": "txxx",
+    "shemalez": "txxx",
+    "upornia": "txxx",
+    "manysex": "txxx",
+    "hotmovs": "txxx",
+    "thegay": "txxx",
+    "inporn": "txxx",
+    "desiporn": "txxx",
+}
+
+
 def build_pytest_command(args):
     """Build the pytest command based on provided arguments."""
     python_exe = find_python_executable()
@@ -107,9 +149,24 @@ def build_pytest_command(args):
 
     # Add specific site test if requested
     if args.site:
-        test_file = f"tests/sites/test_{args.site}.py"
-        if not Path(test_file).exists():
-            safe_print(f"ERROR: Test file not found: {test_file}")
+        site_id = args.site.lower()
+        test_module = SITE_TO_TEST_MAPPING.get(site_id, site_id)
+        
+        # Try both test_module.py and test_site_module.py patterns
+        candidates = [
+            f"tests/sites/test_{test_module}.py",
+            f"tests/test_{test_module}.py",
+        ]
+        
+        test_file = None
+        for cand in candidates:
+            if Path(cand).exists():
+                test_file = cand
+                break
+                
+        if not test_file:
+            safe_print(f"ERROR: Test file not found for site '{args.site}'")
+            safe_print(f"Tried: {', '.join(candidates)}")
             sys.exit(1)
         cmd.append(test_file)
 

@@ -154,8 +154,9 @@ def _thumb_from_data_path(img_tag, fallback_url=""):
 def _extract_thumbnail(item, link):
     img_tag = item.select_one("img")
     attr_names = [
-        "data-thumb-url",
         "data-mediumthumb",
+        "data-thumb-url",
+        "data-thumb_url",
         "data-image",
         "data-src",
         "data-lazy-src",
@@ -164,12 +165,23 @@ def _extract_thumbnail(item, link):
         "poster",
         "src",
     ]
+    # Check BeautifulSoup sources first
     for source in (img_tag, item, link):
         if not source:
             continue
         for attr in attr_names:
             img = utils.safe_get_attr(source, attr)
-            if img and not _is_media_preview_url(img):
+            if img and not _is_media_preview_url(img) and "phncdn.com" in img:
+                return add_img_headers(img)
+
+    # Fallback: Regex extraction from item HTML to handle poisoned tags (rogue '>')
+    # PornHub sometimes injects a '>' in the middle of img attributes to break parsers.
+    item_html = str(item)
+    for attr in attr_names:
+        match = re.search(r'%s=["\']\s*([^"\']+)["\']' % attr, item_html)
+        if match:
+            img = match.group(1)
+            if img and not _is_media_preview_url(img) and "phncdn.com" in img:
                 return add_img_headers(img)
 
     fallback = utils.safe_get_attr(img_tag, "data-image", ["src"]) if img_tag else ""
@@ -492,6 +504,8 @@ def Categories(url):
                 name = utils.safe_get_text(name_tag) if name_tag else "Category"
             img_tag = category.select_one("img")
             img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-lazy-src"])
+            img = add_img_headers(img)
+            
             count_tag = category.select_one("var, .videoCount")
             video_count = utils.safe_get_text(count_tag)
             if video_count:

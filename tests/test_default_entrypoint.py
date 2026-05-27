@@ -4,6 +4,9 @@ import sys
 
 def _load_default_module():
     sys.modules.pop("default", None)
+    # Ensure current directory is in path for importing 'default'
+    if "." not in sys.path:
+        sys.path.insert(0, ".")
     return importlib.import_module("default")
 
 
@@ -21,7 +24,8 @@ def test_main_defaults_to_index_when_query_missing():
     default_module.main(["plugin.video.cumination", "1"])
 
     assert captured["mode"] == "main.INDEX"
-    assert captured["queries"]["mode"] == "main.INDEX"
+    # parse_query defaults to main.INDEX in the queries dict as well
+    assert captured["queries"].get("mode") == "main.INDEX"
 
 
 def test_main_dispatches_explicit_query_mode():
@@ -44,4 +48,5 @@ def test_main_dispatches_explicit_query_mode():
     )
 
     assert captured["mode"] == "main.site_list"
+    assert captured["queries"]["mode"] == "main.site_list"
     assert captured["queries"]["url"] == "https://example.com"

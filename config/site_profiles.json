@@ -229,12 +229,12 @@
     },
     "reallifecam": {
       "tier": 2,
-      "content_type": "cam",
+      "content_type": "video",
       "supports": {
-        "play": false
+        "play": true
       },
       "harness": {
-        "playback_not_testable": true
+        "playback_not_testable": false
       }
     },
     "amateurtv": {

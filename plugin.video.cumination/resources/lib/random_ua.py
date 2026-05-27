@@ -33,9 +33,15 @@ def generate_ua():
     feature = random.choice(FEATURES)
     br_ver = random.choice(BR_VERS[browser])
 
-    user_agent_template = next(
-        (ua for ua in RAND_UAS if browser.lower() in ua.lower()), RAND_UAS[0]
-    )
+    if browser == "Firefox":
+        user_agent_template = RAND_UAS[0]
+    elif browser == "Chrome":
+        user_agent_template = RAND_UAS[1]
+    elif browser == "Edge":
+        user_agent_template = RAND_UAS[2]
+    else:
+        user_agent_template = RAND_UAS[0]
+
     return user_agent_template.format(os_ver=os_ver, feature=feature, br_ver=br_ver)
 
 

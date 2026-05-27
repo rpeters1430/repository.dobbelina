@@ -28,7 +28,8 @@ def test_josporn_list_parsing(monkeypatch):
     josporn.List("https://josporn.club/videos/")
 
     assert len(captured_items) > 0
-    assert captured_items[0]["name"] == "The red-haired bitch is always ready to suck and fuck"
+    # Check for a realistic title from the new fixture
+    assert "Big boobed teen stepsis" in captured_items[0]["name"]
 
 
 def test_josporn_categories_parsing(monkeypatch):
@@ -48,11 +49,11 @@ def test_josporn_categories_parsing(monkeypatch):
         
     monkeypatch.setattr(josporn.site, "add_dir", fake_add_dir)
 
-    josporn.Categories("https://josporn.club/categories/")
+    josporn.Categories("https://josporn.net/categories/")
 
     assert len(captured_dirs) > 0
-    # Categories are in #leftcategories a
-    assert any("Amateur" in d["name"] for d in captured_dirs)
+    # Check for a category that is likely to be present
+    assert any("Role Play" in d["name"] or "Milf" in d["name"] for d in captured_dirs)
 
 
 def test_josporn_list_pagination(monkeypatch):

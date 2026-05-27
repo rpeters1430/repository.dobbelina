@@ -23,8 +23,8 @@ from six.moves import urllib_parse
 
 site = AdultSite(
     "josporn",
-    "[COLOR hotpink]josporn.com[/COLOR]",
-    "https://josporn.club/",
+    "[COLOR hotpink]josporn.net[/COLOR]",
+    "https://josporn.net/",
     "josporn.png",
     "josporn",
     category="Video Tubes",
@@ -35,9 +35,10 @@ site = AdultSite(
 @site.register(default_mode=True)
 def Main(url):
     site.add_dir("[COLOR hotpink]Most Popular[/COLOR]", site.url + "most-popular/", "List", "")
-    site.add_dir("[COLOR hotpink]Latest Updates[/COLOR]", site.url + "videos/", "List", "")
+    site.add_dir("[COLOR hotpink]Latest Updates[/COLOR]", site.url + "latest-updates/", "List", "")
     site.add_dir("[COLOR hotpink]Top Rated[/COLOR]", site.url + "top-rated/", "List", "")
     site.add_dir("[COLOR hotpink]Categories[/COLOR]", site.url + "categories/", "Categories", site.img_cat)
+    site.add_dir("[COLOR hotpink]Models[/COLOR]", site.url + "models/", "Categories", site.img_cat)
     site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search)
     utils.eod()
 
@@ -58,10 +59,10 @@ def List(url, page=1):
         utils.eod()
         return
     
-    # Video items are in .innercont div
-    items = soup.select(".innercont")
+    # Video items are in .item div
+    items = soup.select(".item")
     for item in items:
-        link = item.select_one(".preview_screen a") or item.select_one(".preview_title a")
+        link = item.select_one("a[href*='/sex-video-online/']")
         if not link:
             continue
             
@@ -69,11 +70,11 @@ def List(url, page=1):
         videopage = urllib_parse.urljoin(site.url, videopage)
         
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "src")
+        img = utils.safe_get_attr(img_tag, "data-original", ["src"])
         if img:
             img = urllib_parse.urljoin(site.url, img)
             
-        name = utils.safe_get_attr(img_tag, "alt") or utils.safe_get_text(link)
+        name = utils.safe_get_attr(link, "title") or utils.safe_get_text(item.select_one(".title"))
         name = utils.cleantext(name)
         
         duration = utils.safe_get_text(item.select_one(".duration"))
@@ -83,10 +84,8 @@ def List(url, page=1):
         )
 
     # Pagination
-    # Use -soup-contains for compatibility
-    next_el = soup.select_one(".navigation a:-soup-contains('Next')") or \
-              soup.select_one(".navigation a:-soup-contains('>')") or \
-              soup.select_one(".mobnavigation a:-soup-contains('Next')")
+    next_el = soup.select_one(".pagination a.next") or \
+              soup.select_one(".pagination a:-soup-contains('Next')")
     if next_el:
         np_url = utils.safe_get_attr(next_el, "href")
         if np_url:
@@ -108,16 +107,14 @@ def Categories(url):
 
     soup = utils.parse_html(html)
     
-    # Categories are in .category_tegs or #leftcategories
-    cats = soup.select(".category_tegs a")
-    if not cats:
-        cats = soup.select("#leftcategories a")
+    # Categories are in .item a tags or .category_tegs or #leftcategories or sidebars
+    cats = soup.select(".item[href*='/categories/'], .item[href*='/models/'], .category_tegs a, #leftcategories a, .list li a[href*='/categories/']")
         
     for cat in cats:
         catpage = utils.safe_get_attr(cat, "href")
         catpage = urllib_parse.urljoin(site.url, catpage)
         
-        name = utils.safe_get_text(cat.select_one(".category_name")) or utils.safe_get_text(cat)
+        name = utils.safe_get_attr(cat, "title") or utils.safe_get_text(cat.select_one(".category_name")) or utils.safe_get_text(cat)
         name = utils.cleantext(name)
         
         img = ""
@@ -136,7 +133,6 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     
-    # The site uses pjs player which often has the direct mp4 link in the source
     html, _ = utils.get_html_with_cloudflare_retry(
         url, site.url, retry_on_empty=True
     )
@@ -144,12 +140,19 @@ def Playvid(url, name, download=None):
         utils.notify("Error", "Could not load video page")
         return
     
+    # Try schema.org contentUrl extraction
+    # "contentUrl": "https://josporn.net/get_file/..."
+    content_match = re.search(r'"contentUrl":\s*"([^"]+)"', html)
+    if content_match:
+        video_url = content_match.group(1).replace("\\/", "/")
+        utils.kodilog("josporn: Found contentUrl: {}".format(video_url))
+        vp.play_from_direct_link(video_url + "|Referer=" + site.url + "&User-Agent=" + utils.USER_AGENT)
+        return
+
     # Try Playerjs extraction
-    # var player = new Playerjs({id:"videoplayer", file:"[240p] https://...mp4,[360p] ..."})
     pjs_match = re.search(r'new\s+Playerjs\({(?:id:"[^"]+",\s*)?file:"([^"]+)"', html)
     if pjs_match:
         file_data = pjs_match.group(1)
-        # file_data can be "[720p] https://url1,[480p] https://url2" or just "https://url"
         sources = {}
         if "[" in file_data:
             qualities = re.findall(r'\[(\d+p)\]\s*([^\s,]+)', file_data)

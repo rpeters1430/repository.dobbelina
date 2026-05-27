@@ -281,13 +281,28 @@ def Playvid(url, name, download=None):
     soup = utils.parse_html(videopage)
 
     # Find ALL iframes and filter out ads
-    iframes = soup.select(".video-embedded iframe, iframe[src]")
+    # Prefer iframes inside .video-embedded
+    embedded_iframe = soup.select_one(".video-embedded iframe")
     refurl = None
-    for iframe in iframes:
-        src = utils.safe_get_attr(iframe, "src")
-        if src and "a-ads.com" not in src:
-            refurl = src
-            break
+    if embedded_iframe:
+        refurl = utils.safe_get_attr(embedded_iframe, "src")
+        
+    if not refurl:
+        iframes = soup.select(".video-embedded iframe, iframe[src]")
+        ad_domains = [
+            "a-ads.com", 
+            "dreamserve.dev", 
+            "juicyads.com", 
+            "exosrv.com", 
+            "traffichaus.com",
+            "happyleafmotion.com",
+            "mellowads.com"
+        ]
+        for iframe in iframes:
+            src = utils.safe_get_attr(iframe, "src")
+            if src and not any(ad in src for ad in ad_domains):
+                refurl = src
+                break
 
     if refurl:
         if refurl.startswith("//"):
