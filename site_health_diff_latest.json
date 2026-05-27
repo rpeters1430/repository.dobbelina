@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-05-27T07:51:12.138450",
+    "sites_total": 173,
+    "pass": 171,
+    "warn": 0,
+    "fail": 2,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-05-25T08:08:06.963529",
     "sites_total": 173,
     "pass": 156,
@@ -8,67 +17,298 @@
     "error": 0,
     "skip": 15
   },
-  "previous": {
-    "generated": "2026-05-24T07:40:48.799068",
-    "sites_total": 171,
-    "pass": 155,
-    "warn": 0,
-    "fail": 2,
-    "error": 0,
-    "skip": 14
-  },
   "summary": {
-    "new_failures": 0,
-    "resolved_failures": 0,
-    "persistent_failures": 2,
-    "improved_sites": 0,
-    "regressions": 1,
-    "step_regressions": 0
+    "new_failures": 2,
+    "resolved_failures": 2,
+    "persistent_failures": 0,
+    "improved_sites": 15,
+    "regressions": 2,
+    "step_regressions": 4
   },
-  "new_failures": [],
-  "resolved_failures": [],
-  "persistent_failures": [
+  "new_failures": [
+    {
+      "site": "analdin",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos",
+      "is_flaky": true,
+      "stability_score": 0.4
+    },
+    {
+      "site": "pornhoarder",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "BLOCKED",
+      "message": "main: HTTPError: HTTP Error 403: Forbidden",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
+  "resolved_failures": [
     {
       "site": "hentaidude",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "ENV",
-      "message": "main: RuntimeError: FlareSolverr error for https://hentaidude.xxx/page/1/?m_orderby=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "is_flaky": true,
-      "stability_score": 0.0
+      "current": "PASS"
     },
     {
       "site": "speedporn",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "Site process timed out after 140s",
-      "is_flaky": true,
-      "stability_score": 0.5
+      "current": "PASS"
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [],
-  "deltas": [
+  "persistent_failures": [],
+  "improved_sites": [
     {
-      "site": "hypnotube",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
+      "site": "familypornhd",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "freepornvideos",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "hdporn92",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "heavyr",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "javhdporn",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "longvideos",
+      "previous": "SKIP",
+      "current": "PASS"
     },
     {
       "site": "luxuretv",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "perverzija",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "pmvhaven",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "porndish",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "rlc",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "spankbang",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "thepornarea",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "whereismyporn",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "xmoviesforyou",
+      "previous": "SKIP",
+      "current": "PASS"
+    }
+  ],
+  "step_regressions": [
+    {
+      "site": "analdin",
+      "step": "list",
       "previous": "PASS",
-      "current": "SKIP",
+      "current": "FAIL",
+      "message": "List returned no videos",
+      "class": "PARSER",
+      "is_flaky": true,
+      "stability_score": 0.4
+    },
+    {
+      "site": "pornhoarder",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "HTTPError: HTTP Error 403: Forbidden",
+      "class": "BLOCKED",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "pornhoarder",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "HTTPError: HTTP Error 403: Forbidden",
+      "class": "BLOCKED",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "pornhoarder",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "HTTPError: HTTP Error 403: Forbidden",
+      "class": "BLOCKED",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
+  "deltas": [
+    {
+      "site": "analdin",
+      "previous": "PASS",
+      "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "yespornvip",
-      "previous": "MISSING",
+      "site": "familypornhd",
+      "previous": "SKIP",
       "current": "PASS",
-      "kind": "new_site",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "freepornvideos",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "hdporn92",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "heavyr",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "hentaidude",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "javhdporn",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "longvideos",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "luxuretv",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "perverzija",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "pmvhaven",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "porndish",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "pornhoarder",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "rlc",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "spankbang",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "speedporn",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "thepornarea",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "whereismyporn",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "xmoviesforyou",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
