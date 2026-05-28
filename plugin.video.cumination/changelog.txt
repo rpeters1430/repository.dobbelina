@@ -1,3 +1,11 @@
+[B]Version 1.1.404[/B]
+- fix(pornhoarder): address structural site regressions and update URLs
+- Refactor tests for josporn and default entrypoint
+- Add unit tests for default entry point behavior
+- Enhance site configurations and FlareSolverr integration across multiple sites
+- feat: enhance site functionality and add new media handling for various sites
+- Add debugging and testing scripts for Analdin site
+
 [B]Version 1.1.403[/B]
 - Refactor tests for josporn and default entrypoint
 - Add unit tests for default entry point behavior
