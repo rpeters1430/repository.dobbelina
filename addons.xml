@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <addons>
-<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.236">
+<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.404">
 <requires>
 <import addon="xbmc.python" version="3.0.0" />
 <import addon="script.module.six" />
@@ -9,6 +9,7 @@
 <import addon="script.module.resolveurl.xxx" version="2.0.1" />
 <import addon="script.common.plugin.cache" />
 <import addon="script.module.websocket" version="0.50.0" />
+<import addon="inputstream.adaptive" optional="true" />
 <import addon="script.module.inputstreamhelper" />
 <import addon="script.module.requests" />
 <import addon="script.module.beautifulsoup4" />

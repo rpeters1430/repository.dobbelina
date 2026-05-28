@@ -54,11 +54,15 @@ def _extract_search_term(url):
 
 
 def _extract_video_image(link, siteurl):
-    primary = link.select_one(
-        ".video-image.primary[data-src], .video-image.primary[src]"
-    )
+    primary = link.select_one(".video-image.primary")
     if primary:
         src = utils.safe_get_attr(primary, "data-src", ["src"])
+        if not src:
+            style = utils.safe_get_attr(primary, "style", default="")
+            match = re.search(r'url\s*\(\s*["\']?([^"\']+)["\']?\s*\)', style)
+            if match:
+                src = match.group(1).replace("&quot;", "").replace("&amp;", "&")
+        
         if src:
             return urllib_parse.urljoin(siteurl, src)
 
@@ -85,7 +89,9 @@ def _extract_video_image(link, siteurl):
 
 def _parse_video_items(soup, siteurl):
     # Modern site structure uses .video class
-    items = soup.select(".video, article")
+    items = soup.select(".video")
+    if not items:
+        items = soup.select("article")
     for item in items:
         link = item.select_one('a[href*="/watch/"], a[href*="/pornvideo/"], a[href*="/videos/"], a[href*="/video/"]')
         if not link:
@@ -213,13 +219,13 @@ def Main():
     )
     site.add_dir(
         "[COLOR hotpink]Studios[/COLOR]",
-        site.url + "studios/",
+        site.url + "porn-studios/",
         "Studios",
         site.img_cat,
     )
     site.add_dir(
         "[COLOR hotpink]Pornstars[/COLOR]",
-        site.url + "pornstars/",
+        site.url + "porn-stars/",
         "Pornstars",
         site.img_cat,
     )
@@ -441,10 +447,7 @@ def Categories(url):
             continue
 
         name = utils.cleantext(utils.safe_get_text(item.select_one("h2")))
-        img_tag = item.select_one("img")
-        img = utils.get_thumbnail(img_tag)
-        if img and img.startswith("/"):
-            img = urllib_parse.urljoin(site.url, img)
+        img = _extract_video_image(item, site.url)
 
         site.add_dir(name, search_term, "List", img)
 
@@ -456,7 +459,7 @@ def Categories(url):
 def Studios(url):
     html = utils.getHtml(url, site.url)
     soup = utils.parse_html(html)
-    for item in soup.select("article"):
+    for item in soup.select(".video.category, article"):
         link = item.select_one("a[href]")
         if not link:
             continue
@@ -465,9 +468,10 @@ def Studios(url):
             site.url, utils.safe_get_attr(link, "href", default="")
         )
         name = utils.cleantext(utils.safe_get_text(item.select_one("h2")))
+        img = _extract_video_image(item, site.url)
         if not sturl or not name:
             continue
-        site.add_dir(name, sturl, "List", "")
+        site.add_dir(name, sturl, "List", img)
 
     _add_next_page_from_soup(soup, url, "Studios")
     utils.eod()
@@ -477,7 +481,7 @@ def Studios(url):
 def Pornstars(url):
     html = utils.getHtml(url, site.url)
     soup = utils.parse_html(html)
-    for item in soup.select("article"):
+    for item in soup.select(".video.category, article"):
         link = item.select_one("a[href]")
         if not link:
             continue
@@ -486,7 +490,7 @@ def Pornstars(url):
             site.url, utils.safe_get_attr(link, "href", default="")
         )
         name = utils.cleantext(utils.safe_get_text(item.select_one("h2")))
-        img = _extract_video_image(link, site.url)
+        img = _extract_video_image(item, site.url)
         if not psurl or not name:
             continue
         site.add_dir(name, psurl, "List", img)
