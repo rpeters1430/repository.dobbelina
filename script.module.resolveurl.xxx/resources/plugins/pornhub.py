@@ -23,15 +23,6 @@ from resolveurl.lib import helpers
 from resolveurl.resolver import ResolveUrl, ResolverError
 
 
-def _extract_js_assignment(html, name_pattern):
-    match = re.search(
-        r'{0}\s*=\s*(.+?);'.format(name_pattern),
-        html,
-        re.DOTALL | re.IGNORECASE,
-    )
-    return match.group(1).strip() if match else ''
-
-
 class PornHubResolver(ResolveUrl):
     name = 'pornhub'
     domains = ['pornhub.com']
@@ -47,9 +38,9 @@ class PornHubResolver(ResolveUrl):
         html = self.net.http_GET(web_url, headers=headers).content
         sources = []
 
-        qvars = _extract_js_assignment(html, r'(?:var\s+)?qualityItems_\d+')
+        qvars = re.search(r'qualityItems_[^\[]+(.+?);', html)
         if qvars:
-            sources = json.loads(qvars)
+            sources = json.loads(qvars.group(1))
             sources = [(src.get('text'), src.get('url')) for src in sources if src.get('url')]
 
         if not sources:
@@ -69,14 +60,14 @@ class PornHubResolver(ResolveUrl):
                         sources.append((r[0], link))
 
         if not sources:
-            fvars = _extract_js_assignment(html, r'flashvars_\d+')
+            fvars = re.search(r'flashvars_\d+\s*=\s*(.+?);\s', html)
             if fvars:
-                sources = json.loads(fvars).get('mediaDefinitions')
+                sources = json.loads(fvars.group(1)).get('mediaDefinitions')
                 sources = [(src.get('quality'), src.get('videoUrl')) for src in sources if
                            type(src.get('quality')) is not list and src.get('videoUrl')]
 
         if sources:
-            headers.update({'Origin': host_url.rstrip('/')})
+            headers.update({'Origin': host[:-1]})
             return helpers.pick_source(helpers.sort_sources_list(sources)) + helpers.append_headers(headers)
 
         raise ResolverError('File not found or not Free')
