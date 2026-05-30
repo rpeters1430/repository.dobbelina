@@ -50,30 +50,41 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url)
-    match = re.compile(
-        r'<div class="thumb thumb_rel item(?![^"]*item--adv-thumb)[^"]*">.*?'
-        r'<a\s+href="([^"]+)"\s+title="([^"]+)"[^>]*>.*?'
-        r'(?:data-original|data-webp)="([^"]+)"[^>]*>.*?'
-        r'<div class="qualtiy">\s*([^<]+)\s*</div>.*?'
-        r'<div class="time">\s*([^<]+)\s*</div>.*?'
-        r'data-fav-video-id="(\d+)"',
-        re.DOTALL | re.IGNORECASE
-    ).findall(listhtml)
-    for urlpage, name, img, quality, duration, embed in match:
-        name = utils.cleantext(name)
+    soup = utils.parse_html(listhtml)
+    for item in soup.select('div.thumb_rel.item'):
+        if 'item--adv-thumb' in (item.get('class') or []):
+            continue
+        link = item.select_one('a[title]')
+        if not link:
+            continue
+        name = utils.safe_get_attr(link, 'title')
+        img = utils.safe_get_attr(item.select_one('img'), 'data-webp', ['data-original'])
+        quality = utils.safe_get_text(item.select_one('.qualtiy'))
+        duration = utils.safe_get_text(item.select_one('.time'))
+        embed_el = item.select_one('[data-fav-video-id]')
+        if not embed_el:
+            continue
+        embed = utils.safe_get_attr(embed_el, 'data-fav-video-id')
+        if not embed:
+            continue
         videopage = site.url + 'embed/' + embed
-        site.add_download_link(name + f' [COLOR yellow]({duration})[/COLOR][COLOR hotpink] [{quality}][/COLOR]', videopage, 'Playvid', img, name)
-
-    m = re.search(
-        r"<a[^>]*class=['\"]next['\"][^>]*data-parameters=['\"][^'\"]*from:(\d+)",
-        listhtml,
-        re.DOTALL
-    )
-
-    if m:
-        nextpage = m.group(1)
-        url = url.split('?from=')[0] + '?from=' + nextpage if '?from=' in url else url + '?from=' + nextpage
-        site.add_dir('Next Page... ({0})'.format(nextpage), url, 'List', site.img_next)
+        site.add_download_link(
+            utils.cleantext(name) + ' [COLOR yellow]({})[/COLOR][COLOR hotpink] [{}][/COLOR]'.format(duration, quality),
+            videopage, 'Playvid', img, name
+        )
+    next_el = soup.select_one('a.next[data-parameters]')
+    if next_el:
+        params = utils.safe_get_attr(next_el, 'data-parameters', default='')
+        nextpage = ''
+        for part in params.split(';'):
+            part = part.strip()
+            if part.startswith('from:'):
+                nextpage = part.split(':', 1)[1]
+                break
+        if nextpage:
+            base = url.split('?from=')[0] if '?from=' in url else url
+            next_url = base + '?from=' + nextpage
+            site.add_dir('Next Page... ({})'.format(nextpage), next_url, 'List', site.img_next)
     utils.eod()
 
 

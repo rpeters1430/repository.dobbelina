@@ -42,24 +42,31 @@ def List(url):
         utils.notify(msg='No videos found!')
         return
 
-    delimiter = r'<div class="item '
-    re_videopage = 'href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = r'data-original="([^"]+)"'
-    re_duration = r'class="duration">([\d:]+)<'
-    re_quality = r'class="is-hd">([^<]+)<'
+    soup = utils.parse_html(listhtml)
 
     cm = []
-    cm_lookupinfo = (utils.addon_sys + "?mode=pornditt.Lookupinfo&url=")
+    cm_lookupinfo = utils.addon_sys + "?mode=pornditt.Lookupinfo&url="
     cm.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin({})'.format(cm_lookupinfo)))
-    cm_related = (utils.addon_sys + "?mode=pornditt.Related&url=")
+    cm_related = utils.addon_sys + "?mode=pornditt.Related&url="
     cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin({})'.format(cm_related)))
-    utils.videos_list(site, 'pornditt.Playvid', listhtml, delimiter, re_videopage, re_name, re_img, re_duration=re_duration, re_quality=re_quality, contextm=cm)
 
-    re_npurl = 'class="next"><a href="([^"]+)"'
-    re_npnr = r'from:(\d+)">Next<'
-    re_lpnr = r'from:(\d+)">Last<'
-    utils.next_page(site, 'pornditt.List', listhtml, re_npurl, re_npnr, re_lpnr=re_lpnr, contextm='pornditt.GotoPage')
+    selectors = {
+        'items': 'div.item',
+        'url': {'selector': 'a[href]', 'attr': 'href'},
+        'title': {'selector': 'a[title]', 'attr': 'title'},
+        'thumbnail': {'selector': 'img', 'attr': 'data-original'},
+        'duration': {'selector': '.duration', 'text': True},
+        'quality': {'selector': '.is-hd', 'text': True},
+    }
+    utils.soup_videos_list(site, soup, selectors, play_mode='Playvid', contextm=cm)
+
+    next_link = soup.select_one('.next a[href], a.next[href]')
+    if next_link:
+        next_url = utils.safe_get_attr(next_link, 'href')
+        if next_url:
+            next_url = urllib_parse.urljoin(site.url, next_url)
+            site.add_dir('Next Page', next_url, 'List', site.img_next)
+
     utils.eod()
 
 

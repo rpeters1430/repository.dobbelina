@@ -38,7 +38,7 @@ class PornHubResolver(ResolveUrl):
         html = self.net.http_GET(web_url, headers=headers).content
         sources = []
 
-        qvars = re.search(r'qualityItems_[^\[]+(.+?);', html)
+        qvars = re.search(r'qualityItems_[^\[]+(.+?);', html, re.DOTALL)
         if qvars:
             sources = json.loads(qvars.group(1))
             sources = [(src.get('text'), src.get('url')) for src in sources if src.get('url')]
@@ -60,14 +60,14 @@ class PornHubResolver(ResolveUrl):
                         sources.append((r[0], link))
 
         if not sources:
-            fvars = re.search(r'flashvars_\d+\s*=\s*(.+?);\s', html)
+            fvars = re.search(r'flashvars_\d+\s*=\s*(.+?);\s', html, re.DOTALL)
             if fvars:
                 sources = json.loads(fvars.group(1)).get('mediaDefinitions')
                 sources = [(src.get('quality'), src.get('videoUrl')) for src in sources if
                            type(src.get('quality')) is not list and src.get('videoUrl')]
 
         if sources:
-            headers.update({'Origin': host[:-1]})
+            headers.update({'Origin': host_url[:-1]})
             return helpers.pick_source(helpers.sort_sources_list(sources)) + helpers.append_headers(headers)
 
         raise ResolverError('File not found or not Free')

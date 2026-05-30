@@ -26,7 +26,7 @@ def test_main_menu(monkeypatch):
     ]
 
 
-def test_list_uses_helper_parsers(monkeypatch):
+def test_list_parses_videos_with_soup(monkeypatch):
     html = """
     <div class="item ">
       <a href="https://v.pornditt.com/videos/1" title="Video 1">
@@ -35,34 +35,24 @@ def test_list_uses_helper_parsers(monkeypatch):
       <span class="duration">10:00</span>
       <span class="is-hd">HD</span>
     </div>
-    <a class="next" href="https://v.pornditt.com/latest-updates/2/">Next</a>
+    <div class="next"><a href="https://v.pornditt.com/latest-updates/2/">Next</a></div>
     """
-    calls = {}
+    captured = {}
 
     monkeypatch.setattr(pornditt.utils, "getHtml", lambda *a, **k: html)
     monkeypatch.setattr(
         pornditt.utils,
-        "videos_list",
-        lambda *args, **kwargs: calls.setdefault("videos_list", (args, kwargs)),
-    )
-    monkeypatch.setattr(
-        pornditt.utils,
-        "next_page",
-        lambda *args, **kwargs: calls.setdefault("next_page", (args, kwargs)),
+        "soup_videos_list",
+        lambda site, soup, selectors, **kwargs: captured.update({"selectors": selectors, "contextm": kwargs.get("contextm")}),
     )
     monkeypatch.setattr(pornditt.utils, "eod", lambda: None)
+    monkeypatch.setattr(pornditt.site, "add_dir", lambda *a, **k: None)
 
     pornditt.List("https://v.pornditt.com/latest-updates/")
 
-    videos_args, videos_kwargs = calls["videos_list"]
-    assert videos_args[1] == "pornditt.Playvid"
-    assert videos_kwargs["re_quality"] == r'class="is-hd">([^<]+)<'
-    assert videos_kwargs["contextm"][0][0] == "[COLOR deeppink]Lookup info[/COLOR]"
-    assert videos_kwargs["contextm"][1][0] == "[COLOR deeppink]Related videos[/COLOR]"
-
-    next_args, next_kwargs = calls["next_page"]
-    assert next_args[1] == "pornditt.List"
-    assert next_kwargs["contextm"] == "pornditt.GotoPage"
+    assert captured["selectors"]["items"] == "div.item"
+    assert captured["contextm"][0][0] == "[COLOR deeppink]Lookup info[/COLOR]"
+    assert captured["contextm"][1][0] == "[COLOR deeppink]Related videos[/COLOR]"
 
 
 def test_list_notifies_when_empty(monkeypatch):

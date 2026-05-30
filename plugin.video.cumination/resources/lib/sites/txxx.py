@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
 import json
 from six.moves import urllib_parse
 from resources.lib import utils
@@ -465,10 +464,10 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     vurl = "{0}api/videofile.php?video_id={1}&lifetime=8640000".format(siteurl, url)
-    vidhtml = utils.getHtml(vurl, siteurl)
-    r = re.search('video_url":"([^"]+)', vidhtml)
-    if r:
-        videourl = txxx.Tdecode(r.group(1)) + "|Referer=" + siteurl
+    jdata = _load_json_payload(utils.getHtml(vurl, siteurl))
+    video_url_raw = jdata.get("video_url")
+    if video_url_raw:
+        videourl = txxx.Tdecode(video_url_raw) + "|Referer=" + siteurl
         if not videourl.startswith("http"):
             videourl = siteurl[:-1] + videourl
             videourl = utils.getVideoLink(videourl, referer=siteurl)

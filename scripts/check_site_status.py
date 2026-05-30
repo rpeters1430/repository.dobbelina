@@ -106,7 +106,7 @@ def print_site_status(site_name: str):
     print(f"   SoupSiteSpec:        {'✅' if analysis['uses_soup_spec'] else '❌'}")
     print()
 
-    if not analysis['uses_beautifulsoup']:
+    if analysis['uses_regex'] and not analysis['uses_beautifulsoup']:
         print("⚠️  MIGRATION NEEDED")
         print("   This site uses regex parsing and should be migrated to BeautifulSoup")
         print("   See: MODERNIZATION.md and CLAUDE.md for migration guide")
@@ -182,7 +182,7 @@ def print_site_status(site_name: str):
     if not analysis['has_play']:
         recommendations.append("❌ Add a Playvid function for video playback")
 
-    if not analysis['uses_beautifulsoup'] and not analysis['is_webcam']:
+    if analysis['uses_regex'] and not analysis['uses_beautifulsoup'] and not analysis['is_webcam']:
         recommendations.append("⚠️  Migrate from regex to BeautifulSoup parsing")
 
     if analysis['uses_beautifulsoup'] and not analysis['uses_soup_spec']:
@@ -267,7 +267,7 @@ def list_problem_sites():
     # Needs migration
     needs_migration = [
         s['name'] for s in analysis['sites']
-        if not s.get('import_error') and not s['uses_beautifulsoup'] and not s['is_webcam']
+        if not s.get('import_error') and s['uses_regex'] and not s['uses_beautifulsoup'] and not s['is_webcam']
     ]
     if needs_migration:
         print(f"Needs BeautifulSoup Migration ({len(needs_migration)}):")

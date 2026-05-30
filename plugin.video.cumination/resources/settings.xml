@@ -6,9 +6,9 @@
 		<setting default="true" id="auto_pick" label="33011" type="bool"/>
 		<setting default="true" id="use_cache" label="33012" type="bool"/>
 		<setting id="reset_cache" type="action" label="33013" action="RunPlugin(plugin://script.module.resolveurl/?mode=reset_cache)"/>
-		<setting default="false" id="bp_enable" label="byparr_enable" type="bool"/>
-		<setting id="bp_url" visible="eq(-1,true)" enable="eq(-1,true)" type="text" label="byparr_url" default="http://localhost:8191"/>
-		<setting id="bp_timeout" visible="eq(-2,true)" enable="eq(-2,true)" type="slider" label="byparr_timeout" default="60" range="30,30,180" option="int" />
+		<setting default="false" id="bp_enable" label="33104" type="bool"/>
+		<setting id="bp_url" visible="eq(-1,true)" enable="eq(-1,true)" type="text" label="33105" default="http://localhost:8191"/>
+		<setting id="bp_timeout" visible="eq(-2,true)" enable="eq(-2,true)" type="slider" label="33106" default="60" range="30,30,180" option="int" />
 		<setting id="personal_nid" label="Your NID" type="text" visible="false" default=""/>
 		<setting id="last_ua_create" label="last_ua_create" type="number" visible="false" default="0"/>
 		<setting id="current_ua" label="current_ua" type="text" visible="false" default=""/>
@@ -1179,6 +1179,10 @@
 		<setting id="VoxzerResolver_priority" type="number" label="33016" default="100"/>
 		<setting id="VoxzerResolver_enabled" type="bool" label="33017" default="true"/>
 		<setting id="VoxzerResolver_login" type="bool" label="33022" default="true" visible="false"/>
+		<setting label="VrraTop" type="lsep"/>
+		<setting id="VrraTopResolver_priority" type="number" label="33016" default="100"/>
+		<setting id="VrraTopResolver_enabled" type="bool" label="33017" default="true"/>
+		<setting id="VrraTopResolver_login" type="bool" label="33022" default="true" visible="false"/>
 		<setting label="VTube" type="lsep"/>
 		<setting id="VTubeResolver_priority" type="number" label="33016" default="100"/>
 		<setting id="VTubeResolver_enabled" type="bool" label="33017" default="true"/>

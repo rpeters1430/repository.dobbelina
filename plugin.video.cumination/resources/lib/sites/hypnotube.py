@@ -32,17 +32,26 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url)
-    match = re.compile(r'class="item-inner-col.+?href="https://hypnotube.com/video/([^"]+)"\s+title="([^"]+)".+?src="([^"]+)"\s.+?time">(.+?)<', re.DOTALL | re.IGNORECASE).findall(listhtml)
-    for videopage, name, img, duration in match:
-        name = utils.cleantext(name)
-        site.add_download_link(name + f' [COLOR yellow]({duration})[/COLOR]', site.url + "video/" + videopage, 'Playvid', img, name)
+    soup = utils.parse_html(utils.getHtml(url))
+    for item in soup.select('[class*="item-inner-col"]'):
+        link = item.select_one('a[href*="/video/"][title]')
+        if not link:
+            continue
+        video_url = utils.safe_get_attr(link, 'href')
+        name = utils.cleantext(utils.safe_get_attr(link, 'title'))
+        img = utils.safe_get_attr(item.select_one('img'), 'src')
+        duration_tag = item.select_one('.time')
+        duration = utils.safe_get_text(duration_tag).strip() if duration_tag else ''
+        display_name = name + (f' [COLOR yellow]({duration})[/COLOR]' if duration else '')
+        site.add_download_link(display_name, video_url, 'Playvid', img, name)
 
-    np = re.compile(r"title='Next' href='([^']+)'", re.DOTALL | re.IGNORECASE).search(listhtml)
-    if np:
-        np = np.group(1)
-        nextpage = re.search(r'page(\d+).', np).group(1)
-        site.add_dir('Next Page... ({0})'.format(nextpage), site.url + "videos/" + np, 'List', site.img_next)
+    next_link = soup.select_one("a[title='Next'][href]")
+    if next_link:
+        np = utils.safe_get_attr(next_link, 'href')
+        page_match = re.search(r'page(\d+)', np)
+        nextpage = page_match.group(1) if page_match else ''
+        label = f'Next Page... ({nextpage})' if nextpage else 'Next Page...'
+        site.add_dir(label, site.url + 'videos/' + np, 'List', site.img_next)
     utils.eod()
 
 

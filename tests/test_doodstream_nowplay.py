@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RESOLVEURL_PATH = ROOT / "script.module.resolveurl" / "lib"
 if str(RESOLVEURL_PATH) not in sys.path:
-    sys.path.insert(0, str(RESOLVEURL_PATH))
+    sys.path.append(str(RESOLVEURL_PATH))
 
 import xbmc  # noqa: E402
 import xbmcaddon  # noqa: E402

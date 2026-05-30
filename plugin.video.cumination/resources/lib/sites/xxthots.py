@@ -43,21 +43,28 @@ def List(url):
         utils.notify(msg='No videos found!')
         return
 
-    delimiter = r'class="thumb thumb_rel'
-    re_videopage = 'href="([^"]+)"'
-    re_name = 'title="([^"]+)"'
-    re_img = r'data-original="([^"]+)"'
-    re_duration = r'class="time">([\d:]+)<'
-    re_quality = r'class="quality">([^<]+)<'
-    skip = 'class="video-item  private'
+    soup = utils.parse_html(listhtml)
 
     cm = []
-    cm_lookupinfo = (utils.addon_sys + "?mode=xxthots.Lookupinfo&url=")
+    cm_lookupinfo = utils.addon_sys + "?mode=xxthots.Lookupinfo&url="
     cm.append(('[COLOR deeppink]Lookup info[/COLOR]', 'RunPlugin({})'.format(cm_lookupinfo)))
-    cm_related = (utils.addon_sys + "?mode=xxthots.Related&url=")
+    cm_related = utils.addon_sys + "?mode=xxthots.Related&url="
     cm.append(('[COLOR deeppink]Related videos[/COLOR]', 'RunPlugin({})'.format(cm_related)))
 
-    utils.videos_list(site, 'xxthots.Playvid', listhtml, delimiter, re_videopage, re_name, re_img, re_duration=re_duration, re_quality=re_quality, skip=skip, contextm=cm)
+    def _not_private(item):
+        classes = item.get('class') or []
+        return 'private' not in ' '.join(classes)
+
+    selectors = {
+        'items': 'div[class*="thumb thumb_rel"]',
+        'url': {'selector': 'a[href]', 'attr': 'href'},
+        'title': {'selector': 'a[title]', 'attr': 'title'},
+        'thumbnail': {'selector': 'img', 'attr': 'data-original'},
+        'duration': {'selector': '.time', 'text': True},
+        'quality': {'selector': '.quality', 'text': True},
+        'filter': _not_private,
+    }
+    utils.soup_videos_list(site, soup, selectors, play_mode='Playvid', contextm=cm)
 
     match = re.search(r'''>(\d+)</a>\s+<a class='next' .+?data-block-id="([^"]+)"\s+data-parameters="([^"]+)">\s*Next''', listhtml, re.DOTALL | re.IGNORECASE)
     if match:

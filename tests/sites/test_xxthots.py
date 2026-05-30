@@ -46,10 +46,9 @@ def test_main_adds_nav_and_calls_list(monkeypatch):
 
 def test_list_parses_videos_and_pagination(monkeypatch):
     recorder = _Recorder()
-    # Dummy HTML that matches the regex in xxthots.List and utils.videos_list
     html = """
     <div class="thumb thumb_rel">
-        <a href="/v1/" title="Video 1">
+        <a href="https://xxthots.com/v1/" title="Video 1">
             <img data-original="1.jpg">
             <span class="time">10:00</span>
             <span class="quality">HD</span>
@@ -60,12 +59,16 @@ def test_list_parses_videos_and_pagination(monkeypatch):
     </div>
     """
 
-    monkeypatch.setattr(xxthots.utils, "getHtml", lambda *a, **k: html)
-    # We need to mock videos_list because it's hard to satisfy with dummy HTML
-    def fake_videos_list(site, mode, html, *args, **kwargs):
-        xxthots.site.add_download_link("Video 1", "/v1/", mode, "1.jpg")
+    soup_calls = {}
 
-    monkeypatch.setattr(xxthots.utils, "videos_list", fake_videos_list)
+    def fake_soup_videos_list(site_obj, soup, selectors, **kwargs):
+        soup_calls["selectors"] = selectors
+        soup_calls["contextm"] = kwargs.get("contextm")
+        # simulate adding one item
+        site_obj.add_download_link("Video 1", "https://xxthots.com/v1/", "Playvid", "1.jpg")
+
+    monkeypatch.setattr(xxthots.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(xxthots.utils, "soup_videos_list", fake_soup_videos_list)
     monkeypatch.setattr(xxthots.site, "add_download_link", recorder.add_download)
     monkeypatch.setattr(xxthots.site, "add_dir", recorder.add_dir)
     monkeypatch.setattr(xxthots.utils, "eod", lambda: None)
@@ -75,6 +78,8 @@ def test_list_parses_videos_and_pagination(monkeypatch):
 
     assert len(recorder.downloads) == 1
     assert recorder.downloads[0]["name"] == "Video 1"
+    assert soup_calls["selectors"]["items"] == 'div[class*="thumb thumb_rel"]'
+    assert soup_calls["contextm"][0][0] == "[COLOR deeppink]Lookup info[/COLOR]"
 
     assert len(recorder.dirs) == 1
     assert "Next Page" in recorder.dirs[0]["name"]
