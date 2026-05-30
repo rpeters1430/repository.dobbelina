@@ -1,3 +1,13 @@
+[B]Version 1.1.405[/B]
+- Refactor and enhance site parsers and tests
+- Merge pull request #179 from rpeters1430/copilot/clean-up-debug-py-files
+- chore: address codeql regex risk in moved debug script
+- chore: move root debug scripts into scripts/debug
+- Initial plan
+- Add SaveFiles resolver with ByParr support and multiple language updates
+- fix(pornhoarder): address structural site regressions and update URLs
+- Refactor tests for josporn and default entrypoint
+
 [B]Version 1.1.404[/B]
 - fix(pornhoarder): address structural site regressions and update URLs
 - Refactor tests for josporn and default entrypoint
