@@ -1,7 +1,32 @@
 import asyncio
 import json
-import re
 from playwright.async_api import async_playwright
+
+
+def _extract_initial_room_dossier(content):
+    marker = "initialRoomDossier"
+    marker_index = content.find(marker)
+    if marker_index == -1:
+        return None
+    quote_start = content.find('"', marker_index)
+    if quote_start == -1:
+        return None
+    escaped = False
+    chars = []
+    for ch in content[quote_start + 1 :]:
+        if escaped:
+            chars.append(ch)
+            escaped = False
+            continue
+        if ch == "\\":
+            chars.append(ch)
+            escaped = True
+            continue
+        if ch == '"':
+            return "".join(chars)
+        chars.append(ch)
+    return None
+
 
 async def run():
     url = "https://chaturbate.com/minji_snow/"
@@ -19,11 +44,11 @@ async def run():
             content = await page.content()
             
             # Look for initialRoomDossier
-            match = re.search(r'initialRoomDossier\s*=\s*"((?:\\.|[^"])*)"', content)
-            if match:
+            initial_room_dossier = _extract_initial_room_dossier(content)
+            if initial_room_dossier:
                 print("SUCCESS: Found initialRoomDossier")
                 # In real code we use unicode-escape, here we just check if it looks right
-                print("Dossier length:", len(match.group(1)))
+                print("Dossier length:", len(initial_room_dossier))
                 
                 # Check for m3u8 links in the dossier or page
                 if "hls_source" in content:
@@ -33,7 +58,7 @@ async def run():
                 # The data is escaped JSON in a string
                 try:
                     import codecs
-                    raw_data = match.group(1)
+                    raw_data = initial_room_dossier
                     decoded_data = codecs.decode(raw_data, 'unicode-escape')
                     dossier = json.loads(decoded_data)
                     hls_url = dossier.get("hls_source")
