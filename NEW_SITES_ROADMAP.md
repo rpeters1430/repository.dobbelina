@@ -66,11 +66,9 @@ New sites found: 284
 | **Tubexclips.com** | Streaming & Video Tubes | Standard tube structure |
 | **Tubezaur.com** | Streaming & Video Tubes | Standard tube structure |
 | **TubePornClassic** | Adult Movies / Grindhouse | Standard tube structure |
-| **MangoPorn** | Adult Movies / Grindhouse | Standard tube structure |
 | **pornxtheatre** | Adult Movies / Grindhouse | Standard tube structure |
 | **HighPorn** | Asian / JAV | Standard tube structure |
 | **Senzuri Tube** | Asian / JAV | Standard tube structure |
-| **91Porna** | Asian / JAV | Standard tube structure |
 | **KoreanPornMovies** | Asian / JAV | Standard tube structure |
 | **JAV/Asian Tube** | Asian / JAV | Standard tube structure |
 | **MalayPorner** | Asian / JAV | Standard tube structure |
@@ -181,8 +179,8 @@ New sites found: 284
 *These sites are already implemented in Cumination.*
 
 *   **Streaming & Video Tubes**: XVideos, xHamster, PornHub, SpankBang, EPorner, HQPorner, SexyPorn, Redtube, Beeg, Motherless, DrTuber, Analdin, Tube8, TNAFlix, Youporn, Youjizz, Jizzbunker, Heavy-R, XNXX, ThePornArea, Porndish, Porndoe, Porndig, xxdbx, Ask4Porn, PornHD3x, txxx.
-*   **Adult Movies / Grindhouse**: EroticMV, EroGarga, EroticAge, paradisehill.
-*   **Asian / JAV**: SexTB, SupJav, JAVSeen, JAVGG, JavGuru, missav, JavHDPorn, JavBangers.
+*   **Adult Movies / Grindhouse**: EroticMV, EroGarga, EroticAge, paradisehill, MangoPorn.
+*   **Asian / JAV**: SexTB, SupJav, JAVSeen, JAVGG, JavGuru, missav, JavHDPorn, JavBangers, 91Porna.
 *   **Hentai Anime**: Hanime.tv, AnimeIDHentai, Hentai Moon, HentaiStream, HAnime.
 *   **Cam Models**: Archivebate, Camwhores Bay, LiveCamRips, Cloudbate.
 *   **Leak Sites**: Hotleak, ThotHub.

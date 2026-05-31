@@ -1,4 +1,4 @@
-"""Smoke tests for hypnotube site"""
+"""Smoke tests for mangoporn site"""
 
 import importlib
 import inspect
@@ -11,7 +11,7 @@ from resources.lib import url_dispatcher
 @pytest.fixture(scope="module")
 def site_module():
     """Get site module"""
-    return importlib.import_module("resources.lib.sites.hypnotube")
+    return importlib.import_module("resources.lib.sites.mangoporn")
 
 
 @pytest.fixture
@@ -165,7 +165,7 @@ def _dispatch_preferred_listing(site_object, captured_items):
 
     list_mode = None
     for mode in URL_Dispatcher.func_registry.keys():
-        if mode.startswith("hypnotube.") and 'list' in mode.lower():
+        if mode.startswith("mangoporn.") and 'list' in mode.lower():
             list_mode = mode
             break
 
@@ -281,7 +281,7 @@ class TestSearch:
         from resources.lib.url_dispatcher import URL_Dispatcher
         search_mode = None
         for mode in URL_Dispatcher.func_registry.keys():
-            if mode.startswith("hypnotube.") and 'search' in mode.lower():
+            if mode.startswith("mangoporn.") and 'search' in mode.lower():
                 search_mode = mode
                 break
 

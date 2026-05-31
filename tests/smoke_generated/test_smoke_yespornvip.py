@@ -304,7 +304,3 @@ class TestPlayback:
         # and mock HTML fixtures to test properly
         pass
 
-
-# TODO: This site still uses regex parsing. Consider migrating to BeautifulSoup
-# See MODERNIZATION.md and plugin.video.cumination/resources/lib/sites/pornhub.py for examples
-

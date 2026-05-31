@@ -11,6 +11,8 @@ This file tracks sites identified for potential implementation. Recent audit sho
 | **PornDoe** | Tube | Medium | ✅ | **Integrated** |
 | **AnySex.com** | Tube | Medium | ✅ | **Integrated** (Requires FlareSolverr) |
 | **PornoBae** | Tube | Easy | ✅ | **Integrated** - marked as new in addon |
+| **MangoPorn** | Adult Movies | Easy-Medium | ✅ | **Integrated** - validated live May 2026 |
+| **91Porna** | JAV / Asian | Easy | ✅ | **Integrated** - validated live May 2026 |
 
 ## 🟡 Tier 2 - Medium (Requires FlareSolverr / Cloudflare)
 *Cloudflare protected (403/503) or Meta-Search.*
@@ -40,3 +42,5 @@ This file tracks sites identified for potential implementation. Recent audit sho
 | **AnySex.com** | Tube | ✅ Added Mar 2026 |
 | **ArchiveBate** | Aggregator | ✅ Added Mar 2026 |
 | **PornoBae** | Tube | ✅ Added May 2026 |
+| **MangoPorn** | Adult Movies | ✅ Added May 2026 |
+| **91Porna** | JAV / Asian | ✅ Added May 2026 |
