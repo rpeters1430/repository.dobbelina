@@ -1,6 +1,6 @@
 # Site Health Delta
 
-- Current report: `live_smoke_20260528_074616.json`
+- Current report: `live_smoke_20260531_074238.json`
 - Previous report: `live_smoke_latest.json`
 
 ## Snapshot
