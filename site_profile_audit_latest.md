@@ -1,14 +1,14 @@
 # Site Profile Audit
 
-- Sites: `173`
+- Sites: `175`
 - Tier1 hot: `0`
 - Failing: `2`
 - Warn: `0`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
+| txxx | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -28,11 +28,13 @@
 | yourlesbians | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | 6xtube | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | 85po | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| 91porna | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | aagmaal | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | aagmaalpro | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
+| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -93,6 +95,7 @@
 | lemoncams | backlog | PASS | 2 | cam |  | Y |  | Y |  |
 | livecamrips | backlog | PASS | 2 | cam |  | Y |  | Y | Y |
 | longvideos | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
+| mangoporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | motherless | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | mrsexe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | myfreecams | backlog | PASS | 2 | cam |  | Y |  |  |  |
@@ -156,7 +159,6 @@
 | trendyporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | tube8 | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | tubxporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| txxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | uflash | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | vaginanl | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | vipporns | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -183,8 +185,8 @@
 
 ## Next Batch
 
-- **analdin** (failing, tier=2) | failures: list:FAIL
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL, search:FAIL
+- **txxx** (failing, tier=None) | failures: main:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)

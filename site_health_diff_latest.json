@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-06-01T08:15:03.050064",
+    "sites_total": 175,
+    "pass": 173,
+    "warn": 0,
+    "fail": 2,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-05-31T07:42:38.498923",
     "sites_total": 173,
     "pass": 171,
@@ -8,35 +17,33 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-05-28T07:46:16.201038",
-    "sites_total": 173,
-    "pass": 171,
-    "warn": 0,
-    "fail": 2,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
-    "new_failures": 0,
-    "resolved_failures": 0,
-    "persistent_failures": 2,
+    "new_failures": 1,
+    "resolved_failures": 1,
+    "persistent_failures": 1,
     "improved_sites": 0,
-    "regressions": 0,
-    "step_regressions": 0
+    "regressions": 1,
+    "step_regressions": 1
   },
-  "new_failures": [],
-  "resolved_failures": [],
-  "persistent_failures": [
+  "new_failures": [
+    {
+      "site": "txxx",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "CODE",
+      "message": "main: AttributeError: 'NoneType' object has no attribute 'strip'",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
+  "resolved_failures": [
     {
       "site": "analdin",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
-      "is_flaky": true,
-      "stability_score": 0.4
-    },
+      "current": "PASS"
+    }
+  ],
+  "persistent_failures": [
     {
       "site": "pornhoarder",
       "previous": "FAIL",
@@ -44,10 +51,50 @@
       "class": "BLOCKED",
       "message": "main: HTTPError: HTTP Error 403: Forbidden",
       "is_flaky": false,
-      "stability_score": 0.8
+      "stability_score": 0.7
     }
   ],
   "improved_sites": [],
-  "step_regressions": [],
-  "deltas": []
+  "step_regressions": [
+    {
+      "site": "txxx",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "AttributeError: 'NoneType' object has no attribute 'strip'",
+      "class": "CODE",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
+  "deltas": [
+    {
+      "site": "91porna",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "analdin",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "mangoporn",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "txxx",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    }
+  ]
 }

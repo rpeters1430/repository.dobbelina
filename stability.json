@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "PASS",
       "FAIL",
       "FAIL",
       "PASS",
@@ -115,7 +114,8 @@
       "PASS",
       "FAIL",
       "FAIL",
-      "FAIL"
+      "FAIL",
+      "PASS"
     ],
     "stability_score": 0.4
   },
@@ -487,12 +487,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "foxnxx": {
     "history": [
@@ -532,12 +532,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "freeuseporn": {
     "history": [
@@ -652,12 +652,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "heavyr": {
     "history": [
@@ -667,12 +667,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "hentai-moon": {
     "history": [
@@ -697,12 +697,12 @@
       "FAIL",
       "FAIL",
       "FAIL",
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "hentaihavenco": {
     "history": [
@@ -922,12 +922,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "javmoe": {
     "history": [
@@ -1072,12 +1072,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "luxuretv": {
     "history": [
@@ -1086,8 +1086,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -1291,7 +1291,7 @@
   },
   "okxxx": {
     "history": [
-      "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1302,7 +1302,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "paradisehill": {
     "history": [
@@ -1357,12 +1357,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "pimpbunny": {
     "history": [
@@ -1417,12 +1417,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "porn4k": {
     "history": [
@@ -1462,12 +1462,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "pornditt": {
     "history": [
@@ -1516,7 +1516,7 @@
   },
   "porngo": {
     "history": [
-      "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1527,11 +1527,11 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "pornhat": {
     "history": [
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1542,7 +1542,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "pornhd3x": {
     "history": [
@@ -1582,12 +1582,12 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
+      "FAIL",
       "FAIL",
       "FAIL",
       "FAIL"
     ],
-    "stability_score": 0.7
+    "stability_score": 0.6
   },
   "pornhub": {
     "history": [
@@ -1762,12 +1762,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "redtube": {
     "history": [
@@ -1867,27 +1867,27 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "speedporn": {
     "history": [
       "FAIL",
-      "FAIL",
       "PASS",
       "PASS",
       "PASS",
       "FAIL",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.6
+    "stability_score": 0.7
   },
   "streamate": {
     "history": [
@@ -2032,12 +2032,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "theyarehuge": {
     "history": [
@@ -2170,9 +2170,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "FAIL"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "uflash": {
     "history": [
@@ -2287,12 +2287,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "whoreshub": {
     "history": [
@@ -2362,12 +2362,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "xnxx": {
     "history": [
@@ -2584,6 +2584,7 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
@@ -2593,6 +2594,19 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
+      "PASS"
+    ],
+    "stability_score": 1.0
+  },
+  "91porna": {
+    "history": [
+      "PASS"
+    ],
+    "stability_score": 1.0
+  },
+  "mangoporn": {
+    "history": [
       "PASS"
     ],
     "stability_score": 1.0
