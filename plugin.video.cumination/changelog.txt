@@ -1,3 +1,8 @@
+[B]Version 1.1.407[/B]
+- fix(txxx): handle videos with null titles in API response to prevent crash
+- fix(txxx): improve robustness of Categories, Channels, and Models parsers
+- add(txxx): regression test for null title handling
+
 [B]Version 1.1.406[/B]
 - Add tests for 91porna and mangoporn sites, including smoke tests
 - Refactor and enhance site parsers and tests

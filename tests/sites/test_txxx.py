@@ -84,3 +84,38 @@ def test_categories_handles_missing_category_list(monkeypatch):
     txxx.Categories("https://txxx.com/categories")
 
     assert dirs == []
+
+
+def test_list_handles_null_title(monkeypatch):
+    """Test that List skips videos with a null title instead of crashing."""
+    mock_data = {
+        "videos": [
+            {
+                "title": None,
+                "duration": "00:00",
+                "scr": "https://img.jpg",
+                "video_id": "456",
+            },
+            {
+                "title": "Valid Video",
+                "duration": "05:00",
+                "scr": "https://img2.jpg",
+                "video_id": "789",
+            }
+        ],
+        "total_count": "2",
+    }
+
+    downloads = []
+
+    monkeypatch.setattr(txxx.utils, "getHtml", lambda *a, **k: json.dumps(mock_data))
+    monkeypatch.setattr(
+        txxx.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
+    )
+    monkeypatch.setattr(txxx.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(txxx.utils, "eod", lambda: None)
+
+    txxx.List("https://txxx.com/latest-updates", page=1)
+
+    assert len(downloads) == 1
+    assert downloads[0] == "Valid Video"

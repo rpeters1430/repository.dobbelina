@@ -257,6 +257,8 @@ def List(url, page=1):
         return
 
     for item in jdata.get("videos"):
+        if not item.get("title"):
+            continue
         name = item.get("title") if utils.PY3 else item.get("title").encode("utf-8")
         duration = item.get("duration")
 
@@ -313,10 +315,11 @@ def Categories(url):
     siteurl += "/"
     aurl = "{0}api/json/{1}/14400/str.all.en.json".format(siteurl, url)
     jdata = _load_json_payload(utils.getHtml(aurl, siteurl))
-    for item in sorted(jdata.get(url) or [], key=lambda x: x.get("title")):
+    items = [item for item in jdata.get(url, []) if item.get("title")]
+    for item in sorted(items, key=lambda x: x.get("title")):
         catpage = "{0}.{1}".format(url, item.get("dir"))
         name = item.get("title") if utils.PY3 else item.get("title").encode("utf-8")
-        videos = " [COLOR deeppink](" + item.get("total_videos") + " videos)[/COLOR]"
+        videos = " [COLOR deeppink](" + item.get("total_videos", "0") + " videos)[/COLOR]"
         name = (
             name + videos
             if utils.PY3
@@ -337,11 +340,13 @@ def Channels(url, page=1):
     )
     jdata = _load_json_payload(utils.getHtml(aurl, siteurl))
     for item in jdata.get(url, []):
+        if not item.get("title"):
+            continue
         catpage = "{0}.{1}".format(url[:-1], item.get("dir"))
         name = item.get("title") if utils.PY3 else item.get("title").encode("utf-8")
         videos = (
             " [COLOR deeppink]("
-            + item.get("statistics").get("videos")
+            + item.get("statistics", {}).get("videos", "0")
             + " videos)[/COLOR]"
         )
         name = (
@@ -392,11 +397,13 @@ def Models(url, page=1):
         )
 
     for item in jdata.get("models", []):
+        if not item.get("title"):
+            continue
         catpage = "model.{}".format(item.get("dir"))
         name = item.get("title") if utils.PY3 else item.get("title").encode("utf-8")
         videos = (
             " [COLOR deeppink]("
-            + item.get("statistics").get("videos")
+            + item.get("statistics", {}).get("videos", "0")
             + " videos)[/COLOR]"
         )
         name = (
