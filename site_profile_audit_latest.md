@@ -2,13 +2,14 @@
 
 - Sites: `175`
 - Tier1 hot: `0`
-- Failing: `2`
+- Failing: `3`
 - Warn: `0`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
+| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
+| anysex | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
-| txxx | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -34,9 +35,7 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
-| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | avple | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | awmnet | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -159,6 +158,7 @@
 | trendyporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | tube8 | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | tubxporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| txxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | uflash | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | vaginanl | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | vipporns | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -185,8 +185,9 @@
 
 ## Next Batch
 
+- **analdin** (failing, tier=2) | failures: list:FAIL
+- **anysex** (failing, tier=2)
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL, search:FAIL
-- **txxx** (failing, tier=None) | failures: main:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
@@ -204,4 +205,3 @@
 - **xvideos** (tier1, tier=1)
 - **youporn** (tier1, tier=1)
 - **yourlesbians** (tier1, tier=1)
-- **6xtube** (backlog, tier=None)
