@@ -281,7 +281,7 @@ def get_video_api(url, member=False, premium_member=False):
             headers.update({"X-Session-Token": session_token})
         else:
             headers = hanime_headers
-        video_api = "https://hanime.tv/rapi/v7/videos_manifests/{0}".format(url)
+        video_api = "https://hanime.tv/api/v8/video?id={0}".format(url)
 
     data = ""
     videojson = utils.getHtml(video_api, headers=headers)
