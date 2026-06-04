@@ -38,6 +38,9 @@ jobs:
       available_labels: '${{ steps.get_labels.outputs.available_labels }}'
       triaged_issues: '${{ env.TRIAGED_ISSUES }}'
     steps:
+      - name: 'Checkout repository'
+        uses: 'actions/checkout@v5'
+
       - name: 'Ensure site health labels'
         if: |-
           ${{ github.event_name != 'pull_request' }}
