@@ -1,3 +1,13 @@
+[B]Version 1.1.408[/B]
+- chore: update repository index for hanime fix
+- fix(hanime): update video manifest API to v8 to fix parser regression
+- fix(txxx): handle videos with null titles in API response
+- Add tests for 91porna and mangoporn sites, including smoke tests
+- Refactor and enhance site parsers and tests
+- Merge pull request #179 from rpeters1430/copilot/clean-up-debug-py-files
+- chore: address codeql regex risk in moved debug script
+- chore: move root debug scripts into scripts/debug
+
 [B]Version 1.1.407[/B]
 - fix(txxx): handle videos with null titles in API response to prevent crash
 - fix(txxx): improve robustness of Categories, Channels, and Models parsers
