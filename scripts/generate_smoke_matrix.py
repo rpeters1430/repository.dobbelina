@@ -3,6 +3,7 @@
 
 import json
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 SITES_DIR = ROOT / "plugin.video.cumination" / "resources" / "lib" / "sites"
@@ -24,8 +25,7 @@ def load_profiles() -> dict[str, Any]:
 
 def main():
     sites = discover_site_names()
-    profiles = load_profiles().get("sites", {})
-    
+
     # Priority grouping: Tier 1 always together in chunk 0? 
     # Or just distribute everything.
     # Let's group by tier first to ensure Tier 1 sites are distributed or isolated.
