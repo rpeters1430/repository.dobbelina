@@ -44,22 +44,7 @@ jobs:
         env:
           GITHUB_REPOSITORY: '${{ github.repository }}'
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN || github.token }}'
-        run: |-
-          ensure_label() {
-            local name="$1"
-            local color="$2"
-            local description="$3"
-            gh label create "$name" --color "$color" --description "$description" --repo "${GITHUB_REPOSITORY}" --force
-          }
-
-          ensure_label "site-health" "5319e7" "Automated site health issue"
-          ensure_label "site-health/new-failure" "b60205" "Site newly failed in health checks"
-          ensure_label "site-health/regression" "d93f0b" "Site health regressed from a healthier state"
-          ensure_label "site-health/step-regression" "fbca04" "One site health step regressed"
-          ensure_label "site-health/persistent-failure" "cfd3d7" "Failure persisted across health checks"
-          ensure_label "failure/network" "006b75" "Network or availability failure"
-          ensure_label "failure/parser" "c2e0c6" "Parser or listing extraction failure"
-          ensure_label "failure/playback" "f9d0c4" "Playback resolution failure"
+        run: python scripts/ensure_labels.py
 
       - name: 'Get repository labels'
         id: 'get_labels'
