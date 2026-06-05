@@ -189,14 +189,36 @@ def Playvid(url, name, download=None):
         if sources:
             src = utils.safe_get_attr(sources[-1], "src", ["data-src"]) or ""
 
+        if not src and soup:
+            video_tag = soup.find("video")
+            if video_tag:
+                src = utils.safe_get_attr(video_tag, "src", ["data-src"]) or ""
+
         if not src:
             match = re.search(
                 r'source[^>]+src="([^"]+)"', videohtml, re.DOTALL | re.IGNORECASE
             )
             if match:
                 src = match.group(1)
+
+        if not src:
+            match = re.search(
+                r'video[^>]+src="([^"]+)"', videohtml, re.DOTALL | re.IGNORECASE
+            )
+            if match:
+                src = match.group(1)
+
         if src:
             vp.play_from_direct_link(src + "|Referer={}".format(site.url))
+        else:
+            if "This video cannot be found" in videohtml or "video_missing" in url or "video_missing" in videohtml:
+                utils.notify(msg="page does not exist")
+                return
+            lower_html = videohtml.lower()
+            if any(p in lower_html for p in ("private", "password", "login", "registered users", "only friends", "permission")):
+                utils.notify(msg="private")
+                return
+            utils.notify(msg="playback failed")
     except Exception as exc:
         utils.kodilog("@@@@Cumination: tokyomotion Playvid failed: {}".format(exc))
         utils.kodilog(traceback.format_exc())

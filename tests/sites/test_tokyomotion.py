@@ -91,3 +91,44 @@ def test_playvid_uses_source_tag(monkeypatch):
     tokyomotion.Playvid("https://www.tokyomotion.net/video/abc123", "First Video")
 
     assert played.get("url") or played.get("resolve")
+
+
+def test_playvid_uses_video_src_fallback(monkeypatch):
+    html = '<html><video src="https://cdn.tokyo-motion.net/videos/fallback.mp4"></video></html>'
+    played = {}
+    monkeypatch.setattr(tokyomotion.utils, "getHtml", lambda url, *a, **k: html)
+    class DummyVP:
+        def __init__(self, name, download=None):
+            self.name = name
+            self.progress = type("P", (), {"update": lambda *a, **k: None})()
+        def play_from_direct_link(self, url):
+            played["url"] = url
+    monkeypatch.setattr(tokyomotion.utils, "VideoPlayer", DummyVP)
+    tokyomotion.Playvid("https://www.tokyomotion.net/video/abc123", "Fallback Video")
+    assert played.get("url") == "https://cdn.tokyo-motion.net/videos/fallback.mp4|Referer=https://www.tokyomotion.net/"
+
+
+def test_playvid_handles_missing_video(monkeypatch):
+    html = '<html><body>This video cannot be found. Are you sure you typed in the correct url?</body></html>'
+    notifications = []
+    monkeypatch.setattr(tokyomotion.utils, "getHtml", lambda url, *a, **k: html)
+    monkeypatch.setattr(tokyomotion.utils, "notify", lambda msg, *a, **k: notifications.append(msg))
+    class DummyVP:
+        def __init__(self, name, download=None):
+            pass
+    monkeypatch.setattr(tokyomotion.utils, "VideoPlayer", DummyVP)
+    tokyomotion.Playvid("https://www.tokyomotion.net/video/abc123", "Missing Video")
+    assert "page does not exist" in notifications
+
+
+def test_playvid_handles_private_video(monkeypatch):
+    html = '<html><body>This video is private. Only uploader and friends can view this.</body></html>'
+    notifications = []
+    monkeypatch.setattr(tokyomotion.utils, "getHtml", lambda url, *a, **k: html)
+    monkeypatch.setattr(tokyomotion.utils, "notify", lambda msg, *a, **k: notifications.append(msg))
+    class DummyVP:
+        def __init__(self, name, download=None):
+            pass
+    monkeypatch.setattr(tokyomotion.utils, "VideoPlayer", DummyVP)
+    tokyomotion.Playvid("https://www.tokyomotion.net/video/abc123", "Private Video")
+    assert "private" in notifications
