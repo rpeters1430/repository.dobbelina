@@ -59,7 +59,7 @@ The stream URL was not captured via network interception. This usually means the
 python scripts/playwright_listing_probe.py --url <video-page-url> --selector "video,source,[data-src],[data-video-url]"
 ```
 
-This dumps a count and summary of matched elements. Look for `src`, `data-src`, or `data-video-url` attributes on `<video>` or `<source>` tags in the output.
+This prints a count of matched elements and a sample of link titles. Use it to confirm the selector is hitting the right cards. To inspect raw HTML attributes (`src`, `data-src`, etc.), open the page in a browser and use DevTools → Elements.
 
 If neither tool returns a usable URL, the site likely requires a signed token or API call — check the browser's Network tab manually (DevTools → Network → filter by `.m3u8` or `.mp4`).
 
@@ -85,7 +85,7 @@ You now know what URL the site serves. To update the scraper to extract it, use 
 Use `playwright_listing_probe.py` to inspect the listing structure before writing any scraper code. Pass the main listing URL and adjust `--selector` to match the card container:
 
 ```bash
-python scripts/playwright_listing_probe.py --url <listing-url> --selector ".video-item,.thumb,.item"
+python scripts/playwright_listing_probe.py --url <listing-url> --selector ".video-item,.thumb,.item"  # adjust to the site's card selector
 ```
 
 For the full new-site workflow (creating the scraper, registering it, writing tests), use `kodi-site-maintenance`.
@@ -100,4 +100,4 @@ If `utils.getHtml` returns a Cloudflare challenge page or empty content, confirm
 python scripts/playwright_sniff.py <site-listing-url>
 ```
 
-If Playwright succeeds (returns page content or stream URLs), the site requires `flaresolverr` or Playwright-based fetching in the scraper. For setup and integration details, use `kodi-site-maintenance`.
+If `[>>]` lines appear in the output, Playwright can reach the site and it requires `flaresolverr` or Playwright-based fetching in the scraper. For setup and integration details, use `kodi-site-maintenance`.
