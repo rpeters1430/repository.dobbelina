@@ -5,30 +5,22 @@
 
 ## Snapshot
 
-- Current: `PASS 172` | `WARN 2` | `FAIL 1` | `ERROR 0` | `SKIP 0`
-- Previous: `PASS 172` | `WARN 1` | `FAIL 2` | `ERROR 0` | `SKIP 0`
+- Current: `PASS 174` | `WARN 0` | `FAIL 1` | `ERROR 0` | `SKIP 0`
+- Previous: `PASS 172` | `WARN 2` | `FAIL 1` | `ERROR 0` | `SKIP 0`
 
 ## Delta Summary
 
 - New failures: `0`
-- Resolved failures: `1`
+- Resolved failures: `0`
 - Persistent failures: `1`
-- Site regressions: `2`
-- Step regressions: `2`
-
-## Resolved Failures
-
-- **analdin**: `FAIL -> PASS`
+- Site regressions: `0`
+- Step regressions: `0`
 
 ## Persistent Failures
 
-- **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 30.0%]
-
-## Step Regressions
-
-- **perverzija** `play`: `SKIP -> FAIL` (CODE) | IndexError: list index out of range
-- **pornmz** `categories`: `PASS -> FAIL` (NETWORK) | Timed out after 35s
+- **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 20.0%]
 
 ## Improvements
 
-- **tokyomotion**: `WARN -> PASS`
+- **perverzija**: `WARN -> PASS`
+- **pornmz**: `WARN -> PASS`
