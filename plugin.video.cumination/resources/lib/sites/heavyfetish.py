@@ -24,37 +24,22 @@ from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.decrypters.kvsplayer import kvs_decode
-from resources.lib.sites.soup_spec import SoupSiteSpec
 
 site = AdultSite(
-    "yourlesbians",
-    "[COLOR hotpink]YourLesbians[/COLOR]",
-    "https://yourlesbians.com/",
-    "yourlesbians.png",
-    "yourlesbians",
+    "heavyfetish",
+    "[COLOR hotpink]HeavyFetish[/COLOR]",
+    "https://heavyfetish.com/",
+    "heavyfetish.png",
+    "heavyfetish",
     category="Specialty",
-)
-
-VIDEO_LIST_SPEC = SoupSiteSpec(
-    selectors={
-        "items": ".item",
-        "url": {"selector": "a[href]", "attr": "href"},
-        "title": {"selector": "a", "attr": "title", "text": False},
-        "thumbnail": {
-            "selector": "img",
-            "attr": "data-original",
-            "fallback_attrs": ["src"],
-        },
-        "duration": {"selector": ".time", "text": True},
-    }
 )
 
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir("[COLOR hotpink]Latest[/COLOR]", site.url + "lesbian-videos/", "List", site.img_cat)
+    site.add_dir("[COLOR hotpink]Categories[/COLOR]", site.url + "categories/", "Categories", site.img_cat)
     site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search)
-    List(site.url + "lesbian-videos/")
+    List(site.url + "1/?&sort_by=post_date")
     utils.eod()
 
 
@@ -65,7 +50,52 @@ def List(url):
         utils.eod()
         return
     soup = utils.parse_html(listhtml)
-    VIDEO_LIST_SPEC.run(site, soup, base_url=site.url)
+    for item in soup.select(".item.b6m-video, .hf-video-item"):
+        link = item.select_one("a[href]")
+        if not link:
+            continue
+        videopage = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, "href"))
+        name = utils.cleantext(utils.safe_get_attr(link, "title") or utils.safe_get_text(link))
+        img_tag = item.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-webp", ["data-original", "src"]) if img_tag else ""
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
+        duration = utils.safe_get_text(item.select_one(".duration"), default="")
+        site.add_download_link(name, videopage, "Playvid", img, name, duration=duration)
+
+    # Next page: href has embedded whitespace — strip before using
+    next_el = soup.select_one("li.next a")
+    if next_el and next_el.get("href"):
+        next_href = next_el["href"].strip()
+        if next_href and not next_href.startswith("#"):
+            next_url = urllib_parse.urljoin(site.url, next_href)
+            page_match = re.search(r"/(\d+)/", next_href)
+            page_num = page_match.group(1) if page_match else "?"
+            site.add_dir("Next Page ({})".format(page_num), next_url, "List", site.img_next)
+    utils.eod()
+
+
+@site.register()
+def Categories(url):
+    html = utils.getHtml(url, site.url)
+    if not html:
+        utils.eod()
+        return
+    soup = utils.parse_html(html)
+    entries = []
+    for anchor in soup.select("a.item[href*='/categories/']"):
+        href = utils.safe_get_attr(anchor, "href")
+        if not href:
+            continue
+        name = utils.safe_get_text(anchor.select_one(".title")) or utils.safe_get_attr(anchor, "title")
+        if not name:
+            continue
+        img_tag = anchor.select_one("img")
+        img = utils.safe_get_attr(img_tag, "src", ["data-src"]) if img_tag else ""
+        cat_url = urllib_parse.urljoin(site.url, href) + "?&sort_by=post_date"
+        entries.append((name, cat_url, img))
+    for name, cat_url, img in sorted(entries):
+        site.add_dir(name, cat_url, "List", img)
     utils.eod()
 
 
@@ -74,7 +104,8 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        search_url = site.url + "search/" + urllib_parse.quote_plus(keyword) + "/"
+        kw = urllib_parse.quote_plus(keyword)
+        search_url = "{}search/{}/".format(site.url, kw) + "?&from_videos=1&from_albums=1"
         List(search_url)
 
 
