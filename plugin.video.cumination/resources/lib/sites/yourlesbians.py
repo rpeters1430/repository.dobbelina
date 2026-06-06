@@ -23,7 +23,6 @@ from six.moves import urllib_parse
 
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
-from resources.lib.decrypters.kvsplayer import kvs_decode
 from resources.lib.sites.soup_spec import SoupSiteSpec
 
 site = AdultSite(
@@ -32,40 +31,76 @@ site = AdultSite(
     "https://yourlesbians.com/",
     "yourlesbians.png",
     "yourlesbians",
-    category="Specialty",
+    category="Video Tubes",
 )
 
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
-        "items": ".item",
-        "url": {"selector": "a[href]", "attr": "href"},
-        "title": {"selector": "a", "attr": "title", "text": False},
+        "items": ".thumbs .item",
+        "url": {"selector": "a", "attr": "href"},
+        "title": {"selector": "a", "attr": "title", "clean": True},
         "thumbnail": {
             "selector": "img",
             "attr": "data-original",
             "fallback_attrs": ["src"],
         },
         "duration": {"selector": ".time", "text": True},
+        "quality": {"selector": ".qualtiy", "text": True},
+        "pagination": {
+            "selector": ".pagination a",
+            "text_matches": ["next", ">", "»"],
+            "attr": "href",
+            "mode": "List",
+        },
     }
 )
 
 
 @site.register(default_mode=True)
 def Main():
-    site.add_dir("[COLOR hotpink]Latest[/COLOR]", site.url + "lesbian-videos/", "List", site.img_cat)
-    site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search)
-    List(site.url + "lesbian-videos/")
+    site.add_dir(
+        "[COLOR hotpink]Latest[/COLOR]", site.url, "List", site.img_cat
+    )
+    site.add_dir(
+        "[COLOR hotpink]Most Viewed[/COLOR]",
+        site.url + "most-popular/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Top Rated[/COLOR]",
+        site.url + "top-rated/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Longest[/COLOR]",
+        site.url + "longest/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Categories[/COLOR]",
+        site.url + "categories/",
+        "Categories",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search
+    )
+    List(site.url)
     utils.eod()
 
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, site.url)
-    if not listhtml:
+    html = utils.getHtml(url, site.url)
+    if not html:
         utils.eod()
         return
-    soup = utils.parse_html(listhtml)
-    VIDEO_LIST_SPEC.run(site, soup, base_url=site.url)
+
+    soup = utils.parse_html(html)
+    VIDEO_LIST_SPEC.run(site, soup, base_url=url)
     utils.eod()
 
 
@@ -79,6 +114,44 @@ def Search(url, keyword=None):
 
 
 @site.register()
+def Categories(url):
+    html = utils.getHtml(url, site.url)
+    if not html:
+        utils.eod()
+        return
+
+    soup = utils.parse_html(html)
+    cat_items = soup.select(".list-categories .item, .list-categories a")
+
+    entries = []
+    for anchor in cat_items:
+        if anchor.name != "a":
+            anchor = anchor.select_one("a")
+        if not anchor:
+            continue
+
+        href = utils.safe_get_attr(anchor, "href")
+        if not href:
+            continue
+
+        name = utils.safe_get_text(anchor)
+        if not name:
+            name = utils.safe_get_attr(anchor, "title")
+        if not name:
+            continue
+
+        img_tag = anchor.select_one("img")
+        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
+
+        entries.append((name, urllib_parse.urljoin(site.url, href), img))
+
+    for name, cat_url, img in sorted(entries):
+        site.add_dir(name, cat_url, "List", img)
+
+    utils.eod()
+
+
+@site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     html = utils.getHtml(url, site.url)
@@ -86,33 +159,27 @@ def Playvid(url, name, download=None):
         vp.play_from_link_to_resolve(url)
         return
 
-    license_match = re.search(r"license_code:\s*'([^']+)'", html, re.IGNORECASE)
-    license_code = license_match.group(1) if license_match else ""
+    quality_matches = [
+        (1080, r"video_alt_url2:\s*['\"]([^'\"]+)['\"]"),
+        (720, r"video_alt_url:\s*['\"]([^'\"]+)['\"]"),
+        (480, r"video_url:\s*['\"]([^'\"]+)['\"]")
+    ]
+    
+    candidates = {}
+    for res, pattern in quality_matches:
+        match = re.search(pattern, html)
+        if match:
+            candidates[res] = match.group(1)
+            
+    if candidates:
+        best_res = max(candidates.keys())
+        video_url = candidates[best_res]
+        vp.play_from_direct_link(video_url + "|Referer=" + url)
+        return
 
-    sources = {}
-    for idx, raw_url in enumerate(
-        re.findall(r"video_url\s*:\s*'([^']+)'", html, re.IGNORECASE), start=1
-    ):
-        stream_url = raw_url
-        if stream_url.startswith("function/"):
-            if license_code:
-                try:
-                    stream_url = kvs_decode(stream_url, license_code)
-                except Exception:
-                    stream_url = re.sub(r"^function/\d+/", "", stream_url)
-            else:
-                stream_url = re.sub(r"^function/\d+/", "", stream_url)
-        if stream_url and stream_url.startswith("http"):
-            sources["Source {}".format(idx)] = stream_url
-
-    if sources:
-        stream_url = (
-            utils.selector("Select quality", sources)
-            if len(sources) > 1
-            else next(iter(sources.values()))
-        )
-        if stream_url:
-            vp.play_from_direct_link(stream_url + "|Referer=" + url)
-            return
+    meta = re.search(r'["\']contentUrl["\']:\s*["\']([^"\']+)["\']', html)
+    if meta:
+        vp.play_from_direct_link(meta.group(1) + "|Referer=" + url)
+        return
 
     vp.play_from_link_to_resolve(url)
