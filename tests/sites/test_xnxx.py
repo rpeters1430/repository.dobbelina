@@ -240,3 +240,30 @@ def test_list_parses_search_results(monkeypatch):
 
     assert len(downloads) == 1
     assert downloads[0]["name"] == "Test Query Video"
+
+
+def test_lookupinfo(monkeypatch):
+    """Test that Lookupinfo correctly parses porn makers and tags."""
+    lookup_calls = []
+
+    class FakeLookupInfo:
+        def __init__(self, site_url, url, mode, lookup_list):
+            self.site_url = site_url
+            self.url = url
+            self.mode = mode
+            self.lookup_list = lookup_list
+
+        def getinfo(self):
+            lookup_calls.append((self.site_url, self.url, self.mode, self.lookup_list))
+
+    monkeypatch.setattr(xnxx.utils, "LookupInfo", FakeLookupInfo)
+
+    xnxx.Lookupinfo("https://www.xnxx.com/video-abc123/test")
+
+    assert len(lookup_calls) == 1
+    assert lookup_calls[0][0] == "https://www.xnxx.com/"
+    assert lookup_calls[0][1] == "https://www.xnxx.com/video-abc123/test"
+    assert lookup_calls[0][2] == "xnxx.List"
+    assert len(lookup_calls[0][3]) == 2
+    assert lookup_calls[0][3][0][0] == "Porn Maker"
+    assert lookup_calls[0][3][1][0] == "Tag"

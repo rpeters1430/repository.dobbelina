@@ -59,6 +59,12 @@ def List(url):
     listhtml = utils.getHtml(url, site.url, headers=hdr)
     soup = utils.parse_html(listhtml)
 
+    cm = []
+    cm_lookupinfo = utils.addon_sys + "?mode=xnxx.Lookupinfo&url="
+    cm.append(
+        ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + cm_lookupinfo + ")")
+    )
+
     video_items = soup.select(".mozaique .thumb-block")
     for item in video_items:
         classes = item.get("class", [])
@@ -115,6 +121,7 @@ def List(url):
             duration=duration,
             quality=quality,
             noDownload=True,
+            contextm=cm,
         )
 
     pagination = soup.select_one(".pagination")
@@ -148,6 +155,13 @@ def List2(url, page=0):
     jlist = utils.getHtml(url + "/videos/best/{0}".format(page), site.url)
     jlist = json.loads(jlist)
     items = jlist.get("videos")
+
+    cm = []
+    cm_lookupinfo = utils.addon_sys + "?mode=xnxx.Lookupinfo&url="
+    cm.append(
+        ("[COLOR deeppink]Lookup info[/COLOR]", "RunPlugin(" + cm_lookupinfo + ")")
+    )
+
     for item in items:
         name = utils.cleantext(item.get("tf"))
         img = item.get("i")
@@ -174,6 +188,7 @@ def List2(url, page=0):
             duration=item.get("d"),
             quality=quality,
             noDownload=True,
+            contextm=cm,
         )
 
     page += 1
@@ -269,3 +284,17 @@ def Search(url, keyword=None):
         site.search_dir(url, "Search")
     else:
         List(url + keyword.replace(" ", "+"))
+
+
+@site.register()
+def Lookupinfo(url):
+    lookup_list = [
+        (
+            "Porn Maker",
+            r'<a class="gold-plate" href="/(porn-maker/[^"]+)">([^<]+)<',
+            "",
+        ),
+        ("Tag", r'class="is-keyword" href="/(search/[^"]+)">([^<]+)<', ""),
+    ]
+    lookupinfo = utils.LookupInfo(site.url, url, "xnxx.List", lookup_list)
+    lookupinfo.getinfo()

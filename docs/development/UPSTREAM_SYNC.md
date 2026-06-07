@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-05-24
-**Last Sync**: 2026-05-24 - Ported new sites (yespornvip, hypnotube), rule34video Lookupinfo, camwhoresbay/drtuber search fixes, premiumporn bysewihe API fix through `46308729`.
+**Last Updated**: 2026-06-06
+**Last Sync**: 2026-06-06 - Ported xnxx Lookupinfo, verified erome active page pagination.
 
 ---
 
@@ -18,6 +18,14 @@
 ---
 
 ## Sync Sessions
+
+### 2026-06-06 Porting Session
+Reviewed upstream `dobbelina/repository.dobbelina` commits after the 2026-05-24 session.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `d29b4cd9` | erome nextpage fixes #1879 | skipped | 2026-06-06 | Our BS4-based scraper matches `.pagination .active` which automatically supports the new `page-item active` class. |
+| `0b8c935e` | xnxx - fixes #1874 | `manual` | 2026-06-06 | Integrated the Lookupinfo context menu option (corrected to call `xnxx.Lookupinfo` rather than upstream's copy-paste error of `premiumporn.Lookupinfo`) and registered the `Lookupinfo` function. |
 
 ### 2026-05-24 Porting Session
 Reviewed upstream `dobbelina/repository.dobbelina` commits after the 2026-05-16 session (`5aca0219..46308729`). Version/package bumps, merge commits, and icon-only uploads were not applied. Large cam site rewrites (bongacams, cam4, chaturbate optional players) deferred to a future session.

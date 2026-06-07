@@ -206,3 +206,49 @@ def test_list_handles_no_pagination(monkeypatch):
 
     # Should have no pagination (current page is last page)
     assert len(dirs) == 0
+
+
+def test_categories_pagination(monkeypatch):
+    """Test that Categories handles pagination correctly by adding a 'Next Page...' directory entry."""
+    html = """
+    <html>
+    <body>
+    <article>
+        <a href="https://pornmz.com/category/milf/" title="MILF">
+            <img src="https://pornmz.com/cats/milf.jpg">
+        </a>
+    </article>
+    <div class="pagination">
+        <span class="current">1</span>
+        <a href="https://pornmz.com/categories/page/2/">2</a>
+    </div>
+    </body>
+    </html>
+    """
+    dirs = []
+    url = "https://pornmz.com/categories/"
+
+    def fake_get_html(url, referer=None):
+        return html
+
+    def fake_add_dir(name, url, mode, iconimage=None):
+        dirs.append(
+            {
+                "name": name,
+                "url": url,
+                "mode": mode,
+            }
+        )
+
+    monkeypatch.setattr(pornmz.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(pornmz.site, "add_dir", fake_add_dir)
+    monkeypatch.setattr(pornmz.utils, "eod", lambda: None)
+
+    pornmz.Categories(url)
+
+    # Should have 1 category + 1 next page dir = 2 total
+    assert len(dirs) == 2
+    assert dirs[0]["name"] == "MILF"
+    assert dirs[1]["name"] == "Next Page..."
+    assert dirs[1]["url"] == "https://pornmz.com/categories/page/2/"
+

@@ -140,7 +140,8 @@
       "Bash(ln *)",
       "Bash(echo \"test\")",
       "Read(//tmp/**)",
-      "Bash(gh issue *)"
+      "Bash(gh issue *)",
+      "Bash(gh pr *)"
     ],
     "deny": [],
     "ask": []

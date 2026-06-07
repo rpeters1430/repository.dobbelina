@@ -171,57 +171,59 @@ def List(url):
 
 @site.register()
 def Categories(url):
-    while True:
-        cathtml = utils.getHtml(url, site.url)
-        soup = utils.parse_html(cathtml)
+    cathtml = utils.getHtml(url, site.url)
+    soup = utils.parse_html(cathtml)
 
-        # Find all category articles
-        articles = soup.select("article")
-        for article in articles:
-            try:
-                link = article.select_one("a[href][title]")
-                if not link:
-                    continue
-
-                sitepage = utils.safe_get_attr(link, "href")
-                if not sitepage:
-                    continue
-
-                name = utils.safe_get_attr(link, "title")
-                name = utils.cleantext(name)
-                if not name:
-                    continue
-
-                # Get image
-                img_tag = article.select_one("img[src]")
-                img = (
-                    utils.safe_get_attr(img_tag, "src", ["data-src"]) if img_tag else ""
-                )
-
-                siteurl = sitepage + "/page/1?filter=latest"
-                site.add_dir(name, siteurl, "List", img)
-            except Exception as e:
-                utils.kodilog("pornmz Categories: Error processing category - {}".format(e))
+    # Find all category articles
+    articles = soup.select("article")
+    for article in articles:
+        try:
+            link = article.select_one("a[href][title]")
+            if not link:
                 continue
 
-        # Check for next page - find current page, then next link
-        pagination = soup.select(".pagination a, .pagination li")
-        next_url = None
-        current_found = False
-        for item in pagination:
-            if "current" in utils.safe_get_attr(item, "class", default=""):
-                current_found = True
-            elif current_found:
-                # Next item after current should be the next page
-                next_link = item if item.name == "a" else item.select_one("a")
-                if next_link:
-                    next_url = utils.safe_get_attr(next_link, "href")
-                break
+            sitepage = utils.safe_get_attr(link, "href")
+            if not sitepage:
+                continue
 
-        if next_url:
-            url = next_url
-        else:
+            name = utils.safe_get_attr(link, "title")
+            name = utils.cleantext(name)
+            if not name:
+                continue
+
+            # Get image
+            img_tag = article.select_one("img[src]")
+            img = (
+                utils.safe_get_attr(img_tag, "src", ["data-src"]) if img_tag else ""
+            )
+
+            siteurl = sitepage + "/page/1?filter=latest"
+            site.add_dir(name, siteurl, "List", img)
+        except Exception as e:
+            utils.kodilog("pornmz Categories: Error processing category - {}".format(e))
+            continue
+
+    # Check for next page - find current page, then next link
+    pagination = soup.select(".pagination a, .pagination li, .pagination span, .pagination .current")
+    next_url = None
+    current_found = False
+    for item in pagination:
+        if "current" in utils.safe_get_attr(item, "class", default="") or "current" in item.get("class", []):
+            current_found = True
+        elif current_found:
+            # Next item after current should be the next page
+            next_link = item if item.name == "a" else item.select_one("a")
+            if next_link:
+                next_url = utils.safe_get_attr(next_link, "href")
             break
+
+    if next_url:
+        site.add_dir(
+            "Next Page...",
+            next_url,
+            "Categories",
+            site.img_next,
+        )
 
     utils.eod()
 
