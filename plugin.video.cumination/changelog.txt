@@ -1,3 +1,14 @@
+[B]Version 1.1.411[/B]
+- feat: enhance scraper functionality and add pagination support for categories in pornmz and xnxx
+- fix: restore yourlesbians to prior implementation (categories, multi-quality, more menus)
+- feat: add fpoxxx, heavyfetish, yourlesbians scrapers and site icons from upstream PR #1876
+- feat: add notfans.com scraper with KVS video support
+- fix: correct playwright-site-investigator skill accuracy issues
+- feat: add playwright-site-investigator skill
+- Merge pull request #194 from rpeters1430/copilot/playwright-tests-fix
+- chore: bump Cumination to 1.1.409 and rebuild repository index
+- fix(tokyomotion): resolve play regression and add video src fallback parsing
+
 [B]Version 1.1.410[/B]
 - fix: restore yourlesbians to prior implementation (categories, multi-quality, more menus)
 - feat: add fpoxxx, heavyfetish, yourlesbians scrapers and site icons from upstream PR #1876
