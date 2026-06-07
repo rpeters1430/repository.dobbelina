@@ -5,8 +5,8 @@
 
 ## Snapshot
 
-- Current: `PASS 174` | `WARN 0` | `FAIL 1` | `ERROR 0` | `SKIP 0`
-- Previous: `PASS 172` | `WARN 2` | `FAIL 1` | `ERROR 0` | `SKIP 0`
+- Current: `PASS 177` | `WARN 0` | `FAIL 1` | `ERROR 0` | `SKIP 0`
+- Previous: `PASS 174` | `WARN 0` | `FAIL 1` | `ERROR 0` | `SKIP 0`
 
 ## Delta Summary
 
@@ -18,9 +18,4 @@
 
 ## Persistent Failures
 
-- **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 20.0%]
-
-## Improvements
-
-- **perverzija**: `WARN -> PASS`
-- **pornmz**: `WARN -> PASS`
+- **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 10.0%]

@@ -1,6 +1,6 @@
 # Site Profile Audit
 
-- Sites: `175`
+- Sites: `178`
 - Tier1 hot: `0`
 - Failing: `1`
 - Warn: `0`
@@ -55,6 +55,7 @@
 | eroticmv | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | familypornhd | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | foxnxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| fpoxxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | freeomovie | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | freepornvideos | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | freeuseporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -65,6 +66,7 @@
 | hanime | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hdporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hdporn92 | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
+| heavyfetish | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | heavyr | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | hentai-moon | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hentaidude | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -107,6 +109,7 @@
 | nltubes | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | nonktube | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | noodlemagazine | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| notfans | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | okxxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | paradisehill | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | peachurnet | backlog | PASS |  | video |  | Y | Y | Y | Y |

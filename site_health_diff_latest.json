@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-06-07T07:37:53.922265",
+    "sites_total": 178,
+    "pass": 177,
+    "warn": 0,
+    "fail": 1,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-06-06T07:17:27.919259",
     "sites_total": 175,
     "pass": 174,
@@ -8,20 +17,11 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-06-05T07:44:16.882353",
-    "sites_total": 175,
-    "pass": 172,
-    "warn": 2,
-    "fail": 1,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
     "new_failures": 0,
     "resolved_failures": 0,
     "persistent_failures": 1,
-    "improved_sites": 2,
+    "improved_sites": 0,
     "regressions": 0,
     "step_regressions": 0
   },
@@ -35,35 +35,31 @@
       "class": "BLOCKED",
       "message": "main: HTTPError: HTTP Error 403: Forbidden",
       "is_flaky": true,
-      "stability_score": 0.2
+      "stability_score": 0.1
     }
   ],
-  "improved_sites": [
-    {
-      "site": "perverzija",
-      "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "pornmz",
-      "previous": "WARN",
-      "current": "PASS"
-    }
-  ],
+  "improved_sites": [],
   "step_regressions": [],
   "deltas": [
     {
-      "site": "perverzija",
-      "previous": "WARN",
+      "site": "fpoxxx",
+      "previous": "MISSING",
       "current": "PASS",
-      "kind": "improvement",
+      "kind": "new_site",
       "detail": ""
     },
     {
-      "site": "pornmz",
-      "previous": "WARN",
+      "site": "heavyfetish",
+      "previous": "MISSING",
       "current": "PASS",
-      "kind": "improvement",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "notfans",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
       "detail": ""
     }
   ]
