@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-06-07T07:37:53.922265",
+    "generated": "2026-06-08T07:55:57.704474",
     "sites_total": 178,
     "pass": 177,
     "warn": 0,
@@ -9,9 +9,9 @@
     "skip": 0
   },
   "previous": {
-    "generated": "2026-06-06T07:17:27.919259",
-    "sites_total": 175,
-    "pass": 174,
+    "generated": "2026-06-07T07:37:53.922265",
+    "sites_total": 178,
+    "pass": 177,
     "warn": 0,
     "fail": 1,
     "error": 0,
@@ -35,32 +35,10 @@
       "class": "BLOCKED",
       "message": "main: HTTPError: HTTP Error 403: Forbidden",
       "is_flaky": true,
-      "stability_score": 0.1
+      "stability_score": 0.0
     }
   ],
   "improved_sites": [],
   "step_regressions": [],
-  "deltas": [
-    {
-      "site": "fpoxxx",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "heavyfetish",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "notfans",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    }
-  ]
+  "deltas": []
 }
