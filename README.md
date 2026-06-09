@@ -81,6 +81,20 @@ pip install -r requirements-test.txt
 pytest
 ```
 
+### Site Maintenance Tools
+
+Most site workflows start from the dispatcher:
+
+```bash
+python scripts/site_tool.py --workflows
+python scripts/site_tool.py --list
+```
+
+Use it to find the right command for adding sites, smoke testing, Playwright
+inspection, listing implemented sites, and logo validation. See
+[docs/development/SITE_TOOLING.md](docs/development/SITE_TOOLING.md) for the
+canonical script map.
+
 On Windows, if the repository already contains a Linux-created `.venv`, create a Windows environment in `.venv-win` instead:
 
 ```powershell

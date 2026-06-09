@@ -17,10 +17,17 @@ import sys
 import re
 import subprocess
 import urllib.request
+import struct
+import zlib
 from pathlib import Path
 from bs4 import BeautifulSoup
 import time
 import argparse
+import io
+
+
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 # Configuration
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", Path(__file__).resolve().parent))
@@ -31,6 +38,7 @@ TEMP_DIR = REPO_ROOT / "temp_logos"
 # Standards
 TARGET_SIZE = (256, 256)
 MAX_FILE_SIZE_KB = 50
+HAS_IMAGEMAGICK = False
 
 # Ensure directories exist
 TEMP_DIR.mkdir(parents=True, exist_ok=True)
@@ -39,25 +47,26 @@ IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
 def check_dependencies():
     """Check if required tools are installed"""
-    missing = []
+    global HAS_IMAGEMAGICK
 
     # Check ImageMagick
     try:
         result = subprocess.run(["magick", "--version"], capture_output=True, text=True)
         if result.returncode == 0:
+            HAS_IMAGEMAGICK = True
             print("[OK] ImageMagick is installed")
         else:
-            missing.append("ImageMagick")
+            HAS_IMAGEMAGICK = False
     except FileNotFoundError:
-        missing.append("ImageMagick")
+        HAS_IMAGEMAGICK = False
 
     # Check BeautifulSoup4 (imported above)
     print("[OK] BeautifulSoup4 is available")
 
-    if missing:
-        print(f"\n[ERROR] Missing dependencies: {', '.join(missing)}")
-        print("Install ImageMagick from: https://imagemagick.org/script/download.php")
-        return False
+    if not HAS_IMAGEMAGICK:
+        print("[WARNING] ImageMagick not found")
+        print("          Downloaded image conversion will be skipped.")
+        print("          Missing logos can still be fixed with generated PNG placeholders.")
 
     return True
 
@@ -81,6 +90,10 @@ def download_file(url, output_path, timeout=10):
 
 def process_logo(input_path, output_path):
     """Process logo: convert to PNG, resize to 256x256, optimize"""
+    if not HAS_IMAGEMAGICK:
+        print("    [WARNING] ImageMagick unavailable; cannot convert downloaded image")
+        return False
+
     try:
         cmd = [
             "magick",
@@ -123,6 +136,27 @@ def process_logo(input_path, output_path):
     except Exception as e:
         print(f"    [ERROR] Processing failed: {e}")
         return False
+
+
+def _png_chunk(chunk_type, data):
+    chunk = chunk_type + data
+    crc = zlib.crc32(chunk) & 0xFFFFFFFF
+    return struct.pack(">I", len(data)) + chunk + struct.pack(">I", crc)
+
+
+def _write_plain_png(output_path, rgb=(255, 20, 147)):
+    """Write a valid 256x256 RGB PNG using only the Python standard library."""
+    width, height = TARGET_SIZE
+    row = b"\x00" + bytes(rgb) * width
+    raw = row * height
+    png = (
+        b"\x89PNG\r\n\x1a\n"
+        + _png_chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
+        + _png_chunk(b"tEXt", b"Comment\0" + b"Generated placeholder logo. " * 240)
+        + _png_chunk(b"IDAT", zlib.compress(raw, level=9))
+        + _png_chunk(b"IEND", b"")
+    )
+    output_path.write_bytes(png)
 
 
 def get_favicon_from_site(base_url):
@@ -188,6 +222,11 @@ def create_placeholder_logo(display_name, output_path):
         clean_name = re.sub(r"\[COLOR.*?\]|\[/COLOR\]", "", display_name)
 
         print(f"    Creating placeholder logo for: {clean_name}")
+
+        if not HAS_IMAGEMAGICK:
+            _write_plain_png(output_path)
+            print(f"    [SUCCESS] Created placeholder: {output_path.name}")
+            return True
 
         cmd = [
             "magick",
@@ -323,6 +362,7 @@ def download_and_process_logo(site_info):
                 temp_file.unlink(missing_ok=True)
                 return True
             else:
+                temp_file.unlink(missing_ok=True)
                 print(f"    Processing failed, trying next URL...")
         else:
             print(f"    Download failed, trying next URL...")
@@ -335,7 +375,10 @@ def download_and_process_logo(site_info):
 
 def update_site_code(site_info):
     """Update site module to use local PNG file instead of remote URL"""
-    if not site_info["is_remote"]:
+    if (
+        not site_info["is_remote"]
+        and site_info["logo_file"] == site_info["expected_filename"]
+    ):
         return True  # Already using local file
 
     module_path = site_info["module_path"]
@@ -529,8 +572,8 @@ def main():
             print(f"\n[{i}/{len(needs_download)}] {site['site_id']}")
             if download_and_process_logo(site):
                 downloaded_count += 1
-                # If this was using a remote URL, update the code
-                if site["is_remote"]:
+                # Keep code references aligned with the generated local PNG.
+                if site["is_remote"] or site["logo_file"] != site["expected_filename"]:
                     update_site_code(site)
             else:
                 failed_downloads.append(site)

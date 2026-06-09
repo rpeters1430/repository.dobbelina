@@ -21,7 +21,7 @@ from urllib.request import Request, urlopen
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
-site = AdultSite('yespornvip', '[COLOR hotpink]YesPorn.vip[/COLOR]', 'https://yesporn.vip/', 'yespornvip.webp', 'yespornvip', category='Video Tubes')
+site = AdultSite('yespornvip', '[COLOR hotpink]YesPorn.vip[/COLOR]', 'https://yesporn.vip/', 'yespornvip.png', 'yespornvip', category='Video Tubes')
 
 
 @site.register(default_mode=True)

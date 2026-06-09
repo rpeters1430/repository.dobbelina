@@ -22,7 +22,7 @@ site = AdultSite(
     "91porna",
     "[COLOR hotpink]91Porna[/COLOR]",
     "https://91porna.com/",
-    "porna91.png",
+    "91porna.png",
     category="JAV & Asian",
     is_new=True,
 )

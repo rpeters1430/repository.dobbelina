@@ -6,6 +6,7 @@ Generates actionable reports showing what works and what's broken.
 """
 
 import argparse
+import io
 import json
 import re
 import subprocess
@@ -15,6 +16,10 @@ from pathlib import Path
 from typing import Dict, List, Any
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 
 def _python_has_module(python_executable: str, module_name: str) -> bool:
