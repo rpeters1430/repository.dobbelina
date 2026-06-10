@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "FAIL",
       "PASS",
       "FAIL",
       "PASS",
@@ -115,6 +114,7 @@
       "PASS",
       "PASS",
       "PASS",
+      "FAIL",
       "FAIL"
     ],
     "stability_score": 0.6
@@ -152,8 +152,8 @@
   "anysex": {
     "history": [
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -618,8 +618,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1353,10 +1353,10 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
       "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1625,8 +1625,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2089,8 +2089,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2161,8 +2161,8 @@
   },
   "txxx": {
     "history": [
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2619,12 +2619,14 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
   },
   "mangoporn": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2641,6 +2643,7 @@
     "history": [
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
@@ -2649,12 +2652,14 @@
     "history": [
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
   },
   "notfans": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
