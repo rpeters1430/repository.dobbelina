@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "PASS",
       "FAIL",
       "PASS",
       "FAIL",
@@ -115,7 +114,8 @@
       "PASS",
       "PASS",
       "FAIL",
-      "FAIL"
+      "FAIL",
+      "PASS"
     ],
     "stability_score": 0.6
   },
@@ -130,9 +130,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "FAIL"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "anybunny": {
     "history": [
@@ -151,8 +151,8 @@
   },
   "anysex": {
     "history": [
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -617,8 +617,8 @@
   "hanime": {
     "history": [
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1352,10 +1352,10 @@
   "perverzija": {
     "history": [
       "PASS",
-      "PASS",
       "WARN",
       "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1624,8 +1624,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2088,8 +2088,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2161,7 +2161,7 @@
   },
   "txxx": {
     "history": [
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2172,7 +2172,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "uflash": {
     "history": [
@@ -2644,6 +2644,7 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
@@ -2653,12 +2654,14 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
   },
   "notfans": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS",

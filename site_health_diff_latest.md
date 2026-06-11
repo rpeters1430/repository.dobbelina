@@ -10,13 +10,24 @@
 
 ## Delta Summary
 
-- New failures: `0`
-- Resolved failures: `0`
-- Persistent failures: `2`
-- Site regressions: `0`
-- Step regressions: `0`
+- New failures: `1`
+- Resolved failures: `1`
+- Persistent failures: `1`
+- Site regressions: `1`
+- Step regressions: `1`
+
+## New Failures
+
+- **animeidhentai**: `PASS -> FAIL` (PARSER) | list: List returned no videos
+
+## Resolved Failures
+
+- **analdin**: `FAIL -> PASS`
 
 ## Persistent Failures
 
-- **analdin**: `FAIL -> FAIL` (PARSER) | list: List returned no videos ⚠️ [FLAKY: 60.0%]
 - **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 0.0%]
+
+## Step Regressions
+
+- **animeidhentai** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
