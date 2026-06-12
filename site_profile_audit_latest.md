@@ -2,12 +2,13 @@
 
 - Sites: `178`
 - Tier1 hot: `0`
-- Failing: `2`
+- Failing: `3`
 - Warn: `0`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
 | animeidhentai | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| hdporn92 | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
@@ -65,7 +66,6 @@
 | fyxxr | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hanime | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hdporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| hdporn92 | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | heavyfetish | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | heavyr | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | hentai-moon | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -189,6 +189,7 @@
 ## Next Batch
 
 - **animeidhentai** (failing, tier=None) | failures: list:FAIL
+- **hdporn92** (failing, tier=2)
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL, search:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
@@ -207,4 +208,3 @@
 - **xvideos** (tier1, tier=1)
 - **youporn** (tier1, tier=1)
 - **yourlesbians** (tier1, tier=1)
-- **6xtube** (backlog, tier=None)

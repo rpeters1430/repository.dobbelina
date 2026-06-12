@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "FAIL",
       "PASS",
       "FAIL",
       "PASS",
@@ -115,9 +114,10 @@
       "PASS",
       "FAIL",
       "FAIL",
+      "PASS",
       "PASS"
     ],
-    "stability_score": 0.6
+    "stability_score": 0.7
   },
   "animeidhentai": {
     "history": [
@@ -129,10 +129,10 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
+      "FAIL",
       "FAIL"
     ],
-    "stability_score": 0.9
+    "stability_score": 0.8
   },
   "anybunny": {
     "history": [
@@ -151,7 +151,7 @@
   },
   "anysex": {
     "history": [
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -162,7 +162,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "archivebate": {
     "history": [
@@ -616,8 +616,8 @@
   },
   "hanime": {
     "history": [
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -655,9 +655,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "FAIL"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "heavyr": {
     "history": [
@@ -1351,10 +1351,10 @@
   },
   "perverzija": {
     "history": [
-      "PASS",
       "WARN",
       "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1623,8 +1623,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2087,8 +2087,8 @@
   "tokyomotion": {
     "history": [
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2645,6 +2645,7 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
@@ -2655,12 +2656,14 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
   },
   "notfans": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
