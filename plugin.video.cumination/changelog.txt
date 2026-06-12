@@ -1,3 +1,12 @@
+[B]Version 1.1.413[/B]
+- feat: enhance video resolution handling and add nhplayer URL resolution
+- Add site_tool script and corresponding smoke tests for multiple sites
+- feat: enhance scraper functionality and add pagination support for categories in pornmz and xnxx
+- fix: restore yourlesbians to prior implementation (categories, multi-quality, more menus)
+- feat: add fpoxxx, heavyfetish, yourlesbians scrapers and site icons from upstream PR #1876
+- feat: add notfans.com scraper with KVS video support
+- fix: correct playwright-site-investigator skill accuracy issues
+
 [B]Version 1.1.412[/B]
 - Add site_tool script and corresponding smoke tests for multiple sites
 - feat: enhance scraper functionality and add pagination support for categories in pornmz and xnxx
