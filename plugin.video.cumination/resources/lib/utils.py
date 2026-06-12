@@ -3406,3 +3406,199 @@ class Thumbnails:
             return img_path
         Thread(target=self.download_image, args=(img, img_path), daemon=True).start()
         return img_path
+
+
+def resolve_nhplayer(embed_url, referer_url):
+    import hashlib
+    import base64
+    import json
+    import re
+    from six.moves import urllib_parse
+
+    # Fetch embed page
+    embed_html = getHtml(embed_url, referer_url)
+    if not embed_html:
+        kodilog("resolve_nhplayer: failed to fetch embed page")
+        return None
+
+    soup = parse_html(embed_html)
+    if not soup:
+        kodilog("resolve_nhplayer: failed to parse embed page HTML")
+        return None
+
+    li = soup.select_one(".servers ul li[data-id]")
+    if not li:
+        li = soup.select_one("[data-id*='player.php']")
+
+    if not li:
+        kodilog("resolve_nhplayer: player.php data-id not found")
+        return None
+
+    player_path = li["data-id"]
+    if player_path.startswith("/"):
+        player_url = "https://nhplayer.com" + player_path
+    elif not player_path.startswith("http"):
+        player_url = "https://nhplayer.com/" + player_path
+    else:
+        player_url = player_path
+
+    # Fetch player page
+    player_html = getHtml(player_url, embed_url)
+    if not player_html:
+        kodilog("resolve_nhplayer: failed to fetch player page")
+        return None
+
+    soup_player = parse_html(player_html)
+    if not soup_player:
+        kodilog("resolve_nhplayer: failed to parse player page HTML")
+        return None
+
+    pV_match = re.search(r'window\._pV\s*=\s*(\{.*?\});', player_html)
+    if not pV_match:
+        kodilog("resolve_nhplayer: window._pV block not found")
+        return None
+
+    try:
+        vid = re.search(r'vid\s*:\s*["\']([^"\']+)["\']', pV_match.group(1)).group(1)
+        ct = re.search(r'ct\s*:\s*["\']([^"\']+)["\']', pV_match.group(1)).group(1)
+        pid = re.search(r'pid\s*:\s*["\']([^"\']+)["\']', pV_match.group(1)).group(1)
+        st = re.search(r'st\s*:\s*["\']([^"\']+)["\']', pV_match.group(1)).group(1)
+    except Exception as e:
+        kodilog("resolve_nhplayer: failed to parse window._pV values: {}".format(e))
+        return None
+
+    js_script = soup_player.select_one("script[src*='player-core-v2.php']")
+    if not js_script:
+        kodilog("resolve_nhplayer: player-core-v2.php script tag not found")
+        return None
+
+    js_url = js_script["src"]
+    if js_url.startswith("/"):
+        js_url = "https://nhplayer.com" + js_url
+    elif not js_url.startswith("http"):
+        js_url = "https://nhplayer.com/" + js_url
+
+    js_content = getHtml(js_url, player_url)
+    if not js_content:
+        kodilog("resolve_nhplayer: failed to fetch player core JS")
+        return None
+
+    ids = re.findall(r"getElementById\(['\"]([^'\"]+)['\"]\)", js_content)
+    if len(ids) < 5:
+        kodilog("resolve_nhplayer: failed to find challenge IDs in JS")
+        return None
+
+    try:
+        p1_attr = re.search(r'p1\s*=\s*\w+.*?getAttribute\([\'"]([^\'"]+)[\'"]\)', js_content).group(1)
+        p3_attr = re.search(r'p3\s*=\s*\w+.*?getAttribute\([\'"]([^\'"]+)[\'"]\)', js_content).group(1)
+        ts_attr = re.search(r'ts\s*=\s*\w+.*?getAttribute\([\'"]([^\'"]+)[\'"]\)', js_content).group(1)
+    except Exception as e:
+        kodilog("resolve_nhplayer: failed to parse challenge attributes in JS: {}".format(e))
+        return None
+
+    e1 = soup_player.find(id=ids[0])
+    e2 = soup_player.find(id=ids[1])
+    e3 = soup_player.find(id=ids[2])
+    e4 = soup_player.find(id=ids[3])
+    e5 = soup_player.find(id=ids[4])
+
+    if not (e1 and e2 and e3 and e4 and e5):
+        kodilog("resolve_nhplayer: failed to find challenge elements in DOM")
+        return None
+
+    p1 = e1.get(p1_attr, "")
+    p2 = e2.get("value", "")
+    p3 = e3.get(p3_attr, "")
+    p4 = e4.string or e4.get_text(strip=True)
+    ts = e5.get(ts_attr, "")
+
+    challenge = p1 + p2 + p3 + p4 + ts
+    pow_solution = None
+    for n in range(10000000):
+        h = hashlib.sha256((challenge + hex(n)[2:]).encode('utf-8')).digest()
+        if h[0] == 0 and h[1] == 0:
+            pow_solution = hex(n)[2:]
+            break
+
+    if not pow_solution:
+        kodilog("resolve_nhplayer: failed to solve Proof of Work")
+        return None
+
+    tokens = re.findall(r"var\s+_[a-zA-Z0-9]+\s*=\s*['\"]([^'\"]+)['\"]", js_content)
+    if len(tokens) < 2:
+        kodilog("resolve_nhplayer: failed to find challenge tokens in JS")
+        return None
+    sc = tokens[0]
+    rid = tokens[1]
+
+    fp_data = {
+        "t": 2050,
+        "mm": [],
+        "tm": [],
+        "cl": [],
+        "kp": [],
+        "sc": [],
+        "i": 0,
+        "mc": 0,
+        "tc": 0,
+        "cc": 0,
+        "kc": 0,
+        "b": {
+            "w": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+            "v": "Google Inc. (Google)",
+            "sw": 1280,
+            "sh": 720,
+            "aw": 1280,
+            "ah": 720,
+            "cd": 24,
+            "pd": 24,
+            "tz": 480,
+            "hc": 8,
+            "dm": 8,
+            "pl": "Win32",
+            "lang": "en-US",
+            "langs": "en-US",
+            "dpr": 1,
+            "ww": 1280,
+            "wh": 720,
+            "touch": False,
+            "pdf": True,
+            "fonts": 0
+        }
+    }
+    fp = base64.b64encode(json.dumps(fp_data).encode('utf-8')).decode('utf-8')
+
+    params = {
+        "vid": vid,
+        "c": ct,
+        "p1": p1,
+        "p2": p2,
+        "p3": p3,
+        "p4": p4,
+        "t": ts,
+        "sc": sc,
+        "rid": rid,
+        "fp": fp,
+        "df": "",
+        "pow": pow_solution,
+        "pid": pid,
+        "st": st
+    }
+
+    api_url = "https://nhplayer.com/get-video-url-v2.php?" + urllib_parse.urlencode(params)
+    headers = {
+        "X-Requested-With": "XMLHttpRequest",
+        "Referer": player_url,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+
+    res = getHtml(api_url, player_url, headers=headers)
+    if not res:
+        kodilog("resolve_nhplayer: empty response from get-video-url API")
+        return None
+    try:
+        res_json = json.loads(res)
+        return res_json.get("url")
+    except Exception as e:
+        kodilog("resolve_nhplayer: failed to parse API response JSON: {}".format(e))
+        return None

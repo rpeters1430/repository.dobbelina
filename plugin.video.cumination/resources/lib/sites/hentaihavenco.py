@@ -94,6 +94,13 @@ def Playvid(url, name, download=None):
     if iframe:
         surl = utils.safe_get_attr(iframe, "src", default="")
         if "nhplayer.com" in surl:
+            resolved = utils.resolve_nhplayer(surl, url)
+            if resolved:
+                vp.play_from_direct_link(resolved)
+                vp.progress.close()
+                return
+                
+            # Legacy fallback
             videopage = utils.getHtml(surl, site.url)
             soup = utils.parse_html(videopage)
             data_id_li = soup.select_one("li[data-id]")
