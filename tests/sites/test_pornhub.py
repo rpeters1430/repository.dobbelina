@@ -499,6 +499,81 @@ def test_playvid_uses_direct_media_definitions(monkeypatch):
     assert "Referer=https%3A%2F%2Fwww.pornhub.com%2F" in video_player_calls[0][1]
 
 
+def test_playvid_uses_json_parse_quality_items(monkeypatch):
+    video_player_calls = []
+    html = r"""
+    <script>
+    var qualityItems_123 = JSON.parse('[{"text":"360p","url":"https:\/\/cdn.example.com\/360.mp4"},{"text":"1080p","url":"https:\/\/cdn.example.com\/1080.mp4"}]');
+    </script>
+    """
+
+    class FakeVideoPlayer:
+        def __init__(self, name, download):
+            self.progress = type(
+                "P",
+                (),
+                {"update": lambda *a, **k: None, "close": lambda *a, **k: None},
+            )()
+
+        def play_from_link_to_resolve(self, url):
+            video_player_calls.append(("resolve", url))
+
+        def play_from_direct_link(self, url):
+            video_player_calls.append(("direct", url))
+
+    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(pornhub.utils, "VideoPlayer", FakeVideoPlayer)
+
+    pornhub.Playvid(
+        "https://www.pornhub.com/view_video.php?viewkey=ph12345",
+        "Test Video",
+        download=None,
+    )
+
+    assert video_player_calls[0][0] == "direct"
+    assert video_player_calls[0][1].startswith("https://cdn.example.com/1080.mp4|")
+
+
+def test_playvid_uses_inline_media_definitions(monkeypatch):
+    video_player_calls = []
+    html = """
+    <script>
+    window.bootstrapData = {
+      "mediaDefinitions": [
+        {"defaultQuality": "240", "url": "https://cdn.example.com/240.mp4"},
+        {"defaultQuality": "720", "url": "https://cdn.example.com/720.mp4"}
+      ]
+    };
+    </script>
+    """
+
+    class FakeVideoPlayer:
+        def __init__(self, name, download):
+            self.progress = type(
+                "P",
+                (),
+                {"update": lambda *a, **k: None, "close": lambda *a, **k: None},
+            )()
+
+        def play_from_link_to_resolve(self, url):
+            video_player_calls.append(("resolve", url))
+
+        def play_from_direct_link(self, url):
+            video_player_calls.append(("direct", url))
+
+    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(pornhub.utils, "VideoPlayer", FakeVideoPlayer)
+
+    pornhub.Playvid(
+        "https://www.pornhub.com/view_video.php?viewkey=ph12345",
+        "Test Video",
+        download=None,
+    )
+
+    assert video_player_calls[0][0] == "direct"
+    assert video_player_calls[0][1].startswith("https://cdn.example.com/720.mp4|")
+
+
 def test_list_extracts_page_title(monkeypatch):
     """Test that List extracts and displays page title."""
     html = load_fixture("listing.html")

@@ -44,6 +44,33 @@ def _extract_json_assignment(html, name_pattern):
     if not match:
         return None
     decoder = json.JSONDecoder()
+    raw_value = html[match.end():].lstrip()
+    if raw_value.startswith("JSON.parse"):
+        string_match = re.match(
+            r"JSON\.parse\(\s*(['\"])(.*?)\1",
+            raw_value,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if string_match:
+            try:
+                parsed_string = string_match.group(2)
+                parsed_string = parsed_string.replace(r"\/", "/")
+                parsed_string = parsed_string.replace(r"\'", "'").replace(r'\"', '"')
+                return json.loads(parsed_string)
+            except (TypeError, ValueError):
+                return None
+    try:
+        value, _ = decoder.raw_decode(raw_value)
+        return value
+    except ValueError:
+        return None
+
+
+def _extract_json_value_after(html, pattern):
+    decoder = json.JSONDecoder()
+    match = re.search(pattern, html, re.DOTALL | re.IGNORECASE)
+    if not match:
+        return None
     try:
         value, _ = decoder.raw_decode(html[match.end():].lstrip())
         return value
@@ -75,6 +102,20 @@ def _extract_media_sources(html):
                 continue
             quality = src.get("quality")
             video_url = src.get("videoUrl")
+            if isinstance(quality, list) or not video_url:
+                continue
+            sources.append((quality, video_url))
+
+    media_definitions = _extract_json_value_after(
+        html,
+        r'["\']mediaDefinitions["\']\s*:\s*',
+    )
+    if isinstance(media_definitions, list):
+        for src in media_definitions:
+            if not isinstance(src, dict):
+                continue
+            quality = src.get("quality") or src.get("defaultQuality") or src.get("format")
+            video_url = src.get("videoUrl") or src.get("url")
             if isinstance(quality, list) or not video_url:
                 continue
             sources.append((quality, video_url))

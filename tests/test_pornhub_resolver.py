@@ -113,3 +113,40 @@ def test_resolver_parses_multiline_quality_items():
     result = resolver.get_media_url("pornhub.com", "ph456")
 
     assert result.startswith("https://cdn.example.com/1080.mp4|")
+
+
+def test_resolver_parses_json_parse_quality_items():
+    module = _load_resolver_module()
+    resolver = module.PornHubResolver()
+    resolver.net = _Net(
+        r"""
+        <script>
+        var qualityItems_987 = JSON.parse('[{"text":"480p","url":"https:\/\/cdn.example.com\/480.mp4"},{"text":"1080p","url":"https:\/\/cdn.example.com\/1080.mp4"}]');
+        </script>
+        """
+    )
+
+    result = resolver.get_media_url("pornhub.com", "ph456")
+
+    assert result.startswith("https://cdn.example.com/1080.mp4|")
+
+
+def test_resolver_parses_inline_media_definitions():
+    module = _load_resolver_module()
+    resolver = module.PornHubResolver()
+    resolver.net = _Net(
+        """
+        <script>
+        window.bootstrapData = {
+          "mediaDefinitions": [
+            {"defaultQuality": "240", "url": "https://cdn.example.com/240.mp4"},
+            {"defaultQuality": "720", "url": "https://cdn.example.com/720.mp4"}
+          ]
+        };
+        </script>
+        """
+    )
+
+    result = resolver.get_media_url("pornhub.com", "ph456")
+
+    assert result.startswith("https://cdn.example.com/720.mp4|")

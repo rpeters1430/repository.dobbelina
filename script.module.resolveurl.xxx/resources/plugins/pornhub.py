@@ -28,6 +28,90 @@ class PornHubResolver(ResolveUrl):
     domains = ['pornhub.com']
     pattern = r'(?://|\.)(pornhub\.com)/(?:view_video\.php\?viewkey=|embed/)([a-zA-Z0-9]+)'
 
+    @staticmethod
+    def _extract_json_assignment(html, name_pattern):
+        match = re.search(r'{0}\s*=\s*'.format(name_pattern), html, re.DOTALL | re.IGNORECASE)
+        if not match:
+            return None
+        decoder = json.JSONDecoder()
+        raw_value = html[match.end():].lstrip()
+        if raw_value.startswith('JSON.parse'):
+            string_match = re.match(
+                r'JSON\.parse\(\s*([\'"])(.*?)\1',
+                raw_value,
+                re.DOTALL | re.IGNORECASE,
+            )
+            if string_match:
+                try:
+                    parsed_string = string_match.group(2)
+                    parsed_string = parsed_string.replace(r'\/', '/')
+                    parsed_string = parsed_string.replace(r"\'", "'").replace(r'\"', '"')
+                    return json.loads(parsed_string)
+                except (TypeError, ValueError):
+                    return None
+        try:
+            value, _ = decoder.raw_decode(raw_value)
+            return value
+        except ValueError:
+            return None
+
+    @staticmethod
+    def _extract_json_value_after(html, pattern):
+        match = re.search(pattern, html, re.DOTALL | re.IGNORECASE)
+        if not match:
+            return None
+        try:
+            value, _ = json.JSONDecoder().raw_decode(html[match.end():].lstrip())
+            return value
+        except ValueError:
+            return None
+
+    @classmethod
+    def _extract_media_sources(cls, html):
+        sources = []
+
+        quality_items = cls._extract_json_assignment(html, r'(?:var\s+)?qualityItems_\d+')
+        if isinstance(quality_items, list):
+            sources.extend(
+                (src.get('text'), src.get('url'))
+                for src in quality_items
+                if isinstance(src, dict) and src.get('url')
+            )
+
+        flashvars = cls._extract_json_assignment(html, r'flashvars_\d+')
+        if isinstance(flashvars, dict):
+            for src in flashvars.get('mediaDefinitions', []):
+                if not isinstance(src, dict):
+                    continue
+                quality = src.get('quality')
+                video_url = src.get('videoUrl')
+                if isinstance(quality, list) or not video_url:
+                    continue
+                sources.append((quality, video_url))
+
+        media_definitions = cls._extract_json_value_after(
+            html,
+            r'["\']mediaDefinitions["\']\s*:\s*',
+        )
+        if isinstance(media_definitions, list):
+            for src in media_definitions:
+                if not isinstance(src, dict):
+                    continue
+                quality = src.get('quality') or src.get('defaultQuality') or src.get('format')
+                video_url = src.get('videoUrl') or src.get('url')
+                if isinstance(quality, list) or not video_url:
+                    continue
+                sources.append((quality, video_url))
+
+        cleaned = []
+        seen_urls = set()
+        for quality, video_url in sources:
+            if video_url in seen_urls:
+                continue
+            seen_urls.add(video_url)
+            cleaned.append((quality, video_url))
+        return cleaned
+
     def get_media_url(self, host, media_id):
         host_url = 'https://www.{0}/'.format(host)
         web_url = self.get_url(host, media_id)
@@ -36,12 +120,7 @@ class PornHubResolver(ResolveUrl):
                    'Cookie': 'accessAgeDisclaimerPH=1; accessAgeDisclaimerUK=1'}
 
         html = self.net.http_GET(web_url, headers=headers).content
-        sources = []
-
-        qvars = re.search(r'qualityItems_[^\[]+(.+?);', html, re.DOTALL)
-        if qvars:
-            sources = json.loads(qvars.group(1))
-            sources = [(src.get('text'), src.get('url')) for src in sources if src.get('url')]
+        sources = self._extract_media_sources(html)
 
         if not sources:
             sections = re.findall(r'(var\sra[a-z0-9]+=.+?);flash', html)
@@ -58,13 +137,6 @@ class PornHubResolver(ResolveUrl):
                     r = re.findall(r'(\d+p)', link, re.I)
                     if r:
                         sources.append((r[0], link))
-
-        if not sources:
-            fvars = re.search(r'flashvars_\d+\s*=\s*(.+?);\s', html, re.DOTALL)
-            if fvars:
-                sources = json.loads(fvars.group(1)).get('mediaDefinitions')
-                sources = [(src.get('quality'), src.get('videoUrl')) for src in sources if
-                           type(src.get('quality')) is not list and src.get('videoUrl')]
 
         if sources:
             headers.update({'Origin': host_url[:-1]})

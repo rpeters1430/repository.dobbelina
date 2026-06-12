@@ -21,6 +21,7 @@ from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.jsunpack import unpack
 from resources.lib.adultsite import AdultSite
+from resources.lib.http_timeouts import HTTP_TIMEOUT_LONG, HTTP_TIMEOUT_SHORT
 
 site = AdultSite(
     "rlc",
@@ -70,6 +71,14 @@ def getBaselink(url):
         parsed = urllib_parse.urlparse(url)
         siteurl = "{0}://{1}/".format(parsed.scheme, parsed.netloc)
     return siteurl
+
+
+def _quiet_get_html(url, referer="", timeout=HTTP_TIMEOUT_SHORT):
+    try:
+        return utils.getHtml(url, referer, error="", timeout=timeout)
+    except Exception as exc:
+        utils.kodilog("reallifecam: optional fetch failed for {}: {}".format(url, exc))
+        return ""
 
 
 @site.register(default_mode=True)
@@ -276,7 +285,8 @@ def Playvid(url, name, download=None):
     """Playvid: Play video for Reallifecam sites."""
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    videopage = utils.getHtml(url)
+    siteurl = getBaselink(url)
+    videopage = utils.getHtml(url, siteurl, timeout=HTTP_TIMEOUT_LONG)
 
     soup = utils.parse_html(videopage)
 
@@ -314,7 +324,7 @@ def Playvid(url, name, download=None):
         if "vidello.net" in refurl or "camcaps.tv" in refurl or "camcaps.to" in refurl:
             # If it's a camcaps embed, it might contain another iframe for vidello
             if "camcaps.tv/embed/" in refurl or "camcaps.to/embed/" in refurl:
-                embed_page = utils.getHtml(refurl)
+                embed_page = _quiet_get_html(refurl, url)
                 embed_soup = utils.parse_html(embed_page)
                 vidello_iframe = embed_soup.select_one('iframe[src*="vidello.net"]')
                 if vidello_iframe:
@@ -339,7 +349,7 @@ def Playvid(url, name, download=None):
             vp.play_from_link_to_resolve(refurl)
             return
 
-        refpage = utils.getHtml(refurl, timeout=10)
+        refpage = _quiet_get_html(refurl, url)
         if isinstance(refpage, (list, tuple, set)):
             links = [link for link in refpage if isinstance(link, str) and link]
             if links:
@@ -348,7 +358,7 @@ def Playvid(url, name, download=None):
             refpage = ""
 
         if not refpage:
-            return
+            refpage = ""
 
         if "/playerz/" in refurl:
             src_match = re.compile(r'"src":"\.([^"]+)"', re.DOTALL | re.IGNORECASE).findall(refpage)

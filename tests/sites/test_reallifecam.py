@@ -581,3 +581,48 @@ def test_playvid_hands_nowplay_embed_to_resolveurl(monkeypatch):
     reallifecam.Playvid("https://camcaps.tv/video/355058/example", "Name")
 
     assert resolved == ["https://nowplay.to/embrikgfauqud4q"]
+
+
+def test_playvid_suppresses_optional_embed_timeout_and_falls_back(monkeypatch):
+    """A slow unsupported iframe should not surface the global slow-site notification."""
+    fallback_html = []
+
+    class MockPlayer:
+        def __init__(self, *args, **kwargs):
+            self.progress = MagicMock()
+            self.resolveurl = MagicMock()
+            self.resolveurl.HostedMediaFile.return_value = False
+
+        def play_from_link_to_resolve(self, source):
+            raise AssertionError("unexpected resolve path")
+
+        def play_from_link_list(self, links):
+            raise AssertionError("unexpected link list path")
+
+        def play_from_direct_link(self, link):
+            raise AssertionError("unexpected direct link path")
+
+        def play_from_html(self, html, url=None):
+            fallback_html.append(html)
+
+    video_page = """
+    <div class="video-embedded">
+        <iframe src="https://slow.example/embed"></iframe>
+    </div>
+    """
+
+    def fake_get_html(url, referer="", headers=None, **kwargs):
+        if url == "https://example.com/video/1":
+            return video_page
+        if url == "https://slow.example/embed":
+            assert kwargs.get("error") == ""
+            raise RuntimeError("timed out")
+        raise AssertionError("unexpected url {}".format(url))
+
+    monkeypatch.setattr(reallifecam.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(reallifecam.utils, "VideoPlayer", MockPlayer)
+    monkeypatch.setattr(reallifecam.utils, "kodilog", lambda *a, **k: None)
+
+    reallifecam.Playvid("https://example.com/video/1", "Name")
+
+    assert fallback_html == [video_page]
