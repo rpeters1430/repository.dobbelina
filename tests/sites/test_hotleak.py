@@ -51,6 +51,57 @@ def test_list_videos(site_spec_fixture):
     mock_add_dir.assert_any_call("Next Page (2)", "https://hotleak.vip/videos?page=2", "List", site_spec.site.img_next, page='2')
 
 
+def test_list_handles_non_text_response(site_spec_fixture):
+    site_spec, mock_add_dir, mock_add_download_link, mock_get_html = site_spec_fixture
+    ended = []
+    mock_get_html.return_value = []
+
+    with patch("resources.lib.utils.eod", lambda: ended.append(True)), \
+         patch("resources.lib.utils.kodilog"):
+        site_spec.List("https://hotleak.vip/videos")
+
+    mock_add_dir.assert_not_called()
+    mock_add_download_link.assert_not_called()
+    assert ended == [True]
+
+
+def test_list_skips_photos_duplicates_and_uses_title_fallback(site_spec_fixture):
+    site_spec, mock_add_dir, mock_add_download_link, mock_get_html = site_spec_fixture
+    mock_get_html.return_value = """
+    <html><body>
+      <article class="movie-item">
+        <a class="thumbnail-container" href="/creator/video/123456">
+          <img class="post-thumbnail" src="/thumb.webp" alt="">
+        </a>
+      </article>
+      <article class="movie-item">
+        <a class="thumbnail-container" href="/creator/video/123456">
+          <img class="post-thumbnail" src="/thumb-duplicate.webp" alt="Duplicate">
+        </a>
+      </article>
+      <article class="movie-item">
+        <a class="thumbnail-container" href="/creator/photo/999999">
+          <img class="post-thumbnail" src="/photo.webp" alt="Photo">
+        </a>
+      </article>
+      <article class="movie-item">
+        <a class="thumbnail-container" href="https://tantaly.com/ad">
+          <img class="post-thumbnail" src="/ad.webp" alt="Ad">
+        </a>
+      </article>
+    </body></html>
+    """
+
+    site_spec.List("https://hotleak.vip/videos")
+
+    assert mock_add_download_link.call_count == 1
+    args, kwargs = mock_add_download_link.call_args
+    assert args[0] == "Hotleak Video 123456"
+    assert args[1] == "https://hotleak.vip/creator/video/123456"
+    assert args[3].startswith("https://hotleak.vip/thumb.webp|")
+    mock_add_dir.assert_not_called()
+
+
 def test_playvid(site_spec_fixture):
     """
     Tests if the Playvid function correctly finds and decrypts the video URL.
@@ -73,4 +124,75 @@ def test_playvid(site_spec_fixture):
         assert "|User-Agent=" in call_args
         assert "Referer=https%3A//hotleak.vip/" in call_args
 
+
+def _encrypt_hotleak_url(url):
+    encoded = hotleak.base64.b64encode(url.encode("utf-8")).decode("ascii")
+    return "a" * 16 + encoded[::-1] + "z" * 16
+
+
+def test_playvid_handles_non_text_response(site_spec_fixture):
+    site_spec, _, _, mock_get_html = site_spec_fixture
+    mock_get_html.return_value = []
+
+    with patch('resources.lib.utils.VideoPlayer') as mock_vp_class, \
+         patch("resources.lib.utils.kodilog"), \
+         patch("resources.lib.utils.notify") as mock_notify:
+        mock_vp_instance = mock_vp_class.return_value
+        site_spec.Playvid("https://hotleak.vip/model/video/123", "Test Video")
+
+    mock_vp_instance.play_from_direct_link.assert_not_called()
+    mock_vp_instance.progress.close.assert_called()
+    mock_notify.assert_called_with("Error", "Could not load video page")
+
+
+def test_playvid_skips_bad_sources_and_uses_next_valid_source(site_spec_fixture):
+    site_spec, _, _, mock_get_html = site_spec_fixture
+    encrypted = _encrypt_hotleak_url("https://video-cdn.hotleak.vip/path/master.m3u8")
+    data_video = hotleak.json.dumps(
+        {
+            "source": [
+                {"src": "too-short"},
+                {"src": encrypted},
+            ]
+        }
+    ).replace('"', "&quot;")
+    mock_get_html.return_value = """
+    <html><body>
+      <div class="light-gallery-item" data-video="{0}"></div>
+    </body></html>
+    """.format(data_video)
+
+    with patch('resources.lib.utils.VideoPlayer') as mock_vp_class:
+        mock_vp_instance = mock_vp_class.return_value
+        site_spec.Playvid("https://hotleak.vip/model/video/123", "Test Video")
+
+    mock_vp_instance.play_from_direct_link.assert_called_once()
+    call_args = mock_vp_instance.play_from_direct_link.call_args[0][0]
+    assert call_args.startswith("https://video-cdn.hotleak.vip/path/master.m3u8|")
+
+
+def test_playvid_accepts_source_dict_shape(site_spec_fixture):
+    site_spec, _, _, mock_get_html = site_spec_fixture
+    encrypted = _encrypt_hotleak_url("https://video-cdn.hotleak.vip/path/master.m3u8")
+    data_video = hotleak.json.dumps({"source": {"src": encrypted}}).replace('"', "&quot;")
+    mock_get_html.return_value = """
+    <html><body>
+      <div class="light-gallery-item" data-video="{0}"></div>
+    </body></html>
+    """.format(data_video)
+
+    with patch('resources.lib.utils.VideoPlayer') as mock_vp_class:
+        mock_vp_instance = mock_vp_class.return_value
+        site_spec.Playvid("https://hotleak.vip/model/video/123", "Test Video")
+
+    mock_vp_instance.play_from_direct_link.assert_called_once()
+
+
+def test_search_encodes_keyword_with_plus(site_spec_fixture):
+    site_spec, _, _, _ = site_spec_fixture
+
+    with patch.object(site_spec, "List") as mock_list:
+        site_spec.Search("https://hotleak.vip/search", keyword="test & query")
+
+    mock_list.assert_called_once_with("https://hotleak.vip/search?search=test+%26+query")
 

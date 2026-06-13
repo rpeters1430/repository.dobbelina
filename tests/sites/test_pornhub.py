@@ -124,6 +124,31 @@ def test_list_handles_empty_results(monkeypatch):
     assert no_results[0]["mode"] == "ResetFilters"
 
 
+def test_list_handles_non_text_response(monkeypatch):
+    dirs = []
+
+    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: [])
+    monkeypatch.setattr(pornhub.utils, "kodilog", lambda *a, **k: None)
+    monkeypatch.setattr(pornhub.site, "add_download_link", lambda *a, **k: None)
+    monkeypatch.setattr(
+        pornhub.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **kwargs: dirs.append(
+            {"name": name, "mode": mode}
+        ),
+    )
+    monkeypatch.setattr(pornhub.utils, "eod", lambda: None)
+
+    pornhub.List("https://www.pornhub.com/video?o=cm")
+
+    assert dirs == [
+        {
+            "name": "No videos found. [COLOR hotpink]Clear all filters.[/COLOR]",
+            "mode": "ResetFilters",
+        }
+    ]
+
+
 def test_list_with_pagination(monkeypatch):
     """Test that List adds pagination when present."""
     html = load_fixture("listing.html")
@@ -228,6 +253,21 @@ def test_categories_handles_missing_video_count(monkeypatch):
     assert dirs[0]["name"] == "Test Category"
 
 
+def test_categories_handles_non_text_response(monkeypatch):
+    dirs = []
+    ended = []
+
+    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: [])
+    monkeypatch.setattr(pornhub.utils, "kodilog", lambda *a, **k: None)
+    monkeypatch.setattr(pornhub.site, "add_dir", lambda *a, **k: dirs.append(a))
+    monkeypatch.setattr(pornhub.utils, "eod", lambda: ended.append(True))
+
+    pornhub.Categories("https://www.pornhub.com/categories")
+
+    assert dirs == []
+    assert ended == [True]
+
+
 def test_search_without_keyword_shows_search_dialog(monkeypatch):
     """Test that Search without keyword shows search input dialog."""
     search_called = []
@@ -273,6 +313,48 @@ def test_search_url_encoding(monkeypatch):
 
     assert len(list_calls) == 1
     assert "test+%26+query" in list_calls[0] or "test+&+query" in list_calls[0]
+
+
+def test_update_url_preserves_page_when_filters_are_unchanged(monkeypatch):
+    monkeypatch.setattr(pornhub, "get_setting", lambda name: {
+        "production": "All",
+        "minlength": "0",
+        "maxlength": "40+ Min",
+        "quality": "All",
+        "country": "World",
+        "sortby": "Newest",
+        "time": "All Time",
+    }[name])
+
+    url = "https://www.pornhub.com/video?o=cm&page=2"
+
+    assert pornhub.update_url(url) == "https://www.pornhub.com/video?page=2&o=cm"
+
+
+def test_update_url_resets_page_when_filters_change(monkeypatch):
+    monkeypatch.setattr(pornhub, "get_setting", lambda name: {
+        "production": "Homemade",
+        "minlength": "10 min",
+        "maxlength": "40+ Min",
+        "quality": "HD",
+        "country": "World",
+        "sortby": "Most Viewed",
+        "time": "All Time",
+    }[name])
+
+    url = "https://www.pornhub.com/video?o=cm&page=3"
+
+    assert pornhub.update_url(url) == (
+        "https://www.pornhub.com/video?p=homemade&min_duration=10&hd=1&o=mv&t=a"
+    )
+
+
+def test_update_url_keeps_search_urls_simple():
+    url = "https://www.pornhub.com/video/search?search=test+%26+query&page=2&o=ht&hd=1"
+
+    assert pornhub.update_url(url) == (
+        "https://www.pornhub.com/video/search?search=test+%26+query&page=2&o=mr"
+    )
 
 
 def test_list_parses_search_results(monkeypatch):
@@ -423,6 +505,40 @@ def test_list_uses_data_image_and_ignores_media_preview_src(monkeypatch):
     assert ".webm" not in downloads[1]["icon"]
 
 
+def test_list_uses_viewkey_title_fallback(monkeypatch):
+    html = """
+    <html><body>
+    <div class="pcVideoListItem">
+        <a href="/view_video.php?viewkey=phnotitle">
+            <img data-mediumthumb="https://ci.phncdn.com/videos/thumb.jpg">
+            <div class="duration">10:00</div>
+        </a>
+    </div>
+    </body></html>
+    """
+    downloads = []
+
+    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(
+        pornhub.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, desc="", **kwargs: downloads.append(
+            {"name": name, "url": url}
+        ),
+    )
+    monkeypatch.setattr(pornhub.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(pornhub.utils, "eod", lambda: None)
+
+    pornhub.List("https://www.pornhub.com/video?o=cm")
+
+    assert downloads == [
+        {
+            "name": "PornHub Video phnotitle",
+            "url": "https://www.pornhub.com/view_video.php?viewkey=phnotitle",
+        }
+    ]
+
+
 def test_playvid_calls_video_player(monkeypatch):
     """Test that Playvid initializes VideoPlayer and calls resolve."""
     video_player_calls = []
@@ -499,6 +615,38 @@ def test_playvid_uses_direct_media_definitions(monkeypatch):
     assert "Referer=https%3A%2F%2Fwww.pornhub.com%2F" in video_player_calls[0][1]
 
 
+def test_playvid_falls_back_when_gethtml_returns_non_text(monkeypatch):
+    video_player_calls = []
+
+    class FakeVideoPlayer:
+        def __init__(self, name, download):
+            self.progress = type(
+                "P",
+                (),
+                {"update": lambda *a, **k: None, "close": lambda *a, **k: None},
+            )()
+
+        def play_from_link_to_resolve(self, url):
+            video_player_calls.append(("resolve", url))
+
+        def play_from_direct_link(self, url):
+            video_player_calls.append(("direct", url))
+
+    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: [])
+    monkeypatch.setattr(pornhub.utils, "kodilog", lambda *a, **k: None)
+    monkeypatch.setattr(pornhub.utils, "VideoPlayer", FakeVideoPlayer)
+
+    pornhub.Playvid(
+        "https://www.pornhub.com/view_video.php?viewkey=ph12345",
+        "Test Video",
+        download=None,
+    )
+
+    assert video_player_calls == [
+        ("resolve", "https://www.pornhub.com/view_video.php?viewkey=ph12345")
+    ]
+
+
 def test_playvid_uses_json_parse_quality_items(monkeypatch):
     video_player_calls = []
     html = r"""
@@ -532,6 +680,50 @@ def test_playvid_uses_json_parse_quality_items(monkeypatch):
 
     assert video_player_calls[0][0] == "direct"
     assert video_player_calls[0][1].startswith("https://cdn.example.com/1080.mp4|")
+
+
+def test_playvid_uses_double_quoted_json_parse_quality_items(monkeypatch):
+    video_player_calls = []
+    html = r"""
+    <script>
+    var qualityItems_123 = JSON.parse("[{\"text\":\"360p\",\"url\":\"https:\/\/cdn.example.com\/360.mp4\"},{\"text\":\"720p\",\"url\":\"https:\/\/cdn.example.com\/720.mp4\"}]");
+    </script>
+    """
+
+    class FakeVideoPlayer:
+        def __init__(self, name, download):
+            self.progress = type(
+                "P",
+                (),
+                {"update": lambda *a, **k: None, "close": lambda *a, **k: None},
+            )()
+
+        def play_from_link_to_resolve(self, url):
+            video_player_calls.append(("resolve", url))
+
+        def play_from_direct_link(self, url):
+            video_player_calls.append(("direct", url))
+
+    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(pornhub.utils, "VideoPlayer", FakeVideoPlayer)
+
+    pornhub.Playvid(
+        "https://www.pornhub.com/view_video.php?viewkey=ph12345",
+        "Test Video",
+        download=None,
+    )
+
+    assert video_player_calls[0][0] == "direct"
+    assert video_player_calls[0][1].startswith("https://cdn.example.com/720.mp4|")
+
+
+def test_select_media_source_prefers_4k_over_1080p():
+    sources = [
+        ("1080p", "https://cdn.example.com/1080.mp4"),
+        ("4K", "https://cdn.example.com/4k.mp4"),
+    ]
+
+    assert pornhub._select_media_source(sources) == "https://cdn.example.com/4k.mp4"
 
 
 def test_playvid_uses_inline_media_definitions(monkeypatch):

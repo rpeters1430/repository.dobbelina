@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 import json
+import six
 from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
@@ -35,7 +36,67 @@ site = AdultSite(
 cookiehdr = {"Cookie": "accessAgeDisclaimerPH=1; accessAgeDisclaimerUK=1"}
 
 
+def _is_text(value):
+    return isinstance(value, six.string_types)
+
+
+def _log_non_text_response(context, value):
+    utils.kodilog(
+        "pornhub: Expected HTML string while {}, got {}".format(
+            context, type(value).__name__
+        )
+    )
+
+
+def _decode_js_string_literal(raw_value):
+    raw_value = raw_value.lstrip()
+    if not raw_value or raw_value[0] not in ("'", '"'):
+        return None
+
+    quote = raw_value[0]
+    decoded = []
+    index = 1
+    length = len(raw_value)
+    while index < length:
+        char = raw_value[index]
+        if char == quote:
+            return "".join(decoded)
+        if char != "\\":
+            decoded.append(char)
+            index += 1
+            continue
+
+        index += 1
+        if index >= length:
+            return None
+        escaped = raw_value[index]
+        escapes = {
+            "\\": "\\",
+            "/": "/",
+            '"': '"',
+            "'": "'",
+            "b": "\b",
+            "f": "\f",
+            "n": "\n",
+            "r": "\r",
+            "t": "\t",
+        }
+        if escaped == "u" and index + 4 < length:
+            hex_value = raw_value[index + 1:index + 5]
+            try:
+                decoded.append(six.unichr(int(hex_value, 16)))
+                index += 5
+                continue
+            except ValueError:
+                return None
+        decoded.append(escapes.get(escaped, escaped))
+        index += 1
+    return None
+
+
 def _extract_json_assignment(html, name_pattern):
+    if not _is_text(html):
+        return None
     match = re.search(
         r"{0}\s*=\s*".format(name_pattern),
         html,
@@ -46,16 +107,12 @@ def _extract_json_assignment(html, name_pattern):
     decoder = json.JSONDecoder()
     raw_value = html[match.end():].lstrip()
     if raw_value.startswith("JSON.parse"):
-        string_match = re.match(
-            r"JSON\.parse\(\s*(['\"])(.*?)\1",
-            raw_value,
-            re.DOTALL | re.IGNORECASE,
-        )
-        if string_match:
+        parse_match = re.match(r"JSON\.parse\(\s*", raw_value, re.IGNORECASE)
+        if parse_match:
             try:
-                parsed_string = string_match.group(2)
-                parsed_string = parsed_string.replace(r"\/", "/")
-                parsed_string = parsed_string.replace(r"\'", "'").replace(r'\"', '"')
+                parsed_string = _decode_js_string_literal(raw_value[parse_match.end():])
+                if parsed_string is None:
+                    return None
                 return json.loads(parsed_string)
             except (TypeError, ValueError):
                 return None
@@ -67,6 +124,8 @@ def _extract_json_assignment(html, name_pattern):
 
 
 def _extract_json_value_after(html, pattern):
+    if not _is_text(html):
+        return None
     decoder = json.JSONDecoder()
     match = re.search(pattern, html, re.DOTALL | re.IGNORECASE)
     if not match:
@@ -80,11 +139,17 @@ def _extract_json_value_after(html, pattern):
 
 def _source_quality_value(source):
     label = str(source[0] or "")
+    if "4k" in label.lower() or "uhd" in label.lower():
+        return 2160
     digits = "".join(ch for ch in label if ch.isdigit())
     return int(digits) if digits else 0
 
 
 def _extract_media_sources(html):
+    if not _is_text(html):
+        _log_non_text_response("resolving video", html)
+        return []
+
     sources = []
 
     quality_items = _extract_json_assignment(html, r"(?:var\s+)?qualityItems_\d+")
@@ -134,6 +199,13 @@ def _select_media_source(sources):
     if not sources:
         return ""
     return sorted(sources, key=_source_quality_value)[-1][1]
+
+
+def _fallback_title_from_url(video_url):
+    match = re.search(r"[?&]viewkey=([a-zA-Z0-9]+)", video_url or "")
+    if match:
+        return "PornHub Video {}".format(match.group(1))
+    return "PornHub Video"
 
 
 def _headers_suffix(video_page_url):
@@ -374,7 +446,10 @@ def List(url):
     ]
 
     listhtml = utils.getHtml(url, site.url, cookiehdr)
-    if "Error Page Not Found" in listhtml or not listhtml:
+    if not _is_text(listhtml):
+        _log_non_text_response("loading listing", listhtml)
+        listhtml = ""
+    if not listhtml or "Error Page Not Found" in listhtml:
         site.add_dir(
             "No videos found. [COLOR hotpink]Clear all filters.[/COLOR]",
             "",
@@ -430,6 +505,8 @@ def List(url):
             if not title:
                 img_tag = item.select_one("img")
                 title = utils.safe_get_attr(img_tag, "alt")
+            if not title:
+                title = _fallback_title_from_url(video_url)
 
             img = _extract_thumbnail(item, link)
 
@@ -522,6 +599,10 @@ def Search(url, keyword=None):
 def Categories(url):
     utils.kodilog("PornHub Categories URL: " + url)
     cathtml = utils.getHtml(url, site.url, cookiehdr)
+    if not _is_text(cathtml):
+        _log_non_text_response("loading categories", cathtml)
+        utils.eod()
+        return
 
     soup = utils.parse_html(cathtml)
     categories = soup.select('.category-wrapper, div[class*="category"]')
@@ -799,66 +880,91 @@ def param(x):
     return ret
 
 
+def _query_value(query_pairs, name):
+    for key, value in query_pairs:
+        if key == name:
+            return value
+    return ""
+
+
+def _param_pair(value):
+    if not value:
+        return None
+    key, sep, param_value = value.partition("=")
+    if not sep or not key:
+        return None
+    return key, param_value
+
+
+def _remove_query_keys(query_pairs, keys):
+    return [(key, value) for key, value in query_pairs if key not in keys]
+
+
 def update_url(url):
-    if "/video/search" in url:
+    parts = urllib_parse.urlsplit(url)
+    query_pairs = urllib_parse.parse_qsl(parts.query, keep_blank_values=True)
+
+    if "/video/search" in parts.path:
         # Keep search queries simple and stable; aggressive filters often return empty results.
-        query_match = re.search(r"[?&]search=([^&]*)", url)
-        search_value = query_match.group(1) if query_match else ""
-        page_match = re.search(r"[?&]page=(\d+)", url)
-        page_value = page_match.group(1) if page_match else ""
-
-        clean_url = site.url + "video/search?search=" + search_value
+        search_value = _query_value(query_pairs, "search")
+        page_value = _query_value(query_pairs, "page")
+        clean_query = [("search", search_value)]
         if page_value:
-            clean_url += "&page=" + page_value
-        clean_url += "&o=mr"
-        return clean_url
+            clean_query.append(("page", page_value))
+        clean_query.append(("o", "mr"))
+        return urllib_parse.urlunsplit(
+            (
+                parts.scheme or "https",
+                parts.netloc or "www.pornhub.com",
+                parts.path,
+                urllib_parse.urlencode(clean_query),
+                parts.fragment,
+            )
+        )
 
-    old_params = url.split("?")[-1].split("&")
-    old_params.sort()
-    url = re.sub(r"[\?&]p=[^\?&]+", "", url)
-    url = re.sub(r"[\?&]min_duration=[^\?&]+", "", url)
-    url = re.sub(r"[\?&]max_duration=[^\?&]+", "", url)
-    url = re.sub(r"[\?&]hd=[^\?&]+", "", url)
-    url = re.sub(r"[\?&]o=[^\?&]+", "", url)
-    url = re.sub(r"[\?&]t=[^\?&]+", "", url)
-    url = re.sub(r"[\?&]cc=[^\?&]+", "", url)
+    filter_keys = {"p", "min_duration", "max_duration", "hd", "o", "t", "cc"}
+    base_query = _remove_query_keys(query_pairs, filter_keys)
+    new_query = list(base_query)
 
-    params = {
-        param(get_setting("production")),
-        param(get_setting("minlength")),
-        param(get_setting("maxlength")),
-        param(get_setting("quality")),
-        param(get_setting("country")),
-        param(get_setting("sortby")),
-        param(get_setting("time")),
-    }
+    for setting in (
+        "production",
+        "minlength",
+        "maxlength",
+        "quality",
+        "country",
+        "sortby",
+        "time",
+    ):
+        pair = _param_pair(param(get_setting(setting)))
+        if pair:
+            new_query.append(pair)
 
-    for x in params:
-        if x != "":
-            url += "&" + x
+    sort_order = _query_value(new_query, "o")
+    if not sort_order or sort_order in ("lg", "cm", "mr"):
+        new_query = _remove_query_keys(new_query, {"t", "cc"})
+    elif sort_order == "tr":
+        new_query = _remove_query_keys(new_query, {"cc"})
+    elif sort_order == "ht":
+        new_query = _remove_query_keys(new_query, {"t"})
 
-    if "search?" in url:
-        url = url.replace("o=cm", "o=mr")
-        url = re.sub(r"[\?&]o=ht[^\?&]+", "", url)
+    old_without_page = sorted(
+        (key, value) for key, value in query_pairs if key != "page"
+    )
+    new_without_page = sorted(
+        (key, value) for key, value in new_query if key != "page"
+    )
+    if new_without_page != old_without_page:
+        new_query = _remove_query_keys(new_query, {"page"})
 
-    if "o=" not in url or "o=lg" in url or "o=cm" in url or "o=mr" in url:
-        url = re.sub(r"[\?&]t=[^\?&]+", "", url)
-        url = re.sub(r"[\?&]cc=[^\?&]+", "", url)
-    if "o=tr" in url:
-        url = re.sub(r"[\?&]cc=[^\?&]+", "", url)
-    if "o=ht" in url:
-        url = re.sub(r"[\?&]t=[^\?&]+", "", url)
-    if "?" not in url:
-        url = url.replace("&", "?", 1)
-
-    new_params = url.split("?")[-1].split("&")
-    new_params.sort()
-
-    if new_params != old_params:
-        url = re.sub(r"[\?&]page=[^\?&]+", "", url)
-    if "?" not in url:
-        url = url.replace("&", "?", 1)
-    return url
+    return urllib_parse.urlunsplit(
+        (
+            parts.scheme,
+            parts.netloc,
+            parts.path,
+            urllib_parse.urlencode(new_query),
+            parts.fragment,
+        )
+    )
 
 
 @site.register()

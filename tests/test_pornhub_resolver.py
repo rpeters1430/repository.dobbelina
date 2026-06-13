@@ -18,8 +18,9 @@ def _load_resolver_module():
     helpers_module.sort_sources_list = lambda sources: sorted(
         sources,
         key=lambda item: int("".join(ch for ch in str(item[0]) if ch.isdigit()) or "0"),
+        reverse=True,
     )
-    helpers_module.pick_source = lambda sources: sources[-1][1]
+    helpers_module.pick_source = lambda sources: sources[0][1]
     helpers_module.append_headers = lambda headers: "|" + "&".join(
         "{}={}".format(key, headers[key]) for key in sorted(headers)
     )
@@ -129,6 +130,43 @@ def test_resolver_parses_json_parse_quality_items():
     result = resolver.get_media_url("pornhub.com", "ph456")
 
     assert result.startswith("https://cdn.example.com/1080.mp4|")
+
+
+def test_resolver_parses_double_quoted_json_parse_quality_items():
+    module = _load_resolver_module()
+    resolver = module.PornHubResolver()
+    resolver.net = _Net(
+        r"""
+        <script>
+        var qualityItems_987 = JSON.parse("[{\"text\":\"480p\",\"url\":\"https:\/\/cdn.example.com\/480.mp4\"},{\"text\":\"1080p\",\"url\":\"https:\/\/cdn.example.com\/1080.mp4\"}]");
+        </script>
+        """
+    )
+
+    result = resolver.get_media_url("pornhub.com", "ph456")
+
+    assert result.startswith("https://cdn.example.com/1080.mp4|")
+
+
+def test_resolver_prefers_4k_over_1080p():
+    module = _load_resolver_module()
+    resolver = module.PornHubResolver()
+    resolver.net = _Net(
+        """
+        <script>
+        flashvars_123 = {
+          "mediaDefinitions": [
+            {"quality": "1080p", "videoUrl": "https://cdn.example.com/1080.mp4"},
+            {"quality": "4K", "videoUrl": "https://cdn.example.com/4k.mp4"}
+          ]
+        };
+        </script>
+        """
+    )
+
+    result = resolver.get_media_url("pornhub.com", "ph456")
+
+    assert result.startswith("https://cdn.example.com/4k.mp4|")
 
 
 def test_resolver_parses_inline_media_definitions():

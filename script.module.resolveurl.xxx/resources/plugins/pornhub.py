@@ -22,11 +22,62 @@ from resolveurl import common
 from resolveurl.lib import helpers
 from resolveurl.resolver import ResolveUrl, ResolverError
 
+try:
+    _unichr = unichr
+except NameError:
+    _unichr = chr
+
 
 class PornHubResolver(ResolveUrl):
     name = 'pornhub'
     domains = ['pornhub.com']
     pattern = r'(?://|\.)(pornhub\.com)/(?:view_video\.php\?viewkey=|embed/)([a-zA-Z0-9]+)'
+
+    @staticmethod
+    def _decode_js_string_literal(raw_value):
+        raw_value = raw_value.lstrip()
+        if not raw_value or raw_value[0] not in ("'", '"'):
+            return None
+
+        quote = raw_value[0]
+        decoded = []
+        index = 1
+        length = len(raw_value)
+        while index < length:
+            char = raw_value[index]
+            if char == quote:
+                return ''.join(decoded)
+            if char != '\\':
+                decoded.append(char)
+                index += 1
+                continue
+
+            index += 1
+            if index >= length:
+                return None
+            escaped = raw_value[index]
+            escapes = {
+                '\\': '\\',
+                '/': '/',
+                '"': '"',
+                "'": "'",
+                'b': '\b',
+                'f': '\f',
+                'n': '\n',
+                'r': '\r',
+                't': '\t',
+            }
+            if escaped == 'u' and index + 4 < length:
+                hex_value = raw_value[index + 1:index + 5]
+                try:
+                    decoded.append(_unichr(int(hex_value, 16)))
+                    index += 5
+                    continue
+                except ValueError:
+                    return None
+            decoded.append(escapes.get(escaped, escaped))
+            index += 1
+        return None
 
     @staticmethod
     def _extract_json_assignment(html, name_pattern):
@@ -36,16 +87,14 @@ class PornHubResolver(ResolveUrl):
         decoder = json.JSONDecoder()
         raw_value = html[match.end():].lstrip()
         if raw_value.startswith('JSON.parse'):
-            string_match = re.match(
-                r'JSON\.parse\(\s*([\'"])(.*?)\1',
-                raw_value,
-                re.DOTALL | re.IGNORECASE,
-            )
-            if string_match:
+            parse_match = re.match(r'JSON\.parse\(\s*', raw_value, re.IGNORECASE)
+            if parse_match:
                 try:
-                    parsed_string = string_match.group(2)
-                    parsed_string = parsed_string.replace(r'\/', '/')
-                    parsed_string = parsed_string.replace(r"\'", "'").replace(r'\"', '"')
+                    parsed_string = PornHubResolver._decode_js_string_literal(
+                        raw_value[parse_match.end():]
+                    )
+                    if parsed_string is None:
+                        return None
                     return json.loads(parsed_string)
                 except (TypeError, ValueError):
                     return None
@@ -140,9 +189,22 @@ class PornHubResolver(ResolveUrl):
 
         if sources:
             headers.update({'Origin': host_url[:-1]})
-            return helpers.pick_source(helpers.sort_sources_list(sources)) + helpers.append_headers(headers)
+            sources = self._sort_sources_list(sources)
+            return helpers.pick_source(sources) + helpers.append_headers(headers)
 
         raise ResolverError('File not found or not Free')
+
+    @staticmethod
+    def _source_quality_value(source):
+        label = str(source[0] or '')
+        if '4k' in label.lower() or 'uhd' in label.lower():
+            return 2160
+        digits = ''.join(ch for ch in label if ch.isdigit())
+        return int(digits) if digits else 0
+
+    @classmethod
+    def _sort_sources_list(cls, sources):
+        return sorted(sources, key=cls._source_quality_value, reverse=True)
 
     def get_url(self, host, media_id):
         return self._default_get_url(host, media_id, template='https://www.{host}/view_video.php?viewkey={media_id}')
