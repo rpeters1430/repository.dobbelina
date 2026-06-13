@@ -1,3 +1,10 @@
+[B]Version 1.1.415[/B]
+- Enhance Hotleak and Pornhub plugins with improved error handling and response validation
+- feat: enhance media source extraction for PornHub and Reallifecam, adding JSON parsing support
+- feat: enhance video resolution handling and add nhplayer URL resolution
+- Add site_tool script and corresponding smoke tests for multiple sites
+- feat: enhance scraper functionality and add pagination support for categories in pornmz and xnxx
+
 [B]Version 1.1.414[/B]
 - feat: enhance media source extraction for PornHub and Reallifecam, adding JSON parsing support
 - feat: enhance video resolution handling and add nhplayer URL resolution
