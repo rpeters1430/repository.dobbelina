@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-06-13T07:31:46.533483",
+    "sites_total": 178,
+    "pass": 176,
+    "warn": 0,
+    "fail": 2,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-06-12T07:54:00.766195",
     "sites_total": 178,
     "pass": 175,
@@ -8,45 +17,38 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-06-11T07:55:01.488450",
-    "sites_total": 178,
-    "pass": 176,
-    "warn": 0,
-    "fail": 2,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
     "new_failures": 1,
-    "resolved_failures": 0,
-    "persistent_failures": 2,
+    "resolved_failures": 2,
+    "persistent_failures": 1,
     "improved_sites": 0,
     "regressions": 1,
-    "step_regressions": 0
+    "step_regressions": 1
   },
   "new_failures": [
     {
-      "site": "hdporn92",
+      "site": "analdin",
       "previous": "PASS",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "Site process timed out after 140s",
-      "is_flaky": false,
-      "stability_score": 1.0
-    }
-  ],
-  "resolved_failures": [],
-  "persistent_failures": [
-    {
-      "site": "animeidhentai",
-      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "list: List returned no videos",
       "is_flaky": false,
-      "stability_score": 0.9
+      "stability_score": 0.7
+    }
+  ],
+  "resolved_failures": [
+    {
+      "site": "animeidhentai",
+      "previous": "FAIL",
+      "current": "PASS"
     },
+    {
+      "site": "hdporn92",
+      "previous": "FAIL",
+      "current": "PASS"
+    }
+  ],
+  "persistent_failures": [
     {
       "site": "pornhoarder",
       "previous": "FAIL",
@@ -58,13 +60,38 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [],
+  "step_regressions": [
+    {
+      "site": "analdin",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "List returned no videos",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 0.7
+    }
+  ],
   "deltas": [
     {
-      "site": "hdporn92",
+      "site": "analdin",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "animeidhentai",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "hdporn92",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]

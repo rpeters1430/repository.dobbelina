@@ -5,22 +5,30 @@
 
 ## Snapshot
 
-- Current: `PASS 175` | `WARN 0` | `FAIL 3` | `ERROR 0` | `SKIP 0`
-- Previous: `PASS 176` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 0`
+- Current: `PASS 176` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 0`
+- Previous: `PASS 175` | `WARN 0` | `FAIL 3` | `ERROR 0` | `SKIP 0`
 
 ## Delta Summary
 
 - New failures: `1`
-- Resolved failures: `0`
-- Persistent failures: `2`
+- Resolved failures: `2`
+- Persistent failures: `1`
 - Site regressions: `1`
-- Step regressions: `0`
+- Step regressions: `1`
 
 ## New Failures
 
-- **hdporn92**: `PASS -> FAIL` (NETWORK) | Site process timed out after 140s
+- **analdin**: `PASS -> FAIL` (PARSER) | list: List returned no videos
+
+## Resolved Failures
+
+- **animeidhentai**: `FAIL -> PASS`
+- **hdporn92**: `FAIL -> PASS`
 
 ## Persistent Failures
 
-- **animeidhentai**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 0.0%]
+
+## Step Regressions
+
+- **analdin** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
