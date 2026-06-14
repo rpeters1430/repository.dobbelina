@@ -22,6 +22,7 @@ if sys.platform == "win32":
 UPSTREAM_REMOTE = "https://github.com/dobbelina/repository.dobbelina.git"
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SYNC_FILE = REPO_ROOT / "docs" / "development" / "UPSTREAM_SYNC.md"
+TRIAGE_FILE = REPO_ROOT / "docs" / "development" / "UPSTREAM_TRIAGE.md"
 AUDIT_FILE = REPO_ROOT / "docs" / "status" / "bs4_migration_audit.csv"
 SITES_DIR = REPO_ROOT / "plugin.video.cumination" / "resources" / "lib" / "sites"
 
@@ -31,6 +32,7 @@ class SyncManager:
         self.dry_run = dry_run
         self.skip_changelog = skip_changelog
         self.bs4_sites = self._load_bs4_sites()
+        self.existing_sites = self._load_existing_sites()
         self.tracked_hashes = self._load_tracked_hashes()
         self.integrated_in_git = self._load_git_history_hashes()
 
@@ -58,6 +60,13 @@ class SyncManager:
         except Exception as e:
             print(f"Warning: Could not load audit file: {e}")
         return bs4_sites
+
+    def _load_existing_sites(self):
+        if not SITES_DIR.exists():
+            return set()
+        return {
+            p.stem.lower() for p in SITES_DIR.glob("*.py") if p.stem != "__init__"
+        }
 
     def _load_tracked_hashes(self):
         if not SYNC_FILE.exists():
@@ -113,41 +122,194 @@ class SyncManager:
         return commits
 
     def analyze_commit(self, sha):
-        # Get files changed in this commit
-        result = self._run_git(["show", "--name-only", "--format=", sha])
-        files = result.stdout.strip().split("\n")
+        # Get files changed in this commit, with their status (A/M/D/R...)
+        result = self._run_git(["show", "--name-status", "--format=", sha])
+        lines = [l for l in result.stdout.strip().split("\n") if l.strip()]
 
         # Get full commit message for deeper analysis
         msg_full = self._run_git(["show", "-s", "--format=%B", sha]).stdout.lower()
 
+        files = []
         sites_affected = set()
+        added_sites = set()
         changelog_affected = False
-        for f in files:
+        for line in lines:
+            parts = line.split("\t")
+            status = parts[0]
+            f = parts[-1]
+            files.append(f)
             if "plugin.video.cumination/resources/lib/sites/" in f:
                 site_name = Path(f).stem.lower()
                 sites_affected.add(site_name)
-            if "changelog.txt" in f:
+                if status.startswith("A"):
+                    added_sites.add(site_name)
+            if "changelog.txt" in f.lower():
                 changelog_affected = True
 
-        playback_keywords = ["playback", "play", "vid", "stream", "decrypt", "kvs"]
+        # Keep this list specific - generic terms like "play"/"vid"/"stream"
+        # match almost any site module (e.g. the `Playvid` function name).
+        playback_keywords = ["playback", "decrypt", "kvs", "m3u8", "hls", "drm"]
         playback_affected = any(kw in msg_full for kw in playback_keywords)
-        
-        # Check if the code changes themselves mention playback related things
-        if not playback_affected:
-            diff = self._run_git(["show", "--format=", sha]).stdout.lower()
-            playback_affected = any(kw in diff for kw in playback_keywords)
 
         is_bs4_only = False
         if sites_affected:
             is_bs4_only = all(site in self.bs4_sites for site in sites_affected)
 
+        # Sites newly added in this commit that we don't have at all.
+        new_sites = added_sites - self.existing_sites
+
         return {
             "files": files,
             "sites": list(sites_affected),
+            "new_sites": list(new_sites),
             "is_bs4_only": is_bs4_only,
             "changelog_affected": changelog_affected,
             "playback_affected": playback_affected,
         }
+
+    def get_pending_commits(self):
+        new_commits = self.get_new_commits()
+        pending = []
+        for c in new_commits:
+            sha = c["sha"]
+            if any(sha.startswith(h) or h.startswith(sha) for h in self.tracked_hashes):
+                continue
+            if any(
+                sha.startswith(h) or h.startswith(sha) for h in self.integrated_in_git
+            ):
+                continue
+            pending.append(c)
+        return pending
+
+    @staticmethod
+    def _extract_issue(msg):
+        m = re.search(r"#(\d+)", msg)
+        return m.group(1) if m else None
+
+    def group_commits(self, pending):
+        """Group commits by referenced issue number so duplicate/iterative
+        commits for the same PR collapse into one triage item."""
+        groups = {}
+        order = []
+        for c in pending:
+            issue = self._extract_issue(c["msg"])
+            key = f"#{issue}" if issue else c["sha"]
+            if key not in groups:
+                groups[key] = []
+                order.append(key)
+            groups[key].append(c)
+        return [(key, groups[key]) for key in order]
+
+    def categorize_group(self, commits):
+        all_sites = set()
+        new_sites = set()
+        playback_affected = False
+        changelog_affected = False
+        for c in commits:
+            a = self.analyze_commit(c["sha"])
+            all_sites.update(a["sites"])
+            new_sites.update(a["new_sites"])
+            playback_affected = playback_affected or a["playback_affected"]
+            changelog_affected = changelog_affected or a["changelog_affected"]
+
+        sites_we_have = all_sites & self.existing_sites
+
+        if not all_sites:
+            category = "auto_skip"
+        elif new_sites:
+            # A site file we don't have was added in this commit.
+            category = "new_site"
+        elif sites_we_have:
+            non_bs4 = sites_we_have - self.bs4_sites
+            if non_bs4 or playback_affected:
+                category = "needs_review"
+            else:
+                category = "covered"
+        else:
+            # Touches only sites we don't have, with nothing newly added
+            # (e.g. upstream removed/renamed a site we never carried).
+            category = "auto_skip"
+
+        return category, all_sites, new_sites, playback_affected, changelog_affected
+
+    def generate_report(self):
+        self.ensure_upstream()
+        pending = self.get_pending_commits()
+
+        if not pending:
+            print("✅ Fork is up to date! No report generated.")
+            return
+
+        groups = self.group_commits(pending)
+
+        categories = {
+            "new_site": [],
+            "needs_review": [],
+            "covered": [],
+            "auto_skip": [],
+        }
+
+        for key, commits in groups:
+            category, all_sites, new_sites, playback, changelog = self.categorize_group(commits)
+            categories[category].append((key, commits, all_sites, new_sites, playback, changelog))
+
+        section_titles = {
+            "new_site": (
+                "New Sites Available",
+                "Sites touched by these commits don't exist in our fork yet. Candidates for new site modules.",
+            ),
+            "needs_review": (
+                "Needs Review",
+                "Touches a site we have that isn't BeautifulSoup-migrated, or mentions playback/decrypt - worth reviewing for porting.",
+            ),
+            "covered": (
+                "Likely Already Covered",
+                "Only touches BeautifulSoup-migrated sites we already have - spot-check, likely skip.",
+            ),
+            "auto_skip": (
+                "Auto-Skip",
+                "No site module changes detected (changelog/icon/docs/version-bump-style commits).",
+            ),
+        }
+
+        lines = []
+        lines.append("# Upstream Triage Report")
+        lines.append("")
+        lines.append(f"Generated: {datetime.now().strftime('%Y-%m-%d')}")
+        lines.append(f"Pending commits: {len(pending)} (grouped into {len(groups)} items)")
+        lines.append("")
+        lines.append(
+            "Run `python scripts/sync_manager.py` (interactive) to review/cherry-pick, "
+            "or `python scripts/sync_manager.py --report` to regenerate this file."
+        )
+        lines.append("")
+
+        for cat_key in ["new_site", "needs_review", "covered", "auto_skip"]:
+            title, desc = section_titles[cat_key]
+            items = categories[cat_key]
+            lines.append(f"## {title} ({len(items)})")
+            lines.append("")
+            lines.append(desc)
+            lines.append("")
+            if not items:
+                lines.append("_None._")
+                lines.append("")
+                continue
+            lines.append("| Group | Commits | Sites | New Sites | Playback | Message(s) |")
+            lines.append("|---|---|---|---|---|---|")
+            for key, commits, all_sites, new_sites, playback, changelog in items:
+                shas = ", ".join(f"`{c['sha']}`" for c in commits)
+                sites_str = ", ".join(sorted(all_sites)) or "-"
+                new_sites_str = ", ".join(sorted(new_sites)) or "-"
+                msgs = "<br>".join(c["msg"].replace("|", "\\|") for c in commits)
+                lines.append(
+                    f"| {key} | {shas} | {sites_str} | {new_sites_str} | {'yes' if playback else ''} | {msgs} |"
+                )
+            lines.append("")
+
+        TRIAGE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        TRIAGE_FILE.write_text("\n".join(lines), encoding="utf-8")
+        print(f"📝 Wrote triage report to {TRIAGE_FILE} ({len(groups)} groups from {len(pending)} commits)")
 
     def preview_commit(self, sha):
         print(f"\n--- PREVIEW: {sha} ---")
@@ -170,32 +332,36 @@ class SyncManager:
         if skip_reason:
             # Add to "Intentionally Skipped" section
             entry = f"| `{sha}` | {msg} | {skip_reason} |\n"
-            # Find the table header for skipped commits
-            pattern = r"(### Intentionally Skipped.*?\n\|.*?\n\|.*?\n)"
-            match = re.search(pattern, content, re.DOTALL)
-            if match:
-                content = content[: match.end()] + entry + content[match.end() :]
-            else:
+            section_header = "### Intentionally Skipped"
+            if section_header not in content:
                 content += (
-                    f"\n### Intentionally Skipped\n\n| Upstream Hash | Message | Reason |\n|---|---|---|\n"
+                    f"\n{section_header}\n\n| Upstream Hash | Message | Reason |\n|---|---|---|\n"
                     + entry
                 )
+            else:
+                section_idx = content.find(section_header)
+                table_end = content.find("\n\n", section_idx)
+                if table_end == -1:
+                    table_end = len(content)
+                content = content[:table_end].rstrip() + "\n" + entry + content[table_end:]
         else:
-            # Add to "Integrated" section
+            # Add to today's "Cherry-Pick Session" section
             entry = f"| `{sha}` | {msg} | `{fork_sha}` | {today} | Cherry-picked with -x |\n"
 
             section_header = f"### {today} Cherry-Pick Session"
             if section_header not in content:
-                # Insert new section after "## Already Integrated Commits"
-                insertion_point = content.find("## Already Integrated Commits")
+                # Insert new section right after "## Sync Sessions"
+                insertion_point = content.find("## Sync Sessions")
                 if insertion_point != -1:
                     insertion_point = content.find("\n", insertion_point) + 1
-                    new_section = f"\n{section_header}\n\n| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |\n|---------------|---------|-----------|-----------------|-------|\n"
-                    content = (
-                        content[:insertion_point]
-                        + new_section
-                        + content[insertion_point:]
-                    )
+                else:
+                    insertion_point = len(content)
+                new_section = f"\n{section_header}\n\n| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |\n|---------------|---------|-----------|-----------------|-------|\n"
+                content = (
+                    content[:insertion_point]
+                    + new_section
+                    + content[insertion_point:]
+                )
 
             section_idx = content.find(section_header)
             table_end = content.find("\n\n", section_idx)
@@ -208,20 +374,7 @@ class SyncManager:
 
     def run(self):
         self.ensure_upstream()
-        new_commits = self.get_new_commits()
-
-        pending = []
-        for c in new_commits:
-            sha = c["sha"]
-            # Check tracking file (handle varying SHA lengths)
-            if any(sha.startswith(h) or h.startswith(sha) for h in self.tracked_hashes):
-                continue
-            # Check git history
-            if any(
-                sha.startswith(h) or h.startswith(sha) for h in self.integrated_in_git
-            ):
-                continue
-            pending.append(c)
+        pending = self.get_pending_commits()
 
         if not pending:
             print("✅ Fork is up to date!")
@@ -334,8 +487,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Sync Manager for Dobbelina Repository Fork")
     parser.add_argument("--dry-run", action="store_true", help="Show what would be done without making changes")
     parser.add_argument("--no-skip-changelog", action="store_true", help="Don't skip changelog files during cherry-picking")
-    
+    parser.add_argument("--report", action="store_true", help="Generate docs/development/UPSTREAM_TRIAGE.md instead of running interactively")
+
     args = parser.parse_args()
-    
+
     manager = SyncManager(dry_run=args.dry_run, skip_changelog=not args.no_skip_changelog)
-    manager.run()
+    if args.report:
+        manager.generate_report()
+    else:
+        manager.run()

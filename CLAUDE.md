@@ -31,8 +31,9 @@ python build_repo_addons.py --addons plugin.video.cumination
 python build_repo_addons.py --update-index       # Also regenerates addons.xml + md5
 
 # Upstream sync
-./scripts/check_upstream_sync.sh
-./scripts/cherry_pick_with_tracking.sh <hash>    # Cherry-pick with tracking
+python scripts/sync_manager.py --report   # Regenerate docs/development/UPSTREAM_TRIAGE.md (grouped, categorized)
+python scripts/sync_manager.py            # Interactive: review pending commits, cherry-pick with tracking
+python scripts/sync_manager.py --dry-run  # Preview without cherry-picking or writing to UPSTREAM_SYNC.md
 ```
 
 ## Architecture
@@ -143,6 +144,18 @@ Standalone scripts for development and debugging — all use Playwright or `requ
 - Branch: `master`
 - Commit prefixes: `feat:`, `fix:`, `chore:`
 - Cherry-picks from upstream: always use `-x` flag, update `docs/development/UPSTREAM_SYNC.md`
+
+## Upstream Commit Triage
+
+`scripts/sync_manager.py` is the single tool for deciding which upstream (`dobbelina/repository.dobbelina`) commits matter to this fork.
+
+- `--report` fetches upstream, groups pending commits by referenced issue number, and writes `docs/development/UPSTREAM_TRIAGE.md` with four sections:
+  - **New Sites Available** - upstream added a site module we don't have at all
+  - **Needs Review** - touches a site we have that isn't BS4-migrated yet, or the message mentions playback/decrypt/m3u8/hls/drm
+  - **Likely Already Covered** - only touches BS4-migrated sites we already have; spot-check and skip
+  - **Auto-Skip** - no site module changes (README/changelog/icon/version-bump, or removal of a site we never carried)
+- Interactive mode (no flags) walks through non-BS4-only commits, lets you cherry-pick (`-x`) and auto-updates `docs/development/UPSTREAM_SYNC.md`.
+- A commit is considered "already handled" if its hash appears in `UPSTREAM_SYNC.md` or in any local commit's "cherry picked from commit ..." trailer - check there before re-reviewing.
 
 ## Custom Agents
 

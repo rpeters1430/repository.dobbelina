@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-06-06
-**Last Sync**: 2026-06-06 - Ported xnxx Lookupinfo, verified erome active page pagination.
+**Last Updated**: 2026-06-14
+**Last Sync**: 2026-06-14 - Triaged 105 pending upstream commits, ported the sites/__init__.py crash-guard, added camgirlfap as a new BS4 site.
 
 ---
 
@@ -18,6 +18,14 @@
 ---
 
 ## Sync Sessions
+
+### 2026-06-14 Porting Session
+Ran `python scripts/sync_manager.py --report` to triage the 105 pending upstream commits (87 groups) into `docs/development/UPSTREAM_TRIAGE.md`. Acted on the "New Sites Available" and crash-guard items; remaining "Needs Review" groups and the other two new-site candidates recorded below as intentionally skipped.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `36b6d753`/`c99dbda2`/`7bc2609e`/`5166dff2` (#1870, partial) | sites that are incompatible with the Kodi version are ignored and no longer cause the add-on to crash | `manual-partial` | 2026-06-14 | Ported the `sites/__init__.py` import crash-guard (per-module try/except with `xbmc.log` on failure), preserving `EXCLUDED_SITE_MODULES`. Per-site legacy-compatibility shims from this group are listed under Intentionally Skipped. |
+| `e97adf79`/`e18276d7` (#1883) | Added Camgirlfap #1883 | `manual` | 2026-06-14 | Created `camgirlfap.py` as a new BS4/SoupSiteSpec site module (category "Cams & Live"), modeled on `fpoxxx.py`. Added icon, fixtures (`tests/fixtures/sites/camgirlfap/`) and tests (`tests/sites/test_camgirlfap.py`). |
 
 ### 2026-06-06 Porting Session
 Reviewed upstream `dobbelina/repository.dobbelina` commits after the 2026-05-24 session.
@@ -173,5 +181,33 @@ These upstream commits have been integrated into the fork:
 |---------------|---------|-----------|-----------------|-------|
 | `fef612ec` | porndit, pmvhaven - fixes #1774 #1252 | `23d4a8c` | 2026-03-14 | Cherry-picked (excluded changelog) |
 | `569ea709` | kt_player, xxthots  new site, fixes #1767 | `9221568` | 2026-03-14 | Cherry-picked (excluded changelog, kept BS4 scrapers) |
+
+### Intentionally Skipped
+
+Commits reviewed in the 2026-06-14 triage session (`docs/development/UPSTREAM_TRIAGE.md`) and judged not worth porting. Listed here so `sync_manager.py --report` stops re-flagging them.
+
+| Upstream Hash | Message | Reason |
+|---|---|---|
+| `7839f576`/`feb31161`/`a7b8d112`/`829c587c`/`79cf0fa6`/`599f72e0` (#1830) | ikisoda new site | New site not selected for porting in the 2026-06-14 triage session (camgirlfap was prioritized instead); revisit in a future session. |
+| `a75b2572`/`1fde0486` (#1700) | Added Porn4Fans #1700 | New site not selected for porting in the 2026-06-14 triage session; revisit in a future session. |
+| `b05e8ddf`/`042444e7`/`2b74f364` (#1831) | Added yourlesbians #1831 | `yourlesbians.py` already exists in this fork (category Video Tubes); upstream's add commits for yourlesbians are redundant. |
+| `cc829f67`/`b6b7a993`/`fc508d42` (#1647), `c179ec7b` | Added pimpbunny #1647 / Delete pimpbunny.py | `pimpbunny.py` already exists in this fork (category Video Tubes); upstream's later addition and subsequent removal are both no-ops for us. |
+| `e9340aba` | notfans small fix | Whitespace/formatting-only change to upstream's legacy `notfans.py`; this fork's `notfans.py` is already BS4-migrated with a different structure. |
+| `ca8b516a`/`e0b41b52` (#1695) | FPO.XXX #1695 | `fpoxxx.py` is already migrated to BS4/`SoupSiteSpec` in this fork (used as the template for camgirlfap); upstream's fixes target the pre-migration implementation. |
+| `76d27ed5`/`6f69aeaa` (#1832) | #1832 - added heavyfetish | `heavyfetish.py` already exists in this fork as a BS4 scraper (added in an earlier session); upstream's initial-add commits for heavyfetish/notfans are redundant. |
+| `b13bacba` (#1869) | premiumporn fixes #1869 fixes #1811 | Reviewed and explicitly should not be ported - touches bongacams/cam4/chaturbate/hypnotube/ikisoda/porn4fans/premiumporn/stripchat/superporn/xvideos/yespornvip with changes not applicable to this fork's implementations. |
+| `f2af6b63`/`7a09d94b` (#1822) | #1822 (superporn) | `superporn.py` already exists in this fork; upstream's fixes target the pre-BS4 implementation superseded by our scraper. |
+| `7a3b1cdb` | Issues with proxy player. Switched back to old player (stripchat) | `stripchat.py` is in `EXCLUDED_SITE_MODULES` (hidden from the Kodi listing); upstream's player-switch fix is for the old player and isn't applicable. |
+| `814ba919` | stripchat | Same as `7a3b1cdb` - `stripchat.py` is excluded from the Kodi listing; not applicable. |
+| `e96ed9b6` (#1710) | stripchat - fix playback (SD only) fixes #1710 | Same as `7a3b1cdb` - `stripchat.py` is excluded from the Kodi listing; not applicable. |
+| `3a8df5f4` | heroero - fix playback | `heroero.py` already BS4-migrated in this fork; upstream's playback fix targets the legacy implementation. Current KVS-based playback verified working. |
+| `73a6488d` (#1763) | sxyprn - fix playback (direct links) fixes #1763 | `sxyprn.py` already BS4-migrated in this fork; upstream's playback fix targets the legacy implementation. |
+| `6f3103ab` (#1749) | javguru - fix playback, thumbnails - fixes #1749 | `javguru.py` already BS4-migrated in this fork; upstream's playback/thumbnail fix targets the legacy implementation. |
+| `8ff6fe1f` (#1751) | allclassic, watchporn playback, fixes #1751 | Both `allclassic.py` and `watchporn.py` already BS4-migrated in this fork; upstream's playback fix targets the legacy implementation. |
+| `af3c079f` (#1731) | porntn liting, fixes #1731 | Touches awmnet/porntn/xhamster, all already BS4-migrated in this fork with different selector structures; the fyxxr portion isn't significant enough to port on its own. |
+| `b4beb803` | camwhoresbay - fix playback | `camwhoresbay.py` already BS4-migrated in this fork; upstream's playback fix targets the legacy implementation. |
+| `60b6859a` (#1688) | hanime playback - fixes #1688 | `hanime.py` already BS4-migrated in this fork; upstream's playback fix targets the legacy implementation. |
+| `1721e034` | terebon - fix playback | `terebon.py` already BS4-migrated in this fork; upstream's playback fix targets the legacy implementation. |
+| `f3d48c1b` | xhmster playback | `xhamster.py` already BS4-migrated in this fork; upstream's playback fix targets the legacy implementation. |
 
 ### 2026-01-04 Cherry-Pick Session
