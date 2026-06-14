@@ -600,7 +600,7 @@ def test_playvid_uses_direct_media_definitions(monkeypatch):
         def play_from_direct_link(self, url):
             video_player_calls.append(("direct", url))
 
-    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(pornhub.utils, "_getHtml", lambda *a, **k: html)
     monkeypatch.setattr(pornhub.utils, "VideoPlayer", FakeVideoPlayer)
 
     pornhub.Playvid(
@@ -632,7 +632,7 @@ def test_playvid_falls_back_when_gethtml_returns_non_text(monkeypatch):
         def play_from_direct_link(self, url):
             video_player_calls.append(("direct", url))
 
-    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: [])
+    monkeypatch.setattr(pornhub.utils, "_getHtml", lambda *a, **k: [])
     monkeypatch.setattr(pornhub.utils, "kodilog", lambda *a, **k: None)
     monkeypatch.setattr(pornhub.utils, "VideoPlayer", FakeVideoPlayer)
 
@@ -669,7 +669,7 @@ def test_playvid_uses_json_parse_quality_items(monkeypatch):
         def play_from_direct_link(self, url):
             video_player_calls.append(("direct", url))
 
-    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(pornhub.utils, "_getHtml", lambda *a, **k: html)
     monkeypatch.setattr(pornhub.utils, "VideoPlayer", FakeVideoPlayer)
 
     pornhub.Playvid(
@@ -704,7 +704,7 @@ def test_playvid_uses_double_quoted_json_parse_quality_items(monkeypatch):
         def play_from_direct_link(self, url):
             video_player_calls.append(("direct", url))
 
-    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(pornhub.utils, "_getHtml", lambda *a, **k: html)
     monkeypatch.setattr(pornhub.utils, "VideoPlayer", FakeVideoPlayer)
 
     pornhub.Playvid(
@@ -753,7 +753,7 @@ def test_playvid_uses_inline_media_definitions(monkeypatch):
         def play_from_direct_link(self, url):
             video_player_calls.append(("direct", url))
 
-    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(pornhub.utils, "_getHtml", lambda *a, **k: html)
     monkeypatch.setattr(pornhub.utils, "VideoPlayer", FakeVideoPlayer)
 
     pornhub.Playvid(

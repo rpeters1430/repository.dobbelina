@@ -209,10 +209,21 @@ def _fallback_title_from_url(video_url):
 
 
 def _headers_suffix(video_page_url):
+    cookie_str = cookiehdr["Cookie"]
+    try:
+        cookies = []
+        for cookie in utils.cj:
+            if cookie.domain and ("pornhub.com" in cookie.domain or "phncdn.com" in cookie.domain):
+                cookies.append("{}={}".format(cookie.name, cookie.value))
+        if cookies:
+            cookie_str = "; ".join(cookies)
+    except Exception:
+        pass
+
     headers = {
         "User-Agent": utils.USER_AGENT,
         "Referer": site.url,
-        "Cookie": cookiehdr["Cookie"],
+        "Cookie": cookie_str,
         "Origin": site.url.rstrip("/"),
     }
     return "|" + urllib_parse.urlencode(headers)
@@ -235,7 +246,7 @@ def add_img_headers(img_url):
 
 
 def _resolve_video_url(url):
-    html = utils.getHtml(url, site.url, cookiehdr)
+    html = utils._getHtml(url, site.url, cookiehdr)
     video_url = _select_media_source(_extract_media_sources(html))
     if video_url:
         return video_url + _headers_suffix(url)
@@ -654,6 +665,8 @@ def Playvid(url, name, download=None):
     vp.progress.update(25, "[CR]Loading video page[CR]")
     direct_url = _resolve_video_url(url)
     if direct_url:
+        if ".m3u8" in direct_url:
+            vp.IA_check = "IA"
         vp.play_from_direct_link(direct_url)
         return
     vp.play_from_link_to_resolve(url)
