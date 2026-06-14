@@ -18,11 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
 import time
-import xbmc
 from six.moves import urllib_parse
 
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
+from resources.lib.sites.stripchat import Playvid as stripchat_playvid
 
 
 site = AdultSite(
@@ -291,37 +291,9 @@ def Playvid(url, name):
         utils.notify("LemonCams", "Only Stripchat models are supported")
         return
 
-    # Use cached stream URL if available, otherwise search for a new one
-    playable_url = stream_url
-    if not playable_url:
-        utils.kodilog("LemonCams: No cached URL, searching for stream for {}".format(username))
-        playable_url = _find_model_stream(provider, username)
-
-    if not playable_url:
-        utils.notify("LemonCams", "Model offline or no stream found")
-        return
-
-    # Build headers for playback
-    headers = {
-        "User-Agent": utils.USER_AGENT,
-        "Referer": "https://www.lemoncams.com/",
-        "Origin": "https://www.lemoncams.com"
-    }
-    
-    # Append headers to URL
-    header_str = "|User-Agent={}&Referer={}&Origin={}".format(
-        urllib_parse.quote(headers["User-Agent"]),
-        urllib_parse.quote(headers["Referer"]),
-        urllib_parse.quote(headers["Origin"])
-    )
-    
-    final_url = playable_url + header_str
-    
-    utils.kodilog("LemonCams: Playing {}".format(final_url), xbmc.LOGDEBUG)
-
-    vp = utils.VideoPlayer(name)
-    vp.IA_check = "IA"  # Use inputstream.adaptive for HLS
-    vp.play_from_direct_link(final_url)
-    # Do not block here with a status-monitor loop. Kodi needs the plugin call to
-    # return after playback is handed off, otherwise the busy/play popup can remain
-    # visible over an already-playing stream.
+    # Hand off to Stripchat's own playback pipeline (manifest proxying, headers,
+    # etc.) instead of playing LemonCams' raw CDN URL directly. The raw doppiocdn
+    # HLS manifest LemonCams exposes returns 404 placeholder segments without that
+    # proxy, which can crash inputstream.adaptive on some platforms (e.g. Android
+    # TV) after the initial buffer is exhausted.
+    stripchat_playvid(stream_url or "", username)
