@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "FAIL",
       "PASS",
       "PASS",
       "PASS",
@@ -115,6 +114,7 @@
       "FAIL",
       "PASS",
       "PASS",
+      "FAIL",
       "FAIL"
     ],
     "stability_score": 0.6
@@ -127,9 +127,9 @@
       "PASS",
       "PASS",
       "PASS",
+      "FAIL",
+      "FAIL",
       "PASS",
-      "FAIL",
-      "FAIL",
       "PASS"
     ],
     "stability_score": 0.8
@@ -653,8 +653,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -1285,9 +1285,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "WARN"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "okxxx": {
     "history": [
@@ -1351,8 +1351,8 @@
   },
   "perverzija": {
     "history": [
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1621,8 +1621,8 @@
   },
   "pornmz": {
     "history": [
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2086,7 +2086,7 @@
   },
   "tokyomotion": {
     "history": [
-      "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2097,7 +2097,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "trannyteca": {
     "history": [
@@ -2647,6 +2647,7 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
@@ -2659,12 +2660,14 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
   },
   "notfans": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS",

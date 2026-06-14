@@ -3,12 +3,13 @@
 - Sites: `178`
 - Tier1 hot: `0`
 - Failing: `2`
-- Warn: `0`
+- Warn: `1`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
 | analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
+| noodlemagazine | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -108,7 +109,6 @@
 | netflixporno | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | nltubes | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | nonktube | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| noodlemagazine | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | notfans | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | okxxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | paradisehill | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -190,6 +190,7 @@
 
 - **analdin** (failing, tier=2) | failures: list:FAIL
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL, search:FAIL
+- **noodlemagazine** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
@@ -207,4 +208,3 @@
 - **xvideos** (tier1, tier=1)
 - **youporn** (tier1, tier=1)
 - **yourlesbians** (tier1, tier=1)
-- **6xtube** (backlog, tier=None)
