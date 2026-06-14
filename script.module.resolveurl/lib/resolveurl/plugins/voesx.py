@@ -56,7 +56,7 @@ class VoeResolver(ResolveUrl):
         'lukesitturn.com', 'mikaylaarealike.com', 'christopheruntilpoint.com', 'walterprettytheir.com',
         'crystaltreatmenteast.com', 'lauradaydo.com', 'smoki.cc', 'lancewhosedifficult.com',
         'ogladaj.me', 'dianaavoidthey.com', 'jefferycontrolmodel.com', 'marissasharecareer.com',
-        'charlestoughrace.com', 'ianrequireadult.com', 'timmaybealready.com'
+        'charlestoughrace.com', 'ianrequireadult.com', 'timmaybealready.com', 'jessicayeahcatch.com'
     ]
     domains += ['voeunblock{}.com'.format(x) for x in range(1, 11)]
     pattern = (
@@ -83,14 +83,14 @@ class VoeResolver(ResolveUrl):
         r'jonathansociallike|mariatheserepublican|johnalwayssame|jilliandescribecompany|'
         r'lukesitturn|mikaylaarealike|christopheruntilpoint|walterprettytheir|crystaltreatmenteast|'
         r'lauradaydo|smoki|lancewhosedifficult|ogladaj|dianaavoidthey|jefferycontrolmodel|marissasharecareer|'
-        r'charlestoughrace|ianrequireadult|timmaybealready|'
+        r'charlestoughrace|ianrequireadult|timmaybealready|jessicayeahcatch|'
         r'(?:v-?o-?e)?(?:-?un-?bl[o0]?c?k\d{0,2})?(?:-?voe)?)\.(?:sx|com|net|cc|me))/'
         r'(?:e/)?([0-9A-Za-z]+)'
     )
 
     def get_media_url(self, host, media_id, subs=False):
         web_url = self.get_url(host, media_id)
-        headers = {'User-Agent': common.FF_USER_AGENT}
+        headers = {'User-Agent': common.RAND_UA}
         html = self.net.http_GET(web_url, headers=headers).content
         while 'const currentUrl' in html:
             r = re.search(r'''window\.location\.href\s*=\s*'([^']+)''', html)

@@ -415,7 +415,7 @@ def girc(page_data, url, co=None):
     Copyright (C) 2021 ADDON-LAB, KAR10S
     """
     net = common.Net()
-    hdrs = {'User-Agent': common.FF_USER_AGENT,
+    hdrs = {'User-Agent': common.RAND_UA,
             'Referer': url}
     rurl = 'https://www.google.com/recaptcha/api.js'
     aurl = 'https://www.google.com/recaptcha/api2'
@@ -836,3 +836,10 @@ def b64urlencode(b, strip=False):
     if strip:
         r = r.rstrip('=')
     return r
+
+
+def b64urldecode(t, binary=False):
+    if len(t) % 4 != 0:
+        t += '=' * (-len(t) % 4)
+    r = base64.urlsafe_b64decode(t)
+    return r if binary else six.ensure_str(r)
