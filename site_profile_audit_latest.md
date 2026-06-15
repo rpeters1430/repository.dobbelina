@@ -1,15 +1,14 @@
 # Site Profile Audit
 
-- Sites: `178`
+- Sites: `179`
 - Tier1 hot: `0`
-- Failing: `2`
+- Failing: `1`
 - Warn: `1`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
-| noodlemagazine | warn | WARN |  | video |  | Y | Y | Y | Y |
+| cumlouder | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -35,6 +34,7 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
+| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -44,10 +44,10 @@
 | beemtube | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | blendporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | bongacams | backlog | PASS | 2 | cam |  | Y |  |  |  |
+| camgirlfap | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | camwhoresbay | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | celebsroulette | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | cloudbate | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
-| cumlouder | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | drtuber | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erogarga | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
@@ -109,6 +109,7 @@
 | netflixporno | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | nltubes | backlog | UNKNOWN |  | video |  | Y | Y | Y | Y |
 | nonktube | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| noodlemagazine | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | notfans | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | okxxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | paradisehill | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -188,9 +189,8 @@
 
 ## Next Batch
 
-- **analdin** (failing, tier=2) | failures: list:FAIL
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL, search:FAIL
-- **noodlemagazine** (warn, tier=None) | failures: play:FAIL
+- **cumlouder** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
@@ -208,3 +208,4 @@
 - **xvideos** (tier1, tier=1)
 - **youporn** (tier1, tier=1)
 - **yourlesbians** (tier1, tier=1)
+- **6xtube** (backlog, tier=None)
