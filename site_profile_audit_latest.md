@@ -8,7 +8,7 @@
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
-| cumlouder | warn | WARN |  | video |  | Y | Y | Y | Y |
+| yrprno | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -48,6 +48,7 @@
 | camwhoresbay | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | celebsroulette | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | cloudbate | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
+| cumlouder | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | drtuber | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erogarga | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
@@ -185,12 +186,11 @@
 | yespornvip | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | youcrazyx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | youjizz | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| yrprno | backlog | PASS |  | video |  | Y | Y | Y | Y |
 
 ## Next Batch
 
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL, search:FAIL
-- **cumlouder** (warn, tier=None) | failures: play:FAIL
+- **yrprno** (warn, tier=None) | failures: categories:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)

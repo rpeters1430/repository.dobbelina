@@ -108,13 +108,13 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
       "FAIL",
       "PASS",
       "PASS",
       "FAIL",
       "FAIL",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.6
@@ -125,9 +125,9 @@
       "PASS",
       "PASS",
       "PASS",
+      "FAIL",
+      "FAIL",
       "PASS",
-      "FAIL",
-      "FAIL",
       "PASS",
       "PASS",
       "PASS"
@@ -384,8 +384,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "WARN"
+      "WARN",
+      "PASS"
     ],
     "stability_score": 0.9
   },
@@ -651,8 +651,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -1283,8 +1283,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -2560,9 +2560,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "WARN"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "pornobae": {
     "history": [
@@ -2649,12 +2649,14 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
   },
   "fpoxxx": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2677,12 +2679,14 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
   },
   "camgirlfap": {
     "history": [
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0

@@ -6,19 +6,15 @@
 ## Snapshot
 
 - Current: `PASS 177` | `WARN 1` | `FAIL 1` | `ERROR 0` | `SKIP 0`
-- Previous: `PASS 175` | `WARN 1` | `FAIL 2` | `ERROR 0` | `SKIP 0`
+- Previous: `PASS 177` | `WARN 1` | `FAIL 1` | `ERROR 0` | `SKIP 0`
 
 ## Delta Summary
 
 - New failures: `0`
-- Resolved failures: `1`
+- Resolved failures: `0`
 - Persistent failures: `1`
 - Site regressions: `1`
 - Step regressions: `1`
-
-## Resolved Failures
-
-- **analdin**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -26,8 +22,8 @@
 
 ## Step Regressions
 
-- **cumlouder** `play`: `PASS -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
+- **yrprno** `categories`: `PASS -> FAIL` (NETWORK) | TimeoutError: The read operation timed out
 
 ## Improvements
 
-- **noodlemagazine**: `WARN -> PASS`
+- **cumlouder**: `WARN -> PASS`
