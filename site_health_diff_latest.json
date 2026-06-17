@@ -1,15 +1,15 @@
 {
   "current": {
-    "generated": "2026-06-16T08:11:31.812898",
-    "sites_total": 179,
-    "pass": 177,
-    "warn": 1,
+    "generated": "2026-06-17T08:07:19.217057",
+    "sites_total": 180,
+    "pass": 179,
+    "warn": 0,
     "fail": 1,
     "error": 0,
     "skip": 0
   },
   "previous": {
-    "generated": "2026-06-15T08:16:54.180967",
+    "generated": "2026-06-16T08:11:31.812898",
     "sites_total": 179,
     "pass": 177,
     "warn": 1,
@@ -22,8 +22,8 @@
     "resolved_failures": 0,
     "persistent_failures": 1,
     "improved_sites": 1,
-    "regressions": 1,
-    "step_regressions": 1
+    "regressions": 0,
+    "step_regressions": 0
   },
   "new_failures": [],
   "resolved_failures": [],
@@ -40,36 +40,25 @@
   ],
   "improved_sites": [
     {
-      "site": "cumlouder",
+      "site": "yrprno",
       "previous": "WARN",
       "current": "PASS"
     }
   ],
-  "step_regressions": [
-    {
-      "site": "yrprno",
-      "step": "categories",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "TimeoutError: The read operation timed out",
-      "class": "NETWORK",
-      "is_flaky": false,
-      "stability_score": 1.0
-    }
-  ],
+  "step_regressions": [],
   "deltas": [
     {
-      "site": "cumlouder",
-      "previous": "WARN",
+      "site": "ikisoda",
+      "previous": "MISSING",
       "current": "PASS",
-      "kind": "improvement",
+      "kind": "new_site",
       "detail": ""
     },
     {
       "site": "yrprno",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]

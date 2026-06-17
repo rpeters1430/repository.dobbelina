@@ -107,13 +107,13 @@
   "analdin": {
     "history": [
       "PASS",
-      "PASS",
       "FAIL",
       "FAIL",
       "PASS",
       "PASS",
       "FAIL",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS"
     ],
@@ -124,9 +124,9 @@
       "PASS",
       "PASS",
       "PASS",
+      "FAIL",
+      "FAIL",
       "PASS",
-      "FAIL",
-      "FAIL",
       "PASS",
       "PASS",
       "PASS",
@@ -383,8 +383,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -650,8 +650,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1282,8 +1282,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS"
     ],
@@ -2559,8 +2559,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "WARN"
+      "WARN",
+      "PASS"
     ],
     "stability_score": 0.9
   },
@@ -2687,6 +2687,13 @@
   "camgirlfap": {
     "history": [
       "PASS",
+      "PASS",
+      "PASS"
+    ],
+    "stability_score": 1.0
+  },
+  "ikisoda": {
+    "history": [
       "PASS"
     ],
     "stability_score": 1.0
