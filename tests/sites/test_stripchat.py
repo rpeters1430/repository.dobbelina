@@ -335,7 +335,7 @@ def test_playvid_does_not_treat_model_page_as_stream_fallback(monkeypatch):
     assert recorder.notifications == [("Stripchat", "Model is offline")]
 
 
-def test_proxy_manifest_uses_local_segment_indexes():
+def test_proxy_manifest_uses_stable_encoded_segment_urls():
     manifest = "\n".join(
         [
             "#EXTM3U",
@@ -351,8 +351,8 @@ def test_proxy_manifest_uses_local_segment_indexes():
     rewritten = stripchat._proxy_segment_urls_in_manifest(manifest, 9150)
 
     assert 'URI="http://127.0.0.1:9150/seg?u=' in rewritten
-    assert "http://127.0.0.1:9150/seg?i=0" in rewritten
-    assert "http://127.0.0.1:9150/seg?i=1" in rewritten
+    assert rewritten.count("http://127.0.0.1:9150/seg?u=") == 3
+    assert "/seg?i=" not in rewritten
     assert "https://cdn.example.com/seg1.mp4" not in rewritten
     assert "https://cdn.example.com/seg2.mp4" not in rewritten
 

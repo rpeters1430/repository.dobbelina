@@ -775,13 +775,13 @@ def _extract_manifest_segment_urls(manifest_text):
 def _proxy_segment_urls_in_manifest(manifest_text, port):
     """Rewrite media URLs to local proxy routes.
 
-    Segment URLs are exposed as stable localhost indexes so the proxy can refresh
-    the upstream manifest and remap them if Stripchat rotates the live-edge
-    signed URLs before Kodi fetches the next segment.
+    Segment URLs are embedded in the localhost URL instead of being exposed as
+    live manifest indexes. Kodi can request older manifest entries after the
+    proxy has refreshed the playlist, and index remapping can then point at a
+    different or missing segment.
     """
     lines = manifest_text.splitlines()
     out = []
-    seg_index = 0
     for line in lines:
         stripped = line.strip()
         if stripped.startswith("#EXT-X-MAP:URI="):
@@ -794,8 +794,9 @@ def _proxy_segment_urls_in_manifest(manifest_text, port):
                     )
                     line = line.replace(cdn_url, proxy_url)
         elif stripped and not stripped.startswith("#") and stripped.startswith("http"):
-            line = "http://127.0.0.1:{0}/seg?i={1}".format(port, seg_index)
-            seg_index += 1
+            line = "http://127.0.0.1:{0}/seg?u={1}".format(
+                port, _encode_proxy_target(stripped)
+            )
         out.append(line)
     return "\n".join(out) + "\n"
 
