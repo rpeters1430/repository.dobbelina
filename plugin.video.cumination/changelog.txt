@@ -1,3 +1,11 @@
+[B]Version 1.1.418[/B]
+- Small Fixes
+- Sync script.module.resolveurl from ResolveURL upstream (5.1.203)
+- fix: route LemonCams playback through Stripchat's manifest pipeline
+- feat: rebuild upstream triage workflow, add camgirlfap, harden site loader
+- Refactor Pornhub site integration and update test cases
+- Enhance Hotleak and Pornhub plugins with improved error handling and response validation
+
 [B]Version 1.1.417[/B]
 - Sync script.module.resolveurl from ResolveURL upstream (5.1.203)
 - fix: route LemonCams playback through Stripchat's manifest pipeline
