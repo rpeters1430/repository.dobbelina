@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-06-14
-**Last Sync**: 2026-06-14 - Triaged 105 pending upstream commits, ported the sites/__init__.py crash-guard, added camgirlfap as a new BS4 site.
+**Last Updated**: 2026-06-17
+**Last Sync**: 2026-06-17 - Reviewed latest upstream commits, imported ikisoda with the upstream player quality fix, and recorded redundant BS4-covered fixes.
 
 ---
 
@@ -18,6 +18,16 @@
 ---
 
 ## Sync Sessions
+
+### 2026-06-17 Porting Session
+Reviewed newest upstream commits after the 2026-06-14 triage session. Imported the upstream `ikisoda` site module and icon, including the latest quality-selection player fix, then adjusted list item ordering so automated playback checks select a real video before the settings control. Spot-checked the newest `freeuseporn`, `camcaps`/`reallifecam`/`porndish`, and `yourlesbians` upstream changes against this fork's current implementations.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `7839f576`/`feb31161`/`a7b8d112`/`829c587c`/`79cf0fa6`/`599f72e0` (#1830), `bcecf6f6` | ikisoda #1830 / Small fix + changed player for better resolution | `manual` | 2026-06-17 | Imported `ikisoda.py` and `ikisoda.png` from upstream, including the latest quality-selection playback changes. Moved the non-playable "Change per page" control after video entries so live smoke `list,play` samples an actual video. Verified `py_compile` and live `ikisoda list,play` PASS. |
+| `994701cc` | freeuseporn #1886 | `manual-already-covered` | 2026-06-17 | Upstream relaxes a legacy regex. This fork already uses `SoupSiteSpec` selectors for FreeusePorn; normal `main,list,play` live smoke PASS. |
+| `a57c567a` | camcaps listing - fixes #1888 | `manual-already-covered` | 2026-06-17 | Porndish icon change is already present; Reallifecam/Camcaps listing is already BS4-based and handles flexible duration text. Live smoke for `reallifecam` and `porndish` PASS. |
+| `b05e8ddf`/`042444e7`/`2b74f364` (#1831) | Added yourlesbians #1831 | `manual-already-covered` | 2026-06-17 | Rechecked during latest upstream review. This fork's `yourlesbians.py` already exists and live `list,play` PASS, so upstream's add/rewrite remains redundant. |
 
 ### 2026-06-14 Porting Session
 Ran `python scripts/sync_manager.py --report` to triage the 105 pending upstream commits (87 groups) into `docs/development/UPSTREAM_TRIAGE.md`. Acted on the "New Sites Available" and crash-guard items; remaining "Needs Review" groups and the other two new-site candidates recorded below as intentionally skipped.
@@ -188,9 +198,7 @@ Commits reviewed in the 2026-06-14 triage session (`docs/development/UPSTREAM_TR
 
 | Upstream Hash | Message | Reason |
 |---|---|---|
-| `7839f576`/`feb31161`/`a7b8d112`/`829c587c`/`79cf0fa6`/`599f72e0` (#1830) | ikisoda new site | New site not selected for porting in the 2026-06-14 triage session (camgirlfap was prioritized instead); revisit in a future session. |
 | `a75b2572`/`1fde0486` (#1700) | Added Porn4Fans #1700 | New site not selected for porting in the 2026-06-14 triage session; revisit in a future session. |
-| `b05e8ddf`/`042444e7`/`2b74f364` (#1831) | Added yourlesbians #1831 | `yourlesbians.py` already exists in this fork (category Video Tubes); upstream's add commits for yourlesbians are redundant. |
 | `cc829f67`/`b6b7a993`/`fc508d42` (#1647), `c179ec7b` | Added pimpbunny #1647 / Delete pimpbunny.py | `pimpbunny.py` already exists in this fork (category Video Tubes); upstream's later addition and subsequent removal are both no-ops for us. |
 | `e9340aba` | notfans small fix | Whitespace/formatting-only change to upstream's legacy `notfans.py`; this fork's `notfans.py` is already BS4-migrated with a different structure. |
 | `ca8b516a`/`e0b41b52` (#1695) | FPO.XXX #1695 | `fpoxxx.py` is already migrated to BS4/`SoupSiteSpec` in this fork (used as the template for camgirlfap); upstream's fixes target the pre-migration implementation. |

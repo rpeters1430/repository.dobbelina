@@ -41,3 +41,21 @@ def test_list_parses_items(monkeypatch):
     assert downloads[0]["quality"] == "HD"
     assert downloads[1]["url"].endswith("/porn/second")
     assert any("Next Page" in d["name"] for d in dirs)
+
+
+def test_list_uses_porn_index_for_site_root(monkeypatch):
+    html = load_fixture("listing.html")
+    requested_urls = []
+
+    def fake_get_html(url, *args, **kwargs):
+        requested_urls.append(url)
+        return html
+
+    monkeypatch.setattr(cumlouder.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(cumlouder.utils, "eod", lambda: None)
+    monkeypatch.setattr(cumlouder.site, "add_download_link", lambda *a, **k: None)
+    monkeypatch.setattr(cumlouder.site, "add_dir", lambda *a, **k: None)
+
+    cumlouder.List("https://www.cumlouder.com/")
+
+    assert requested_urls == ["https://www.cumlouder.com/porn/"]

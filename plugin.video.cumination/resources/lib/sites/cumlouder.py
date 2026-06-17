@@ -64,6 +64,9 @@ def Main():
 
 @site.register()
 def List(url):
+    if url.rstrip("/") == site.url.rstrip("/"):
+        url = site.url + "porn/"
+
     listhtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(listhtml)
     for item in soup.select(".muestra-escena, .scene-item, .item"):

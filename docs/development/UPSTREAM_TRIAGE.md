@@ -1,7 +1,7 @@
 # Upstream Triage Report
 
-Generated: 2026-06-14
-Pending commits: 64 (grouped into 63 items)
+Generated: 2026-06-17
+Pending commits: 61 (grouped into 60 items)
 
 Run `python scripts/sync_manager.py` (interactive) to review/cherry-pick, or `python scripts/sync_manager.py --report` to regenerate this file.
 
@@ -17,14 +17,12 @@ Touches a site we have that isn't BeautifulSoup-migrated, or mentions playback/d
 
 _None._
 
-## Likely Already Covered (50)
+## Likely Already Covered (48)
 
 Only touches BeautifulSoup-migrated sites we already have - spot-check, likely skip.
 
 | Group | Commits | Sites | New Sites | Playback | Message(s) |
 |---|---|---|---|---|---|
-| #1886 | `994701cc` | freeuseporn | - |  | freeuseporn #1886 |
-| #1888 | `a57c567a` | porndish, reallifecam | - |  | camcaps listing - fixes #1888 |
 | 57423ce2 | `57423ce2` | xnxx | - |  | Delete plugin.video.cumination/resources/lib/sites/xnxx.py |
 | d6120389 | `d6120389` | xnxx | - |  | Excluded interactive items that cannot be played |
 | 496aec2f | `496aec2f` | cam4 | - |  | Compatibility issues with PY2 |
@@ -74,13 +72,12 @@ Only touches BeautifulSoup-migrated sites we already have - spot-check, likely s
 | #1686 | `86d995a6` | hanime | - |  | hanime fixes #1686 |
 | #1685 | `d47192d5` | camsoda | - |  | camsoda #1685 |
 
-## Auto-Skip (13)
+## Auto-Skip (12)
 
 No site module changes detected (changelog/icon/docs/version-bump-style commits).
 
 | Group | Commits | Sites | New Sites | Playback | Message(s) |
 |---|---|---|---|---|---|
-| bcecf6f6 | `bcecf6f6` | ikisoda | - |  | Small fix + changed player for better resolution |
 | 5ca9af98 | `5ca9af98` | - | - |  | xnxx |
 | 920bdb8c | `920bdb8c` | - | - |  | - AWM network search fix |
 | e6bb2487 | `e6bb2487` | - | - |  | Update README |
