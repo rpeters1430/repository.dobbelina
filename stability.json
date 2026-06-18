@@ -106,13 +106,13 @@
   },
   "analdin": {
     "history": [
-      "PASS",
       "FAIL",
       "FAIL",
       "PASS",
       "PASS",
       "FAIL",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -123,9 +123,9 @@
     "history": [
       "PASS",
       "PASS",
+      "FAIL",
+      "FAIL",
       "PASS",
-      "FAIL",
-      "FAIL",
       "PASS",
       "PASS",
       "PASS",
@@ -382,8 +382,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS"
     ],
@@ -649,8 +649,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1281,8 +1281,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -2065,9 +2065,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "FAIL"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "tnaflix": {
     "history": [
@@ -2558,8 +2558,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -2688,12 +2688,14 @@
     "history": [
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
   },
   "ikisoda": {
     "history": [
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
