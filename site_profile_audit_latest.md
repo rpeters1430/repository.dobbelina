@@ -7,8 +7,8 @@
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
+| analdin | failing | FAIL | 2 | video |  | Y | Y | Y | Y |
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
-| thothub | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -34,7 +34,6 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
-| analdin | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | animeidhentai | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -100,7 +99,7 @@
 | livecamrips | backlog | PASS | 2 | cam |  | Y |  | Y | Y |
 | longvideos | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | mangoporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| motherless | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
+| motherless | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
 | mrsexe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | myfreecams | backlog | PASS | 2 | cam |  | Y |  |  |  |
 | naked | backlog | PASS | 2 | cam |  |  |  |  |  |
@@ -157,6 +156,7 @@
 | terebon | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | thepornarea | backlog | PASS | 2 | video | Y | Y |  | Y | Y |
 | theyarehuge | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| thothub | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | tnaflix | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | tokyomotion | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | trannyteca | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -190,8 +190,8 @@
 
 ## Next Batch
 
+- **analdin** (failing, tier=2) | failures: list:FAIL
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL, search:FAIL
-- **thothub** (failing, tier=None) | failures: list:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)

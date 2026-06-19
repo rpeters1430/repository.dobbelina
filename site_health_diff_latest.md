@@ -5,20 +5,24 @@
 
 ## Snapshot
 
-- Current: `PASS 178` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 0`
-- Previous: `PASS 179` | `WARN 0` | `FAIL 1` | `ERROR 0` | `SKIP 0`
+- Current: `PASS 176` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 178` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 0`
 
 ## Delta Summary
 
 - New failures: `1`
-- Resolved failures: `0`
+- Resolved failures: `1`
 - Persistent failures: `1`
-- Site regressions: `1`
+- Site regressions: `3`
 - Step regressions: `1`
 
 ## New Failures
 
-- **thothub**: `PASS -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 521)
+- **analdin**: `PASS -> FAIL` (PARSER) | list: List returned no videos ⚠️ [FLAKY: 60.0%]
+
+## Resolved Failures
+
+- **thothub**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -26,4 +30,4 @@
 
 ## Step Regressions
 
-- **thothub** `list`: `PASS -> FAIL` (UNKNOWN) | List URL unavailable in harness (HTTP 521)
+- **analdin** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
