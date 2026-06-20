@@ -1,3 +1,11 @@
+[B]Version 1.1.421[/B]
+- Small Updates
+- fix: implement LemonCams direct HLS playback
+- Plan LemonCams direct HLS playback
+- Document LemonCams direct HLS design
+- Lemoncam Fixes
+- Small Fixes
+
 [B]Version 1.1.420[/B]
 - fix: implement LemonCams direct HLS playback
 - Plan LemonCams direct HLS playback
