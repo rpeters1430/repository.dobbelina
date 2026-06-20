@@ -2992,17 +2992,49 @@ class VideoPlayer:
         if not html:
             return None
             
+        # Check for packed scripts and unpack them
+        packed_match = re.compile(
+            r"(eval\s*\(function\(p,a,c,k,e,d\).+?)(?:\s*<\/script>|$)", 
+            re.DOTALL | re.IGNORECASE
+        ).findall(html)
+        
+        unpacked_html = html
+        if packed_match:
+            for packed in packed_match:
+                try:
+                    unpacked_html += "\n" + jsunpack.unpack(packed)
+                except Exception:
+                    pass
+
+        # Try to find direct jwplayer file first (especially for nowplay.to)
+        jw_match = re.search(
+            r"""file\s*:\s*["']([^'"]+\.(?:m3u8|mp4)[^'"]*)""",
+            unpacked_html,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if jw_match:
+            final_url = jw_match.group(1)
+            if final_url.startswith("//"):
+                final_url = "https:" + final_url
+            elif final_url.startswith("/"):
+                final_url = urllib_parse.urljoin(url, final_url)
+            
+            domain = urllib_parse.urlparse(url).netloc
+            cookies = get_cookies_string(domain)
+            cookie_str = "&Cookie={}".format(urllib_parse.quote(cookies)) if cookies else ""
+            return "{}|Referer={}&User-Agent={}{}".format(final_url, urllib_parse.quote(url), urllib_parse.quote(USER_AGENT), cookie_str)
+
         # Extract token and pass_url_chunk
         match = re.search(
             r"""dsplayer\.hotkeys\s*\(\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]+)['"]""",
-            html,
+            unpacked_html,
             re.DOTALL | re.IGNORECASE,
         )
         if not match:
             # Fallback for older patterns
             match = re.search(
                 r"""dsplayer\.hotkeys[^'"]+['"]([^'"]+).+?function\s*makePlay.+?return[^?]+([^'"]+)""",
-                html,
+                unpacked_html,
                 re.DOTALL,
             )
             if not match:

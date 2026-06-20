@@ -17,6 +17,7 @@ SITES_DIR = REPO_ROOT / "plugin.video.cumination" / "resources" / "lib" / "sites
 
 # Standards
 TARGET_SIZE = "256x256"
+MIN_FILE_SIZE_KB = 2
 MAX_FILE_SIZE_KB = 50
 OPTIMAL_FILE_SIZE_RANGE = (5, 30)
 
@@ -114,11 +115,11 @@ def validate_logo_specs(logo_path, use_imagemagick=True):
     size_kb = logo_path.stat().st_size / 1024
     if size_kb > MAX_FILE_SIZE_KB:
         issues.append(f"Too large: {size_kb:.1f} KB (max {MAX_FILE_SIZE_KB} KB)")
-    elif size_kb < OPTIMAL_FILE_SIZE_RANGE[0]:
+    elif size_kb < MIN_FILE_SIZE_KB:
         issues.append(
-            f"Too small: {size_kb:.1f} KB (min {OPTIMAL_FILE_SIZE_RANGE[0]} KB)"
+            f"Too small: {size_kb:.1f} KB (min {MIN_FILE_SIZE_KB} KB)"
         )
-    elif size_kb > OPTIMAL_FILE_SIZE_RANGE[1]:
+    elif size_kb < OPTIMAL_FILE_SIZE_RANGE[0] or size_kb > OPTIMAL_FILE_SIZE_RANGE[1]:
         issues.append(
             f"Suboptimal size: {size_kb:.1f} KB (optimal {OPTIMAL_FILE_SIZE_RANGE[0]}-{OPTIMAL_FILE_SIZE_RANGE[1]} KB)"
         )

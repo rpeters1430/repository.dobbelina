@@ -22,7 +22,7 @@ from resources.lib.decrypters.kvsplayer import kvs_decode
 from resources.lib.adultsite import AdultSite
 from urllib.parse import quote
 
-site = AdultSite('ikisoda', '[COLOR hotpink]Ikisoda[/COLOR]', 'https://ikisoda.com/', 'ikisoda.png', 'ikisoda')
+site = AdultSite('ikisoda', '[COLOR hotpink]Ikisoda[/COLOR]', 'https://ikisoda.com/', 'ikisoda.png', 'ikisoda', category="JAV & Asian")
 
 addon = utils.addon
 perPage = 30
