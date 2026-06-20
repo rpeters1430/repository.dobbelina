@@ -1,3 +1,12 @@
+[B]Version 1.1.420[/B]
+- fix: implement LemonCams direct HLS playback
+- Plan LemonCams direct HLS playback
+- Document LemonCams direct HLS design
+- Lemoncam Fixes
+- Small Fixes
+- Sync script.module.resolveurl from ResolveURL upstream (5.1.203)
+- fix: route LemonCams playback through Stripchat's manifest pipeline
+
 [B]Version 1.1.419[/B]
 - Lemoncam Fixes
 - Small Fixes
