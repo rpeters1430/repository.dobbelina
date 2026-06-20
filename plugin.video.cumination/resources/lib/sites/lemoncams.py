@@ -22,7 +22,6 @@ from six.moves import urllib_parse
 
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
-from resources.lib.sites.stripchat import Playvid as stripchat_playvid
 
 
 site = AdultSite(
@@ -291,9 +290,23 @@ def Playvid(url, name):
         utils.notify("LemonCams", "Only Stripchat models are supported")
         return
 
-    # Hand off to Stripchat's own playback pipeline (manifest proxying, headers,
-    # etc.) instead of playing LemonCams' raw CDN URL directly. The raw doppiocdn
-    # HLS manifest LemonCams exposes returns 404 placeholder segments without that
-    # proxy, which can crash inputstream.adaptive on some platforms (e.g. Android
-    # TV) after the initial buffer is exhausted.
-    stripchat_playvid(stream_url or "", username)
+    playable_url = stream_url or _find_model_stream(provider, username)
+    if not playable_url:
+        utils.notify("LemonCams", "Model offline or no stream found")
+        return
+
+    headers = {
+        "User-Agent": utils.USER_AGENT,
+        "Referer": site.url,
+        "Origin": site.url,
+    }
+    header_string = (
+        "User-Agent={0}&Referer={1}&Origin={2}&manifest_headers=1"
+    ).format(
+        urllib_parse.quote(headers["User-Agent"], safe=""),
+        urllib_parse.quote(headers["Referer"], safe="/"),
+        urllib_parse.quote(headers["Origin"], safe="/"),
+    )
+
+    player = utils.VideoPlayer(username, IA_check="IA")
+    player.play_from_direct_link("{}|{}".format(playable_url, header_string))

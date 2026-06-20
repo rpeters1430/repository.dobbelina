@@ -68,39 +68,78 @@ def test_list_uses_real_pagination_and_adds_next_page(monkeypatch):
     ]
 
 
-def test_playvid_delegates_to_stripchat_with_cached_stream(monkeypatch):
-    calls = []
+def test_playvid_plays_cached_hls_directly_with_lemoncams_headers(monkeypatch):
+    played = []
 
-    monkeypatch.setattr(
-        lemoncams,
-        "stripchat_playvid",
-        lambda url, name: calls.append({"url": url, "name": name}),
+    class FakeVideoPlayer:
+        def __init__(self, name, IA_check=None):
+            assert name == "model1"
+            assert IA_check == "IA"
+
+        def play_from_direct_link(self, url):
+            played.append(url)
+
+    monkeypatch.setattr(lemoncams.utils, "VideoPlayer", FakeVideoPlayer)
+
+    lemoncams.Playvid(
+        "https://www.lemoncams.com/stripchat/model1|"
+        "https://edge.example/master.m3u8",
+        "Model 1",
     )
 
-    # Test with piped URL
-    url = "https://www.lemoncams.com/stripchat/model1|https://stream.example/model1.m3u8"
-    lemoncams.Playvid(url, "Model 1")
+    assert len(played) == 1
+    assert played[0].startswith("https://edge.example/master.m3u8|")
+    assert "User-Agent=" in played[0]
+    assert "Referer=https%3A//www.lemoncams.com/" in played[0]
+    assert "Origin=https%3A//www.lemoncams.com/" in played[0]
+    assert "manifest_headers=1" in played[0]
 
-    assert calls == [
-        {"url": "https://stream.example/model1.m3u8", "name": "model1"}
+
+def test_playvid_refreshes_missing_stream_before_direct_playback(monkeypatch):
+    played = []
+    searches = []
+
+    class FakeVideoPlayer:
+        def __init__(self, name, IA_check=None):
+            assert name == "model1"
+            assert IA_check == "IA"
+
+        def play_from_direct_link(self, url):
+            played.append(url)
+
+    monkeypatch.setattr(lemoncams.utils, "VideoPlayer", FakeVideoPlayer)
+    monkeypatch.setattr(
+        lemoncams,
+        "_find_model_stream",
+        lambda provider, username: (
+            searches.append((provider, username))
+            or "https://edge.example/refreshed.m3u8"
+        ),
+    )
+
+    lemoncams.Playvid("https://www.lemoncams.com/stripchat/model1", "Model 1")
+
+    assert searches == [("stripchat", "model1")]
+    assert played[0].startswith("https://edge.example/refreshed.m3u8|")
+
+
+def test_playvid_notifies_when_refreshed_stream_is_missing(monkeypatch):
+    notifications = []
+
+    monkeypatch.setattr(lemoncams, "_find_model_stream", lambda *args: "")
+    monkeypatch.setattr(
+        lemoncams.utils,
+        "notify",
+        lambda heading, message, *args, **kwargs: notifications.append(
+            (heading, message)
+        ),
+    )
+
+    lemoncams.Playvid("https://www.lemoncams.com/stripchat/model1", "Model 1")
+
+    assert notifications == [
+        ("LemonCams", "Model offline or no stream found")
     ]
-
-
-def test_playvid_delegates_to_stripchat_without_cached_stream(monkeypatch):
-    calls = []
-
-    monkeypatch.setattr(
-        lemoncams,
-        "stripchat_playvid",
-        lambda url, name: calls.append({"url": url, "name": name}),
-    )
-
-    # Test with URL without piped stream - LemonCams should not resolve a
-    # stream itself; Stripchat's pipeline does its own model lookup.
-    url = "https://www.lemoncams.com/stripchat/model1"
-    lemoncams.Playvid(url, "Model 1")
-
-    assert calls == [{"url": "", "name": "model1"}]
 
 
 def test_search_rejects_non_stripchat_provider(monkeypatch):
@@ -120,13 +159,13 @@ def test_search_rejects_non_stripchat_provider(monkeypatch):
 
 def test_playvid_rejects_non_stripchat_provider(monkeypatch):
     notifications = []
-    calls = []
+    player_calls = []
 
-    monkeypatch.setattr(
-        lemoncams,
-        "stripchat_playvid",
-        lambda url, name: calls.append({"url": url, "name": name}),
-    )
+    class FakeVideoPlayer:
+        def __init__(self, name, IA_check=None):
+            player_calls.append(name)
+
+    monkeypatch.setattr(lemoncams.utils, "VideoPlayer", FakeVideoPlayer)
     monkeypatch.setattr(
         lemoncams.utils,
         "notify",
@@ -136,4 +175,5 @@ def test_playvid_rejects_non_stripchat_provider(monkeypatch):
     lemoncams.Playvid("https://www.lemoncams.com/chaturbate/beckymadsons", "beckymadsons")
 
     assert notifications == [("LemonCams", "Only Stripchat models are supported")]
-    assert calls == []
+    assert player_calls == []
+
