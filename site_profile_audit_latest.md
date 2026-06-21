@@ -1,6 +1,6 @@
 # Site Profile Audit
 
-- Sites: `180`
+- Sites: `181`
 - Tier1 hot: `0`
 - Failing: `1`
 - Warn: `0`
@@ -99,9 +99,10 @@
 | livecamrips | backlog | PASS | 2 | cam |  | Y |  | Y | Y |
 | longvideos | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | mangoporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| motherless | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
+| motherless | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
 | mrsexe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | myfreecams | backlog | PASS | 2 | cam |  | Y |  |  |  |
+| myporntape | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | naked | backlog | PASS | 2 | cam |  |  |  |  |  |
 | naughtyblog | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | neporn | backlog | PASS |  | video |  | Y | Y | Y | Y |

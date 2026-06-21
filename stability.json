@@ -107,7 +107,6 @@
   "analdin": {
     "history": [
       "PASS",
-      "PASS",
       "FAIL",
       "FAIL",
       "PASS",
@@ -115,6 +114,7 @@
       "PASS",
       "PASS",
       "FAIL",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.7
@@ -122,7 +122,7 @@
   "animeidhentai": {
     "history": [
       "FAIL",
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -132,7 +132,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.8
+    "stability_score": 0.9
   },
   "anybunny": {
     "history": [
@@ -379,8 +379,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -646,8 +646,8 @@
   },
   "hdporn92": {
     "history": [
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1118,11 +1118,11 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
-      "PASS"
+      "PASS",
+      "SKIP"
     ],
-    "stability_score": 0.9
+    "stability_score": 0.8
   },
   "mrsexe": {
     "history": [
@@ -1278,8 +1278,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1763,8 +1763,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -2062,8 +2062,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS"
     ],
@@ -2555,8 +2555,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2691,6 +2691,7 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
@@ -2700,6 +2701,13 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
+      "PASS"
+    ],
+    "stability_score": 1.0
+  },
+  "myporntape": {
+    "history": [
       "PASS"
     ],
     "stability_score": 1.0
