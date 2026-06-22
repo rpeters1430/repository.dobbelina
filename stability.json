@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "PASS",
       "FAIL",
       "FAIL",
       "PASS",
@@ -114,6 +113,7 @@
       "PASS",
       "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS"
     ],
@@ -121,7 +121,7 @@
   },
   "animeidhentai": {
     "history": [
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -132,7 +132,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "anybunny": {
     "history": [
@@ -378,8 +378,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -646,7 +646,7 @@
   },
   "hdporn92": {
     "history": [
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -657,7 +657,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "heavyr": {
     "history": [
@@ -1117,12 +1117,12 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
       "PASS",
+      "SKIP",
       "SKIP"
     ],
-    "stability_score": 0.8
+    "stability_score": 0.7
   },
   "mrsexe": {
     "history": [
@@ -1277,8 +1277,8 @@
   "noodlemagazine": {
     "history": [
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1762,8 +1762,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS"
     ],
@@ -2061,8 +2061,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -2554,8 +2554,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2692,6 +2692,7 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
@@ -2702,12 +2703,14 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
   },
   "myporntape": {
     "history": [
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
