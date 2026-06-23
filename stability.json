@@ -107,7 +107,6 @@
   "analdin": {
     "history": [
       "FAIL",
-      "FAIL",
       "PASS",
       "PASS",
       "PASS",
@@ -115,7 +114,8 @@
       "FAIL",
       "PASS",
       "PASS",
-      "PASS"
+      "PASS",
+      "FAIL"
     ],
     "stability_score": 0.7
   },
@@ -377,8 +377,8 @@
   "cumlouder": {
     "history": [
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1116,13 +1116,13 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
       "PASS",
+      "SKIP",
       "SKIP",
       "SKIP"
     ],
-    "stability_score": 0.7
+    "stability_score": 0.6
   },
   "mrsexe": {
     "history": [
@@ -1276,8 +1276,8 @@
   },
   "noodlemagazine": {
     "history": [
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1761,8 +1761,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -2060,8 +2060,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2500,9 +2500,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "WARN"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "youjizz": {
     "history": [
@@ -2553,8 +2553,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2693,6 +2693,7 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
@@ -2704,12 +2705,14 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0
   },
   "myporntape": {
     "history": [
+      "PASS",
       "PASS",
       "PASS"
     ],
