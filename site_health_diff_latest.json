@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-06-24T07:25:17.234703",
+    "sites_total": 181,
+    "pass": 179,
+    "warn": 0,
+    "fail": 1,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-06-23T07:27:39.270700",
     "sites_total": 181,
     "pass": 177,
@@ -8,35 +17,22 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-06-22T08:22:02.500370",
-    "sites_total": 181,
-    "pass": 179,
-    "warn": 0,
-    "fail": 1,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
-    "new_failures": 1,
-    "resolved_failures": 0,
+    "new_failures": 0,
+    "resolved_failures": 1,
     "persistent_failures": 1,
-    "improved_sites": 0,
-    "regressions": 2,
-    "step_regressions": 2
+    "improved_sites": 1,
+    "regressions": 0,
+    "step_regressions": 0
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
-      "is_flaky": false,
-      "stability_score": 0.7
+      "previous": "FAIL",
+      "current": "PASS"
     }
   ],
-  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "pornhoarder",
@@ -48,42 +44,27 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
-    {
-      "site": "analdin",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 0.7
-    },
+  "improved_sites": [
     {
       "site": "youcrazyx",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "TimeoutError: The read operation timed out",
-      "class": "NETWORK",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "previous": "WARN",
+      "current": "PASS"
     }
   ],
+  "step_regressions": [],
   "deltas": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "youcrazyx",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
