@@ -24,7 +24,7 @@ def test_list_parses_video_items_and_pagination():
     <html>
         <div class="item">
             <a href="/videos/123/example-sex-tape/" title="Example Sex Tape" class="link">
-                <img class="thumb lazy-load" data-webp="https://myporntape.com/thumb.webp" />
+                <img class="thumb lazy-load" data-original="https://myporntape.com/thumb.jpg" data-webp="https://myporntape.com/thumb.webp" />
                 <span class="type">hd</span>
                 <span class="time">12:34</span>
             </a>
@@ -62,7 +62,7 @@ def test_list_parses_video_items_and_pagination():
         assert "5 000 views" in downloads[0][0]
         assert "95% rating" in downloads[0][0]
         assert downloads[0][1] == "https://myporntape.com/videos/123/example-sex-tape/"
-        assert downloads[0][2] == "https://myporntape.com/thumb.webp"
+        assert downloads[0][2] == "https://myporntape.com/thumb.jpg"
         
         assert len(dirs) == 1
         assert "Next Page... (2)" in dirs[0][0]

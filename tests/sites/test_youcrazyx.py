@@ -46,4 +46,24 @@ def test_list_populates_download_links(monkeypatch):
         "mode": "youcrazyx.Playvid",
         "icon": "https://images.youcrazyx.com/thumbs/6/9/8/4/7/69847c232f282.mp4/69847c232f282.mp4-2.jpg",
     }
+
+
+def test_search_without_keyword(monkeypatch):
+    searched = []
+    monkeypatch.setattr(youcrazyx.site, "search_dir", lambda url, mode: searched.append(url))
+    youcrazyx.Search("https://www.youcrazyx.com/searchgate.php?mode=search&q=")
+    assert searched == ["https://www.youcrazyx.com/searchgate.php?mode=search&q="]
+
+
+def test_search_with_keyword(monkeypatch):
+    lists = []
+    monkeypatch.setattr(youcrazyx, "List", lambda url: lists.append(url))
+    
+    # Test with standard search URL
+    youcrazyx.Search("https://www.youcrazyx.com/searchgate.php?mode=search&q=", keyword="milf amateur")
+    assert lists[0] == "https://www.youcrazyx.com/searchgate.php?mode=search&q=milf+amateur"
+    
+    # Test with site URL fallback (e.g. from smoke test runner)
+    youcrazyx.Search("https://www.youcrazyx.com/", keyword="test query")
+    assert lists[1] == "https://www.youcrazyx.com/searchgate.php?mode=search&q=test+query"
     # Wait, I need to check the icon in the fixture for the first item.

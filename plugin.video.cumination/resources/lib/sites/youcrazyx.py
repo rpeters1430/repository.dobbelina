@@ -60,7 +60,7 @@ def Main():
     )
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]",
-        site.url + "search.php?q=",
+        site.url + "searchgate.php?mode=search&q=",
         "Search",
         site.img_search,
     )
@@ -121,6 +121,8 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
+        if "searchgate.php" not in url:
+            url = urllib_parse.urljoin(site.url, "searchgate.php?mode=search&q=")
         url = "{0}{1}".format(url, keyword.replace(" ", "+"))
         List(url)
 

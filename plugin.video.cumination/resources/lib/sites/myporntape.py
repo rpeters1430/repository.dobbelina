@@ -68,7 +68,7 @@ def List(url):
         name = utils.cleantext(name)
         
         img_el = item.select_one("img.thumb")
-        img = utils.safe_get_attr(img_el, "data-webp", ["data-original", "src"])
+        img = utils.safe_get_attr(img_el, "data-original", ["data-webp", "src"])
         if img and img.startswith("//"):
             img = "https:" + img
         elif img and img.startswith("/"):
