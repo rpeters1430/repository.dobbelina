@@ -1,15 +1,15 @@
 {
   "current": {
-    "generated": "2026-06-25T07:25:11.594164",
+    "generated": "2026-06-26T07:32:09.345319",
     "sites_total": 181,
-    "pass": 179,
-    "warn": 0,
+    "pass": 178,
+    "warn": 1,
     "fail": 1,
     "error": 0,
     "skip": 1
   },
   "previous": {
-    "generated": "2026-06-24T07:25:17.234703",
+    "generated": "2026-06-25T07:25:11.594164",
     "sites_total": 181,
     "pass": 179,
     "warn": 0,
@@ -22,8 +22,8 @@
     "resolved_failures": 0,
     "persistent_failures": 1,
     "improved_sites": 0,
-    "regressions": 0,
-    "step_regressions": 0
+    "regressions": 1,
+    "step_regressions": 1
   },
   "new_failures": [],
   "resolved_failures": [],
@@ -39,6 +39,25 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [],
-  "deltas": []
+  "step_regressions": [
+    {
+      "site": "perverzija",
+      "step": "play",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "TypeError: quote_from_bytes() expected bytes",
+      "class": "CODE",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
+  "deltas": [
+    {
+      "site": "perverzija",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    }
+  ]
 }

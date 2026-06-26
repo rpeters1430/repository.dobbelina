@@ -3,11 +3,12 @@
 - Sites: `181`
 - Tier1 hot: `0`
 - Failing: `1`
-- Warn: `0`
+- Warn: `1`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
+| perverzija | warn | WARN | 2 | video | Y | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -117,7 +118,6 @@
 | paradisehill | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | peachurnet | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | peekvids | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| perverzija | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | pimpbunny | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | playhdporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | playvids | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -192,6 +192,7 @@
 ## Next Batch
 
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL, search:FAIL
+- **perverzija** (warn, tier=2) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
@@ -210,4 +211,3 @@
 - **youporn** (tier1, tier=1)
 - **yourlesbians** (tier1, tier=1)
 - **6xtube** (backlog, tier=None)
-- **85po** (backlog, tier=None)
