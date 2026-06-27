@@ -107,7 +107,6 @@
   "analdin": {
     "history": [
       "PASS",
-      "PASS",
       "FAIL",
       "PASS",
       "PASS",
@@ -115,9 +114,10 @@
       "FAIL",
       "PASS",
       "PASS",
-      "PASS"
+      "PASS",
+      "FAIL"
     ],
-    "stability_score": 0.8
+    "stability_score": 0.7
   },
   "animeidhentai": {
     "history": [
@@ -1112,9 +1112,9 @@
   "motherless": {
     "history": [
       "PASS",
-      "PASS",
       "SKIP",
       "PASS",
+      "SKIP",
       "SKIP",
       "SKIP",
       "SKIP",
@@ -1122,7 +1122,7 @@
       "SKIP",
       "SKIP"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.2
   },
   "mrsexe": {
     "history": [
@@ -1359,8 +1359,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "WARN"
+      "WARN",
+      "PASS"
     ],
     "stability_score": 0.9
   },
@@ -1757,8 +1757,8 @@
   "rlc": {
     "history": [
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2056,8 +2056,8 @@
   },
   "thothub": {
     "history": [
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2496,8 +2496,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -2716,6 +2716,7 @@
   },
   "myporntape": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS",

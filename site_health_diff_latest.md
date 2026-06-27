@@ -5,16 +5,20 @@
 
 ## Snapshot
 
-- Current: `PASS 178` | `WARN 1` | `FAIL 1` | `ERROR 0` | `SKIP 1`
-- Previous: `PASS 179` | `WARN 0` | `FAIL 1` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 178` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 1`
+- Previous: `PASS 178` | `WARN 1` | `FAIL 1` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
-- New failures: `0`
+- New failures: `1`
 - Resolved failures: `0`
 - Persistent failures: `1`
 - Site regressions: `1`
 - Step regressions: `1`
+
+## New Failures
+
+- **analdin**: `PASS -> FAIL` (PARSER) | list: List returned no videos
 
 ## Persistent Failures
 
@@ -22,4 +26,8 @@
 
 ## Step Regressions
 
-- **perverzija** `play`: `SKIP -> FAIL` (CODE) | TypeError: quote_from_bytes() expected bytes
+- **analdin** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
+
+## Improvements
+
+- **perverzija**: `WARN -> PASS`
