@@ -24,7 +24,7 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "motherless",
     "[COLOR hotpink]Motherless[/COLOR]",
-    "https://motherless.com/",
+    "https://motherless.xxx/",
     "motherless.png",
     "motherless",
     category="Video Tubes",
@@ -76,7 +76,7 @@ def List(url):
             link = item.select_one("a.img-container")
             if not link:
                 # Try alternative selector
-                link = item.select_one('a[href*="motherless.com/"]')
+                link = item.select_one('a[href*="motherless.com/"], a[href*="motherless.xxx/"]')
             if not link:
                 continue
 

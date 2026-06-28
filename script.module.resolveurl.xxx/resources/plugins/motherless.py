@@ -22,8 +22,8 @@ from resolveurl.plugins.__resolve_generic__ import ResolveGeneric
 
 class MotherlessResolver(ResolveGeneric):
     name = 'motherless'
-    domains = ['motherless.com']
-    pattern = r'(?://|\.)(motherless\.com)/(.+)'
+    domains = ['motherless.com', 'motherless.xxx']
+    pattern = r'(?://|\.)(motherless\.(?:com|xxx))/(.+)'
 
     def get_media_url(self, host, media_id):
         return helpers.get_media_url(

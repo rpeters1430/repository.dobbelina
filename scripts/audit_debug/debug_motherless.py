@@ -9,7 +9,7 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # Add the project root to sys.path
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(ROOT)
 sys.path.append(os.path.join(ROOT, 'script.module.resolveurl', 'lib'))
 
@@ -34,7 +34,7 @@ site_motherless = importlib.import_module("resources.lib.sites.motherless")
 
 def test_motherless():
     print("Testing motherless...")
-    site_url = "https://motherless.com/"
+    site_url = "https://motherless.xxx/"
     
     # Test Listing
     print("\n--- Testing Listing ---")
@@ -51,7 +51,7 @@ def test_motherless():
         soup = utils.parse_html(html)
         item = soup.select_one(".desktop-thumb.video, .thumb-container.video")
         if item:
-            link = item.select_one("a.img-container") or item.select_one('a[href*="motherless.com/"]')
+            link = item.select_one("a.img-container") or item.select_one('a[href*="motherless.com/"], a[href*="motherless.xxx/"]')
             video_url = utils.safe_get_attr(link, "href")
             if not video_url.startswith("http"):
                  from six.moves import urllib_parse

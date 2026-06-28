@@ -49,7 +49,7 @@ def test_list_parses_video_items(monkeypatch):
     monkeypatch.setattr(motherless.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(motherless.utils, "eod", lambda: None)
 
-    motherless.List("https://motherless.com/videos/recent")
+    motherless.List("https://motherless.xxx/videos/recent")
 
     # Should have videos from the fixture
     assert len(downloads) > 0
@@ -77,7 +77,7 @@ def test_cat_parses_categories(monkeypatch):
     monkeypatch.setattr(motherless.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(motherless.utils, "eod", lambda: None)
 
-    motherless.Categories("https://motherless.com/categories")
+    motherless.Categories("https://motherless.xxx/categories")
 
     # Should have categories
     assert len(dirs) > 0
@@ -98,6 +98,6 @@ def test_playvid_implementation(monkeypatch):
     monkeypatch.setattr(motherless.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (html, ""))
     monkeypatch.setattr(motherless.utils, "VideoPlayer", MockPlayer)
     
-    motherless.Playvid("https://motherless.com/v1", "Test")
+    motherless.Playvid("https://motherless.xxx/v1", "Test")
     
     assert played.get("url") or played.get("resolve")
