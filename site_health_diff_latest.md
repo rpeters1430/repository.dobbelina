@@ -5,29 +5,25 @@
 
 ## Snapshot
 
-- Current: `PASS 178` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 1`
-- Previous: `PASS 178` | `WARN 1` | `FAIL 1` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 180` | `WARN 0` | `FAIL 1` | `ERROR 0` | `SKIP 0`
+- Previous: `PASS 178` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
-- New failures: `1`
-- Resolved failures: `0`
+- New failures: `0`
+- Resolved failures: `1`
 - Persistent failures: `1`
-- Site regressions: `1`
-- Step regressions: `1`
+- Site regressions: `0`
+- Step regressions: `0`
 
-## New Failures
+## Resolved Failures
 
-- **analdin**: `PASS -> FAIL` (PARSER) | list: List returned no videos
+- **analdin**: `FAIL -> PASS`
 
 ## Persistent Failures
 
 - **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 0.0%]
 
-## Step Regressions
-
-- **analdin** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
-
 ## Improvements
 
-- **perverzija**: `WARN -> PASS`
+- **motherless**: `SKIP -> PASS`
