@@ -5,25 +5,27 @@
 
 ## Snapshot
 
-- Current: `PASS 180` | `WARN 0` | `FAIL 1` | `ERROR 0` | `SKIP 0`
-- Previous: `PASS 178` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 177` | `WARN 1` | `FAIL 3` | `ERROR 0` | `SKIP 0`
+- Previous: `PASS 180` | `WARN 0` | `FAIL 1` | `ERROR 0` | `SKIP 0`
 
 ## Delta Summary
 
-- New failures: `0`
-- Resolved failures: `1`
+- New failures: `2`
+- Resolved failures: `0`
 - Persistent failures: `1`
-- Site regressions: `0`
-- Step regressions: `0`
+- Site regressions: `3`
+- Step regressions: `2`
 
-## Resolved Failures
+## New Failures
 
-- **analdin**: `FAIL -> PASS`
+- **analdin**: `PASS -> FAIL` (PARSER) | list: List returned no videos
+- **supjav**: `PASS -> FAIL` (NETWORK) | Site process timed out after 140s
 
 ## Persistent Failures
 
 - **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 0.0%]
 
-## Improvements
+## Step Regressions
 
-- **motherless**: `SKIP -> PASS`
+- **analdin** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
+- **familypornhd** `play`: `SKIP -> FAIL` (CODE) | JSONDecodeError: Expecting value: line 1 column 1 (char 0)

@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "FAIL",
       "PASS",
       "PASS",
       "PASS",
@@ -115,7 +114,8 @@
       "PASS",
       "PASS",
       "FAIL",
-      "PASS"
+      "PASS",
+      "FAIL"
     ],
     "stability_score": 0.7
   },
@@ -490,9 +490,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "WARN"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "foxnxx": {
     "history": [
@@ -1111,7 +1111,6 @@
   },
   "motherless": {
     "history": [
-      "SKIP",
       "PASS",
       "SKIP",
       "SKIP",
@@ -1120,9 +1119,10 @@
       "SKIP",
       "SKIP",
       "SKIP",
+      "PASS",
       "PASS"
     ],
-    "stability_score": 0.2
+    "stability_score": 0.3
   },
   "mrsexe": {
     "history": [
@@ -1357,8 +1357,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS"
     ],
@@ -1756,7 +1756,7 @@
   },
   "rlc": {
     "history": [
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1767,7 +1767,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "redtube": {
     "history": [
@@ -1960,9 +1960,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "FAIL"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "sxyprn": {
     "history": [
@@ -2494,8 +2494,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2716,6 +2716,7 @@
   },
   "myporntape": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
