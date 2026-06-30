@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-06-30T07:33:22.053763",
+    "sites_total": 181,
+    "pass": 180,
+    "warn": 0,
+    "fail": 1,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-06-29T08:00:25.754226",
     "sites_total": 181,
     "pass": 177,
@@ -8,44 +17,27 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-06-28T07:35:38.477994",
-    "sites_total": 181,
-    "pass": 180,
-    "warn": 0,
-    "fail": 1,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
-    "new_failures": 2,
-    "resolved_failures": 0,
+    "new_failures": 0,
+    "resolved_failures": 2,
     "persistent_failures": 1,
-    "improved_sites": 0,
-    "regressions": 3,
-    "step_regressions": 2
+    "improved_sites": 1,
+    "regressions": 0,
+    "step_regressions": 0
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
-      "is_flaky": false,
-      "stability_score": 0.7
+      "previous": "FAIL",
+      "current": "PASS"
     },
     {
       "site": "supjav",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "Site process timed out after 140s",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "previous": "FAIL",
+      "current": "PASS"
     }
   ],
-  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "pornhoarder",
@@ -57,49 +49,34 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
-    {
-      "site": "analdin",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 0.7
-    },
+  "improved_sites": [
     {
       "site": "familypornhd",
-      "step": "play",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-      "class": "CODE",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "previous": "WARN",
+      "current": "PASS"
     }
   ],
+  "step_regressions": [],
   "deltas": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "familypornhd",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "supjav",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]

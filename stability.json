@@ -108,14 +108,14 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
       "PASS",
       "PASS",
       "PASS",
       "FAIL",
       "PASS",
-      "FAIL"
+      "FAIL",
+      "PASS"
     ],
     "stability_score": 0.7
   },
@@ -489,8 +489,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "WARN"
+      "WARN",
+      "PASS"
     ],
     "stability_score": 0.9
   },
@@ -1111,14 +1111,14 @@
   },
   "motherless": {
     "history": [
+      "SKIP",
+      "SKIP",
+      "SKIP",
+      "SKIP",
+      "SKIP",
+      "SKIP",
+      "SKIP",
       "PASS",
-      "SKIP",
-      "SKIP",
-      "SKIP",
-      "SKIP",
-      "SKIP",
-      "SKIP",
-      "SKIP",
       "PASS",
       "PASS"
     ],
@@ -1356,8 +1356,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -1959,8 +1959,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "FAIL"
+      "FAIL",
+      "PASS"
     ],
     "stability_score": 0.9
   },
@@ -2493,8 +2493,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2716,6 +2716,7 @@
   },
   "myporntape": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
