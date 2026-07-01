@@ -5,26 +5,26 @@
 
 ## Snapshot
 
-- Current: `PASS 180` | `WARN 0` | `FAIL 1` | `ERROR 0` | `SKIP 0`
-- Previous: `PASS 177` | `WARN 1` | `FAIL 3` | `ERROR 0` | `SKIP 0`
+- Current: `PASS 179` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 0`
+- Previous: `PASS 180` | `WARN 0` | `FAIL 1` | `ERROR 0` | `SKIP 0`
 
 ## Delta Summary
 
-- New failures: `0`
-- Resolved failures: `2`
+- New failures: `1`
+- Resolved failures: `0`
 - Persistent failures: `1`
-- Site regressions: `0`
-- Step regressions: `0`
+- Site regressions: `1`
+- Step regressions: `2`
 
-## Resolved Failures
+## New Failures
 
-- **analdin**: `FAIL -> PASS`
-- **supjav**: `FAIL -> PASS`
+- **pornez**: `PASS -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
 ## Persistent Failures
 
 - **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 0.0%]
 
-## Improvements
+## Step Regressions
 
-- **familypornhd**: `WARN -> PASS`
+- **pornez** `list`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **pornez** `main`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1

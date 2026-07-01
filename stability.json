@@ -107,7 +107,6 @@
   "analdin": {
     "history": [
       "PASS",
-      "PASS",
       "FAIL",
       "PASS",
       "PASS",
@@ -115,6 +114,7 @@
       "FAIL",
       "PASS",
       "FAIL",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.7
@@ -488,8 +488,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -1117,12 +1117,12 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.4
   },
   "mrsexe": {
     "history": [
@@ -1355,8 +1355,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1510,9 +1510,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "FAIL"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "porngo": {
     "history": [
@@ -1958,8 +1958,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -2492,8 +2492,8 @@
   "youcrazyx": {
     "history": [
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
