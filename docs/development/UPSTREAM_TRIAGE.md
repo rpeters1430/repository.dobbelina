@@ -1,7 +1,7 @@
 # Upstream Triage Report
 
-Generated: 2026-06-17
-Pending commits: 61 (grouped into 60 items)
+Generated: 2026-06-30
+Pending commits: 72 (grouped into 69 items)
 
 Run `python scripts/sync_manager.py` (interactive) to review/cherry-pick, or `python scripts/sync_manager.py --report` to regenerate this file.
 
@@ -11,11 +11,19 @@ Sites touched by these commits don't exist in our fork yet. Candidates for new s
 
 _None._
 
-## Needs Review (0)
+## Needs Review (7)
 
 Touches a site we have that isn't BeautifulSoup-migrated, or mentions playback/decrypt - worth reviewing for porting.
 
-_None._
+| Group | Commits | Sites | New Sites | Playback | Message(s) |
+|---|---|---|---|---|---|
+| #1890 | `9f2ec98a`, `267cb29e`, `8d7b487f` | myporntape | - |  | #1890<br>MyPornTape #1890<br>MyPornTape #1890 |
+| d078f264 | `d078f264` | bongacams | - |  | Bongacams fixes for Adaptive and Proxy player |
+| 9917addc | `9917addc` | awmnet, myporntape | - |  | added site myporntape |
+| 242d6706 | `242d6706` | cam4 | - |  | Fixed compatibility issues PY2+3 |
+| 496aec2f | `496aec2f` | cam4 | - |  | Compatibility issues with PY2 |
+| #1686 | `86d995a6` | hanime | - |  | hanime fixes #1686 |
+| #1685 | `d47192d5` | camsoda | - |  | camsoda #1685 |
 
 ## Likely Already Covered (48)
 
@@ -23,9 +31,11 @@ Only touches BeautifulSoup-migrated sites we already have - spot-check, likely s
 
 | Group | Commits | Sites | New Sites | Playback | Message(s) |
 |---|---|---|---|---|---|
+| #1898 | `b936cfe3` | taboofantazy, tabootube | - |  | taboofantazy, tabootoobe fixes #1898 fixes #1899 |
+| #1894 | `f0d1f0d7` | reallifecam | - |  | camcaps - nextpage fixes #1894 |
+| #1892 | `ff9ea1b5` | awmnet | - |  | awmnet #1892 |
 | 57423ce2 | `57423ce2` | xnxx | - |  | Delete plugin.video.cumination/resources/lib/sites/xnxx.py |
 | d6120389 | `d6120389` | xnxx | - |  | Excluded interactive items that cannot be played |
-| 496aec2f | `496aec2f` | cam4 | - |  | Compatibility issues with PY2 |
 | #1881 | `b728f8a2` | xnxx | - |  | xnxx fixes #1881 |
 | #1878 | `f63e38a5` | hitprn | - |  | hitprn fixes #1878 |
 | #1877 | `1a7e69f1` | uflash | - |  | uflash removed - fixes #1877 |
@@ -69,15 +79,15 @@ Only touches BeautifulSoup-migrated sites we already have - spot-check, likely s
 | a34c0a78 | `a34c0a78` | terebon | - |  | terebon - fix listing |
 | #1689 | `67bd60fe` | tokyomotion | - |  | tokyomotion - new site fixes #1689 |
 | 9722f3eb | `9722f3eb` | camwhoresbay | - |  | camwhoresbay - fix next page |
-| #1686 | `86d995a6` | hanime | - |  | hanime fixes #1686 |
-| #1685 | `d47192d5` | camsoda | - |  | camsoda #1685 |
 
-## Auto-Skip (12)
+## Auto-Skip (14)
 
 No site module changes detected (changelog/icon/docs/version-bump-style commits).
 
 | Group | Commits | Sites | New Sites | Playback | Message(s) |
 |---|---|---|---|---|---|
+| fad5cb73 | `fad5cb73` | - | - |  | delete cam4.py |
+| fdec806e | `fdec806e` | - | - |  | Cam4 added Tags and filter by country |
 | 5ca9af98 | `5ca9af98` | - | - |  | xnxx |
 | 920bdb8c | `920bdb8c` | - | - |  | - AWM network search fix |
 | e6bb2487 | `e6bb2487` | - | - |  | Update README |
