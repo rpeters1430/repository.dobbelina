@@ -16,7 +16,7 @@ def test_analdin_list_parses_videos_and_pagination(monkeypatch):
     downloads = []
     dirs = []
 
-    monkeypatch.setattr(analdin.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(analdin.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (html, False))
     monkeypatch.setattr(
         analdin.site,
         "add_download_link",
@@ -93,9 +93,9 @@ def test_analdin_list_normalizes_legacy_videos_url(monkeypatch):
 
     def fake_get_html(url, *args, **kwargs):
         seen_urls.append(url)
-        return html
+        return html, False
 
-    monkeypatch.setattr(analdin.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(analdin.utils, "get_html_with_cloudflare_retry", fake_get_html)
     monkeypatch.setattr(
         analdin.site,
         "add_download_link",
@@ -117,9 +117,9 @@ def test_analdin_list_normalizes_site_root_url(monkeypatch):
 
     def fake_get_html(url, *args, **kwargs):
         seen_urls.append(url)
-        return html
+        return html, False
 
-    monkeypatch.setattr(analdin.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(analdin.utils, "get_html_with_cloudflare_retry", fake_get_html)
     monkeypatch.setattr(
         analdin.site,
         "add_download_link",
@@ -137,7 +137,7 @@ def test_analdin_list_normalizes_site_root_url(monkeypatch):
 def test_analdin_playvid_prefers_alt_url(monkeypatch):
     html = _load_fixture("analdin_video.html")
 
-    monkeypatch.setattr(analdin.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(analdin.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (html, False))
     mock_vp_class = MagicMock()
     monkeypatch.setattr("resources.lib.utils.VideoPlayer", mock_vp_class)
 

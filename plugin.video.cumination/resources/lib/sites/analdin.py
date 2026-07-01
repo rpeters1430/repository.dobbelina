@@ -22,6 +22,7 @@ site = AdultSite(
     "https://www.analdin.com/",
     "analdin.png",
     category="Video Tubes",
+    requires_flaresolverr=True,
 )
 
 
@@ -71,7 +72,7 @@ def Main():
 def List(url):
     url = _normalize_listing_url(url)
     try:
-        html = utils.getHtml(url, site.url)
+        html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     except Exception as e:
         utils.kodilog("@@@@Cumination: failure in analdin: {}".format(e))
         utils.notify(msg="List blocked/challenged in harness")
@@ -166,7 +167,12 @@ def Search(url, keyword=None):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
-    html = utils.getHtml(url, site.url)
+    try:
+        html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
+    except Exception as e:
+        utils.kodilog("@@@@Cumination: playvid failure in analdin: {}".format(e))
+        vp.play_from_link_to_resolve(url)
+        return
     if not html:
         vp.play_from_link_to_resolve(url)
         return

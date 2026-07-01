@@ -211,10 +211,13 @@ def Playvid(url, name, download=None):
         if "bestwish.lol" in iframeurl:
             url1 = "https://bestwish.lol/ajax/stream?filecode={}".format(hash)
             html = utils.getHtml(url1, "https://bestwish.lol/")
-            jsondata = json.loads(html)
-            videourl = jsondata["streaming_url"]
-            videourl += "|Referer=https://bestwish.lol/&Origin=https://bestwish.lol"
-            vp.play_from_direct_link(videourl)
+            try:
+                jsondata = json.loads(html)
+                videourl = jsondata["streaming_url"]
+                videourl += "|Referer=https://bestwish.lol/&Origin=https://bestwish.lol"
+                vp.play_from_direct_link(videourl)
+            except (ValueError, KeyError, TypeError) as e:
+                utils.kodilog("@@@@Cumination: familypornhd: bestwish resolver failed: {}".format(e))
         elif (
             "video-mart.com" in iframeurl
             or "videostreamingworld.com" in iframeurl
@@ -227,24 +230,30 @@ def Playvid(url, name, download=None):
             hdr["X-Requested-With"] = "XMLHttpRequest"
             data = {"hash": hash, "r": ""}
             html = utils.getHtml(url1, iframeurl, headers=hdr, data=data)
-            jsondata = json.loads(html)
-            videourl = jsondata["videoSource"]
-            m3u8html = utils.getHtml(videourl, iframeurl, headers=hdr)
-            lines = m3u8html.splitlines()
-            for i, line in enumerate(lines):
-                if line.startswith("/"):
-                    lines[i] = host + line
-                if 'URI="/' in line:
-                    lines[i] = line.replace('URI="/', 'URI="{}/'.format(host))
-            m3u8html = "\n".join(lines)
-            myplaylist = utils.TRANSLATEPATH("special://temp/myPlaylist.mp4")
-            with open(myplaylist, "w", encoding="utf-8") as f:
-                f.write(m3u8html)
-            vp.play_from_direct_link(myplaylist)
+            try:
+                jsondata = json.loads(html)
+                videourl = jsondata["videoSource"]
+                m3u8html = utils.getHtml(videourl, iframeurl, headers=hdr)
+                lines = m3u8html.splitlines()
+                for i, line in enumerate(lines):
+                    if line.startswith("/"):
+                        lines[i] = host + line
+                    if 'URI="/' in line:
+                        lines[i] = line.replace('URI="/', 'URI="{}/'.format(host))
+                m3u8html = "\n".join(lines)
+                myplaylist = utils.TRANSLATEPATH("special://temp/myPlaylist.mp4")
+                with open(myplaylist, "w", encoding="utf-8") as f:
+                    f.write(m3u8html)
+                vp.play_from_direct_link(myplaylist)
+            except (ValueError, KeyError, TypeError) as e:
+                utils.kodilog("@@@@Cumination: familypornhd: player index resolver failed: {}".format(e))
         else:
             host = iframeurl.rsplit("/", 1)[0]
             url1 = host + "/data.php?filecode=" + hash
             html = utils.getHtml(url1, iframeurl)
-            jsondata = json.loads(html)
-            videourl = jsondata["streaming_url"]
-            vp.play_from_direct_link(videourl)
+            try:
+                jsondata = json.loads(html)
+                videourl = jsondata["streaming_url"]
+                vp.play_from_direct_link(videourl)
+            except (ValueError, KeyError, TypeError) as e:
+                utils.kodilog("@@@@Cumination: familypornhd: data.php resolver failed: {}".format(e))

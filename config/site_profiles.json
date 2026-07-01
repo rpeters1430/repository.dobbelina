@@ -260,7 +260,8 @@
       "requires_flaresolverr": true
     },
     "analdin": {
-      "tier": 2
+      "tier": 2,
+      "requires_flaresolverr": true
     },
     "josporn": {
       "tier": 2,

@@ -263,6 +263,8 @@ def install_kodi_stubs() -> None:
     xbmcvfs = types.ModuleType("kodi_six.xbmcvfs")
     xbmcvfs.translatePath = lambda path: str(path).replace(
         "special://profile", str(ROOT / ".profile")
+    ).replace(
+        "special://temp", __import__("tempfile").gettempdir()
     )
     xbmcvfs.exists = lambda path: Path(str(path)).exists()
     xbmcvfs.mkdirs = lambda path: Path(str(path)).mkdir(parents=True, exist_ok=True)
