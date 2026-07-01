@@ -1,3 +1,11 @@
+[B]Version 1.1.424[/B]
+- Fix site-health regressions for analdin and familypornhd
+- Implement new site tracking and validation script; update tests and documentation
+- fix: update image attribute handling and search URL in myporntape and youcrazyx modules
+- Small Updates
+- fix: implement LemonCams direct HLS playback
+- Plan LemonCams direct HLS playback
+
 [B]Version 1.1.423[/B]
 - Implement new site tracking and validation script; update tests and documentation
 - fix: update image attribute handling and search URL in myporntape and youcrazyx modules
