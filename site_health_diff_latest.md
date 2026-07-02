@@ -5,20 +5,25 @@
 
 ## Snapshot
 
-- Current: `PASS 179` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 0`
-- Previous: `PASS 180` | `WARN 0` | `FAIL 1` | `ERROR 0` | `SKIP 0`
+- Current: `PASS 178` | `WARN 0` | `FAIL 3` | `ERROR 0` | `SKIP 0`
+- Previous: `PASS 179` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 0`
 
 ## Delta Summary
 
-- New failures: `1`
-- Resolved failures: `0`
+- New failures: `2`
+- Resolved failures: `1`
 - Persistent failures: `1`
-- Site regressions: `1`
-- Step regressions: `2`
+- Site regressions: `2`
+- Step regressions: `1`
 
 ## New Failures
 
-- **pornez**: `PASS -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **analdin**: `PASS -> FAIL` (PARSER) | list: List returned no videos
+- **longvideos**: `PASS -> FAIL` (NETWORK) | Site process timed out after 140s
+
+## Resolved Failures
+
+- **pornez**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -26,5 +31,4 @@
 
 ## Step Regressions
 
-- **pornez** `list`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-- **pornez** `main`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **analdin** `list`: `PASS -> FAIL` (PARSER) | List returned no videos

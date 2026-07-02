@@ -2,12 +2,13 @@
 
 - Sites: `181`
 - Tier1 hot: `0`
-- Failing: `2`
+- Failing: `3`
 - Warn: `0`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| pornez | failing | FAIL |  | video |  | Y | Y | Y | Y |
+| analdin | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
+| longvideos | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
@@ -34,7 +35,6 @@
 | absoluporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | allclassic | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | amateurtv | backlog | PASS | 2 | cam |  | Y |  |  |  |
-| analdin | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | animeidhentai | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | anysex | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | archivebate | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -98,7 +98,6 @@
 | kissjav | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | lemoncams | backlog | PASS | 2 | cam |  | Y |  | Y |  |
 | livecamrips | backlog | PASS | 2 | cam |  | Y |  | Y | Y |
-| longvideos | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | mangoporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | motherless | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | mrsexe | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -127,6 +126,7 @@
 | porndish | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | pornditt | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porndoe | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
+| pornez | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porngo | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhat | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pornhd3x | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -191,7 +191,8 @@
 
 ## Next Batch
 
-- **pornez** (failing, tier=None) | failures: main:FAIL, list:FAIL
+- **analdin** (failing, tier=2) | failures: list:FAIL
+- **longvideos** (failing, tier=2)
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL, search:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
@@ -210,4 +211,3 @@
 - **xvideos** (tier1, tier=1)
 - **youporn** (tier1, tier=1)
 - **yourlesbians** (tier1, tier=1)
-- **6xtube** (backlog, tier=None)
