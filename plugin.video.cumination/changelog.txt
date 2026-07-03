@@ -1,3 +1,11 @@
+[B]Version 1.1.425[/B]
+- Update status metrics and fix site URLs in various modules
+- docs: generate upstream triage report
+- Fix site-health regressions for analdin and familypornhd
+- Implement new site tracking and validation script; update tests and documentation
+- fix: update image attribute handling and search URL in myporntape and youcrazyx modules
+- Small Updates
+
 [B]Version 1.1.424[/B]
 - Fix site-health regressions for analdin and familypornhd
 - Implement new site tracking and validation script; update tests and documentation
