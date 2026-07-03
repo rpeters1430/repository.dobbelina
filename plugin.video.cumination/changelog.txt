@@ -1,3 +1,12 @@
+[B]Version 1.1.426[/B]
+- Merge pull request #224 from rpeters1430/copilot/fix-settings-screen
+- fix: restore cumination settings screen
+- Initial plan
+- Update status metrics and fix site URLs in various modules
+- docs: generate upstream triage report
+- Fix site-health regressions for analdin and familypornhd
+- Implement new site tracking and validation script; update tests and documentation
+
 [B]Version 1.1.425[/B]
 - Update status metrics and fix site URLs in various modules
 - docs: generate upstream triage report
