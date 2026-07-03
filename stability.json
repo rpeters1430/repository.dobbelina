@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "FAIL",
       "PASS",
       "PASS",
       "PASS",
@@ -115,9 +114,10 @@
       "FAIL",
       "PASS",
       "PASS",
-      "FAIL"
+      "FAIL",
+      "PASS"
     ],
-    "stability_score": 0.6
+    "stability_score": 0.7
   },
   "animeidhentai": {
     "history": [
@@ -486,8 +486,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -1074,8 +1074,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "FAIL"
+      "FAIL",
+      "PASS"
     ],
     "stability_score": 0.9
   },
@@ -1115,14 +1115,14 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.5
+    "stability_score": 0.6
   },
   "mrsexe": {
     "history": [
@@ -1353,8 +1353,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1508,8 +1508,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -1956,8 +1956,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -2491,7 +2491,7 @@
   },
   "youcrazyx": {
     "history": [
-      "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2502,7 +2502,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "youjizz": {
     "history": [
