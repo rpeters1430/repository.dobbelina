@@ -63,6 +63,8 @@ def _ensure_kodi_stubs():
     class _Addon:
         def __init__(self, addon_id=None):
             self.addon_id = addon_id or "plugin.video.cumination"
+            addon_root = ROOT / self.addon_id
+            self._addon_path = addon_root if addon_root.exists() else PLUGIN_PATH
             self._settings = {
                 "cache_time": "0",
                 "custom_favorites": "false",
@@ -84,9 +86,9 @@ def _ensure_kodi_stubs():
 
         def getAddonInfo(self, key):
             if key == "path":
-                return str(PLUGIN_PATH)
+                return str(self._addon_path)
             if key == "profile":
-                return str(ROOT / ".profile")
+                return str(ROOT / ".profile" / self.addon_id)
             if key == "version":
                 return "19.9"
             return ""
@@ -307,6 +309,16 @@ def _ensure_kodi_stubs():
 
 
 _ensure_kodi_stubs()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _cleanup_generated_resolveurl_settings():
+    yield
+    generated_settings = (
+        ROOT / "script.module.resolveurl" / "resources" / "settings.xml"
+    )
+    if generated_settings.exists():
+        generated_settings.unlink()
 
 
 def read_fixture(filename):
