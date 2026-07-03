@@ -98,7 +98,7 @@ def Main():
 
 @site.register()
 def List(url):
-    listhtml = utils.getHtml(url, site.url)
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     if not listhtml:
         utils.eod()
         return
@@ -119,7 +119,7 @@ def Search(url, keyword=None):
 
 @site.register()
 def Categories(url):
-    html = utils.getHtml(url, site.url)
+    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     if not html:
         utils.eod()
         return
@@ -159,7 +159,7 @@ def Categories(url):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    html = utils.getHtml(url, site.url)
+    html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     if not html:
         vp.play_from_link_to_resolve(url)
         return

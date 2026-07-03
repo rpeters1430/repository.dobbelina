@@ -178,7 +178,7 @@ def test_list_handles_lazy_thumbnail_attributes(monkeypatch):
     monkeypatch.setattr(reallifecam.site, "add_dir", lambda *a, **k: None)
     monkeypatch.setattr(reallifecam.utils, "eod", lambda: None)
 
-    reallifecam.List("https://camcaps.tv/videos?o=mr")
+    reallifecam.List("https://camcaps.io/videos?o=mr")
 
     assert len(downloads) == 1
     assert downloads[0]["icon"].startswith("https://camcaps.to/media/videos/tmb/123/1.jpg|")
@@ -422,12 +422,12 @@ def test_categories_parses_camcaps_category_cards(monkeypatch):
     monkeypatch.setattr(reallifecam.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(reallifecam.utils, "eod", lambda: None)
 
-    reallifecam.Categories("https://camcaps.tv/categories")
+    reallifecam.Categories("https://camcaps.io/categories")
 
     assert len(dirs) == 1
     assert dirs[0]["name"] == "Amateur [COLOR deeppink]6920[/COLOR]"
-    assert dirs[0]["url"] == "https://camcaps.tv/videos/amateur"
-    assert dirs[0]["icon"].startswith("https://camcaps.tv/media/categories/video/8.jpg|")
+    assert dirs[0]["url"] == "https://camcaps.io/videos/amateur"
+    assert dirs[0]["icon"].startswith("https://camcaps.io/media/categories/video/8.jpg|")
 
 
 def test_search_without_keyword_shows_dialog(monkeypatch):
@@ -540,7 +540,7 @@ def test_playvid_hands_playmogo_embed_to_resolveurl(monkeypatch):
     monkeypatch.setattr(reallifecam.utils, "getHtml", lambda *a, **k: video_page)
     monkeypatch.setattr(reallifecam.utils, "VideoPlayer", MockPlayer)
 
-    reallifecam.Playvid("https://camcaps.tv/video/1/example", "Name")
+    reallifecam.Playvid("https://camcaps.io/video/1/example", "Name")
 
     assert resolved == ["https://playmogo.com/e/tdlz3kh7b74k"]
 
@@ -578,7 +578,7 @@ def test_playvid_hands_nowplay_embed_to_resolveurl(monkeypatch):
     monkeypatch.setattr(reallifecam.utils, "getHtml", lambda *a, **k: video_page)
     monkeypatch.setattr(reallifecam.utils, "VideoPlayer", MockPlayer)
 
-    reallifecam.Playvid("https://camcaps.tv/video/355058/example", "Name")
+    reallifecam.Playvid("https://camcaps.io/video/355058/example", "Name")
 
     assert resolved == ["https://nowplay.to/embrikgfauqud4q"]
 

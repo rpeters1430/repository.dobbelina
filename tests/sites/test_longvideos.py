@@ -21,7 +21,7 @@ def test_list_parses_video_items(monkeypatch):
     dirs = []
 
     def fake_get_html(url, *args, **kwargs):
-        return html
+        return html, False
 
     def fake_add_download_link(name, url, mode, iconimage, desc, **kwargs):
         downloads.append(
@@ -44,7 +44,7 @@ def test_list_parses_video_items(monkeypatch):
             }
         )
 
-    monkeypatch.setattr(longvideos.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(longvideos.utils, "get_html_with_cloudflare_retry", fake_get_html)
     monkeypatch.setattr(longvideos.site, "add_download_link", fake_add_download_link)
     monkeypatch.setattr(longvideos.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(longvideos.utils, "eod", lambda: None)
@@ -84,7 +84,7 @@ def test_categories_parses_categories(monkeypatch):
     dirs = []
 
     def fake_get_html(url, *args, **kwargs):
-        return html
+        return html, False
 
     def fake_add_dir(name, url, mode, iconimage):
         dirs.append(
@@ -95,7 +95,7 @@ def test_categories_parses_categories(monkeypatch):
             }
         )
 
-    monkeypatch.setattr(longvideos.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(longvideos.utils, "get_html_with_cloudflare_retry", fake_get_html)
     monkeypatch.setattr(longvideos.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(longvideos.utils, "eod", lambda: None)
 
@@ -155,12 +155,12 @@ def test_list_handles_no_data(monkeypatch):
     notified = []
 
     def fake_get_html(url, *args, **kwargs):
-        return html
+        return html, False
 
     def fake_notify(**kwargs):
         notified.append(kwargs)
 
-    monkeypatch.setattr(longvideos.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(longvideos.utils, "get_html_with_cloudflare_retry", fake_get_html)
     monkeypatch.setattr(
         longvideos.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
     )
@@ -179,9 +179,9 @@ def test_list_handles_empty_results(monkeypatch):
     downloads = []
 
     def fake_get_html(url, *args, **kwargs):
-        return html
+        return html, False
 
-    monkeypatch.setattr(longvideos.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(longvideos.utils, "get_html_with_cloudflare_retry", fake_get_html)
     monkeypatch.setattr(
         longvideos.site, "add_download_link", lambda *a, **k: downloads.append(a[0])
     )

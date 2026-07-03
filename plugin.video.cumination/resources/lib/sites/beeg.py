@@ -238,7 +238,8 @@ def Playvid(url, name, download=None):
     # New format: id=123&tag_id=456
     if "id=" in url and "tag_id=" in url:
         try:
-            params = dict(urllib_parse.parse_qsl(url))
+            query = url.split("/")[-1] if "/" in url else url
+            params = dict(urllib_parse.parse_qsl(query))
             video_id = params.get("id")
             tag_id = params.get("tag_id")
             

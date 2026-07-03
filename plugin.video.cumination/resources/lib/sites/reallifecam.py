@@ -50,8 +50,8 @@ site3 = AdultSite(
 )
 site4 = AdultSite(
     "camcaps",
-    "[COLOR hotpink]Camcaps.tv (SimpVids)[/COLOR]",
-    "https://camcaps.tv/",
+    "[COLOR hotpink]Camcaps.io (SimpVids)[/COLOR]",
+    "https://camcaps.io/",
     "camcaps.png",
     "camcapsto",
     category="Cams & Live",
@@ -121,7 +121,7 @@ def List(url):
     soup = utils.parse_html(listhtml)
 
     seen = set()
-    cards = soup.select(".col-sm-6, .video-item, .item")
+    cards = soup.select(".col-sm-6, .video-item, .item, article.thumb, .thumb")
     for card in cards:
         link = card.select_one("a[href]")
         if not link:
@@ -170,7 +170,7 @@ def List(url):
             img = utils.get_kodi_url(img, referer=siteurl)
 
         duration_tag = card.select_one(
-            ".duration, .time, .video-duration, .clock, .label-duration"
+            ".duration, .time, .video-duration, .clock, .label-duration, .dur-icon"
         )
         duration = utils.safe_get_text(duration_tag)
 
@@ -226,7 +226,7 @@ def Categories(url):
     seen = set()
     containers = soup.select(
         ".col-sm, .col-sm-6, .category, .category-item, .list-group-item, "
-        ".content-row > div:has(.category-title)"
+        ".content-row > div:has(.category-title), article.thumb-2, .thumb-2"
     )
     for container in containers:
         link = (
@@ -267,7 +267,7 @@ def Categories(url):
             name = "Category"
 
         count_tag = container.select_one(
-            ".badge, .float-right, .videos, .video-count, .count"
+            ".badge, .float-right, .videos, .video-count, .count, .videos-icon"
         )
         videos = utils.safe_get_text(count_tag)
         if videos:
@@ -320,10 +320,10 @@ def Playvid(url, name, download=None):
         elif refurl.startswith("/"):
             refurl = urllib_parse.urljoin(url, refurl)
 
-        # Handle camcaps.tv / camcaps.to / simpvids.com which often lead to vidello
-        if "vidello.net" in refurl or "camcaps.tv" in refurl or "camcaps.to" in refurl:
+        # Handle camcaps.io / camcaps.tv / camcaps.to / simpvids.com which often lead to vidello
+        if "vidello.net" in refurl or "camcaps.io" in refurl or "camcaps.tv" in refurl or "camcaps.to" in refurl:
             # If it's a camcaps embed, it might contain another iframe for vidello
-            if "camcaps.tv/embed/" in refurl or "camcaps.to/embed/" in refurl:
+            if "camcaps.io/embed/" in refurl or "camcaps.tv/embed/" in refurl or "camcaps.to/embed/" in refurl:
                 embed_page = _quiet_get_html(refurl, url)
                 embed_soup = utils.parse_html(embed_page)
                 vidello_iframe = embed_soup.select_one('iframe[src*="vidello.net"]')
