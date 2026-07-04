@@ -108,16 +108,16 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
       "PASS",
       "FAIL",
       "PASS",
       "PASS",
       "FAIL",
-      "PASS"
+      "PASS",
+      "FAIL"
     ],
-    "stability_score": 0.7
+    "stability_score": 0.6
   },
   "animeidhentai": {
     "history": [
@@ -485,8 +485,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1073,8 +1073,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -1114,7 +1114,7 @@
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1122,7 +1122,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.6
+    "stability_score": 0.7
   },
   "mrsexe": {
     "history": [
@@ -1352,8 +1352,8 @@
   "perverzija": {
     "history": [
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1507,8 +1507,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS"
     ],
@@ -1955,8 +1955,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
