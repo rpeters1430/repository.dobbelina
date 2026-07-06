@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-07-05T07:19:03.814553",
+    "generated": "2026-07-06T07:46:25.547245",
     "sites_total": 181,
     "pass": 180,
     "warn": 0,
@@ -9,30 +9,24 @@
     "skip": 0
   },
   "previous": {
-    "generated": "2026-07-04T07:11:52.365445",
+    "generated": "2026-07-05T07:19:03.814553",
     "sites_total": 181,
-    "pass": 179,
+    "pass": 180,
     "warn": 0,
-    "fail": 2,
+    "fail": 1,
     "error": 0,
     "skip": 0
   },
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 1,
+    "resolved_failures": 0,
     "persistent_failures": 1,
     "improved_sites": 0,
     "regressions": 0,
     "step_regressions": 0
   },
   "new_failures": [],
-  "resolved_failures": [
-    {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS"
-    }
-  ],
+  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "pornhoarder",
@@ -46,13 +40,5 @@
   ],
   "improved_sites": [],
   "step_regressions": [],
-  "deltas": [
-    {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    }
-  ]
+  "deltas": []
 }
