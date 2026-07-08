@@ -106,13 +106,13 @@
   },
   "analdin": {
     "history": [
-      "PASS",
       "FAIL",
       "PASS",
       "PASS",
       "FAIL",
       "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -385,9 +385,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "WARN"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "drtuber": {
     "history": [
@@ -481,8 +481,8 @@
   },
   "familypornhd": {
     "history": [
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -625,9 +625,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "WARN"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "hdporn": {
     "history": [
@@ -1069,8 +1069,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1503,8 +1503,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1951,7 +1951,6 @@
   },
   "supjav": {
     "history": [
-      "PASS",
       "FAIL",
       "PASS",
       "PASS",
@@ -1960,9 +1959,10 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "PASS",
+      "FAIL"
     ],
-    "stability_score": 0.9
+    "stability_score": 0.8
   },
   "sxyprn": {
     "history": [
