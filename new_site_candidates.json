@@ -35,13 +35,6 @@
         "reason": "Likely a standard tube site with BS4-parsable video tags"
     },
     {
-        "site": "PornoBae",
-        "category": "Streaming & Video Tubes",
-        "status": "New",
-        "difficulty": "Easy",
-        "reason": "Likely a standard tube site with BS4-parsable video tags"
-    },
-    {
         "site": "pornken",
         "category": "Streaming & Video Tubes",
         "status": "New",
@@ -78,13 +71,6 @@
     },
     {
         "site": "PornTube",
-        "category": "Streaming & Video Tubes",
-        "status": "New",
-        "difficulty": "Easy",
-        "reason": "Likely a standard tube site with BS4-parsable video tags"
-    },
-    {
-        "site": "SunPorno",
         "category": "Streaming & Video Tubes",
         "status": "New",
         "difficulty": "Easy",
@@ -378,13 +364,6 @@
         "reason": "Likely a standard tube site with BS4-parsable video tags"
     },
     {
-        "site": "MangoPorn",
-        "category": "Adult Movies / Grindhouse",
-        "status": "New",
-        "difficulty": "Easy",
-        "reason": "Likely a standard tube site with BS4-parsable video tags"
-    },
-    {
         "site": "pornxtheatre",
         "category": "Adult Movies / Grindhouse",
         "status": "New",
@@ -400,13 +379,6 @@
     },
     {
         "site": "Senzuri Tube",
-        "category": "Asian / JAV",
-        "status": "New",
-        "difficulty": "Easy",
-        "reason": "Likely a standard tube site with BS4-parsable video tags"
-    },
-    {
-        "site": "91Porna",
         "category": "Asian / JAV",
         "status": "New",
         "difficulty": "Easy",
@@ -2128,6 +2100,13 @@
         "reason": "Standard BS4 parsing usually works; check for known players"
     },
     {
+        "site": "PornoBae",
+        "category": "Streaming & Video Tubes",
+        "status": "Added",
+        "difficulty": "Easy/Medium",
+        "reason": "Standard BS4 parsing usually works; check for known players"
+    },
+    {
         "site": "Jizzbunker",
         "category": "Streaming & Video Tubes",
         "status": "Added",
@@ -2268,6 +2247,13 @@
         "reason": "Standard BS4 parsing usually works; check for known players"
     },
     {
+        "site": "SunPorno",
+        "category": "Streaming & Video Tubes",
+        "status": "Added",
+        "difficulty": "Easy/Medium",
+        "reason": "Standard BS4 parsing usually works; check for known players"
+    },
+    {
         "site": "PornOne",
         "category": "Streaming & Video Tubes",
         "status": "Added",
@@ -2304,6 +2290,13 @@
     },
     {
         "site": "EroticMV",
+        "category": "Adult Movies / Grindhouse",
+        "status": "Added",
+        "difficulty": "Medium",
+        "reason": "Requires investigation"
+    },
+    {
+        "site": "MangoPorn",
         "category": "Adult Movies / Grindhouse",
         "status": "Added",
         "difficulty": "Medium",
@@ -2374,6 +2367,13 @@
     },
     {
         "site": "JavHDPorn",
+        "category": "Asian / JAV",
+        "status": "Added",
+        "difficulty": "Medium",
+        "reason": "Requires investigation"
+    },
+    {
+        "site": "91Porna",
         "category": "Asian / JAV",
         "status": "Added",
         "difficulty": "Medium",

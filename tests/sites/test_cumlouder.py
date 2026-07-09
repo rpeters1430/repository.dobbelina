@@ -17,7 +17,7 @@ def test_list_parses_items(monkeypatch):
     downloads = []
     dirs = []
 
-    monkeypatch.setattr(cumlouder.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(cumlouder.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (html, False))
     monkeypatch.setattr(cumlouder.utils, "eod", lambda: None)
     monkeypatch.setattr(
         cumlouder.site,
@@ -49,9 +49,9 @@ def test_list_uses_porn_index_for_site_root(monkeypatch):
 
     def fake_get_html(url, *args, **kwargs):
         requested_urls.append(url)
-        return html
+        return html, False
 
-    monkeypatch.setattr(cumlouder.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(cumlouder.utils, "get_html_with_cloudflare_retry", fake_get_html)
     monkeypatch.setattr(cumlouder.utils, "eod", lambda: None)
     monkeypatch.setattr(cumlouder.site, "add_download_link", lambda *a, **k: None)
     monkeypatch.setattr(cumlouder.site, "add_dir", lambda *a, **k: None)

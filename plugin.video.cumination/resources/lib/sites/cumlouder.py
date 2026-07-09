@@ -67,7 +67,7 @@ def List(url):
     if url.rstrip("/") == site.url.rstrip("/"):
         url = site.url + "porn/"
 
-    listhtml = utils.getHtml(url, site.url)
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     soup = utils.parse_html(listhtml)
     for item in soup.select(".muestra-escena, .scene-item, .item"):
         link = (
@@ -122,7 +122,7 @@ def List(url):
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
-    vpage = utils.getHtml(url, site.url)
+    vpage, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     
     # Extract embed URL
     embed_id = re.findall(r"/embed/(\d+)/", vpage)
@@ -139,7 +139,7 @@ def Playvid(url, name, download=None):
             return
             
     vp.progress.update(50, "[CR]Loading embed page[CR]")
-    embed_html = utils.getHtml(videourl, site.url)
+    embed_html, _ = utils.get_html_with_cloudflare_retry(videourl, site.url)
     source_match = re.findall(r'<source src="([^"]+)"', embed_html)
     
     if source_match:
@@ -155,7 +155,7 @@ def Playvid(url, name, download=None):
 def Categories(url):
     nextpg = True
     while nextpg:
-        cathtml = utils.getHtml(url, site.url)
+        cathtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
         soup = utils.parse_html(cathtml)
         
         items = soup.select(".tag-item, .item")
@@ -196,7 +196,7 @@ def Categories(url):
 def Channels(url):
     nextpg = True
     while nextpg:
-        cathtml = utils.getHtml(url, site.url)
+        cathtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
         soup = utils.parse_html(cathtml)
         
         items = soup.select(".channel-item, .item")
@@ -236,7 +236,7 @@ def Channels(url):
 def Series(url):
     nextpg = True
     while nextpg:
-        cathtml = utils.getHtml(url, site.url)
+        cathtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
         soup = utils.parse_html(cathtml)
         
         items = soup.select(".serie-item, .item")
@@ -276,7 +276,7 @@ def Series(url):
 
 @site.register()
 def Girls(url):
-    cathtml = utils.getHtml(url, site.url)
+    cathtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     soup = utils.parse_html(cathtml)
     
     items = soup.select(".girl-item, .item")

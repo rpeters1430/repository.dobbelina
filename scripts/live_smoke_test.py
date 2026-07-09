@@ -845,7 +845,19 @@ def run_site_child(
                 query[key] = str(defaults[key])
         URL_Dispatcher.dispatch(mode, query)
 
+    fs_failed = False
+
     def run_step(step_name: str, func: Callable[[], StepResult]) -> None:
+        nonlocal fs_failed
+        if fs_failed:
+            step_results[step_name] = asdict(
+                StepResult(
+                    "SKIP",
+                    "FlareSolverr failed in a previous step",
+                )
+            )
+            return
+
         start = time.time()
         try:
             with TimeoutCtx(timeout_s):
@@ -856,6 +868,8 @@ def run_site_child(
             msg = f"{type(exc).__name__}: {exc}"
             res = StepResult("FAIL", msg)
         res = normalize_step_result(step_name, res)
+        if "flaresolverr" in (res.message or "").lower() or any("flaresolverr" in n.lower() for n in notify_calls):
+            fs_failed = True
         res.elapsed = round(time.time() - start, 2)
         step_results[step_name] = asdict(res)
 
