@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-07-09T07:24:25.017698",
+    "sites_total": 182,
+    "pass": 179,
+    "warn": 1,
+    "fail": 2,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-07-08T07:02:33.283048",
     "sites_total": 181,
     "pass": 177,
@@ -8,35 +17,32 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-07-07T07:24:58.979371",
-    "sites_total": 181,
-    "pass": 180,
-    "warn": 0,
-    "fail": 1,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
     "new_failures": 1,
-    "resolved_failures": 0,
+    "resolved_failures": 1,
     "persistent_failures": 1,
-    "improved_sites": 0,
-    "regressions": 3,
-    "step_regressions": 2
+    "improved_sites": 1,
+    "regressions": 1,
+    "step_regressions": 1
   },
   "new_failures": [
     {
-      "site": "supjav",
+      "site": "analdin",
       "previous": "PASS",
       "current": "FAIL",
-      "class": "NETWORK",
-      "message": "Site process timed out after 140s",
+      "class": "PARSER",
+      "message": "list: List returned no videos",
       "is_flaky": false,
-      "stability_score": 0.9
+      "stability_score": 0.7
     }
   ],
-  "resolved_failures": [],
+  "resolved_failures": [
+    {
+      "site": "supjav",
+      "previous": "FAIL",
+      "current": "PASS"
+    }
+  ],
   "persistent_failures": [
     {
       "site": "pornhoarder",
@@ -48,49 +54,52 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
       "site": "cumlouder",
-      "step": "play",
+      "previous": "WARN",
+      "current": "PASS"
+    }
+  ],
+  "step_regressions": [
+    {
+      "site": "analdin",
+      "step": "list",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "Play function executed but no playback URL captured (no notifications)",
-      "class": "PLAYBACK",
+      "message": "List returned no videos",
+      "class": "PARSER",
       "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "hanime",
-      "step": "play",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://hanime.tv/api/v8/video?id=https://hanime.tv/nuki-nuki-zupposism-1: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "stability_score": 0.7
     }
   ],
   "deltas": [
     {
-      "site": "cumlouder",
+      "site": "analdin",
       "previous": "PASS",
-      "current": "WARN",
+      "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "hanime",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
+      "site": "cumlouder",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "pornmd",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
       "detail": ""
     },
     {
       "site": "supjav",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]

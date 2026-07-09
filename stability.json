@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "FAIL",
       "PASS",
       "PASS",
       "FAIL",
@@ -115,7 +114,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "PASS",
+      "FAIL"
     ],
     "stability_score": 0.7
   },
@@ -384,8 +384,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "WARN"
+      "WARN",
+      "PASS"
     ],
     "stability_score": 0.9
   },
@@ -481,7 +481,7 @@
   },
   "familypornhd": {
     "history": [
-      "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -492,7 +492,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "foxnxx": {
     "history": [
@@ -624,10 +624,10 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
+      "WARN",
       "WARN"
     ],
-    "stability_score": 0.9
+    "stability_score": 0.8
   },
   "hdporn": {
     "history": [
@@ -1068,8 +1068,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1502,8 +1502,8 @@
   "pornez": {
     "history": [
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1951,18 +1951,18 @@
   },
   "supjav": {
     "history": [
+      "PASS",
+      "PASS",
+      "PASS",
+      "PASS",
+      "PASS",
+      "PASS",
+      "PASS",
+      "PASS",
       "FAIL",
-      "PASS",
-      "PASS",
-      "PASS",
-      "PASS",
-      "PASS",
-      "PASS",
-      "PASS",
-      "PASS",
-      "FAIL"
+      "PASS"
     ],
-    "stability_score": 0.8
+    "stability_score": 0.9
   },
   "sxyprn": {
     "history": [
@@ -2725,6 +2725,12 @@
       "PASS",
       "PASS",
       "PASS",
+      "PASS"
+    ],
+    "stability_score": 1.0
+  },
+  "pornmd": {
+    "history": [
       "PASS"
     ],
     "stability_score": 1.0
