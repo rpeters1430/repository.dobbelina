@@ -107,7 +107,6 @@
   "analdin": {
     "history": [
       "PASS",
-      "PASS",
       "FAIL",
       "PASS",
       "FAIL",
@@ -115,7 +114,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "FAIL"
+      "FAIL",
+      "PASS"
     ],
     "stability_score": 0.7
   },
@@ -383,8 +383,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -623,11 +623,11 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
+      "WARN",
       "WARN",
       "WARN"
     ],
-    "stability_score": 0.8
+    "stability_score": 0.7
   },
   "hdporn": {
     "history": [
@@ -1067,8 +1067,8 @@
   "longvideos": {
     "history": [
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1501,8 +1501,8 @@
   },
   "pornez": {
     "history": [
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1958,8 +1958,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -2731,6 +2731,7 @@
   },
   "pornmd": {
     "history": [
+      "PASS",
       "PASS"
     ],
     "stability_score": 1.0

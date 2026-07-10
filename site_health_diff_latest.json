@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-07-10T07:22:52.401942",
+    "sites_total": 182,
+    "pass": 180,
+    "warn": 1,
+    "fail": 1,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-07-09T07:24:25.017698",
     "sites_total": 182,
     "pass": 179,
@@ -8,37 +17,18 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-07-08T07:02:33.283048",
-    "sites_total": 181,
-    "pass": 177,
-    "warn": 2,
-    "fail": 2,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
-    "new_failures": 1,
+    "new_failures": 0,
     "resolved_failures": 1,
     "persistent_failures": 1,
-    "improved_sites": 1,
-    "regressions": 1,
-    "step_regressions": 1
+    "improved_sites": 0,
+    "regressions": 0,
+    "step_regressions": 0
   },
-  "new_failures": [
-    {
-      "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
-      "is_flaky": false,
-      "stability_score": 0.7
-    }
-  ],
+  "new_failures": [],
   "resolved_failures": [
     {
-      "site": "supjav",
+      "site": "analdin",
       "previous": "FAIL",
       "current": "PASS"
     }
@@ -54,49 +44,11 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [
-    {
-      "site": "cumlouder",
-      "previous": "WARN",
-      "current": "PASS"
-    }
-  ],
-  "step_regressions": [
-    {
-      "site": "analdin",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 0.7
-    }
-  ],
+  "improved_sites": [],
+  "step_regressions": [],
   "deltas": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "cumlouder",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "pornmd",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "supjav",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
