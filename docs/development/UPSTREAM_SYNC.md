@@ -193,6 +193,136 @@ These upstream commits have been integrated into the fork:
 | `569ea709` | kt_player, xxthots  new site, fixes #1767 | `9221568` | 2026-03-14 | Cherry-picked (excluded changelog, kept BS4 scrapers) |
 
 ### Intentionally Skipped
+| `51a4da69` | camcaps fixes #1904 | Already modernly handled under reallifecam.py |
+| `fad5cb73` | delete cam4.py | Retained working cam4.py implementation in our fork |
+| `fdec806e` | Cam4 added Tags and filter by country | Retained working cam4.py implementation in our fork |
+| `9f2ec98a` | #1890 (myporntape) | New site, skip regex implementation |
+| `d078f264` | Bongacams fixes for Adaptive and Proxy player | Skipped due to conflicts/deferred cam player rewrites |
+| `9917addc` | added site myporntape | New site, skip regex implementation |
+| `267cb29e` | MyPornTape #1890 | New site, skip regex implementation |
+| `8d7b487f` | MyPornTape #1890 | New site, skip regex implementation |
+| `242d6706` | Fixed compatibility issues PY2+3 (cam4) | Retained working cam4.py implementation in our fork |
+| `5ca9af98` | xnxx | Redundant, xnxx.png already exists and site is BS4-migrated |
+| `496aec2f` | Compatibility issues with PY2 (cam4) | Retained working cam4.py implementation in our fork |
+| `920bdb8c` | AWM network search fix | AWM network sites are already migrated to BS4 on our fork |
+| `e6bb2487` | Update README | Upstream README change - skip |
+| `46d996d2` | Updated README | Upstream README change - skip |
+| `75389f3b` | Update README | Upstream README change - skip |
+| `86bbcf14` | Enhance README | Upstream README change - skip |
+| `d658ea5d` | Revise README | Upstream README change - skip |
+| `627e95c3` | added site Thothub.tube | Thothub is already BS4-migrated in our fork |
+| `e8ebd05c` | #1739 (easynews) | Easynews not implemented or used in our fork |
+| `f4c5a437` | iflix - removed | Iflix not implemented or used in our fork |
+| `b5ae7b69` | bubba, cambro, yespornplease removed | Not implemented or used in our fork |
+| `71d13989` | vintagetube - removed | Vintagetube not implemented or used in our fork |
+| `86d995a6` | hanime fixes #1686 | Hanime not implemented or used in our fork |
+| `d47192d5` | camsoda #1685 | Camsoda not implemented or used in our fork |
+| `80c5f5c9` | porndish | Fork has BeautifulSoup migration |
+| `a42bd474` | pornhub - fixes #1907 | Fork has BeautifulSoup migration |
+| `41b7c24f` | fullporner - fix listing | Fork has BeautifulSoup migration |
+| `79ab0d2e` | noodlemagazine fixes #1905 | Fork has BeautifulSoup migration |
+| `b936cfe3` | taboofantazy, tabootoobe fixes #1898 fixes #1899 | Fork has BeautifulSoup migration |
+| `f0d1f0d7` | camcaps - nextpage fixes #1894 | Fork has BeautifulSoup migration |
+| `ff9ea1b5` | awmnet #1892 | Fork has BeautifulSoup migration |
+| `57423ce2` | Delete plugin.video.cumination/resources/lib/sites/xnxx.py | Fork has BeautifulSoup migration |
+| `d6120389` | Excluded interactive items that cannot be played | Fork has BeautifulSoup migration |
+| `b728f8a2` | xnxx fixes #1881 | Fork has BeautifulSoup migration |
+| `f63e38a5` | hitprn fixes #1878 | Fork has BeautifulSoup migration |
+| `1a7e69f1` | uflash removed - fixes #1877 | Fork has BeautifulSoup migration |
+| `37023abb` | Reverted to original @12asdfg12 | Fork has BeautifulSoup migration |
+| `2eaf2aaf` | 85po - fixes #1875 | Fork has BeautifulSoup migration |
+| `6896c431` | hentaistream fixes #1872 | Fork has BeautifulSoup migration |
+| `007f1622` | #1873 | Fork has BeautifulSoup migration |
+| `37dc2461` | #1872 | Fork has BeautifulSoup migration |
+| `f1bea989` | Update spankbang.py | Fork has BeautifulSoup migration |
+| `f5534bdd` | fixes #1835 | Fork has BeautifulSoup migration |
+| `39d6fc79` | Spankbang & Chaturbate fixes | Fork has BeautifulSoup migration |
+| `7df873be` | fix chaturbate streams - prefetch master playlist for single-use tokens | Fork has BeautifulSoup migration |
+| `ae675dbb` | Add thothub.tube | Fork has BeautifulSoup migration |
+| `1a167fb7` | Fix Chaturbate | Fork has BeautifulSoup migration |
+| `3461ae2f` | hentaidude - fixes #1779 | Fork has BeautifulSoup migration |
+| `e1b93b42` | erome fixes #1782 | Fork has BeautifulSoup migration |
+| `6e16879c` | anybunny - fixes #1773 | Fork has BeautifulSoup migration |
+| `ebf141f7` | speedporn - fixes #1770 | Fork has BeautifulSoup migration |
+| `ef8811de` | xmoviesforyou - fix page numbers, goto page | Fork has BeautifulSoup migration |
+| `e90da9b7` | hqporner - fix thumbnails fixes #1769 | Fork has BeautifulSoup migration |
+| `68e4ef97` | pornkai - fixes #1760 | Fork has BeautifulSoup migration |
+| `2ad68a13` | simpvids - name chaged to camcaps - fixes #1757 | Fork has BeautifulSoup migration |
+| `3e995d97` | hentaidude - fix listing - fixes #1750 | Fork has BeautifulSoup migration |
+| `0d683b26` | freshporno - fix domain fixes #1748 | Fork has BeautifulSoup migration |
+| `b075cbdf` | luxuretv - fix nextpage | Fork has BeautifulSoup migration |
+| `004f106f` | luxuretv - fix nextpage, fixes #1734 | Fork has BeautifulSoup migration |
+| `673fe9b8` | fix module load error on TvOS #1724 | Fork has BeautifulSoup migration |
+| `8eae561a` | fullxcinema | Fork has BeautifulSoup migration |
+| `3a98f37d` | Python 2 fixes #1722 fixes #1663 | Fork has BeautifulSoup migration |
+| `c11caeb6` | pornhoarder fixes #1713 | Fork has BeautifulSoup migration |
+| `31644dcc` | pornhub fixes #1712 | Fork has BeautifulSoup migration |
+| `53a9dfe3` | whoreshub fixes #1715 | Fork has BeautifulSoup migration |
+| `d92bd04d` | tnaflix fixes #1718 | Fork has BeautifulSoup migration |
+| `0509d5b0` | premiumporn - fixes #1714 | Fork has BeautifulSoup migration |
+| `51c39fb2` | porntn fixes #1720 | Fork has BeautifulSoup migration |
+| `afe1ff04` | celebsroulette, awmnet | Fork has BeautifulSoup migration |
+| `90d2f5af` | pornxp - domain change - fixes #1711 | Fork has BeautifulSoup migration |
+| `b4daafcf` | fixes | Fork has BeautifulSoup migration |
+| `d522cedb` | awmnet - fix listing | Fork has BeautifulSoup migration |
+| `122e9555` | freepornvideos - new site | Fork has BeautifulSoup migration |
+| `e40d58df` | camcaps site name change | Fork has BeautifulSoup migration |
+| `a34c0a78` | terebon - fix listing | Fork has BeautifulSoup migration |
+| `67bd60fe` | tokyomotion - new site fixes #1689 | Fork has BeautifulSoup migration |
+| `9722f3eb` | camwhoresbay - fix next page | Fork has BeautifulSoup migration |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Commits reviewed in the 2026-06-14 triage session (`docs/development/UPSTREAM_TRIAGE.md`) and judged not worth porting. Listed here so `sync_manager.py --report` stops re-flagging them.
 
