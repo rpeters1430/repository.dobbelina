@@ -68,23 +68,39 @@ def test_list_uses_real_pagination_and_adds_next_page(monkeypatch):
     ]
 
 
-def test_playvid_delegates_to_stripchat(monkeypatch):
-    delegated = []
+def test_playvid_plays_cached_stream_url_directly(monkeypatch):
+    played = []
 
-    class MockStripchat:
-        @staticmethod
-        def Playvid(url, username):
-            delegated.append((url, username))
+    class FakePlayer:
+        def __init__(self, name, IA_check=None):
+            self.name = name
 
-    import sys
-    import resources.lib.sites
-    monkeypatch.setitem(sys.modules, "resources.lib.sites.stripchat", MockStripchat)
-    if hasattr(resources.lib.sites, "stripchat"):
-        monkeypatch.setattr(resources.lib.sites, "stripchat", MockStripchat)
+        def play_from_direct_link(self, link):
+            played.append(link)
+
+    monkeypatch.setattr(lemoncams.utils, "VideoPlayer", FakePlayer)
+
+    lemoncams.Playvid(
+        "https://www.lemoncams.com/stripchat/model1|https://stream.example/model1.m3u8",
+        "Model 1",
+    )
+
+    assert len(played) == 1
+    assert played[0].startswith("https://stream.example/model1.m3u8|")
+
+
+def test_playvid_falls_back_to_listing_search_when_no_cached_url(monkeypatch):
+    monkeypatch.setattr(lemoncams, "_find_model_stream", lambda provider, username, **kw: "")
+    notifications = []
+    monkeypatch.setattr(
+        lemoncams.utils,
+        "notify",
+        lambda header, msg, *args, **kwargs: notifications.append((header, msg)),
+    )
 
     lemoncams.Playvid("https://www.lemoncams.com/stripchat/model1", "Model 1")
 
-    assert delegated == [("https://stripchat.com/model1", "model1")]
+    assert notifications == [("LemonCams", "Model offline or no stream found")]
 
 
 def test_playvid_rejects_non_stripchat_provider(monkeypatch):

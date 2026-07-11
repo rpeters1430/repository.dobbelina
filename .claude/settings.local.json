@@ -141,7 +141,8 @@
       "Bash(echo \"test\")",
       "Read(//tmp/**)",
       "Bash(gh issue *)",
-      "Bash(gh pr *)"
+      "Bash(gh pr *)",
+      "WebFetch(domain:yaso.su)"
     ],
     "deny": [],
     "ask": []
