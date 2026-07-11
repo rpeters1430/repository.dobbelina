@@ -263,15 +263,12 @@ def Search(url, keyword=None):
         utils.eod()
         return
 
-    playable_url = _find_model_stream(provider, username)
-    if not playable_url:
-        utils.notify("LemonCams", "Model offline or no stream found")
-        utils.eod()
-        return
-
+    # We do not call _find_model_stream here because it is limited to the first
+    # 5 pages of the LemonCams listing. Adding the link directly allows the delegated
+    # playback resolver to verify status via Stripchat's widget API in real-time.
     site.add_download_link(
         username,
-        _build_model_page_url(provider, username, playable_url),
+        _build_model_page_url(provider, username),
         "Playvid",
         "",
         "",
@@ -289,6 +286,14 @@ def Playvid(url, name):
     if not _is_supported_provider(provider):
         utils.notify("LemonCams", "Only Stripchat models are supported")
         return
+
+    if provider == "stripchat":
+        try:
+            from resources.lib.sites import stripchat
+            stripchat.Playvid("https://stripchat.com/{}".format(username), username)
+            return
+        except Exception as e:
+            utils.kodilog("LemonCams: Failed to delegate Playvid to stripchat module: {}".format(e))
 
     playable_url = stream_url or _find_model_stream(provider, username)
     if not playable_url:
