@@ -77,7 +77,10 @@ def test_playvid_delegates_to_stripchat(monkeypatch):
             delegated.append((url, username))
 
     import sys
-    sys.modules["resources.lib.sites.stripchat"] = MockStripchat
+    import resources.lib.sites
+    monkeypatch.setitem(sys.modules, "resources.lib.sites.stripchat", MockStripchat)
+    if hasattr(resources.lib.sites, "stripchat"):
+        monkeypatch.setattr(resources.lib.sites, "stripchat", MockStripchat)
 
     lemoncams.Playvid("https://www.lemoncams.com/stripchat/model1", "Model 1")
 
