@@ -2733,7 +2733,7 @@ class VideoPlayer:
             raise ValueError(i18n("no_regex"))
 
     @_cancellable
-    def play_from_kt_player(self, html, url=None):
+    def play_from_kt_player(self, html, url=None, follow_redirects=False):
         license = re.search(r"license_code:\s*'(\$\d+)", html, re.DOTALL | re.IGNORECASE)
         if license:
             license = license.group(1)
@@ -2771,7 +2771,13 @@ class VideoPlayer:
                 return
             from resources.lib.decrypters.kvsplayer import kvs_decode
             videourl = kvs_decode(videourl, license)
-        videourl += '|User-Agent={0}&Referer={1}'.format(USER_AGENT, url)
+
+        if follow_redirects:
+            videourl = getVideoLink(videourl, url)
+
+        videourl += '|User-Agent={0}'.format(USER_AGENT)
+        if url:
+            videourl += '&Referer={0}'.format(url)
 
         if not videourl:
             self.progress.close()

@@ -7,10 +7,17 @@ def test_list_parses_videos(monkeypatch):
     """Test that List correctly parses video items."""
     html = """
     <html>
-    <a class="clip-link" data-id="123" title="Hot Video Title" href="/video/hot-video/">
-        <img src="/thumbs/1.jpg" />
-    </a>
-    <a title="Next page" href="/page/2/">Next</a>
+    <article class="thumb-block">
+        <a href="/video/hot-video/" title="Hot Video Title">
+            <img class="video-main-thumb" src="/thumbs/1.jpg" />
+        </a>
+    </article>
+    <div class="pagination">
+        <ul>
+            <li><a class="current">1</a></li>
+            <li><a href="/page/2/">Next</a></li>
+        </ul>
+    </div>
     </html>
     """
 

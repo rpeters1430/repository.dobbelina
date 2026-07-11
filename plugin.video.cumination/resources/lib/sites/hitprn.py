@@ -24,7 +24,7 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "hitprn",
     "[COLOR hotpink]Hitprn[/COLOR]",
-    "https://www.hitprn.com/",
+    "https://www.hitprn.net/",
     "hitprn.png",
     "hitprn",
     category="Video Tubes",
@@ -37,21 +37,33 @@ addon = utils.addon
 def Main():
     site.add_dir("[COLOR hotpink]Sites[/COLOR]", site.url, "Sites", "", "")
     site.add_dir(
-        "[COLOR hotpink]Most Views[/COLOR]",
-        site.url + "page/1/?orderby=views",
+        "[COLOR hotpink]Most Viewed[/COLOR]",
+        site.url + "page/1/?filter=most-viewed",
         "List",
         site.img_cat,
     )
     site.add_dir(
-        "[COLOR hotpink]Likes[/COLOR]",
-        site.url + "page/1/?orderby=likes",
+        "[COLOR hotpink]Longest[/COLOR]",
+        site.url + "page/1/?filter=longest",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Popular[/COLOR]",
+        site.url + "page/1/?filter=popular",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Random[/COLOR]",
+        site.url + "page/1/?filter=random",
         "List",
         site.img_cat,
     )
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]", site.url + "?s=", "Search", site.img_search
     )
-    List(site.url + "page/1/?orderby=date")
+    List(site.url + "page/1/?filter=latest")
 
 
 @site.register()
@@ -59,14 +71,17 @@ def List(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
 
-    video_items = soup.select(".clip-link")
+    video_items = soup.select("article.thumb-block")
     for item in video_items:
         try:
-            videopage = utils.safe_get_attr(item, "href")
-            name = utils.safe_get_attr(item, "title")
+            link = item.select_one("a[href]")
+            if not link:
+                continue
+            videopage = utils.safe_get_attr(link, "href")
+            name = utils.safe_get_attr(link, "title") or utils.safe_get_text(link)
 
             img_tag = item.select_one("img")
-            img = utils.safe_get_attr(img_tag, "src", ["data-original", "data-src"])
+            img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-main-thumb"]) or utils.safe_get_attr(item, "data-main-thumb")
 
             if not videopage or not name:
                 continue
@@ -90,7 +105,11 @@ def List(url):
             utils.kodilog("Error parsing video item in hitprn: " + str(e))
             continue
 
-    next_page_tag = soup.select_one('a[title*="Next page"]')
+    next_page_tag = None
+    for a in soup.select('.pagination a'):
+        if a.get_text().strip() == 'Next':
+            next_page_tag = a
+            break
     if next_page_tag:
         next_url = utils.safe_get_attr(next_page_tag, "href")
         if next_url:
@@ -133,7 +152,7 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        url += keyword.replace(" ", "+") + "&orderby=date"
+        url += keyword.replace(" ", "+")
         List(url)
 
 
@@ -142,22 +161,7 @@ def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     html = utils.getHtml(url, site.url)
-    sources = re.compile(
-        r"""<source\s*src="([^"]+)".+?label="([^"]+)""", re.DOTALL | re.IGNORECASE
-    ).findall(html)
-    sources = {quality: videourl for videourl, quality in sources}
-    videourl = utils.selector(
-        "Select quality",
-        sources,
-        setting_valid="qualityask",
-        sort_by=lambda x: int(x[:-1]),
-        reverse=True,
-    )
-    if videourl:
-        vp.play_from_direct_link(videourl + "|Referer=" + site.url)
-    else:
-        vp.progress.close()
-        return
+    vp.play_from_html(html, url)
 
 
 @site.register()

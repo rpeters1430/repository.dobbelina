@@ -741,7 +741,7 @@ def run_site_child(
             if links:
                 play_calls.append(str(links[0]))
 
-        def play_from_kt_player(self, html, url=None):
+        def play_from_kt_player(self, html, url=None, follow_redirects=False):
             if url:
                 play_calls.append(str(url))
             else:

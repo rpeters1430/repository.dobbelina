@@ -268,7 +268,7 @@ def test_playback_smoke(monkeypatch, case):
         def play_from_link_to_resolve(self, url):
             recorder.play_from_site_link = url
 
-        def play_from_kt_player(self, html, url=None):
+        def play_from_kt_player(self, html, url=None, *args, **kwargs):
             recorder.play_from_kt_player = (html, url)
 
     def fake_get_html(url, ref=None, headers=None):
