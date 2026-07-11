@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "PASS",
       "FAIL",
       "PASS",
       "FAIL",
@@ -115,6 +114,7 @@
       "PASS",
       "PASS",
       "FAIL",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.7
@@ -382,8 +382,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS"
     ],
@@ -622,10 +622,10 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
       "WARN",
-      "WARN"
+      "WARN",
+      "PASS"
     ],
     "stability_score": 0.7
   },
@@ -1066,8 +1066,8 @@
   },
   "longvideos": {
     "history": [
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1180,9 +1180,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "WARN"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "neporn": {
     "history": [
@@ -1501,7 +1501,7 @@
   },
   "pornez": {
     "history": [
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1512,7 +1512,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "porngo": {
     "history": [
@@ -1957,8 +1957,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS"
     ],
@@ -2731,6 +2731,7 @@
   },
   "pornmd": {
     "history": [
+      "PASS",
       "PASS",
       "PASS"
     ],

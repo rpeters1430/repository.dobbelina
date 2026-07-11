@@ -8,7 +8,7 @@
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
-| hanime | warn | WARN |  | video |  | Y | Y | Y | Y |
+| naughtyblog | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -65,6 +65,7 @@
 | fullporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | fullxcinema | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | fyxxr | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| hanime | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hdporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | hdporn92 | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | heavyfetish | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -104,7 +105,6 @@
 | myfreecams | backlog | PASS | 2 | cam |  | Y |  |  |  |
 | myporntape | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | naked | backlog | PASS | 2 | cam |  |  |  |  |  |
-| naughtyblog | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | neporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | netfapx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | netflav | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -193,7 +193,7 @@
 ## Next Batch
 
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL
-- **hanime** (warn, tier=None) | failures: play:FAIL
+- **naughtyblog** (warn, tier=None) | failures: categories:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
