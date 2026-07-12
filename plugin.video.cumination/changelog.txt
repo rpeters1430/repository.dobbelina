@@ -1,3 +1,12 @@
+[B]Version 1.1.429[/B]
+- Enhance LemonCams integration with Stripchat
+- fix: update LemonCams to delegate playback to Stripchat and adjust settings
+- test: refine lemoncams tests mock isolation to prevent test pollution
+- fix: delegate LemonCams Stripchat playback to stripchat module
+- fix: resolve redirects for 85po playback and adapt hitprn parser to new site theme
+- chore: update upstream sync log with 77 triaged commits
+- Small Updates
+
 [B]Version 1.1.428[/B]
 - fix: update LemonCams to delegate playback to Stripchat and adjust settings
 - test: refine lemoncams tests mock isolation to prevent test pollution
