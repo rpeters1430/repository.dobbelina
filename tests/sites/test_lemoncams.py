@@ -68,7 +68,38 @@ def test_list_uses_real_pagination_and_adds_next_page(monkeypatch):
     ]
 
 
-def test_playvid_plays_cached_stream_url_directly(monkeypatch):
+def _mock_stripchat_module(monkeypatch, stripchat_module):
+    import sys
+    import resources.lib.sites
+
+    monkeypatch.setitem(sys.modules, "resources.lib.sites.stripchat", stripchat_module)
+    if hasattr(resources.lib.sites, "stripchat"):
+        monkeypatch.setattr(resources.lib.sites, "stripchat", stripchat_module)
+
+
+def test_playvid_delegates_to_stripchat(monkeypatch):
+    delegated = []
+
+    class MockStripchat:
+        @staticmethod
+        def _play_stripchat_model(url, username):
+            delegated.append((url, username))
+
+    _mock_stripchat_module(monkeypatch, MockStripchat)
+
+    lemoncams.Playvid("https://www.lemoncams.com/stripchat/model1", "Model 1")
+
+    assert delegated == [("https://stripchat.com/model1", "model1")]
+
+
+def test_playvid_plays_cached_stream_url_directly_when_delegation_fails(monkeypatch):
+    class FailingStripchat:
+        @staticmethod
+        def _play_stripchat_model(url, username):
+            raise RuntimeError("boom")
+
+    _mock_stripchat_module(monkeypatch, FailingStripchat)
+
     played = []
 
     class FakePlayer:
@@ -90,6 +121,13 @@ def test_playvid_plays_cached_stream_url_directly(monkeypatch):
 
 
 def test_playvid_falls_back_to_listing_search_when_no_cached_url(monkeypatch):
+    class FailingStripchat:
+        @staticmethod
+        def _play_stripchat_model(url, username):
+            raise RuntimeError("boom")
+
+    _mock_stripchat_module(monkeypatch, FailingStripchat)
+
     monkeypatch.setattr(lemoncams, "_find_model_stream", lambda provider, username, **kw: "")
     notifications = []
     monkeypatch.setattr(

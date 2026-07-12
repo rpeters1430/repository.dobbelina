@@ -166,6 +166,62 @@ def _load_model_profile_by_username(model_name):
     return None
 
 
+def _load_model_by_search(model_name):
+    """Look up a model via the front-end models listing search, which
+    (unlike the widget API) reliably returns the requested username along
+    with a playable ``hlsPlaylist`` field when the model is live."""
+    if not isinstance(model_name, str) or not model_name:
+        return None
+
+    endpoint = (
+        "https://stripchat.com/api/front/models?search={0}&primaryTag=girls".format(
+            urllib_parse.quote(model_name)
+        )
+    )
+    headers = {
+        "User-Agent": utils.USER_AGENT,
+        "Accept": "application/json, text/plain, */*",
+        "Origin": "https://stripchat.com",
+        "Referer": "https://stripchat.com/{0}".format(model_name),
+    }
+    try:
+        utils.kodilog("Stripchat: Searching models listing for: {}".format(model_name))
+        response, _ = utils.get_html_with_cloudflare_retry(
+            endpoint,
+            site.url,
+            headers=headers,
+            retry_on_empty=True,
+        )
+        if not response:
+            utils.kodilog("Stripchat: Empty response from models search endpoint")
+            return None
+        payload = json.loads(response)
+        models = payload.get("models") if isinstance(payload, dict) else None
+        if not models:
+            return None
+        for model in models:
+            if model.get("username", "").lower() == model_name.lower():
+                utils.kodilog(
+                    "Stripchat: Found model via search listing: {}".format(model_name)
+                )
+                return model
+    except json.JSONDecodeError as e:
+        utils.kodilog("Stripchat: Models search JSON decode error: {}".format(str(e)))
+    except Exception as e:
+        utils.kodilog("Stripchat: Models search lookup failed: {}".format(str(e)))
+    return None
+
+
+def _load_model_fallback(model_name):
+    """Fallback lookup chain used when the widget API doesn't return an
+    exact username match: try the search listing first (has stream data),
+    then the username-profile endpoint (status only, no stream data)."""
+    search_payload = _load_model_by_search(model_name)
+    if search_payload:
+        return search_payload
+    return _load_model_profile_by_username(model_name)
+
+
 def _ensure_low_latency_playlist(url):
     if not isinstance(url, str) or ".m3u8" not in url:
         return url
@@ -1307,6 +1363,12 @@ def Playvid(url, name):
     if STRIPCHAT_DISABLED:
         _notify_stripchat_disabled()
         return
+    _play_stripchat_model(url, name)
+
+
+def _play_stripchat_model(url, name):
+    """Core Stripchat resolution/playback, usable internally (e.g. by
+    LemonCams) without going through the disabled public Stripchat site."""
     vp = utils.VideoPlayer(name, IA_check="IA")
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
@@ -1359,21 +1421,21 @@ def Playvid(url, name):
                             models[0].get("username")
                         )
                     )
-                profile_payload = _load_model_profile_by_username(model_name)
-                if profile_payload:
-                    return profile_payload
+                fallback_payload = _load_model_fallback(model_name)
+                if fallback_payload:
+                    return fallback_payload
             else:
                 utils.kodilog("Stripchat: No models in widget response")
-                profile_payload = _load_model_profile_by_username(model_name)
-                if profile_payload:
-                    return profile_payload
+                fallback_payload = _load_model_fallback(model_name)
+                if fallback_payload:
+                    return fallback_payload
         except json.JSONDecodeError as e:
             utils.kodilog("Stripchat: JSON decode error: {}".format(str(e)))
         except Exception as e:
             utils.kodilog("Stripchat: Error loading model details: {}".format(str(e)))
-        profile_payload = _load_model_profile_by_username(model_name)
-        if profile_payload:
-            return profile_payload
+        fallback_payload = _load_model_fallback(model_name)
+        if fallback_payload:
+            return fallback_payload
         return None
 
     def _pick_stream(model_data, fallback_url):
@@ -1593,11 +1655,11 @@ def Playvid(url, name):
             last_error = None
             for probe_url in _iter_manifest_probe_urls(manifest_url):
                 try:
-                    text = utils._getHtml(
+                    text, _ = utils.get_html_with_cloudflare_retry(
                         probe_url,
                         site.url,
                         headers=headers,
-                        error="throw",
+                        retry_on_empty=True,
                     )
                     if isinstance(text, str) and "#EXTM3U" in text:
                         manifest_probe_errors.pop(manifest_url, None)

@@ -142,7 +142,9 @@
       "Read(//tmp/**)",
       "Bash(gh issue *)",
       "Bash(gh pr *)",
-      "WebFetch(domain:yaso.su)"
+      "WebFetch(domain:yaso.su)",
+      "Bash(rm -f tests/manual/test_diag.py tests/manual/test_diag2.py tests/manual/test_diag3.py tests/manual/test_lemoncams_live.py /tmp/pw_check.py)",
+      "Bash(rmdir tests/manual)"
     ],
     "deny": [],
     "ask": []

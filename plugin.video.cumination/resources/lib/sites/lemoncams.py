@@ -286,6 +286,14 @@ def Playvid(url, name):
         utils.notify("LemonCams", "Only Stripchat models are supported")
         return
 
+    if provider == "stripchat":
+        try:
+            from resources.lib.sites import stripchat
+            stripchat._play_stripchat_model("https://stripchat.com/{}".format(username), username)
+            return
+        except Exception as e:
+            utils.kodilog("LemonCams: Failed to delegate Playvid to stripchat module: {}".format(e))
+
     playable_url = stream_url or _find_model_stream(provider, username)
     if not playable_url:
         utils.notify("LemonCams", "Model offline or no stream found")
