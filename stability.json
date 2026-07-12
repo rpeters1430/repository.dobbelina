@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "FAIL",
       "PASS",
       "FAIL",
       "PASS",
@@ -114,10 +113,11 @@
       "PASS",
       "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.7
+    "stability_score": 0.8
   },
   "animeidhentai": {
     "history": [
@@ -381,8 +381,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -621,10 +621,10 @@
       "PASS",
       "PASS",
       "PASS",
+      "WARN",
+      "WARN",
+      "WARN",
       "PASS",
-      "WARN",
-      "WARN",
-      "WARN",
       "PASS"
     ],
     "stability_score": 0.7
@@ -970,9 +970,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "FAIL"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "josporn": {
     "history": [
@@ -1066,7 +1066,7 @@
   },
   "longvideos": {
     "history": [
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1077,7 +1077,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "luxuretv": {
     "history": [
@@ -1179,8 +1179,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "WARN"
+      "WARN",
+      "PASS"
     ],
     "stability_score": 0.9
   },
@@ -1915,9 +1915,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "SKIP"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "sunporno": {
     "history": [
@@ -1956,8 +1956,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -2731,6 +2731,7 @@
   },
   "pornmd": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS"

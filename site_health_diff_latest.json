@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-07-12T07:03:09.606021",
+    "sites_total": 182,
+    "pass": 179,
+    "warn": 0,
+    "fail": 2,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-07-11T06:56:00.384832",
     "sites_total": 182,
     "pass": 180,
@@ -8,24 +17,25 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-07-10T07:22:52.401942",
-    "sites_total": 182,
-    "pass": 180,
-    "warn": 1,
-    "fail": 1,
-    "error": 0,
-    "skip": 0
-  },
   "summary": {
-    "new_failures": 0,
+    "new_failures": 1,
     "resolved_failures": 0,
     "persistent_failures": 1,
     "improved_sites": 1,
-    "regressions": 1,
+    "regressions": 2,
     "step_regressions": 1
   },
-  "new_failures": [],
+  "new_failures": [
+    {
+      "site": "jizzbunker",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "UNKNOWN",
+      "message": "list: List URL unavailable in harness (HTTP 502)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
   "resolved_failures": [],
   "persistent_failures": [
     {
@@ -40,35 +50,42 @@
   ],
   "improved_sites": [
     {
-      "site": "hanime",
+      "site": "naughtyblog",
       "previous": "WARN",
       "current": "PASS"
     }
   ],
   "step_regressions": [
     {
-      "site": "naughtyblog",
-      "step": "categories",
+      "site": "jizzbunker",
+      "step": "list",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://www.naughtyblog.org/categories/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
+      "message": "List URL unavailable in harness (HTTP 502)",
+      "class": "UNKNOWN",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "hanime",
+      "site": "jizzbunker",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "naughtyblog",
       "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "naughtyblog",
+      "site": "stripchat",
       "previous": "PASS",
-      "current": "WARN",
+      "current": "SKIP",
       "kind": "regression",
       "detail": ""
     }

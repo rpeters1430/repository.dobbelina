@@ -5,16 +5,20 @@
 
 ## Snapshot
 
-- Current: `PASS 180` | `WARN 1` | `FAIL 1` | `ERROR 0` | `SKIP 0`
+- Current: `PASS 179` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 1`
 - Previous: `PASS 180` | `WARN 1` | `FAIL 1` | `ERROR 0` | `SKIP 0`
 
 ## Delta Summary
 
-- New failures: `0`
+- New failures: `1`
 - Resolved failures: `0`
 - Persistent failures: `1`
-- Site regressions: `1`
+- Site regressions: `2`
 - Step regressions: `1`
+
+## New Failures
+
+- **jizzbunker**: `PASS -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 502)
 
 ## Persistent Failures
 
@@ -22,8 +26,8 @@
 
 ## Step Regressions
 
-- **naughtyblog** `categories`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://www.naughtyblog.org/categories/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **jizzbunker** `list`: `PASS -> FAIL` (UNKNOWN) | List URL unavailable in harness (HTTP 502)
 
 ## Improvements
 
-- **hanime**: `WARN -> PASS`
+- **naughtyblog**: `WARN -> PASS`
