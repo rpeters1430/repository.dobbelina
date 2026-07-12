@@ -222,6 +222,35 @@ def _load_model_fallback(model_name):
     return _load_model_profile_by_username(model_name)
 
 
+def _extract_all_mouflon_psch_pkeys(master_text):
+    """Return every ``(psch, pkey)`` pair listed in a master playlist.
+
+    The master lists several ``#EXT-X-MOUFLON:PSCH:v2:<key>`` entries, and
+    which one the CDN currently accepts for signed media playlist/segment
+    requests isn't reliably the first one in the list (confirmed live: a
+    real browser session used a key from the middle of the list, not
+    index 0). Callers should try candidates in order until one works
+    rather than assuming the first is valid.
+    """
+    if not isinstance(master_text, str):
+        return []
+    matches = re.findall(r"#EXT-X-MOUFLON:PSCH:(v\d+):([^\r\n]+)", master_text)
+    pairs = []
+    for psch, pkey in matches:
+        pkey = pkey.strip()
+        if pkey:
+            pairs.append((psch, pkey))
+    return pairs
+
+
+def _extract_mouflon_psch_pkey(master_text):
+    """Return the first ``(psch, pkey)`` pair from a master playlist, or
+    ``(None, None)``. See ``_extract_all_mouflon_psch_pkeys`` for why this
+    is only a starting guess, not necessarily the currently valid key."""
+    pairs = _extract_all_mouflon_psch_pkeys(master_text)
+    return pairs[0] if pairs else (None, None)
+
+
 def _ensure_low_latency_playlist(url):
     if not isinstance(url, str) or ".m3u8" not in url:
         return url
@@ -954,6 +983,7 @@ def _start_manifest_proxy(selected_url, name):
                         forwarded_params
                     )
                 )
+            candidate_keys = []
             edge_master_url = _derive_edge_master_url_from_media_url(upstream_url)
             if edge_master_url:
                 try:
@@ -970,17 +1000,53 @@ def _start_manifest_proxy(selected_url, name):
                             edge_resp.status_code
                         )
                     )
+                    if edge_resp.status_code == 200:
+                        candidate_keys = _extract_all_mouflon_psch_pkeys(edge_resp.text)
                 except Exception as edge_exc:
                     utils.kodilog(
                         "Stripchat proxy: preflight edge master error: {}".format(
                             str(edge_exc)
                         )
                     )
+
+            def _with_pkey(url, psch, pkey):
+                url_parts = list(urlparse(url))
+                url_query = parse_qs(url_parts[4], keep_blank_values=True)
+                url_query["psch"] = [psch]
+                url_query["pkey"] = [pkey]
+                url_parts[4] = urlencode(url_query, doseq=True)
+                return urlunparse(url_parts)
+
             utils.kodilog(
                 "Stripchat proxy: initial manifest GET {}".format(upstream_url[:140])
             )
             resp = session.get(upstream_url, timeout=HTTP_TIMEOUT_MANIFEST)
             utils.kodilog("Stripchat proxy: initial status {}".format(resp.status_code))
+
+            if resp.status_code in (403, 404) and candidate_keys:
+                current_pkey = parse_qs(urlparse(upstream_url).query).get("pkey", [None])[0]
+                for psch, pkey in candidate_keys:
+                    if pkey == current_pkey:
+                        continue
+                    retry_url = _with_pkey(upstream_url, psch, pkey)
+                    utils.kodilog(
+                        "Stripchat proxy: retrying manifest with candidate pkey {}".format(
+                            pkey
+                        )
+                    )
+                    retry_resp = session.get(retry_url, timeout=HTTP_TIMEOUT_MANIFEST)
+                    if retry_resp.status_code == 200:
+                        upstream_url = retry_url
+                        resp = retry_resp
+                        utils.kodilog(
+                            "Stripchat proxy: candidate pkey {} succeeded".format(pkey)
+                        )
+                        break
+                    utils.kodilog(
+                        "Stripchat proxy: candidate pkey {} failed with {}".format(
+                            pkey, retry_resp.status_code
+                        )
+                    )
             utils.kodilog(
                 "Stripchat proxy: manifest cookies resp={0} session={1}".format(
                     resp.cookies.get_dict(), session.cookies.get_dict()
@@ -1017,13 +1083,17 @@ def _start_manifest_proxy(selected_url, name):
                     utils.kodilog(
                         "Stripchat proxy: rewrite removed placeholder media.mp4 references"
                     )
-                # Full segments (~2 s each) survive 30-60 s on the CDN, so a
-                # smaller edge buffer is enough.  edge_buffer=1 skips only the
-                # newest segment; keep_count=4 gives ~8 s of buffered content.
+                # Confirmed live: segments carry Cloudflare edge caching of
+                # only max-age=5s and are already gone (404, cf-cache-status
+                # EXPIRED) within ~1-2s of being listed. Keep only the single
+                # freshest segment so there's minimal delay between "we saw
+                # this listed" and "Kodi actually requests it" -- a wider
+                # window just means the older entries in it are more likely
+                # to already be expired by the time they're requested.
                 rewritten = _keep_only_part_window(
                     rewritten,
-                    keep_count=4,
-                    edge_buffer=1,
+                    keep_count=1,
+                    edge_buffer=0,
                 )
                 current_segment_urls = _extract_manifest_segment_urls(rewritten)
                 rewritten = _proxy_segment_urls_in_manifest(rewritten, port)
@@ -1742,12 +1812,7 @@ def _play_stripchat_model(url, name):
             if not master_text or "#EXTM3U" not in master_text:
                 return None, None
 
-            mouflon = re.search(r"#EXT-X-MOUFLON:PSCH:(v\d+):([^\r\n]+)", master_text)
-            if not mouflon:
-                return None, None
-
-            psch = mouflon.group(1)
-            pkey = mouflon.group(2).strip()
+            psch, pkey = _extract_mouflon_psch_pkey(master_text)
             if not pkey:
                 return None, None
 

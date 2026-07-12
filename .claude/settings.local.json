@@ -144,7 +144,9 @@
       "Bash(gh pr *)",
       "WebFetch(domain:yaso.su)",
       "Bash(rm -f tests/manual/test_diag.py tests/manual/test_diag2.py tests/manual/test_diag3.py tests/manual/test_lemoncams_live.py /tmp/pw_check.py)",
-      "Bash(rmdir tests/manual)"
+      "Bash(rmdir tests/manual)",
+      "Bash(sed -i 's#/tmp/lemoncams_dirtypub.png#C:/Users/rpete/AppData/Local/Temp/claude/C--Users-rpete-repository-dobbelina/f5403d34-6bf3-4a45-97ab-7ac194b6210c/scratchpad/lemoncams_dirtypub.png#' /tmp/pw_lemoncams2.py)",
+      "Bash(mkdir -p \"C:/Users/rpete/AppData/Local/Temp/claude/C--Users-rpete-repository-dobbelina/f5403d34-6bf3-4a45-97ab-7ac194b6210c/scratchpad\")"
     ],
     "deny": [],
     "ask": []
