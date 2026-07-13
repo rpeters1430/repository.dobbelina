@@ -106,13 +106,13 @@
   },
   "analdin": {
     "history": [
-      "PASS",
       "FAIL",
       "PASS",
       "PASS",
       "PASS",
       "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -380,14 +380,14 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "PASS",
+      "WARN"
     ],
-    "stability_score": 0.9
+    "stability_score": 0.8
   },
   "drtuber": {
     "history": [
@@ -620,10 +620,10 @@
       "PASS",
       "PASS",
       "PASS",
+      "WARN",
+      "WARN",
+      "WARN",
       "PASS",
-      "WARN",
-      "WARN",
-      "WARN",
       "PASS",
       "PASS"
     ],
@@ -969,8 +969,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "FAIL"
+      "FAIL",
+      "PASS"
     ],
     "stability_score": 0.9
   },
@@ -1178,8 +1178,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -1914,10 +1914,10 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
+      "SKIP",
       "SKIP"
     ],
-    "stability_score": 0.9
+    "stability_score": 0.8
   },
   "sunporno": {
     "history": [
@@ -1955,8 +1955,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2731,6 +2731,7 @@
   },
   "pornmd": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS",

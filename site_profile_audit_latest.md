@@ -2,13 +2,13 @@
 
 - Sites: `182`
 - Tier1 hot: `0`
-- Failing: `2`
-- Warn: `0`
+- Failing: `1`
+- Warn: `1`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| jizzbunker | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
+| cumlouder | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -48,7 +48,6 @@
 | camwhoresbay | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | celebsroulette | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | cloudbate | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
-| cumlouder | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | drtuber | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erogarga | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
@@ -91,6 +90,7 @@
 | javhdporn | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | javmoe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | javseen | backlog | PASS | 2 | video |  | Y |  | Y | Y |
+| jizzbunker | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | josporn | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | justfullporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | justporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -192,8 +192,8 @@
 
 ## Next Batch
 
-- **jizzbunker** (failing, tier=2) | failures: list:FAIL
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL
+- **cumlouder** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
