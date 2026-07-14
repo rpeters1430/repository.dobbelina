@@ -106,18 +106,18 @@
   },
   "analdin": {
     "history": [
-      "FAIL",
       "PASS",
       "PASS",
       "PASS",
       "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.8
+    "stability_score": 0.9
   },
   "animeidhentai": {
     "history": [
@@ -379,13 +379,13 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
       "PASS",
       "PASS",
       "PASS",
       "PASS",
-      "WARN"
+      "WARN",
+      "PASS"
     ],
     "stability_score": 0.8
   },
@@ -619,10 +619,10 @@
       "PASS",
       "PASS",
       "PASS",
+      "WARN",
+      "WARN",
+      "WARN",
       "PASS",
-      "WARN",
-      "WARN",
-      "WARN",
       "PASS",
       "PASS",
       "PASS"
@@ -968,8 +968,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -1177,8 +1177,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS"
     ],
@@ -1913,11 +1913,11 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
+      "SKIP",
       "SKIP",
       "SKIP"
     ],
-    "stability_score": 0.8
+    "stability_score": 0.7
   },
   "sunporno": {
     "history": [
@@ -1954,8 +1954,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2731,6 +2731,7 @@
   },
   "pornmd": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
