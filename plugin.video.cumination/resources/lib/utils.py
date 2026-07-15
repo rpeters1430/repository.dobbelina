@@ -251,6 +251,7 @@ def get_thumbnail(element, default=""):
 
     # Common attributes used for thumbnails
     attrs = [
+        "data-webp",
         "data-src",
         "data-original",
         "original",

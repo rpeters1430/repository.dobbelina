@@ -56,7 +56,6 @@ PRIVATE_MESSAGE_MAP = {
     "private video": "ThotHub marks this video as private (login may be required).",
     "only active members can watch private videos": "Only active members can watch private videos.",
     "you are not allowed to watch this video": "ThotHub denied access to this video.",
-    "login-required": "This video requires login.",
     "login required": "This video requires login.",
     "login to view": "Login is required to view this video.",
     "please login": "Please login at ThotHub to view this video.",

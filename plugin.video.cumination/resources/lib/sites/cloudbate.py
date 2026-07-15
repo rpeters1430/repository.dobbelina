@@ -86,8 +86,10 @@ def List(url):
         content = soup
 
     items_added = 0
-    # The site uses .item containers for videos, but fixtures might use .video-block
-    for item in content.select(".item, .video-block"):
+    # The site uses .item containers for videos (with .video-block inside), but fixtures might use .video-block directly.
+    # Prioritize .video-block to avoid duplicates if nested, fallback to .item.
+    items = content.select(".video-block") or content.select(".item")
+    for item in items:
         try:
             # Video link can contain /video/ or /videos/
             link = item.select_one('a[href*="/video/"], a[href*="/videos/"]')
@@ -107,7 +109,7 @@ def List(url):
             name = utils.cleantext(name)
 
             img_tag = item.select_one("img")
-            img = utils.safe_get_attr(img_tag, "data-webp", ["data-src", "src"])
+            img = utils.get_thumbnail(img_tag)
             if img and not img.startswith("http"):
                 img = urllib_parse.urljoin(site.url, img)
 
