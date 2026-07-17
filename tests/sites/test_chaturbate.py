@@ -124,6 +124,79 @@ def test_playvid_handles_missing_hls_source(monkeypatch):
     assert notifications == [("Oh oh", "Couldn't find a playable webcam link")]
 
 
+def test_playvid_falls_back_to_ajax_hls_when_dossier_is_missing(monkeypatch):
+    """Public rooms remain playable when the room dossier is rendered by JavaScript."""
+    play_calls = []
+    ajax_calls = []
+
+    class FakeVideoPlayer:
+        def __init__(self, name):
+            self.IA_check = None
+
+        def play_from_direct_link(self, url):
+            play_calls.append((url, self.IA_check))
+
+    def fake_get_html(url, headers=None, data=None, **kwargs):
+        ajax_calls.append((url, headers, data))
+        return json.dumps(
+            {
+                "room_status": "public",
+                "url": "http://127.0.0.1:1/live/master.m3u8",
+            }
+        )
+
+    monkeypatch.setattr(
+        chaturbate.addon, "getSetting", lambda key: "0" if key == "chatplay" else ""
+    )
+    monkeypatch.setattr(
+        chaturbate.utils,
+        "get_html_with_cloudflare_retry",
+        lambda *args, **kwargs: ("<html></html>", False),
+    )
+    monkeypatch.setattr(chaturbate.utils, "_getHtml", fake_get_html)
+    monkeypatch.setattr(chaturbate.utils, "VideoPlayer", FakeVideoPlayer)
+
+    room_url = "https://chaturbate.com/model1/"
+    chaturbate.Playvid(room_url, "Model 1")
+
+    assert ajax_calls[0][0].endswith("get_edge_hls_url_ajax/")
+    assert ajax_calls[0][1]["X-Requested-With"] == "XMLHttpRequest"
+    assert ajax_calls[0][1]["Referer"] == room_url
+    assert ajax_calls[0][2] == {"room_slug": "model1", "bandwidth": "high"}
+    assert len(play_calls) == 1
+    assert play_calls[0][1] == "IA"
+    assert play_calls[0][0].startswith("http://127.0.0.1:1/live/master.m3u8|")
+    assert "Referer=https%3A%2F%2Fchaturbate.com%2Fmodel1%2F" in play_calls[0][0]
+
+
+def test_playvid_handles_ajax_hls_fallback_error(monkeypatch):
+    """A failed fallback request keeps the existing no-stream behavior."""
+    notifications = []
+
+    monkeypatch.setattr(
+        chaturbate.addon, "getSetting", lambda key: "0" if key == "chatplay" else ""
+    )
+    monkeypatch.setattr(
+        chaturbate.utils,
+        "get_html_with_cloudflare_retry",
+        lambda *args, **kwargs: ("<html></html>", False),
+    )
+    monkeypatch.setattr(
+        chaturbate.utils,
+        "_getHtml",
+        lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("unavailable")),
+    )
+    monkeypatch.setattr(
+        chaturbate.utils,
+        "notify",
+        lambda header, msg, *args, **kwargs: notifications.append((header, msg)),
+    )
+
+    chaturbate.Playvid("https://chaturbate.com/model1/", "Model 1")
+
+    assert notifications == [("Oh oh", "Couldn't find a playable webcam link")]
+
+
 def test_remembers_llhls_media_urls_from_uri_attributes():
     state = {
         "seg_cdn_urls": {},

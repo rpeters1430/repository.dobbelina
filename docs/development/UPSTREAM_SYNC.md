@@ -19,6 +19,14 @@
 
 ## Sync Sessions
 
+### 2026-07-16 Porting Session
+Reviewed the untriaged upstream changes after the 2026-06-17 session. Ported only the compatible playback fixes while preserving the fork's BeautifulSoup and Chaturbate proxy implementations.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `99c93d13`/`665842a7` | Chaturbate room-list AJAX header / HLS AJAX playback | `manual` | 2026-07-16 | Retained the dossier-first proxy implementation. Added a public-room HLS fallback through `get_edge_hls_url_ajax/` only when the JavaScript-rendered room page no longer exposes `initialRoomDossier`. Verified focused tests and live `main,list,play` smoke PASS. |
+| `8acaa5fc` | KissJav fixes #1914 | `manual` | 2026-07-16 | Updated direct-media requests to use the KissJav root URL as the referer. Verified focused tests and live `main,list,play` smoke PASS. |
+
 ### 2026-06-17 Porting Session
 Reviewed newest upstream commits after the 2026-06-14 triage session. Imported the upstream `ikisoda` site module and icon, including the latest quality-selection player fix, then adjusted list item ordering so automated playback checks select a real video before the settings control. Spot-checked the newest `freeuseporn`, `camcaps`/`reallifecam`/`porndish`, and `yourlesbians` upstream changes against this fork's current implementations.
 

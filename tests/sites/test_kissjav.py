@@ -176,6 +176,36 @@ def test_search_with_keyword_calls_list(monkeypatch):
     assert "cawd-123" in list_calls[0]
 
 
+def test_playvid_uses_site_url_as_media_referer(monkeypatch):
+    """Media requests must use the site root rather than a video-page referer."""
+    played_urls = []
+
+    class FakeProgress:
+        def update(self, *args, **kwargs):
+            pass
+
+        def close(self):
+            pass
+
+    class FakeVideoPlayer:
+        def __init__(self, name, download=None):
+            self.progress = FakeProgress()
+
+        def play_from_direct_link(self, url):
+            played_urls.append(url)
+
+    monkeypatch.setattr(
+        kissjav.utils,
+        "getHtml",
+        lambda *args, **kwargs: "video_url: 'https://cdn.example.com/video.mp4'",
+    )
+    monkeypatch.setattr(kissjav.utils, "VideoPlayer", FakeVideoPlayer)
+
+    kissjav.Playvid("https://kissjav.com/video/example/", "Example")
+
+    assert played_urls == ["https://cdn.example.com/video.mp4|referer=" + kissjav.site.url]
+
+
 def test_list_with_pagination_context_menu(monkeypatch):
     """Test that List adds pagination with page numbers."""
     html = load_fixture("listing.html")

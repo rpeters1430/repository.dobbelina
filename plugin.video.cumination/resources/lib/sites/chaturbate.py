@@ -475,6 +475,26 @@ def Playvid(url, name):
         m3u8stream = data.get("hls_source")
     else:
         m3u8stream = False
+        slug = url.rstrip("/").rsplit("/", 1)[-1]
+        headers = HTTP_HEADERS_IPAD.copy()
+        headers.update(
+            {
+                "X-Requested-With": "XMLHttpRequest",
+                "Referer": url,
+            }
+        )
+        try:
+            edge = json.loads(
+                utils._getHtml(
+                    bu + "get_edge_hls_url_ajax/",
+                    headers=headers,
+                    data={"room_slug": slug, "bandwidth": "high"},
+                )
+            )
+            if edge.get("room_status") == "public":
+                m3u8stream = edge.get("url")
+        except Exception as error:
+            utils.kodilog("Chaturbate: HLS fallback failed: {}".format(str(error)))
 
     if playmode == 0:
         if m3u8stream:
