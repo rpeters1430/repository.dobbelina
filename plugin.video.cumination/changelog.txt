@@ -1,3 +1,11 @@
+[B]Version 1.1.432[/B]
+- Implement Chaturbate and KissJav playback fixes with AJAX HLS fallback and referer corrections
+- Enhance video item selection logic and add explore_non_video_items script
+- Add OffCloud integration and new video resolvers
+- Enhance LemonCams integration with Stripchat
+- fix: update LemonCams to delegate playback to Stripchat and adjust settings
+- test: refine lemoncams tests mock isolation to prevent test pollution
+
 [B]Version 1.1.431[/B]
 - Enhance video item selection logic and add explore_non_video_items script
 - Add OffCloud integration and new video resolvers
