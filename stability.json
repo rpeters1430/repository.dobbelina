@@ -107,7 +107,6 @@
   "analdin": {
     "history": [
       "PASS",
-      "PASS",
       "FAIL",
       "PASS",
       "PASS",
@@ -115,7 +114,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "FAIL"
+      "FAIL",
+      "PASS"
     ],
     "stability_score": 0.8
   },
@@ -376,7 +376,6 @@
   },
   "cumlouder": {
     "history": [
-      "PASS",
       "WARN",
       "PASS",
       "PASS",
@@ -385,7 +384,8 @@
       "WARN",
       "PASS",
       "PASS",
-      "WARN"
+      "WARN",
+      "PASS"
     ],
     "stability_score": 0.7
   },
@@ -616,10 +616,10 @@
   },
   "hanime": {
     "history": [
+      "WARN",
+      "WARN",
+      "WARN",
       "PASS",
-      "WARN",
-      "WARN",
-      "WARN",
       "PASS",
       "PASS",
       "PASS",
@@ -965,8 +965,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1174,8 +1174,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1910,14 +1910,14 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
+      "SKIP",
       "SKIP",
       "SKIP",
       "SKIP",
       "SKIP",
       "SKIP"
     ],
-    "stability_score": 0.5
+    "stability_score": 0.4
   },
   "sunporno": {
     "history": [
@@ -1951,8 +1951,8 @@
   },
   "supjav": {
     "history": [
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2731,6 +2731,7 @@
   },
   "pornmd": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
