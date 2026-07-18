@@ -1,3 +1,11 @@
+[B]Version 1.1.433[/B]
+- Merge pull request #240 from rpeters1430/copilot/fix-flaresolverr-issues
+- fix: allow tailscale flaresolverr endpoints
+- Initial plan
+- Implement Chaturbate and KissJav playback fixes with AJAX HLS fallback and referer corrections
+- Enhance video item selection logic and add explore_non_video_items script
+- Add OffCloud integration and new video resolvers
+
 [B]Version 1.1.432[/B]
 - Implement Chaturbate and KissJav playback fixes with AJAX HLS fallback and referer corrections
 - Enhance video item selection logic and add explore_non_video_items script
