@@ -28,6 +28,19 @@ def test_validate_flaresolverr_url_unsafe():
     with pytest.raises(RuntimeError) as excinfo:
         _validate_flaresolverr_url("http://remote-host:8191/v1")
     assert "remote host" in str(excinfo.value)
+    assert "enable remote FlareSolverr hosts" in str(excinfo.value)
+
+
+def test_validate_flaresolverr_url_allows_remote_ip_when_setting_enabled(monkeypatch):
+    class _FakeAddon:
+        def getSetting(self, key):
+            if key == "fs_allow_remote":
+                return "true"
+            return ""
+
+    monkeypatch.setattr(flaresolverr.xbmcaddon, "Addon", lambda *args, **kwargs: _FakeAddon())
+
+    _validate_flaresolverr_url("http://100.90.80.70:8191/v1")
 
 
 def test_init_clears_old_sessions(monkeypatch):
