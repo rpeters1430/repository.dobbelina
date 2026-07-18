@@ -13,7 +13,7 @@
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
 | camsoda | tier1 | PASS | 1 | cam |  |  |  |  |  |
 | chaturbate | tier1 | PASS | 1 | cam |  |  |  |  |  |
-| luxuretv | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
+| luxuretv | tier1 | SKIP | 1 | video | Y | Y | Y | Y | Y |
 | missav | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | porndig | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | pornhub | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |

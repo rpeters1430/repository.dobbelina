@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "PASS",
       "FAIL",
       "PASS",
       "PASS",
@@ -115,6 +114,7 @@
       "PASS",
       "PASS",
       "FAIL",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.8
@@ -376,7 +376,6 @@
   },
   "cumlouder": {
     "history": [
-      "WARN",
       "PASS",
       "PASS",
       "PASS",
@@ -385,9 +384,10 @@
       "PASS",
       "PASS",
       "WARN",
+      "PASS",
       "PASS"
     ],
-    "stability_score": 0.7
+    "stability_score": 0.8
   },
   "drtuber": {
     "history": [
@@ -618,7 +618,7 @@
     "history": [
       "WARN",
       "WARN",
-      "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -627,7 +627,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.7
+    "stability_score": 0.8
   },
   "hdporn": {
     "history": [
@@ -964,8 +964,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1090,9 +1090,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "SKIP"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "missav": {
     "history": [
@@ -1173,8 +1173,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1909,7 +1909,7 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
+      "SKIP",
       "SKIP",
       "SKIP",
       "SKIP",
@@ -1917,7 +1917,7 @@
       "SKIP",
       "SKIP"
     ],
-    "stability_score": 0.4
+    "stability_score": 0.3
   },
   "sunporno": {
     "history": [
@@ -1951,7 +1951,7 @@
   },
   "supjav": {
     "history": [
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1962,7 +1962,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "sxyprn": {
     "history": [
@@ -2731,6 +2731,7 @@
   },
   "pornmd": {
     "history": [
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
