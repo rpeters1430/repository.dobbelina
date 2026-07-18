@@ -57,7 +57,8 @@ def _validate_flaresolverr_url(url):
             raise RuntimeError(
                 "FlareSolverr is configured with a remote host '{}'. "
                 "For security, only localhost is allowed by default. "
-                "Please use 127.0.0.1 or localhost.".format(host)
+                "Please use 127.0.0.1 or localhost, or enable remote "
+                "FlareSolverr hosts in addon settings.".format(host)
             )
         else:
             xbmc.log(

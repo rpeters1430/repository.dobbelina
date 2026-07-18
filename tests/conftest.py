@@ -82,6 +82,7 @@ def _ensure_kodi_stubs():
                 "hcaptcha": "false",
                 "proxy_use": "false",
                 "cuminationage": "true",
+                "fs_allow_remote": "false",
             }
 
         def getAddonInfo(self, key):

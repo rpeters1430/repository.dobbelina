@@ -77,6 +77,7 @@
         <setting type="lsep" label="33024" />
         <setting id="fs_enable" type="bool" label="33022" default="false" />
         <setting id="fs_host" enable="eq(-1,true)" type="text" label="33023" default="http://127.0.0.1:8191/v1"/>
+        <setting id="fs_allow_remote" enable="eq(-2,true)" type="bool" label="Allow remote FlareSolverr hosts (Tailscale/LAN)" default="false" />
         <setting type="lsep" label="33025" />
         <setting id="sessionid" type="text" label="33026" default=""/>
         <setting type="lsep" label="ThotHub Authentication" />
