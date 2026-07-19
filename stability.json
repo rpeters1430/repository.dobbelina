@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "FAIL",
       "PASS",
       "PASS",
       "PASS",
@@ -114,10 +113,11 @@
       "PASS",
       "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.8
+    "stability_score": 0.9
   },
   "animeidhentai": {
     "history": [
@@ -379,11 +379,11 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
       "PASS",
       "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS"
     ],
@@ -617,7 +617,7 @@
   "hanime": {
     "history": [
       "WARN",
-      "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -627,7 +627,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.8
+    "stability_score": 0.9
   },
   "hdporn": {
     "history": [
@@ -963,8 +963,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1089,8 +1089,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "SKIP"
+      "SKIP",
+      "PASS"
     ],
     "stability_score": 0.9
   },
@@ -1172,8 +1172,8 @@
   "naughtyblog": {
     "history": [
       "PASS",
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1908,7 +1908,7 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
+      "SKIP",
       "SKIP",
       "SKIP",
       "SKIP",
@@ -1917,7 +1917,7 @@
       "SKIP",
       "SKIP"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.2
   },
   "sunporno": {
     "history": [

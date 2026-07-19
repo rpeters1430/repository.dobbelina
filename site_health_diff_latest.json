@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-07-19T06:59:27.130580",
+    "sites_total": 182,
+    "pass": 180,
+    "warn": 0,
+    "fail": 1,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-07-18T06:48:46.244500",
     "sites_total": 182,
     "pass": 179,
@@ -8,21 +17,12 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-07-17T06:55:24.003875",
-    "sites_total": 182,
-    "pass": 180,
-    "warn": 0,
-    "fail": 1,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
     "new_failures": 0,
     "resolved_failures": 0,
     "persistent_failures": 1,
-    "improved_sites": 0,
-    "regressions": 1,
+    "improved_sites": 1,
+    "regressions": 0,
     "step_regressions": 0
   },
   "new_failures": [],
@@ -38,14 +38,20 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [],
+  "improved_sites": [
+    {
+      "site": "luxuretv",
+      "previous": "SKIP",
+      "current": "PASS"
+    }
+  ],
   "step_regressions": [],
   "deltas": [
     {
       "site": "luxuretv",
-      "previous": "PASS",
-      "current": "SKIP",
-      "kind": "regression",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
