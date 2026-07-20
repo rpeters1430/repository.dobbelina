@@ -111,8 +111,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -378,11 +378,11 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "WARN",
       "PASS",
       "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -616,7 +616,7 @@
   },
   "hanime": {
     "history": [
-      "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -627,7 +627,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "hdporn": {
     "history": [
@@ -962,8 +962,8 @@
   "jizzbunker": {
     "history": [
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1088,8 +1088,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
@@ -1171,8 +1171,8 @@
   },
   "naughtyblog": {
     "history": [
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1907,7 +1907,7 @@
   "stripchat": {
     "history": [
       "PASS",
-      "PASS",
+      "SKIP",
       "SKIP",
       "SKIP",
       "SKIP",
@@ -1917,7 +1917,7 @@
       "SKIP",
       "SKIP"
     ],
-    "stability_score": 0.2
+    "stability_score": 0.1
   },
   "sunporno": {
     "history": [

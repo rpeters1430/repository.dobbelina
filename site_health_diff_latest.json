@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-07-19T06:59:27.130580",
+    "generated": "2026-07-20T07:16:13.717490",
     "sites_total": 182,
     "pass": 180,
     "warn": 0,
@@ -9,19 +9,19 @@
     "skip": 1
   },
   "previous": {
-    "generated": "2026-07-18T06:48:46.244500",
+    "generated": "2026-07-19T06:59:27.130580",
     "sites_total": 182,
-    "pass": 179,
+    "pass": 180,
     "warn": 0,
     "fail": 1,
     "error": 0,
-    "skip": 2
+    "skip": 1
   },
   "summary": {
     "new_failures": 0,
     "resolved_failures": 0,
     "persistent_failures": 1,
-    "improved_sites": 1,
+    "improved_sites": 0,
     "regressions": 0,
     "step_regressions": 0
   },
@@ -38,21 +38,7 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [
-    {
-      "site": "luxuretv",
-      "previous": "SKIP",
-      "current": "PASS"
-    }
-  ],
+  "improved_sites": [],
   "step_regressions": [],
-  "deltas": [
-    {
-      "site": "luxuretv",
-      "previous": "SKIP",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    }
-  ]
+  "deltas": []
 }
