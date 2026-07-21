@@ -110,8 +110,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -377,11 +377,11 @@
   "cumlouder": {
     "history": [
       "PASS",
-      "PASS",
       "WARN",
       "PASS",
       "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -961,8 +961,8 @@
   },
   "jizzbunker": {
     "history": [
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1087,8 +1087,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS"
     ],
@@ -1171,7 +1171,7 @@
   },
   "naughtyblog": {
     "history": [
-      "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1182,7 +1182,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "neporn": {
     "history": [
@@ -1465,9 +1465,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "SKIP"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "pornditt": {
     "history": [
@@ -1906,7 +1906,7 @@
   },
   "stripchat": {
     "history": [
-      "PASS",
+      "SKIP",
       "SKIP",
       "SKIP",
       "SKIP",
@@ -1917,7 +1917,7 @@
       "SKIP",
       "SKIP"
     ],
-    "stability_score": 0.1
+    "stability_score": 0.0
   },
   "sunporno": {
     "history": [
