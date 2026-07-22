@@ -109,8 +109,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -376,11 +376,11 @@
   },
   "cumlouder": {
     "history": [
-      "PASS",
       "WARN",
       "PASS",
       "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -961,7 +961,7 @@
   },
   "jizzbunker": {
     "history": [
-      "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -972,7 +972,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "josporn": {
     "history": [
@@ -1086,8 +1086,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -1120,9 +1120,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "SKIP"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "mrsexe": {
     "history": [
@@ -1464,8 +1464,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "SKIP"
+      "SKIP",
+      "PASS"
     ],
     "stability_score": 0.9
   },

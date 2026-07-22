@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-07-21T07:05:03.638394",
+    "generated": "2026-07-22T07:01:40.788235",
     "sites_total": 182,
     "pass": 179,
     "warn": 0,
@@ -9,19 +9,19 @@
     "skip": 2
   },
   "previous": {
-    "generated": "2026-07-20T07:16:13.717490",
+    "generated": "2026-07-21T07:05:03.638394",
     "sites_total": 182,
-    "pass": 180,
+    "pass": 179,
     "warn": 0,
     "fail": 1,
     "error": 0,
-    "skip": 1
+    "skip": 2
   },
   "summary": {
     "new_failures": 0,
     "resolved_failures": 0,
     "persistent_failures": 1,
-    "improved_sites": 0,
+    "improved_sites": 1,
     "regressions": 1,
     "step_regressions": 0
   },
@@ -38,14 +38,27 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [],
+  "improved_sites": [
+    {
+      "site": "porndish",
+      "previous": "SKIP",
+      "current": "PASS"
+    }
+  ],
   "step_regressions": [],
   "deltas": [
     {
-      "site": "porndish",
+      "site": "motherless",
       "previous": "PASS",
       "current": "SKIP",
       "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "porndish",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]

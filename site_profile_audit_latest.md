@@ -99,7 +99,7 @@
 | livecamrips | backlog | PASS | 2 | cam |  | Y |  | Y | Y |
 | longvideos | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | mangoporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| motherless | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
+| motherless | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
 | mrsexe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | myfreecams | backlog | PASS | 2 | cam |  | Y |  |  |  |
 | myporntape | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -123,7 +123,7 @@
 | playvids | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | pmvhaven | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | porn4k | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| porndish | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
+| porndish | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | pornditt | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | porndoe | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
 | pornez | backlog | PASS |  | video |  | Y | Y | Y | Y |
