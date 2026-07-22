@@ -37,7 +37,7 @@ site = AdultSite(
 
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
-        "items": ".item",
+        "items": ".item:not(.avd)",
         "url": {"selector": "a[href]", "attr": "href"},
         "title": {"selector": "strong.title", "text": True, "clean": True},
         "thumbnail": {

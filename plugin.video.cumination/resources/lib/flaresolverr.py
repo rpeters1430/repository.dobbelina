@@ -26,17 +26,32 @@ def _validate_flaresolverr_url(url):
     if host not in _LOCALHOST_HOSTS:
         allow_remote = False
 
-        # Preferred path in Kodi runtime.
+        # Automatically allow private/local/Tailscale IPs and domains
         try:
-            if (
-                hasattr(xbmc, "getAddonSettings")
-                and hasattr(xbmc, "getAddonId")
-                and xbmc.getAddonSettings(xbmc.getAddonId()).getSetting("fs_allow_remote")
-                == "true"
-            ):
+            import ipaddress
+            # Strip brackets for IPv6 addresses if present
+            ip_str = host.strip("[]")
+            ip = ipaddress.ip_address(ip_str)
+            is_tailscale = ip.version == 4 and ip in ipaddress.ip_network("100.64.0.0/10")
+            if ip.is_private or ip.is_loopback or ip.is_link_local or is_tailscale:
                 allow_remote = True
-        except Exception:
-            pass
+        except ValueError:
+            # Check for local, LAN, or Tailscale domain names
+            if host.endswith(".local") or host.endswith(".lan") or host.endswith(".ts.net") or host.endswith(".tailnet"):
+                allow_remote = True
+
+        # Preferred path in Kodi runtime.
+        if not allow_remote:
+            try:
+                if (
+                    hasattr(xbmc, "getAddonSettings")
+                    and hasattr(xbmc, "getAddonId")
+                    and xbmc.getAddonSettings(xbmc.getAddonId()).getSetting("fs_allow_remote")
+                    == "true"
+                ):
+                    allow_remote = True
+            except Exception:
+                pass
 
         # Backward-compatible fallback for environments without xbmc.getAddonSettings.
         if not allow_remote:

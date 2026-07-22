@@ -25,10 +25,27 @@ def test_validate_flaresolverr_url_safe():
 
 def test_validate_flaresolverr_url_unsafe():
     # Remote host should raise RuntimeError if settings are not mocked (and thus not allowed)
+    # and it is not a private IP or local domain.
     with pytest.raises(RuntimeError) as excinfo:
-        _validate_flaresolverr_url("http://remote-host:8191/v1")
+        _validate_flaresolverr_url("http://remote-host.com:8191/v1")
     assert "remote host" in str(excinfo.value)
     assert "enable remote FlareSolverr hosts" in str(excinfo.value)
+
+
+def test_validate_flaresolverr_url_private_ips():
+    # Private IPs (both IPv4 and IPv6) should be automatically allowed
+    _validate_flaresolverr_url("http://192.168.1.50:8191/v1")
+    _validate_flaresolverr_url("http://10.0.0.5:8191/v1")
+    _validate_flaresolverr_url("http://100.64.0.1:8191/v1")  # Tailscale
+    _validate_flaresolverr_url("http://[fd00::1]:8191/v1")   # Unique Local IPv6
+
+
+def test_validate_flaresolverr_url_local_domains():
+    # Local/LAN/Tailscale domains should be automatically allowed
+    _validate_flaresolverr_url("http://my-flaresolverr.local:8191/v1")
+    _validate_flaresolverr_url("http://homeserver.lan:8191/v1")
+    _validate_flaresolverr_url("http://node.domain.ts.net:8191/v1")
+    _validate_flaresolverr_url("http://node.tailnet:8191/v1")
 
 
 def test_validate_flaresolverr_url_allows_remote_ip_when_setting_enabled(monkeypatch):

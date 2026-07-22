@@ -159,6 +159,7 @@ def List(url):
     # Find all video items
     video_items = soup.select(".thumb.thumb-video, .thumb, .item")
 
+    seen = set()
     for item in video_items:
         try:
             # Get the video link
@@ -174,6 +175,10 @@ def List(url):
             videopage = (
                 siteurl[:-1] + videopage if videopage.startswith("/") else videopage
             )
+
+            if videopage in seen:
+                continue
+            seen.add(videopage)
 
             # Get title
             name = utils.safe_get_attr(link, "title")
@@ -382,13 +387,19 @@ def Play(url, name, download=None):
         vp.progress.update(60, "[CR]{0}[CR]".format("kt_player detected"))
         vp.play_from_kt_player(vpage, url)
     elif '<source' in vpage:
+        soup = utils.parse_html(vpage)
         sources = {}
-        sources = re.compile(r'<source\s*src="([^"]+)".+?label="([^"]+)', re.DOTALL | re.IGNORECASE).findall(vpage)
-        sources = {quality: videourl for videourl, quality in sources if quality.lower() != 'auto'}
-        videourl = utils.selector('Select quality', sources, setting_valid='qualityask', sort_by=lambda x: 1081 if x.lower() == '4k' else int(x[:-1]), reverse=True)
-        if videourl:
-            videourl = utils.getVideoLink(videourl, siteurl)
-            vp.play_from_direct_link(videourl)
+        for source_tag in soup.select('source'):
+            src = utils.safe_get_attr(source_tag, 'src')
+            # Extract quality/label or fallback to title or 'SD'
+            label = utils.safe_get_attr(source_tag, 'label') or utils.safe_get_attr(source_tag, 'title') or 'SD'
+            if src and label.lower() != 'auto':
+                sources[label] = src
+        if sources:
+            videourl = utils.selector('Select quality', sources, setting_valid='qualityask', sort_by=lambda x: 1081 if x.lower() == '4k' else int(x[:-1]) if x[:-1].isdigit() else 0, reverse=True)
+            if videourl:
+                videourl = utils.getVideoLink(videourl, siteurl)
+                vp.play_from_direct_link(videourl)
 
 
 @site.register()

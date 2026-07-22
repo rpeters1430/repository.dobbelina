@@ -66,3 +66,30 @@ def test_playvid_fallback(mock_site):
     ):
         notfans.Playvid("https://notfans.com/videos/204523/bbystar61/", "Bbystar")
         assert mock_vp.play_from_link_to_resolve.called
+
+
+def test_list_filters_ads(mock_site):
+    html = """
+    <html>
+    <div class="item">
+        <a href="https://notfans.com/videos/123/real-video" title="Real Video">
+            <strong class="title">Real Video</strong>
+            <img src="thumb.jpg" />
+        </a>
+    </div>
+    <div class="item avd">
+        <a href="https://ads.com/ad-link" title="Ad">
+            <strong class="title">Ad title</strong>
+        </a>
+    </div>
+    </html>
+    """
+    with (
+        patch("resources.lib.utils.getHtml", return_value=html),
+        patch("resources.lib.utils.eod"),
+    ):
+        notfans.List("https://notfans.com/latest-updates/")
+        assert mock_site.add_download_link.call_count == 1
+        args, kwargs = mock_site.add_download_link.call_args_list[0]
+        assert "Real Video" in args[0]
+

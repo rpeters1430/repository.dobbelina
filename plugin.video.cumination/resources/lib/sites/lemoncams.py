@@ -286,7 +286,7 @@ def Playvid(url, name):
         utils.notify("LemonCams", "Only Stripchat models are supported")
         return
 
-    if provider == "stripchat":
+    if provider == "stripchat" and not stream_url:
         try:
             from resources.lib.sites import stripchat
             stripchat._play_stripchat_model("https://stripchat.com/{}".format(username), username)

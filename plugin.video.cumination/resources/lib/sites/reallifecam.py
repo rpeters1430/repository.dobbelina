@@ -184,7 +184,7 @@ def List(url):
         )
 
     next_link = soup.select_one(
-        'a.prevnext[href], .pagination li.next a, a[rel="next"]'
+        'a.prevnext[href], .pagination li.next a, a[rel="next"], a.next[href]'
     )
     if next_link:
         next_page = utils.safe_get_attr(next_link, "href")
