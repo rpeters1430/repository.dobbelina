@@ -108,16 +108,16 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
       "PASS",
       "PASS",
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "PASS",
+      "FAIL"
     ],
-    "stability_score": 0.9
+    "stability_score": 0.8
   },
   "animeidhentai": {
     "history": [
@@ -376,10 +376,10 @@
   },
   "cumlouder": {
     "history": [
-      "WARN",
       "PASS",
       "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -387,7 +387,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.8
+    "stability_score": 0.9
   },
   "drtuber": {
     "history": [
@@ -1085,8 +1085,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1119,10 +1119,10 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
+      "SKIP",
       "SKIP"
     ],
-    "stability_score": 0.9
+    "stability_score": 0.8
   },
   "mrsexe": {
     "history": [
@@ -1463,8 +1463,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.9
