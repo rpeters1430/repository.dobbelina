@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "PASS",
       "FAIL",
       "PASS",
       "PASS",
@@ -115,6 +114,7 @@
       "PASS",
       "PASS",
       "FAIL",
+      "PASS",
       "PASS"
     ],
     "stability_score": 0.8
@@ -376,8 +376,8 @@
   },
   "cumlouder": {
     "history": [
-      "PASS",
       "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1083,8 +1083,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1117,12 +1117,12 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
+      "SKIP",
       "SKIP",
       "SKIP",
       "SKIP"
     ],
-    "stability_score": 0.7
+    "stability_score": 0.6
   },
   "mrsexe": {
     "history": [
@@ -1461,8 +1461,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
