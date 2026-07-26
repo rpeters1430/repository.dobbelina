@@ -113,12 +113,11 @@ def Cat(url):
     listhtml = utils.getHtml(url)
     soup = utils.parse_html(listhtml)
 
-    cat_box = soup.select_one(".box")
-    if not cat_box:
+    links = soup.select(".list-tags a[href], .box li a[href], a[href*='/tags-name/']")
+    if not links:
         utils.eod()
         return
 
-    links = cat_box.select("li a[href]")
     for link in links:
         name = utils.safe_get_text(link)
         cat_url = utils.safe_get_attr(link, "href")

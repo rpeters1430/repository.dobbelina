@@ -112,16 +112,17 @@ def Genres(url):
     html = utils.getHtml(url)
     soup = utils.parse_html(html)
 
-    # Find genres in the content area
-    genre_links = soup.select("ul.genres li a") or soup.select("div.genres a")
-    if not genre_links:
-        # Fallback to any links under /list/
-        genre_links = soup.select('a[href*="/list/"]')
+    # Find genres in the content area (supports /genres?genre= URLs)
+    genre_links = soup.select(
+        "div.content.page a[href*='genre='], div.content a[href*='genre='], ul.genres li a, div.genres a, a[href*='/list/']"
+    )
 
     for link in genre_links:
-        name = utils.safe_get_text(link)
         genre_url = utils.safe_get_attr(link, "href")
-        if name and genre_url:
+        if genre_url and genre_url.startswith("#"):
+            continue
+        name = utils.safe_get_text(link)
+        if name and genre_url and len(name) > 1:
             if not genre_url.startswith("http"):
                 genre_url = urllib_parse.urljoin(site.url, genre_url)
             site.add_dir(name, genre_url, "List", "")

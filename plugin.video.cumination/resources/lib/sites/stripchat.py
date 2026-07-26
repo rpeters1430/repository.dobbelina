@@ -1795,7 +1795,12 @@ def _play_stripchat_model(url, name):
             if _is_ad_or_stub_manifest(master_text):
                 return True
 
-            # If this is a master playlist, inspect child playlists as well.
+            # Master playlists containing variant streams (#EXT-X-STREAM-INF) are valid
+            # streams for Kodi playback; do not reject them due to child media probing.
+            if "#EXT-X-STREAM-INF" in master_text:
+                return False
+
+            # If this is a child playlist or non-master, inspect child links if any.
             child_urls = [
                 line.strip()
                 for line in master_text.splitlines()

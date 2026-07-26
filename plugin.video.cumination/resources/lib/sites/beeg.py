@@ -152,7 +152,10 @@ def List(url, page=1):
 
         # Pass ID and tag_id in the URL for fresh fetching
         video_id = video["file"]["id"]
-        videopage = "id={}&tag_id={}".format(video_id, tag_id)
+        if tag_id:
+            videopage = "id={}&tag_id={}".format(video_id, tag_id)
+        else:
+            videopage = "id={}".format(video_id)
         # Store full video data in cache as fallback
         utils.cache.set("beeg_video_{}".format(video_id), json.dumps(video))
 
@@ -235,8 +238,8 @@ def Playvid(url, name, download=None):
     jdata = None
     video_id = None
     
-    # New format: id=123&tag_id=456
-    if "id=" in url and "tag_id=" in url:
+    # New format: id=123 (& tag_id=456)
+    if "id=" in url:
         try:
             query = url.split("/")[-1] if "/" in url else url
             params = dict(urllib_parse.parse_qsl(query))
@@ -244,7 +247,10 @@ def Playvid(url, name, download=None):
             tag_id = params.get("tag_id")
             
             # Fetch fresh data
-            api_url = "https://store.externulls.com/facts/file/{}?tag={}".format(video_id, tag_id)
+            if tag_id:
+                api_url = "https://store.externulls.com/facts/file/{}?tag={}".format(video_id, tag_id)
+            else:
+                api_url = "https://store.externulls.com/facts/file/{}".format(video_id)
             utils.kodilog("beeg Playvid: Fetching fresh URL from {}".format(api_url), xbmc.LOGDEBUG)
             fresh_json = utils.getHtml(api_url, site.url)
             jdata = json.loads(fresh_json)

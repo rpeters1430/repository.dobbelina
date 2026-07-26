@@ -194,5 +194,5 @@ def test_search_encodes_keyword_with_plus(site_spec_fixture):
     with patch.object(site_spec, "List") as mock_list:
         site_spec.Search("https://hotleak.vip/search", keyword="test & query")
 
-    mock_list.assert_called_once_with("https://hotleak.vip/search?search=test+%26+query")
+    mock_list.assert_called_once_with("https://hotleak.vip/?s=test+%26+query")
 

@@ -242,5 +242,5 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        search_url = site.url + "search?search=" + urllib_parse.quote_plus(keyword)
+        search_url = site.url + "?s=" + urllib_parse.quote_plus(keyword)
         List(search_url)

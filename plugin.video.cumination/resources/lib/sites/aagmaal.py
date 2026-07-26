@@ -164,10 +164,9 @@ def Categories(url):
     cathtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(cathtml)
 
-    # Find the "Categories" h3 widget then its sibling ul
     cat_links = []
     for h3 in soup.select("h3"):
-        if utils.safe_get_text(h3, "").strip() == "Categories":
+        if "categories" in utils.safe_get_text(h3, "").lower():
             ul = h3.find_next_sibling("ul")
             if ul:
                 for li in ul.select("li a[href]"):
@@ -177,7 +176,22 @@ def Categories(url):
                         cat_links.append((name, catpage))
             break
 
-    for name, catpage in sorted(cat_links, key=lambda x: x[0].lower()):
+    if not cat_links:
+        for a in soup.select("ul.menu a[href], nav a[href], .menu a[href]"):
+            catpage = utils.safe_get_attr(a, "href")
+            name = utils.cleantext(utils.safe_get_text(a))
+            if catpage and name and len(name) > 2:
+                if not any(x in catpage for x in ["dmca", "contact", "18-usc", "sample-page", "page/"]):
+                    cat_links.append((name, catpage))
+
+    seen = set()
+    unique_links = []
+    for name, catpage in cat_links:
+        if catpage not in seen:
+            seen.add(catpage)
+            unique_links.append((name, catpage))
+
+    for name, catpage in sorted(unique_links, key=lambda x: x[0].lower()):
         site.add_dir(name, catpage, "List")
 
     utils.eod()

@@ -44,7 +44,7 @@ def Main():
     site.add_dir("[COLOR hotpink]91 Videos[/COLOR]", site.url + "index/video?category=play", "List", site.img_cat)
     site.add_dir("[COLOR hotpink]Popular[/COLOR]", site.url + "index/video?category=now_month_hot", "List", site.img_cat)
     site.add_dir("[COLOR hotpink]Categories[/COLOR]", site.url, "Categories", site.img_cat)
-    site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "index/search?keyword=", "Search", site.img_search)
+    site.add_dir("[COLOR hotpink]Search[/COLOR]", site.url + "comic/index/search?keyword=", "Search", site.img_search)
     List(site.url)
 
 

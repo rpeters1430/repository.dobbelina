@@ -30,6 +30,7 @@ from six.moves import urllib_parse
 site = AdultSite(
     "avple", "[COLOR hotpink]Avple[/COLOR]", "https://avple.tv/", "avple.png", "avple",
     category="JAV & Asian",
+    requires_flaresolverr=True,
 )
 CDN = [
     "q2cyl7.cdnedge.live",
