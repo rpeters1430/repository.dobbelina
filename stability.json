@@ -106,7 +106,6 @@
   },
   "analdin": {
     "history": [
-      "FAIL",
       "PASS",
       "PASS",
       "PASS",
@@ -114,10 +113,11 @@
       "PASS",
       "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.8
+    "stability_score": 0.9
   },
   "animeidhentai": {
     "history": [
@@ -250,9 +250,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "WARN"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "blendporn": {
     "history": [
@@ -376,7 +376,7 @@
   },
   "cumlouder": {
     "history": [
-      "WARN",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -387,7 +387,7 @@
       "PASS",
       "PASS"
     ],
-    "stability_score": 0.9
+    "stability_score": 1.0
   },
   "drtuber": {
     "history": [
@@ -1082,8 +1082,8 @@
   "luxuretv": {
     "history": [
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1116,13 +1116,13 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
       "SKIP",
       "SKIP",
-      "SKIP"
+      "SKIP",
+      "FAIL"
     ],
-    "stability_score": 0.6
+    "stability_score": 0.5
   },
   "mrsexe": {
     "history": [
@@ -1460,8 +1460,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",

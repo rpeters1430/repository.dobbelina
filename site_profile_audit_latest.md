@@ -2,12 +2,14 @@
 
 - Sites: `182`
 - Tier1 hot: `0`
-- Failing: `1`
-- Warn: `0`
+- Failing: `2`
+- Warn: `1`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
+| motherless | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
+| beemtube | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -40,7 +42,6 @@
 | avple | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | awmnet | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | beeg | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| beemtube | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | blendporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | bongacams | backlog | PASS | 2 | cam |  | Y |  |  |  |
 | camgirlfap | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -99,7 +100,6 @@
 | livecamrips | backlog | PASS | 2 | cam |  | Y |  | Y | Y |
 | longvideos | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | mangoporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| motherless | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
 | mrsexe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | myfreecams | backlog | PASS | 2 | cam |  | Y |  |  |  |
 | myporntape | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -192,7 +192,9 @@
 
 ## Next Batch
 
+- **motherless** (failing, tier=2) | failures: list:FAIL
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL
+- **beemtube** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)
@@ -210,5 +212,3 @@
 - **xvideos** (tier1, tier=1)
 - **youporn** (tier1, tier=1)
 - **yourlesbians** (tier1, tier=1)
-- **6xtube** (backlog, tier=None)
-- **85po** (backlog, tier=None)
