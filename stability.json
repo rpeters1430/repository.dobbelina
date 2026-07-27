@@ -111,8 +111,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS"
@@ -249,10 +249,10 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
+      "WARN",
       "WARN"
     ],
-    "stability_score": 0.9
+    "stability_score": 0.8
   },
   "blendporn": {
     "history": [
@@ -1081,8 +1081,8 @@
   },
   "luxuretv": {
     "history": [
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -1115,14 +1115,14 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
       "SKIP",
       "SKIP",
       "SKIP",
+      "FAIL",
       "FAIL"
     ],
-    "stability_score": 0.5
+    "stability_score": 0.4
   },
   "mrsexe": {
     "history": [
@@ -1459,8 +1459,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
