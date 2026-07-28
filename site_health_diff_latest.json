@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-07-27T07:20:51.719417",
+    "generated": "2026-07-28T07:02:24.115863",
     "sites_total": 182,
     "pass": 178,
     "warn": 1,
@@ -9,7 +9,7 @@
     "skip": 1
   },
   "previous": {
-    "generated": "2026-07-26T07:04:23.232434",
+    "generated": "2026-07-27T07:20:51.719417",
     "sites_total": 182,
     "pass": 178,
     "warn": 1,
@@ -35,7 +35,7 @@
       "class": "UNKNOWN",
       "message": "list: List URL unavailable in harness (HTTP 502)",
       "is_flaky": true,
-      "stability_score": 0.5
+      "stability_score": 0.4
     },
     {
       "site": "pornhoarder",

@@ -18,5 +18,5 @@
 
 ## Persistent Failures
 
-- **motherless**: `FAIL -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 502) ⚠️ [FLAKY: 50.0%]
+- **motherless**: `FAIL -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 502) ⚠️ [FLAKY: 40.0%]
 - **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 0.0%]
