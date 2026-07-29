@@ -1,3 +1,11 @@
+[B]Version 1.1.437[/B]
+- fix: update ThotHub URLs and improve test cases for pagination and video extraction
+- Add site icons and tests for validation
+- fix: update search endpoints and improve category parsing for multiple sites
+- feat: enhance flaresolverr URL validation and improve site filtering
+- Merge pull request #240 from rpeters1430/copilot/fix-flaresolverr-issues
+- fix: allow tailscale flaresolverr endpoints
+
 [B]Version 1.1.436[/B]
 - Add site icons and tests for validation
 - fix: update search endpoints and improve category parsing for multiple sites
