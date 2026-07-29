@@ -21,7 +21,7 @@ site = AdultSite(
     "thepornarea",
     "[COLOR hotpink]ThePornArea[/COLOR]",
     "https://thepornarea.com/",
-    "cum-sites.png",
+    "thepornarea.png",
     category="Video Tubes",
     requires_flaresolverr=True,
 )

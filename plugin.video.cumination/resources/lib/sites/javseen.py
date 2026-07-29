@@ -21,7 +21,7 @@ site = AdultSite(
     "javseen",
     "[COLOR hotpink]JAVSeen[/COLOR]",
     "https://javseen.tv/",
-    "cum-sites.png",
+    "javseen.png",
     category="JAV & Asian",
 )
 
