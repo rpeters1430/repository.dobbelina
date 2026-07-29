@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-07-29T07:05:34.818643",
+    "sites_total": 182,
+    "pass": 177,
+    "warn": 1,
+    "fail": 3,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-07-28T07:02:24.115863",
     "sites_total": 182,
     "pass": 178,
@@ -8,24 +17,25 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-07-27T07:20:51.719417",
-    "sites_total": 182,
-    "pass": 178,
-    "warn": 1,
-    "fail": 2,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
-    "new_failures": 0,
+    "new_failures": 1,
     "resolved_failures": 0,
     "persistent_failures": 2,
     "improved_sites": 0,
-    "regressions": 0,
-    "step_regressions": 0
+    "regressions": 1,
+    "step_regressions": 1
   },
-  "new_failures": [],
+  "new_failures": [
+    {
+      "site": "thothub",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "UNKNOWN",
+      "message": "list: List URL unavailable in harness (HTTP 521)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
   "resolved_failures": [],
   "persistent_failures": [
     {
@@ -35,7 +45,7 @@
       "class": "UNKNOWN",
       "message": "list: List URL unavailable in harness (HTTP 502)",
       "is_flaky": true,
-      "stability_score": 0.4
+      "stability_score": 0.3
     },
     {
       "site": "pornhoarder",
@@ -48,6 +58,25 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [],
-  "deltas": []
+  "step_regressions": [
+    {
+      "site": "thothub",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "List URL unavailable in harness (HTTP 521)",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
+  "deltas": [
+    {
+      "site": "thothub",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    }
+  ]
 }

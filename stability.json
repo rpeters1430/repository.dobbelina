@@ -109,8 +109,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -247,12 +247,12 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
+      "WARN",
       "WARN",
       "WARN",
       "WARN"
     ],
-    "stability_score": 0.7
+    "stability_score": 0.6
   },
   "blendporn": {
     "history": [
@@ -1113,16 +1113,16 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "SKIP",
       "SKIP",
       "SKIP",
       "SKIP",
+      "FAIL",
       "FAIL",
       "FAIL",
       "FAIL"
     ],
-    "stability_score": 0.3
+    "stability_score": 0.2
   },
   "mrsexe": {
     "history": [
@@ -1457,8 +1457,8 @@
   "porndish": {
     "history": [
       "PASS",
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2065,9 +2065,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "FAIL"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "tnaflix": {
     "history": [

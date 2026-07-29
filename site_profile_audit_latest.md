@@ -2,13 +2,14 @@
 
 - Sites: `182`
 - Tier1 hot: `0`
-- Failing: `2`
+- Failing: `3`
 - Warn: `1`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
 | motherless | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
+| thothub | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | beemtube | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
@@ -158,7 +159,6 @@
 | terebon | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | thepornarea | backlog | PASS | 2 | video | Y | Y |  | Y | Y |
 | theyarehuge | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| thothub | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | tnaflix | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | tokyomotion | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | trannyteca | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -194,6 +194,7 @@
 
 - **motherless** (failing, tier=2) | failures: list:FAIL
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL
+- **thothub** (failing, tier=None) | failures: list:FAIL
 - **beemtube** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
@@ -211,4 +212,3 @@
 - **xnxx** (tier1, tier=1)
 - **xvideos** (tier1, tier=1)
 - **youporn** (tier1, tier=1)
-- **yourlesbians** (tier1, tier=1)
