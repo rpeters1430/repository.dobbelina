@@ -32,7 +32,7 @@ addon = xbmcaddon.Addon()
 site = AdultSite(
     "thothub",
     "[COLOR hotpink]ThotHub[/COLOR]",
-    "https://thothub.mx/",
+    "https://thothub.vip/",
     "thothub.png",
     "thothub",
     category="Amateur & Social",
@@ -115,34 +115,18 @@ def _count_private_list_items(html):
 
 
 def _build_public_fallback_url(url):
-    """Map latest-updates URLs to their public equivalent, preserving pagination."""
-    parsed = urllib_parse.urlsplit(url)
-    path = parsed.path or "/"
-    if not path.startswith("/latest-updates"):
-        return ""
-    fallback_path = path.replace("/latest-updates", "/public", 1)
-    return urllib_parse.urlunsplit(
-        (parsed.scheme, parsed.netloc, fallback_path, parsed.query, parsed.fragment)
-    )
+    """Map latest-updates URLs to fallback equivalent if needed."""
+    return url
 
 
 def _resolve_list_url(url):
-    """Use the public feed for anonymous latest-updates requests."""
-    if _has_credentials():
-        return url
-    fallback_url = _build_public_fallback_url(url)
-    return fallback_url or url
+    """Resolve feed list URL."""
+    return url
 
 
 def _should_retry_public_listing(url, items, html):
-    """Retry with /public/ when latest-updates is mostly private for anonymous users."""
-    if _has_credentials():
-        return False
-    path = (urllib_parse.urlsplit(url).path or "").rstrip("/")
-    if not path.startswith("/latest-updates"):
-        return False
-    private_items = _count_private_list_items(html)
-    return len(items) <= 1 and private_items >= 3
+    """Check if listing needs retry."""
+    return False
 
 
 def _parse_flashvars(html):
@@ -353,14 +337,20 @@ def _login(force=False):
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
-        "[COLOR hotpink]Latest Public Updates[/COLOR]",
-        site.url + "public/",
+        "[COLOR hotpink]Latest Updates[/COLOR]",
+        site.url + "latest-updates/",
         "List",
         site.img_next,
     )
     site.add_dir(
-        "[COLOR hotpink]Public Videos[/COLOR]",
-        site.url + "public/",
+        "[COLOR hotpink]Top Rated[/COLOR]",
+        site.url + "top-rated/",
+        "List",
+        site.img_next,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Most Popular[/COLOR]",
+        site.url + "most-popular/",
         "List",
         site.img_next,
     )
@@ -377,12 +367,12 @@ def Main():
         site.img_cat,
     )
     site.add_dir(
-        "[COLOR hotpink]Search Public Videos[/COLOR]",
+        "[COLOR hotpink]Search Videos[/COLOR]",
         site.url + "search/",
         "Search",
         site.img_search,
     )
-    List(site.url + "public/")
+    List(site.url + "latest-updates/")
 
 
 def _extract_list_items(html):
@@ -391,7 +381,6 @@ def _extract_list_items(html):
     soup = utils.parse_html(html)
 
     # Try to find the main video container to avoid sidebar/related videos
-    # Common IDs: list_videos_latest_videos_list_items, list_videos_most_recent_videos_items, etc.
     container = soup.select_one('[id*="videos"][id*="_items"]')
     if not container:
         container = soup.select_one(".list-videos, .videos-list")
@@ -408,36 +397,33 @@ def _extract_list_items(html):
             )
             continue
 
-        # Also check for .line-private span as a safety measure
         if item.select_one(".line-private, .ico-private"):
             utils.kodilog(
                 "ThotHub: Skipping private video (found .line-private)", xbmc.LOGDEBUG
             )
             continue
 
-        link = item.select_one('a[href*="/videos/"]')
+        link = item.select_one('a[href*="/video/"], a[href*="/videos/"]')
         if not link:
             continue
 
         url = utils.safe_get_attr(link, "href")
-        if not url or "/videos/" not in url:
+        if not url:
             continue
 
-        # Extract video ID from URL: /videos/1430251/slug/
-        try:
-            parts = url.split("/videos/")
-            if len(parts) < 2:
-                continue
-            video_id = parts[1].split("/")[0]
-            if not video_id.isdigit():
-                continue
-        except (IndexError, AttributeError):
+        # Extract video ID from URL: /videos/1430251/slug/ or /video/464268/slug/
+        match = re.search(r"/videos?/(\d+)/", url)
+        if not match:
             continue
+        video_id = match.group(1)
 
-        # Get title from title attribute or link text
-        title = utils.safe_get_attr(link, "title")
-        if not title:
-            title = utils.safe_get_text(link)
+        # Get title from title attribute, title element, or link text
+        title_el = item.select_one(".title")
+        title = (
+            utils.safe_get_attr(link, "title")
+            or utils.safe_get_text(title_el)
+            or utils.safe_get_text(link)
+        )
         if not title:
             # Fallback: extract from URL slug
             slug = url.split("/")[-2] if url.endswith("/") else url.split("/")[-1]
@@ -445,13 +431,27 @@ def _extract_list_items(html):
 
         name = utils.cleantext(title)
 
-        # ThotHub screenshot pattern: /contents/videos_screenshots/ID000/ID/preview.jpg
-        video_id_int = int(video_id)
-        base_id = (video_id_int // 1000) * 1000
-        screenshot = urllib_parse.urljoin(
-            site.url,
-            "contents/videos_screenshots/{}/{}/preview.jpg".format(base_id, video_id),
-        )
+        img_el = item.select_one("img")
+        screenshot = None
+        if img_el:
+            screenshot = (
+                utils.safe_get_attr(img_el, "data-original")
+                or utils.safe_get_attr(img_el, "data-webp")
+                or utils.safe_get_attr(img_el, "src")
+            )
+            if screenshot and screenshot.startswith("data:"):
+                screenshot = None
+
+        if not screenshot and video_id.isdigit():
+            # ThotHub screenshot pattern fallback: /contents/videos_screenshots/ID000/ID/preview.jpg
+            video_id_int = int(video_id)
+            base_id = (video_id_int // 1000) * 1000
+            screenshot = urllib_parse.urljoin(
+                site.url,
+                "contents/videos_screenshots/{}/{}/preview.jpg".format(
+                    base_id, video_id
+                ),
+            )
 
         items.append((url, name, screenshot))
 
@@ -475,11 +475,18 @@ def Categories(url):
     container = soup.select_one(".list-categories")
     source = container if container else soup
 
-    for item in source.select("a.item"):
-        cat_url = utils.safe_get_attr(item, "href")
+    for item in source.select(".item"):
+        link = item if item.name == "a" else item.select_one("a")
+        if not link:
+            continue
+        cat_url = utils.safe_get_attr(link, "href")
         title_el = item.select_one(".title")
-        title = utils.safe_get_text(title_el)
-        count_el = item.select_one(".videos")
+        title = (
+            utils.safe_get_attr(link, "title")
+            or utils.safe_get_text(title_el)
+            or utils.safe_get_text(link)
+        )
+        count_el = item.select_one(".thumb-item, .videos")
         count = utils.safe_get_text(count_el)
 
         if title and cat_url:
@@ -506,14 +513,27 @@ def Models(url):
     container = soup.select_one(".list-models")
     source = container if container else soup
 
-    for item in source.select("a.item"):
-        model_url = utils.safe_get_attr(item, "href")
+    for item in source.select(".item"):
+        link = item if item.name == "a" else item.select_one("a")
+        if not link:
+            continue
+        model_url = utils.safe_get_attr(link, "href")
         title_el = item.select_one(".title")
-        title = utils.safe_get_text(title_el)
-        count_el = item.select_one(".videos")
+        title = (
+            utils.safe_get_attr(link, "title")
+            or utils.safe_get_text(title_el)
+            or utils.safe_get_text(link)
+        )
+        count_el = item.select_one(".thumb-item, .videos")
         count = utils.safe_get_text(count_el)
         img_el = item.select_one("img")
-        img = utils.safe_get_attr(img_el, "src")
+        img = None
+        if img_el:
+            img = (
+                utils.safe_get_attr(img_el, "data-original")
+                or utils.safe_get_attr(img_el, "data-webp")
+                or utils.safe_get_attr(img_el, "src")
+            )
 
         if title and model_url:
             display_name = title
@@ -535,54 +555,59 @@ def _find_next_page(html, current_url):
     """Find the next page URL in pagination using BeautifulSoup."""
     soup = utils.parse_html(html)
 
-    # Try various pagination patterns
     # Pattern 1: <a rel="next" href="...">
     next_link = soup.select_one('a[rel="next"]')
     if next_link:
         url = utils.safe_get_attr(next_link, "href")
-        if url and url != "#" and url != "#search":
-            utils.kodilog("ThotHub found next page (rel=next): {}".format(url), xbmc.LOGDEBUG)
+        if url and url not in ("#", "#search", "#more"):
+            utils.kodilog(
+                "ThotHub found next page (rel=next): {}".format(url), xbmc.LOGDEBUG
+            )
             return url
 
-    # Pattern 2: <li class="next"><a href="...">
-    # Handle #search relative links by looking at data-parameters
-    li_next = soup.select_one('li.next a, li[class*="next"] a')
+    # Pattern 2: <li class="next"><a href="..."> or a.next
+    li_next = soup.select_one('li.next a, li[class*="next"] a, a.next')
     if li_next:
         url = utils.safe_get_attr(li_next, "href")
-        if url == "#search" or url == "#":
-            params = utils.safe_get_attr(li_next, "data-parameters")
-            if params:
-                # from_videos+from_albums:2 or similar
-                match = re.search(r'from(?:_videos\+from_albums)?:(\d+)', params)
-                if match:
-                    next_page = match.group(1)
-                    if "/search/" in current_url:
-                        # Construct: /search/keyword/2/
-                        base_search = re.sub(r'/\d+/?$', '', current_url.rstrip("/"))
-                        return base_search + "/{}/".format(next_page)
-        
-        if url and url != "#" and url != "#search":
+        params = utils.safe_get_attr(li_next, "data-parameters")
+        if params:
+            match = re.search(r"from(?:_videos\+from_albums|_videos)?[:=](\d+)", params)
+            if not match:
+                match = re.search(r"from[:=](\d+)", params)
+            if match:
+                next_page = match.group(1)
+                if "/search/" in current_url:
+                    base_search = re.sub(r"\?.*$", "", current_url)
+                    base_search = re.sub(r"/\d+/?$", "", base_search.rstrip("/"))
+                    return base_search + "/?from_videos={}".format(next_page)
+                else:
+                    base_url = re.sub(r"/\d+/?$", "", current_url.rstrip("/"))
+                    return base_url + "/{}/".format(next_page)
+
+        if url and url not in ("#", "#search", "#more"):
             utils.kodilog(
                 "ThotHub found next page via li.next: {}".format(url), xbmc.LOGDEBUG
             )
             return url
 
     # Try to find numbered pagination and increment
-    # URLs like /latest-updates/2/ -> /latest-updates/3/
     page_match = re.search(r"/(\d+)/?$", current_url)
     if page_match:
         current_page = int(page_match.group(1))
         next_page = current_page + 1
         next_url = re.sub(r"/\d+/?$", "/{}/".format(next_page), current_url)
-        # Verify this page number exists in the HTML
         if "/{}/".format(next_page) in html or 'data-parameters="' in html:
             utils.kodilog(
                 "ThotHub incrementing page to: {}".format(next_url), xbmc.LOGDEBUG
             )
             return next_url
     else:
-        # Initial page, try to find "2" in pagination
-        if "/2/" in html or 'from:2' in html or 'from_videos+from_albums:2' in html:
+        if (
+            "/2/" in html
+            or "from:2" in html
+            or "from_videos=2" in html
+            or "from_videos+from_albums:2" in html
+        ):
             if current_url.endswith("/"):
                 return current_url + "2/"
             else:
