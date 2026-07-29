@@ -1,3 +1,11 @@
+[B]Version 1.1.436[/B]
+- Add site icons and tests for validation
+- fix: update search endpoints and improve category parsing for multiple sites
+- feat: enhance flaresolverr URL validation and improve site filtering
+- Merge pull request #240 from rpeters1430/copilot/fix-flaresolverr-issues
+- fix: allow tailscale flaresolverr endpoints
+- Initial plan
+
 [B]Version 1.1.435[/B]
 - fix: update search endpoints and improve category parsing for multiple sites
 - feat: enhance flaresolverr URL validation and improve site filtering
