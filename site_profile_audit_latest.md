@@ -2,15 +2,15 @@
 
 - Sites: `182`
 - Tier1 hot: `0`
-- Failing: `3`
-- Warn: `1`
+- Failing: `2`
+- Warn: `2`
 
 | Site | Priority | Overall | Tier | Type | FS | List | Cat | Search | Play |
 |---|---|---|---:|---|---|---|---|---|---|
-| motherless | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
+| freepornvideos | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
 | pornhoarder | failing | FAIL | 2 | video | Y | Y | Y | Y | Y |
-| thothub | failing | FAIL |  | video |  | Y | Y | Y | Y |
 | beemtube | warn | WARN |  | video |  | Y | Y | Y | Y |
+| cumlouder | warn | WARN |  | video |  | Y | Y | Y | Y |
 | anybunny | tier1 | PASS | 1 | video |  | Y | Y | Y | Y |
 | ask4porn | tier1 | PASS | 1 | video | Y | Y | Y | Y | Y |
 | cam4 | tier1 | PASS | 1 | cam |  | Y |  |  |  |
@@ -49,7 +49,6 @@
 | camwhoresbay | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | celebsroulette | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | cloudbate | backlog | PASS | 2 | video |  | Y | Y | Y | Y |
-| cumlouder | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | drtuber | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | eporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | erogarga | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
@@ -60,7 +59,6 @@
 | foxnxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | fpoxxx | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | freeomovie | backlog | PASS |  | video |  | Y | Y | Y | Y |
-| freepornvideos | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | freeuseporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | freshporno | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | fullporner | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -101,6 +99,7 @@
 | livecamrips | backlog | PASS | 2 | cam |  | Y |  | Y | Y |
 | longvideos | backlog | PASS | 2 | video | Y | Y | Y | Y | Y |
 | mangoporn | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| motherless | backlog | SKIP | 2 | video | Y | Y | Y | Y | Y |
 | mrsexe | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | myfreecams | backlog | PASS | 2 | cam |  | Y |  |  |  |
 | myporntape | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -159,6 +158,7 @@
 | terebon | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | thepornarea | backlog | PASS | 2 | video | Y | Y |  | Y | Y |
 | theyarehuge | backlog | PASS |  | video |  | Y | Y | Y | Y |
+| thothub | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | tnaflix | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | tokyomotion | backlog | PASS |  | video |  | Y | Y | Y | Y |
 | trannyteca | backlog | PASS |  | video |  | Y | Y | Y | Y |
@@ -192,10 +192,10 @@
 
 ## Next Batch
 
-- **motherless** (failing, tier=2) | failures: list:FAIL
+- **freepornvideos** (failing, tier=2) | failures: main:FAIL
 - **pornhoarder** (failing, tier=2) | failures: main:FAIL, list:FAIL
-- **thothub** (failing, tier=None) | failures: list:FAIL
 - **beemtube** (warn, tier=None) | failures: play:FAIL
+- **cumlouder** (warn, tier=None) | failures: play:FAIL
 - **anybunny** (tier1, tier=1)
 - **ask4porn** (tier1, tier=1)
 - **cam4** (tier1, tier=1)

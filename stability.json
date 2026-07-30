@@ -108,8 +108,8 @@
     "history": [
       "PASS",
       "PASS",
-      "PASS",
       "FAIL",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -246,13 +246,13 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
+      "WARN",
       "WARN",
       "WARN",
       "WARN",
       "WARN"
     ],
-    "stability_score": 0.6
+    "stability_score": 0.5
   },
   "blendporn": {
     "history": [
@@ -385,9 +385,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "WARN"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "drtuber": {
     "history": [
@@ -535,9 +535,9 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS"
+      "FAIL"
     ],
-    "stability_score": 1.0
+    "stability_score": 0.9
   },
   "freeuseporn": {
     "history": [
@@ -1112,7 +1112,6 @@
   "motherless": {
     "history": [
       "PASS",
-      "PASS",
       "SKIP",
       "SKIP",
       "SKIP",
@@ -1120,9 +1119,10 @@
       "FAIL",
       "FAIL",
       "FAIL",
-      "FAIL"
+      "FAIL",
+      "SKIP"
     ],
-    "stability_score": 0.2
+    "stability_score": 0.1
   },
   "mrsexe": {
     "history": [
@@ -1456,8 +1456,8 @@
   },
   "porndish": {
     "history": [
-      "PASS",
       "SKIP",
+      "PASS",
       "PASS",
       "PASS",
       "PASS",
@@ -2064,8 +2064,8 @@
       "PASS",
       "PASS",
       "PASS",
-      "PASS",
-      "FAIL"
+      "FAIL",
+      "PASS"
     ],
     "stability_score": 0.9
   },

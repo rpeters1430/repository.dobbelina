@@ -5,26 +5,31 @@
 
 ## Snapshot
 
-- Current: `PASS 177` | `WARN 1` | `FAIL 3` | `ERROR 0` | `SKIP 1`
-- Previous: `PASS 178` | `WARN 1` | `FAIL 2` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 176` | `WARN 2` | `FAIL 2` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 177` | `WARN 1` | `FAIL 3` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
 - New failures: `1`
-- Resolved failures: `0`
-- Persistent failures: `2`
-- Site regressions: `1`
-- Step regressions: `1`
+- Resolved failures: `2`
+- Persistent failures: `1`
+- Site regressions: `2`
+- Step regressions: `2`
 
 ## New Failures
 
-- **thothub**: `PASS -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 521)
+- **freepornvideos**: `PASS -> FAIL` (NETWORK) | main: TimeoutError: The read operation timed out
+
+## Resolved Failures
+
+- **motherless**: `FAIL -> SKIP`
+- **thothub**: `FAIL -> PASS`
 
 ## Persistent Failures
 
-- **motherless**: `FAIL -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 502) ⚠️ [FLAKY: 30.0%]
 - **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 0.0%]
 
 ## Step Regressions
 
-- **thothub** `list`: `PASS -> FAIL` (UNKNOWN) | List URL unavailable in harness (HTTP 521)
+- **cumlouder** `play`: `PASS -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
+- **freepornvideos** `main`: `PASS -> FAIL` (NETWORK) | TimeoutError: The read operation timed out
