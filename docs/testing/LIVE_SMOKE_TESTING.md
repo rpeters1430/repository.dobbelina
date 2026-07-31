@@ -1,72 +1,51 @@
-# Live Smoke Testing (Read-Only)
+# Live Smoke & Strict Priority Site Monitoring
 
-Use `scripts/live_smoke_test.py` to test real site behavior without touching fixtures.
+Use `scripts/live_smoke_test.py` for broad site checks and `scripts/strict_site_monitor.py` for trusted priority site monitoring.
 
-## What it checks
+## Broad Smoke Check vs Strict Monitoring
 
-- `main`: site loads and returns menu/video entries
-- `list`: videos load from a real listing URL
-- `categories`: category page/folder entries load
-- `search`: search returns videos for a keyword
-- `play`: play mode resolves a playback URL from a sampled video item
+1. **Broad Smoke Scan**: Runs all 170 site scrapers across 4 matrix chunks. Reports `PASS`, `WARN`, `FAIL`, `SKIP`.
+2. **Strict Priority Site Monitoring**: Runs trusted, contract-based verification against the 17 priority sites (`pornhub`, `xvideos`, `spankbang`, `thothub`, etc.).
+   - Validates listing contract (`min_video_items`, title/URL uniqueness, host checks).
+   - Validates media stream bytes (direct media, HLS playlists, DASH manifests).
+   - Tracks 14-run history, failure signatures, and requires **2 consecutive healthy passes** before closing GitHub issues.
 
-Also reported per step:
-- video item count
-- screenshot/image count (`icon` present)
-- description count (`desc` present)
+## Strict Priority Site Commands
 
-## Important safety rule
-
-This script is **read-only**:
-- it does **not** write to `tests/fixtures/`
-- it does **not** modify test data
-- it only writes reports to `results/`
-
-## Usage
-
-Run all sites:
+Run strict monitoring for a specific site:
 
 ```bash
-python scripts/live_smoke_test.py
+python scripts/strict_site_monitor.py --site pornhub --out results/strict
 ```
 
-Run a subset:
+Run Kodi runtime probe via JSON-RPC:
 
 ```bash
-python scripts/live_smoke_test.py --site stripchat pornhub pornkai
+python scripts/kodi_site_probe.py --site pornhub --out results/kodi
 ```
 
-Faster scan (no search/play):
+Merge strict reports and update history:
 
 ```bash
-python scripts/live_smoke_test.py --steps main,list,categories
+python scripts/strict_health_history.py results/strict/strict_site_*.json --out results
 ```
 
-Tune timeouts:
+Generate strict triage issue actions:
 
 ```bash
-python scripts/live_smoke_test.py --timeout 35 --site-timeout 140
+python scripts/generate_strict_triage_requests.py --latest results/strict_health_latest.json --history results/strict_history.json --out results/strict_triage_requests.json
 ```
 
-Custom output dir / search keyword:
+## Important Safety Rules
 
-```bash
-python scripts/live_smoke_test.py --out reports --keyword sexy
-```
+- Monitoring scripts perform read-only network checks and bounded 64 KiB media reads.
+- Query parameters containing sensitive keys (`token`, `auth`, `cookie`, `key`, `signature`, `expires`) are automatically redacted before persistence.
+- Media streams are never saved to disk.
 
-## Output
+## Strict States & Interpretations
 
-Each run writes:
-
-- `results/live_smoke_<timestamp>.json`
-- `results/live_smoke_<timestamp>.md`
-
-Markdown is formatted for quick pasting into GitHub issues.
-
-## Interpreting failures
-
-- `FAIL`: site logic ran but one or more steps failed (no videos, bad parse, playback not resolved)
-- `ERROR`: module import or subprocess error
-- `SKIP`: step not applicable (for example, no categories/search function on that site)
-
-Use this report to pick parser fixes first, then re-run only those sites.
+- `HEALTHY`: All strict listing, playback, and media contract checks passed cleanly.
+- `BROKEN`: One or more required contract checks failed (e.g. parser drop, missing video items, invalid HLS manifest).
+- `BLOCKED`: Cloudflare challenge or age-verification wall detected.
+- `HARNESS_ERROR`: Infrastructure error, network crash, or Python exception before trustworthy result.
+- `NOT_TESTED`: Priority site was omitted from test run.

@@ -1,11 +1,10 @@
 # Site Health Profiles
 
-`config/site_profiles.json` defines per-site expectations for the live smoke runner.
+`config/site_profiles.json` defines per-site expectations for broad smoke scans and strict priority site monitoring.
 
 ## Purpose
 
-The smoke runner is generic, but site modules are not. Profiles reduce false positives by
-describing what a site is expected to support and what the harness can or cannot verify.
+Profiles specify content type, FlareSolverr requirement, tier level, and strict contracts for the 17 core priority sites.
 
 ## Schema
 
@@ -25,44 +24,36 @@ describing what a site is expected to support and what the harness can or cannot
       "playback_not_testable": false,
       "search_results_optional": false,
       "categories_optional": false
+    },
+    "strict_contract": {
+      "min_video_items": 5,
+      "min_unique_title_ratio": 0.8,
+      "min_unique_url_ratio": 0.8,
+      "max_count_drop_ratio": 0.7,
+      "sample_count": 1,
+      "allowed_hosts": [],
+      "required_stages": ["listing", "playback", "media"],
+      "advisory_fields": ["thumbnail", "description"]
     }
   },
   "sites": {
-    "example": {
-      "tier": 1,
-      "content_type": "cam",
-      "requires_flaresolverr": true,
-      "supports": {
-        "search": false,
-        "play": false
-      },
-      "harness": {
-        "playback_not_testable": true
-      }
+    "pornhub": {
+      "tier": 1
+    },
+    "thothub": {
+      "tier": 1
     }
   }
 }
 ```
 
-## Field meanings
+## Field Meanings
 
-- `supports`
-  - Whether the site should expose a meaningful implementation for each smoke step.
-- `content_type`
-  - `video`, `cam`, or another classification you want the harness to reason about.
-- `requires_flaresolverr`
-  - Marks sites where Cloudflare bypass infrastructure is expected.
-- `harness.playback_not_testable`
-  - Use for sites where the smoke harness cannot realistically validate playback.
-- `harness.search_results_optional`
-  - Use where empty or weak search results are not a reliable failure signal.
-- `harness.categories_optional`
-  - Use where categories are absent or unstable and should not create noise.
-- `tier`
-  - Priority marker for future rollout and alerting.
-
-## Rollout guidance
-
-1. Add profiles for high-value or historically noisy sites first.
-2. Keep the profile narrowly factual; do not encode temporary bugs as permanent expectations.
-3. When a site is fixed, tighten the profile rather than letting the exception live forever.
+- `tier`: Priority marker. `1` indicates one of the 17 core priority sites subject to strict daily monitoring and issue automation.
+- `strict_contract`:
+  - `min_video_items`: Minimum number of video items required in a listing.
+  - `min_unique_title_ratio`: Minimum ratio of unique titles required.
+  - `min_unique_url_ratio`: Minimum ratio of unique item URLs required.
+  - `max_count_drop_ratio`: Maximum allowed drop in item count compared to previous healthy baseline.
+  - `allowed_hosts`: Explicit list of allowed domain names for video listing and media links.
+  - `required_stages`: Stages that must pass for the run to be marked `HEALTHY` (`listing`, `playback`, `media`).
