@@ -565,8 +565,14 @@ def get_mode_param_name(plugin_url: str) -> str:
 
 
 def run_site_child(
-    site_name: str, steps: list[str], timeout_s: int, keyword: str
+    site_name: str,
+    steps: list[str] = None,
+    timeout_s: int = 30,
+    keyword: str = "latina",
+    strict: bool = False,
 ) -> dict[str, Any]:
+    if steps is None:
+        steps = ["main", "list", "categories", "search", "play"]
     if str(ROOT) not in sys.path:
         sys.path.insert(0, str(ROOT))
     if str(PLUGIN_PATH) not in sys.path:
@@ -607,6 +613,7 @@ def run_site_child(
             "error": f"{type(exc).__name__}: {exc}",
             "traceback": traceback.format_exc(limit=5),
             "steps": {},
+            "listing_samples": [],
         }
 
     site = getattr(module, "site", None)
@@ -617,16 +624,20 @@ def run_site_child(
             "error_type": "missing_site",
             "error": "No AdultSite/default_mode exported",
             "steps": {},
+            "listing_samples": [],
         }
 
     site_profile = get_site_profile(site.name)
     profile_supports = site_profile.get("supports", {})
     harness_profile = site_profile.get("harness", {})
+    strict_contract = site_profile.get("strict_contract", {})
 
     # Determine global FlareSolverr availability (set by run_parent via env var)
     _fs_globally_available = os.environ.get("FLARESOLVERR_AVAILABLE", "1") != "0"
 
     def supports_step(step_name: str) -> bool:
+        if strict and step_name in strict_contract.get("required_stages", []):
+            return True
         return profile_supports.get(step_name, True)
 
     def content_type() -> str:
@@ -638,8 +649,22 @@ def run_site_child(
     # Capture emitted UI items.
     captured_dirs: list[dict[str, Any]] = []
     captured_downloads: list[dict[str, Any]] = []
+    listing_samples: list[dict[str, Any]] = []
     play_calls: list[str] = []
     notify_calls: list[str] = []
+
+    def record_sample(name, url, mode, icon="", desc=""):
+        name_str = str(name or "")
+        url_str = str(url or "")
+        if name_str and url_str:
+            if not any(s["url"] == url_str for s in listing_samples):
+                listing_samples.append({
+                    "name": name_str,
+                    "url": url_str,
+                    "mode": str(mode or ""),
+                    "icon": str(icon or ""),
+                    "desc": str(desc or ""),
+                })
 
     original_add_dir = basics.addDir
     original_add_down = basics.addDownLink
@@ -655,18 +680,18 @@ def run_site_child(
         channel = args[1] if len(args) > 1 else kwargs.get("channel")
         section = args[2] if len(args) > 2 else kwargs.get("section")
         keyword_val = args[3] if len(args) > 3 else kwargs.get("keyword")
-        captured_dirs.append(
-            {
-                "name": str(name or ""),
-                "url": str(url or ""),
-                "mode": str(mode or ""),
-                "icon": str(iconimage or ""),
-                "page": "" if page is None else str(page),
-                "channel": "" if channel is None else str(channel),
-                "section": "" if section is None else str(section),
-                "keyword": "" if keyword_val is None else str(keyword_val),
-            }
-        )
+        item = {
+            "name": str(name or ""),
+            "url": str(url or ""),
+            "mode": str(mode or ""),
+            "icon": str(iconimage or ""),
+            "page": "" if page is None else str(page),
+            "channel": "" if channel is None else str(channel),
+            "section": "" if section is None else str(section),
+            "keyword": "" if keyword_val is None else str(keyword_val),
+        }
+        captured_dirs.append(item)
+        record_sample(name, url, mode, iconimage)
         return True
 
     def fake_add_down(name, url, mode, iconimage, *args, **kwargs):
@@ -686,6 +711,7 @@ def run_site_child(
                 "quality": str(kwargs.get("quality", "") or ""),
             }
         )
+        record_sample(name, url, mode, iconimage, desc)
         return True
 
     def fake_notify(*args, **kwargs):
@@ -1464,6 +1490,7 @@ def run_site_child(
         "steps": step_results,
         "notifications": notify_calls[-3:],
         "profile": site_profile,
+        "listing_samples": listing_samples,
     }
 
 
