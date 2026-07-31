@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-07-31T07:08:15.971287",
+    "sites_total": 182,
+    "pass": 178,
+    "warn": 1,
+    "fail": 1,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-07-30T07:07:03.916794",
     "sites_total": 182,
     "pass": 176,
@@ -8,42 +17,18 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-07-29T07:05:34.818643",
-    "sites_total": 182,
-    "pass": 177,
-    "warn": 1,
-    "fail": 3,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
-    "new_failures": 1,
-    "resolved_failures": 2,
+    "new_failures": 0,
+    "resolved_failures": 1,
     "persistent_failures": 1,
-    "improved_sites": 0,
-    "regressions": 2,
-    "step_regressions": 2
+    "improved_sites": 2,
+    "regressions": 1,
+    "step_regressions": 0
   },
-  "new_failures": [
-    {
-      "site": "freepornvideos",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: TimeoutError: The read operation timed out",
-      "is_flaky": false,
-      "stability_score": 1.0
-    }
-  ],
+  "new_failures": [],
   "resolved_failures": [
     {
-      "site": "motherless",
-      "previous": "FAIL",
-      "current": "SKIP"
-    },
-    {
-      "site": "thothub",
+      "site": "freepornvideos",
       "previous": "FAIL",
       "current": "PASS"
     }
@@ -59,54 +44,44 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
       "site": "cumlouder",
-      "step": "play",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "Play function executed but no playback URL captured (no notifications)",
-      "class": "PLAYBACK",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "previous": "WARN",
+      "current": "PASS"
     },
     {
-      "site": "freepornvideos",
-      "step": "main",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "TimeoutError: The read operation timed out",
-      "class": "NETWORK",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "site": "stripchat",
+      "previous": "SKIP",
+      "current": "PASS"
     }
   ],
+  "step_regressions": [],
   "deltas": [
     {
       "site": "cumlouder",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "freepornvideos",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "motherless",
-      "previous": "FAIL",
-      "current": "SKIP",
+      "previous": "WARN",
+      "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "thothub",
+      "site": "freepornvideos",
       "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "spankbang",
+      "previous": "PASS",
+      "current": "SKIP",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "stripchat",
+      "previous": "SKIP",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
