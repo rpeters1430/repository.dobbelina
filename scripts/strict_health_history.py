@@ -7,6 +7,10 @@ import sys
 from pathlib import Path
 from typing import Any
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from scripts.site_health_types import HealthState
 
 PRIORITY_SITES = [
@@ -141,12 +145,13 @@ def render_strict_summary_markdown(latest: dict[str, Any], history: dict[str, An
     for site in PRIORITY_SITES:
         rep = sites.get(site, {})
         h_entry = hist_sites.get(site, {})
-        state = rep.get("state", "NOT_TESTED")
+        raw_state = rep.get("state", HealthState.NOT_TESTED)
+        state_str = str(raw_state.value if hasattr(raw_state, "value") else raw_state)
         stage = rep.get("failed_stage") or "-"
         classification = rep.get("classification") or "-"
         consec = h_entry.get("consecutive_healthy", 0)
         sig = rep.get("failure_signature") or h_entry.get("open_failure_signature") or "-"
-        lines.append(f"| `{site}` | `{state}` | `{stage}` | `{classification}` | {consec} | `{sig}` |")
+        lines.append(f"| `{site}` | `{state_str}` | `{stage}` | `{classification}` | {consec} | `{sig}` |")
 
     return "\n".join(lines) + "\n"
 
@@ -168,7 +173,15 @@ def main():
         except Exception:
             previous_history = None
 
-    report_paths = [Path(p) for p in args.reports]
+    report_paths = []
+    for p in args.reports:
+        path_obj = Path(p)
+        if "*" in p or "?" in p:
+            parent = path_obj.parent if str(path_obj.parent) != "." else Path.cwd()
+            report_paths.extend(parent.glob(path_obj.name))
+        else:
+            report_paths.append(path_obj)
+
     latest, history = merge_reports(report_paths, previous_history)
 
     latest_json_path = out_dir / "strict_health_latest.json"
