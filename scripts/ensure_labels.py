@@ -11,15 +11,21 @@ LABELS = [
     ("site-health/regression", "d93f0b", "Site health regressed from a healthier state"),
     ("site-health/step-regression", "fbca04", "One site health step regressed"),
     ("site-health/persistent-failure", "cfd3d7", "Failure persisted across health checks"),
+    ("site-monitor", "5319e7", "Strict site monitor issue"),
+    ("failure/blocked", "d93f0b", "Site blocked or challenge detected"),
+    ("failure/harness", "e9967a", "Harness or infrastructure failure"),
+    ("failure/broken", "b60205", "Site scraper or playback broken"),
     ("failure/network", "006b75", "Network or availability failure"),
     ("failure/parser", "c2e0c6", "Parser or listing extraction failure"),
     ("failure/playback", "f9d0c4", "Playback resolution failure"),
     ("status/needs-triage", "ededed", "Issue needs attention from a maintainer"),
 ]
 
+
 def run_gh(args):
     result = subprocess.run(["gh"] + args, capture_output=True, text=True)
     return result
+
 
 def main():
     parser = argparse.ArgumentParser(description="Ensure GitHub labels")
@@ -38,6 +44,7 @@ def main():
 
         print(f"  Creating label '{name}'...")
         run_gh(["label", "create", name, "--color", color, "--description", description] + repo_args)
+
 
 if __name__ == "__main__":
     main()
