@@ -229,7 +229,8 @@ def List(url, page=1):
     favorite = [row[0] for row in c.fetchall()]
     c.close()
 
-    listhtml, _ = utils.get_html_with_cloudflare_retry(url)
+    headers = {"X-Requested-With": "XMLHttpRequest"}
+    listhtml, _ = utils.get_html_with_cloudflare_retry(url, headers=headers)
     listhtml = json.loads(listhtml)
     models = listhtml.get("rooms")
     for model in models:
