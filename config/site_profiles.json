@@ -13,6 +13,23 @@
       "playback_not_testable": false,
       "search_results_optional": false,
       "categories_optional": false
+    },
+    "strict_contract": {
+      "min_video_items": 5,
+      "min_unique_title_ratio": 0.8,
+      "min_unique_url_ratio": 0.8,
+      "max_count_drop_ratio": 0.7,
+      "sample_count": 1,
+      "allowed_hosts": [],
+      "required_stages": [
+        "listing",
+        "playback",
+        "media"
+      ],
+      "advisory_fields": [
+        "thumbnail",
+        "description"
+      ]
     }
   },
   "sites": {
@@ -89,7 +106,7 @@
       }
     },
     "stripchat": {
-      "tier": 1,
+      "tier": 2,
       "content_type": "cam",
       "supports": {
         "list": false,
@@ -340,6 +357,9 @@
     "pornhoarder": {
       "tier": 2,
       "requires_flaresolverr": true
+    },
+    "thothub": {
+      "tier": 1
     }
   }
 }

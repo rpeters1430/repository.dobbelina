@@ -28,3 +28,35 @@ def test_main_outputs_valid_matrix(monkeypatch, tmp_path, capsys):
         for entry in matrix["include"]
         for site in entry["sites"].split()
     ) == ["alpha", "beta", "delta", "epsilon", "gamma"]
+
+
+def test_build_strict_matrix_returns_only_tier_1():
+    from scripts.generate_smoke_matrix import build_strict_matrix
+
+    profiles = {
+        "sites": {
+            "pornhub": {"tier": 1},
+            "cloudbate": {"tier": 2},
+            "xnxx": {"tier": 1},
+        }
+    }
+    result = build_strict_matrix(profiles)
+    assert result == {
+        "include": [
+            {"site": "pornhub"},
+            {"site": "xnxx"},
+        ]
+    }
+
+
+def test_main_strict_flag_outputs_strict_matrix(monkeypatch, capsys):
+    from scripts import generate_smoke_matrix
+
+    monkeypatch.setattr("sys.argv", ["generate_smoke_matrix.py", "--strict"])
+    generate_smoke_matrix.main()
+    output = capsys.readouterr().out
+    data = json.loads(output)
+    sites = [item["site"] for item in data["include"]]
+    assert "pornhub" in sites
+    assert "thothub" in sites
+    assert "stripchat" not in sites
