@@ -31,6 +31,28 @@ def test_classify_message_detects_age_verification_blocks():
     )
 
 
+def test_indicates_flaresolverr_failure_ignores_informational_notify():
+    # FlareSolverr fires this as a transient progress notification while it
+    # solves a challenge; it must not be treated as a failure that skips
+    # every later step.
+    assert not live_smoke_test.indicates_flaresolverr_failure(
+        "Cloudflare detected, solving challenge..."
+    )
+
+
+def test_indicates_flaresolverr_failure_detects_real_failures():
+    assert live_smoke_test.indicates_flaresolverr_failure(
+        "FlareSolverr Failed: solved challenge but got HTTP 403 from website"
+    )
+    assert live_smoke_test.indicates_flaresolverr_failure(
+        "FlareSolverr Failed: connection refused"
+    )
+    assert live_smoke_test.indicates_flaresolverr_failure(
+        "FlareSolverr is not available, check if FlareSolverr is running"
+    )
+    assert not live_smoke_test.indicates_flaresolverr_failure("List returned no videos")
+
+
 def test_flaresolverr_url_can_be_configured_with_env(monkeypatch):
     monkeypatch.setenv("FLARESOLVERR_URL", "http://127.0.0.1:8191/v1")
 

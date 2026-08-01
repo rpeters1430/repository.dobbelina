@@ -427,6 +427,29 @@ def translate_kodi_strings(text: str) -> str:
     return text
 
 
+_FS_FAILURE_MARKERS = (
+    "failed",
+    "error",
+    "unavailable",
+    "not available",
+    "connection refused",
+    "check if flaresolverr is running",
+)
+
+
+def indicates_flaresolverr_failure(msg: str) -> bool:
+    """True if a message reports a genuine FlareSolverr failure.
+
+    FlareSolverr also emits a purely informational notify() while it is
+    actively solving a challenge (e.g. "Cloudflare detected, solving
+    challenge..."). That message mentions FlareSolverr but is not a
+    failure, so callers must not treat its mere presence as fatal for
+    the rest of the run.
+    """
+    m = (msg or "").lower()
+    return "flaresolverr" in m and any(marker in m for marker in _FS_FAILURE_MARKERS)
+
+
 def classify_message(msg: str) -> str:
     m = (msg or "").lower()
     if "flaresolverr" in m and any(
@@ -894,7 +917,9 @@ def run_site_child(
             msg = f"{type(exc).__name__}: {exc}"
             res = StepResult("FAIL", msg)
         res = normalize_step_result(step_name, res)
-        if "flaresolverr" in (res.message or "").lower() or any("flaresolverr" in n.lower() for n in notify_calls):
+        if indicates_flaresolverr_failure(res.message) or any(
+            indicates_flaresolverr_failure(n) for n in notify_calls
+        ):
             fs_failed = True
         res.elapsed = round(time.time() - start, 2)
         step_results[step_name] = asdict(res)
