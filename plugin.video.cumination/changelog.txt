@@ -1,3 +1,13 @@
+[B]Version 1.1.440[/B]
+- chore: update vendored resolveurl/resolveurl.xxx resolver plugins
+- fix: stop harness from treating FlareSolverr progress notices as failures
+- fix: repair xvideos playback and luxuretv listing regressions
+- feat: enhance site profiles and playback handling for new sites
+- Update UPSTREAM_TRIAGE.md with new generation date and pending commits count
+- Port Chaturbate AJAX HLS and re-enable Stripchat from upstream
+- Fix sys.path and glob expansion in monitoring scripts
+- Run trusted priority site monitoring daily
+
 [B]Version 1.1.439[/B]
 - feat: enhance site profiles and playback handling for new sites
 - Update UPSTREAM_TRIAGE.md with new generation date and pending commits count
