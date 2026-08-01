@@ -1,3 +1,14 @@
+[B]Version 1.1.439[/B]
+- feat: enhance site profiles and playback handling for new sites
+- Update UPSTREAM_TRIAGE.md with new generation date and pending commits count
+- Port Chaturbate AJAX HLS and re-enable Stripchat from upstream
+- Fix sys.path and glob expansion in monitoring scripts
+- Run trusted priority site monitoring daily
+- Add Kodi runtime site probe
+- Add strict site issue lifecycle
+- Track strict site health history
+- Add strict priority site runner
+
 [B]Version 1.1.438[/B]
 - Update UPSTREAM_TRIAGE.md with new generation date and pending commits count
 - Port Chaturbate AJAX HLS and re-enable Stripchat from upstream
