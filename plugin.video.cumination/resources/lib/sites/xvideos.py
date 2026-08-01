@@ -479,8 +479,22 @@ def Tags(url):
 
 @site.register()
 def Playvid(url, name, download=None):
-    vp = utils.VideoPlayer(name, download, "src=&quot;([^&]+)&quot;")
-    vp.play_from_site_link(url)
+    vp = utils.VideoPlayer(name, download)
+    videopage = utils.getHtml(url, site.url)
+    if not videopage:
+        vp.play_from_link_to_resolve(url)
+        return
+
+    match = re.search(r"html5player\.setVideoHLS\('([^']+)", videopage)
+    if not match:
+        match = re.search(r"html5player\.setVideoUrlHigh\('([^']+)", videopage)
+    if not match:
+        match = re.search(r"html5player\.setVideoUrlLow\('([^']+)", videopage)
+
+    if match:
+        vp.play_from_direct_link(match.group(1))
+    else:
+        vp.play_from_html(videopage, url)
 
 
 @site.register()

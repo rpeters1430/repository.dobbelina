@@ -54,6 +54,35 @@ def test_list_parses_video_items(monkeypatch):
     assert len(downloads) > 0
 
 
+def test_list_skips_javascript_void_links(monkeypatch):
+    """Test that List ignores non-video 'load more' style links (javascript:void(0))."""
+    html = load_fixture("listing.html")
+    # Inject a bogus "content" item whose link is a javascript: no-op, as seen
+    # on the live site for a "+" load-more control.
+    html = html.replace(
+        "</body>",
+        '<div class="content"><a href="javascript:void(0);">+</a></div></body>',
+    )
+
+    downloads = []
+
+    def fake_get_html_cf(url, *args, **kwargs):
+        return html, ""
+
+    def fake_add_download_link(name, url, mode, iconimage, desc, **kwargs):
+        downloads.append({"name": name, "url": url})
+
+    monkeypatch.setattr(luxuretv.utils, "get_html_with_cloudflare_retry", fake_get_html_cf)
+    monkeypatch.setattr(luxuretv.site, "add_download_link", fake_add_download_link)
+    monkeypatch.setattr(luxuretv.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(luxuretv.utils, "eod", lambda: None)
+
+    luxuretv.List("https://luxuretv.com/")
+
+    assert not any(d["url"].startswith("javascript:") for d in downloads)
+    assert not any(d["name"] == "+" for d in downloads)
+
+
 def test_cat_parses_categories(monkeypatch):
     """Test that Cat correctly parses category/channel links."""
     html = load_fixture("categories.html")
@@ -81,6 +110,32 @@ def test_cat_parses_categories(monkeypatch):
 
     # Should have categories
     assert len(dirs) > 0
+
+
+def test_cat_skips_javascript_void_links(monkeypatch):
+    """Test that Cat ignores non-category 'load more' style links (javascript:void(0))."""
+    html = load_fixture("categories.html")
+    html = html.replace(
+        "</body>",
+        '<div class="content-channel"><a href="javascript:void(0);">+</a></div></body>',
+    )
+
+    dirs = []
+
+    def fake_get_html_cf(url, *args, **kwargs):
+        return html, ""
+
+    def fake_add_dir(name, url, mode, iconimage):
+        dirs.append({"name": name, "url": url})
+
+    monkeypatch.setattr(luxuretv.utils, "get_html_with_cloudflare_retry", fake_get_html_cf)
+    monkeypatch.setattr(luxuretv.site, "add_dir", fake_add_dir)
+    monkeypatch.setattr(luxuretv.utils, "eod", lambda: None)
+
+    luxuretv.Cat("https://luxuretv.com/channels/")
+
+    assert not any(d["url"].startswith("javascript:") for d in dirs)
+    assert not any(d["name"] == "+" for d in dirs)
 
 
 def test_search_without_keyword_shows_search_dialog(monkeypatch):

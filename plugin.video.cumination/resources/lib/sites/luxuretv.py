@@ -64,7 +64,7 @@ def List(url):
                 continue
 
             video = utils.safe_get_attr(link, "href")
-            if not video:
+            if not video or video.startswith(("javascript:", "#")):
                 continue
 
             name = utils.safe_get_attr(link, "title")
@@ -143,7 +143,7 @@ def Cat(url):
                 continue
 
             catpage = utils.safe_get_attr(link, "href")
-            if not catpage:
+            if not catpage or catpage.startswith(("javascript:", "#")):
                 continue
 
             name = utils.safe_get_text(link, "").strip()

@@ -235,25 +235,59 @@ def test_search_with_keyword(monkeypatch):
     assert "test+query" in list_calls[0]
 
 
-def test_playvid_initializes_video_player(monkeypatch):
-    """Test that Playvid initializes VideoPlayer."""
+def test_playvid_extracts_hls_link(monkeypatch):
+    """Test that Playvid extracts the direct HLS link from html5player.setVideoHLS."""
     vp_calls = []
 
     class FakeVideoPlayer:
-        def __init__(self, name, download, regex):
-            vp_calls.append(("init", name, download, regex))
+        def __init__(self, name, download=None):
+            vp_calls.append(("init", name, download))
 
-        def play_from_site_link(self, url):
-            vp_calls.append(("play", url))
+        def play_from_direct_link(self, url):
+            vp_calls.append(("direct", url))
+
+        def play_from_html(self, html, url):
+            vp_calls.append(("html", url))
+
+        def play_from_link_to_resolve(self, url):
+            vp_calls.append(("resolve", url))
 
     monkeypatch.setattr(xvideos.utils, "VideoPlayer", FakeVideoPlayer)
+    monkeypatch.setattr(
+        xvideos.utils,
+        "getHtml",
+        lambda url, referer=None: "html5player.setVideoHLS('https://cdn.example.com/hls.m3u8');",
+    )
 
     xvideos.Playvid("https://www.xvideos.com/video12345/test", "Test Video")
 
-    assert len(vp_calls) == 2
-    assert vp_calls[0][0] == "init"
-    assert vp_calls[0][1] == "Test Video"
-    assert vp_calls[1] == ("play", "https://www.xvideos.com/video12345/test")
+    assert vp_calls[0] == ("init", "Test Video", None)
+    assert vp_calls[1] == ("direct", "https://cdn.example.com/hls.m3u8")
+
+
+def test_playvid_falls_back_when_no_direct_link(monkeypatch):
+    """Test that Playvid falls back to play_from_html when no direct link is found."""
+    vp_calls = []
+
+    class FakeVideoPlayer:
+        def __init__(self, name, download=None):
+            vp_calls.append(("init", name, download))
+
+        def play_from_direct_link(self, url):
+            vp_calls.append(("direct", url))
+
+        def play_from_html(self, html, url):
+            vp_calls.append(("html", url))
+
+        def play_from_link_to_resolve(self, url):
+            vp_calls.append(("resolve", url))
+
+    monkeypatch.setattr(xvideos.utils, "VideoPlayer", FakeVideoPlayer)
+    monkeypatch.setattr(xvideos.utils, "getHtml", lambda url, referer=None: "<html>no player here</html>")
+
+    xvideos.Playvid("https://www.xvideos.com/video12345/test", "Test Video")
+
+    assert vp_calls[1] == ("html", "https://www.xvideos.com/video12345/test")
 
 
 def test_list_metadata_parsing(monkeypatch):
