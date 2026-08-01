@@ -303,15 +303,22 @@ def Categories(url):
 def Playvid(url, name, download=None):
     videohtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(videohtml)
-    iframe = soup.select_one('.if_cont iframe, #video_container iframe, #player_container iframe')
+    iframe = soup.select_one('.if_cont iframe, #video_container iframe, #player_container iframe, iframe[src]')
 
     vp = utils.VideoPlayer(name, download)
     if iframe:
         vid_url = iframe.get('src', '')
         if vid_url:
+            if vid_url.startswith('//'):
+                vid_url = 'https:' + vid_url
             if 'xvideos.com' in vid_url or 'xh.video' in vid_url:
                 vp.play_from_link_to_resolve(vid_url)
                 return
+            else:
+                embed_html = utils.getHtml(vid_url, url)
+                if embed_html:
+                    vp.play_from_html(embed_html, vid_url)
+                    return
 
     # Fallback to the original method if iframe not found or src is not a direct link
     vp.play_from_html(videohtml, url)

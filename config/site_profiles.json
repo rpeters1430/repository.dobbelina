@@ -59,7 +59,10 @@
       "tier": 1
     },
     "pornkai": {
-      "tier": 1
+      "tier": 1,
+      "strict_contract": {
+        "min_unique_title_ratio": 0.65
+      }
     },
     "porndig": {
       "tier": 1
@@ -360,6 +363,12 @@
     },
     "thothub": {
       "tier": 1
+    },
+    "beemtube": {
+      "tier": 2,
+      "harness": {
+        "playback_not_testable": true
+      }
     }
   }
 }

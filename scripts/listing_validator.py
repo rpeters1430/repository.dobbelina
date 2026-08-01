@@ -77,7 +77,7 @@ def validate_listing(
         )
 
     # Scheme check
-    non_http = [u for u in urls if not urlparse(u).scheme in ("http", "https")]
+    non_http = [u for u in urls if urlparse(u).scheme and urlparse(u).scheme not in ("http", "https")]
     if non_http:
         return ValidationResult(
             passed=False,

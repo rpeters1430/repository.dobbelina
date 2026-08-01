@@ -76,7 +76,7 @@ def List(url):
     for item in soup.select(".video-block, .content"):
         link = item.select_one("a.video-link, a.thumb, a[href]")
         videopage = utils.safe_get_attr(link, "href", default="")
-        if not videopage:
+        if not videopage or "/1430/" in videopage:
             continue
         name = utils.cleantext(
             utils.safe_get_text(item.select_one("strong"), default="")
@@ -214,7 +214,11 @@ def Playvid(url, name, download=None):
             jdata = json.loads(playlist)
             if "label" not in jdata["playlist"][0]["sources"][0].keys():
                 jdata["playlist"][0]["sources"][0]["label"] = "0p"
-            sources = {j["label"]: j["file"] for j in jdata["playlist"][0]["sources"]}
-            videourl = utils.prefquality(sources, reverse=True)
-            if videourl:
-                vp.play_from_direct_link(videourl + "|referer:" + url)
+            sources = {j["label"]: j["file"] for j in jdata["playlist"][0]["sources"] if "error-video" not in j.get("file", "")}
+            if sources:
+                videourl = utils.prefquality(sources, reverse=True)
+                if videourl:
+                    vp.play_from_direct_link(videourl + "|Referer=" + url)
+                    return
+    vp.play_from_html(videohtml, url)
+

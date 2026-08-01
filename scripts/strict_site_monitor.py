@@ -24,7 +24,12 @@ def evaluate_record(
     """Evaluate a site execution record against its strict contract."""
     site_name = record.get("site", "unknown")
     contract = profile.get("strict_contract", {})
-    required_stages = contract.get("required_stages", ["listing", "playback", "media"])
+    required_stages = list(contract.get("required_stages", ["listing", "playback", "media"]))
+
+    harness = profile.get("harness", {})
+    supports = profile.get("supports", {})
+    if harness.get("playback_not_testable") or not supports.get("play", True):
+        required_stages = [s for s in required_stages if s not in ("playback", "media")]
 
     # Harness / Infrastructure error
     if record.get("status") == "ERROR" or (not record and "error" in record):
