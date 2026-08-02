@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-08-02T07:04:28.163103",
+    "sites_total": 182,
+    "pass": 178,
+    "warn": 0,
+    "fail": 3,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-08-01T06:58:32.343918",
     "sites_total": 182,
     "pass": 179,
@@ -8,36 +17,36 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-07-31T07:08:15.971287",
-    "sites_total": 182,
-    "pass": 178,
-    "warn": 1,
-    "fail": 1,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
     "new_failures": 1,
     "resolved_failures": 0,
-    "persistent_failures": 1,
-    "improved_sites": 2,
+    "persistent_failures": 2,
+    "improved_sites": 0,
     "regressions": 1,
-    "step_regressions": 1
+    "step_regressions": 2
   },
   "new_failures": [
     {
-      "site": "pornez",
+      "site": "analdin",
       "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos",
+      "is_flaky": false,
+      "stability_score": 0.9
+    }
+  ],
+  "resolved_failures": [],
+  "persistent_failures": [
+    {
+      "site": "pornez",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "ENV",
       "message": "main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "is_flaky": false,
       "stability_score": 1.0
-    }
-  ],
-  "resolved_failures": [],
-  "persistent_failures": [
+    },
     {
       "site": "pornhoarder",
       "previous": "FAIL",
@@ -48,50 +57,35 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [
-    {
-      "site": "beemtube",
-      "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "spankbang",
-      "previous": "SKIP",
-      "current": "PASS"
-    }
-  ],
+  "improved_sites": [],
   "step_regressions": [
     {
-      "site": "pornez",
-      "step": "main",
+      "site": "analdin",
+      "step": "list",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
+      "message": "List returned no videos",
+      "class": "PARSER",
       "is_flaky": false,
-      "stability_score": 1.0
+      "stability_score": 0.9
+    },
+    {
+      "site": "pornhoarder",
+      "step": "search",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "HTTPError: HTTP Error 403: Forbidden",
+      "class": "BLOCKED",
+      "is_flaky": true,
+      "stability_score": 0.0
     }
   ],
   "deltas": [
     {
-      "site": "beemtube",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "pornez",
+      "site": "analdin",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "spankbang",
-      "previous": "SKIP",
-      "current": "PASS",
-      "kind": "improvement",
       "detail": ""
     }
   ]
