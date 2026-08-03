@@ -5,27 +5,23 @@
 
 ## Snapshot
 
-- Current: `PASS 178` | `WARN 0` | `FAIL 3` | `ERROR 0` | `SKIP 1`
-- Previous: `PASS 179` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 179` | `WARN 0` | `FAIL 3` | `ERROR 0` | `SKIP 0`
+- Previous: `PASS 178` | `WARN 0` | `FAIL 3` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
-- New failures: `1`
+- New failures: `0`
 - Resolved failures: `0`
-- Persistent failures: `2`
-- Site regressions: `1`
-- Step regressions: `2`
-
-## New Failures
-
-- **analdin**: `PASS -> FAIL` (PARSER) | list: List returned no videos
+- Persistent failures: `3`
+- Site regressions: `0`
+- Step regressions: `0`
 
 ## Persistent Failures
 
+- **analdin**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **pornez**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 0.0%]
 
-## Step Regressions
+## Improvements
 
-- **analdin** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
-- **pornhoarder** `search`: `SKIP -> FAIL` (BLOCKED) | HTTPError: HTTP Error 403: Forbidden
+- **motherless**: `SKIP -> PASS`

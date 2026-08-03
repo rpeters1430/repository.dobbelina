@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-08-03T07:20:30.772966",
+    "sites_total": 182,
+    "pass": 179,
+    "warn": 0,
+    "fail": 3,
+    "error": 0,
+    "skip": 0
+  },
+  "previous": {
     "generated": "2026-08-02T07:04:28.163103",
     "sites_total": 182,
     "pass": 178,
@@ -8,36 +17,26 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-08-01T06:58:32.343918",
-    "sites_total": 182,
-    "pass": 179,
-    "warn": 0,
-    "fail": 2,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
-    "new_failures": 1,
+    "new_failures": 0,
     "resolved_failures": 0,
-    "persistent_failures": 2,
-    "improved_sites": 0,
-    "regressions": 1,
-    "step_regressions": 2
+    "persistent_failures": 3,
+    "improved_sites": 1,
+    "regressions": 0,
+    "step_regressions": 0
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [],
+  "persistent_failures": [
     {
       "site": "analdin",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "list: List returned no videos",
       "is_flaky": false,
       "stability_score": 0.9
-    }
-  ],
-  "resolved_failures": [],
-  "persistent_failures": [
+    },
     {
       "site": "pornez",
       "previous": "FAIL",
@@ -57,35 +56,20 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
-      "site": "analdin",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 0.9
-    },
-    {
-      "site": "pornhoarder",
-      "step": "search",
+      "site": "motherless",
       "previous": "SKIP",
-      "current": "FAIL",
-      "message": "HTTPError: HTTP Error 403: Forbidden",
-      "class": "BLOCKED",
-      "is_flaky": true,
-      "stability_score": 0.0
+      "current": "PASS"
     }
   ],
+  "step_regressions": [],
   "deltas": [
     {
-      "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "site": "motherless",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
