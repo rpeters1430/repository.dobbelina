@@ -114,6 +114,7 @@ class FlareSolverrManager:
 
     def _create_session(self):
         session_create_request = {"cmd": "sessions.create", "session": self.session_id}
+        start = time.time()
         try:
             session_create_response = requests.post(
                 self.flaresolverr_url,
@@ -121,6 +122,16 @@ class FlareSolverrManager:
                 timeout=HTTP_TIMEOUT_CONNECT,
             )
             response_data = session_create_response.json()
+            xbmc.log(
+                "@@@@Cumination: [CF-DIAG] sessions.create for '{}' took {:.2f}s, "
+                "HTTP {}, status={}".format(
+                    self.session_id,
+                    time.time() - start,
+                    session_create_response.status_code,
+                    response_data.get("status"),
+                ),
+                xbmc.LOGINFO,
+            )
 
             if response_data.get("status") == "error":
                 error_msg = str(response_data.get("message", ""))
@@ -139,6 +150,11 @@ class FlareSolverrManager:
         except Exception as e:
             if isinstance(e, RuntimeError):
                 raise
+            xbmc.log(
+                "@@@@Cumination: [CF-DIAG] sessions.create for '{}' failed after "
+                "{:.2f}s: {}".format(self.session_id, time.time() - start, str(e)),
+                xbmc.LOGWARNING,
+            )
             raise RuntimeError(
                 "Failed to connect to FlareSolverr at {}: {}. "
                 "Please check if FlareSolverr is running and configured correctly in addon settings.".format(
@@ -208,17 +224,34 @@ class FlareSolverrManager:
         if cookies:
             flaresolverr_request["cookies"] = cookies
 
+        xbmc.log(
+            "@@@@Cumination: [CF-DIAG] FlareSolverr request: cmd={} url={} "
+            "session={} maxTimeout={}ms cookies_sent={} tries={}".format(
+                flaresolverr_request["cmd"], url, self.flaresolverr_session,
+                max_timeout, len(cookies), tries,
+            ),
+            xbmc.LOGINFO,
+        )
+
         try_count = 0
         while try_count < tries:
             try_count += 1
+            attempt_start = time.time()
             try:
                 flaresolverr_response = requests.post(
                     self.flaresolverr_url,
                     json=flaresolverr_request,
                     timeout=(max_timeout / 1000) + 10,
                 )
-                
+
                 status_code = flaresolverr_response.status_code
+                xbmc.log(
+                    "@@@@Cumination: [CF-DIAG] FlareSolverr attempt {}/{} for {} "
+                    "returned HTTP {} in {:.2f}s".format(
+                        try_count, tries, url, status_code, time.time() - attempt_start
+                    ),
+                    xbmc.LOGINFO,
+                )
 
                 if status_code >= 500:
                     response_text = flaresolverr_response.text or ""
@@ -243,6 +276,11 @@ class FlareSolverrManager:
 
                 if response_json.get("status") == "error":
                     error_msg = response_json.get("message", "Unknown error")
+                    xbmc.log(
+                        "@@@@Cumination: [CF-DIAG] FlareSolverr returned status=error "
+                        "on attempt {}/{}: {}".format(try_count, tries, error_msg),
+                        xbmc.LOGWARNING,
+                    )
                     if (
                         "invalid session id" in str(error_msg).lower()
                         and try_count < tries

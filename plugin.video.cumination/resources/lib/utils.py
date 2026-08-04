@@ -1124,6 +1124,24 @@ def _getHtml(
     if data:
         req.add_header("Content-Length", len(data))
 
+    try:
+        req_domain = urllib_parse.urlparse(url).netloc.lower()
+        cf_cookie_names = [
+            c.name
+            for c in cj
+            if c.domain.lstrip(".") in req_domain or req_domain.endswith(c.domain.lstrip("."))
+        ]
+        if cf_cookie_names:
+            kodilog(
+                "[CF-DIAG] direct request to {} sending stored cookies: {} "
+                "(a stale cf_clearance here that FlareSolverr obtained on a "
+                "different IP is the classic cause of solve-then-loop)".format(
+                    url, cf_cookie_names
+                )
+            )
+    except Exception as e:
+        kodilog("[CF-DIAG] cookie diagnostic check failed: {}".format(e), xbmc.LOGDEBUG)
+
     response = None
     try:
         if ignore_ssl and PY3:
@@ -1156,13 +1174,29 @@ def _getHtml(
                 else result.encode("utf-8")
             )
             if "cloudflare" in e.info().get("Server", "").lower():
+                cf_ray = e.info().get("cf-ray", "") or e.info().get("CF-RAY", "")
+                cf_mitigated = e.info().get("cf-mitigated", "")
+                kodilog(
+                    "[CF-DIAG] Cloudflare response for {} -> HTTP {} cf-ray={} "
+                    "cf-mitigated={}".format(url, e.code, cf_ray or "n/a", cf_mitigated or "n/a")
+                )
                 if e.code == 403 and not e.info().get("cf-mitigated", False):
                     # Retry with an explicit modern TLS context for problematic servers.
+                    kodilog(
+                        "[CF-DIAG] {} -> 403 without cf-mitigated header, retrying once "
+                        "with explicit TLS context (NOT going through FlareSolverr on "
+                        "this path)".format(url)
+                    )
                     ctx = _create_ssl_context()
                     handle = [urllib_request.HTTPSHandler(context=ctx)]
                     opener = urllib_request.build_opener(*handle)
                     try:
                         response = opener.open(req, timeout=timeout)
+                        kodilog(
+                            "[CF-DIAG] TLS-context retry for {} succeeded with HTTP {}".format(
+                                url, response.getcode()
+                            )
+                        )
                     except urllib_error.HTTPError as e:
                         if e.info().get("Content-Encoding", "").lower() == "gzip":
                             buf = six.BytesIO(e.read())
@@ -1175,6 +1209,13 @@ def _getHtml(
                             result.decode("latin-1", errors="ignore")
                             if PY3
                             else result.encode("utf-8")
+                        )
+                        kodilog(
+                            "[CF-DIAG] TLS-context retry for {} also failed with HTTP {} "
+                            "cf-ray={}; giving up without trying FlareSolverr".format(
+                                url, e.code, e.info().get("cf-ray", "n/a")
+                            ),
+                            xbmc.LOGWARNING,
                         )
                         notify(i18n("oh_oh"), i18n("site_down"))
                         if "return" in error:
@@ -1192,6 +1233,7 @@ def _getHtml(
                         notify(
                             "FlareSolverr", "Cloudflare detected, solving challenge..."
                         )
+                        _note_flaresolverr_trigger(url, "js-challenge-markers-in-403-body")
                         kodilog(
                             "Cloudflare protection detected on {}, using FlareSolverr".format(
                                 url
@@ -1201,6 +1243,12 @@ def _getHtml(
                             return flaresolve(url, referer)
                         except RuntimeError as fs_error:
                             # FlareSolverr failed with a clear error message
+                            kodilog(
+                                "[CF-DIAG] FlareSolverr failed to solve {}: {}".format(
+                                    url, str(fs_error)
+                                ),
+                                xbmc.LOGWARNING,
+                            )
                             notify("FlareSolverr Failed", str(fs_error), duration=8000)
                             raise
                         except Exception as fs_error:
@@ -1301,6 +1349,52 @@ def _getHtml(
     return result
 
 
+# Per-domain diagnostics for the "solves the challenge then loops" symptom.
+# If FlareSolverr's outbound IP differs from this device's, the cf_clearance
+# cookie FlareSolverr obtains is often rejected on this device's own direct
+# requests, forcing a fresh FlareSolverr solve on every single page load.
+# These counters/timestamps exist purely to surface that pattern in the log.
+_cf_domain_trigger_counts = {}
+_CF_LOOP_WARNING_THRESHOLD = 2
+_CF_LOOP_WINDOW_SECONDS = 600
+
+
+def _note_flaresolverr_trigger(url, reason):
+    """Log + track how often FlareSolverr is invoked per domain to surface loops."""
+    try:
+        domain = urllib_parse.urlparse(url).netloc.lower()
+    except Exception:
+        domain = url
+
+    now = time.time()
+    entry = _cf_domain_trigger_counts.get(domain)
+    if entry and (now - entry["first_seen"]) <= _CF_LOOP_WINDOW_SECONDS:
+        entry["count"] += 1
+    else:
+        entry = {"count": 1, "first_seen": now}
+    _cf_domain_trigger_counts[domain] = entry
+
+    kodilog(
+        "[CF-DIAG] FlareSolverr triggered for domain={} reason={} "
+        "(trigger #{} in last {}s)".format(
+            domain, reason, entry["count"], _CF_LOOP_WINDOW_SECONDS
+        )
+    )
+
+    if entry["count"] >= _CF_LOOP_WARNING_THRESHOLD:
+        kodilog(
+            "[CF-DIAG] LOOP SUSPECTED on domain={}: FlareSolverr has been invoked "
+            "{} times within {}s. This usually means FlareSolverr's outbound IP "
+            "differs from this device's outbound IP, so the cf_clearance cookie "
+            "FlareSolverr obtains is being rejected on this device's direct "
+            "requests, forcing a re-solve every time. Compare the cf-ray colo "
+            "codes logged for direct vs FlareSolverr responses to confirm.".format(
+                domain, entry["count"], _CF_LOOP_WINDOW_SECONDS
+            ),
+            xbmc.LOGWARNING,
+        )
+
+
 def flaresolve(url, referer):
     """
     Use FlareSolverr to bypass Cloudflare protection.
@@ -1321,11 +1415,37 @@ def flaresolve(url, referer):
     if not fs_host:
         fs_host = "http://127.0.0.1:8191/v1"
 
+    start_time = time.time()
+    kodilog("[CF-DIAG] flaresolve() starting for {} via FlareSolverr host {}".format(url, fs_host))
+
     flaresolverr = None
     try:
         flaresolverr = FlareSolverrManager(fs_host)
+        kodilog(
+            "[CF-DIAG] FlareSolverr session '{}' created after {:.2f}s, sending request for {}".format(
+                flaresolverr.flaresolverr_session, time.time() - start_time, url
+            )
+        )
         # FlareSolverrManager handles API errors and session management
         response = flaresolverr.request(url)
+
+        elapsed = time.time() - start_time
+        cf_ray = ""
+        try:
+            cf_ray = response.headers.get("cf-ray", "") if response.headers else ""
+        except Exception:
+            cf_ray = ""
+        kodilog(
+            "[CF-DIAG] FlareSolverr response for {} after {:.2f}s: HTTP {} "
+            "final_url={} cf-ray={} body_len={}".format(
+                url,
+                elapsed,
+                response.status_code,
+                response.url,
+                cf_ray or "n/a",
+                len(response.text or ""),
+            )
+        )
 
         if response.status_code != 200:
             raise RuntimeError(
@@ -1338,8 +1458,28 @@ def flaresolve(url, referer):
         if not listhtml:
             raise RuntimeError("FlareSolverr returned empty response")
 
+        if is_cloudflare_challenge_page(listhtml):
+            kodilog(
+                "[CF-DIAG] WARNING: content returned by FlareSolverr for {} still "
+                "matches Cloudflare challenge markers - the challenge was NOT "
+                "actually solved (Turnstile/managed challenge FlareSolverr can't "
+                "pass, or maxTimeout too low).".format(url),
+                xbmc.LOGWARNING,
+            )
+
         # Save cookies from FlareSolverr for future requests
         if hasattr(response, "raw_json") and response.raw_json:
+            solution = (response.raw_json or {}).get("solution") or {}
+            cookie_names = [
+                "{}@{}".format(c.get("name"), c.get("domain"))
+                for c in (solution.get("cookies") or [])
+                if isinstance(c, dict)
+            ]
+            kodilog(
+                "[CF-DIAG] FlareSolverr returned {} cookie(s) for {}: {} | userAgent={}".format(
+                    len(cookie_names), url, cookie_names, solution.get("userAgent", "n/a")
+                )
+            )
             savecookies(response.raw_json)
 
         kodilog("FlareSolverr successfully bypassed Cloudflare for: {}".format(url))
@@ -1400,6 +1540,7 @@ def get_html_with_cloudflare_retry(
     attempted when FlareSolverr support is enabled in the add-on settings.
     """
 
+    direct_start = time.time()
     html = getHtml(
         url,
         referer,
@@ -1408,18 +1549,32 @@ def get_html_with_cloudflare_retry(
         data=data,
         error=error,
     )
+    kodilog(
+        "[CF-DIAG] direct request for {} took {:.2f}s, body_len={}, "
+        "looks_like_challenge={}".format(
+            url,
+            time.time() - direct_start,
+            len(html or ""),
+            is_cloudflare_challenge_page(html),
+        )
+    )
 
     fs_enabled = addon.getSetting("fs_enable") == "true"
     used_fs = False
 
     if is_cloudflare_challenge_page(html):
         if not fs_enabled:
+            kodilog(
+                "[CF-DIAG] Cloudflare challenge detected on {} but fs_enable is "
+                "off; returning challenge page as-is.".format(url)
+            )
             return html, False
         kodilog(
             "Cloudflare challenge detected on {}, retrying with FlareSolverr".format(
                 url
             )
         )
+        _note_flaresolverr_trigger(url, "direct-request-returned-challenge-page")
         html = flaresolve(url, referer)
         used_fs = True
 
@@ -1427,6 +1582,7 @@ def get_html_with_cloudflare_retry(
         kodilog(
             "Empty response received from {}, retrying with FlareSolverr".format(url)
         )
+        _note_flaresolverr_trigger(url, "empty-direct-response")
         html = flaresolve(url, referer)
         used_fs = True
 
@@ -1477,6 +1633,10 @@ def savecookies(flarejson):
         cj_cf.set_cookie(c)
     cj_cf.save(cookiePath, ignore_discard=True)
     UA = flarejson["solution"]["userAgent"]
+    kodilog(
+        "[CF-DIAG] savecookies: stored {} cookie(s) from FlareSolverr, "
+        "USER_AGENT now '{}' (was '{}')".format(len(cookies), UA, USER_AGENT)
+    )
     random_ua.set_ua(UA)
     USER_AGENT = UA
 
