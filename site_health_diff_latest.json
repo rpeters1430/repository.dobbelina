@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-08-04T07:04:11.010483",
+    "sites_total": 184,
+    "pass": 181,
+    "warn": 0,
+    "fail": 2,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-08-03T07:20:30.772966",
     "sites_total": 182,
     "pass": 179,
@@ -8,35 +17,23 @@
     "error": 0,
     "skip": 0
   },
-  "previous": {
-    "generated": "2026-08-02T07:04:28.163103",
-    "sites_total": 182,
-    "pass": 178,
-    "warn": 0,
-    "fail": 3,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 0,
-    "persistent_failures": 3,
-    "improved_sites": 1,
-    "regressions": 0,
+    "resolved_failures": 1,
+    "persistent_failures": 2,
+    "improved_sites": 0,
+    "regressions": 1,
     "step_regressions": 0
   },
   "new_failures": [],
-  "resolved_failures": [],
-  "persistent_failures": [
+  "resolved_failures": [
     {
       "site": "analdin",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
-      "is_flaky": false,
-      "stability_score": 0.9
-    },
+      "current": "PASS"
+    }
+  ],
+  "persistent_failures": [
     {
       "site": "pornez",
       "previous": "FAIL",
@@ -56,20 +53,35 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [
-    {
-      "site": "motherless",
-      "previous": "SKIP",
-      "current": "PASS"
-    }
-  ],
+  "improved_sites": [],
   "step_regressions": [],
   "deltas": [
     {
-      "site": "motherless",
-      "previous": "SKIP",
+      "site": "analdin",
+      "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "camwhorestv",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "motherless",
+      "previous": "PASS",
+      "current": "SKIP",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "xoxo",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
       "detail": ""
     }
   ]
