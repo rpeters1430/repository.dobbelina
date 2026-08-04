@@ -32,7 +32,7 @@ TESTS_DIR = ROOT / "tests"
 KNOWN_ISSUES = ROOT / "docs" / "development" / "KNOWN_ISSUES.md"
 CANONICAL_STATUS = ROOT / "docs" / "status" / "STATUS_METRICS.md"
 
-SITE_FILE_EXCLUDES = {"__init__.py", "soup_spec.py", "stripchat.py"}
+SITE_FILE_EXCLUDES = {"__init__.py", "soup_spec.py"}
 SITE_ANALYSIS_REPORT = ROOT / "results" / "site_analysis.json"
 
 BS_MARKERS = (

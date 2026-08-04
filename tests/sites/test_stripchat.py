@@ -1,9 +1,6 @@
 import json
-import pytest
 
 from resources.lib.sites import stripchat
-
-pytestmark = pytest.mark.skip(reason="Stripchat disabled")
 
 
 class _Recorder:
@@ -476,3 +473,151 @@ def test_keep_only_part_window_skips_live_edge_parts():
     assert "https://cdn.example.com/p3.mp4" in rewritten
     assert "https://cdn.example.com/p4.mp4" not in rewritten
     assert "https://cdn.example.com/p5.mp4" not in rewritten
+
+
+def test_add_model_download_link_labels_offline_models(monkeypatch):
+    added = []
+
+    monkeypatch.setattr(
+        stripchat.site,
+        "add_download_link",
+        lambda name, url, mode, img, desc, **k: added.append(name),
+    )
+
+    online_model = {"username": "OnlineModel", "isLive": True}
+    offline_model = {"username": "OfflineModel", "isLive": False}
+
+    assert stripchat._add_model_download_link(online_model) is True
+    assert stripchat._add_model_download_link(offline_model) is True
+
+    assert added[0] == "OnlineModel"
+    assert "OfflineModel" in added[1]
+    assert "[Offline]" in added[1]
+
+
+def test_add_model_download_link_can_skip_offline(monkeypatch):
+    added = []
+    monkeypatch.setattr(
+        stripchat.site,
+        "add_download_link",
+        lambda name, url, mode, img, desc, **k: added.append(name),
+    )
+
+    offline_model = {"username": "OfflineModel", "isLive": False}
+
+    result = stripchat._add_model_download_link(offline_model, skip_offline=True)
+
+    assert result is False
+    assert added == []
+
+
+def test_add_model_download_link_skips_items_without_username():
+    assert stripchat._add_model_download_link({"isLive": True}) is False
+
+
+def test_playvid_blocks_offline_models(monkeypatch):
+    notifications = []
+    play_calls = []
+
+    monkeypatch.setattr(stripchat, "STRIPCHAT_DISABLED", False)
+    monkeypatch.setattr(
+        stripchat.utils, "notify", lambda header, msg="": notifications.append((header, msg))
+    )
+    monkeypatch.setattr(
+        stripchat, "_play_stripchat_model", lambda url, name: play_calls.append((url, name))
+    )
+
+    stripchat.Playvid("", "SomeModel [COLOR yellow][Offline][/COLOR]")
+
+    assert play_calls == []
+    assert len(notifications) == 1
+    assert "offline" in notifications[0][0].lower()
+
+
+def test_playvid_plays_online_models(monkeypatch):
+    play_calls = []
+
+    monkeypatch.setattr(stripchat, "STRIPCHAT_DISABLED", False)
+    monkeypatch.setattr(
+        stripchat, "_play_stripchat_model", lambda url, name: play_calls.append((url, name))
+    )
+
+    stripchat.Playvid("https://stripchat.com/x", "SomeModel")
+
+    assert play_calls == [("https://stripchat.com/x", "SomeModel")]
+
+
+def test_list_parses_top_models_response(monkeypatch):
+    added = []
+
+    top_response = json.dumps(
+        {
+            "tops": [
+                {
+                    "winners": [
+                        {"model": {"username": "Winner1", "isLive": True}},
+                        {"model": {"username": "Winner2", "isLive": False}},
+                    ]
+                }
+            ]
+        }
+    )
+
+    monkeypatch.setattr(stripchat, "STRIPCHAT_DISABLED", False)
+    monkeypatch.setattr(
+        stripchat.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (top_response, {})
+    )
+    monkeypatch.setattr(
+        stripchat.utils.addon, "getSetting", lambda key: "false" if key == "online_only" else ""
+    )
+    monkeypatch.setattr(
+        stripchat.site,
+        "add_download_link",
+        lambda name, url, mode, img, desc, **k: added.append(name),
+    )
+    monkeypatch.setattr(stripchat.utils, "eod", lambda: None)
+
+    stripchat.List("https://stripchat.com/api/front/v5/models/top?gender=female")
+
+    assert added == ["Winner1", "Winner2 [COLOR yellow][Offline][/COLOR]"]
+
+
+def test_top_models_prompts_gender_and_delegates_to_list(monkeypatch):
+    list_calls = []
+
+    monkeypatch.setattr(stripchat, "STRIPCHAT_DISABLED", False)
+
+    class FakeDialog:
+        def select(self, heading, options):
+            # Always pick "Girls" (index 0), which triggers a region prompt too.
+            return 0
+
+    monkeypatch.setattr(stripchat.xbmcgui, "Dialog", FakeDialog)
+    monkeypatch.setattr(
+        stripchat.utils.addon, "getSetting", lambda key: "false" if key == "online_only" else ""
+    )
+    monkeypatch.setattr(stripchat.site, "add_download_link", lambda *a, **k: None)
+    monkeypatch.setattr(stripchat, "List", lambda url: list_calls.append(url))
+
+    stripchat.TopModels()
+
+    assert len(list_calls) == 1
+    assert "gender=female" in list_calls[0]
+    assert "continent=" in list_calls[0]
+
+
+def test_top_models_returns_without_prompting_list_when_dialog_cancelled(monkeypatch):
+    list_calls = []
+
+    monkeypatch.setattr(stripchat, "STRIPCHAT_DISABLED", False)
+
+    class FakeDialog:
+        def select(self, heading, options):
+            return -1
+
+    monkeypatch.setattr(stripchat.xbmcgui, "Dialog", FakeDialog)
+    monkeypatch.setattr(stripchat, "List", lambda url: list_calls.append(url))
+
+    stripchat.TopModels()
+
+    assert list_calls == []

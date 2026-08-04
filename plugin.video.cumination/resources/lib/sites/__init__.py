@@ -4,7 +4,7 @@ import os
 from kodi_six import xbmc
 
 # Sites intentionally excluded from Kodi runtime listing.
-EXCLUDED_SITE_MODULES = {"luxuretv.py", "missav.py", "pornxpert.py", "stripchat.py"}
+EXCLUDED_SITE_MODULES = {"luxuretv.py", "missav.py", "pornxpert.py"}
 
 _pkg = __name__
 _dir = os.path.dirname(__file__)

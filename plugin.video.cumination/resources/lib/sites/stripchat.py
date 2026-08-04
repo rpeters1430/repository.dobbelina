@@ -20,6 +20,7 @@ import re
 import time
 import base64
 import requests
+import xbmcgui
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, urljoin
 
 from resources.lib import utils
@@ -1262,6 +1263,13 @@ def Main():
         "",
         Folder=False,
     )
+    site.add_dir(
+        "[COLOR red]Top Models[/COLOR]",
+        "",
+        "TopModels",
+        "",
+        Folder=False,
+    )
 
     bu = "https://stripchat.com/api/front/models?limit=80&parentTag=autoTagNew&sortBy=trending&offset=0&primaryTag="
     if female:
@@ -1316,6 +1324,109 @@ def Main():
     utils.eod()
 
 
+_TOP_MODELS_GENDERS = [
+    ("Girls", "female"),
+    ("Couples", "couple"),
+    ("Guys", "male"),
+    ("Trans", "tranny"),
+]
+_TOP_MODELS_ZONES = [
+    ("Worldwide", ""),
+    ("Europe", "eu"),
+    ("North America", "na"),
+    ("South America", "sa"),
+    ("Asia & Pacific", "as"),
+    ("Africa", "af"),
+]
+
+
+@site.register()
+def TopModels():
+    """Interactive gender/region picker for Stripchat's top-models rankings."""
+    if STRIPCHAT_DISABLED:
+        _notify_stripchat_disabled()
+        return
+    gender_names = [name for name, _ in _TOP_MODELS_GENDERS]
+    selection = xbmcgui.Dialog().select("Select Gender", gender_names)
+    if selection == -1:
+        return
+    gender = _TOP_MODELS_GENDERS[selection][1]
+
+    zone = ""
+    if gender == "female":
+        zone_names = [name for name, _ in _TOP_MODELS_ZONES]
+        selection = xbmcgui.Dialog().select("Select Region", zone_names)
+        if selection == -1:
+            return
+        zone = _TOP_MODELS_ZONES[selection][1]
+
+    url = (
+        "https://stripchat.com/api/front/v5/models/top"
+        "?gender={0}&period=current&offset=0&limit=100&continent={1}".format(gender, zone)
+    )
+
+    online_only = utils.addon.getSetting("online_only") == "true"
+    if online_only:
+        site.add_download_link(
+            "[COLOR red][B]Show all models[/B][/COLOR]", url, "online", "", "", noDownload=True
+        )
+    else:
+        site.add_download_link(
+            "[COLOR red][B]Show only models online[/B][/COLOR]",
+            url,
+            "online",
+            "",
+            "",
+            noDownload=True,
+        )
+
+    List(url)
+
+
+def _add_model_download_link(model, cache_bust=None, skip_offline=False):
+    """Render one model dict (from any of Stripchat's /models-style API
+    responses) as a listing item. Returns False if the item was skipped."""
+    raw_name = model.get("username")
+    if not raw_name:
+        return False
+    is_live = model.get("isLive")
+    if skip_offline and is_live is False:
+        return False
+
+    name = utils.cleanhtml(raw_name)
+    if is_live is False:
+        name += " [COLOR yellow][Offline][/COLOR]"
+    videourl = model.get("hlsPlaylist") or ""
+    img = _model_screenshot(model, cache_bust=cache_bust)
+    fanart = img
+    subject = ""
+    if model.get("groupShowTopic"):
+        subject += model.get("groupShowTopic") + "[CR]"
+    if model.get("country"):
+        subject += "[COLOR deeppink]Location: [/COLOR]{0}[CR]".format(
+            utils.get_country(model.get("country"))
+        )
+    if model.get("languages"):
+        langs = [utils.get_language(x) for x in model.get("languages")]
+        subject += "[COLOR deeppink]Languages: [/COLOR]{0}[CR]".format(", ".join(langs))
+    if model.get("broadcastGender"):
+        subject += "[COLOR deeppink]Gender: [/COLOR]{0}[CR]".format(
+            model.get("broadcastGender")
+        )
+    if model.get("viewersCount"):
+        subject += "[COLOR deeppink]Watching: [/COLOR]{0}[CR][CR]".format(
+            model.get("viewersCount")
+        )
+    if model.get("tags"):
+        subject += "[COLOR deeppink]#[/COLOR]"
+        tags = [t for t in model.get("tags") if "tag" not in t.lower()]
+        subject += "[COLOR deeppink] #[/COLOR]".join(tags)
+    site.add_download_link(
+        name, videourl, "Playvid", img, subject, noDownload=True, fanart=fanart
+    )
+    return True
+
+
 @site.register()
 def List(url, page=1):
     if STRIPCHAT_DISABLED:
@@ -1338,7 +1449,19 @@ def List(url, page=1):
             utils.notify("Error", "Could not load Stripchat models")
             return None
         data = json.loads(response)
-        model_list = data["models"]
+        if "models" in data:
+            model_list = data["models"]
+        elif "tops" in data:
+            # /models/top-style responses nest winners per-category instead
+            # of a flat "models" list.
+            model_list = [
+                winner["model"]
+                for top in data.get("tops", [])
+                for winner in top.get("winners", [])
+                if winner.get("model")
+            ]
+        else:
+            model_list = []
         utils.kodilog(
             "Stripchat: Successfully loaded {} models".format(len(model_list))
         )
@@ -1347,42 +1470,10 @@ def List(url, page=1):
         utils.notify("Error", "Could not load Stripchat models")
         return None
 
+    online_only = utils.addon.getSetting("online_only") == "true"
     cache_bust = int(time.time())
     for model in model_list:
-        raw_name = model.get("username")
-        if not raw_name:
-            continue
-        name = utils.cleanhtml(raw_name)
-        videourl = model.get("hlsPlaylist") or ""
-        img = _model_screenshot(model, cache_bust=cache_bust)
-        fanart = img
-        subject = ""
-        if model.get("groupShowTopic"):
-            subject += model.get("groupShowTopic") + "[CR]"
-        if model.get("country"):
-            subject += "[COLOR deeppink]Location: [/COLOR]{0}[CR]".format(
-                utils.get_country(model.get("country"))
-            )
-        if model.get("languages"):
-            langs = [utils.get_language(x) for x in model.get("languages")]
-            subject += "[COLOR deeppink]Languages: [/COLOR]{0}[CR]".format(
-                ", ".join(langs)
-            )
-        if model.get("broadcastGender"):
-            subject += "[COLOR deeppink]Gender: [/COLOR]{0}[CR]".format(
-                model.get("broadcastGender")
-            )
-        if model.get("viewersCount"):
-            subject += "[COLOR deeppink]Watching: [/COLOR]{0}[CR][CR]".format(
-                model.get("viewersCount")
-            )
-        if model.get("tags"):
-            subject += "[COLOR deeppink]#[/COLOR]"
-            tags = [t for t in model.get("tags") if "tag" not in t.lower()]
-            subject += "[COLOR deeppink] #[/COLOR]".join(tags)
-        site.add_download_link(
-            name, videourl, "Playvid", img, subject, noDownload=True, fanart=fanart
-        )
+        _add_model_download_link(model, cache_bust, skip_offline=online_only)
 
     total_items = data.get("filteredCount", 0)
     nextp = (page * 80) < total_items
@@ -1432,6 +1523,9 @@ def clean_database(showdialog=True):
 def Playvid(url, name):
     if STRIPCHAT_DISABLED:
         _notify_stripchat_disabled()
+        return
+    if "[Offline]" in name:
+        utils.notify(name.split(" [COLOR")[0] + " is currently offline")
         return
     _play_stripchat_model(url, name)
 
