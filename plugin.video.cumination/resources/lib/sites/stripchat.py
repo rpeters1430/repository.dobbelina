@@ -1721,6 +1721,18 @@ def _play_stripchat_model(url, name):
                 mirrored.append(("{}-mirror".format(label), mirror_url))
         candidates.extend(mirrored)
 
+        # saawsedge frequently fails DNS entirely (even FlareSolverr's browser
+        # can't navigate to it). Drop it now, before the source/auto/signed-media
+        # probing below, so none of those stages waste multiple FlareSolverr
+        # retry cycles on a domain that will never resolve.
+        if any("saawsedge.com" not in c[1] for c in candidates):
+            non_saaws_candidates = [c for c in candidates if "saawsedge.com" not in c[1]]
+            if non_saaws_candidates:
+                utils.kodilog(
+                    "Stripchat: Skipping saawsedge candidates in favor of reachable mirrored CDN"
+                )
+                candidates = non_saaws_candidates
+
         # Some list URLs are pinned to low variants like "<id>_240p.m3u8".
         # Try to promote those to "<id>.m3u8" (often "source"/best stream) when valid.
         def _promote_variant_to_source_url(stream_url):
