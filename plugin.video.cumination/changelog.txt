@@ -1,3 +1,12 @@
+[B]Version 1.1.443[/B]
+- fix: skip unreachable saawsedge stripchat CDN before wasting time probing it
+- Merge pull request #278 from rpeters1430/claude/flaresolverr-kodi-loop-6v5asz
+- chore: add diagnostic logging for FlareSolverr Cloudflare-loop symptom
+- feat: port camwhorestv/xoxostream sites and re-enable stripchat from upstream
+- chore: stop tracking debug log dumps
+- fix: repair luxuretv 403 media and pornkai blocked playback
+- chore: update vendored resolveurl/resolveurl.xxx resolver plugins
+
 [B]Version 1.1.442[/B]
 - Merge pull request #278 from rpeters1430/claude/flaresolverr-kodi-loop-6v5asz
 - chore: add diagnostic logging for FlareSolverr Cloudflare-loop symptom
