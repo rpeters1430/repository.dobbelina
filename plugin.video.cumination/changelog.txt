@@ -1,3 +1,12 @@
+[B]Version 1.1.441[/B]
+- feat: port camwhorestv/xoxostream sites and re-enable stripchat from upstream
+- chore: stop tracking debug log dumps
+- fix: repair luxuretv 403 media and pornkai blocked playback
+- chore: update vendored resolveurl/resolveurl.xxx resolver plugins
+- fix: stop harness from treating FlareSolverr progress notices as failures
+- fix: repair xvideos playback and luxuretv listing regressions
+- feat: enhance site profiles and playback handling for new sites
+
 [B]Version 1.1.440[/B]
 - chore: update vendored resolveurl/resolveurl.xxx resolver plugins
 - fix: stop harness from treating FlareSolverr progress notices as failures
