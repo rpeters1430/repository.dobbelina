@@ -301,7 +301,8 @@ def Categories(url):
 
 @site.register()
 def Playvid(url, name, download=None):
-    videohtml = utils.getHtml(url, site.url)
+    import re
+    videohtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     soup = utils.parse_html(videohtml)
     iframe = soup.select_one('.if_cont iframe, #video_container iframe, #player_container iframe, iframe[src]')
 
@@ -311,16 +312,39 @@ def Playvid(url, name, download=None):
         if vid_url:
             if vid_url.startswith('//'):
                 vid_url = 'https:' + vid_url
-            if 'xvideos.com' in vid_url or 'xh.video' in vid_url:
+            if any(domain in vid_url for domain in ['xvideos.com', 'xh.video', 'spankbang.com', 'pornhub.com', 'redtube.com', 'txxx.com']):
                 vp.play_from_link_to_resolve(vid_url)
                 return
+            elif any(domain in vid_url for domain in ['videopornl.com', 'pornl.com', 'upornia.com']):
+                match = re.search(r'embed/(\d+)', vid_url)
+                if match:
+                    video_id = match.group(1)
+                    api_url = f"https://upornia.com/api/videofile.php?video_id={video_id}&lifetime=8640000"
+                    api_json, _ = utils.get_html_with_cloudflare_retry(api_url, "https://upornia.com/")
+                    if api_json:
+                        try:
+                            data = json.loads(api_json)
+                            if isinstance(data, list) and data:
+                                data = data[0]
+                            raw_url = data.get("video_url") if isinstance(data, dict) else None
+                            if raw_url:
+                                from resources.lib.decrypters import txxx
+                                direct_url = txxx.Tdecode(raw_url)
+                                if not direct_url.startswith("http"):
+                                    direct_url = "https://upornia.com" + direct_url
+                                direct_url += "|Referer=https://upornia.com/"
+                                vp.play_from_direct_link(direct_url)
+                                return
+                        except (ValueError, TypeError, KeyError, AttributeError) as e:
+                            utils.kodilog(f"Pornkai upornia decode error: {e}")
             else:
-                embed_html = utils.getHtml(vid_url, url)
-                if embed_html:
-                    vp.play_from_html(embed_html, vid_url)
+                embed_html, _ = utils.get_html_with_cloudflare_retry(vid_url, url)
+                if embed_html and vp.play_from_html(embed_html, vid_url):
                     return
+                vp.play_from_link_to_resolve(vid_url)
+                return
 
-    # Fallback to the original method if iframe not found or src is not a direct link
+    # Fallback to original method if iframe not found
     vp.play_from_html(videohtml, url)
 
 

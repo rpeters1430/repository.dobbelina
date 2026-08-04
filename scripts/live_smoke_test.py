@@ -1865,6 +1865,11 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        try:
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
     args = parse_args()
     if args.run_site:
         steps = [s.strip() for s in args.steps.split(",") if s.strip()]

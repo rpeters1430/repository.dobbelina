@@ -181,6 +181,7 @@ def Play(url, name, download=None):
     if source_tag:
         videourl = utils.safe_get_attr(source_tag, "src")
         if videourl:
+            videourl = f"{videourl}|Referer={site.url}&User-Agent={utils.USER_AGENT}"
             vp = utils.VideoPlayer(name, download=download)
             vp.play_from_direct_link(videourl)
             return

@@ -934,11 +934,9 @@ def downloadVideo(url, name):
 def notify(header=None, msg="", duration=5000, icon=None):
     if header is None:
         header = "Cumination"
-    if icon is None:
-        icon = cuminationicon
-    elif icon == "thumb":
+    if icon == "thumb":
         icon = xbmc.getInfoImage("ListItem.Thumb")
-    elif not icon.startswith("http"):
+    if not icon or not isinstance(icon, str) or not icon.startswith("http"):
         icon = cuminationicon
     dialog.notification(header, msg, icon, duration, False)
 
@@ -1402,7 +1400,7 @@ def get_html_with_cloudflare_retry(
     attempted when FlareSolverr support is enabled in the add-on settings.
     """
 
-    html = _getHtml(
+    html = getHtml(
         url,
         referer,
         headers=headers,
@@ -1438,24 +1436,41 @@ def get_html_with_cloudflare_retry(
 def savecookies(flarejson):
     global USER_AGENT
     cj_cf = cj
-    for cookie in flarejson["solution"]["cookies"]:
+    if not isinstance(flarejson, dict):
+        return
+    solution = flarejson.get("solution") or {}
+    if not isinstance(solution, dict):
+        return
+    cookies = solution.get("cookies") or []
+    if not isinstance(cookies, list):
+        return
+
+    for cookie in cookies:
+        if not isinstance(cookie, dict):
+            continue
+        name = cookie.get("name")
+        value = cookie.get("value")
+        if not name or value is None:
+            continue
+        domain = cookie.get("domain") or ""
+        path = cookie.get("path") or "/"
         c = http_cookiejar.Cookie(
             version=0,
-            name=cookie.get("name"),
-            value=cookie.get("value"),
+            name=name,
+            value=value,
             port=None,
             port_specified=False,
-            domain=cookie.get("domain"),
-            domain_specified=False,
-            domain_initial_dot=False,
-            path=cookie.get("path"),
+            domain=domain,
+            domain_specified=bool(domain),
+            domain_initial_dot=domain.startswith("."),
+            path=path,
             path_specified=True,
-            secure=cookie.get("secure"),
+            secure=bool(cookie.get("secure")),
             expires=cookie.get("expiry"),
             discard=True,
             comment=None,
             comment_url=None,
-            rest={"HttpOnly": cookie.get("httpOnly")},
+            rest={"HttpOnly": bool(cookie.get("httpOnly"))},
             rfc2109=False,
         )
 

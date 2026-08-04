@@ -156,11 +156,18 @@ class FlareSolverrManager:
                 json=sessions_list_request,
                 timeout=HTTP_TIMEOUT_SHORT,
             )
-            sessions = sessions_list_response.json().get("sessions", [])
+            res_json = sessions_list_response.json()
+            sessions = res_json.get("sessions") if isinstance(res_json, dict) else []
+            if not isinstance(sessions, list):
+                sessions = []
 
             # Destroy only our sessions
             for session_id in sessions:
-                if session_id.startswith("cumination_session_") and session_id != self.session_id:
+                if (
+                    isinstance(session_id, str)
+                    and session_id.startswith("cumination_session_")
+                    and session_id != self.session_id
+                ):
                     destroy_request = {"cmd": "sessions.destroy", "session": session_id}
                     requests.post(
                         self.flaresolverr_url,
@@ -231,6 +238,9 @@ class FlareSolverrManager:
 
                 flaresolverr_response.raise_for_status()
                 response_json = flaresolverr_response.json()
+                if not isinstance(response_json, dict):
+                    response_json = {}
+
                 if response_json.get("status") == "error":
                     error_msg = response_json.get("message", "Unknown error")
                     if (
@@ -247,16 +257,19 @@ class FlareSolverrManager:
                     raise ValueError("FlareSolverr error: {}".format(error_msg))
 
                 # Success!
-                solution = response_json.get("solution", {})
+                solution = response_json.get("solution") or {}
+                if not isinstance(solution, dict):
+                    solution = {}
                 
                 # Update session cookies from FlareSolverr response
-                for cookie in solution.get("cookies", []):
-                    self.session.cookies.set(
-                        cookie["name"], 
-                        cookie["value"], 
-                        domain=cookie.get("domain", ""), 
-                        path=cookie.get("path", "/")
-                    )
+                for cookie in solution.get("cookies") or []:
+                    if isinstance(cookie, dict) and "name" in cookie and "value" in cookie:
+                        self.session.cookies.set(
+                            cookie["name"], 
+                            cookie["value"], 
+                            domain=cookie.get("domain") or "", 
+                            path=cookie.get("path") or "/"
+                        )
 
                 # Return a pseudo-response object that mimics requests.Response
                 class MockResponse:
