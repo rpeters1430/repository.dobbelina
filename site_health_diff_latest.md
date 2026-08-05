@@ -6,19 +6,15 @@
 ## Snapshot
 
 - Current: `PASS 181` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 1`
-- Previous: `PASS 179` | `WARN 0` | `FAIL 3` | `ERROR 0` | `SKIP 0`
+- Previous: `PASS 181` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
 - New failures: `0`
-- Resolved failures: `1`
+- Resolved failures: `0`
 - Persistent failures: `2`
-- Site regressions: `1`
+- Site regressions: `0`
 - Step regressions: `0`
-
-## Resolved Failures
-
-- **analdin**: `FAIL -> PASS`
 
 ## Persistent Failures
 

@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-08-04T07:04:11.010483",
+    "generated": "2026-08-05T07:06:31.503244",
     "sites_total": 184,
     "pass": 181,
     "warn": 0,
@@ -9,30 +9,24 @@
     "skip": 1
   },
   "previous": {
-    "generated": "2026-08-03T07:20:30.772966",
-    "sites_total": 182,
-    "pass": 179,
+    "generated": "2026-08-04T07:04:11.010483",
+    "sites_total": 184,
+    "pass": 181,
     "warn": 0,
-    "fail": 3,
+    "fail": 2,
     "error": 0,
-    "skip": 0
+    "skip": 1
   },
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 1,
+    "resolved_failures": 0,
     "persistent_failures": 2,
     "improved_sites": 0,
-    "regressions": 1,
+    "regressions": 0,
     "step_regressions": 0
   },
   "new_failures": [],
-  "resolved_failures": [
-    {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS"
-    }
-  ],
+  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "pornez",
@@ -55,34 +49,5 @@
   ],
   "improved_sites": [],
   "step_regressions": [],
-  "deltas": [
-    {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "camwhorestv",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "motherless",
-      "previous": "PASS",
-      "current": "SKIP",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "xoxo",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    }
-  ]
+  "deltas": []
 }
