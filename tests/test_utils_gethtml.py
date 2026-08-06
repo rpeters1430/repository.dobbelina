@@ -5,6 +5,7 @@ import io
 
 
 from resources.lib import utils
+from resources.lib import flaresolverr
 
 
 class FakeResponse:
@@ -90,3 +91,33 @@ def test_gethtml_cloudflare_flaresolverr(monkeypatch):
     utils.addon._settings = {**utils.addon._settings, "fs_enable": "true"}
 
     assert utils._getHtml("https://example.com") == "solved"
+
+
+def test_flaresolve_logs_stateless_request_path(monkeypatch):
+    logs = []
+
+    class _FakeResponse:
+        text = "<html>solved</html>"
+        status_code = 200
+        url = "https://example.com"
+        headers = {}
+        raw_json = None
+
+    class _FakeManager:
+        def __init__(self, host):
+            self.host = host
+
+        def request(self, url):
+            return _FakeResponse()
+
+        def close(self, destroy_session=False):
+            pass
+
+    monkeypatch.setattr(flaresolverr, "FlareSolverrManager", _FakeManager)
+    monkeypatch.setattr(utils, "kodilog", logs.append)
+    monkeypatch.setattr(utils.time, "time", lambda: 1.0)
+    utils.addon._settings = {**utils.addon._settings, "fs_host": ""}
+
+    assert utils.flaresolve("https://example.com", None) == "<html>solved</html>"
+    assert any("stateless" in message for message in logs)
+    assert not any("session" in message.lower() for message in logs)

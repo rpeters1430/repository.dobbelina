@@ -1422,11 +1422,11 @@ def flaresolve(url, referer):
     try:
         flaresolverr = FlareSolverrManager(fs_host)
         kodilog(
-            "[CF-DIAG] FlareSolverr session '{}' created after {:.2f}s, sending request for {}".format(
-                flaresolverr.flaresolverr_session, time.time() - start_time, url
+            "[CF-DIAG] FlareSolverr manager ready after {:.2f}s, sending stateless request for {}".format(
+                time.time() - start_time, url
             )
         )
-        # FlareSolverrManager handles API errors and session management
+        # FlareSolverrManager handles API errors, retries, and local cookies.
         response = flaresolverr.request(url)
 
         elapsed = time.time() - start_time
