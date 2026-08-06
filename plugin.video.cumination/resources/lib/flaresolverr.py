@@ -1,10 +1,7 @@
 import requests
 import time
-import os
-import uuid
 from urllib.parse import urlparse
 from kodi_six import xbmc, xbmcaddon
-from resources.lib.http_timeouts import HTTP_TIMEOUT_CONNECT, HTTP_TIMEOUT_SHORT
 
 _ALLOWED_FS_SCHEMES = ("http", "https")
 _LOCALHOST_HOSTS = {"127.0.0.1", "localhost", "::1"}
@@ -84,117 +81,13 @@ def _validate_flaresolverr_url(url):
 
 
 class FlareSolverrManager:
-    @staticmethod
-    def _build_session_id():
-        return "cumination_session_{}_{}_{}".format(
-            int(time.time() * 1000),
-            os.getpid(),
-            uuid.uuid4().hex[:8],
-        )
-
     def __init__(self, flaresolverr_url=None, session_id=None):
         self.session = requests.session()
         self.flaresolverr_url = flaresolverr_url or "http://127.0.0.1:8191/v1"
         _validate_flaresolverr_url(self.flaresolverr_url)
-        self.session_id = session_id or self._build_session_id()
-        self.flaresolverr_session = self.session_id
+        self.session_id = session_id
+        self.flaresolverr_session = None
         self._destroyed = False
-
-        # Only clear old cumination sessions to avoid conflicts with other addons
-        self.clear_old_sessions()
-
-        # Try to create session
-        self._create_session()
-
-    def _reset_session(self):
-        self.session_id = self._build_session_id()
-        self.flaresolverr_session = self.session_id
-        self._destroyed = False
-        self._create_session()
-
-    def _create_session(self):
-        session_create_request = {"cmd": "sessions.create", "session": self.session_id}
-        start = time.time()
-        try:
-            session_create_response = requests.post(
-                self.flaresolverr_url,
-                json=session_create_request,
-                timeout=HTTP_TIMEOUT_CONNECT,
-            )
-            response_data = session_create_response.json()
-            xbmc.log(
-                "@@@@Cumination: [CF-DIAG] sessions.create for '{}' took {:.2f}s, "
-                "HTTP {}, status={}".format(
-                    self.session_id,
-                    time.time() - start,
-                    session_create_response.status_code,
-                    response_data.get("status"),
-                ),
-                xbmc.LOGINFO,
-            )
-
-            if response_data.get("status") == "error":
-                error_msg = str(response_data.get("message", ""))
-                if "already exists" in error_msg.lower():
-                    self.flaresolverr_session = self.session_id
-                else:
-                    raise RuntimeError(
-                        "Unable to create FlareSolverr session '{}': {}".format(
-                            self.session_id, error_msg or "unknown error"
-                        )
-                    )
-            else:
-                self.flaresolverr_session = response_data.get(
-                    "session", self.session_id
-                )
-        except Exception as e:
-            if isinstance(e, RuntimeError):
-                raise
-            xbmc.log(
-                "@@@@Cumination: [CF-DIAG] sessions.create for '{}' failed after "
-                "{:.2f}s: {}".format(self.session_id, time.time() - start, str(e)),
-                xbmc.LOGWARNING,
-            )
-            raise RuntimeError(
-                "Failed to connect to FlareSolverr at {}: {}. "
-                "Please check if FlareSolverr is running and configured correctly in addon settings.".format(
-                    self.flaresolverr_url, str(e)
-                )
-            )
-
-    def clear_old_sessions(self):
-        """Clear FlareSolverr sessions created by this addon that might have been left over."""
-        try:
-            # List all sessions
-            sessions_list_request = {"cmd": "sessions.list"}
-            sessions_list_response = requests.post(
-                self.flaresolverr_url,
-                json=sessions_list_request,
-                timeout=HTTP_TIMEOUT_SHORT,
-            )
-            res_json = sessions_list_response.json()
-            sessions = res_json.get("sessions") if isinstance(res_json, dict) else []
-            if not isinstance(sessions, list):
-                sessions = []
-
-            # Destroy only our sessions
-            for session_id in sessions:
-                if (
-                    isinstance(session_id, str)
-                    and session_id.startswith("cumination_session_")
-                    and session_id != self.session_id
-                ):
-                    destroy_request = {"cmd": "sessions.destroy", "session": session_id}
-                    requests.post(
-                        self.flaresolverr_url,
-                        json=destroy_request,
-                        timeout=HTTP_TIMEOUT_SHORT,
-                    )
-        except Exception as e:
-            xbmc.log(
-                "@@@@Cumination: Failed to clear old FlareSolverr sessions: {}".format(str(e)),
-                xbmc.LOGDEBUG,
-            )
 
     def request(self, url, method="get", post_data=None, tries=3, max_timeout=60000):
         """Proxy a request through FlareSolverr."""
@@ -214,7 +107,6 @@ class FlareSolverrManager:
         flaresolverr_request = {
             "cmd": "request.get" if method.lower() == "get" else "request.post",
             "url": url,
-            "session": self.flaresolverr_session,
             "maxTimeout": max_timeout,
         }
 
@@ -227,7 +119,7 @@ class FlareSolverrManager:
         xbmc.log(
             "@@@@Cumination: [CF-DIAG] FlareSolverr request: cmd={} url={} "
             "session={} maxTimeout={}ms cookies_sent={} tries={}".format(
-                flaresolverr_request["cmd"], url, self.flaresolverr_session,
+                flaresolverr_request["cmd"], url, "stateless",
                 max_timeout, len(cookies), tries,
             ),
             xbmc.LOGINFO,
@@ -255,14 +147,6 @@ class FlareSolverrManager:
 
                 if status_code >= 500:
                     response_text = flaresolverr_response.text or ""
-                    if "invalid session id" in response_text.lower() and try_count < tries:
-                        self._reset_session()
-                        flaresolverr_request["session"] = self.flaresolverr_session
-                        xbmc.log(
-                            "@@@@Cumination: FlareSolverr session expired; recreated session and retrying",
-                            xbmc.LOGDEBUG,
-                        )
-                        continue
                     raise ValueError(
                         "FlareSolverr server error (HTTP {}): {}".format(
                             status_code, response_text[:200]
@@ -281,17 +165,6 @@ class FlareSolverrManager:
                         "on attempt {}/{}: {}".format(try_count, tries, error_msg),
                         xbmc.LOGWARNING,
                     )
-                    if (
-                        "invalid session id" in str(error_msg).lower()
-                        and try_count < tries
-                    ):
-                        self._reset_session()
-                        flaresolverr_request["session"] = self.flaresolverr_session
-                        xbmc.log(
-                            "@@@@Cumination: FlareSolverr session invalid; recreated session and retrying",
-                            xbmc.LOGDEBUG,
-                        )
-                        continue
                     raise ValueError("FlareSolverr error: {}".format(error_msg))
 
                 # Success!
@@ -342,25 +215,9 @@ class FlareSolverrManager:
         raise RuntimeError("FlareSolverr request failed after {} attempts".format(tries))
 
     def close(self, destroy_session=False):
-        """Close the FlareSolverr manager and optionally destroy the session."""
+        """Close the local HTTP session."""
         if self._destroyed:
             return
-
-        if destroy_session:
-            try:
-                destroy_request = {"cmd": "sessions.destroy", "session": self.session_id}
-                requests.post(
-                    self.flaresolverr_url,
-                    json=destroy_request,
-                    timeout=HTTP_TIMEOUT_SHORT,
-                )
-            except Exception as e:
-                xbmc.log(
-                    "@@@@Cumination: Failed to destroy FlareSolverr session {}: {}".format(
-                        self.session_id, str(e)
-                    ),
-                    xbmc.LOGDEBUG,
-                )
 
         self.session.close()
         self._destroyed = True
