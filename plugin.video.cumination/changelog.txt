@@ -1,3 +1,14 @@
+[B]Version 1.1.445[/B]
+- chore: update FlareSolverr service image to Trawl and adjust health checks fix: update chat settings logic to handle 'false' values correctly fix: clean video titles before logging and improve error message formatting feat: add cookie handling in Stripchat proxy logging feat: allow remote access in Kodi stubs installation
+- Merge pull request #286 from rpeters1430/fix/flaresolverr-v1-v2
+- Fix stateless FlareSolverr diagnostics
+- Support stateless FlareSolverr v1 and v2
+- Plan FlareSolverr v1 v2 compatibility
+- Document FlareSolverr v1 v2 compatibility
+- feat: add additional permissions for git and scratchpad directory
+- Plan site monitor accuracy repairs
+- Document site monitor accuracy repairs
+
 [B]Version 1.1.444[/B]
 - Merge pull request #286 from rpeters1430/fix/flaresolverr-v1-v2
 - Fix stateless FlareSolverr diagnostics
