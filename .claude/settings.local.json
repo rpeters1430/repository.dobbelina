@@ -149,7 +149,10 @@
       "Bash(mkdir -p \"C:/Users/rpete/AppData/Local/Temp/claude/C--Users-rpete-repository-dobbelina/f5403d34-6bf3-4a45-97ab-7ac194b6210c/scratchpad\")",
       "Bash(gh run *)",
       "Bash(pwd -W)",
-      "Bash(pip show *)"
+      "Bash(pip show *)",
+      "Bash(git show *)",
+      "Bash(mkdir -p \"/c/Users/rpete/AppData/Local/Temp/claude/C--Users-rpete-repository-dobbelina/1df1f9f9-1f53-4387-b6fb-abc9656764d7/scratchpad\")",
+      "Read(//c/Users/rpete/AppData/Local/Temp/claude/C--Users-rpete-repository-dobbelina/1df1f9f9-1f53-4387-b6fb-abc9656764d7/scratchpad/**)"
     ],
     "deny": [],
     "ask": []
