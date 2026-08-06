@@ -1,3 +1,14 @@
+[B]Version 1.1.444[/B]
+- Merge pull request #286 from rpeters1430/fix/flaresolverr-v1-v2
+- Fix stateless FlareSolverr diagnostics
+- Support stateless FlareSolverr v1 and v2
+- Plan FlareSolverr v1 v2 compatibility
+- Document FlareSolverr v1 v2 compatibility
+- feat: add additional permissions for git and scratchpad directory
+- Plan site monitor accuracy repairs
+- Document site monitor accuracy repairs
+- fix: skip unreachable saawsedge stripchat CDN before wasting time probing it
+
 [B]Version 1.1.443[/B]
 - fix: skip unreachable saawsedge stripchat CDN before wasting time probing it
 - Merge pull request #278 from rpeters1430/claude/flaresolverr-kodi-loop-6v5asz
