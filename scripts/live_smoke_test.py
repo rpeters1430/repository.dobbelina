@@ -143,6 +143,7 @@ def install_kodi_stubs() -> None:
                 "sortxt": "0",
                 "fs_enable": "true",
                 "fs_host": _get_flaresolverr_url(),
+                "fs_allow_remote": "true",
             }
 
         def getAddonInfo(self, key):

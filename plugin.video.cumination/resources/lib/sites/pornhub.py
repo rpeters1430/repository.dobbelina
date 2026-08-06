@@ -518,6 +518,7 @@ def List(url):
                 title = utils.safe_get_attr(img_tag, "alt")
             if not title:
                 title = _fallback_title_from_url(video_url)
+            title = utils.cleantext(title)
 
             img = _extract_thumbnail(item, link)
 
@@ -540,7 +541,11 @@ def List(url):
                         seconds = int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
                     
                     if seconds > 0 and seconds < 60:
-                        utils.kodilog("pornhub: Skipping short video '{}' ({}s)".format(title, seconds))
+                        utils.kodilog(
+                            "pornhub: Skipping short video '{}' ({}s)".format(
+                                utils.cleantext(title), seconds
+                            )
+                        )
                         continue
                 except (ValueError, TypeError):
                     pass
@@ -558,7 +563,7 @@ def List(url):
 
         except Exception as e:
             # Log error but continue processing other videos
-            utils.kodilog("Error parsing video item: " + str(e))
+            utils.kodilog("Error parsing video item: {}".format(repr(e)))
             continue
 
     # Extract pagination (Next Page link)

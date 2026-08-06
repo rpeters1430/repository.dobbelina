@@ -1048,9 +1048,21 @@ def _start_manifest_proxy(selected_url, name):
                             pkey, retry_resp.status_code
                         )
                     )
+            resp_cookies = getattr(resp, "cookies", None)
+            resp_cookies_dict = (
+                resp_cookies.get_dict()
+                if hasattr(resp_cookies, "get_dict")
+                else (resp_cookies if isinstance(resp_cookies, dict) else {})
+            )
+            session_cookies = getattr(session, "cookies", None)
+            session_cookies_dict = (
+                session_cookies.get_dict()
+                if hasattr(session_cookies, "get_dict")
+                else (session_cookies if isinstance(session_cookies, dict) else {})
+            )
             utils.kodilog(
                 "Stripchat proxy: manifest cookies resp={0} session={1}".format(
-                    resp.cookies.get_dict(), session.cookies.get_dict()
+                    resp_cookies_dict, session_cookies_dict
                 )
             )
 

@@ -251,6 +251,7 @@ def _ensure_kodi_stubs():
             self.text = ""
             self.content = b""
             self.headers = {}
+            self.cookies = {}
 
         def json(self):
             return {}

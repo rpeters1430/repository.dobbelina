@@ -31,7 +31,7 @@ jobs:
       FLARESOLVERR_URL: http://localhost:8191/v1
     services:
       flaresolverr:
-        image: flaresolverr/flaresolverr:latest
+        image: ghcr.io/germondai/trawl:latest
         ports:
           - 8191:8191
         env:
@@ -45,11 +45,12 @@ jobs:
           cache-dependency-path: requirements-test.txt
       - name: Install dependencies
         run: pip install -r requirements-test.txt
-      - name: Wait for FlareSolverr
+      - name: Wait for FlareSolverr (Trawl)
         run: |
           for i in $(seq 1 30); do
-            if curl -s http://localhost:8191/health > /dev/null; then exit 0; fi
-            sleep 10
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8191/v1 2>/dev/null || echo 000)
+            if [ "$CODE" = "200" ] || [ "$CODE" = "400" ]; then exit 0; fi
+            sleep 5
           done
           exit 1
       - name: Run live smoke chunk
@@ -74,7 +75,7 @@ jobs:
       FLARESOLVERR_URL: http://localhost:8191/v1
     services:
       flaresolverr:
-        image: flaresolverr/flaresolverr:latest
+        image: ghcr.io/germondai/trawl:latest
         ports:
           - 8191:8191
         env:
@@ -88,11 +89,12 @@ jobs:
           cache-dependency-path: requirements-test.txt
       - name: Install dependencies
         run: pip install -r requirements-test.txt
-      - name: Wait for FlareSolverr
+      - name: Wait for FlareSolverr (Trawl)
         run: |
           for i in $(seq 1 30); do
-            if curl -s http://localhost:8191/health > /dev/null; then exit 0; fi
-            sleep 10
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8191/v1 2>/dev/null || echo 000)
+            if [ "$CODE" = "200" ] || [ "$CODE" = "400" ]; then exit 0; fi
+            sleep 5
           done
           exit 1
       - name: Run strict site monitor

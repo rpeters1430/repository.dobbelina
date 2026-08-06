@@ -37,9 +37,9 @@ site = AdultSite(
 
 @site.register(default_mode=True)
 def Main():
-    female = utils.addon.getSetting("chatfemale") == "true"
-    male = utils.addon.getSetting("chatmale") == "true"
-    trans = utils.addon.getSetting("chattrans") == "true"
+    female = utils.addon.getSetting("chatfemale") != "false"
+    male = utils.addon.getSetting("chatmale") != "false"
+    trans = utils.addon.getSetting("chattrans") != "false"
     site.add_dir(
         "[COLOR red]Refresh naked.com images[/COLOR]",
         "",

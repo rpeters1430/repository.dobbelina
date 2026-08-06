@@ -40,7 +40,7 @@ jobs:
     needs: lint
     services:
       flaresolverr:
-        image: flaresolverr/flaresolverr:latest
+        image: ghcr.io/germondai/trawl:latest
         ports:
           - 8191:8191
     strategy:
@@ -58,13 +58,13 @@ jobs:
           cache: 'pip'
           cache-dependency-path: requirements-test.txt
 
-      - name: Wait for FlareSolverr
+      - name: Wait for FlareSolverr (Trawl)
         run: |
-          echo "Waiting for FlareSolverr to be ready..."
+          echo "Waiting for FlareSolverr (Trawl) to be ready..."
           for i in $(seq 1 30); do
-            HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8191/health 2>/dev/null || echo 000)
-            if [ "$HEALTH_STATUS" = "200" ]; then
-              echo "FlareSolverr is ready (attempt $i)"
+            HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8191/v1 2>/dev/null || echo 000)
+            if [ "$HEALTH_STATUS" = "200" ] || [ "$HEALTH_STATUS" = "400" ]; then
+              echo "FlareSolverr (Trawl) is ready (attempt $i)"
               exit 0
             fi
             echo "  Attempt $i/30: health HTTP $HEALTH_STATUS — waiting 5s..."
