@@ -1,6 +1,5 @@
 """Tests for yespornvip site module."""
 
-import pytest
 from resources.lib.sites import yespornvip
 from unittest.mock import patch, MagicMock
 
@@ -110,7 +109,7 @@ def test_fetch_homepage():
         patch("resources.lib.sites.yespornvip.Request") as mock_req,
         patch("resources.lib.sites.yespornvip.urlopen") as mock_urlopen,
         patch("resources.lib.utils.cj") as mock_cj,
-        patch("resources.lib.utils.TRANSLATEPATH", return_value="/tmp/cookie") as mock_translate,
+        patch("resources.lib.utils.TRANSLATEPATH", return_value="/tmp/cookie"),
     ):
         yespornvip.fetch_homepage()
         assert mock_req.called

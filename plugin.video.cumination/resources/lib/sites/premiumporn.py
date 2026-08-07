@@ -320,8 +320,6 @@ def Play(url, name, download=None):
                     data = json.dumps(body)
                     details_data = utils.getHtml(details_url, embed_url, headers=hdr)
                     if details_data:
-                        details_json = json.loads(details_data)
-                        embed = details_json.get("embed_frame_url", "")
                         api_url = "https://rupertisdivingintoocean.com/api/videos/{}/embed/playback".format(video_id)
                         api_data = utils.getHtml(api_url,
                                                  referer="https://rupertisdivingintoocean.com/29f/{}".format(video_id),

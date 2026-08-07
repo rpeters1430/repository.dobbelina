@@ -4,7 +4,6 @@ import types
 
 def _load_default_module():
     import importlib.util
-    import sys
     from pathlib import Path
     
     # Use the absolute path to default.py to ensure we load the correct one

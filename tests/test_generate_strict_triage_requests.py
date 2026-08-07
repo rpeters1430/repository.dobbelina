@@ -1,4 +1,3 @@
-import pytest
 from scripts.generate_strict_triage_requests import generate_strict_triage_requests
 from scripts.site_health_types import HealthState
 

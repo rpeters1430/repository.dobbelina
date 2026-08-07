@@ -1,4 +1,3 @@
-import pytest
 from scripts.listing_validator import validate_listing
 
 

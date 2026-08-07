@@ -1,7 +1,6 @@
 import http.server
 import json
 import threading
-import urllib.parse
 import pytest
 from scripts.kodi_jsonrpc import KodiClient, KodiJSONRPCError
 

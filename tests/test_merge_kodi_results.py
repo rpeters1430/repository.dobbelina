@@ -1,4 +1,3 @@
-import pytest
 from scripts.merge_kodi_results import merge_kodi_result
 from scripts.site_health_types import HealthState
 

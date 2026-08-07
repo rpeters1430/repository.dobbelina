@@ -1,6 +1,5 @@
 """Tests for myporntape site module."""
 
-import pytest
 from resources.lib.sites import myporntape
 from resources.lib import utils
 from unittest.mock import patch, MagicMock
@@ -45,7 +44,7 @@ def test_list_parses_video_items_and_pagination():
     dirs = []
     
     with (
-        patch("resources.lib.utils.getHtml", return_value=html) as mock_gethtml,
+        patch("resources.lib.utils.getHtml", return_value=html),
         patch.object(myporntape.site, "add_download_link") as mock_add_dl,
         patch.object(myporntape.site, "add_dir") as mock_add_dir,
         patch("resources.lib.utils.eod") as mock_eod,
@@ -88,7 +87,7 @@ def test_categories_parses_category_items():
     dirs = []
     
     with (
-        patch("resources.lib.utils.getHtml", return_value=html) as mock_gethtml,
+        patch("resources.lib.utils.getHtml", return_value=html),
         patch.object(myporntape.site, "add_dir") as mock_add_dir,
         patch("resources.lib.utils.eod") as mock_eod,
     ):

@@ -1,4 +1,3 @@
-import pytest
 from scripts.site_health_types import HealthState
 from scripts.strict_site_monitor import evaluate_record
 

@@ -263,7 +263,7 @@ def Search(url, keyword=None):
         url = "{0}{1}".format(url, keyword.replace(" ", "+"))
         try:
             List(url)
-        except:
+        except Exception:
             return
             utils.notify('Drtuber', 'Search failed!')
 
