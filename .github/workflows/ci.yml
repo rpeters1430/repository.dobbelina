@@ -62,8 +62,8 @@ jobs:
         run: |
           echo "Waiting for FlareSolverr (Trawl) to be ready..."
           for i in $(seq 1 60); do
-            HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8191/v1 2>/dev/null || echo 000)
-            if [ "$HEALTH_STATUS" = "200" ] || [ "$HEALTH_STATUS" = "400" ]; then
+            HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8191/health 2>/dev/null || echo 000)
+            if [ "$HEALTH_STATUS" = "200" ]; then
               echo "FlareSolverr (Trawl) is ready (attempt $i)"
               exit 0
             fi
