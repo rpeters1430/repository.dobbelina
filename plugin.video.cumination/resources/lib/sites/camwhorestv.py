@@ -29,7 +29,7 @@ site = AdultSite(
     "camwhorestv",
     "[COLOR hotpink]CamWhores.tv[/COLOR]",
     "https://www.camwhores.tv/",
-    "camwhorestv.jpg",
+    "camwhorestv.png",
     "camwhorestv",
     category="Amateur & Social",
 )
