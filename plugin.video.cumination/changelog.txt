@@ -1,3 +1,13 @@
+[B]Version 1.1.446[/B]
+- Merge pull request #291 from rpeters1430/claude/github-actions-trawl-migration-9eq1k9
+- fix: pin ruff rule set and clear lint backlog blocking CI
+- fix: probe Trawl's /health endpoint for readiness, not /v1
+- Merge pull request #290 from rpeters1430/copilot/fix-github-action-error
+- fix: extend FlareSolverr startup wait in workflows
+- Initial plan
+- chore: update FlareSolverr service image to Trawl and adjust health checks fix: update chat settings logic to handle 'false' values correctly fix: clean video titles before logging and improve error message formatting feat: add cookie handling in Stripchat proxy logging feat: allow remote access in Kodi stubs installation
+- Merge pull request #286 from rpeters1430/fix/flaresolverr-v1-v2
+
 [B]Version 1.1.445[/B]
 - chore: update FlareSolverr service image to Trawl and adjust health checks fix: update chat settings logic to handle 'false' values correctly fix: clean video titles before logging and improve error message formatting feat: add cookie handling in Stripchat proxy logging feat: allow remote access in Kodi stubs installation
 - Merge pull request #286 from rpeters1430/fix/flaresolverr-v1-v2
