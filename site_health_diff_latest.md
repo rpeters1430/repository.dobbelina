@@ -5,22 +5,31 @@
 
 ## Snapshot
 
-- Current: `PASS 179` | `WARN 1` | `FAIL 2` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 181` | `WARN 0` | `FAIL 2` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 178` | `WARN 3` | `FAIL 1` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 179` | `WARN 1` | `FAIL 2` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
 - New failures: `0`
-- Resolved failures: `0`
-- Persistent failures: `2`
-- Site regressions: `2`
-- Step regressions: `1`
+- Resolved failures: `1`
+- Persistent failures: `1`
+- Site regressions: `3`
+- Step regressions: `3`
+
+## Resolved Failures
+
+- **pornez**: `FAIL -> PASS`
 
 ## Persistent Failures
 
-- **pornez**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-- **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 0.0%]
+- **pornhoarder**: `FAIL -> FAIL` (UNKNOWN) | main: URLError: <urlopen error [Errno -5] No address associated with hostname> ⚠️ [FLAKY: 0.0%]
 
 ## Step Regressions
 
-- **yrprno** `play`: `PASS -> FAIL` (NETWORK) | TimeoutError: The read operation timed out
+- **awmnet** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
+- **hentaidude** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
+- **ikisoda** `play`: `PASS -> FAIL` (CODE) | AttributeError: module 'kodi_six.xbmc' has no attribute 'Keyboard'
+
+## Improvements
+
+- **yrprno**: `WARN -> PASS`

@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-08-07T16:46:29.485093",
+    "sites_total": 184,
+    "pass": 178,
+    "warn": 3,
+    "fail": 1,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-08-06T07:07:00.432627",
     "sites_total": 184,
     "pass": 179,
@@ -8,71 +17,106 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-08-05T07:06:31.503244",
-    "sites_total": 184,
-    "pass": 181,
-    "warn": 0,
-    "fail": 2,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 0,
-    "persistent_failures": 2,
-    "improved_sites": 0,
-    "regressions": 2,
-    "step_regressions": 1
+    "resolved_failures": 1,
+    "persistent_failures": 1,
+    "improved_sites": 1,
+    "regressions": 3,
+    "step_regressions": 3
   },
   "new_failures": [],
-  "resolved_failures": [],
-  "persistent_failures": [
+  "resolved_failures": [
     {
       "site": "pornez",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "ENV",
-      "message": "main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
+      "current": "PASS"
+    }
+  ],
+  "persistent_failures": [
     {
       "site": "pornhoarder",
       "previous": "FAIL",
       "current": "FAIL",
-      "class": "BLOCKED",
-      "message": "main: HTTPError: HTTP Error 403: Forbidden",
+      "class": "UNKNOWN",
+      "message": "main: URLError: <urlopen error [Errno -5] No address associated with hostname>",
       "is_flaky": true,
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
       "site": "yrprno",
+      "previous": "WARN",
+      "current": "PASS"
+    }
+  ],
+  "step_regressions": [
+    {
+      "site": "awmnet",
+      "step": "search",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
+      "class": "BLOCKED",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hentaidude",
+      "step": "search",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
+      "class": "BLOCKED",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "ikisoda",
       "step": "play",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "TimeoutError: The read operation timed out",
-      "class": "NETWORK",
+      "message": "AttributeError: module 'kodi_six.xbmc' has no attribute 'Keyboard'",
+      "class": "CODE",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "spankbang",
+      "site": "awmnet",
       "previous": "PASS",
-      "current": "SKIP",
+      "current": "WARN",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "yrprno",
+      "site": "hentaidude",
       "previous": "PASS",
       "current": "WARN",
       "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "ikisoda",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "pornez",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "yrprno",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
