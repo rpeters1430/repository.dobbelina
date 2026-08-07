@@ -1,4 +1,3 @@
-import pytest
 from scripts.automate_triage import execute_triage_requests
 
 

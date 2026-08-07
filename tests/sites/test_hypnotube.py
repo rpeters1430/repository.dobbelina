@@ -6,8 +6,6 @@ from unittest.mock import patch
 
 def test_main():
     """Test that Main function displays initial directory links and lists videos."""
-    dirs = []
-    
     with (
         patch("resources.lib.utils.getHtml") as mock_gethtml,
         patch.object(hypnotube.site, "add_dir") as mock_add_dir,

@@ -1,7 +1,6 @@
 
 import pytest
 from resources.lib.sites import analdin
-from resources.lib import utils
 
 @pytest.mark.skip(reason="Live tests are blocked by network guard in conftest.py")
 def test_analdin_list_live():

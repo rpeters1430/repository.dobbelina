@@ -20,8 +20,8 @@ xbmcgui.WindowXMLDialog = getattr(xbmcgui, "WindowXMLDialog", type("WindowXMLDia
 xbmcgui.WindowDialog = getattr(xbmcgui, "WindowDialog", type("WindowDialog", (), {}))
 
 from resolveurl.plugins.doodstream import DoodStreamResolver  # noqa: E402
-from resources.lib import utils
-from unittest.mock import patch, MagicMock
+from resources.lib import utils  # noqa: E402
+from unittest.mock import patch  # noqa: E402
 
 
 def test_nowplay_root_embed_matches_doodstream_resolver():
@@ -48,7 +48,7 @@ def test_solve_doodstream_nowplay():
     
     with (
         patch("resources.lib.utils.getHtml", return_value=nowplay_html) as mock_gethtml,
-        patch("resources.lib.utils.get_cookies_string", return_value="foo=bar") as mock_cookies,
+        patch("resources.lib.utils.get_cookies_string", return_value="foo=bar"),
     ):
         result = player._solve_doodstream("https://nowplay.to/embirhfhr29bvz4")
         
@@ -81,8 +81,8 @@ def test_solve_doodstream_standard():
         return dood_html
         
     with (
-        patch("resources.lib.utils.getHtml", side_effect=fake_get_html) as mock_gethtml,
-        patch("resources.lib.utils.get_cookies_string", return_value="") as mock_cookies,
+        patch("resources.lib.utils.getHtml", side_effect=fake_get_html),
+        patch("resources.lib.utils.get_cookies_string", return_value=""),
     ):
         result = player._solve_doodstream("https://dood.to/d/12345")
         

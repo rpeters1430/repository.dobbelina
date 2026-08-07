@@ -132,7 +132,7 @@ def List1(url):
             "[COLOR gold]{title}[/COLOR]  "
             "[COLOR cyan]{count}[/COLOR]"
         ).format(title=title, count=count)
-        site.add_dir("{label}".format(label=label), href + '?items_per_page={perPage}'.format(perPage), 'List', site.img_cat)
+        site.add_dir("{label}".format(label=label), href + '?items_per_page={perPage}'.format(perPage=perPage), 'List', site.img_cat)
     np = re.compile(r'href="([^"]+)">Next<', re.DOTALL | re.IGNORECASE).search(html)
     if np:
         np = np.group(1)
@@ -165,7 +165,7 @@ def List2(url):
             "[COLOR hotpink] [{rating} rating][/COLOR]"
         ).format(title=title, count=count, views=views, rating=rating)
 
-        site.add_dir("{label}".format(label=label), href + '?items_per_page={perPage}'.format(perPage), 'List', quote(img, safe=':/'))
+        site.add_dir("{label}".format(label=label), href + '?items_per_page={perPage}'.format(perPage=perPage), 'List', quote(img, safe=':/'))
 
     np = re.search(
         r'<li\s+class="next".*?<a\s+href="([^"]+)"',
@@ -229,26 +229,6 @@ def Playvid(url, name, download=None):
         vp.progress.close()
         return
     vp.play_from_direct_link(videourl + '|referer=' + url)
-
-
-def Playvid(url, name, download=None):
-
-    vp = utils.VideoPlayer(name, download)
-    html = utils.getHtml(url)
-    
-    license = re.search(r"license_code:\s*'(\$\d+)",html, flags=re.DOTALL | re.IGNORECASE)
-    video_url = re.search(r"video_url:\s*'([^']+)",html, flags=re.DOTALL | re.IGNORECASE)
-    
-    if license and video_url:
-        lc = license.group(1)
-        vu = video_url.group(1)
-        
-        final_url = kvs_decode(vu, lc)
-   
-        final_url += '|User-Agent={0}&Referer={1}'.format(utils.USER_AGENT, url)
-        vp.play_from_direct_link(final_url)
-    else:
-        vp.play_from_site_link(url + ('/' if not url.endswith('/') else ''))
 
 
 @site.register()

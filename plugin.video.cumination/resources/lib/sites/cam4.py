@@ -256,7 +256,7 @@ def Playvid_Adaptive(url, name):
     html = utils._getHtml(url)
     try:
         cdn_list = json.loads(html).get('cdnURL')
-    except:
+    except Exception:
         utils.notify('Cam4', 'Cannot fetch CDN URL')
         return
 

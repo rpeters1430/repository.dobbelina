@@ -456,7 +456,7 @@ def Search(url, keyword=None):
         searchUrl = searchUrl.format(title)
         try:
             List(searchUrl)
-        except:
+        except Exception:
             utils.notify('CamWhoresBay', 'Search failed!')
 
 

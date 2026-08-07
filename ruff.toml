@@ -1,0 +1,6 @@
+# Pin the rule set explicitly so ruff upgrades can't silently change what
+# CI enforces. Ruff 0.16 expanded its unconfigured default from 59 rules
+# (E4, E7, E9, F) to 413 rules; this restores the set the codebase is
+# actually written against.
+[lint]
+select = ["E4", "E7", "E9", "F"]

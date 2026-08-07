@@ -1,4 +1,3 @@
-import pytest
 from scripts.site_health_types import (
     HealthState,
     ValidationResult,
