@@ -61,16 +61,16 @@ jobs:
       - name: Wait for FlareSolverr (Trawl)
         run: |
           echo "Waiting for FlareSolverr (Trawl) to be ready..."
-          for i in $(seq 1 30); do
+          for i in $(seq 1 60); do
             HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8191/v1 2>/dev/null || echo 000)
             if [ "$HEALTH_STATUS" = "200" ] || [ "$HEALTH_STATUS" = "400" ]; then
               echo "FlareSolverr (Trawl) is ready (attempt $i)"
               exit 0
             fi
-            echo "  Attempt $i/30: health HTTP $HEALTH_STATUS — waiting 5s..."
+            echo "  Attempt $i/60: health HTTP $HEALTH_STATUS — waiting 5s..."
             sleep 5
           done
-          echo "ERROR: FlareSolverr did not become ready in 150s"
+          echo "ERROR: FlareSolverr did not become ready in 300s"
           exit 1
 
       - name: Install dependencies
