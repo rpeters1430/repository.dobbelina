@@ -1,3 +1,12 @@
+[B]Version 1.1.449[/B]
+- feat: update site profiles and improve video extraction methods for better playback
+- feat: add LL-HLS blocking playlist reload for Stripchat segments
+- Refactor code structure for improved readability and maintainability
+- Merge pull request #291 from rpeters1430/claude/github-actions-trawl-migration-9eq1k9
+- fix: pin ruff rule set and clear lint backlog blocking CI
+- fix: probe Trawl's /health endpoint for readiness, not /v1
+- Merge pull request #290 from rpeters1430/copilot/fix-github-action-error
+
 [B]Version 1.1.448[/B]
 - feat: add LL-HLS blocking playlist reload for Stripchat segments
 - Refactor code structure for improved readability and maintainability
