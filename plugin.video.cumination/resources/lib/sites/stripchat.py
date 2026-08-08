@@ -858,6 +858,40 @@ def _extract_manifest_segment_urls(manifest_text):
     return urls
 
 
+def _compute_next_ll_hls_target(manifest_text):
+    """Return ``(msn, part)`` for the next not-yet-produced LL-HLS part.
+
+    Confirmed live (browser network capture): Stripchat's MOUFLON segment
+    and part URLs are not independently fetchable just because a plain,
+    non-blocking manifest GET lists them -- a real player always precedes
+    each segment fetch with an LL-HLS *blocking playlist reload*
+    (``_HLS_msn``/``_HLS_part`` query params), which makes the origin hold
+    the response until that exact part exists. Without that request first,
+    the listed part/segment URLs 404 (observed: still 404 after 13s of
+    polling). This computes the next msn/part to block on: one past the
+    last part already listed for the still-open (no closing EXTINF yet)
+    segment, or part 0 of the next segment if the last one is complete.
+    """
+    if not isinstance(manifest_text, str) or "#EXTM3U" not in manifest_text:
+        return None
+    seq_match = re.search(r"#EXT-X-MEDIA-SEQUENCE:(\d+)", manifest_text)
+    if not seq_match:
+        return None
+    media_sequence = int(seq_match.group(1))
+
+    complete_segments = 0
+    trailing_parts = 0
+    for line in manifest_text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("#EXTINF:"):
+            complete_segments += 1
+            trailing_parts = 0
+        elif stripped.startswith("#EXT-X-PART:"):
+            trailing_parts += 1
+
+    return media_sequence + complete_segments, trailing_parts
+
+
 def _proxy_segment_urls_in_manifest(manifest_text, port):
     """Rewrite media URLs to local proxy routes.
 
@@ -1079,6 +1113,45 @@ def _start_manifest_proxy(selected_url, name):
             if resp.status_code != 200:
                 return
 
+            # Plain manifest polling never makes the listed parts
+            # fetchable (see _compute_next_ll_hls_target docstring). Issue
+            # a genuine LL-HLS blocking-reload request for the next part
+            # so the CDN holds the connection open until it actually
+            # exists -- once that returns, the segment that just
+            # completed is guaranteed to be servable.
+            if not forwarded_params:
+                target = _compute_next_ll_hls_target(resp.text)
+                if target:
+                    next_msn, next_part = target
+                    blocking_parts = list(urlparse(upstream_url))
+                    blocking_query = parse_qs(blocking_parts[4], keep_blank_values=True)
+                    blocking_query["_HLS_msn"] = [str(next_msn)]
+                    blocking_query["_HLS_part"] = [str(next_part)]
+                    blocking_parts[4] = urlencode(blocking_query, doseq=True)
+                    blocking_url = urlunparse(blocking_parts)
+                    utils.kodilog(
+                        "Stripchat proxy: blocking reload GET msn={0} part={1}".format(
+                            next_msn, next_part
+                        )
+                    )
+                    try:
+                        blocking_resp = session.get(
+                            blocking_url, timeout=HTTP_TIMEOUT_MANIFEST
+                        )
+                        utils.kodilog(
+                            "Stripchat proxy: blocking reload status {}".format(
+                                blocking_resp.status_code
+                            )
+                        )
+                        if blocking_resp.status_code == 200:
+                            resp = blocking_resp
+                    except Exception as block_exc:
+                        utils.kodilog(
+                            "Stripchat proxy: blocking reload error: {}".format(
+                                str(block_exc)
+                            )
+                        )
+
             rewritten = _rewrite_mouflon_for_isa(
                 resp.text, base_url, prefer_full_segments=True
             )
@@ -1166,25 +1239,38 @@ def _start_manifest_proxy(selected_url, name):
                         )
 
                     seg_resp = _fetch_segment(safe_cdn_url)
-                    if seg_resp.status_code == 404 and seg_index is not None:
+                    # Proxy URLs carry the CDN URL itself (not a position
+                    # index) to avoid a stale index pointing at the wrong
+                    # segment after a refresh. So on 404 -- expected, since
+                    # these MOUFLON segments are only reachable for a brief
+                    # window around when the live edge lists them -- refresh
+                    # the manifest and retry with whatever segment is now
+                    # current. A single retry often still 404s (the newly
+                    # selected "freshest" segment can itself not be ready
+                    # yet), so retry a few times with a short backoff.
+                    retry_attempts = 0
+                    while seg_resp.status_code == 404 and retry_attempts < 3:
+                        retry_attempts += 1
                         seg_resp.close()
                         utils.kodilog(
-                            "Stripchat proxy: segment index {0} 404, refreshing manifest".format(
-                                seg_index
+                            "Stripchat proxy: segment 404 (attempt {0}), refreshing manifest: {1}".format(
+                                retry_attempts, safe_cdn_url[:140]
                             )
                         )
+                        time.sleep(0.3)
                         _fetch_and_rewrite()
                         with state_lock:
                             refreshed_segment_urls = list(state.get("segment_urls") or [])
-                        if 0 <= seg_index < len(refreshed_segment_urls):
-                            refreshed_url = _normalize_and_validate_proxy_segment_url(
-                                refreshed_segment_urls[seg_index]
+                        refreshed_url = (
+                            _normalize_and_validate_proxy_segment_url(
+                                refreshed_segment_urls[-1]
                             )
-                            if refreshed_url and refreshed_url != safe_cdn_url:
-                                safe_cdn_url = refreshed_url
-                                seg_resp = _fetch_segment(safe_cdn_url)
-                            else:
-                                seg_resp = _fetch_segment(safe_cdn_url)
+                            if refreshed_segment_urls
+                            else ""
+                        )
+                        if refreshed_url:
+                            safe_cdn_url = refreshed_url
+                        seg_resp = _fetch_segment(safe_cdn_url)
                     self.send_response(seg_resp.status_code)
                     self.send_header(
                         "Content-Type",
