@@ -182,7 +182,9 @@ def Search(url, keyword=None):
         from six.moves import urllib_parse
 
         title = urllib_parse.quote_plus(keyword)
-        searchUrl = searchUrl + title + "/"
+        if not searchUrl.rstrip("/").endswith("/s"):
+            searchUrl = site.url + "s/"
+        searchUrl = searchUrl.rstrip("/") + "/" + title + "/"
         List(searchUrl)
 
 

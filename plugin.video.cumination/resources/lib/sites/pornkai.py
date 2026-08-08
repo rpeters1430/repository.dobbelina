@@ -304,7 +304,13 @@ def Playvid(url, name, download=None):
     import re
     videohtml, _ = utils.get_html_with_cloudflare_retry(url, site.url)
     soup = utils.parse_html(videohtml)
-    iframe = soup.select_one('.if_cont iframe, #video_container iframe, #player_container iframe, iframe[src]')
+    iframes = soup.select('.if_cont iframe, #video2, #video_container iframe, #player_container iframe, iframe[src]')
+    iframe = None
+    for ifr in iframes:
+        src = ifr.get('src', '')
+        if src and not any(bad in src.lower() for bad in ['googletagmanager', 'google', 'facebook', 'analytics', 'doubleclick', 'amazon-adsystem']):
+            iframe = ifr
+            break
 
     vp = utils.VideoPlayer(name, download)
     if iframe:
@@ -315,7 +321,10 @@ def Playvid(url, name, download=None):
             if any(domain in vid_url for domain in ['xvideos.com', 'xh.video', 'spankbang.com', 'pornhub.com', 'redtube.com', 'txxx.com']):
                 vp.play_from_link_to_resolve(vid_url)
                 return
-            elif any(domain in vid_url for domain in ['videopornl.com', 'pornl.com', 'upornia.com']):
+            embed_html, _ = utils.get_html_with_cloudflare_retry(vid_url, url)
+            if embed_html and vp.play_from_html(embed_html, vid_url):
+                return
+            if any(domain in vid_url for domain in ['videopornl.com', 'pornl.com', 'upornia.com']):
                 match = re.search(r'embed/(\d+)', vid_url)
                 if match:
                     video_id = match.group(1)
@@ -337,12 +346,8 @@ def Playvid(url, name, download=None):
                                 return
                         except (ValueError, TypeError, KeyError, AttributeError) as e:
                             utils.kodilog(f"Pornkai upornia decode error: {e}")
-            else:
-                embed_html, _ = utils.get_html_with_cloudflare_retry(vid_url, url)
-                if embed_html and vp.play_from_html(embed_html, vid_url):
-                    return
-                vp.play_from_link_to_resolve(vid_url)
-                return
+            vp.play_from_link_to_resolve(vid_url)
+            return
 
     # Fallback to original method if iframe not found
     vp.play_from_html(videohtml, url)

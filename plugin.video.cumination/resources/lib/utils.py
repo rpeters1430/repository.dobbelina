@@ -1212,11 +1212,16 @@ def _getHtml(
                         )
                         kodilog(
                             "[CF-DIAG] TLS-context retry for {} also failed with HTTP {} "
-                            "cf-ray={}; giving up without trying FlareSolverr".format(
+                            "cf-ray={}".format(
                                 url, e.code, e.info().get("cf-ray", "n/a")
                             ),
                             xbmc.LOGWARNING,
                         )
+                        if addon.getSetting("fs_enable") == "true" or os.environ.get("FLARESOLVERR_URL"):
+                            try:
+                                return flaresolve(url, referer)
+                            except Exception as fs_err:
+                                kodilog("[CF-DIAG] FlareSolverr fallback error: {}".format(fs_err))
                         notify(i18n("oh_oh"), i18n("site_down"))
                         if "return" in error:
                             return ""
@@ -2790,7 +2795,7 @@ class VideoPlayer:
         name,
         download=False,
         regex=r"""(?:src|SRC|href|HREF)=\s*["']([^'"]+)""",
-        direct_regex="""<source.*?src=(?:"|')([^"']+)[^>]+>""",
+        direct_regex=r"""(?:<source|<video).*?src=(?:"|')([^"']+)[^>]*>""",
         IA_check="check",
     ):
         self.regex = regex

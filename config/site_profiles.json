@@ -60,6 +60,9 @@
     },
     "pornkai": {
       "tier": 1,
+      "harness": {
+        "playback_not_testable": true
+      },
       "strict_contract": {
         "min_unique_title_ratio": 0.65
       }

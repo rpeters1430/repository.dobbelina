@@ -23,7 +23,7 @@ from six.moves import urllib_parse
 site = AdultSite(
     "ask4porn",
     "[COLOR orange]Ask4Porn[/COLOR]",
-    "https://ask4porn.cc/",
+    "https://www.tap4porn.cc/",
     "ask4porn.png",
     "ask4porn",
     category="Video Tubes",
@@ -33,14 +33,13 @@ site = AdultSite(
 
 @site.register(default_mode=True)
 def Main(url):
-    site.add_dir("Newest", site.url + "?filter=latest", "List", "")
-    site.add_dir("Best", site.url + "?filter=popular", "List", "")
-    site.add_dir("Most Viewed", site.url + "?filter=most-viewed", "List", "")
-    site.add_dir("Longest", site.url + "?filter=longest", "List", "")
-    site.add_dir("Random", site.url + "?filter=random", "List", "")
-    site.add_dir("Studios", site.url + "categories/", "Studios", "")
-    site.add_dir("Categories", site.url + "tags/", "Categories", "")
-    site.add_dir("Girls", site.url + "actors-1/", "Girls", "")
+    site.add_dir("Newest", site.url + "videos", "List", "")
+    site.add_dir("Best", site.url + "videos?filter=popular", "List", "")
+    site.add_dir("Most Viewed", site.url + "videos?filter=most-viewed", "List", "")
+    site.add_dir("Longest", site.url + "videos?filter=longest", "List", "")
+    site.add_dir("Random", site.url + "videos?filter=random", "List", "")
+    site.add_dir("Studios", site.url + "studios", "Studios", "")
+    site.add_dir("Girls", site.url + "pornstars", "Girls", "")
     site.add_dir("Search", site.url, "Search", site.img_search)
     utils.eod()
 
@@ -51,14 +50,14 @@ def List(url):
     soup = utils.parse_html(html)
 
     selectors = {
-        "items": ["article.thumb-block", "div.thumb-block", ".thumb-block"],
-        "url": {"selector": "a", "attr": "href"},
-        "title": {"selector": ["span.title", "h2", ".title"], "text": True},
+        "items": ["a.video-card", ".video-card", "article.thumb-block", ".thumb-block"],
+        "url": {"selector": ":self", "attr": "href", "fallback_selectors": ["a"]},
+        "title": {"selector": [".video-card-title", "span.title", "h2", ".title"], "text": True},
         "thumbnail": {"selector": "img", "attr": "src", "fallback_attrs": ["data-src"]},
-        "duration": {"selector": "span.duration", "text": True},
+        "duration": {"selector": ["span.video-card-duration", "span.duration"], "text": True},
         "pagination": {
-            "selector": ["div.pagination a", ".pagination a"],
-            "text_matches": ["next"],
+            "selector": ["div.pagination a", ".pagination a", "a.page-link"],
+            "text_matches": ["next", ">", "»"],
             "attr": "href",
         },
     }
@@ -128,9 +127,31 @@ def Girls(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download, IA_check="skip")
-    html, _ = utils.get_html_with_cloudflare_retry(url)
     
-    # Try direct link parsing first (includes hornyhill iframe detection)
+    slug = url.rstrip("/").split("/")[-1]
+    if slug:
+        api_url = urllib_parse.urljoin(site.url, "api/extract?slug=" + slug)
+        api_json, _ = utils.get_html_with_cloudflare_retry(api_url, site.url)
+        if api_json:
+            import json
+            try:
+                soup = utils.parse_html(api_json)
+                text_data = soup.get_text().strip() if soup else api_json.strip()
+                data = json.loads(text_data)
+                if isinstance(data, dict) and data:
+                    for quality in ["1080p", "720p", "480p", "360p", "240p"]:
+                        if quality in data and data[quality]:
+                            stream_url = data[quality]
+                            vp.play_from_direct_link(stream_url)
+                            return
+                    first_val = next(iter(data.values()))
+                    if first_val and isinstance(first_val, str) and first_val.startswith("http"):
+                        vp.play_from_direct_link(first_val)
+                        return
+            except Exception as e:
+                utils.kodilog("Ask4Porn extract API error: {}".format(e))
+
+    html, _ = utils.get_html_with_cloudflare_retry(url)
     vp.play_from_html(html, url)
 
 
