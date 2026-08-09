@@ -488,13 +488,31 @@ def change():
     utils.textBox(heading, announce)
 
 
+@url_dispatcher.register()
+def send_test_report():
+    from resources.lib import telemetry
+    reporter = telemetry.get_reporter()
+    if not reporter.enabled():
+        dialog.ok("Diagnostic Telemetry", "Diagnostic reporting is disabled in settings.")
+        return
+
+    result = reporter.send_test_report()
+    if result.ok:
+        dialog.ok("Diagnostic Telemetry", "Test report accepted by GlitchTip!\nEvent ID: {}".format(result.event_id))
+    else:
+        dialog.ok("Diagnostic Telemetry", "Failed to send test report:\n{}".format(result.message))
+
+
 def main(argv=None):
     if argv is None:
         argv = sys.argv
     query = argv[2] if len(argv) > 2 else ""
     queries = utils.parse_query(query)
     mode = queries.get("mode", None)
-    url_dispatcher.dispatch(mode, queries)
+    from resources.lib import telemetry
+    reporter = telemetry.get_reporter()
+    with reporter.operation_scope(mode, queries):
+        url_dispatcher.dispatch(mode, queries)
 
 
 if __name__ == "__main__":
