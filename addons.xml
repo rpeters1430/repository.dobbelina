@@ -17,6 +17,9 @@
 <extension library="default.py" point="xbmc.python.pluginsource">
 <provides>video</provides>
 </extension>
+<extension library="service.py" point="xbmc.service">
+<provides>executable</provides>
+</extension>
 <extension point="xbmc.addon.metadata">
 <platform>all</platform>
 <license>GPL 2.0</license>
