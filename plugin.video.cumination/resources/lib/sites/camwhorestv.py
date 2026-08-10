@@ -77,29 +77,53 @@ def Main():
 
 @site.register()
 def List(url):
+    if isinstance(url, list):
+        url = "".join(url)
     listhtml = utils.getHtml(url, site.url)
-    items = re.findall(
-        r'<div class="item[^"]*".*?</div>', listhtml, re.DOTALL | re.IGNORECASE
-    )
-    matches = re.compile(
-        r'<div class="item[^"]*".+?href="([^"]+)".+?'  # link
-        r'title="([^"]+)".+?'  # title
-        r'data-original="([^"]+)".+?'  # thumbnail
-        r'duration">([^<]+)<.+?'  # duration
-        r'views">([^<]+)<',  # views
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
+    if isinstance(listhtml, list):
+        listhtml = "".join(listhtml)
 
-    for block, (videopage, name, img, duration, views) in zip(items, matches):
-        is_private = 'class="ico-private"' in block
-
+    soup = utils.parse_html(listhtml)
+    
+    for block in soup.select('div[class*="item"]'):
+        anchor = block.select_one('a')
+        if not anchor:
+            continue
+            
+        videopage = anchor.get('href')
+        if not videopage:
+            continue
+            
+        name = anchor.get('title')
+        if not name:
+            img_tag = anchor.select_one('img')
+            name = img_tag.get('alt') if img_tag else ""
+        if not name:
+            continue
+            
+        img_tag = anchor.select_one('img')
+        img = img_tag.get('data-original') if img_tag else ""
+        if not img and img_tag:
+            img = img_tag.get('src') or ""
+            
+        duration_tag = anchor.select_one('.duration')
+        duration = duration_tag.get_text().strip() if duration_tag else ""
+        
+        views_tag = block.select_one('.views')
+        views = views_tag.get_text().strip() if views_tag else ""
+        
+        is_private = anchor.select_one('.ico-private') is not None or block.select_one('.ico-private') is not None
+        
         title = utils.cleantext(name)
         label = "[COLOR blue][PV] [/COLOR]" if is_private else ""
-        label += f"{title} [COLOR yellow][{views} views][/COLOR]"
-
-        parts = img.rstrip("/").split("/")
-        img_preview = "/".join(parts[:-2]) + "/preview.jpg"
-
+        label += f"{title} [COLOR yellow][{views}][/COLOR]"
+        
+        if img:
+            parts = img.rstrip("/").split("/")
+            img_preview = "/".join(parts[:-2]) + "/preview.jpg"
+        else:
+            img_preview = site.image
+            
         site.add_download_link(
             label, videopage, "Playvid", img_preview, label, duration=duration
         )
@@ -117,6 +141,8 @@ def List(url):
 
 def _add_async_next_page(url, listhtml):
     """Follow the site's AJAX-driven pagination on categories/models/search pages."""
+    if isinstance(listhtml, list):
+        listhtml = "".join(listhtml)
     npnr_match = re.search(
         r'<li class="next">.*?[from_albums|from]:(\d+)">Next', listhtml, re.DOTALL
     )
@@ -152,6 +178,10 @@ def _add_async_next_page(url, listhtml):
 
 @site.register()
 def Search(url, keyword=None):
+    if isinstance(url, list):
+        url = "".join(url)
+    if isinstance(keyword, list):
+        keyword = "".join(keyword)
     if not keyword:
         site.search_dir(url, "Search")
     else:
@@ -161,8 +191,14 @@ def Search(url, keyword=None):
 
 @site.register()
 def Playvid(url, name, download=None):
+    if isinstance(url, list):
+        url = "".join(url)
+    if isinstance(name, list):
+        name = "".join(name)
     vp = utils.VideoPlayer(name, download)
     html = utils.getHtml(url, site.url)
+    if isinstance(html, list):
+        html = "".join(html)
     if 'class="message"' in html:
         message = re.search(r'span class="message">\s(.+) Only', html)
         if message:
@@ -173,15 +209,27 @@ def Playvid(url, name, download=None):
 
 @site.register()
 def Categories(url):
+    if isinstance(url, list):
+        url = "".join(url)
     listhtml = utils.getHtml(url, site.url)
-    matches = re.compile(
-        r'<a\s+class="item"\s+href="([^"]+)"'
-        r'\s+title="([^"]+)".+?'
-        r'<img[^>]+src="([^"]+)".+?'
-        r'<div class="videos">([^<]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for cat_url, cat_title, cat_img, cat_count in matches:
+    if isinstance(listhtml, list):
+        listhtml = "".join(listhtml)
+        
+    soup = utils.parse_html(listhtml)
+    
+    for anchor in soup.select('a.item'):
+        cat_url = anchor.get('href')
+        cat_title = anchor.get('title')
+        
+        img_tag = anchor.select_one('img')
+        cat_img = img_tag.get('src') if img_tag else ""
+        
+        count_tag = anchor.select_one('.videos')
+        cat_count = count_tag.get_text().strip() if count_tag else ""
+        
+        if not (cat_url and cat_title):
+            continue
+            
         site.add_dir(
             f"[COLOR hotpink]{cat_title} [/COLOR][COLOR yellow][{cat_count}][/COLOR]",
             cat_url,
@@ -193,18 +241,34 @@ def Categories(url):
 
 @site.register()
 def Models(url):
+    if isinstance(url, list):
+        url = "".join(url)
     listhtml = utils.getHtml(url, site.url)
-    matches = re.compile(
-        r'a class="item.+?href="([^"]+)".+?title="([^"]+)".+?src="([^"]+)".+?videos">([^>]+)<',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    for cat_url, cat_title, cat_img, cat_count in matches:
+    if isinstance(listhtml, list):
+        listhtml = "".join(listhtml)
+        
+    soup = utils.parse_html(listhtml)
+    
+    for anchor in soup.select('a[class*="item"]'):
+        cat_url = anchor.get('href')
+        cat_title = anchor.get('title')
+        
+        img_tag = anchor.select_one('img')
+        cat_img = img_tag.get('src') if img_tag else ""
+        
+        count_tag = anchor.select_one('.videos')
+        cat_count = count_tag.get_text().strip() if count_tag else ""
+        
+        if not (cat_url and cat_title):
+            continue
+            
         site.add_dir(
             f"{cat_title} [COLOR yellow][{cat_count}][/COLOR]",
             cat_url,
             "List",
             cat_img,
         )
+        
     re_npurl = r'class="next"><a href="([^"]+)"'
     re_npnr = r'class="next"><a href="[^"]*/(\d+)/"'
     re_lpnr = r'class="last"><a href="[^"]*/(\d+)/"'
@@ -222,6 +286,8 @@ def Models(url):
 
 @site.register()
 def GotoPage(url, np, lp=None, list_mode="List"):
+    if isinstance(url, list):
+        url = "".join(url)
     dialog = xbmcgui.Dialog()
     pg = dialog.numeric(0, "Enter Page number")
     if pg:
