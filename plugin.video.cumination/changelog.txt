@@ -1,3 +1,13 @@
+[B]Version 1.1.450[/B]
+- Implement code changes to enhance functionality and improve performance
+- feat: improve telemetry reporting to GlitchTip with standard Sentry exception schemas and playback/HTTP/resolve integrations
+- refactor: migrate camwhorestv.py scraper to BeautifulSoup4 and fix list TypeError
+- feat: implement opt-in diagnostic telemetry system for GlitchTip
+- Add diagnostic telemetry implementation plan
+- Add diagnostic telemetry design
+- feat: update site profiles and improve video extraction methods for better playback
+- feat: add LL-HLS blocking playlist reload for Stripchat segments
+
 [B]Version 1.1.449[/B]
 - feat: update site profiles and improve video extraction methods for better playback
 - feat: add LL-HLS blocking playlist reload for Stripchat segments
