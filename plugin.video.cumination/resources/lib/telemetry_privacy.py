@@ -119,8 +119,24 @@ def safe_exception(exc, addon_root=""):
     if exc.__traceback__:
         for f in traceback.extract_tb(exc.__traceback__):
             filename = sanitize_text(f.filename, addon_root=addon_root)
-            frames.append({"filename": filename, "function": f.name, "lineno": f.lineno})
-    return {"type": exc_type, "value": message, "frames": frames[-20:]}
+            in_app = filename.startswith("<addon>") or "plugin.video.cumination" in filename or "tests" in filename
+            frames.append({
+                "filename": filename,
+                "function": f.name,
+                "lineno": f.lineno,
+                "in_app": in_app
+            })
+    return {
+        "values": [
+            {
+                "type": exc_type,
+                "value": message,
+                "stacktrace": {
+                    "frames": frames[-20:]
+                }
+            }
+        ]
+    }
 
 
 def sanitize_event(event, addon_root=""):
@@ -149,24 +165,36 @@ def sanitize_event(event, addon_root=""):
                     sub_ctx = {}
                     for s_k, s_v in c_v.items():
                         if not SECRET_KEY_PATTERN.match(s_k):
-                            sub_ctx[s_k] = sanitize_text(s_v, addon_root=addon_root)
+                            if isinstance(s_v, (int, float, bool)):
+                                sub_ctx[s_k] = s_v
+                            else:
+                                sub_ctx[s_k] = sanitize_text(s_v, addon_root=addon_root)
                     contexts[c_k] = sub_ctx
             sanitized[key] = contexts
         elif key == "exception" and isinstance(val, dict):
-            if "type" in val:
-                sanitized[key] = {
-                    "type": val.get("type", ""),
-                    "value": sanitize_text(val.get("value", ""), addon_root=addon_root),
-                    "frames": [
-                        {
-                            "filename": sanitize_text(fr.get("filename", ""), addon_root=addon_root),
-                            "function": str(fr.get("function", "")),
-                            "lineno": fr.get("lineno", 0),
-                        }
-                        for fr in val.get("frames", [])
-                        if isinstance(fr, dict)
-                    ][-20:],
-                }
+            values = []
+            for item in val.get("values", []):
+                if isinstance(item, dict):
+                    st = item.get("stacktrace") or {}
+                    frames = []
+                    for fr in st.get("frames", []):
+                        if isinstance(fr, dict):
+                            filename = sanitize_text(fr.get("filename", ""), addon_root=addon_root)
+                            in_app = fr.get("in_app")
+                            if in_app is None:
+                                in_app = filename.startswith("<addon>") or "plugin.video.cumination" in filename
+                            frames.append({
+                                "filename": filename,
+                                "function": str(fr.get("function", "")),
+                                "lineno": int(fr.get("lineno", 0)),
+                                "in_app": bool(in_app)
+                            })
+                    values.append({
+                        "type": str(item.get("type", "")),
+                        "value": sanitize_text(item.get("value", ""), addon_root=addon_root),
+                        "stacktrace": {"frames": frames[-20:]}
+                    })
+            sanitized[key] = {"values": values}
         elif key == "breadcrumbs" and isinstance(val, list):
             crumbs = []
             for item in val[:MAX_ITEMS]:

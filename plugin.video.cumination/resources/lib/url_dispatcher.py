@@ -142,6 +142,11 @@ class URL_Dispatcher(object):
             bypass_list = filter_listing.split(";")
             if any(x.lower() in name.lower() for x in bypass_list):
                 return
+        try:
+            from resources.lib import telemetry
+            telemetry.get_reporter().note_listing_item()
+        except Exception:
+            pass
         addDownLink(
             name,
             url,

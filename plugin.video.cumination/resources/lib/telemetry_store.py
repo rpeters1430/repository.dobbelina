@@ -163,6 +163,31 @@ class TelemetryStore:
         val = int(h[:8], 16) % 100
         return val < 10
 
+    def save_playback_attempt(self, attempt):
+        """Save playback attempt context atomically."""
+        self._atomic_write_json(os.path.join(self.telemetry_dir, "playback_attempt.json"), attempt)
+
+    def load_playback_attempt(self):
+        """Load and return playback attempt if valid and not expired (TTL 120s)."""
+        filepath = os.path.join(self.telemetry_dir, "playback_attempt.json")
+        attempt = self._read_json(filepath, None)
+        if not attempt:
+            return None
+        created_at = attempt.get("created_at", 0.0)
+        if self.now() - created_at > 120.0:
+            self.clear_playback_attempt()
+            return None
+        return attempt
+
+    def clear_playback_attempt(self):
+        """Remove active playback attempt context file."""
+        filepath = os.path.join(self.telemetry_dir, "playback_attempt.json")
+        if os.path.exists(filepath):
+            try:
+                os.remove(filepath)
+            except Exception:
+                pass
+
     def clear(self):
         """Completely remove all telemetry directory state."""
         if os.path.exists(self.telemetry_dir):

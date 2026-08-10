@@ -27,6 +27,8 @@ def test_exception_has_no_locals_or_raw_url(tmp_path):
         raise RuntimeError("https://host/path?token=abc")
     except RuntimeError as exc:
         result = privacy.safe_exception(exc, str(tmp_path))
-    assert result["type"] == "RuntimeError"
+    assert result["values"][0]["type"] == "RuntimeError"
     assert "must-not-leak" not in repr(result)
-    assert all("locals" not in frame for frame in result["frames"])
+    st = result["values"][0]["stacktrace"]
+    assert all("locals" not in frame for frame in st["frames"])
+    assert any(frame.get("in_app") for frame in st["frames"])

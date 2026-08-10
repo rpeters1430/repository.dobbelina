@@ -1002,6 +1002,13 @@ def playvid(videourl, name, download=None, subtitle=None, IA_check="check"):
 
         listitem.setProperty("script.trakt.exclude", "1")
 
+        try:
+            from resources.lib import telemetry
+            inputstream_addon = listitem.getProperty("inputstream")
+            telemetry.get_reporter().start_playback_attempt(videourl, inputstream_addon=inputstream_addon)
+        except Exception:
+            pass
+
         if int(sys.argv[1]) == -1:
             xbmc.Player().play(videourl, listitem)
         else:
@@ -1142,6 +1149,13 @@ def _getHtml(
     except Exception as e:
         kodilog("[CF-DIAG] cookie diagnostic check failed: {}".format(e), xbmc.LOGDEBUG)
 
+    try:
+        from resources.lib import telemetry
+        reporter = telemetry.get_reporter()
+    except Exception:
+        reporter = None
+    start_time = time.time()
+
     response = None
     try:
         if ignore_ssl and PY3:
@@ -1158,6 +1172,12 @@ def _getHtml(
             response = urlopen(req, timeout=timeout)
     except urllib_error.HTTPError as e:
         kodilog("getHtml HTTPError: {}".format(str(e)), xbmc.LOGDEBUG)
+        try:
+            if reporter:
+                elapsed_ms = int((time.time() - start_time) * 1000)
+                reporter.http_outcome(url, "http_error", status=e.code, elapsed_ms=elapsed_ms)
+        except Exception:
+            pass
         if error is True:
             response = e
         else:
@@ -1281,6 +1301,19 @@ def _getHtml(
                 return ""
     except urllib_error.URLError as e:
         kodilog("getHtml URLError: {}".format(str(e)), xbmc.LOGDEBUG)
+        try:
+            if reporter:
+                elapsed_ms = int((time.time() - start_time) * 1000)
+                msg = str(e.reason).lower()
+                if "timed out" in msg or "timeout" in msg:
+                    classification = "timeout"
+                elif "name not resolved" in msg or "gai_error" in msg:
+                    classification = "dns_error"
+                else:
+                    classification = "connection_error"
+                reporter.http_outcome(url, classification, status=0, elapsed_ms=elapsed_ms)
+        except Exception:
+            pass
         if "return" in error:
             notify(i18n("oh_oh"), i18n("slow_site"))
             xbmc.log(str(e), xbmc.LOGDEBUG)
@@ -1289,6 +1322,17 @@ def _getHtml(
             raise
     except Exception as e:
         kodilog("getHtml unexpected error: {}".format(str(e)), xbmc.LOGDEBUG)
+        try:
+            if reporter:
+                elapsed_ms = int((time.time() - start_time) * 1000)
+                msg = str(e).lower()
+                if "ssl" in msg or "handshake" in msg or "tls" in msg:
+                    classification = "tls_error"
+                else:
+                    classification = "connection_error"
+                reporter.http_outcome(url, classification, status=0, elapsed_ms=elapsed_ms)
+        except Exception:
+            pass
         if "SSL23_GET_SERVER_HELLO" in str(e):
             notify(i18n("oh_oh"), i18n("python_old"))
             return ""
@@ -2978,6 +3022,15 @@ class VideoPlayer:
             ]
         )
         if not sources:
+            try:
+                from resources.lib import telemetry
+                telemetry.get_reporter().resolve_failure(
+                    resolver_name="resolveurl",
+                    classification="no_sources",
+                    error_msg="No supported sources found in link list"
+                )
+            except Exception:
+                pass
             notify(i18n("oh_oh"), i18n("not_found"))
             return
         self._select_source(sources)
@@ -3009,9 +3062,27 @@ class VideoPlayer:
                 link = self._solve_doodstream(source._url)
             else:
                 link = source.resolve()
-        except self.resolveurl.resolver.ResolverError:
+        except self.resolveurl.resolver.ResolverError as e:
             link = False  # ResolveURL returns False in some cases when resolving fails
+            try:
+                from resources.lib import telemetry
+                telemetry.get_reporter().resolve_failure(
+                    resolver_name="resolveurl",
+                    classification="resolver_exception",
+                    error_msg=str(e)
+                )
+            except Exception:
+                pass
         if not link:
+            try:
+                from resources.lib import telemetry
+                telemetry.get_reporter().resolve_failure(
+                    resolver_name="resolveurl",
+                    classification="no_sources",
+                    error_msg="Failed to resolve link: " + str(source._url)
+                )
+            except Exception:
+                pass
             notify(i18n("rslv_fail"), "{0} {1}".format(source.title, i18n("not_rslv")))
         else:
             playvid(link, self.name, self.download, IA_check=self.IA_check)
