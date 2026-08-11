@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-08-11T06:29:10.852450",
+    "sites_total": 184,
+    "pass": 180,
+    "warn": 1,
+    "fail": 2,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-08-10T06:39:33.967229",
     "sites_total": 184,
     "pass": 176,
@@ -8,51 +17,34 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-08-09T06:23:52.044904",
-    "sites_total": 184,
-    "pass": 178,
-    "warn": 2,
-    "fail": 2,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
-    "new_failures": 2,
-    "resolved_failures": 0,
+    "new_failures": 0,
+    "resolved_failures": 2,
     "persistent_failures": 2,
-    "improved_sites": 0,
-    "regressions": 2,
-    "step_regressions": 2
+    "improved_sites": 2,
+    "regressions": 0,
+    "step_regressions": 0
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [
     {
       "site": "fpoxxx",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "previous": "FAIL",
+      "current": "PASS"
     },
-    {
-      "site": "hypnotube",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
-      "is_flaky": false,
-      "stability_score": 1.0
-    }
-  ],
-  "resolved_failures": [],
-  "persistent_failures": [
     {
       "site": "myporntape",
       "previous": "FAIL",
+      "current": "PASS"
+    }
+  ],
+  "persistent_failures": [
+    {
+      "site": "hypnotube",
+      "previous": "FAIL",
       "current": "FAIL",
-      "class": "ENV",
-      "message": "main: RuntimeError: FlareSolverr error for https://myporntape.com/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PARSER",
+      "message": "list: List returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -66,42 +58,46 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
-      "site": "fpoxxx",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "site": "awmnet",
+      "previous": "WARN",
+      "current": "PASS"
     },
     {
-      "site": "hypnotube",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "site": "spankbang",
+      "previous": "SKIP",
+      "current": "PASS"
     }
   ],
+  "step_regressions": [],
   "deltas": [
     {
-      "site": "fpoxxx",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "site": "awmnet",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "hypnotube",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "site": "fpoxxx",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "myporntape",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "spankbang",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
