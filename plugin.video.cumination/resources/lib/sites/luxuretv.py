@@ -38,7 +38,7 @@ def Main():
     )
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]",
-        site.url + "searchgate/videos/",
+        site.url + "searchgate.php?mode=search&type=videos&q=",
         "Search",
         site.img_search,
     )
@@ -163,7 +163,9 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        url = "{0}{1}/".format(url, keyword.replace(" ", "-"))
+        from six.moves import urllib_parse
+
+        url = url + urllib_parse.quote_plus(keyword)
         List(url)
 
 

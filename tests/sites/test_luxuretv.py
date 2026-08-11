@@ -147,7 +147,7 @@ def test_search_without_keyword_shows_search_dialog(monkeypatch):
 
     monkeypatch.setattr(luxuretv.site, "search_dir", fake_search_dir)
 
-    luxuretv.Search("https://luxuretv.com/searchgate/videos/")
+    luxuretv.Search("https://luxuretv.com/searchgate.php?mode=search&type=videos&q=")
 
     assert len(search_called) == 1
     assert search_called[0][1] == "Search"
@@ -162,10 +162,13 @@ def test_search_with_keyword_calls_list(monkeypatch):
 
     monkeypatch.setattr(luxuretv, "List", fake_list)
 
-    luxuretv.Search("https://luxuretv.com/searchgate/videos/", keyword="test query")
+    luxuretv.Search(
+        "https://luxuretv.com/searchgate.php?mode=search&type=videos&q=",
+        keyword="test query",
+    )
 
     assert len(list_calls) == 1
-    assert "test-query" in list_calls[0]
+    assert "test+query" in list_calls[0]
 
 
 def test_list_handles_empty_results(monkeypatch):
