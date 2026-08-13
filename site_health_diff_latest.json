@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-08-13T06:41:29.215531",
+    "sites_total": 184,
+    "pass": 179,
+    "warn": 2,
+    "fail": 2,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-08-12T06:39:21.424125",
     "sites_total": 184,
     "pass": 177,
@@ -8,44 +17,27 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-08-11T06:29:10.852450",
-    "sites_total": 184,
-    "pass": 180,
-    "warn": 1,
-    "fail": 2,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
-    "new_failures": 2,
-    "resolved_failures": 0,
+    "new_failures": 0,
+    "resolved_failures": 2,
     "persistent_failures": 2,
-    "improved_sites": 0,
-    "regressions": 3,
-    "step_regressions": 3
+    "improved_sites": 1,
+    "regressions": 1,
+    "step_regressions": 2
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "list: List URL unavailable in harness (HTTP 503)",
-      "is_flaky": false,
-      "stability_score": 0.9
+      "previous": "FAIL",
+      "current": "PASS"
     },
     {
       "site": "pornez",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "ENV",
-      "message": "main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "previous": "FAIL",
+      "current": "PASS"
     }
   ],
-  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "hypnotube",
@@ -66,49 +58,52 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [],
+  "improved_sites": [
+    {
+      "site": "awmnet",
+      "previous": "WARN",
+      "current": "PASS"
+    }
+  ],
   "step_regressions": [
     {
-      "site": "analdin",
-      "step": "list",
+      "site": "cumlouder",
+      "step": "play",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "List URL unavailable in harness (HTTP 503)",
-      "class": "NETWORK",
+      "message": "Play function executed but no playback URL captured (no notifications)",
+      "class": "PLAYBACK",
       "is_flaky": false,
       "stability_score": 0.9
     },
     {
-      "site": "awmnet",
+      "site": "pornhoarder",
       "step": "search",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
+      "message": "HTTPError: HTTP Error 403: Forbidden",
       "class": "BLOCKED",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "pornez",
-      "step": "main",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "is_flaky": true,
+      "stability_score": 0.0
     }
   ],
   "deltas": [
     {
       "site": "analdin",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "awmnet",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "cumlouder",
       "previous": "PASS",
       "current": "WARN",
       "kind": "regression",
@@ -116,9 +111,9 @@
     },
     {
       "site": "pornez",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]

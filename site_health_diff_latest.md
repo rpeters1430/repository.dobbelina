@@ -5,21 +5,21 @@
 
 ## Snapshot
 
-- Current: `PASS 177` | `WARN 2` | `FAIL 4` | `ERROR 0` | `SKIP 1`
-- Previous: `PASS 180` | `WARN 1` | `FAIL 2` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 179` | `WARN 2` | `FAIL 2` | `ERROR 0` | `SKIP 1`
+- Previous: `PASS 177` | `WARN 2` | `FAIL 4` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
-- New failures: `2`
-- Resolved failures: `0`
+- New failures: `0`
+- Resolved failures: `2`
 - Persistent failures: `2`
-- Site regressions: `3`
-- Step regressions: `3`
+- Site regressions: `1`
+- Step regressions: `2`
 
-## New Failures
+## Resolved Failures
 
-- **analdin**: `PASS -> FAIL` (NETWORK) | list: List URL unavailable in harness (HTTP 503)
-- **pornez**: `PASS -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **analdin**: `FAIL -> PASS`
+- **pornez**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -28,6 +28,9 @@
 
 ## Step Regressions
 
-- **analdin** `list`: `PASS -> FAIL` (NETWORK) | List URL unavailable in harness (HTTP 503)
-- **awmnet** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
-- **pornez** `main`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **cumlouder** `play`: `PASS -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
+- **pornhoarder** `search`: `SKIP -> FAIL` (BLOCKED) | HTTPError: HTTP Error 403: Forbidden
+
+## Improvements
+
+- **awmnet**: `WARN -> PASS`
