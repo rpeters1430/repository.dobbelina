@@ -1,3 +1,13 @@
+[B]Version 1.1.452[/B]
+- Add script to update virtual environment dependencies
+- fix: correct luxuretv search URL to stop playback failures
+- Implement code changes to enhance functionality and improve performance
+- feat: improve telemetry reporting to GlitchTip with standard Sentry exception schemas and playback/HTTP/resolve integrations
+- refactor: migrate camwhorestv.py scraper to BeautifulSoup4 and fix list TypeError
+- feat: implement opt-in diagnostic telemetry system for GlitchTip
+- Add diagnostic telemetry implementation plan
+- Add diagnostic telemetry design
+
 [B]Version 1.1.451[/B]
 - fix: correct luxuretv search URL to stop playback failures
 - Implement code changes to enhance functionality and improve performance
