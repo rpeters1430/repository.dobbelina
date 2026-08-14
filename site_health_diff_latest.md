@@ -5,21 +5,16 @@
 
 ## Snapshot
 
-- Current: `PASS 179` | `WARN 2` | `FAIL 2` | `ERROR 0` | `SKIP 1`
-- Previous: `PASS 177` | `WARN 2` | `FAIL 4` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 178` | `WARN 3` | `FAIL 2` | `ERROR 0` | `SKIP 1`
+- Previous: `PASS 179` | `WARN 2` | `FAIL 2` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
 - New failures: `0`
-- Resolved failures: `2`
+- Resolved failures: `0`
 - Persistent failures: `2`
-- Site regressions: `1`
+- Site regressions: `2`
 - Step regressions: `2`
-
-## Resolved Failures
-
-- **analdin**: `FAIL -> PASS`
-- **pornez**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -28,9 +23,9 @@
 
 ## Step Regressions
 
-- **cumlouder** `play`: `PASS -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
-- **pornhoarder** `search`: `SKIP -> FAIL` (BLOCKED) | HTTPError: HTTP Error 403: Forbidden
+- **awmnet** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
+- **pornhd3x** `play`: `PASS -> FAIL` (NETWORK) | Timed out after 35s
 
 ## Improvements
 
-- **awmnet**: `WARN -> PASS`
+- **cumlouder**: `WARN -> PASS`
