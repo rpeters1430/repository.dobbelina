@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-06-17
-**Last Sync**: 2026-06-17 - Reviewed latest upstream commits, imported ikisoda with the upstream player quality fix, and recorded redundant BS4-covered fixes.
+**Last Updated**: 2026-08-13
+**Last Sync**: 2026-08-13 - Expanded chaturbate's Record search-engine list (CamWhores.tv/CamWhoresBay/CamGirlFap/DrTuber) and fixed camwhorestv search keyword encoding; documented stripchat model-info toggle as not applicable.
 
 ---
 
@@ -18,6 +18,17 @@
 ---
 
 ## Sync Sessions
+
+### 2026-08-13 Porting Session
+Reviewed the 6 pending commits surfaced by `sync_manager.py --report`. Ported the one applicable feature gap and a small URL-encoding fix; documented the rest as not applicable.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `618f068f` (partial, #1926/#1927/#1799/#1140) | archivebate, chaturbate - Record search fan-out | `manual` | 2026-08-13 | Upstream expanded chaturbate's `Record()` "search for recordings" dialog from 2 sites (Cloudbate, iXXX) to 7, plus a `GlobalSearch` cross-site aggregator. Ported only the site-list expansion, adding CamWhores.tv, CamWhoresBay, CamGirlFap, and DrTuber - all sites already present in this fork with working `Search()` modes. Matched each engine's URL template to its own `Search()` calling convention: CamWhoresBay's `Search` does its own `url.format(title)` substitution so its template keeps upstream's `{0}` placeholder; CamWhores.tv/CamGirlFap/DrTuber's `Search` builds the URL itself from `keyword`, so their templates are bare base paths (no `{0}`) to avoid double-appending the model id. Skipped `GlobalSearch` (500+ line regex-scraping aggregator against 7 differently-structured sites) and the new `archivebate.py` (upstream's is a from-scratch pre-BS4 API scraper; this fork already has a working BS4 `archivebate.py` with a different `List()`/`Playvid()` shape - no `Search()` to fan out to anyway, so it wasn't added to the Record list). |
+| `736f5558` (#1929) | camwhorestv - pagination crash guards + search encoding | `manual` | 2026-08-13 | Our fork's `camwhorestv.py` is already BS4-migrated with guarded async-pagination regex matching (`if not (npnr_match and lpnr_match and np_match): return`), so upstream's crash fix (unguarded `.group(1)` on a failed match) doesn't apply. Ported the one still-applicable piece: `Search()` now URL-encodes the keyword (`urllib_parse.quote(..., safe="-")`) instead of raw string concatenation, matching upstream's fix for special characters breaking the search path. |
+| `b541d614` | Stripchat - Show/Hide model info toggle | not applicable | 2026-08-13 | Patches upstream's legacy JSON-API `stripchat.py` (`Main()`/`List()` reading `model.get(...)` directly). This fork's `stripchat.py` is a structurally different, much larger custom implementation (HLS/Mouflon manifest rewriting, proxy system) with no equivalent `isLive`/model-info toggle point to hang the same patch off of - not a compatible port target. |
+| `140dc06a` (#1928) | chaturbate - misc fixes | not reviewed in detail | 2026-08-13 | Triage classified "Likely Already Covered" (BS4-migrated site only); folded into the `618f068f` review above since both touch the same file - no additional applicable changes found beyond the Record list expansion. |
+| `0d16ac45`, `6e08f6b6` | Add files via upload; Additional images for site | n/a | 2026-08-13 | Auto-skip bucket - no site module changes (asset/upload commits). |
 
 ### 2026-08-03 Porting Session
 Reviewed the 17 pending upstream commits surfaced by `sync_manager.py --report`. Ported the two new sites and re-enabled + extended Stripchat; explicitly skipped the per-model detail enrichment and the Cam4 niches fix as not applicable/not worth the cost.

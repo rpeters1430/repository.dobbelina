@@ -185,7 +185,7 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        url += keyword.replace(" ", "-") + "/"
+        url += urllib_parse.quote(keyword.strip().replace(" ", "-"), safe="-") + "/"
         List(url)
 
 

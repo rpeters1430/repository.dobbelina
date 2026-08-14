@@ -153,7 +153,10 @@
       "Bash(git show *)",
       "Bash(mkdir -p \"/c/Users/rpete/AppData/Local/Temp/claude/C--Users-rpete-repository-dobbelina/1df1f9f9-1f53-4387-b6fb-abc9656764d7/scratchpad\")",
       "Read(//c/Users/rpete/AppData/Local/Temp/claude/C--Users-rpete-repository-dobbelina/1df1f9f9-1f53-4387-b6fb-abc9656764d7/scratchpad/**)",
-      "Bash(awk 'NR>=8040 && NR<=8125' kodi.log)"
+      "Bash(awk 'NR>=8040 && NR<=8125' kodi.log)",
+      "Bash(gh repo *)",
+      "Bash(gh auth *)",
+      "Bash(./.venv/Scripts/python.exe -m pytest tests/sites/test_luxuretv.py -v)"
     ],
     "deny": [],
     "ask": []

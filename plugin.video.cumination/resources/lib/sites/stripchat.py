@@ -1058,6 +1058,23 @@ def _start_manifest_proxy(selected_url, name):
             resp = session.get(upstream_url, timeout=HTTP_TIMEOUT_MANIFEST)
             utils.kodilog("Stripchat proxy: initial status {}".format(resp.status_code))
 
+            # A 200 with an empty body (no headers at all in the worst
+            # cases) has been observed right after a burst of candidate
+            # probing requests - it reads like transient edge/rate-limit
+            # throttling rather than a real "no stream" response, so retry
+            # once after a short pause before giving up on this pkey.
+            if resp.status_code == 200 and not resp.content:
+                utils.kodilog(
+                    "Stripchat proxy: initial fetch returned empty body, retrying once"
+                )
+                time.sleep(0.5)
+                resp = session.get(upstream_url, timeout=HTTP_TIMEOUT_MANIFEST)
+                utils.kodilog(
+                    "Stripchat proxy: retry status {} len {}".format(
+                        resp.status_code, len(resp.content)
+                    )
+                )
+
             if resp.status_code in (403, 404) and candidate_keys:
                 current_pkey = parse_qs(urlparse(upstream_url).query).get("pkey", [None])[0]
                 for psch, pkey in candidate_keys:
@@ -2096,14 +2113,23 @@ def _play_stripchat_model(url, name):
         candidates.extend(promoted)
 
         # After source promotion, derive signed child manifests again so the
-        # source playlist can yield its own media child (often the best path).
+        # newly promoted source/auto playlists can yield their own media
+        # child (often the best path). Only re-probe the URLs that are new
+        # since the loop above (source-derived/auto-derived) - re-running
+        # _derive_signed_media_candidate against candidates already handled
+        # there (including the signed URLs it just produced) doubles the
+        # live-edge CDN requests fired per playback attempt with no benefit,
+        # which risks tripping Cloudflare's burst-rate mitigation before the
+        # manifest proxy even gets to fetch the stream for real.
         seen_candidate_urls = set(
             candidate_url
             for _, candidate_url in candidates
             if isinstance(candidate_url, str) and candidate_url
         )
         signed_followups = []
-        for label, candidate_url in list(candidates):
+        for label, candidate_url in list(promoted):
+            if "signed" in label:
+                continue
             signed_label, signed_media_url = _derive_signed_media_candidate(
                 candidate_url, label
             )

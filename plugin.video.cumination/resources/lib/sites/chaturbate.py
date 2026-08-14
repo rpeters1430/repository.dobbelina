@@ -1489,6 +1489,26 @@ def Record(id):
             "url": "https://www.ixxx.com/search/{0}/",
             "search": "?mode=awmnet.Search&url={}&keyword={}",
         },
+        {
+            "name": "CamWhores.tv",
+            "url": "https://www.camwhores.tv/search/",
+            "search": "?mode=camwhorestv.Search&url={}&keyword={}",
+        },
+        {
+            "name": "CamWhoresBay",
+            "url": "https://www.camwhoresbay.com/search/{0}/",
+            "search": "?mode=camwhoresbay.Search&url={}&keyword={}",
+        },
+        {
+            "name": "CamGirlFap",
+            "url": "https://camgirlfap.com/search/",
+            "search": "?mode=camgirlfap.Search&url={}&keyword={}",
+        },
+        {
+            "name": "DrTuber",
+            "url": "https://www.drtuber.com/search/videos/",
+            "search": "?mode=drtuber.Search&url={}&keyword={}",
+        },
     ]
     selection = xbmcgui.Dialog().select(
         "Select site for search", [engine["name"] for engine in search_engines]
