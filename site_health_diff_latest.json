@@ -1,18 +1,18 @@
 {
   "current": {
-    "generated": "2026-08-14T06:43:35.279351",
+    "generated": "2026-08-15T06:16:05.968295",
     "sites_total": 184,
-    "pass": 178,
-    "warn": 3,
+    "pass": 179,
+    "warn": 2,
     "fail": 2,
     "error": 0,
     "skip": 1
   },
   "previous": {
-    "generated": "2026-08-13T06:41:29.215531",
+    "generated": "2026-08-14T06:43:35.279351",
     "sites_total": 184,
-    "pass": 179,
-    "warn": 2,
+    "pass": 178,
+    "warn": 3,
     "fail": 2,
     "error": 0,
     "skip": 1
@@ -22,8 +22,8 @@
     "resolved_failures": 0,
     "persistent_failures": 2,
     "improved_sites": 1,
-    "regressions": 2,
-    "step_regressions": 2
+    "regressions": 0,
+    "step_regressions": 0
   },
   "new_failures": [],
   "resolved_failures": [],
@@ -49,53 +49,18 @@
   ],
   "improved_sites": [
     {
-      "site": "cumlouder",
+      "site": "pornhd3x",
       "previous": "WARN",
       "current": "PASS"
     }
   ],
-  "step_regressions": [
-    {
-      "site": "awmnet",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
-      "class": "BLOCKED",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "pornhd3x",
-      "step": "play",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "Timed out after 35s",
-      "class": "NETWORK",
-      "is_flaky": false,
-      "stability_score": 1.0
-    }
-  ],
+  "step_regressions": [],
   "deltas": [
     {
-      "site": "awmnet",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "cumlouder",
+      "site": "pornhd3x",
       "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "pornhd3x",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
       "detail": ""
     }
   ]
