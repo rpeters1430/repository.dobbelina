@@ -1,3 +1,11 @@
+[B]Version 1.1.454[/B]
+- Merge pull request #314 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: implement pornslash site scraper and add support for video streaming
+- feat: add new image assets for cum-filters and pornslash
+- Add script to update virtual environment dependencies
+- fix: correct luxuretv search URL to stop playback failures
+
 [B]Version 1.1.453[/B]
 - feat: implement pornslash site scraper and add support for video streaming
 - feat: add new image assets for cum-filters and pornslash
