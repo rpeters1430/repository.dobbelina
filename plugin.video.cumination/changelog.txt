@@ -1,3 +1,12 @@
+[B]Version 1.1.453[/B]
+- feat: implement pornslash site scraper and add support for video streaming
+- feat: add new image assets for cum-filters and pornslash
+- Add script to update virtual environment dependencies
+- fix: correct luxuretv search URL to stop playback failures
+- Implement code changes to enhance functionality and improve performance
+- feat: improve telemetry reporting to GlitchTip with standard Sentry exception schemas and playback/HTTP/resolve integrations
+- refactor: migrate camwhorestv.py scraper to BeautifulSoup4 and fix list TypeError
+
 [B]Version 1.1.452[/B]
 - Add script to update virtual environment dependencies
 - fix: correct luxuretv search URL to stop playback failures
