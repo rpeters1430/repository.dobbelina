@@ -184,6 +184,8 @@ def parse_html(html):
         soup = parse_html(listhtml)
         videos = soup.select('div.video-item')
     """
+    if isinstance(html, (list, tuple)):
+        html = html[0] if html else ""
     if not html:
         from bs4 import BeautifulSoup
         return BeautifulSoup("", "html.parser")
@@ -1082,7 +1084,7 @@ def getHtml(
     ignore_ssl=False,
 ):
     if ignore_ssl:
-        return _getHtml(
+        result = _getHtml(
             url,
             referer,
             headers,
@@ -1092,16 +1094,22 @@ def getHtml(
             timeout,
             ignore_ssl=True,
         )
-    return cache.cacheFunction(
-        _getHtml,
-        url,
-        referer,
-        headers,
-        NoCookie,
-        data,
-        error,
-        timeout,
-    )
+    else:
+        result = cache.cacheFunction(
+            _getHtml,
+            url,
+            referer,
+            headers,
+            NoCookie,
+            data,
+            error,
+            timeout,
+        )
+    if isinstance(result, (list, tuple)):
+        result = result[0] if result else ""
+    if not isinstance(result, six.string_types) and result is not None:
+        result = str(result)
+    return result or ""
 
 
 def _getHtml(
@@ -1913,7 +1921,12 @@ def checkUrl(url, headers=None):
 
 
 def getHtml2(url):
-    return cache.cacheFunction(_getHtml2, url)
+    result = cache.cacheFunction(_getHtml2, url)
+    if isinstance(result, (list, tuple)):
+        result = result[0] if result else ""
+    if not isinstance(result, six.string_types) and result is not None:
+        result = str(result)
+    return result or ""
 
 
 def _getHtml2(url):

@@ -121,3 +121,23 @@ def test_flaresolve_logs_stateless_request_path(monkeypatch):
     assert utils.flaresolve("https://example.com", None) == "<html>solved</html>"
     assert any("stateless" in message for message in logs)
     assert not any("session" in message.lower() for message in logs)
+
+
+def test_gethtml_unwraps_cached_list(monkeypatch):
+    monkeypatch.setattr(utils.cache, "cacheFunction", lambda *a, **k: ["<html>cached_list</html>"])
+    result = utils.getHtml("https://example.com")
+    assert result == "<html>cached_list</html>"
+
+
+def test_gethtml_handles_cached_empty_list(monkeypatch):
+    monkeypatch.setattr(utils.cache, "cacheFunction", lambda *a, **k: [])
+    result = utils.getHtml("https://example.com")
+    assert result == ""
+
+
+def test_parse_html_handles_sequence_types():
+    soup = utils.parse_html(["<div>hello</div>"])
+    assert soup.find("div").text == "hello"
+
+    soup_empty = utils.parse_html([])
+    assert soup_empty is not None

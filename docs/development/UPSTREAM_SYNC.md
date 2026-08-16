@@ -19,6 +19,13 @@
 
 ## Sync Sessions
 
+### 2026-08-15 Porting Session
+Reviewed upstream PR #1931 (`camilt/repository.dobbelina@cda959e1`). Cleanly ported and modernized the new site `pornslash.com` and integrated the `eroticmv.py` base64 stream decoding fix.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| PR #1931 (`cda959e1`) | EoricMV - fixed Player (new site PornSlash + eroticmv player fix) | `manual` | 2026-08-15 | **PornSlash**: Re-architected from upstream's regex-based scraper and problematic local `HTTPServer` on port 8787 to project-standard BeautifulSoup4 with piped stream headers (`User-Agent`/`Referer`) and adaptive HLS quality selector. Added 256x256 icon asset `resources/images/pornslash.png` and full unit test coverage in `tests/sites/test_pornslash.py`.<br>**EroticMV**: Safely added base64 `.m3u8` URL decoding to `Playvid()` without upstream's `UnboundLocalError` bug on non-matching links. |
+
 ### 2026-08-13 Porting Session
 Reviewed the 6 pending commits surfaced by `sync_manager.py --report`. Ported the one applicable feature gap and a small URL-encoding fix; documented the rest as not applicable.
 

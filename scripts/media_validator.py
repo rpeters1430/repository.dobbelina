@@ -90,16 +90,6 @@ def validate_media(
         evidence["status_code"] = status_code
         evidence["content_type"] = content_type
 
-        # Check HTML signature
-        content_lower = content[:2048].lower()
-        if any(sig in content_lower for sig in HTML_SIGNATURES):
-            return ValidationResult(
-                passed=False,
-                classification="HTML_PAYLOAD",
-                message="Server returned HTML page instead of media content",
-                evidence=evidence,
-            )
-
         content_type_lower = content_type.lower()
         path = parsed.path.lower()
 
@@ -110,6 +100,16 @@ def validate_media(
         # Check DASH (.mpd)
         if ".mpd" in path or "dash+xml" in content_type_lower or b"<MPD" in content:
             return _validate_dash(real_url, content, headers, opener, timeout, evidence)
+
+        # Check HTML signature
+        content_lower = content[:2048].lower()
+        if any(sig in content_lower for sig in HTML_SIGNATURES):
+            return ValidationResult(
+                passed=False,
+                classification="HTML_PAYLOAD",
+                message="Server returned HTML page instead of media content",
+                evidence=evidence,
+            )
 
         # Direct media
         if len(content) > 0:
@@ -170,11 +170,11 @@ def _validate_hls(
             req = urllib.request.Request(media_playlist_url, headers=headers)
             with opener.open(req, timeout=timeout) as m_resp:
                 m_text = m_resp.read().decode("utf-8", errors="ignore")
-                m_lines = [l.strip() for l in m_text.splitlines() if l.strip()]
+                m_lines = [line.strip() for line in m_text.splitlines() if line.strip()]
                 segment_url = None
-                for l in m_lines:
-                    if not l.startswith("#"):
-                        segment_url = urljoin(media_playlist_url, l)
+                for line in m_lines:
+                    if not line.startswith("#"):
+                        segment_url = urljoin(media_playlist_url, line)
                         break
                 if not segment_url:
                     return ValidationResult(

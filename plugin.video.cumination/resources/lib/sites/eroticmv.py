@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import base64
 import re
 import xbmc
 import xbmcgui
@@ -155,6 +156,15 @@ def Playvid(url, name, download=None):
     ).findall(videohtml)
     if match:
         videourl = match[0]
+        b64_m = re.search(r"https?://([A-Za-z0-9+/=]+)\.m3u8", videourl)
+        if b64_m:
+            try:
+                decoded = base64.b64decode(b64_m.group(1)).decode("utf-8")
+                if decoded.startswith("http"):
+                    videourl = decoded
+            except Exception:
+                pass
+
         if "embed" in videourl:
             vp.play_from_site_link(videourl)
         else:

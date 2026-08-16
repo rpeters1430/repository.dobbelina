@@ -96,10 +96,6 @@ class TelemetryReporter:
         finally:
             self.current_context = None
 
-    def finish_operation(self):
-        if not self.enabled() or not self.current_context:
-            return
-
     def capture_exception(self, exc):
         if not self.enabled():
             return

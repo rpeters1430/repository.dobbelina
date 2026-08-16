@@ -102,3 +102,77 @@ def test_playvid_builds_direct_link(monkeypatch):
         "https://vdownload-M1.sb-cd.com/D2/Q3/tid4-720p.mp4"
         "?secure=secureTok,1690000000&m=M1&d=D2&_tid=tid4"
     )
+
+
+def test_list_handles_cached_list_input(monkeypatch):
+    html = [
+        '<li id="video-1"><a href="https://xoxostream.com/video/1/hot-clip/" title="Hot Clip">'
+        '<img src="https://cdn.xoxostream.com/thumb1.jpg" alt="t"></a>'
+        '<span class="duration">;05:30</span></li>'
+    ]
+
+    downloads = []
+
+    monkeypatch.setattr(xoxostream.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(
+        xoxostream.site,
+        "add_download_link",
+        lambda name, url, mode, img, desc, **k: downloads.append(
+            {"name": name, "url": url, "duration": k.get("duration")}
+        ),
+    )
+    monkeypatch.setattr(xoxostream.utils, "eod", lambda: None)
+
+    xoxostream.List("https://xoxostream.com/1/")
+
+    assert len(downloads) == 1
+    assert downloads[0]["name"] == "Hot Clip"
+
+
+def test_models_parses_model_items(monkeypatch):
+    html = (
+        '<ul class="models_list">'
+        '<li><a href="austin_kincaid/1/"></a><img src="../doc/img/models/austin_kincaid.jpg">Austin Kincaid</li>'
+        '<li><a href="brice_bardot/1/"></a><img src="../doc/img/models/brice_bardot.jpg">Brice Bardot</li>'
+        "</ul>"
+    )
+
+    dirs = []
+
+    monkeypatch.setattr(xoxostream.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(xoxostream.site, "add_dir", lambda *a, **k: dirs.append(a))
+    monkeypatch.setattr(xoxostream.utils, "eod", lambda: None)
+
+    xoxostream.Models("https://xoxostream.com/models/")
+
+    assert len(dirs) == 2
+    assert "Austin Kincaid" in dirs[0][0]
+    assert dirs[0][1] == "https://xoxostream.com/tags/austin_kincaid/1/"
+    assert "austin_kincaid.jpg" in dirs[0][3]
+
+
+def test_list_pagination(monkeypatch):
+    html = (
+        '<li id="1"><a href="/videos/123/sample" title="Sample"><img src="thumb.jpg"></a></li>'
+        '<a class="next page-numbers" href="../2/">Next</a>'
+    )
+
+    dirs = []
+    downloads = []
+
+    monkeypatch.setattr(xoxostream.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(
+        xoxostream.site,
+        "add_download_link",
+        lambda name, url, mode, img, desc, **k: downloads.append((name, url)),
+    )
+    monkeypatch.setattr(xoxostream.site, "add_dir", lambda *a, **k: dirs.append(a))
+    monkeypatch.setattr(xoxostream.utils, "eod", lambda: None)
+
+    xoxostream.List("https://xoxostream.com/1/")
+
+    assert len(downloads) == 1
+    assert downloads[0][1] == "https://xoxostream.com/videos/123/sample"
+    assert len(dirs) == 1
+    assert "Next Page" in dirs[0][0]
+    assert dirs[0][1] == "https://xoxostream.com/2/"

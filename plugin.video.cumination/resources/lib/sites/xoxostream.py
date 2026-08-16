@@ -55,25 +55,57 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
-    matches = re.compile(
-        r'<li id=.+?href="([^"]+)" title="([^"]+)".+?src="([^"]+)".+?duration.+?;([^;]+)</span',
-        re.DOTALL | re.IGNORECASE,
-    ).findall(listhtml)
-    if not matches:
+    if not listhtml:
         utils.notify("XOXOstream", "No video found!")
         return
-    for videopage, name, img, duration in matches:
+
+    soup = utils.parse_html(listhtml)
+    items = soup.select("ul.videos_list > li, li[id]")
+    if not items:
+        utils.notify("XOXOstream", "No video found!")
+        return
+
+    found = False
+    for item in items:
+        a_tag = item.select_one("a")
+        if not a_tag:
+            continue
+        videopage = utils.safe_get_attr(a_tag, "href")
+        if not videopage:
+            continue
+        if videopage.startswith("//"):
+            videopage = "https:" + videopage
+        elif videopage.startswith("/"):
+            videopage = site.url.rstrip("/") + videopage
+
+        name = utils.safe_get_attr(a_tag, "title") or utils.safe_get_text(a_tag)
         name = utils.cleantext(name)
-        videopage = "https:" + videopage if videopage.startswith("/") else videopage
+
+        img_tag = item.select_one("img")
+        img = utils.get_thumbnail(img_tag) if img_tag else ""
+
+        duration_el = item.select_one(".duration, span.duration")
+        duration = utils.safe_get_text(duration_el) if duration_el else ""
+        if duration and ";" in duration:
+            duration = duration.split(";")[-1].strip()
+
         site.add_download_link(name, videopage, "Playvid", img, name, duration=duration)
+        found = True
 
-    np = re.search(r'<a[^>]*class="next page-numbers"[^>]*href="\.\./(\d+)/"', listhtml)
+    if not found:
+        utils.notify("XOXOstream", "No video found!")
+        return
 
-    if np:
-        np = np.group(1)
-        parts = url.rstrip("/").split("/")
-        base = "/".join(parts[:-1]) + "/" + np + "/"
-        site.add_dir(f"Next Page... ({np})", base, "List", site.img_next)
+    next_page = soup.select_one('a.next, a.next-page, a.page-numbers.next, a[class*="next"]')
+    if next_page:
+        href = utils.safe_get_attr(next_page, "href")
+        m = re.search(r"(\d+)/?$", href)
+        if m:
+            np = m.group(1)
+            parts = url.rstrip("/").split("/")
+            base = "/".join(parts[:-1]) + "/" + np + "/"
+            site.add_dir(f"Next Page... ({np})", base, "List", site.img_next)
+
     utils.eod()
 
 
@@ -119,33 +151,41 @@ def Playvid(url, name, download=None):
 @site.register()
 def Tags(url):
     html = utils.getHtml(url, site.url)
-    container = re.compile(r'<ul class="tags_list">(.*?)</ul>', re.DOTALL | re.IGNORECASE).search(
-        html
-    )
-    if not container:
+    soup = utils.parse_html(html)
+    tags = soup.select("ul.tags_list a, ul.tags a")
+    if not tags:
         raise ValueError("No Tags found!")
 
-    matches = re.compile(r"<li>.+?href=\"([^\"]+)\".+?>([^>]+)<", re.DOTALL | re.IGNORECASE).findall(
-        container.group(1)
-    )
-    if not matches:
-        raise ValueError("No Tags found!")
-    for tag_url, tag in matches:
-        site.add_dir(f"[COLOR hotpink]{tag}[/COLOR]", site.url + "tags/" + tag_url, "List", site.img_search)
+    for tag in tags:
+        tag_url = utils.safe_get_attr(tag, "href")
+        tag_name = utils.safe_get_text(tag)
+        if not tag_url or not tag_name:
+            continue
+        site.add_dir(f"[COLOR hotpink]{tag_name}[/COLOR]", site.url + "tags/" + tag_url.lstrip("/"), "List", site.img_search)
     utils.eod()
 
 
 @site.register()
 def Models(url):
     html = utils.getHtml(url, site.url)
-    matches = re.compile(
-        r'<li>.+?href="([^"]+)".+?src="([^"]+)".+?>([^>]+)<', re.DOTALL | re.IGNORECASE
-    ).findall(html)
-    if not matches:
+    soup = utils.parse_html(html)
+    items = soup.select("ul.models_list li, ul.models li, li:has(img)")
+    if not items:
         raise ValueError("No Models found!")
-    for tag_url, img, tag in matches:
-        if "/models/" not in img:
+
+    for item in items:
+        a_tag = item.select_one("a")
+        img_tag = item.select_one("img")
+        if not a_tag:
             continue
-        img = site.url + img.strip("../")
-        site.add_dir(f"[COLOR hotpink]{tag}[/COLOR]", site.url + "tags/" + tag_url, "List", img)
+        tag_url = utils.safe_get_attr(a_tag, "href")
+        tag_name = utils.safe_get_text(a_tag) or utils.safe_get_text(item)
+        if "AKA" in tag_name:
+            tag_name = tag_name.split("AKA")[0].strip()
+        img_src = utils.get_thumbnail(img_tag) if img_tag else ""
+        if "/models/" not in img_src:
+            continue
+        if img_src.startswith("../"):
+            img_src = site.url + img_src.lstrip("../")
+        site.add_dir(f"[COLOR hotpink]{tag_name}[/COLOR]", site.url + "tags/" + tag_url.lstrip("/"), "List", img_src)
     utils.eod()
