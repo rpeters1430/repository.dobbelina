@@ -5,20 +5,24 @@
 
 ## Snapshot
 
-- Current: `PASS 180` | `WARN 1` | `FAIL 3` | `ERROR 0` | `SKIP 1`
-- Previous: `PASS 179` | `WARN 2` | `FAIL 2` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 178` | `WARN 3` | `FAIL 3` | `ERROR 0` | `SKIP 1`
+- Previous: `PASS 180` | `WARN 1` | `FAIL 3` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
 - New failures: `1`
-- Resolved failures: `0`
+- Resolved failures: `1`
 - Persistent failures: `2`
-- Site regressions: `1`
-- Step regressions: `2`
+- Site regressions: `3`
+- Step regressions: `3`
 
 ## New Failures
 
-- **pornez**: `PASS -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://pornezoo.net/page/2/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **analdin**: `PASS -> FAIL` (PARSER) | list: List returned no videos
+
+## Resolved Failures
+
+- **pornez**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -27,9 +31,6 @@
 
 ## Step Regressions
 
-- **pornez** `list`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornezoo.net/page/2/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-- **pornhoarder** `search`: `SKIP -> FAIL` (BLOCKED) | HTTPError: HTTP Error 403: Forbidden
-
-## Improvements
-
-- **awmnet**: `WARN -> PASS`
+- **analdin** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
+- **awmnet** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
+- **javguru** `play`: `PASS -> FAIL` (NETWORK) | Timed out after 35s
