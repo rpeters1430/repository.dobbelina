@@ -348,24 +348,34 @@ def parse_new_sites(path: Path) -> dict[str, str]:
 
 def fetch_fluffle(url: str = FLUFFLE_URL) -> list[dict]:
     """
-    Fetch and parse fluffle.cc/fmfy.
+    Fetch and parse fluffle.cc/fmfy or an equivalent HTML document / URL.
     Returns list of {name, url, category, raw_name}.
     """
-    headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/124.0.0.0 Safari/537.36"
-        )
-    }
-    try:
-        resp = requests.get(url, headers=headers, timeout=30)
-        resp.raise_for_status()
-    except requests.RequestException as e:
-        print(f"[ERROR] Could not fetch {url}: {e}", file=sys.stderr)
-        return []
+    html_text = ""
+    local_path = Path(url)
+    if local_path.exists() and local_path.is_file():
+        html_text = local_path.read_text(encoding="utf-8")
+    elif url.startswith("file://"):
+        file_path = Path(url[7:])
+        if file_path.exists() and file_path.is_file():
+            html_text = file_path.read_text(encoding="utf-8")
+    else:
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/124.0.0.0 Safari/537.36"
+            )
+        }
+        try:
+            resp = requests.get(url, headers=headers, timeout=30)
+            resp.raise_for_status()
+            html_text = resp.text
+        except requests.RequestException as e:
+            print(f"[ERROR] Could not fetch {url}: {e}", file=sys.stderr)
+            return []
 
-    soup = BeautifulSoup(resp.text, "html.parser")
+    soup = BeautifulSoup(html_text, "html.parser")
     sites: list[dict] = []
     current_category = "Unknown"
 
