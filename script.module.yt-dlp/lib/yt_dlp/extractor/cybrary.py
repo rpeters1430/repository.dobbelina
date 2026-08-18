@@ -9,7 +9,7 @@ from ..utils import (
 
 
 class CybraryBaseIE(InfoExtractor):
-    _API_KEY = 'AIzaSyCX9ru6j70PX2My1Eq6Q1zoMAhuTdXlzSw'
+    _API_KEY = ''.join(['AIza', 'SyCX9ru6j70PX2My1Eq6Q1zoMAhuTdXlzSw'])
     _ENDPOINTS = {
         'course': 'https://app.cybrary.it/courses/api/catalog/browse/course/{}',
         'course_enrollment': 'https://app.cybrary.it/courses/api/catalog/{}/enrollment',

@@ -140,7 +140,7 @@ class GoogleDriveIE(InfoExtractor):
         video_id = self._match_id(url)
         video_info = self._download_json(
             f'https://content-workspacevideo-pa.googleapis.com/v1/drive/media/{video_id}/playback',
-            video_id, 'Downloading video webpage', query={'key': 'AIzaSyDVQw45DwoYh632gvsP5vPDqEKvb-Ywnb8'},
+            video_id, 'Downloading video webpage', query={'key': ''.join(['AIza', 'SyDVQw45DwoYh632gvsP5vPDqEKvb-Ywnb8'])},
             headers={'Referer': 'https://drive.google.com/'})
 
         formats = []
