@@ -70,6 +70,18 @@ def _cb_remember_playlist_media_urls(proxy_state, playlist, type_key=None):
         _cb_remember_media_url(proxy_state, match.group(1), type_key)
 
 
+def _cb_build_segment_proxy_url(media_url, port):
+    return "http://127.0.0.1:{}/segment?name={}".format(
+        port, urllib_parse.quote(_cb_media_name(media_url), safe="")
+    )
+
+
+def _cb_get_segment_cdn_url(proxy_state, segment_name):
+    if not segment_name:
+        return None
+    return proxy_state["seg_cdn_urls"].get(segment_name)
+
+
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
@@ -804,48 +816,6 @@ def Playvid(url, name):
                     t2.daemon = True
                     t2.start()
 
-                def _is_safe_url(target_url):
-                    def _canonical_host_port(parsed_url):
-                        if parsed_url.scheme not in ("http", "https"):
-                            return None
-                        if parsed_url.username or parsed_url.password:
-                            return None
-                        host = parsed_url.hostname
-                        if not host:
-                            return None
-                        port = parsed_url.port
-                        if port is None:
-                            port = 443 if parsed_url.scheme == "https" else 80
-                        return (host.lower(), port)
-
-                    parsed = urllib_parse.urlparse(target_url)
-                    req_host_port = _canonical_host_port(parsed)
-                    if not req_host_port:
-                        return False
-
-                    allowed_hosts = set()
-                    with _proxy_state["lock"]:
-                        try:
-                            base_parsed = urllib_parse.urlparse(
-                                _proxy_state["stream_url"]
-                            )
-                            base_host_port = _canonical_host_port(base_parsed)
-                            if base_host_port:
-                                allowed_hosts.add(base_host_port)
-                        except Exception:
-                            pass
-
-                        for collection in ["seg_cdn_urls", "latest_seg", "url_map"]:
-                            for _u in _proxy_state.get(collection, {}).values():
-                                try:
-                                    _p = urllib_parse.urlparse(_u)
-                                    _hp = _canonical_host_port(_p)
-                                    if _hp:
-                                        allowed_hosts.add(_hp)
-                                except Exception:
-                                    pass
-                    return req_host_port in allowed_hosts
-
                 # Localhost proxy: serves master + proxies chunklists with auto-reconnect
                 class _H(BaseHTTPRequestHandler):
                     def do_GET(self):
@@ -895,16 +865,16 @@ def Playvid(url, name):
                                 )
                                 raw = re.sub(
                                     r"^(https?://[^\s]+\.m4s[^\s]*)$",
-                                    lambda m: "http://127.0.0.1:{}/segment?url={}".format(
-                                        port, urllib_parse.quote(m.group(1), safe="")
+                                    lambda m: _cb_build_segment_proxy_url(
+                                        m.group(1), port
                                     ),
                                     raw,
                                     flags=re.MULTILINE,
                                 )
                                 raw = re.sub(
                                     r'URI="(https?://[^"]+\.m4s[^"]*)"',
-                                    lambda m: 'URI="http://127.0.0.1:{}/segment?url={}"'.format(
-                                        port, urllib_parse.quote(m.group(1), safe="")
+                                    lambda m: 'URI="{}"'.format(
+                                        _cb_build_segment_proxy_url(m.group(1), port)
                                     ),
                                     raw,
                                     flags=re.IGNORECASE,
@@ -1000,15 +970,14 @@ def Playvid(url, name):
                         elif self.path.startswith("/segment"):
                             parsed = urllib_parse.urlparse(self.path)
                             params = urllib_parse.parse_qs(parsed.query)
-                            seg_url = params.get("url", [None])[0]
-                            if not seg_url:
+                            seg_name = params.get("name", [None])[0]
+                            if not seg_name:
                                 self.send_error(400)
                                 return
 
-                            seg_name = seg_url.rsplit("/", 1)[-1].split("?")[0]
-                            resolved_url = _proxy_state["seg_cdn_urls"].get(seg_name)
-                            if not resolved_url and _is_safe_url(seg_url):
-                                resolved_url = seg_url
+                            resolved_url = _cb_get_segment_cdn_url(
+                                _proxy_state, seg_name
+                            )
                             if not resolved_url:
                                 self.send_error(404)
                                 return
