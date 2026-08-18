@@ -233,3 +233,38 @@ https://edge.example.com/live/seg_0_4307_video_123_llhls.m4s?session=s1
         state["latest_seg"]["chunklist_0_video"]
         == "https://edge.example.com/live/part_0_4308_0_video_123_llhls.m4s?session=s1"
     )
+
+
+def test_build_segment_proxy_url_uses_segment_name_only():
+    media_url = "https://edge.example.com/live/seg_0_4307_video_123_llhls.m4s?session=s1"
+
+    proxy_url = chaturbate._cb_build_segment_proxy_url(media_url, 8080)
+
+    assert proxy_url == (
+        "http://127.0.0.1:8080/segment?name=seg_0_4307_video_123_llhls.m4s"
+    )
+    assert "url=" not in proxy_url
+
+
+def test_get_segment_cdn_url_requires_known_segment_name():
+    state = {
+        "seg_cdn_urls": {
+            "seg_0_4307_video_123_llhls.m4s": (
+                "https://edge.example.com/live/seg_0_4307_video_123_llhls.m4s?session=s1"
+            )
+        }
+    }
+
+    assert (
+        chaturbate._cb_get_segment_cdn_url(
+            state, "seg_0_4307_video_123_llhls.m4s"
+        )
+        == "https://edge.example.com/live/seg_0_4307_video_123_llhls.m4s?session=s1"
+    )
+    assert (
+        chaturbate._cb_get_segment_cdn_url(
+            state,
+            "https://evil.example/live/seg_0_4307_video_123_llhls.m4s?session=evil",
+        )
+        is None
+    )
