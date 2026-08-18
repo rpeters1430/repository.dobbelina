@@ -160,11 +160,45 @@ def test_search_with_keyword(monkeypatch):
         list_calls.append(url)
 
     monkeypatch.setattr(xhamster, "List", fake_list)
+    monkeypatch.setattr(xhamster, "get_setting", lambda x: "straight")
 
     xhamster.Search("https://xhamster.com/search/", keyword="test query")
 
     assert len(list_calls) == 1
-    assert "test+query" in list_calls[0] or "test%20query" in list_calls[0]
+    assert list_calls[0] == "https://xhamster.com/search/test+query"
+
+    # Gay orientation
+    monkeypatch.setattr(xhamster, "get_setting", lambda x: "gay")
+    xhamster.Search("https://xhamster.com/search/", keyword="test query")
+    assert list_calls[1] == "https://xhamster.com/gay/search/test+query"
+
+
+def test_playvid_accepts_relative_url(monkeypatch):
+    """Test that Playvid handles relative URLs without failing."""
+    played_links = []
+    fake_html = """
+    <script id="initials-script">
+    window.initials={"xplayerSettings":{"sources":{"standard":{"h264":[{"quality":"720p","url":"https://video.xhcdn.com/test.mp4"}]}}}};
+    </script>
+    """
+    class FakeProgress:
+        def update(self, *args, **kwargs):
+            pass
+    class FakeVP:
+        def __init__(self, name, download=None):
+            self.progress = FakeProgress()
+        def play_from_direct_link(self, url):
+            played_links.append(url)
+
+    monkeypatch.setattr(xhamster.utils, "getHtml", lambda *a, **k: fake_html)
+    monkeypatch.setattr(xhamster.utils, "VideoPlayer", FakeVP)
+
+    xhamster.Playvid("/videos/test-video-123", "Test Video")
+
+    assert len(played_links) == 1
+    assert "https://video.xhcdn.com/test.mp4" in played_links[0]
+    assert "User-Agent=" in played_links[0]
+    assert "Referer=https://xhamster.com/" in played_links[0]
 
 
 def test_list_handles_layout_page_missing_video_list_props(monkeypatch):
@@ -328,7 +362,7 @@ def test_list_finds_nested_video_list_props_and_pagination(monkeypatch):
 
     xhamster.List("https://xhamster.com/newest")
 
-    assert downloads == [{"name": "Nested Video", "url": "/videos/nested-123"}]
+    assert downloads == [{"name": "Nested Video", "url": "https://xhamster.com/videos/nested-123"}]
     assert dirs
     assert dirs[0]["url"] == "https://xhamster.com/newest/2"
 

@@ -156,14 +156,7 @@ def Search(url, keyword=None):
         List(search_url)
 
 
-@site.register()
-def Playvid(url, name, download=None):
-    vp = utils.VideoPlayer(name, download)
-    html = utils.getHtml(url, site.url)
-    if not html:
-        vp.play_from_link_to_resolve(url)
-        return
-
+def _extract_kvs_sources(html: str) -> dict[str, str]:
     license_match = re.search(r"license_code:\s*'([^']+)'", html, re.IGNORECASE)
     license_code = license_match.group(1) if license_match else ""
 
@@ -189,6 +182,26 @@ def Playvid(url, name, download=None):
                 stream_url = re.sub(r"^function/\d+/", "", stream_url)
         if stream_url and stream_url.startswith("http"):
             sources[label] = stream_url
+    return sources
+
+
+@site.register()
+def Playvid(url, name, download=None):
+    vp = utils.VideoPlayer(name, download)
+    html = utils.getHtml(url, site.url)
+    if not html:
+        return
+
+    sources = _extract_kvs_sources(html)
+    if not sources:
+        embed_match = re.search(r"src=[\"'](https?://[^\"']*/embed/\d+[^\"']*)[\"']", html, re.IGNORECASE)
+        if not embed_match:
+            embed_match = re.search(r"['\"](https?://[^'\"]*/embed/\d+)['\"]", html, re.IGNORECASE)
+        if embed_match:
+            embed_url = embed_match.group(1)
+            embed_html = utils.getHtml(embed_url, url)
+            if embed_html:
+                sources = _extract_kvs_sources(embed_html)
 
     if sources:
         stream_url = (
@@ -205,4 +218,9 @@ def Playvid(url, name, download=None):
             vp.play_from_direct_link(stream_url + "|Referer=" + url)
             return
 
-    vp.play_from_link_to_resolve(url)
+    soup = utils.parse_html(html)
+    for tag in soup.find_all(["iframe", "a"]):
+        src = utils.safe_get_attr(tag, "src", ["href"])
+        if src and not any(h in src.lower() for h in ("camgirlfap.com", "google", "traffic", "ad", "banner", "javascript:")):
+            if vp.play_from_link_to_resolve(src):
+                return

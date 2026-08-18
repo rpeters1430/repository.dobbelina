@@ -18,11 +18,13 @@
         <setting id="cache_time" label="30030" type="slider" default="4" range="1,1,8" option="int" />
         <setting type="lsep" label="30031" />
         <setting id="clear_cookies" label="30032" type="action" action="RunPlugin(plugin://plugin.video.cumination/?mode=utils.clear_cookies)"/>
+        <setting id="clear_mirrors" label="Reset domain mirror cache" type="action" action="RunPlugin(plugin://plugin.video.cumination/?mode=utils.clear_mirrors)"/>
     </category>
     <category label="30053">
         <setting id="qualityask" type="enum" label="30001" lvalues="30401|30402|30403|30404|30405" default="0" />
         <setting id="dontask" label="30002" type="bool" default="false" />
         <setting id="universal_resolvers" label="30026" type="bool" default="true" />
+        <setting id="ytdlp_fallback" label="Use yt-dlp resolver as fallback" type="bool" default="true" />
         <setting id="open_smr_settings" type="action" label="30027" enable="true" option="close" action="RunPlugin(plugin://plugin.video.cumination/?mode=main.smrSettings)" />
     </category>
     <category label="30054">
@@ -74,6 +76,9 @@
         <setting id="enh_debug" type="bool" label="33021" default="true" />
         <setting id="debuglog" type="action" label="30017" enable="true" option="close" action="RunPlugin(plugin://plugin.video.cumination/?mode=utils.ToggleDebug)" />
         <setting id="startlog" type="action" label="33020" enable="true" option="close" action="RunPlugin(plugin://plugin.video.cumination/?mode=main.openLogUploader)" />
+        <setting type="lsep" label="DNS-over-HTTPS (DoH)" />
+        <setting id="doh_enable" type="bool" label="Use DNS-over-HTTPS (DoH) to bypass DNS blocking" default="false" />
+        <setting id="doh_provider" enable="eq(-1,true)" type="enum" label="DoH Provider" lvalues="Cloudflare (1.1.1.1)|Google (8.8.8.8)|Quad9 (9.9.9.9)" default="0"/>
         <setting type="lsep" label="33024" />
         <setting id="fs_enable" type="bool" label="33022" default="false" />
         <setting id="fs_host" enable="eq(-1,true)" type="text" label="33023" default="http://127.0.0.1:8191/v1"/>

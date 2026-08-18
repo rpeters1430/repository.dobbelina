@@ -24,7 +24,7 @@ class AdultSite(URL_Dispatcher):
         self.default_mode = ""
         self.name = name
         self.title = title + "[COLOR white] - webcams[/COLOR]" if webcam else title
-        self.url = url
+        self._base_url = url
         self.image = basics.cum_image(image) if image else ""
         self.about = about
         self.webcam = webcam
@@ -34,6 +34,18 @@ class AdultSite(URL_Dispatcher):
         self.requires_flaresolverr = requires_flaresolverr
         self.custom = False
         self.add_to_instances()
+
+    @property
+    def url(self):
+        try:
+            from resources.lib import mirror_manager
+            return mirror_manager.get_site_url(self.name, self._base_url)
+        except Exception:
+            return self._base_url
+
+    @url.setter
+    def url(self, value):
+        self._base_url = value
 
     def add_to_instances(self):
         super(AdultSite, self).__init__(self.name)

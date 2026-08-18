@@ -671,6 +671,16 @@ def clear_cookies():
     xbmcgui.Dialog().notification("Cumination", msg, cuminationicon, 3000, False)
 
 
+@url_dispatcher.register()
+def clear_mirrors():
+    try:
+        from resources.lib import mirror_manager
+        mirror_manager.clear_mirrors_cache()
+    except Exception:
+        pass
+    xbmcgui.Dialog().notification("Cumination", "Mirror cache reset to defaults", cuminationicon, 3000, False)
+
+
 def i18n(string_id):
     try:
         return six.ensure_str(addon.getLocalizedString(strings.STRINGS[string_id]))
@@ -2972,15 +2982,27 @@ class VideoPlayer:
 
     @_cancellable
     def play_from_kt_player(self, html, url=None, follow_redirects=False):
-        license = re.search(r"license_code:\s*'(\$\d+)", html, re.DOTALL | re.IGNORECASE)
+        license = re.search(r"license_code:\s*'([^']+)'", html, re.DOTALL | re.IGNORECASE)
         if license:
             license = license.group(1)
 
-        match = re.compile(r"video(?:_|_alt_)url\d?:\s*'([^']+)[^;]+?video(?:_|_alt_)url\d?_text:\s*'([^']+)", re.DOTALL | re.IGNORECASE).findall(html)
-        if not match:
-            match = re.compile(r"video(?:_|_alt_)url\d?: '([^']+)'.+?postfix\s*:\s*'([^']+)'", re.DOTALL | re.IGNORECASE).findall(html)
+        sources = {}
+        for match in re.finditer(r"(video(?:_alt)?_url\d*)\s*:\s*'([^']+)'", html, re.IGNORECASE):
+            url_key, stream_url = match.group(1), match.group(2)
+            label_match = re.search(r"{}_text\s*:\s*'([^']+)'".format(url_key), html, re.IGNORECASE)
+            if label_match:
+                label = label_match.group(1)
+            elif "alt" in url_key:
+                label = "Alt {}".format(url_key)
+            else:
+                label = "Default"
+            sources[label] = stream_url
 
-        sources = {qual: videourl for videourl, qual in match}
+        if not sources:
+            match = re.compile(r"video(?:_|_alt_)url\d?:\s*'([^']+)[^;]+?video(?:_|_alt_)url\d?_text:\s*'([^']+)", re.DOTALL | re.IGNORECASE).findall(html)
+            if not match:
+                match = re.compile(r"video(?:_|_alt_)url\d?: '([^']+)'.+?postfix\s*:\s*'([^']+)'", re.DOTALL | re.IGNORECASE).findall(html)
+            sources = {qual: videourl for videourl, qual in match}
 
         # Filter out qualities that require login if others are available
         available_sources = {k: v for k, v in sources.items() if "?login" not in v}
@@ -2989,11 +3011,13 @@ class VideoPlayer:
 
         if len(sources.keys()) == 1:
             videourl = list(sources.values())[0]
-        else:
+        elif sources:
             try:
-                videourl = prefquality(sources, sort_by=lambda x: 2160 if x == '4k' else int(x.split('p')[0]), reverse=True)
+                videourl = prefquality(sources, sort_by=lambda x: 2160 if '4k' in x.lower() else int(re.sub(r'\D', '', x) or 0), reverse=True)
             except Exception:
                 videourl = selector('Select quality', sources, reverse=True)
+        else:
+            videourl = None
 
         if not videourl:
             self.progress.close()
@@ -3002,7 +3026,7 @@ class VideoPlayer:
             self.progress.close()
             notify(i18n('oh_oh'), i18n('Login required for this quality.'))
             return
-        if videourl.startswith('function/0/'):
+        if videourl.startswith('function/'):
             if not license:
                 self.progress.close()
                 notify(i18n('oh_oh'), 'Unable to play video: License code not found')
@@ -3013,7 +3037,7 @@ class VideoPlayer:
         if follow_redirects:
             videourl = getVideoLink(videourl, url)
 
-        videourl += '|User-Agent={0}'.format(USER_AGENT)
+        videourl += '|User-Agent={0}'.format(urllib_parse.quote(USER_AGENT, safe=""))
         if url:
             videourl += '&Referer={0}'.format(url)
 
@@ -3086,6 +3110,16 @@ class VideoPlayer:
                 )
             except Exception:
                 pass
+
+        if not link and addon.getSetting("ytdlp_fallback") != "false":
+            try:
+                from resources.lib import ytdlp_resolver
+                link = ytdlp_resolver.resolve_url(source._url)
+                if link:
+                    kodilog("Resolved link via yt-dlp fallback: " + str(source._url))
+            except Exception as ytdlp_err:
+                kodilog("yt-dlp fallback error: " + str(ytdlp_err))
+
         if not link:
             try:
                 from resources.lib import telemetry

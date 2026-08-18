@@ -98,10 +98,18 @@ def Playvid(url, name, download=None):
     license_code = license_match.group(1) if license_match else ""
 
     sources = {}
-    for idx, raw_url in enumerate(
-        re.findall(r"video_url\s*:\s*'([^']+)'", html, re.IGNORECASE), start=1
+    for url_key, label_key, default_label in (
+        ("video_url", "video_url_text", "480p"),
+        ("video_alt_url", "video_alt_url_text", "720p"),
+        ("video_alt_url2", "video_alt_url2_text", "1080p"),
+        ("video_alt_url3", "video_alt_url3_text", "2160p"),
     ):
-        stream_url = raw_url
+        url_match = re.search(r"{}:\s*'([^']+)'".format(url_key), html, re.IGNORECASE)
+        if not url_match:
+            continue
+        stream_url = url_match.group(1)
+        label_match = re.search(r"{}:\s*'([^']+)'".format(label_key), html, re.IGNORECASE)
+        label = label_match.group(1) if label_match else default_label
         if stream_url.startswith("function/"):
             if license_code:
                 try:
@@ -111,16 +119,23 @@ def Playvid(url, name, download=None):
             else:
                 stream_url = re.sub(r"^function/\d+/", "", stream_url)
         if stream_url and stream_url.startswith("http"):
-            sources["Source {}".format(idx)] = stream_url
+            sources[label] = stream_url
 
     if sources:
         stream_url = (
-            utils.selector("Select quality", sources)
+            utils.selector(
+                "Select quality",
+                sources,
+                sort_by=lambda x: int(re.sub(r"\D", "", x) or 0),
+                reverse=True,
+            )
             if len(sources) > 1
             else next(iter(sources.values()))
         )
         if stream_url:
-            vp.play_from_direct_link(stream_url + "|Referer=" + url)
+            ua = urllib_parse.quote(utils.USER_AGENT, safe="")
+            headers_suffix = "|Referer={}&User-Agent={}".format(url, ua)
+            vp.play_from_direct_link(stream_url + headers_suffix)
             return
 
     vp.play_from_link_to_resolve(url)

@@ -218,9 +218,13 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
     vpage = utils.getHtml(url, site.url)
-    if "kt_player('kt_player'" in vpage:
+    if not vpage:
+        return
+    if "kt_player" in vpage or "flashvars" in vpage or "video_url" in vpage:
         vp.progress.update(60, "[CR]{0}[CR]".format("kt_player detected"))
         vp.play_from_kt_player(vpage, url)
+    else:
+        vp.play_from_link_to_resolve(url)
 
 
 @site.register()

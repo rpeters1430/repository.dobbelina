@@ -137,6 +137,8 @@ def List(url):
             continue
         name = video["title"] if utils.PY3 else video["title"].encode("utf8")
         videolink = video["pageURL"]
+        if not videolink.startswith("http"):
+            videolink = urllib_parse.urljoin(site.url, videolink)
         img = video.get("thumbURL", "")
         if img.endswith(".jpg") and "webp" in img:
             img = thumbnails.fix_img(img)
@@ -262,6 +264,8 @@ def List(url):
 
 @site.register()
 def Playvid(url, name, download=None):
+    if not url.startswith("http"):
+        url = urllib_parse.urljoin(site.url, url)
     url = url.replace("/embed/", "/videos/")
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
@@ -329,8 +333,8 @@ def Playvid(url, name, download=None):
                 except Exception as e:
                     utils.notify("Oh Oh", "Failed to deobfuscate video URL - {}".format(e))
                     return
-            elif "standard" in sources2:
-                standard_sources = sources2.get("standard") or {}
+            elif "standard" in sources or "standard" in sources2:
+                standard_sources = sources.get("standard") or sources2.get("standard") or {}
                 if not isinstance(standard_sources, dict):
                     standard_sources = {}
                 src = standard_sources.get("h264", "")
@@ -349,6 +353,9 @@ def Playvid(url, name, download=None):
                     return
 
     if videourl.startswith("http"):
+        if "|" not in videourl:
+            ua = urllib_parse.quote(utils.USER_AGENT, safe="")
+            videourl += "|User-Agent={}&Referer={}".format(ua, site.url)
         vp.progress.update(75, "[CR]Playing video[CR]")
         vp.play_from_direct_link(videourl)
     else:
@@ -465,8 +472,13 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        title = keyword.replace(" ", "%20")
-        searchUrl = url + title + "?orientations=" + get_setting("category")
+        title = urllib_parse.quote_plus(keyword)
+        cat = get_setting("category")
+        if cat in ("gay", "shemale"):
+            search_base = site.url + cat + "/search/"
+        else:
+            search_base = site.url + "search/"
+        searchUrl = search_base + title
         List(searchUrl)
 
 

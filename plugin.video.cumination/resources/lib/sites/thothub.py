@@ -32,7 +32,7 @@ addon = xbmcaddon.Addon()
 site = AdultSite(
     "thothub",
     "[COLOR hotpink]ThotHub[/COLOR]",
-    "https://thothub.vip/",
+    "https://thothub.to/",
     "thothub.png",
     "thothub",
     category="Amateur & Social",

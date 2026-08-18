@@ -82,6 +82,9 @@ def List(url):
     listhtml = utils.getHtml(url, site.url)
     if isinstance(listhtml, list):
         listhtml = "".join(listhtml)
+    if not listhtml:
+        utils.eod()
+        return
 
     soup = utils.parse_html(listhtml)
     

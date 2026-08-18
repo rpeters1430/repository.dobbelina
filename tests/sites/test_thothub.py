@@ -134,10 +134,10 @@ def test_search_url_format(monkeypatch):
         searched_url.append(url)
 
     monkeypatch.setattr(thothub, "List", fake_list)
-    thothub.Search("https://thothub.vip/search/", "big tits")
+    thothub.Search(thothub.site.url + "search/", "big tits")
 
     assert len(searched_url) == 1
-    assert searched_url[0] == "https://thothub.vip/search/big-tits/"
+    assert searched_url[0] == thothub.site.url + "search/big-tits/"
 
 
 def test_extract_list_items_singular_video_url():
@@ -174,10 +174,10 @@ def test_main_exposes_navigation(monkeypatch):
     thothub.Main()
 
     assert len(dirs) == 6
-    assert dirs[0]["url"] == "https://thothub.vip/latest-updates/"
-    assert dirs[1]["url"] == "https://thothub.vip/top-rated/"
-    assert dirs[2]["url"] == "https://thothub.vip/most-popular/"
-    assert dirs[3]["url"] == "https://thothub.vip/categories/"
-    assert dirs[4]["url"] == "https://thothub.vip/models/"
+    assert dirs[0]["url"] == thothub.site.url + "latest-updates/"
+    assert dirs[1]["url"] == thothub.site.url + "top-rated/"
+    assert dirs[2]["url"] == thothub.site.url + "most-popular/"
+    assert dirs[3]["url"] == thothub.site.url + "categories/"
+    assert dirs[4]["url"] == thothub.site.url + "models/"
     assert dirs[5]["mode"] == "Search"
 

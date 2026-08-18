@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <addons>
-<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.429">
+<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.456">
 <requires>
 <import addon="xbmc.python" version="3.0.0" />
 <import addon="script.module.six" />
@@ -13,9 +13,13 @@
 <import addon="script.module.inputstreamhelper" />
 <import addon="script.module.requests" />
 <import addon="script.module.beautifulsoup4" />
+<import addon="script.module.yt-dlp" optional="true" />
 </requires>
 <extension library="default.py" point="xbmc.python.pluginsource">
 <provides>video</provides>
+</extension>
+<extension library="service.py" point="xbmc.service">
+<provides>executable</provides>
 </extension>
 <extension point="xbmc.addon.metadata">
 <platform>all</platform>
@@ -91,7 +95,7 @@ Metadata refreshed for Matrix/Nexus/Omega compatibility
 <description lang="en">Use this addon to play F4m v1 and v2 streams</description>
 </extension>
 </addon>
-<addon id="script.module.resolveurl" name="ResolveURL" version="5.1.206" provider-name="gujal">
+<addon id="script.module.resolveurl" name="ResolveURL" version="5.1.211" provider-name="gujal">
 <requires>
 <import addon="script.module.six" />
 <import addon="script.module.kodi-six" />
@@ -120,7 +124,7 @@ Metadata refreshed for Matrix/Nexus/Omega compatibility
 </assets>
 </extension>
 </addon>
-<addon id="script.module.resolveurl.xxx" version="2.1.44" name="Adult Resolver SMR Extension" provider-name="gujal">
+<addon id="script.module.resolveurl.xxx" version="2.1.46" name="Adult Resolver SMR Extension" provider-name="gujal">
 <requires>
 <import addon="script.module.resolveurl" version="5.1.0" />
 </requires>
@@ -135,7 +139,7 @@ Metadata refreshed for Matrix/Nexus/Omega compatibility
 </assets>
 </extension>
 </addon>
-<addon id="plugin.video.smr_link_tester" version="1.1.22" name="SMR Link Tester" provider-name="gujal">
+<addon id="plugin.video.smr_link_tester" version="1.1.23" name="SMR Link Tester" provider-name="gujal">
 <requires>
 <import addon="script.module.resolveurl" />
 <import addon="script.module.resolveurl.xxx" />
@@ -152,6 +156,20 @@ Metadata refreshed for Matrix/Nexus/Omega compatibility
 <assets>
 <icon>icon.png</icon>
 </assets>
+</extension>
+</addon>
+<addon id="script.module.yt-dlp" name="yt-dlp" version="2026.07.04-2" provider-name="yt-dlp contributors">
+<requires>
+<import addon="xbmc.python" version="3.0.1" />
+<import addon="script.module.certifi" version="2023.5.7" />
+</requires>
+<extension point="xbmc.python.module" library="lib" />
+<extension point="xbmc.addon.metadata">
+<summary lang="en_GB">A youtube-dl fork with additional features and patches</summary>
+<description lang="en_GB">yt-dlp is a youtube-dl fork based on the now inactive youtube-dlc. The main focus of this project is adding new features and patches while also keeping up to date with the original project</description>
+<license>Unlicense</license>
+<platform>all</platform>
+<source>https://github.com/yt-dlp/yt-dlp</source>
 </extension>
 </addon>
 </addons>
