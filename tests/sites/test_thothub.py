@@ -174,7 +174,7 @@ def test_main_exposes_navigation(monkeypatch):
     thothub.Main()
 
     assert len(dirs) == 6
-    assert dirs[0]["url"] == thothub.site.url + "latest-updates/"
+    assert dirs[0]["url"] == thothub.site.url + "public/"
     assert dirs[1]["url"] == thothub.site.url + "top-rated/"
     assert dirs[2]["url"] == thothub.site.url + "most-popular/"
     assert dirs[3]["url"] == thothub.site.url + "categories/"

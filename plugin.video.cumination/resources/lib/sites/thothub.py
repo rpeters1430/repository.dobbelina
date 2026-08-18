@@ -338,7 +338,7 @@ def _login(force=False):
 def Main():
     site.add_dir(
         "[COLOR hotpink]Latest Updates[/COLOR]",
-        site.url + "latest-updates/",
+        site.url + "public/",
         "List",
         site.img_next,
     )
@@ -372,7 +372,7 @@ def Main():
         "Search",
         site.img_search,
     )
-    List(site.url + "latest-updates/")
+    List(site.url + "public/")
 
 
 def _extract_list_items(html):

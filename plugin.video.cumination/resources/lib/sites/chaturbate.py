@@ -70,6 +70,21 @@ def _cb_remember_playlist_media_urls(proxy_state, playlist, type_key=None):
         _cb_remember_media_url(proxy_state, match.group(1), type_key)
 
 
+def _cb_load_json(text):
+    """Parse a Chaturbate API response, returning None on empty/blocked responses
+    (e.g. a Cloudflare/WAF 403) instead of letting json.loads raise."""
+    if not text:
+        utils.kodilog("Chaturbate: empty response body, site may be blocking this request")
+        utils.notify("Chaturbate", "Site returned no data, try again later")
+        return None
+    try:
+        return json.loads(text)
+    except ValueError as error:
+        utils.kodilog("Chaturbate: failed to parse JSON response: {}".format(error))
+        utils.notify("Chaturbate", "Site returned unexpected data, try again later")
+        return None
+
+
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
@@ -231,7 +246,10 @@ def List(url, page=1):
 
     headers = {"X-Requested-With": "XMLHttpRequest"}
     listhtml, _ = utils.get_html_with_cloudflare_retry(url, headers=headers)
-    listhtml = json.loads(listhtml)
+    listhtml = _cb_load_json(listhtml)
+    if listhtml is None:
+        utils.eod()
+        return
     models = listhtml.get("rooms")
     for model in models:
         if model.get('is_following'):
@@ -374,7 +392,10 @@ def SList(url):
     hdr = utils.base_hdrs.copy()
     hdr.update({"X-Requested-With": "XMLHttpRequest"})
     listhtml, _ = utils.get_html_with_cloudflare_retry(url, site.url, headers=hdr)
-    jlist = json.loads(listhtml)
+    jlist = _cb_load_json(listhtml)
+    if jlist is None:
+        utils.eod()
+        return
     for model in jlist.get("online", []):
         img = "https://thumb.live.mmcdn.com/riw/{}.jpg".format(model)
         contextfollow = (
@@ -1214,7 +1235,11 @@ def topCams(url):
     if addon.getSetting("chaturbate") == "true":
         clean_database(False)
     response, _ = utils.get_html_with_cloudflare_retry(url)
-    jsonTop = json.loads(response)["top"]
+    topdata = _cb_load_json(response)
+    if topdata is None:
+        utils.eod()
+        return
+    jsonTop = topdata["top"]
     for iTop in jsonTop:
         subject = (
             "[COLOR deeppink]Name: [/COLOR]"
@@ -1241,7 +1266,10 @@ def topCams(url):
 def Tags(url, page=1):
     cat = re.search(r"&g=([^&]*)", url).group(1)
     html, _ = utils.get_html_with_cloudflare_retry(url, site.url)
-    jdata = json.loads(html)
+    jdata = _cb_load_json(html)
+    if jdata is None:
+        utils.eod()
+        return
     total = jdata["total"]
     for tag in jdata["hashtags"]:
         name = tag["hashtag"]
@@ -1286,7 +1314,10 @@ def onlineFav(url):
         + random.choice(wmArray)
     )
     data_chat, _ = utils.get_html_with_cloudflare_retry(chaturbate_url, "")
-    model_list = json.loads(data_chat)
+    model_list = _cb_load_json(data_chat)
+    if model_list is None:
+        utils.eod()
+        return
     model_lookup = {item["username"]: item for item in model_list}
     conn = sqlite3.connect(utils.favoritesdb)
     conn.text_factory = str
