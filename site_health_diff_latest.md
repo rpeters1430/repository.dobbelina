@@ -5,8 +5,8 @@
 
 ## Snapshot
 
-- Current: `PASS 178` | `WARN 3` | `FAIL 3` | `ERROR 0` | `SKIP 1`
-- Previous: `PASS 180` | `WARN 1` | `FAIL 3` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 181` | `WARN 2` | `FAIL 3` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 178` | `WARN 3` | `FAIL 3` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
@@ -14,15 +14,15 @@
 - Resolved failures: `1`
 - Persistent failures: `2`
 - Site regressions: `3`
-- Step regressions: `3`
+- Step regressions: `2`
 
 ## New Failures
 
-- **analdin**: `PASS -> FAIL` (PARSER) | list: List returned no videos
+- **pornez**: `PASS -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
 ## Resolved Failures
 
-- **pornez**: `FAIL -> PASS`
+- **analdin**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -31,6 +31,10 @@
 
 ## Step Regressions
 
-- **analdin** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
-- **awmnet** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
-- **javguru** `play`: `PASS -> FAIL` (NETWORK) | Timed out after 35s
+- **pornez** `main`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **pornslash** `play`: `PASS -> FAIL` (CODE) | ValueError: No video stream found!
+
+## Improvements
+
+- **awmnet**: `WARN -> PASS`
+- **javguru**: `WARN -> PASS`
