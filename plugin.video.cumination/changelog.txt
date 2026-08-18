@@ -1,3 +1,11 @@
+[B]Version 1.1.457[/B]
+- fix(anybunny): migrate domain to anybunny.tv and modernize scraper and playback
+- feat: add dynamic mirror manager, DoH client, and yt-dlp resolver bridge
+- Added New Sites
+- Merge pull request #314 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: implement pornslash site scraper and add support for video streaming
+
 [B]Version 1.1.456[/B]
 - feat: add dynamic mirror manager, DoH client, and yt-dlp resolver bridge
 - Added New Sites
