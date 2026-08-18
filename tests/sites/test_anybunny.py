@@ -83,7 +83,6 @@ def test_list_filters_out_category_links(monkeypatch):
 
     anybunny.List("https://anybunny.org/top/Indian")
 
-    # Only /too/ items should produce downloads — no /top/ category items
     for dl in recorder.downloads:
         assert "/too/" in dl["url"], f"Expected /too/ in URL, got {dl['url']}"
 
@@ -108,7 +107,6 @@ def test_search_results_list_videos(monkeypatch):
         "Search Result One",
         "Search Result Two",
     ]
-    # search.html has no topbtmsel2r so no pagination dir should be added
     assert recorder.dirs == []
 
 
@@ -128,11 +126,9 @@ def test_categories2_extracts_category_links(monkeypatch):
 
     anybunny.Categories2("https://anybunny.org/")
 
-    # Should list Indian and Big Tits but NOT the bare /top/ link
     cat_names = [d["name"] for d in recorder.dirs]
     assert "Indian" in cat_names
     assert "Big Tits" in cat_names
-    # The bare /top/ entry should be skipped
     assert not any(d["url"].rstrip("/").endswith("/top") for d in recorder.dirs)
 
 
@@ -165,7 +161,35 @@ def test_playvid_extracts_mp4_from_file_param(monkeypatch):
 
     anybunny.Playvid("https://anybunny.org/too/123-video", "Example")
 
-    assert captured["direct_url"] == "https://anybunny.org/video/mp4/123/abc/ts/video.mp4"
+    assert captured["direct_url"].split("|")[0] == "https://anybunny.org/video/mp4/123/abc/ts/video.mp4"
+
+
+def test_playvid_extracts_html5_source(monkeypatch):
+    """Playvid() extracts modern HTML5 video sources."""
+    captured = {}
+
+    class _DummyVP:
+        def __init__(self, name, download=False, **kwargs):
+            self.progress = type("P", (), {"update": lambda *a, **k: None})()
+
+        def play_from_direct_link(self, url):
+            captured["direct_url"] = url
+
+    monkeypatch.setattr(anybunny.utils, "VideoPlayer", _DummyVP)
+
+    video_html = (
+        '<html><body>'
+        '<video id="tube-mov">'
+        '<source src="https://mov.anybunny.tv/key=abc,end=123/video.mp4" type="video/mp4"/>'
+        '</video>'
+        '</body></html>'
+    )
+
+    monkeypatch.setattr(anybunny.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (video_html, None))
+
+    anybunny.Playvid("https://anybunny.tv/movie/123/test.html", "Example")
+
+    assert captured["direct_url"].split("|")[0] == "https://mov.anybunny.tv/key=abc,end=123/video.mp4"
 
 
 def test_playvid_uses_iframe_fallback(monkeypatch):
@@ -190,7 +214,7 @@ def test_playvid_uses_iframe_fallback(monkeypatch):
 
     anybunny.Playvid("http://anybunny.org/too/123-video", "Example")
 
-    assert captured["direct_url"] == "https://stream1.anybunny.org/vid.mp4"
+    assert captured["direct_url"].split("|")[0] == "https://stream1.anybunny.org/vid.mp4"
 
 
 def test_main_populates_directories(monkeypatch):
@@ -204,8 +228,9 @@ def test_main_populates_directories(monkeypatch):
 
     anybunny.Main()
 
-    assert len(recorder.dirs) == 3
-    assert any("Featured" in d["name"] for d in recorder.dirs)
+    assert len(recorder.dirs) == 4
+    assert any("Latest" in d["name"] for d in recorder.dirs)
+    assert any("Top Rated" in d["name"] for d in recorder.dirs)
     assert any("Categories" in d["name"] for d in recorder.dirs)
     assert any("Search" in d["name"] for d in recorder.dirs)
     assert list_calls == [anybunny.DEFAULT_LIST_URL]

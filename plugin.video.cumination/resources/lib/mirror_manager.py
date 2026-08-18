@@ -42,6 +42,10 @@ DEFAULT_MIRRORS: dict[str, list[str]] = {
         "https://xhamster.com/",
         "https://xhamster.desi/",
     ],
+    "anybunny": [
+        "https://anybunny.tv/",
+        "https://anybunny.org/",
+    ],
 }
 
 _ACTIVE_MIRRORS_CACHE: dict[str, str] = {}

@@ -25,42 +25,36 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "anybunny",
     "[COLOR hotpink]Anybunny[/COLOR]",
-    "https://anybunny.org/",
+    "https://anybunny.tv/",
     "anybunny.png",
     "anybunny",
     category="Video Tubes",
 )
-DEFAULT_LIST_URL = site.url + "top/indian"
-
-# Site structure (as of 2026-03):
-# - /new/ and /top/ are 404 for plain HTTP; only category pages (/top/{Name})
-#   and individual video pages (/too/{id}-{slug}) work with getHtml().
-# - Root page / contains 100 category links as a.nuyrfe with /top/{Name} hrefs.
-# - Category pages /top/{Name} contain ~119 video links as a.nuyrfe with
-#   absolute https://anybunny.org/too/{id}-{slug} hrefs.
-# - Pagination on category pages uses <a class='topbtmsel2r' href='...?p=N'>Next</a>.
-# - Video pages use Playerjs with file:"<m3u8_url>:cast:<m3u8_url> or <mp4_url>:cast:<mp4_url>"
+DEFAULT_LIST_URL = site.url + "latest/"
 
 
-def _extract_playerjs_best_url(html_content):
-    """Extract the best quality video URL from Playerjs file parameter in HTML.
+def _extract_video_stream_url(html_content):
+    """Extract direct playable video URL from anybunny HTML page."""
+    if not html_content:
+        return None
 
-    Handles two formats:
-    - Quality-labelled: file:"[240]url,[360]url,[480]url,[720]url" (picks highest)
-    - Multi-source:     file:"m3u8_url :cast:cast_url or mp4_url :cast:cast_url"
-    Falls back to bare URL pattern scan if no file: parameter is found.
-    """
+    soup = utils.parse_html(html_content)
+
+    # 1. Check HTML5 <video><source src="..."> elements
+    for source in soup.select("video source[src], source[src]"):
+        src = source.get("src")
+        if src and (".mp4" in src.lower() or ".m3u8" in src.lower() or "mov.anybunny.tv" in src):
+            return src
+
+    # 2. Check Playerjs file parameter (legacy format: prefer mp4 over m3u8 for compatibility)
     file_match = re.search(r'file\s*:\s*["\']([^"\']+)["\']', html_content, re.IGNORECASE)
     if file_match:
         file_val = file_match.group(1)
-
-        # Quality-labelled format: [240]url,[360]url,...
         quality_options = re.findall(r'\[(\d+)\](https?://[^,\[\s"\']+)', file_val)
         if quality_options:
             quality_options.sort(key=lambda x: int(x[0]), reverse=True)
             return quality_options[0][1]
 
-        # Multi-source format: url1 :cast:casturl1 or url2 :cast:casturl2
         mp4_url = None
         m3u8_url = None
         for part in re.split(r'\s+or\s+', file_val):
@@ -70,18 +64,21 @@ def _extract_playerjs_best_url(html_content):
             elif ('.m3u8' in primary.lower() or '/hls/' in primary.lower()) and not m3u8_url:
                 m3u8_url = primary
         if mp4_url or m3u8_url:
-            # Prefer mp4: plays without inputstream.adaptive
             return mp4_url or m3u8_url
 
-    # Fallback: scan for bare media URLs
+    # 3. Regex for direct media URLs on mov.anybunny.tv
+    mov_match = re.search(r'["\'](https?://mov\.anybunny\.tv/[^"\']+)["\']', html_content)
+    if mov_match:
+        return mov_match.group(1)
+
+    # 4. Fallback pattern search
     for pattern in [
         r'(https?://[^\s"\'\\,\]]+\.mp4(?:[^\s"\'\\,\]]*)?)',
         r'(https?://[^\s"\'\\,\]]+\.m3u8(?:[^\s"\'\\,\]]*)?)',
     ]:
         match = re.search(pattern, html_content, re.IGNORECASE)
         if match:
-            video_url = match.group(1).split(':cast:')[0].strip()
-            return video_url
+            return match.group(1).split(':cast:')[0].strip()
 
     return None
 
@@ -89,13 +86,16 @@ def _extract_playerjs_best_url(html_content):
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
-        "[COLOR hotpink]Featured[/COLOR]", DEFAULT_LIST_URL, "List", site.img_cat
+        "[COLOR hotpink]Latest Videos[/COLOR]", site.url + "latest/", "List", site.img_cat
+    )
+    site.add_dir(
+        "[COLOR hotpink]Top Rated[/COLOR]", site.url + "top-rated/", "List", site.img_cat
     )
     site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]", site.url, "Categories2", site.img_cat
     )
     site.add_dir(
-        "[COLOR hotpink]Search[/COLOR]", site.url + "top/", "Search", site.img_search
+        "[COLOR hotpink]Search[/COLOR]", site.url, "Search", site.img_search
     )
     List(DEFAULT_LIST_URL)
     utils.eod()
@@ -116,31 +116,36 @@ def List(url):
 
     soup = utils.parse_html(listhtml)
 
-    # Video items: a.nuyrfe with absolute /too/ hrefs
-    for anchor in soup.select("a.nuyrfe[href*='/too/']"):
+    # 1. Primary format: <li class="thumb">
+    items = soup.select("li.thumb")
+    for item in items:
+        anchor = item.select_one("a.thumb_img_wrap") or item.find("a", href=re.compile(r"/movie/"))
+        if not anchor:
+            continue
         href = utils.safe_get_attr(anchor, "href")
         if not href:
             continue
+
         video_url = urllib_parse.urljoin(site.url, href)
-        
-        # Find the main thumbnail image, avoiding UI icons
-        img_tag = anchor.select_one("img.imgresdif") or anchor.find("img", attrs={"src": re.compile(r"cdnclouder|thumb")})
-        if not img_tag:
-            # Fallback to the largest image or last image if class is missing
-            imgs = anchor.find_all("img")
-            if imgs:
-                img_tag = imgs[-1]
-                
-        thumb = utils.get_thumbnail(img_tag)
-        title = utils.cleantext(utils.safe_get_attr(img_tag, "alt"))
+
+        title_el = item.select_one(".thumb_title")
+        title = utils.cleantext(title_el.get_text().strip()) if title_el else ""
         if not title:
             title = utils.cleantext(utils.safe_get_attr(anchor, "title") or "")
         if not title:
-            # Fallback to slug from URL
-            title = utils.cleantext(video_url.split("-", 1)[-1].replace("_", " ").title())
-        
-        if not title:
-            continue
+            slug = href.rstrip("/").split("/")[-1].replace(".html", "").replace("-", " ")
+            title = utils.cleantext(slug.title())
+
+        thumb = ""
+        thumb_div = item.select_one(".thumb_img")
+        if thumb_div and thumb_div.has_attr("style"):
+            bg_match = re.search(r"url\(['\"]?([^'\")]+)['\"]?\)", thumb_div["style"])
+            if bg_match:
+                thumb = bg_match.group(1)
+
+        if not thumb:
+            img_tag = item.find("img")
+            thumb = utils.get_thumbnail(img_tag) if img_tag else ""
 
         if thumb:
             thumb = urllib_parse.urljoin(site.url, thumb)
@@ -149,7 +154,21 @@ def List(url):
 
         site.add_download_link(title, video_url, "Playvid", thumb, title)
 
-    # Pagination: a.topbtmsel2r with href and text "Next"
+    # 2. Legacy fallback: a.nuyrfe with /too/ hrefs
+    if not items:
+        for anchor in soup.select("a.nuyrfe[href*='/too/']"):
+            href = utils.safe_get_attr(anchor, "href")
+            if not href:
+                continue
+            video_url = urllib_parse.urljoin(site.url, href)
+            img_tag = anchor.find("img")
+            thumb = utils.get_thumbnail(img_tag) if img_tag else site.image
+            title = utils.cleantext(utils.safe_get_attr(img_tag, "alt") if img_tag else "")
+            if not title:
+                title = utils.cleantext(video_url.split("-", 1)[-1].replace("_", " ").title())
+            site.add_download_link(title, video_url, "Playvid", thumb, title)
+
+    # Pagination: a.topbtmsel2r (legacy) or modern pagination
     next_link = soup.select_one("a.topbtmsel2r")
     if next_link and next_link.has_attr("href"):
         text = next_link.get_text().strip().lower()
@@ -163,48 +182,34 @@ def List(url):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
-
     vp.progress.update(50, "[CR]Fetching video page...[CR]")
     pagehtml, _ = utils.get_html_with_cloudflare_retry(url, referer=site.url)
 
     if not pagehtml:
         utils.kodilog("anybunny Playvid: Failed to fetch page")
+        utils.notify("Error", "Could not load video page")
         return
 
-    # Video pages embed Playerjs with file: parameter containing m3u8/mp4 URLs
-    video_url = _extract_playerjs_best_url(pagehtml)
+    video_url = _extract_video_stream_url(pagehtml)
+    if not video_url:
+        iframe_match = re.search(r'<iframe[^>]+src=["\']([^"\']+)["\']', pagehtml, re.IGNORECASE)
+        if iframe_match:
+            iframe_url = iframe_match.group(1)
+            if not iframe_url.startswith("http"):
+                iframe_url = urllib_parse.urljoin(site.url, iframe_url)
+            iframe_html, _ = utils.get_html_with_cloudflare_retry(iframe_url, referer=url)
+            if iframe_html:
+                video_url = _extract_video_stream_url(iframe_html)
+
     if video_url:
-        utils.kodilog(f"anybunny Playvid: Found video URL in page: {video_url[:100]}")
+        if "|" not in video_url:
+            ua = urllib_parse.quote(utils.USER_AGENT, safe="")
+            video_url += "|User-Agent={}&Referer={}".format(ua, site.url)
+        vp.progress.update(85, "[CR]Playing video...[CR]")
         vp.play_from_direct_link(video_url)
-        return
-
-    # Fallback: look for an iframe containing the player
-    iframe_match = re.search(r'<iframe[^>]+src=["\']([^"\']+)["\']', pagehtml, re.IGNORECASE)
-    if not iframe_match:
-        utils.kodilog("anybunny Playvid: No iframe or video found")
+    else:
+        utils.kodilog("anybunny Playvid: No playable video URL found")
         utils.notify("Error", "Could not extract video URL")
-        return
-
-    iframe_url = iframe_match.group(1)
-    if not iframe_url.startswith('http'):
-        iframe_url = urllib_parse.urljoin(site.url, iframe_url)
-
-    utils.kodilog(f"anybunny Playvid: Found iframe: {iframe_url[:100]}")
-    vp.progress.update(70, "[CR]Loading player...[CR]")
-    iframe_html, _ = utils.get_html_with_cloudflare_retry(iframe_url, referer=url)
-
-    if not iframe_html:
-        utils.kodilog("anybunny Playvid: Failed to fetch iframe")
-        return
-
-    video_url = _extract_playerjs_best_url(iframe_html)
-    if video_url:
-        utils.kodilog(f"anybunny Playvid: Found video URL in iframe: {video_url[:100]}")
-        vp.play_from_direct_link(video_url)
-        return
-
-    utils.kodilog("anybunny Playvid: No video URL found")
-    utils.notify("Error", "Could not extract video URL")
 
 
 @site.register()
@@ -222,14 +227,11 @@ def Categories2(url):
     soup = utils.parse_html(cathtml)
 
     entries = []
-    # Root page has category links as a.nuyrfe pointing to /top/{Name}
-    # (distinguished from video items which point to /too/{id}-{slug})
     for anchor in soup.select("a.nuyrfe"):
         href = utils.safe_get_attr(anchor, "href") or ""
         if "/top/" not in href or "/too/" in href:
             continue
 
-        # Skip the bare /top/ index link
         stripped = href.rstrip("/")
         if stripped.endswith("/top"):
             continue
@@ -247,7 +249,6 @@ def Categories2(url):
         if not name:
             name = utils.cleantext(utils.safe_get_text(anchor))
         if not name:
-            # Derive a human-readable name from the URL slug
             name = utils.cleantext(catid.replace("_", " ").title())
         if not name:
             continue
@@ -272,7 +273,7 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        # Search works by navigating to /top/{keyword}
-        title = keyword.replace(" ", "_")
-        searchUrl = urllib_parse.urljoin(site.url, "top/" + title)
-        List(searchUrl)
+        slug = re.sub(r"[^a-zA-Z0-9]+", "-", keyword.strip()).strip("-").lower()
+        search_slug = slug if "-" in slug else "{}-video".format(slug)
+        search_url = urllib_parse.urljoin(site.url, "search/{}.html".format(search_slug))
+        List(search_url)
