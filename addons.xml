@@ -158,7 +158,7 @@ Metadata refreshed for Matrix/Nexus/Omega compatibility
 </assets>
 </extension>
 </addon>
-<addon id="script.module.yt-dlp" name="yt-dlp" version="2026.07.04-2" provider-name="yt-dlp contributors">
+<addon id="script.module.yt-dlp" name="yt-dlp" version="2026.8.04-2" provider-name="yt-dlp contributors">
 <requires>
 <import addon="xbmc.python" version="3.0.1" />
 <import addon="script.module.certifi" version="2023.5.7" />
