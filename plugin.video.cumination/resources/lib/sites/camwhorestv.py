@@ -28,11 +28,17 @@ from six.moves import urllib_parse
 site = AdultSite(
     "camwhorestv",
     "[COLOR hotpink]CamWhores.tv[/COLOR]",
-    "https://www.camwhores.tv/",
+    "https://www.camwhores.tw/",
     "camwhorestv.png",
     "camwhorestv",
     category="Amateur & Social",
 )
+
+cwtvhdr = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+}
 
 camwhores_logged = utils.addon.getSetting("camwhores_logged").lower() == "true"
 
@@ -199,7 +205,7 @@ def Playvid(url, name, download=None):
     if isinstance(name, list):
         name = "".join(name)
     vp = utils.VideoPlayer(name, download)
-    html = utils.getHtml(url, site.url)
+    html = utils.getHtml(url, headers=cwtvhdr)
     if isinstance(html, list):
         html = "".join(html)
     if 'class="message"' in html:
@@ -207,7 +213,7 @@ def Playvid(url, name, download=None):
         if message:
             utils.notify("", message.group(1).lstrip(" \t"))
         return
-    vp.play_from_kt_player(html)
+    vp.play_from_kt_player(html, user_agent=cwtvhdr["User-Agent"])
 
 
 @site.register()

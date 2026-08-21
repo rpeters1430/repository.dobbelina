@@ -145,7 +145,7 @@ def test_search_with_keyword(monkeypatch):
     )
 
     assert len(list_calls) == 1
-    assert "test+query" in list_calls[0]
+    assert "test-query" in list_calls[0]
 
 
 def test_search_without_keyword(monkeypatch):

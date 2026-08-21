@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-08-13
-**Last Sync**: 2026-08-13 - Expanded chaturbate's Record search-engine list (CamWhores.tv/CamWhoresBay/CamGirlFap/DrTuber) and fixed camwhorestv search keyword encoding; documented stripchat model-info toggle as not applicable.
+**Last Updated**: 2026-08-21
+**Last Sync**: 2026-08-21 - Added new sites 3movs and xtapesla with BeautifulSoup4 modernization, ported SexTB player XOR decryption & studios endpoint, and updated CamWhores domains and custom User-Agent in kt_player.
 
 ---
 
@@ -18,6 +18,18 @@
 ---
 
 ## Sync Sessions
+
+### 2026-08-21 Porting Session
+Reviewed pending upstream commits surfaced by `sync_manager.py --report`. Cleanly ported and modernized 2 new site modules (`3movs.com` and `xtapes.la`), ported the `sextb.py` XOR decryption fix, and integrated `camwhores.tw` domain and `play_from_kt_player` user-agent parameters.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `a008b739` (#1935, #1352) | 3movs - fixes #1935 fixes #1352 | `manual` | 2026-08-21 | **3movs**: Modernized from upstream's regex-based scraper to BeautifulSoup4. Added icon asset `3movs.png`, about text `3movs.txt`, fixture `tests/fixtures/sites/3movs/listing.html`, and unit test `tests/sites/test_3movs.py`. Verified live smoke PASS. |
+| `2ac3fb76`, `36b00188`, `e9fd3d06` (#1923) | Xtapes / Xtapes.la new site / Full Movies option | `manual` | 2026-08-21 | **xtapesla**: Modernized from upstream's regex-based scraper and local HTTP proxy to project-standard BeautifulSoup4 with direct HLS playback with piped HTTP headers. Added icon asset `xtapes.png`, fixture `tests/fixtures/sites/xtapesla/listing.html`, and unit test `tests/sites/test_xtapesla.py`. Verified live smoke PASS. |
+| `a525b35d` (#1933, #1719, #1534, #1415, #1279) | sextb fixes | `manual` | 2026-08-21 | **SexTB**: Integrated `window.__pt` / `window.__pk` XOR player decryption for `player_enc` AJAX responses and updated Studios link to `list-studios`. Unit tests pass. |
+| `b94fbd78`, `e2360af0` (#1941) | camwhores.tw / camwhoresbay, camwhores.tv fixes | `manual` | 2026-08-21 | **CamWhores**: Updated CamWhoresTV base URL to `https://www.camwhores.tw/`, added custom User-Agent headers, updated `VideoPlayer.play_from_kt_player` in `utils.py` to accept `user_agent`, and updated `camwhoresbay` search query formatting. Unit tests pass. |
+| `a955b9f6`, `356b19b7`, `3d408498`, `6e20e2d3`, `ae4c2924` | chaturbate, missav, anybunny, yespornvip, eroticmv fixes | `manual-already-covered` | 2026-08-21 | Rechecked against fork implementations; BS4 parsers and live smoke tests pass cleanly. |
+| `1d5db296`, `b23546b2`, `dec8e3a4`, `707dcf08` | Version bumps, merge commits, uploads | `skipped` | 2026-08-21 | Version/package bumps and duplicate upload commits. |
 
 ### 2026-08-15 Porting Session
 Reviewed upstream PR #1931 (`camilt/repository.dobbelina@cda959e1`). Cleanly ported and modernized the new site `pornslash.com` and integrated the `eroticmv.py` base64 stream decoding fix.

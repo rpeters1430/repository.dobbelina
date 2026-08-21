@@ -107,7 +107,7 @@ def Main():
     )
     site.add_dir(
         "[COLOR hotpink]Studios[/COLOR]",
-        site.url + "list-studio",
+        site.url + "list-studios",
         "Studios",
         site.img_cat,
     )
@@ -320,6 +320,17 @@ def Search(url, keyword=None):
         List(url)
 
 
+def xor_decrypt(encoded, key):
+    import base64
+
+    decoded = base64.b64decode(encoded)
+    key_bytes = key.encode("utf-8")
+    key_len = len(key_bytes)
+    return "".join(
+        chr(decoded[i] ^ key_bytes[i % key_len]) for i in range(len(decoded))
+    )
+
+
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
@@ -349,11 +360,48 @@ def Playvid(url, name, download=None):
     source = utils.selector("Select Hoster", sources)
     if source:
         filmid, episode = source.split("$$")
-        formdata = {"filmId": filmid, "episode": episode}
-        player = json.loads(
-            utils.postHtml(ajaxurl, form_data=formdata, headers={"Referer": site.url})
-        ).get("player")
-        videourl = re.findall(r'src="([^?"]+)', player)[0] + "$$" + site.url
+        match = re.compile(
+            r'window\.__pt = "([^"]+)";\s+window\.__pk = "([^"]+)";',
+            re.DOTALL | re.IGNORECASE,
+        ).search(video_page)
+        if match:
+            pt, pk = match.groups()
+            form_data = {"filmId": filmid, "episode": episode, "pt": pt}
+            player_html = utils._postHtml(
+                ajaxurl,
+                form_data=form_data,
+                headers={"Referer": url, "X-Requested-With": "XMLHttpRequest"},
+            )
+            try:
+                data = json.loads(player_html)
+                player_enc = data.get("player_enc")
+                if player_enc:
+                    decrypted_html = xor_decrypt(player_enc, pk)
+                    iframe_match = re.search(r'src="([^"]+)"', decrypted_html)
+                    if iframe_match:
+                        iframe_url = iframe_match.group(1)
+                        if iframe_url.startswith("//"):
+                            iframe_url = "https:" + iframe_url
+                        vp.progress.update(75, "[CR]Resolving video...[/CR]")
+                        videourl = iframe_url + "$$" + url
+                        vp.play_from_link_to_resolve(videourl)
+                        return
+            except Exception as e:
+                utils.kodilog("sextb: failed to decode player_enc: {}".format(e))
+        else:
+            formdata = {"filmId": filmid, "episode": episode}
+            try:
+                player = json.loads(
+                    utils.postHtml(
+                        ajaxurl, form_data=formdata, headers={"Referer": site.url}
+                    )
+                ).get("player")
+                if player:
+                    src_match = re.findall(r'src="([^?"]+)', player)
+                    if src_match:
+                        videourl = src_match[0] + "$$" + site.url
+            except Exception:
+                pass
 
     if not videourl:
         vp.progress.close()

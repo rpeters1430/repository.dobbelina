@@ -2981,15 +2981,23 @@ class VideoPlayer:
             raise ValueError(i18n("no_regex"))
 
     @_cancellable
-    def play_from_kt_player(self, html, url=None, follow_redirects=False):
-        license = re.search(r"license_code:\s*'([^']+)'", html, re.DOTALL | re.IGNORECASE)
+    def play_from_kt_player(
+        self, html, url=None, follow_redirects=False, user_agent=None
+    ):
+        license = re.search(
+            r"license_code:\s*'([^']+)'", html, re.DOTALL | re.IGNORECASE
+        )
         if license:
             license = license.group(1)
 
         sources = {}
-        for match in re.finditer(r"(video(?:_alt)?_url\d*)\s*:\s*'([^']+)'", html, re.IGNORECASE):
+        for match in re.finditer(
+            r"(video(?:_alt)?_url\d*)\s*:\s*'([^']+)'", html, re.IGNORECASE
+        ):
             url_key, stream_url = match.group(1), match.group(2)
-            label_match = re.search(r"{}_text\s*:\s*'([^']+)'".format(url_key), html, re.IGNORECASE)
+            label_match = re.search(
+                r"{}_text\s*:\s*'([^']+)'".format(url_key), html, re.IGNORECASE
+            )
             if label_match:
                 label = label_match.group(1)
             elif "alt" in url_key:
@@ -2999,9 +3007,15 @@ class VideoPlayer:
             sources[label] = stream_url
 
         if not sources:
-            match = re.compile(r"video(?:_|_alt_)url\d?:\s*'([^']+)[^;]+?video(?:_|_alt_)url\d?_text:\s*'([^']+)", re.DOTALL | re.IGNORECASE).findall(html)
+            match = re.compile(
+                r"video(?:_|_alt_)url\d?:\s*'([^']+)[^;]+?video(?:_|_alt_)url\d?_text:\s*'([^']+)",
+                re.DOTALL | re.IGNORECASE,
+            ).findall(html)
             if not match:
-                match = re.compile(r"video(?:_|_alt_)url\d?: '([^']+)'.+?postfix\s*:\s*'([^']+)'", re.DOTALL | re.IGNORECASE).findall(html)
+                match = re.compile(
+                    r"video(?:_|_alt_)url\d?: '([^']+)'.+?postfix\s*:\s*'([^']+)'",
+                    re.DOTALL | re.IGNORECASE,
+                ).findall(html)
             sources = {qual: videourl for videourl, qual in match}
 
         # Filter out qualities that require login if others are available
@@ -3013,31 +3027,41 @@ class VideoPlayer:
             videourl = list(sources.values())[0]
         elif sources:
             try:
-                videourl = prefquality(sources, sort_by=lambda x: 2160 if '4k' in x.lower() else int(re.sub(r'\D', '', x) or 0), reverse=True)
+                videourl = prefquality(
+                    sources,
+                    sort_by=lambda x: 2160
+                    if "4k" in x.lower()
+                    else int(re.sub(r"\D", "", x) or 0),
+                    reverse=True,
+                )
             except Exception:
-                videourl = selector('Select quality', sources, reverse=True)
+                videourl = selector("Select quality", sources, reverse=True)
         else:
             videourl = None
 
         if not videourl:
             self.progress.close()
             return
-        if '?login' in videourl:
+        if "?login" in videourl:
             self.progress.close()
-            notify(i18n('oh_oh'), i18n('Login required for this quality.'))
+            notify(i18n("oh_oh"), i18n("Login required for this quality."))
             return
-        if videourl.startswith('function/'):
+        if videourl.startswith("function/"):
             if not license:
                 self.progress.close()
-                notify(i18n('oh_oh'), 'Unable to play video: License code not found')
+                notify(
+                    i18n("oh_oh"), "Unable to play video: License code not found"
+                )
                 return
             from resources.lib.decrypters.kvsplayer import kvs_decode
+
             videourl = kvs_decode(videourl, license)
 
         if follow_redirects:
             videourl = getVideoLink(videourl, url)
 
-        videourl += '|User-Agent={0}'.format(urllib_parse.quote(USER_AGENT, safe=""))
+        ua = user_agent if user_agent else USER_AGENT
+        videourl += "|User-Agent={0}".format(urllib_parse.quote(ua, safe=""))
         if url:
             videourl += '&Referer={0}'.format(url)
 

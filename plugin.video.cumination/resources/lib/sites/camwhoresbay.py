@@ -452,7 +452,7 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        title = keyword.replace(" ", "+")
+        title = keyword.replace(" ", "-")
         searchUrl = searchUrl.format(title)
         try:
             List(searchUrl)
