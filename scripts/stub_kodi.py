@@ -4,11 +4,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_PATH = ROOT / "plugin.video.cumination"
+RESOLVEURL_PATH = ROOT / "script.module.resolveurl" / "lib"
 
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 if str(PLUGIN_PATH) not in sys.path:
     sys.path.insert(0, str(PLUGIN_PATH))
+if str(RESOLVEURL_PATH) not in sys.path and RESOLVEURL_PATH.exists():
+    sys.path.insert(0, str(RESOLVEURL_PATH))
 
 def ensure_stubs():
     if "kodi_six" in sys.modules:
