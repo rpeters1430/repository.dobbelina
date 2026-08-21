@@ -1,3 +1,10 @@
+[B]Version 1.1.459[/B]
+- fix(flaresolverr): support env var host configuration and stub settings in test harness
+- fix(thothub): update URL from latest-updates to public in Main function fix(chaturbate): add JSON response handling to prevent crashes on empty or blocked responses
+- fix(yt-dlp): de-identify static Google API key string literals in extractors
+- fix(anybunny): migrate domain to anybunny.tv and modernize scraper and playback
+- feat: add dynamic mirror manager, DoH client, and yt-dlp resolver bridge
+
 [B]Version 1.1.458[/B]
 - fix(thothub): update URL from latest-updates to public in Main function fix(chaturbate): add JSON response handling to prevent crashes on empty or blocked responses
 - fix(yt-dlp): de-identify static Google API key string literals in extractors
