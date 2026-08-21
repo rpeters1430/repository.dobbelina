@@ -1478,8 +1478,8 @@ def flaresolve(url, referer):
     """
     from resources.lib.flaresolverr import FlareSolverrManager
 
-    fs_host = addon.getSetting("fs_host")
-    if not fs_host:
+    fs_host = os.environ.get("FLARESOLVERR_URL") or os.environ.get("FS_HOST") or addon.getSetting("fs_host")
+    if not fs_host or fs_host == "0":
         fs_host = "http://127.0.0.1:8191/v1"
 
     start_time = time.time()

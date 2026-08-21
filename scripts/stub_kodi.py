@@ -38,19 +38,31 @@ def ensure_stubs():
 
     # xbmcaddon module
     xbmcaddon = types.ModuleType("kodi_six.xbmcaddon")
+    import os
     class _Addon:
         def __init__(self, addon_id="plugin.video.cumination"):
             self.addon_id = addon_id
+            self._settings = {
+                "fs_host": os.environ.get("FLARESOLVERR_URL") or os.environ.get("FS_HOST") or "http://127.0.0.1:8191/v1",
+                "fs_enable": os.environ.get("FS_ENABLE", "true"),
+                "fs_allow_remote": "true",
+            }
         def getAddonInfo(self, key):
-            if key == "path": return str(PLUGIN_PATH)
-            if key == "profile": return str(ROOT / ".profile")
+            if key == "path":
+                return str(PLUGIN_PATH)
+            if key == "profile":
+                return str(ROOT / ".profile")
             if key == "version":
-                if self.addon_id == "xbmc.addon": return "19.0.0"
+                if self.addon_id == "xbmc.addon":
+                    return "19.0.0"
                 return "1.0.0"
             return ""
-        def getSetting(self, key): return "0"
+        def getSetting(self, key):
+            if key in self._settings:
+                return self._settings[key]
+            return "0"
         def getLocalizedString(self, string_id): return str(string_id)
-        def setSetting(self, key, value): pass
+        def setSetting(self, key, value): self._settings[key] = value
         def openSettings(self): pass
     xbmcaddon.Addon = _Addon
 
@@ -140,7 +152,8 @@ def ensure_stubs():
     class _StorageServer:
         def __init__(self, *args, **kwargs): pass
         def cacheFunction(self, *args, **kwargs):
-            if args and callable(args[0]): return args[0](*args[1:])
+            if args and callable(args[0]):
+                return args[0](*args[1:])
             return None
         def get(self, *args, **kwargs): return None
         def set(self, *args, **kwargs): pass
