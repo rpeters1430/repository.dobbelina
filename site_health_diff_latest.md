@@ -5,30 +5,22 @@
 
 ## Snapshot
 
-- Current: `PASS 183` | `WARN 1` | `FAIL 3` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 183` | `WARN 1` | `FAIL 1` | `ERROR 0` | `SKIP 3`
 - Previous: `PASS 183` | `WARN 1` | `FAIL 3` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
-- New failures: `1`
-- Resolved failures: `1`
-- Persistent failures: `2`
-- Site regressions: `1`
-- Step regressions: `1`
-
-## New Failures
-
-- **pornobae**: `PASS -> FAIL` (PARSER) | list: List returned no videos
+- New failures: `0`
+- Resolved failures: `2`
+- Persistent failures: `1`
+- Site regressions: `2`
+- Step regressions: `0`
 
 ## Resolved Failures
 
-- **analdin**: `FAIL -> PASS`
+- **hypnotube**: `FAIL -> PASS`
+- **pornobae**: `FAIL -> PASS`
 
 ## Persistent Failures
 
-- **hypnotube**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 0.0%]
-
-## Step Regressions
-
-- **pornobae** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
