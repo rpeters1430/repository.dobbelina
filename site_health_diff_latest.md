@@ -5,22 +5,26 @@
 
 ## Snapshot
 
-- Current: `PASS 183` | `WARN 1` | `FAIL 1` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 183` | `WARN 1` | `FAIL 3` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 185` | `WARN 2` | `FAIL 2` | `ERROR 0` | `SKIP 1`
+- Previous: `PASS 183` | `WARN 1` | `FAIL 1` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
 - New failures: `0`
-- Resolved failures: `2`
+- Resolved failures: `0`
 - Persistent failures: `1`
-- Site regressions: `2`
-- Step regressions: `0`
-
-## Resolved Failures
-
-- **hypnotube**: `FAIL -> PASS`
-- **pornobae**: `FAIL -> PASS`
+- Site regressions: `1`
+- Step regressions: `1`
 
 ## Persistent Failures
 
 - **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 0.0%]
+
+## Step Regressions
+
+- **camwhorestv** `play`: `PASS -> FAIL` (CODE) | TypeError: run_site_child.<locals>.FakeVideoPlayer.play_from_kt_player() got an unexpected keyword argument 'user_agent'
+
+## Improvements
+
+- **longvideos**: `SKIP -> PASS`
+- **porntrex**: `SKIP -> PASS`
