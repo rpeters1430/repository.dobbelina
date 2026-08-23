@@ -36,6 +36,16 @@ def _clean_title(value):
     return title.strip()
 
 
+def _extract_thumb(img):
+    if not img:
+        return ""
+    for attr in ("data-original", "data-webp", "data-src", "src"):
+        val = img.get(attr)
+        if val and not val.startswith("data:") and not val.endswith(".mp4"):
+            return _absolute_url(val)
+    return ""
+
+
 @site.register(default_mode=True)
 def Main():
     site.add_dir("[COLOR hotpink]Latest Videos[/COLOR]", site.url + "latest-updates/", "List", site.img_cat)
@@ -67,7 +77,7 @@ def List(url):
         seen.add(video_url)
 
         img = a.select_one("img") or item.select_one("img")
-        thumb = utils.safe_get_attr(img, "data-original", ["data-preview", "data-src", "src"])
+        thumb = _extract_thumb(img)
         title = (
             _clean_title(utils.safe_get_attr(a, "title"))
             or _clean_title(utils.safe_get_attr(img, "alt"))
@@ -118,7 +128,7 @@ def Categories(url):
         seen.add(cat_url)
 
         img = item.select_one("img")
-        thumb = utils.safe_get_attr(img, "data-original", ["data-src", "src"])
+        thumb = _extract_thumb(img)
         # Format name from link or spans
         title = _clean_title(utils.safe_get_attr(item, "title"))
         if not title:
@@ -162,7 +172,7 @@ def Models(url):
         seen.add(model_url)
 
         img = item.select_one("img")
-        thumb = utils.safe_get_attr(img, "data-original", ["data-src", "src"])
+        thumb = _extract_thumb(img)
         title = _clean_title(utils.safe_get_attr(item, "title"))
         if not title:
             spans = item.select("span")

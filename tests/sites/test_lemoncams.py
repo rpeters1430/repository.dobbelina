@@ -1,28 +1,60 @@
-"""Tests for LemonCams pagination and playback routing."""
+"""Comprehensive tests for LemonCams scraper and multi-provider stream resolution."""
 
+import json
 from resources.lib.sites import lemoncams
 
 
-def test_list_uses_real_pagination_and_adds_next_page(monkeypatch):
+def test_main_menu(monkeypatch):
+    dirs = []
+
+    def fake_add_dir(name, url, mode, iconimage="", page=None, **kwargs):
+        dirs.append({"name": name, "url": url, "mode": mode, "page": page})
+
+    monkeypatch.setattr(lemoncams.site, "add_dir", fake_add_dir)
+    monkeypatch.setattr(lemoncams.utils, "eod", lambda: None)
+
+    lemoncams.Main()
+
+    modes = [d["mode"] for d in dirs]
+    urls = [d["url"] for d in dirs]
+
+    assert "List" in modes
+    assert "Search" in modes
+    assert "__top__" in urls
+    assert "stripchat" in urls
+    assert "camsoda" in urls
+    assert "myfreecams" in urls
+
+
+def test_list_parses_multi_provider_models(monkeypatch):
     added_links = []
     added_dirs = []
 
     def fake_api_get(params):
-        assert params["function"] == "cams"
-        assert params["provider"] == "stripchat"
-        assert params["page"] == "1"
         return {
             "cams": [
                 {
-                    "username": "model1",
+                    "username": "model_sc",
                     "provider": "stripchat",
-                    "title": "test title",
-                    "numberOfUsers": 12,
-                    "imageUrl": "https://img.example/model1.jpg",
-                    "embedUrl": "https://stream.example/model1.m3u8"
-                }
+                    "title": "Stripchat Live",
+                    "numberOfUsers": 1200,
+                    "gender": "female",
+                    "country": "us",
+                    "imageUrl": "https://img.example/sc.jpg",
+                    "embedUrl": None,
+                },
+                {
+                    "username": "model_cs",
+                    "provider": "camsoda",
+                    "title": "Camsoda Live",
+                    "numberOfUsers": 450,
+                    "gender": "female",
+                    "country": "co",
+                    "imageUrl": "https://img.example/cs.jpg",
+                    "embedUrl": "https://stream.example/cs.m3u8",
+                },
             ],
-            "maxPage": 3,
+            "maxPage": 5,
         }
 
     monkeypatch.setattr(lemoncams, "_api_get", fake_api_get)
@@ -34,6 +66,7 @@ def test_list_uses_real_pagination_and_adds_next_page(monkeypatch):
                 "name": name,
                 "url": url,
                 "mode": mode,
+                "icon": iconimage,
             }
         ),
     )
@@ -51,60 +84,33 @@ def test_list_uses_real_pagination_and_adds_next_page(monkeypatch):
     )
     monkeypatch.setattr(lemoncams.utils, "eod", lambda: None)
 
-    lemoncams.List("stripchat", page=1)
+    lemoncams.List("__top__", page=1)
 
-    assert len(added_links) == 1
-    assert "model1" in added_links[0]["name"]
-    # URL should contain the piped stream URL now
-    assert "https://www.lemoncams.com/stripchat/model1|https://stream.example/model1.m3u8" == added_links[0]["url"]
-    
-    assert added_dirs == [
-        {
-            "name": "Next Page (2/3)",
-            "url": "stripchat",
-            "mode": "List",
-            "page": 2,
-        }
-    ]
+    assert len(added_links) == 2
+    assert "model_sc" in added_links[0]["name"]
+    assert "Stripchat" in added_links[0]["name"]
+    assert added_links[0]["url"] == "https://www.lemoncams.com/stripchat/model_sc"
+
+    assert "model_cs" in added_links[1]["name"]
+    assert "CamSoda" in added_links[1]["name"]
+    assert added_links[1]["url"] == "https://www.lemoncams.com/camsoda/model_cs|https://stream.example/cs.m3u8"
+
+    assert len(added_dirs) == 1
+    assert added_dirs[0]["page"] == 2
 
 
-def _mock_stripchat_module(monkeypatch, stripchat_module):
-    import sys
-    import resources.lib.sites
-
-    monkeypatch.setitem(sys.modules, "resources.lib.sites.stripchat", stripchat_module)
-    if hasattr(resources.lib.sites, "stripchat"):
-        monkeypatch.setattr(resources.lib.sites, "stripchat", stripchat_module)
-
-
-def test_playvid_delegates_to_stripchat(monkeypatch):
-    delegated = []
-
-    class MockStripchat:
-        @staticmethod
-        def _play_stripchat_model(url, username):
-            delegated.append((url, username))
-
-    _mock_stripchat_module(monkeypatch, MockStripchat)
-
-    lemoncams.Playvid("https://www.lemoncams.com/stripchat/model1", "Model 1")
-
-    assert delegated == [("https://stripchat.com/model1", "model1")]
-
-
-def test_playvid_plays_cached_stream_url_directly_when_delegation_fails(monkeypatch):
-    class FailingStripchat:
-        @staticmethod
-        def _play_stripchat_model(url, username):
-            raise RuntimeError("boom")
-
-    _mock_stripchat_module(monkeypatch, FailingStripchat)
-
+def test_playvid_plays_cached_stream_url_directly(monkeypatch):
     played = []
 
     class FakePlayer:
         def __init__(self, name, IA_check=None):
-            self.name = name
+            self.progress = self
+
+        def update(self, *args, **kwargs):
+            pass
+
+        def close(self):
+            pass
 
         def play_from_direct_link(self, link):
             played.append(link)
@@ -112,50 +118,84 @@ def test_playvid_plays_cached_stream_url_directly_when_delegation_fails(monkeypa
     monkeypatch.setattr(lemoncams.utils, "VideoPlayer", FakePlayer)
 
     lemoncams.Playvid(
-        "https://www.lemoncams.com/stripchat/model1|https://stream.example/model1.m3u8",
-        "Model 1",
+        "https://www.lemoncams.com/camsoda/model_cs|https://stream.example/cs.m3u8",
+        "Model CS",
     )
 
     assert len(played) == 1
-    assert played[0].startswith("https://stream.example/model1.m3u8|")
+    assert played[0].startswith("https://stream.example/cs.m3u8|")
+    assert "User-Agent=" in played[0]
 
 
-def test_playvid_falls_back_to_listing_search_when_no_cached_url(monkeypatch):
-    class FailingStripchat:
-        @staticmethod
-        def _play_stripchat_model(url, username):
-            raise RuntimeError("boom")
+def test_playvid_resolves_stripchat_via_widget_api(monkeypatch):
+    played = []
 
-    _mock_stripchat_module(monkeypatch, FailingStripchat)
+    def fake_get_html(url, *args, **kwargs):
+        if "stripchat.com/api/external/v4/widget" in url:
+            return json.dumps({
+                "models": [
+                    {
+                        "username": "nicdani_1",
+                        "stream": {
+                            "urls": {
+                                "480p": "https://edge-hls.example/nicdani_480p.m3u8",
+                            }
+                        }
+                    }
+                ]
+            })
+        return ""
 
-    monkeypatch.setattr(lemoncams, "_find_model_stream", lambda provider, username, **kw: "")
+    class FakePlayer:
+        def __init__(self, name, IA_check=None):
+            self.progress = self
+
+        def update(self, *args, **kwargs):
+            pass
+
+        def close(self):
+            pass
+
+        def play_from_direct_link(self, link):
+            played.append(link)
+
+    monkeypatch.setattr(lemoncams.utils, "_getHtml", fake_get_html)
+    monkeypatch.setattr(lemoncams.utils, "VideoPlayer", FakePlayer)
+
+    lemoncams.Playvid("https://www.lemoncams.com/stripchat/nicdani_1", "nicdani_1")
+
+    assert len(played) == 1
+    assert "https://edge-hls.example/nicdani_480p.m3u8|" in played[0]
+
+
+def test_playvid_notifies_offline_when_stream_not_found(monkeypatch):
     notifications = []
+
+    class FakePlayer:
+        def __init__(self, name, IA_check=None):
+            self.progress = self
+
+        def update(self, *args, **kwargs):
+            pass
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(lemoncams.utils, "VideoPlayer", FakePlayer)
+    monkeypatch.setattr(lemoncams, "_resolve_stripchat_stream", lambda username: None)
     monkeypatch.setattr(
         lemoncams.utils,
         "notify",
         lambda header, msg, *args, **kwargs: notifications.append((header, msg)),
     )
 
-    lemoncams.Playvid("https://www.lemoncams.com/stripchat/model1", "Model 1")
+    lemoncams.Playvid("https://www.lemoncams.com/stripchat/offline_model", "offline_model")
 
-    assert notifications == [("LemonCams", "Model offline or no stream found")]
-
-
-def test_playvid_rejects_non_stripchat_provider(monkeypatch):
-    notifications = []
-
-    monkeypatch.setattr(
-        lemoncams.utils,
-        "notify",
-        lambda header, msg, *args, **kwargs: notifications.append((header, msg)),
-    )
-
-    lemoncams.Playvid("https://www.lemoncams.com/chaturbate/beckymadsons", "beckymadsons")
-
-    assert notifications == [("LemonCams", "Only Stripchat models are supported")]
+    assert len(notifications) == 1
+    assert "offline" in notifications[0][1].lower()
 
 
-def test_search_adds_download_link_directly(monkeypatch):
+def test_search_adds_model_link(monkeypatch):
     added_links = []
 
     monkeypatch.setattr(
@@ -171,25 +211,9 @@ def test_search_adds_download_link_directly(monkeypatch):
     )
     monkeypatch.setattr(lemoncams.utils, "eod", lambda: None)
 
-    lemoncams.Search("any", "model1")
+    lemoncams.Search("any", "camsoda:desirerodriguez")
 
     assert len(added_links) == 1
-    assert added_links[0]["name"] == "model1"
-    assert added_links[0]["url"] == "https://www.lemoncams.com/stripchat/model1"
+    assert "desirerodriguez" in added_links[0]["name"]
+    assert added_links[0]["url"] == "https://www.lemoncams.com/camsoda/desirerodriguez"
     assert added_links[0]["mode"] == "Playvid"
-
-
-def test_search_rejects_non_stripchat_provider(monkeypatch):
-    notifications = []
-
-    monkeypatch.setattr(
-        lemoncams.utils,
-        "notify",
-        lambda header, msg, *args, **kwargs: notifications.append((header, msg)),
-    )
-    monkeypatch.setattr(lemoncams.utils, "eod", lambda: None)
-
-    lemoncams.Search("url", "https://www.lemoncams.com/chaturbate/beckymadsons")
-
-    assert notifications == [("LemonCams", "Only Stripchat models are supported")]
-

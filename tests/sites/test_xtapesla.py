@@ -106,3 +106,46 @@ def test_search_with_keyword(monkeypatch):
 
     assert len(list_calls) == 1
     assert "blonde+teen" in list_calls[0]
+
+
+def test_main_menu(monkeypatch):
+    """Test Main menu registers expected directory items."""
+    dirs = []
+
+    def fake_add_dir(name, url, mode, iconimage=None, **kwargs):
+        dirs.append({"name": name, "url": url, "mode": mode})
+
+    monkeypatch.setattr(xtapesla.site, "add_dir", fake_add_dir)
+    monkeypatch.setattr(xtapesla, "List", lambda url: None)
+
+    xtapesla.Main()
+
+    modes = [d["mode"] for d in dirs]
+    assert "Search" in modes
+    assert "Filters" in modes
+    assert "Networks" in modes
+    assert "List" in modes
+
+
+def test_filters_sort_selection(monkeypatch):
+    """Test Filters sort selection delegates to List."""
+    list_calls = []
+    dialog_select_calls = []
+
+    def fake_dialog_select(title, options):
+        dialog_select_calls.append((title, options))
+        return 0
+
+    class FakeDialog:
+        def select(self, title, options):
+            return fake_dialog_select(title, options)
+
+    monkeypatch.setattr(xtapesla.xbmcgui, "Dialog", FakeDialog)
+    monkeypatch.setattr(xtapesla, "List", lambda url: list_calls.append(url))
+
+    xtapesla.Filters("https://xtapes.la/")
+
+    assert len(dialog_select_calls) == 2
+    assert len(list_calls) == 1
+    assert "filtre=date" in list_calls[0]
+

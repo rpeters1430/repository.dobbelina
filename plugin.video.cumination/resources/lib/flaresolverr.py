@@ -202,7 +202,15 @@ class FlareSolverrManager:
                 return MockResponse(solution, raw_json=response_json)
 
             except (requests.exceptions.RequestException, ValueError) as e:
-                if try_count >= tries:
+                conn_errors = tuple(
+                    cls
+                    for cls in (
+                        getattr(requests.exceptions, "ConnectionError", None),
+                        getattr(requests.exceptions, "ConnectTimeout", None),
+                    )
+                    if cls is not None
+                )
+                if (conn_errors and isinstance(e, conn_errors)) or try_count >= tries:
                     raise
                 xbmc.log(
                     "@@@@Cumination: FlareSolverr request failed (attempt {}/{}): {}".format(

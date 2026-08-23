@@ -19,6 +19,13 @@
 
 ## Sync Sessions
 
+### 2026-08-22 Porting Session
+Reviewed pending upstream commits surfaced by `sync_manager.py --report`. Cleanly ported and modernized new site `pornyteen.com` (PR #1948) using project-standard BeautifulSoup4.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `8a133b34`, `dec5db44`, `f5d1bef4` (#1948) | New site - Pornyteen | `manual` | 2026-08-22 | **pornyteen**: Modernized from upstream's regex-based scraper to BeautifulSoup4 with direct HTML5 video source resolution. Added icon asset `pornyteen.png`, about text `pornyteen.txt`, fixtures `tests/fixtures/sites/pornyteen/`, and comprehensive unit tests `tests/sites/test_pornyteen.py`. |
+
 ### 2026-08-21 Porting Session
 Reviewed pending upstream commits surfaced by `sync_manager.py --report`. Cleanly ported and modernized 2 new site modules (`3movs.com` and `xtapes.la`), ported the `sextb.py` XOR decryption fix, and integrated `camwhores.tw` domain and `play_from_kt_player` user-agent parameters.
 

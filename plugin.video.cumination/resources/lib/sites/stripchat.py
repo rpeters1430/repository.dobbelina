@@ -125,7 +125,7 @@ def _prime_stream_session(model_url, model_name):
             model_url,
             referer=site.url,
             headers=_stripchat_stream_headers(model_name),
-            retry_on_empty=True,
+            retry_on_empty=False,
         )
     except Exception as exc:
         utils.kodilog("Stripchat: Session prime failed: {}".format(str(exc)))
@@ -1950,7 +1950,7 @@ def _play_stripchat_model(url, name):
                         probe_url,
                         site.url,
                         headers=headers,
-                        retry_on_empty=True,
+                        retry_on_empty=False,
                     )
                     if isinstance(text, str) and "#EXTM3U" in text:
                         manifest_probe_errors.pop(manifest_url, None)

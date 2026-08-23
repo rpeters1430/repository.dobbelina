@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import json
 import re
 from six.moves import urllib_parse
+import xbmcgui
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.jsunpack import unpack
@@ -48,6 +49,12 @@ def Main():
         site.img_search,
     )
     site.add_dir(
+        "[COLOR hotpink]Filters[/COLOR]",
+        site.url,
+        "Filters",
+        site.img_cat,
+    )
+    site.add_dir(
         "[COLOR hotpink]Networks[/COLOR]",
         site.url,
         "Networks",
@@ -60,6 +67,41 @@ def Main():
         site.img_cat,
     )
     List(site.url + "?display=tube&filtre=date")
+
+
+@site.register()
+def Filters(url):
+    options = ["Sort By", "Networks", "Filter List"]
+    selection = xbmcgui.Dialog().select("Select Filter", options)
+    if selection == -1:
+        return
+    elif selection == 0:
+        sorts = [
+            ("Date (Latest)", site.url + "?display=tube&filtre=date"),
+            ("Most Viewed", site.url + "?display=tube&filtre=views"),
+            ("Top Rated", site.url + "?display=tube&filtre=rate"),
+            ("Longest", site.url + "?display=tube&filtre=duration"),
+            ("Random", site.url + "?display=tube&filtre=random"),
+        ]
+        sort_sel = xbmcgui.Dialog().select("Sort By", [s[0] for s in sorts])
+        if sort_sel != -1:
+            List(sorts[sort_sel][1])
+    elif selection == 1:
+        Networks(site.url)
+    elif selection == 2:
+        html = utils.getHtml(site.url, site.url, headers=xtapes_headers)
+        if html:
+            soup = utils.parse_html(html)
+            filters = []
+            for a in soup.select(".filtre-list li a, ul.filtre-list a"):
+                f_url = utils.safe_get_attr(a, "href")
+                f_name = utils.safe_get_text(a)
+                if f_url and f_name:
+                    filters.append((f_name, urllib_parse.urljoin(site.url, f_url)))
+            if filters:
+                f_sel = xbmcgui.Dialog().select("Select Filter", [f[0] for f in filters])
+                if f_sel != -1:
+                    List(filters[f_sel][1])
 
 
 @site.register()
