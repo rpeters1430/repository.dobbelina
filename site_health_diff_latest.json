@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-08-23T06:17:40.576681",
+    "sites_total": 191,
+    "pass": 186,
+    "warn": 3,
+    "fail": 1,
+    "error": 0,
+    "skip": 1
+  },
+  "previous": {
     "generated": "2026-08-22T06:17:30.277120",
     "sites_total": 190,
     "pass": 185,
@@ -8,25 +17,22 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-08-21T06:21:14.035374",
-    "sites_total": 188,
-    "pass": 183,
-    "warn": 1,
-    "fail": 1,
-    "error": 0,
-    "skip": 3
-  },
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 0,
+    "resolved_failures": 1,
     "persistent_failures": 1,
-    "improved_sites": 2,
+    "improved_sites": 0,
     "regressions": 1,
     "step_regressions": 1
   },
   "new_failures": [],
-  "resolved_failures": [],
+  "resolved_failures": [
+    {
+      "site": "xtapesla",
+      "previous": "FAIL",
+      "current": "PASS"
+    }
+  ],
   "persistent_failures": [
     {
       "site": "pornhoarder",
@@ -38,64 +44,39 @@
       "stability_score": 0.0
     }
   ],
-  "improved_sites": [
-    {
-      "site": "longvideos",
-      "previous": "SKIP",
-      "current": "PASS"
-    },
-    {
-      "site": "porntrex",
-      "previous": "SKIP",
-      "current": "PASS"
-    }
-  ],
+  "improved_sites": [],
   "step_regressions": [
     {
-      "site": "camwhorestv",
+      "site": "porndoe",
       "step": "play",
-      "previous": "PASS",
+      "previous": "SKIP",
       "current": "FAIL",
-      "message": "TypeError: run_site_child.<locals>.FakeVideoPlayer.play_from_kt_player() got an unexpected keyword argument 'user_agent'",
-      "class": "CODE",
+      "message": "RuntimeError: FlareSolverr error for https://porndoe.com/watch/pd1t0r9o8u4w: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "3movs",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "camwhorestv",
+      "site": "porndoe",
       "previous": "PASS",
       "current": "WARN",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "longvideos",
-      "previous": "SKIP",
+      "site": "pornyteen",
+      "previous": "MISSING",
       "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "porntrex",
-      "previous": "SKIP",
-      "current": "PASS",
-      "kind": "improvement",
+      "kind": "new_site",
       "detail": ""
     },
     {
       "site": "xtapesla",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]

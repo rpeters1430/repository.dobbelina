@@ -5,16 +5,20 @@
 
 ## Snapshot
 
-- Current: `PASS 185` | `WARN 2` | `FAIL 2` | `ERROR 0` | `SKIP 1`
-- Previous: `PASS 183` | `WARN 1` | `FAIL 1` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 186` | `WARN 3` | `FAIL 1` | `ERROR 0` | `SKIP 1`
+- Previous: `PASS 185` | `WARN 2` | `FAIL 2` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
 - New failures: `0`
-- Resolved failures: `0`
+- Resolved failures: `1`
 - Persistent failures: `1`
 - Site regressions: `1`
 - Step regressions: `1`
+
+## Resolved Failures
+
+- **xtapesla**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -22,9 +26,4 @@
 
 ## Step Regressions
 
-- **camwhorestv** `play`: `PASS -> FAIL` (CODE) | TypeError: run_site_child.<locals>.FakeVideoPlayer.play_from_kt_player() got an unexpected keyword argument 'user_agent'
-
-## Improvements
-
-- **longvideos**: `SKIP -> PASS`
-- **porntrex**: `SKIP -> PASS`
+- **porndoe** `play`: `SKIP -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://porndoe.com/watch/pd1t0r9o8u4w: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
