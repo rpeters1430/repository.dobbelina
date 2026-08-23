@@ -1,3 +1,12 @@
+[B]Version 1.1.462[/B]
+- fix: repair pornhoarder, hanime, and familypornhd smoke-test failures
+- chore: remove dead one-off scripts and add scripts index
+- Add comprehensive tests for pornyteen.com site implementation
+- feat: add new image resource for pornyteen
+- feat: update addon.xml versions, improve resolver plugins, and add Playmate resolver
+- fix(stub): add resolveurl lib to stub_kodi sys.path
+- feat(upstream-sync): port new sites 3movs & xtapesla, fix sextb XOR player decryption & camwhores domains
+
 [B]Version 1.1.461[/B]
 - Add comprehensive tests for pornyteen.com site implementation
 - feat: add new image resource for pornyteen
