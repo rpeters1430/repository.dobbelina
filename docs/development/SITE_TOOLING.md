@@ -41,11 +41,45 @@ Use these canonical entry points first:
 - `list_implemented_sites.py`: implemented site inventory.
 - `validate_logos.py` and `fix_all_logos.py`: logo validation and repair.
 
-Treat these as support/debug scripts unless a specific investigation needs them:
+For the full inventory of every script in `scripts/` and the repo root — what
+it does, whether CI depends on it, and when to reach for it — see
+[`scripts/README.md`](../../scripts/README.md).
 
-- `scripts/audit_debug/debug_*.py`
-- `scripts/debug/debug_*.py`
-- one-off root files named `check_*`, `compare_*`, `repro_*`, or `test_*`
+## Monthly Full-Repo Review
+
+`scripts/live_smoke_test.py` already simulates the whole Kodi user journey for
+every site in-process (via Kodi stubs, no real Kodi install needed): it opens
+`Main`, follows into `List` (hopping up to 3 "next page" navigations),
+opens `Categories`, runs `Search`, and resolves a `Playvid` URL — the same
+five things you'd check by hand once a month. Run it against every site with:
+
+```powershell
+python scripts/live_smoke_test.py --out results
+```
+
+With no `--site` given it discovers and runs all ~190 site modules
+sequentially, so budget real time for it (each site gets up to 140s before
+being force-timed-out; a full run is commonly 30-90 minutes depending on how
+many sites are slow/unreachable). Start it and let it run in the background;
+it's read-only against the live sites.
+
+Notes:
+- Install/enable FlareSolverr first (`FLARESOLVERR_URL` env var, defaults to
+  `http://localhost:8191/v1`) so Cloudflare-protected sites get a fair shot —
+  without it, those sites SKIP instead of FAIL.
+- Output is written to `results/live_smoke_<timestamp>.{json,md}`. Read the
+  `.md` file first — it has a per-site PASS/WARN/FAIL/SKIP table across all
+  five steps, a `## Failures` section with the actual error per failing step,
+  a `## Failure Classification Summary` that separates real bugs from harness
+  noise (blocked/webcam/network issues you can ignore), and a
+  `## Missing Thumbnails` section flagging sites where videos were found but
+  none had an image.
+- To recheck a handful of sites you already suspect are broken:
+  `python scripts/site_tool.py smoke-live --site <name> --steps main,list,categories,search,play`.
+- `strict_site_monitor.py` (run daily by CI) checks a stricter subset of
+  "priority" sites against machine-checkable contracts — useful for
+  comparison, but `live_smoke_test.py` with no `--site` filter is the one
+  that covers every site for a full manual review.
 
 ## New Site Workflow
 
@@ -72,5 +106,8 @@ Treat these as support/debug scripts unless a specific investigation needs them:
 ## Cleanup Rule
 
 Do not add new top-level one-off scripts for normal site work. Add reusable
-workflow commands to `scripts/site_tool.py`, or put temporary investigations
-under `scripts/debug/` or `scripts/audit_debug/`.
+workflow commands to `scripts/site_tool.py` instead. If you need a throwaway
+investigation script, delete it once the investigation is done (or fold the
+useful part into an existing script/test) rather than leaving it in the repo —
+`scripts/audit_debug/` and `scripts/debug/` used to hold ~190 of these and were
+removed in the August 2026 cleanup.

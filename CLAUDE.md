@@ -123,6 +123,9 @@ comm -23 <(grep -l "parse_html" plugin.video.cumination/resources/lib/sites/*.py
 
 ## Dev Scripts (`scripts/`)
 
+Full index of every script (root + `scripts/`), what it does, and whether CI
+depends on it: [`scripts/README.md`](scripts/README.md).
+
 Standalone scripts for development and debugging — all use Playwright or `requests` directly (not the Kodi runtime):
 
 - `live_smoke_test.py` / `smoke_check.py` / `run_smoke_tests.py` - Live-fetch site health checks; outputs to `results/` and `smoke_results/`

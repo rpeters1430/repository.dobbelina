@@ -1709,6 +1709,14 @@ def render_markdown(payload: dict[str, Any]) -> str:
             f"| {r.get('site', '')} | {r.get('overall', '')} | {icon('main')} | {icon('list')} | {icon('categories')} | {icon('search')} | {icon('play')} | {r.get('elapsed', 0):.1f}s |"
         )
 
+    no_image_sites: list[str] = []
+    for r in payload["sites"]:
+        for step_name, data in r.get("steps", {}).items():
+            if data.get("status") != "PASS":
+                continue
+            if data.get("video_items", 0) > 0 and data.get("image_items", 0) == 0:
+                no_image_sites.append(f"{r.get('site')} ({step_name})")
+
     failing = [r for r in payload["sites"] if r.get("overall") in ("FAIL", "ERROR")]
     if failing:
         lines.append("")
@@ -1829,6 +1837,19 @@ def render_markdown(payload: dict[str, Any]) -> str:
                 lines.append(
                     f"- **{category}** ({len(sites)}): {', '.join(sorted(sites))}"
                 )
+        lines.append("")
+
+    if no_image_sites:
+        lines.append("## Missing Thumbnails")
+        lines.append("")
+        lines.append(
+            "These sites returned videos on a passing step but no thumbnail/icon "
+            "on the first item — worth a manual look even though the step itself "
+            "counts as PASS:"
+        )
+        lines.append("")
+        for entry in sorted(no_image_sites):
+            lines.append(f"- {entry}")
         lines.append("")
 
     return "\n".join(lines).strip() + "\n"
