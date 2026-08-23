@@ -203,7 +203,7 @@ def Playvid(url, name, download=None):
     videohtml = utils.getHtml(url, site.url)
 
     match = re.compile(
-        'class="embed-container"><iframe.*?src="([^"]+)"', re.IGNORECASE | re.DOTALL
+        '<iframe[^>]+src="([^"]+)"', re.IGNORECASE | re.DOTALL
     ).findall(videohtml)
     if match:
         iframeurl = match[0]

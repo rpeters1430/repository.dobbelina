@@ -117,14 +117,14 @@ def test_hanime_play_handles_empty_sources(monkeypatch):
 def test_hanime_list_parses_json_results(monkeypatch):
     """Test that hanime_list() correctly parses JSON API results."""
     json_response = """{
-        "hits": "[{\\"name\\":\\"Sample Hentai 1\\",\\"slug\\":\\"sample-1\\",\\"is_censored\\":false,\\"cover_url\\":\\"https://example.com/cover1.jpg\\",\\"poster_url\\":\\"https://example.com/poster1.jpg\\",\\"description\\":\\"<p>Sample description 1</p>\\",\\"tags\\":[\\"tag1\\",\\"tag2\\"]}]",
-        "nbPages": 5
+        "data": [{"name":"Sample Hentai 1","search_titles":"Sample Hentai 1","slug":"sample-1","cover_url":"https://example.com/cover1.jpg","poster_url":"https://example.com/poster1.jpg","description":"<p>Sample description 1</p>","tags":["tag1","uncensored"]}],
+        "ads": {}
     }"""
 
     downloads = []
     dirs = []
 
-    def fake_post_html(url, *args, **kwargs):
+    def fake_get_html(url, *args, **kwargs):
         return json_response
 
     def fake_add_download_link(name, url, mode, iconimage, desc="", **kwargs):
@@ -135,7 +135,7 @@ def test_hanime_list_parses_json_results(monkeypatch):
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
         dirs.append({"name": name, "url": url, "mode": mode})
 
-    monkeypatch.setattr(hanime.utils, "postHtml", fake_post_html)
+    monkeypatch.setattr(hanime.utils, "getHtml", fake_get_html)
     monkeypatch.setattr(hanime.site, "add_download_link", fake_add_download_link)
     monkeypatch.setattr(hanime.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
@@ -146,13 +146,13 @@ def test_hanime_list_parses_json_results(monkeypatch):
     # Verify we got 1 video
     assert len(downloads) == 1
     assert "Sample Hentai 1" in downloads[0]["name"]
-    assert "Uncensored" in downloads[0]["name"]  # Because is_censored is false
+    assert "Uncensored" in downloads[0]["name"]  # Because "uncensored" is in tags
     assert downloads[0]["url"] == "sample-1"
     assert downloads[0]["mode"] == "hanime_play_combined"
 
-    # Verify pagination was added (nbPages = 5, we're on page 0)
+    # Only 1 item total, well under the page size, so no pagination
     next_pages = [d for d in dirs if "Next Page" in d["name"]]
-    assert len(next_pages) == 1
+    assert len(next_pages) == 0
 
 
 def test_hanime_search_without_keyword_shows_dialog(monkeypatch):
@@ -225,7 +225,7 @@ def test_hanime_list_with_api_list_fixture(monkeypatch):
     api_response = load_fixture("api_list.json")
 
     monkeypatch.setattr(
-        hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response
+        hanime.utils, "getHtml", lambda url, *args, **kwargs: api_response
     )
 
     downloads = []
@@ -284,7 +284,35 @@ def test_hanime_list_with_api_list_fixture(monkeypatch):
     assert "[COLOR hotpink][I]Uncensored[/I][/COLOR]" not in downloads[1]["name"]
     assert downloads[1]["url"] == "another-hentai-2"
 
-    # Should add Next Page (page 0 of 5)
+    # Only 2 items total, well under the page size, so no pagination
+    next_pages = [d for d in dirs if "Next Page" in d["name"]]
+    assert len(next_pages) == 0
+
+
+def test_hanime_list_first_page_pagination(monkeypatch):
+    """Test that a full first page (35 items, page size 30) adds a Next Page link."""
+    api_response = load_fixture("api_last_page.json")
+
+    monkeypatch.setattr(
+        hanime.utils, "getHtml", lambda url, *args, **kwargs: api_response
+    )
+
+    downloads = []
+    dirs = []
+
+    monkeypatch.setattr(
+        hanime.site, "add_download_link", lambda *args, **kwargs: downloads.append(True)
+    )
+
+    def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
+        dirs.append({"name": name})
+
+    monkeypatch.setattr(hanime.site, "add_dir", fake_add_dir)
+    monkeypatch.setattr(hanime.utils, "eod", lambda: None)
+
+    hanime.hanime_list("", "", 0)  # Page 0 of 35 items
+
+    assert len(downloads) == 30
     next_pages = [d for d in dirs if "Next Page" in d["name"]]
     assert len(next_pages) == 1
 
@@ -294,23 +322,25 @@ def test_hanime_list_last_page_no_pagination(monkeypatch):
     api_response = load_fixture("api_last_page.json")
 
     monkeypatch.setattr(
-        hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response
+        hanime.utils, "getHtml", lambda url, *args, **kwargs: api_response
     )
 
+    downloads = []
     dirs = []
 
-    def fake_add_download_link(*args, **kwargs):
-        pass
+    monkeypatch.setattr(
+        hanime.site, "add_download_link", lambda *args, **kwargs: downloads.append(True)
+    )
 
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
         dirs.append({"name": name})
 
-    monkeypatch.setattr(hanime.site, "add_download_link", fake_add_download_link)
     monkeypatch.setattr(hanime.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
-    hanime.hanime_list("", "", 4)  # Page 4 (last page)
+    hanime.hanime_list("", "", 1)  # Page 1 (last page: 5 remaining of 35 items)
 
+    assert len(downloads) == 5
     # No Next Page link
     next_pages = [d for d in dirs if "Next Page" in d["name"]]
     assert len(next_pages) == 0
@@ -321,7 +351,7 @@ def test_hanime_list_empty_results(monkeypatch):
     api_response = load_fixture("api_empty.json")
 
     monkeypatch.setattr(
-        hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response
+        hanime.utils, "getHtml", lambda url, *args, **kwargs: api_response
     )
 
     downloads = []
@@ -344,65 +374,80 @@ def test_hanime_list_empty_results(monkeypatch):
 
 
 def test_hanime_list_tag_filtering_single_tag(monkeypatch):
-    """Test that single tag uses OR mode."""
+    """Test that a single tag matches any item carrying it (OR mode)."""
     api_response = load_fixture("api_list.json")
 
-    post_calls = []
+    monkeypatch.setattr(
+        hanime.utils, "getHtml", lambda url, *args, **kwargs: api_response
+    )
 
-    def fake_post(url, json_data=None, headers=None):
-        post_calls.append(json_data)
-        return api_response
-
-    monkeypatch.setattr(hanime.utils, "postHtml", fake_post)
-    monkeypatch.setattr(hanime.site, "add_download_link", lambda *args, **kwargs: None)
+    downloads = []
+    monkeypatch.setattr(
+        hanime.site,
+        "add_download_link",
+        lambda name, *args, **kwargs: downloads.append(name),
+    )
     monkeypatch.setattr(hanime.site, "add_dir", lambda *args, **kwargs: None)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
     hanime.hanime_list("uncensored", "", 0)
 
-    assert post_calls[-1]["tags"] == ["uncensored"]
-    assert post_calls[-1]["tags_mode"] == "OR"
+    # Only the item tagged "Uncensored" should match
+    assert len(downloads) == 1
+    assert "Sample Hentai Episode 1" in downloads[0]
 
 
 def test_hanime_list_tag_filtering_multiple_tags(monkeypatch):
-    """Test that multiple tags use AND mode."""
+    """Test that multiple tags require all of them to be present (AND mode)."""
     api_response = load_fixture("api_list.json")
 
-    post_calls = []
+    monkeypatch.setattr(
+        hanime.utils, "getHtml", lambda url, *args, **kwargs: api_response
+    )
 
-    def fake_post(url, json_data=None, headers=None):
-        post_calls.append(json_data)
-        return api_response
-
-    monkeypatch.setattr(hanime.utils, "postHtml", fake_post)
-    monkeypatch.setattr(hanime.site, "add_download_link", lambda *args, **kwargs: None)
+    downloads = []
+    monkeypatch.setattr(
+        hanime.site,
+        "add_download_link",
+        lambda name, *args, **kwargs: downloads.append(name),
+    )
     monkeypatch.setattr(hanime.site, "add_dir", lambda *args, **kwargs: None)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
+    # Item 1 has all three tags (hd, uncensored, vanilla); item 2 has none of them
     hanime.hanime_list("uncensored|vanilla|hd", "", 0)
 
-    assert post_calls[-1]["tags"] == ["uncensored", "vanilla", "hd"]
-    assert post_calls[-1]["tags_mode"] == "AND"
+    assert len(downloads) == 1
+    assert "Sample Hentai Episode 1" in downloads[0]
+
+    # A tag combination no single item satisfies fully should return nothing
+    downloads.clear()
+    hanime.hanime_list("uncensored|plot", "", 0)
+    assert len(downloads) == 0
 
 
 def test_hanime_list_search_query(monkeypatch):
-    """Test that search query is properly sent."""
+    """Test that search filters items by search_titles."""
     api_response = load_fixture("api_list.json")
 
-    post_calls = []
+    monkeypatch.setattr(
+        hanime.utils, "getHtml", lambda url, *args, **kwargs: api_response
+    )
 
-    def fake_post(url, json_data=None, headers=None):
-        post_calls.append(json_data)
-        return api_response
-
-    monkeypatch.setattr(hanime.utils, "postHtml", fake_post)
-    monkeypatch.setattr(hanime.site, "add_download_link", lambda *args, **kwargs: None)
+    downloads = []
+    monkeypatch.setattr(
+        hanime.site,
+        "add_download_link",
+        lambda name, *args, **kwargs: downloads.append(name),
+    )
     monkeypatch.setattr(hanime.site, "add_dir", lambda *args, **kwargs: None)
     monkeypatch.setattr(hanime.utils, "eod", lambda: None)
 
     hanime.hanime_list("", "test search", 0)
 
-    assert post_calls[-1]["search_text"] == "test search"
+    # Only item 1's search_titles contains "test search"
+    assert len(downloads) == 1
+    assert "Sample Hentai Episode 1" in downloads[0]
 
 
 def test_hanime_list_cdn_replacement(monkeypatch):
@@ -410,7 +455,7 @@ def test_hanime_list_cdn_replacement(monkeypatch):
     api_response = load_fixture("api_list.json")
 
     monkeypatch.setattr(
-        hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response
+        hanime.utils, "getHtml", lambda url, *args, **kwargs: api_response
     )
 
     downloads = []
@@ -434,7 +479,7 @@ def test_hanime_list_description_html_stripping(monkeypatch):
     api_response = load_fixture("api_list.json")
 
     monkeypatch.setattr(
-        hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response
+        hanime.utils, "getHtml", lambda url, *args, **kwargs: api_response
     )
 
     downloads = []
@@ -579,7 +624,7 @@ def test_hanime_list_context_menu_structure(monkeypatch):
     api_response = load_fixture("api_list.json")
 
     monkeypatch.setattr(
-        hanime.utils, "postHtml", lambda url, json_data=None, headers=None: api_response
+        hanime.utils, "getHtml", lambda url, *args, **kwargs: api_response
     )
     monkeypatch.setattr(hanime.utils.addon, "getSetting", lambda key: "false")
 

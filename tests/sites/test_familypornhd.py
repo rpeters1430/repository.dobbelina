@@ -74,3 +74,26 @@ def test_playvid_handles_invalid_json():
         assert mock_kodilog.called
         mock_vp_instance = mock_videoplayer.return_value
         assert not mock_vp_instance.play_from_direct_link.called
+
+
+def test_playvid_finds_iframe_without_embed_container_wrapper():
+    """The site no longer wraps the player iframe in a div.embed-container;
+    Playvid must still find a bare <iframe src="..."> tag."""
+    html_page = (
+        '<iframe src="https://bestwish.lol/e/test-hash" '
+        'width="100%" height="360" frameborder="0"></iframe>'
+    )
+    stream_json = '{"streaming_url": "https://cdn.bestwish.lol/stream.m3u8"}'
+
+    with (
+        patch("resources.lib.utils.getHtml") as mock_gethtml,
+        patch("resources.lib.utils.VideoPlayer") as mock_videoplayer,
+    ):
+        mock_gethtml.side_effect = [html_page, stream_json]
+
+        familypornhd.Playvid("https://familypornhd.com/video/test", "Test Video")
+
+        mock_vp_instance = mock_videoplayer.return_value
+        assert mock_vp_instance.play_from_direct_link.called
+        played_url = mock_vp_instance.play_from_direct_link.call_args[0][0]
+        assert "cdn.bestwish.lol/stream.m3u8" in played_url

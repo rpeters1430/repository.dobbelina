@@ -1462,13 +1462,15 @@ def _note_flaresolverr_trigger(url, reason):
         )
 
 
-def flaresolve(url, referer):
+def flaresolve(url, referer, method="get", post_data=None):
     """
     Use FlareSolverr to bypass Cloudflare protection.
 
     Args:
         url: The URL to fetch
         referer: The referer URL (currently unused)
+        method: "get" or "post"
+        post_data: URL-encoded form body to submit when method is "post"
 
     Returns:
         HTML content of the page
@@ -1483,7 +1485,7 @@ def flaresolve(url, referer):
         fs_host = "http://127.0.0.1:8191/v1"
 
     start_time = time.time()
-    kodilog("[CF-DIAG] flaresolve() starting for {} via FlareSolverr host {}".format(url, fs_host))
+    kodilog("[CF-DIAG] flaresolve() starting for {} via FlareSolverr host {} (method={})".format(url, fs_host, method))
 
     flaresolverr = None
     try:
@@ -1494,7 +1496,7 @@ def flaresolve(url, referer):
             )
         )
         # FlareSolverrManager handles API errors, retries, and local cookies.
-        response = flaresolverr.request(url)
+        response = flaresolverr.request(url, method=method, post_data=post_data)
 
         elapsed = time.time() - start_time
         cf_ray = ""
@@ -1810,9 +1812,10 @@ def _postHtml(
     if json_data is None:
         json_data = {}
 
+    encoded_form_data = None
     if form_data:
-        form_data = urllib_parse.urlencode(form_data)
-        form_data = form_data if PY2 else six.b(form_data)
+        encoded_form_data = urllib_parse.urlencode(form_data)
+        form_data = encoded_form_data if PY2 else six.b(encoded_form_data)
         req = urllib_request.Request(url, form_data)
     elif json_data:
         json_data = json.dumps(json_data)
@@ -1867,6 +1870,45 @@ def _postHtml(
                 if e.code == 403 and "cf-alert-error" in result:
                     notify(i18n("oh_oh"), i18n("site_down"))
                     raise
+        elif any(x == e.code for x in [403, 429, 503]) and any(
+            x in result
+            for x in [
+                "__cf_chl_f_tk",
+                "__cf_chl_jschl_tk__=",
+                "/cdn-cgi/challenge-platform/",
+            ]
+        ):
+            if addon.getSetting("fs_enable") == "true" or os.environ.get("FLARESOLVERR_URL"):
+                notify("FlareSolverr", "Cloudflare detected, solving challenge...")
+                kodilog(
+                    "Cloudflare protection detected on POST {}, using FlareSolverr".format(url)
+                )
+                try:
+                    return flaresolve(url, "", method="post", post_data=encoded_form_data)
+                except RuntimeError as fs_error:
+                    kodilog(
+                        "[CF-DIAG] FlareSolverr failed to solve POST {}: {}".format(
+                            url, str(fs_error)
+                        ),
+                        xbmc.LOGWARNING,
+                    )
+                    notify("FlareSolverr Failed", str(fs_error), duration=8000)
+                    raise
+                except Exception as fs_error:
+                    kodilog("FlareSolverr error: {}".format(str(fs_error)))
+                    notify(
+                        "FlareSolverr Error",
+                        "Failed to bypass Cloudflare. Check Kodi log.",
+                        duration=6000,
+                    )
+                    raise
+            else:
+                notify(
+                    i18n("oh_oh"),
+                    "Cloudflare protection detected. Enable FlareSolverr in addon settings.",
+                    duration=6000,
+                )
+                raise
         elif 400 < e.code < 500:
             if not e.code == 403:
                 notify(i18n("oh_oh"), i18n("not_exist"))

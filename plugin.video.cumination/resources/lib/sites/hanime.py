@@ -153,6 +153,25 @@ def hanime_main():
     hanime_list("", "", 0)
 
 
+_CATALOG_PAGE_SIZE = 30
+_SEARCH_API_URL = "https://guest.freeanimehentai.net/api/v11/search_hvs"
+
+
+def _fetch_catalog():
+    # The API is a "guest" full-catalog dump: search_text/tags query params
+    # are ignored server-side, so filtering/sorting/paging happens client-side.
+    catalogjson = utils.getHtml(
+        _SEARCH_API_URL + "?order_by=created_at_unix&ordering=desc",
+        headers={"User-Agent": ua},
+    )
+    if not catalogjson:
+        return []
+    try:
+        return json.loads(catalogjson).get("data", [])
+    except ValueError:
+        return []
+
+
 @site.register()
 def hanime_list(url="", search="", page=0):
     tag = []
@@ -162,34 +181,34 @@ def hanime_list(url="", search="", page=0):
         else:
             tag.append(url)
     mode = "OR" if len(tag) == 1 else "AND"
+    tag = [t.lower() for t in tag]
 
-    siteurl = "https://search.htv-services.com/"
-    data = {
-        "search_text": search,
-        "tags": tag,
-        "tags_mode": mode,
-        "brands": [],
-        "blacklist": [],
-        "order_by": "created_at_unix",
-        "ordering": "desc",
-        "page": page,
-    }
-    _user_agent = (
-        "Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.1 "
-        + "(KHTML, like Gecko) Chrome/13.0.782.99 Safari/535.1"
-    )
     try:
-        listhtml = utils.postHtml(
-            siteurl, json_data=data, headers={"User-Agent": _user_agent}
-        )
+        catalog = _fetch_catalog()
     except Exception as e:
         utils.notify("Notify", str(e))
         return None
-    hits = json.loads(listhtml)
-    videos = json.loads(hits["hits"])
-    for video in videos:
+
+    videos = []
+    for video in catalog:
+        video_tags = [t.lower() for t in video.get("tags", [])]
+        if search and search.lower() not in video.get("search_titles", "").lower():
+            continue
+        if tag:
+            if mode == "AND" and not all(t in video_tags for t in tag):
+                continue
+            if mode == "OR" and not any(t in video_tags for t in tag):
+                continue
+        videos.append(video)
+
+    total_items = len(videos)
+    start = page * _CATALOG_PAGE_SIZE
+    page_videos = videos[start:start + _CATALOG_PAGE_SIZE]
+
+    for video in page_videos:
         name = video["name"]
-        if video["is_censored"] is False:
+        video_tags = [t.lower() for t in video.get("tags", [])]
+        if "uncensored" in video_tags:
             name = name + " [COLOR hotpink][I]Uncensored[/I][/COLOR]"
         videoid = video["slug"]
         img = video["cover_url"].replace("highwinds-cdn.com", "droidbuzz.top")
@@ -199,7 +218,7 @@ def hanime_list(url="", search="", page=0):
         plot = video["description"].replace("<p>", "").replace("</p>", "")
         if utils.PY2:
             plot = plot.encode("ascii", "ignore")
-        tags = ", ".join(sorted(video["tags"]))
+        tags = ", ".join(sorted(video.get("tags", [])))
         plot = "[COLOR hotpink][I]Tags: {1}[/I][/COLOR]\n\n{0}".format(plot, tags)
         contextmenu = []
         contextepisodes = (
@@ -239,11 +258,8 @@ def hanime_list(url="", search="", page=0):
             fanart=fanart,
         )
 
-    if "nbPages" in hits:
-        totalp = hits["nbPages"]
-        npage = page + 1
-        if npage < totalp:
-            site.add_dir("Next Page", url, "hanime_list", site.img_next, npage)
+    if start + _CATALOG_PAGE_SIZE < total_items:
+        site.add_dir("Next Page", url, "hanime_list", site.img_next, page + 1)
 
     utils.eod()
 

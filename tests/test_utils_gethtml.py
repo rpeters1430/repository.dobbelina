@@ -107,7 +107,7 @@ def test_flaresolve_logs_stateless_request_path(monkeypatch):
         def __init__(self, host):
             self.host = host
 
-        def request(self, url):
+        def request(self, url, method="get", post_data=None):
             return _FakeResponse()
 
         def close(self, destroy_session=False):
