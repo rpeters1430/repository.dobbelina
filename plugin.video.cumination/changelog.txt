@@ -1,3 +1,12 @@
+[B]Version 1.1.461[/B]
+- Add comprehensive tests for pornyteen.com site implementation
+- feat: add new image resource for pornyteen
+- feat: update addon.xml versions, improve resolver plugins, and add Playmate resolver
+- fix(stub): add resolveurl lib to stub_kodi sys.path
+- feat(upstream-sync): port new sites 3movs & xtapesla, fix sextb XOR player decryption & camwhores domains
+- fix(flaresolverr): support env var host configuration and stub settings in test harness
+- fix(thothub): update URL from latest-updates to public in Main function fix(chaturbate): add JSON response handling to prevent crashes on empty or blocked responses
+
 [B]Version 1.1.460[/B]
 - feat(upstream-sync): port new sites 3movs & xtapesla, fix sextb XOR player decryption & camwhores domains
 - fix(flaresolverr): support env var host configuration and stub settings in test harness
