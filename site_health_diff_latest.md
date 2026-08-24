@@ -5,25 +5,28 @@
 
 ## Snapshot
 
-- Current: `PASS 186` | `WARN 3` | `FAIL 1` | `ERROR 0` | `SKIP 1`
-- Previous: `PASS 185` | `WARN 2` | `FAIL 2` | `ERROR 0` | `SKIP 1`
+- Current: `PASS 185` | `WARN 4` | `FAIL 0` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 186` | `WARN 3` | `FAIL 1` | `ERROR 0` | `SKIP 1`
 
 ## Delta Summary
 
 - New failures: `0`
 - Resolved failures: `1`
-- Persistent failures: `1`
-- Site regressions: `1`
-- Step regressions: `1`
+- Persistent failures: `0`
+- Site regressions: `3`
+- Step regressions: `3`
 
 ## Resolved Failures
 
-- **xtapesla**: `FAIL -> PASS`
-
-## Persistent Failures
-
-- **pornhoarder**: `FAIL -> FAIL` (BLOCKED) | main: HTTPError: HTTP Error 403: Forbidden ⚠️ [FLAKY: 0.0%]
+- **pornhoarder**: `FAIL -> SKIP`
 
 ## Step Regressions
 
-- **porndoe** `play`: `SKIP -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://porndoe.com/watch/pd1t0r9o8u4w: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **hanime** `play`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
+- **xoxo** `play`: `PASS -> FAIL` (CODE) | ValueError: No videolink found!
+- **xtapesla** `search`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://xtapes.la/?s=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+
+## Improvements
+
+- **camwhorestv**: `WARN -> PASS`
+- **porndoe**: `WARN -> PASS`

@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-08-24T06:22:17.823444",
+    "sites_total": 191,
+    "pass": 185,
+    "warn": 4,
+    "fail": 0,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-08-23T06:17:40.576681",
     "sites_total": 191,
     "pass": 186,
@@ -8,50 +17,62 @@
     "error": 0,
     "skip": 1
   },
-  "previous": {
-    "generated": "2026-08-22T06:17:30.277120",
-    "sites_total": 190,
-    "pass": 185,
-    "warn": 2,
-    "fail": 2,
-    "error": 0,
-    "skip": 1
-  },
   "summary": {
     "new_failures": 0,
     "resolved_failures": 1,
-    "persistent_failures": 1,
-    "improved_sites": 0,
-    "regressions": 1,
-    "step_regressions": 1
+    "persistent_failures": 0,
+    "improved_sites": 2,
+    "regressions": 3,
+    "step_regressions": 3
   },
   "new_failures": [],
   "resolved_failures": [
     {
-      "site": "xtapesla",
+      "site": "pornhoarder",
       "previous": "FAIL",
+      "current": "SKIP"
+    }
+  ],
+  "persistent_failures": [],
+  "improved_sites": [
+    {
+      "site": "camwhorestv",
+      "previous": "WARN",
+      "current": "PASS"
+    },
+    {
+      "site": "porndoe",
+      "previous": "WARN",
       "current": "PASS"
     }
   ],
-  "persistent_failures": [
-    {
-      "site": "pornhoarder",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "BLOCKED",
-      "message": "main: HTTPError: HTTP Error 403: Forbidden",
-      "is_flaky": true,
-      "stability_score": 0.0
-    }
-  ],
-  "improved_sites": [],
   "step_regressions": [
     {
-      "site": "porndoe",
+      "site": "hanime",
       "step": "play",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://porndoe.com/watch/pd1t0r9o8u4w: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
+      "class": "BLOCKED",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xoxo",
+      "step": "play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "ValueError: No videolink found!",
+      "class": "CODE",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xtapesla",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://xtapes.la/?s=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "class": "ENV",
       "is_flaky": false,
       "stability_score": 1.0
@@ -59,24 +80,45 @@
   ],
   "deltas": [
     {
-      "site": "porndoe",
+      "site": "camwhorestv",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "hanime",
       "previous": "PASS",
       "current": "WARN",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "pornyteen",
-      "previous": "MISSING",
+      "site": "porndoe",
+      "previous": "WARN",
       "current": "PASS",
-      "kind": "new_site",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "pornhoarder",
+      "previous": "FAIL",
+      "current": "SKIP",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "xoxo",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
       "detail": ""
     },
     {
       "site": "xtapesla",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
       "detail": ""
     }
   ]
