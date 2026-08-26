@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-08-26T06:19:00.355955",
+    "sites_total": 191,
+    "pass": 186,
+    "warn": 3,
+    "fail": 0,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-08-25T06:18:14.183728",
     "sites_total": 191,
     "pass": 187,
@@ -8,52 +17,36 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-08-24T06:22:17.823444",
-    "sites_total": 191,
-    "pass": 185,
-    "warn": 4,
-    "fail": 0,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
     "new_failures": 0,
     "resolved_failures": 0,
     "persistent_failures": 0,
-    "improved_sites": 2,
-    "regressions": 0,
-    "step_regressions": 0
+    "improved_sites": 0,
+    "regressions": 1,
+    "step_regressions": 1
   },
   "new_failures": [],
   "resolved_failures": [],
   "persistent_failures": [],
-  "improved_sites": [
+  "improved_sites": [],
+  "step_regressions": [
     {
-      "site": "xoxo",
-      "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "xtapesla",
-      "previous": "WARN",
-      "current": "PASS"
+      "site": "xtheatre",
+      "step": "categories",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://pornxtheatre.com/categories/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
+      "is_flaky": false,
+      "stability_score": 1.0
     }
   ],
-  "step_regressions": [],
   "deltas": [
     {
-      "site": "xoxo",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "xtapesla",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
+      "site": "xtheatre",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
       "detail": ""
     }
   ]
