@@ -1,3 +1,13 @@
+[B]Version 1.1.463[/B]
+- fix: resolve scraper issues for luxuretv, anybunny, and pornkai; update site contracts
+- chore: update status metrics and add pornyteen site to inventory
+- fix: repair pornhoarder, hanime, and familypornhd smoke-test failures
+- chore: remove dead one-off scripts and add scripts index
+- Add comprehensive tests for pornyteen.com site implementation
+- feat: add new image resource for pornyteen
+- feat: update addon.xml versions, improve resolver plugins, and add Playmate resolver
+- fix(stub): add resolveurl lib to stub_kodi sys.path
+
 [B]Version 1.1.462[/B]
 - fix: repair pornhoarder, hanime, and familypornhd smoke-test failures
 - chore: remove dead one-off scripts and add scripts index
