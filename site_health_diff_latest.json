@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-08-27T09:16:59.874304",
+    "sites_total": 191,
+    "pass": 185,
+    "warn": 2,
+    "fail": 2,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-08-26T06:19:00.355955",
     "sites_total": 191,
     "pass": 186,
@@ -8,44 +17,71 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-08-25T06:18:14.183728",
-    "sites_total": 191,
-    "pass": 187,
-    "warn": 2,
-    "fail": 0,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
-    "new_failures": 0,
+    "new_failures": 2,
     "resolved_failures": 0,
     "persistent_failures": 0,
     "improved_sites": 0,
-    "regressions": 1,
-    "step_regressions": 1
+    "regressions": 2,
+    "step_regressions": 2
   },
-  "new_failures": [],
+  "new_failures": [
+    {
+      "site": "analdin",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos",
+      "is_flaky": false,
+      "stability_score": 0.9
+    },
+    {
+      "site": "xtheatre",
+      "previous": "WARN",
+      "current": "FAIL",
+      "class": "BLOCKED",
+      "message": "list: RuntimeError: FlareSolverr solved challenge but got HTTP 500 from website",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
   "resolved_failures": [],
   "persistent_failures": [],
   "improved_sites": [],
   "step_regressions": [
     {
-      "site": "xtheatre",
-      "step": "categories",
+      "site": "analdin",
+      "step": "list",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://pornxtheatre.com/categories/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
+      "message": "List returned no videos",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 0.9
+    },
+    {
+      "site": "xtheatre",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 500 from website",
+      "class": "BLOCKED",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "xtheatre",
+      "site": "analdin",
       "previous": "PASS",
-      "current": "WARN",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "xtheatre",
+      "previous": "WARN",
+      "current": "FAIL",
       "kind": "regression",
       "detail": ""
     }
