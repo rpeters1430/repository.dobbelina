@@ -29,6 +29,7 @@ site = AdultSite(
     "anybunny.png",
     "anybunny",
     category="Video Tubes",
+    requires_flaresolverr=True,
 )
 DEFAULT_LIST_URL = site.url + "latest/"
 
@@ -168,13 +169,23 @@ def List(url):
                 title = utils.cleantext(video_url.split("-", 1)[-1].replace("_", " ").title())
             site.add_download_link(title, video_url, "Playvid", thumb, title)
 
-    # Pagination: a.topbtmsel2r (legacy) or modern pagination
+    # Pagination: support ?page=N / &page=N and legacy a.topbtmsel2r
     next_link = soup.select_one("a.topbtmsel2r")
     if next_link and next_link.has_attr("href"):
         text = next_link.get_text().strip().lower()
         if not text or "next" in text or text in ("»", ">", "→"):
             next_url = urllib_parse.urljoin(site.url, next_link["href"])
             site.add_dir("Next Page", next_url, "List")
+    elif len(items) >= 20:
+        if "page=" in url:
+            next_url = re.sub(r'([?&]page=)(\d+)', lambda m: "{}{}".format(m.group(1), int(m.group(2)) + 1), url)
+            page_match = re.search(r'[?&]page=(\d+)', url)
+            page_num = int(page_match.group(1)) + 1 if page_match else 2
+        else:
+            sep = "&" if "?" in url else "?"
+            next_url = "{}{}page=2".format(url, sep)
+            page_num = 2
+        site.add_dir("[COLOR hotpink]Next Page...[/COLOR] ({})".format(page_num), next_url, "List", site.img_next)
 
     utils.eod()
 
@@ -227,37 +238,51 @@ def Categories2(url):
     soup = utils.parse_html(cathtml)
 
     entries = []
-    for anchor in soup.select("a.nuyrfe"):
+    # 1. Search tags / category links: /search/*.html
+    for anchor in soup.select("a[href*='/search/']"):
         href = utils.safe_get_attr(anchor, "href") or ""
-        if "/top/" not in href or "/too/" in href:
+        if not href.endswith(".html"):
             continue
-
-        stripped = href.rstrip("/")
-        if stripped.endswith("/top"):
+        slug = href.split("/search/", 1)[-1].replace(".html", "").replace("-", " ")
+        name = utils.cleantext(utils.safe_get_text(anchor)) or utils.cleantext(slug.title())
+        if not name or any(x in name.lower() for x in ["dmca", "abuse", "2257", "login"]):
             continue
+        catpage = urllib_parse.urljoin(site.url, href)
+        entries.append((name.lower(), name, catpage, site.image))
 
-        try:
-            catid = href.split("/top/", 1)[1].strip("/")
-        except IndexError:
-            continue
+    # 2. Legacy fallback: a.nuyrfe
+    if not entries:
+        for anchor in soup.select("a.nuyrfe"):
+            href = utils.safe_get_attr(anchor, "href") or ""
+            if "/top/" not in href or "/too/" in href:
+                continue
 
-        if not catid or any(x in catid.lower() for x in ["dmca", "abuse", "2257", "login"]):
-            continue
+            stripped = href.rstrip("/")
+            if stripped.endswith("/top"):
+                continue
 
-        img_tag = anchor.find("img")
-        name = utils.cleantext(utils.safe_get_attr(img_tag, "alt") if img_tag else "")
-        if not name:
-            name = utils.cleantext(utils.safe_get_text(anchor))
-        if not name:
-            name = utils.cleantext(catid.replace("_", " ").title())
-        if not name:
-            continue
+            try:
+                catid = href.split("/top/", 1)[1].strip("/")
+            except IndexError:
+                continue
 
-        img = utils.get_thumbnail(img_tag) if img_tag else ""
-        if img:
-            img = urllib_parse.urljoin(site.url, img)
-        catpage = urllib_parse.urljoin(site.url, "top/" + catid)
-        entries.append((name.lower(), name, catpage, img))
+            if not catid or any(x in catid.lower() for x in ["dmca", "abuse", "2257", "login"]):
+                continue
+
+            img_tag = anchor.find("img")
+            name = utils.cleantext(utils.safe_get_attr(img_tag, "alt") if img_tag else "")
+            if not name:
+                name = utils.cleantext(utils.safe_get_text(anchor))
+            if not name:
+                name = utils.cleantext(catid.replace("_", " ").title())
+            if not name:
+                continue
+
+            img = utils.get_thumbnail(img_tag) if img_tag else ""
+            if img:
+                img = urllib_parse.urljoin(site.url, img)
+            catpage = urllib_parse.urljoin(site.url, "top/" + catid)
+            entries.append((name.lower(), name, catpage, img))
 
     seen = set()
     for _, display_name, catpage, img in sorted(entries):

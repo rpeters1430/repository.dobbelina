@@ -96,3 +96,34 @@ def test_list_parses_json_listing_and_adds_next_page(monkeypatch):
         }
     ]
 
+
+def test_list_disambiguates_duplicate_titles(monkeypatch):
+    """List() disambiguates multiple videos sharing identical titles."""
+    downloads = []
+    sample_html = """
+    <html><body>
+        <div class="thumbnail">
+            <a class="thumbnail_link" href="/view?key=key1"></a>
+            <a class="thumbnail_title">Shared Video Title</a>
+        </div>
+        <div class="thumbnail">
+            <a class="thumbnail_link" href="/view?key=key2"></a>
+            <a class="thumbnail_title">Shared Video Title</a>
+        </div>
+    </body></html>
+    """
+    monkeypatch.setattr(pornkai.utils, "getHtml", lambda url, referer=None: sample_html)
+    monkeypatch.setattr(
+        pornkai.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, *args, **kwargs: downloads.append({"name": name, "url": url}),
+    )
+    monkeypatch.setattr(pornkai.utils, "eod", lambda *args, **kwargs: None)
+
+    pornkai.List("https://pornkai.com/videos?q=test")
+
+    assert len(downloads) == 2
+    assert downloads[0]["name"] == "Shared Video Title"
+    assert downloads[1]["name"] == "Shared Video Title (2)"
+
+

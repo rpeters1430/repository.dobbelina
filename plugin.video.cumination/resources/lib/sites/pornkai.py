@@ -75,6 +75,8 @@ def List(url):
         soup = utils.parse_html(markup)
         video_items = soup.select("div.thumbnail, article.thumbnail")
 
+    seen_urls = set()
+    seen_titles = {}
     for item in video_items:
         link_tag = item.select_one("a.thumbnail_link")
         if not link_tag:
@@ -84,6 +86,9 @@ def List(url):
         if not videopage or not _is_video_link(videopage):
             continue
         videopage = utils.fix_url(videopage, site.url)
+        if videopage in seen_urls:
+            continue
+        seen_urls.add(videopage)
 
         title_tag = item.select_one("a.thumbnail_title")
         title = utils.safe_get_text(title_tag).strip() if title_tag else ""
@@ -98,6 +103,13 @@ def List(url):
         title = utils.cleantext(title)
         if not title:
             continue
+
+        if title in seen_titles:
+            seen_titles[title] += 1
+            display_title = "{} ({})".format(title, seen_titles[title])
+        else:
+            seen_titles[title] = 1
+            display_title = title
 
         img_tag = item.select_one("img.vid_thumbnail, img.slideshow, img")
         img = _extract_thumbnail(img_tag)
@@ -120,11 +132,11 @@ def List(url):
         ]
 
         site.add_download_link(
-            title,
+            display_title,
             videopage,
             "Playvid",
             img,
-            title,
+            display_title,
             duration=duration,
             contextm=context_menu,
         )

@@ -138,7 +138,7 @@ def Cat(url):
             img = utils.safe_get_attr(img_tag, "data-src", ["src"]) if img_tag else ""
 
             # Get category link and name
-            link = item.select_one("a[href]")
+            link = item.select_one(".vtitle a[href]") or item.select_one("a[href]")
             if not link:
                 continue
 
@@ -147,6 +147,8 @@ def Cat(url):
                 continue
 
             name = utils.safe_get_text(link, "").strip()
+            if not name and img_tag:
+                name = utils.safe_get_attr(img_tag, "alt", "").strip()
             if not name:
                 continue
 

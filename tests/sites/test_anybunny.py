@@ -234,3 +234,48 @@ def test_main_populates_directories(monkeypatch):
     assert any("Categories" in d["name"] for d in recorder.dirs)
     assert any("Search" in d["name"] for d in recorder.dirs)
     assert list_calls == [anybunny.DEFAULT_LIST_URL]
+
+
+def test_categories2_parses_search_tags(monkeypatch):
+    """Categories2() parses popular search/tag links from the homepage."""
+    recorder = _Recorder()
+    sample_html = """
+    <html><body>
+        <a href="/search/interracial-orgy.html">Interracial Orgy</a>
+        <a href="/search/milf-blowjob.html">Milf Blowjob</a>
+        <a href="/movie/123/video.html">Ignore Video Link</a>
+    </body></html>
+    """
+    monkeypatch.setattr(anybunny.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (sample_html, None))
+    monkeypatch.setattr(anybunny.site, "add_dir", recorder.add_dir)
+    monkeypatch.setattr(anybunny.utils, "eod", lambda *a, **k: None)
+
+    anybunny.Categories2("https://anybunny.tv/")
+
+    assert len(recorder.dirs) == 2
+    names = [d["name"] for d in recorder.dirs]
+    assert "Interracial Orgy" in names
+    assert "Milf Blowjob" in names
+
+
+def test_list_numeric_pagination(monkeypatch):
+    """List() adds numeric Next Page link when >= 20 items are found."""
+    recorder = _Recorder()
+    items_html = "".join([
+        f'<li class="thumb"><a class="thumb_img_wrap" href="/movie/{i}/test.html"><span class="thumb_title">Video {i}</span></a></li>'
+        for i in range(25)
+    ])
+    html = f"<html><body><ul>{items_html}</ul></body></html>"
+
+    monkeypatch.setattr(anybunny.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (html, None))
+    monkeypatch.setattr(anybunny.site, "add_download_link", recorder.add_download)
+    monkeypatch.setattr(anybunny.site, "add_dir", recorder.add_dir)
+    monkeypatch.setattr(anybunny.utils, "eod", lambda *a, **k: None)
+
+    anybunny.List("https://anybunny.tv/latest/")
+
+    assert len(recorder.downloads) == 25
+    assert len(recorder.dirs) == 1
+    assert "Next Page" in recorder.dirs[0]["name"]
+    assert "page=2" in recorder.dirs[0]["url"]
+

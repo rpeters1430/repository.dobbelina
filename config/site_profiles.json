@@ -74,7 +74,26 @@
       "tier": 2
     },
     "anybunny": {
-      "tier": 1
+      "tier": 1,
+      "requires_flaresolverr": true
+    },
+    "naked": {
+      "tier": 2,
+      "content_type": "cam",
+      "supports": {
+        "list": false,
+        "categories": false,
+        "search": false,
+        "play": false
+      },
+      "harness": {
+        "playback_not_testable": true,
+        "search_results_optional": true,
+        "categories_optional": true
+      },
+      "strict_contract": {
+        "min_video_items": 1
+      }
     },
     "missav": {
       "tier": 1,
@@ -124,6 +143,9 @@
         "playback_not_testable": true,
         "search_results_optional": true,
         "categories_optional": true
+      },
+      "strict_contract": {
+        "min_video_items": 1
       }
     },
     "chaturbate": {
@@ -139,6 +161,9 @@
         "playback_not_testable": true,
         "search_results_optional": true,
         "categories_optional": true
+      },
+      "strict_contract": {
+        "min_video_items": 1
       }
     },
     "camsoda": {
@@ -154,6 +179,9 @@
         "playback_not_testable": true,
         "search_results_optional": true,
         "categories_optional": true
+      },
+      "strict_contract": {
+        "min_video_items": 1
       }
     },
     "cam4": {
@@ -168,6 +196,9 @@
         "playback_not_testable": true,
         "search_results_optional": true,
         "categories_optional": true
+      },
+      "strict_contract": {
+        "min_video_items": 1
       }
     },
     "streamate": {
@@ -182,6 +213,9 @@
         "playback_not_testable": true,
         "search_results_optional": true,
         "categories_optional": true
+      },
+      "strict_contract": {
+        "min_video_items": 1
       }
     },
     "bongacams": {
@@ -196,21 +230,9 @@
         "playback_not_testable": true,
         "search_results_optional": true,
         "categories_optional": true
-      }
-    },
-    "naked": {
-      "tier": 2,
-      "content_type": "cam",
-      "supports": {
-        "list": false,
-        "categories": false,
-        "search": false,
-        "play": false
       },
-      "harness": {
-        "playback_not_testable": true,
-        "search_results_optional": true,
-        "categories_optional": true
+      "strict_contract": {
+        "min_video_items": 1
       }
     },
     "myfreecams": {
@@ -225,6 +247,9 @@
         "playback_not_testable": true,
         "search_results_optional": true,
         "categories_optional": true
+      },
+      "strict_contract": {
+        "min_video_items": 1
       }
     },
     "livecamrips": {
