@@ -172,41 +172,6 @@ def _find_model_stream(provider, username, max_pages=5):
     return ""
 
 
-def _resolve_stripchat_stream(username):
-    endpoint = "https://stripchat.com/api/external/v4/widget/?limit=1&modelsList={}".format(
-        urllib_parse.quote(username, safe="")
-    )
-    headers = {
-        "User-Agent": utils.USER_AGENT,
-        "Accept": "application/json, text/plain, */*",
-        "Origin": "https://stripchat.com",
-        "Referer": "https://stripchat.com/{}".format(urllib_parse.quote(username, safe="")),
-    }
-    try:
-        response_data = utils._getHtml(endpoint, referer="https://stripchat.com/", headers=headers)
-        if not response_data:
-            return None
-        payload = json.loads(response_data)
-        models = payload.get("models") or []
-        for model in models:
-            if model.get("username", "").lower() == username.lower():
-                stream = model.get("stream") or {}
-                urls = stream.get("urls") or {}
-                stream_url = (
-                    urls.get("original")
-                    or urls.get("480p")
-                    or urls.get("720p")
-                    or urls.get("240p")
-                    or stream.get("url")
-                    or stream.get("hls")
-                )
-                if stream_url and isinstance(stream_url, str) and stream_url.startswith("http"):
-                    return stream_url
-    except Exception as exc:
-        utils.kodilog("LemonCams: Error resolving Stripchat stream for {}: {}".format(username, exc))
-    return None
-
-
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
@@ -354,23 +319,30 @@ def Search(url, keyword=None):
 
 @site.register()
 def Playvid(url, name):
-    vp = utils.VideoPlayer(name, IA_check="IA")
-    vp.progress.update(25, "[CR]Loading model stream[CR]")
-
     provider, username, stream_url = _parse_model_identifier(url)
     if not provider or not username:
-        vp.progress.close()
         utils.notify("LemonCams", "Could not parse model URL")
         return
+
+    if provider == "stripchat":
+        # Stripchat serves MOUFLON-extended LL-HLS manifests with placeholder
+        # segment URLs that 404 on direct playback; only stripchat.py's
+        # manifest rewrite/proxy logic can play them. See its
+        # _play_stripchat_model docstring.
+        from resources.lib.sites.stripchat import _play_stripchat_model
+
+        _play_stripchat_model(stream_url or username, username)
+        return
+
+    vp = utils.VideoPlayer(name, IA_check="IA")
+    vp.progress.update(25, "[CR]Loading model stream[CR]")
 
     playable_url = stream_url
 
     # If stream_url is not cached in the item URL, resolve it
     if not playable_url:
         vp.progress.update(50, "[CR]Resolving live stream[CR]")
-        if provider == "stripchat":
-            playable_url = _resolve_stripchat_stream(username)
-        elif provider in ("camsoda", "myfreecams"):
+        if provider in ("camsoda", "myfreecams"):
             playable_url = _find_model_stream(provider, username)
 
     if not playable_url:

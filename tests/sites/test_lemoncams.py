@@ -1,6 +1,5 @@
 """Comprehensive tests for LemonCams scraper and multi-provider stream resolution."""
 
-import json
 from resources.lib.sites import lemoncams
 
 
@@ -127,72 +126,37 @@ def test_playvid_plays_cached_stream_url_directly(monkeypatch):
     assert "User-Agent=" in played[0]
 
 
-def test_playvid_resolves_stripchat_via_widget_api(monkeypatch):
-    played = []
+def test_playvid_delegates_stripchat_to_stripchat_module(monkeypatch):
+    from resources.lib.sites import stripchat
 
-    def fake_get_html(url, *args, **kwargs):
-        if "stripchat.com/api/external/v4/widget" in url:
-            return json.dumps({
-                "models": [
-                    {
-                        "username": "nicdani_1",
-                        "stream": {
-                            "urls": {
-                                "480p": "https://edge-hls.example/nicdani_480p.m3u8",
-                            }
-                        }
-                    }
-                ]
-            })
-        return ""
+    calls = []
 
-    class FakePlayer:
-        def __init__(self, name, IA_check=None):
-            self.progress = self
+    def fake_play_stripchat_model(url, name):
+        calls.append((url, name))
 
-        def update(self, *args, **kwargs):
-            pass
-
-        def close(self):
-            pass
-
-        def play_from_direct_link(self, link):
-            played.append(link)
-
-    monkeypatch.setattr(lemoncams.utils, "_getHtml", fake_get_html)
-    monkeypatch.setattr(lemoncams.utils, "VideoPlayer", FakePlayer)
+    monkeypatch.setattr(stripchat, "_play_stripchat_model", fake_play_stripchat_model)
 
     lemoncams.Playvid("https://www.lemoncams.com/stripchat/nicdani_1", "nicdani_1")
 
-    assert len(played) == 1
-    assert "https://edge-hls.example/nicdani_480p.m3u8|" in played[0]
+    assert calls == [("nicdani_1", "nicdani_1")]
 
 
-def test_playvid_notifies_offline_when_stream_not_found(monkeypatch):
-    notifications = []
+def test_playvid_delegates_stripchat_with_cached_stream_url(monkeypatch):
+    from resources.lib.sites import stripchat
 
-    class FakePlayer:
-        def __init__(self, name, IA_check=None):
-            self.progress = self
+    calls = []
 
-        def update(self, *args, **kwargs):
-            pass
+    def fake_play_stripchat_model(url, name):
+        calls.append((url, name))
 
-        def close(self):
-            pass
+    monkeypatch.setattr(stripchat, "_play_stripchat_model", fake_play_stripchat_model)
 
-    monkeypatch.setattr(lemoncams.utils, "VideoPlayer", FakePlayer)
-    monkeypatch.setattr(lemoncams, "_resolve_stripchat_stream", lambda username: None)
-    monkeypatch.setattr(
-        lemoncams.utils,
-        "notify",
-        lambda header, msg, *args, **kwargs: notifications.append((header, msg)),
+    lemoncams.Playvid(
+        "https://www.lemoncams.com/stripchat/nicdani_1|https://edge-hls.example/nicdani.m3u8",
+        "nicdani_1",
     )
 
-    lemoncams.Playvid("https://www.lemoncams.com/stripchat/offline_model", "offline_model")
-
-    assert len(notifications) == 1
-    assert "offline" in notifications[0][1].lower()
+    assert calls == [("https://edge-hls.example/nicdani.m3u8", "nicdani_1")]
 
 
 def test_search_adds_model_link(monkeypatch):
