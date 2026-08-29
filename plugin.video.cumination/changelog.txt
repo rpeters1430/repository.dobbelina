@@ -1,3 +1,11 @@
+[B]Version 1.1.465[/B]
+- feat: add upstream addon sync tooling, pull updates, and fix stripchat LL-HLS playback
+- fix: play Stripchat streams in LemonCams via stripchat.py's manifest proxy
+- fix: resolve scraper issues for luxuretv, anybunny, and pornkai; update site contracts
+- chore: update status metrics and add pornyteen site to inventory
+- fix: repair pornhoarder, hanime, and familypornhd smoke-test failures
+- chore: remove dead one-off scripts and add scripts index
+
 [B]Version 1.1.464[/B]
 - fix: play Stripchat streams in LemonCams via stripchat.py's manifest proxy
 - fix: resolve scraper issues for luxuretv, anybunny, and pornkai; update site contracts
