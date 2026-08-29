@@ -1,15 +1,15 @@
 {
   "current": {
-    "generated": "2026-08-28T09:21:06.600769",
+    "generated": "2026-08-29T06:26:16.328363",
     "sites_total": 191,
     "pass": 185,
-    "warn": 2,
-    "fail": 2,
+    "warn": 3,
+    "fail": 1,
     "error": 0,
     "skip": 2
   },
   "previous": {
-    "generated": "2026-08-27T09:16:59.874304",
+    "generated": "2026-08-28T09:21:06.600769",
     "sites_total": 191,
     "pass": 185,
     "warn": 2,
@@ -19,45 +19,56 @@
   },
   "summary": {
     "new_failures": 1,
-    "resolved_failures": 1,
-    "persistent_failures": 1,
-    "improved_sites": 0,
+    "resolved_failures": 2,
+    "persistent_failures": 0,
+    "improved_sites": 1,
     "regressions": 2,
     "step_regressions": 3
   },
   "new_failures": [
     {
-      "site": "hentaidude",
-      "previous": "WARN",
+      "site": "pornmz",
+      "previous": "PASS",
       "current": "FAIL",
       "class": "ENV",
-      "message": "main: RuntimeError: FlareSolverr error for https://hentaidude.xxx/page/1/?m_orderby=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "message": "list: RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=popular: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "resolved_failures": [
     {
-      "site": "analdin",
+      "site": "hentaidude",
+      "previous": "FAIL",
+      "current": "WARN"
+    },
+    {
+      "site": "xtheatre",
       "previous": "FAIL",
       "current": "PASS"
     }
   ],
-  "persistent_failures": [
-    {
-      "site": "xtheatre",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "ENV",
-      "message": "main: RuntimeError: FlareSolverr error for https://pornxtheatre.com/?filter=latest&filter=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "is_flaky": false,
-      "stability_score": 1.0
-    }
-  ],
-  "improved_sites": [],
-  "step_regressions": [
+  "persistent_failures": [],
+  "improved_sites": [
     {
       "site": "awmnet",
+      "previous": "WARN",
+      "current": "PASS"
+    }
+  ],
+  "step_regressions": [
+    {
+      "site": "cumlouder",
+      "step": "play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Play function executed but no playback URL captured (no notifications)",
+      "class": "PLAYBACK",
+      "is_flaky": false,
+      "stability_score": 0.9
+    },
+    {
+      "site": "hentaidude",
       "step": "search",
       "previous": "SKIP",
       "current": "FAIL",
@@ -67,21 +78,11 @@
       "stability_score": 1.0
     },
     {
-      "site": "hentaidude",
-      "step": "main",
+      "site": "pornmz",
+      "step": "list",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://hentaidude.xxx/page/1/?m_orderby=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "xtheatre",
-      "step": "main",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://pornxtheatre.com/?filter=latest&filter=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "message": "RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=popular: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "class": "ENV",
       "is_flaky": false,
       "stability_score": 1.0
@@ -89,14 +90,14 @@
   ],
   "deltas": [
     {
-      "site": "analdin",
-      "previous": "FAIL",
+      "site": "awmnet",
+      "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "awmnet",
+      "site": "cumlouder",
       "previous": "PASS",
       "current": "WARN",
       "kind": "regression",
@@ -104,9 +105,23 @@
     },
     {
       "site": "hentaidude",
-      "previous": "WARN",
+      "previous": "FAIL",
+      "current": "WARN",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "pornmz",
+      "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "xtheatre",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
