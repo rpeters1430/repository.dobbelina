@@ -455,6 +455,11 @@ def _normalize_and_validate_proxy_segment_url(url):
         "stripchat.global",
         "doppiocdn.com",
         "doppiocdn.net",
+        "doppiocdn.media",
+        "doppiocdn.org",
+        "doppiocdn.live",
+        "strpst.com",
+        "saawsedge.com",
     )
     if not any(
         host == suffix or host.endswith("." + suffix)
@@ -542,7 +547,7 @@ def _rewrite_mouflon_manifest_for_kodi(
         if any(stripped.startswith(p) for p in _STRIP_PREFIXES):
             continue
 
-        if stripped.startswith("#EXT-X-MAP:URI="):
+        if stripped.startswith("#EXT-X-MAP:"):
             uri_match = re.search(r'URI="([^"]+)"', stripped)
             if uri_match:
                 map_uri = uri_match.group(1)
@@ -553,15 +558,37 @@ def _rewrite_mouflon_manifest_for_kodi(
             continue
 
         if stripped.startswith("#EXTINF:"):
-            # Stripchat MOUFLON layout: parts arrive *before* #EXTINF, then the
-            # full-segment MOUFLON URI, then #EXTINF, then ../media.mp4.
-            # Check prefer_full_segments first so we don't fall into the parts
-            # branch when a full-segment URL is already collected.
-            if prefer_full_segments and pending_full_segment_url:
+            # Stripchat MOUFLON layout: parts arrive *before* #EXTINF, then
+            # #EXTINF, then the full-segment MOUFLON URI, then ../media.mp4.
+            # When prefer_full_segments is True, resolve the full segment first
+            # (either from pending_full_segment_url or by looking ahead in lines)
+            # and discard the part segments.
+            found_full_mouflon = None
+            if prefer_full_segments:
+                if pending_full_segment_url:
+                    found_full_mouflon = pending_full_segment_url
+                else:
+                    for j in range(i + 1, len(lines)):
+                        future = lines[j].strip()
+                        if future.startswith("#EXTINF:"):
+                            break
+                        if (
+                            future.startswith("#EXT-X-MOUFLON:URI:")
+                            and ".mp4" in future
+                            and "_part" not in future
+                        ):
+                            found_full_mouflon = future[len("#EXT-X-MOUFLON:URI:") :].strip()
+                            if not found_full_mouflon.startswith("http"):
+                                found_full_mouflon = urljoin(base_url, found_full_mouflon)
+                            break
+                        if future and not future.startswith("#"):
+                            break
+
+            if prefer_full_segments and found_full_mouflon:
                 if not stripped.endswith(","):
                     stripped += ","
                 lines_out.append(stripped)
-                lines_out.append(pending_full_segment_url)
+                lines_out.append(found_full_mouflon)
                 skip_next_placeholder = True
                 replaced_segments += 1
                 pending_part_segments = []
@@ -579,39 +606,6 @@ def _rewrite_mouflon_manifest_for_kodi(
                 pending_full_segment_url = None
                 pending_mouflon_url = None
                 continue
-
-            if prefer_full_segments:
-                # Prefer the full segment URL for each EXTINF block. Parts are
-                # the live edge and tend to expire before Kodi requests them.
-                found_full_mouflon = None
-                for j in range(i + 1, len(lines)):
-                    future = lines[j].strip()
-                    if future.startswith("#EXTINF:"):
-                        break
-                    if (
-                        future.startswith("#EXT-X-MOUFLON:URI:")
-                        and ".mp4" in future
-                        and "_part" not in future
-                    ):
-                        found_full_mouflon = future[len("#EXT-X-MOUFLON:URI:") :]
-                        if not found_full_mouflon.startswith("http"):
-                            found_full_mouflon = urljoin(base_url, found_full_mouflon)
-                        break
-                    if future and not future.startswith("#"):
-                        break
-
-                selected_full_segment = found_full_mouflon or pending_full_segment_url
-                if selected_full_segment:
-                    if not stripped.endswith(","):
-                        stripped += ","
-                    lines_out.append(stripped)
-                    lines_out.append(selected_full_segment)
-                    skip_next_placeholder = True
-                    replaced_segments += 1
-                    pending_part_segments = []
-                    pending_full_segment_url = None
-                    pending_mouflon_url = None
-                    continue
 
         if stripped and not stripped.startswith("#"):
             if skip_next_placeholder:
@@ -904,7 +898,7 @@ def _proxy_segment_urls_in_manifest(manifest_text, port):
     out = []
     for line in lines:
         stripped = line.strip()
-        if stripped.startswith("#EXT-X-MAP:URI="):
+        if stripped.startswith("#EXT-X-MAP:"):
             uri_match = re.search(r'URI="([^"]+)"', stripped)
             if uri_match:
                 cdn_url = uri_match.group(1)
@@ -1195,7 +1189,7 @@ def _start_manifest_proxy(selected_url, name):
                 # to already be expired by the time they're requested.
                 rewritten = _keep_only_part_window(
                     rewritten,
-                    keep_count=1,
+                    keep_count=3,
                     edge_buffer=0,
                 )
                 current_segment_urls = _extract_manifest_segment_urls(rewritten)
@@ -1613,7 +1607,14 @@ def clean_database(showdialog=True):
     conn = sqlite3.connect(utils.TRANSLATEPATH("special://database/Textures13.db"))
     try:
         with conn:
-            for domain_fragment in (".strpst.com", ".doppiocdn.com"):
+            for domain_fragment in (
+                ".strpst.com",
+                ".doppiocdn.com",
+                ".doppiocdn.net",
+                ".doppiocdn.media",
+                ".doppiocdn.org",
+                ".doppiocdn.live",
+            ):
                 pattern = "%" + domain_fragment + "%"
                 rows = conn.execute(
                     "SELECT id, cachedurl FROM texture WHERE url LIKE ?;",

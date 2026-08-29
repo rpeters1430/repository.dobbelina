@@ -34,14 +34,15 @@ class KinoGerResolver(ResolveUrl):
         'srbe84.vidplayer.live', 'flimmer.rpmvip.com', 't1.p2pplay.pro', 'flixfilmesonline.strp2p.site',
         'filma365.strp2p.site', 'strp2p.site', 'vidmoly.cc', 'animeshqip.uns.bio', 'cimanow.upns.online',
         'kinoger.p2pplay.pro', 'embedplay.upns.ink', 'moviehax.strp2p.site', 'filmi9.upns.xyz',
-        'embedplayapiupn.upns.xyz', 'kinoger.embed4me.vip', 'kinoger.seekplays.pro'
+        'embedplayapiupn.upns.xyz', 'kinoger.embed4me.vip', 'kinoger.seekplays.pro', 'kory.4meplayer.pro'
     ]
     pattern = (
         r'(?://|\.)((?:kinoger|wasuytm|ultrastream|(?:shiid4u|player)\.upn|(?:moflix|cimanow|embedplay(?:apiupn)?|'
         r'(?:tuktuk|ultra)\.rpmvid|filedecrypt|(?:dzo|srbe84)\.vidplayer|video(?:shar\.uns|land)|'
-        r'w1tv|(?:flixfilmesonline\.|filma365\.|moviehax\.)?strp2p|flimmer\.rpmvip|(?:t1|kinoger)\.p2pplay|'
-        r'asianembed|securecdn|watch\.(?:ezplayer|streamcasthub)|kinoger\.(?:embed4me|seekplays)|'
-        r'filmi9)\.(?:upns|rpmplay)|disneycdn|vidmoly|animeshqip\.uns)'
+        r'w1tv|(?:flixfilmesonline\.|filma365\.|moviehax\.)?strp2p|flimmer\.rpmvip|'
+        r'asianembed|securecdn|watch\.(?:ezplayer|streamcasthub)|'
+        r'filmi9)\.(?:upns|rpmplay)|(?:t1|kinoger)\.p2pplay|kinoger\.(?:embed4me|seekplays)|'
+        r'disneycdn|vidmoly|animeshqip\.uns|kory\.4meplayer)'
         r'\.(?:[mr]e|one|xyz|store|online|c[oa]m|net|l?i(?:nk|ve)|bio|cfd|site|shop|pro|cc|vip))/#([A-Za-z0-9]+)'
     )
 
@@ -59,6 +60,7 @@ class KinoGerResolver(ResolveUrl):
             ddata = decrypter.feed(edata)
             ddata += decrypter.feed()
             ddata = ddata.decode('utf-8')
+            common.logger.log(ddata, common.log_utils.LOGINFO)
             ddata = json.loads(ddata)
             # r = ddata.get('cf')  # Plays with xbmc Player
             r = ddata.get('source')  # Plays with Inputstream Adaptive

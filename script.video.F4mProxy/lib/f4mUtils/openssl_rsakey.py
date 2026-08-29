@@ -6,21 +6,19 @@
 from .cryptomath import *
 
 from .rsakey import *
+from .python_rsakey import Python_RSAKey
 
-
-# copied from M2Crypto.util.py, so when we load the local copy of m2
-# we can still use it
-def password_callback(
-    v, prompt1="Enter private key passphrase:", prompt2="Verify passphrase:"
-):
+#copied from M2Crypto.util.py, so when we load the local copy of m2
+#we can still use it
+def password_callback(v, prompt1='Enter private key passphrase:',
+                           prompt2='Verify passphrase:'):
     from getpass import getpass
-
     while 1:
         try:
-            p1 = getpass(prompt1)
+            p1=getpass(prompt1)
             if v:
-                p2 = getpass(prompt2)
-                if p1 == p2:
+                p2=getpass(prompt2)
+                if p1==p2:
                     break
             else:
                 break
@@ -30,7 +28,6 @@ def password_callback(
 
 
 if m2cryptoLoaded:
-
     class OpenSSL_RSAKey(RSAKey):
         def __init__(self, n=0, e=0):
             self.rsa = None
@@ -47,11 +44,11 @@ if m2cryptoLoaded:
                 m2.rsa_free(self.rsa)
 
         def __getattr__(self, name):
-            if name == "e":
+            if name == 'e':
                 if not self.rsa:
                     return 0
                 return mpiToNumber(m2.rsa_get_e(self.rsa))
-            elif name == "n":
+            elif name == 'n':
                 if not self.rsa:
                     return 0
                 return mpiToNumber(m2.rsa_get_n(self.rsa))
@@ -73,23 +70,16 @@ if m2cryptoLoaded:
             m = bytesToNumber(bytearray(s))
             return m
 
-        def acceptsPassword(self):
-            return True
+        def acceptsPassword(self): return True
 
         def write(self, password=None):
             bio = m2.bio_new(m2.bio_s_mem())
             if self._hasPrivateKey:
                 if password:
-
-                    def f(v):
-                        return password
-
+                    def f(v): return password
                     m2.rsa_write_key(self.rsa, bio, m2.des_ede_cbc(), f)
                 else:
-
-                    def f():
-                        pass
-
+                    def f(): pass
                     m2.rsa_write_key_no_cipher(self.rsa, bio, f)
             else:
                 if password:
@@ -101,14 +91,10 @@ if m2cryptoLoaded:
 
         def generate(bits):
             key = OpenSSL_RSAKey()
-
-            def f():
-                pass
-
+            def f():pass
             key.rsa = m2.rsa_generate_key(bits, 3, f)
             key._hasPrivateKey = True
             return key
-
         generate = staticmethod(generate)
 
         def parse(s, passwordCallback=None):
@@ -116,25 +102,20 @@ if m2cryptoLoaded:
             start = s.find("-----BEGIN ")
             if start == -1:
                 raise SyntaxError()
-            s = s[start:]
+            s = s[start:]            
             if s.startswith("-----BEGIN "):
-                if passwordCallback == None:
+                if passwordCallback==None:
                     callback = password_callback
                 else:
-
                     def f(v, prompt1=None, prompt2=None):
                         return passwordCallback()
-
                     callback = f
                 bio = m2.bio_new(m2.bio_s_mem())
                 try:
                     m2.bio_write(bio, s)
                     key = OpenSSL_RSAKey()
                     if s.startswith("-----BEGIN RSA PRIVATE KEY-----"):
-
-                        def f():
-                            pass
-
+                        def f():pass
                         key.rsa = m2.rsa_read_key(bio, callback)
                         if key.rsa == None:
                             raise SyntaxError()

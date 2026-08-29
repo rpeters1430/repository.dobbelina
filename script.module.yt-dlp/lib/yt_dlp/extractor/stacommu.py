@@ -12,7 +12,7 @@ from ..utils import (
 class StacommuBaseIE(WrestleUniverseBaseIE):
     _NETRC_MACHINE = 'stacommu'
     _API_HOST = 'api.stacommu.jp'
-    _LOGIN_QUERY = {'key': ''.join(['AIza', 'SyCR9czxhH2eWuijEhTNWBZ5MCcOYEUTAhg'])}
+    _LOGIN_QUERY = {'key': 'AIzaSyCR9czxhH2eWuijEhTNWBZ5MCcOYEUTAhg'}
     _LOGIN_HEADERS = {
         'Accept': '*/*',
         'Content-Type': 'application/json',
@@ -23,11 +23,10 @@ class StacommuBaseIE(WrestleUniverseBaseIE):
 
     @WrestleUniverseBaseIE._TOKEN.getter
     def _TOKEN(self):
-        return self._TOKEN_DICT.get(self._API_HOST)
+        if self._REAL_TOKEN and self._TOKEN_EXPIRY <= int(time.time()):
+            self._refresh_token()
 
-    @_TOKEN.setter
-    def _TOKEN(self, value):
-        self._TOKEN_DICT[self._API_HOST] = value
+        return self._REAL_TOKEN
 
     def _get_formats(self, data, path, video_id=None):
         if not traverse_obj(data, path) and not data.get('canWatch') and not self._TOKEN:
@@ -175,7 +174,7 @@ class StacommuLiveIE(StacommuBaseIE):
 class TheaterComplexTownBaseIE(StacommuBaseIE):
     _NETRC_MACHINE = 'theatercomplextown'
     _API_HOST = 'api.theater-complex.town'
-    _LOGIN_QUERY = {'key': ''.join(['AIza', 'SyAgNCqToaIz4a062EeIrkhI_xetVfAOrfc'])}
+    _LOGIN_QUERY = {'key': 'AIzaSyAgNCqToaIz4a062EeIrkhI_xetVfAOrfc'}
     _LOGIN_HEADERS = {
         'Accept': '*/*',
         'Content-Type': 'application/json',

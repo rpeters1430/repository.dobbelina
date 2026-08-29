@@ -5,7 +5,6 @@
 
 from .compat import *
 
-
 class Writer(object):
     def __init__(self):
         self.bytes = bytearray(0)
@@ -23,10 +22,9 @@ class Writer(object):
             self.add(e, length)
 
     def addVarSeq(self, seq, length, lengthLength):
-        self.add(len(seq) * length, lengthLength)
+        self.add(len(seq)*length, lengthLength)
         for e in seq:
             self.add(e, length)
-
 
 class Parser(object):
     def __init__(self, bytes):
@@ -46,7 +44,7 @@ class Parser(object):
     def getFixBytes(self, lengthBytes):
         if self.index + lengthBytes > len(self.bytes):
             raise SyntaxError()
-        bytes = self.bytes[self.index : self.index + lengthBytes]
+        bytes = self.bytes[self.index : self.index+lengthBytes]
         self.index += lengthBytes
         return bytes
 

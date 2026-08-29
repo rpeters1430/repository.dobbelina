@@ -1,7 +1,3 @@
-Version 1.2.47
-- Update metadata for Kodi Matrix/Nexus/Omega compatibility
-- Align dependency targets with refreshed repository packaging
-
 Version 1.2.46
 Chaturbate fixed
 Myfreecams fixed

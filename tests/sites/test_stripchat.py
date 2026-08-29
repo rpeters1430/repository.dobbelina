@@ -444,6 +444,76 @@ def test_rewrite_mouflon_prefer_full_segments_with_real_layout():
     assert placeholders == []
 
 
+def test_rewrite_mouflon_prefer_full_segments_with_actual_doppiocdn_layout():
+    """Real Stripchat/DoppioCDN layout: #EXTINF appears BEFORE the full-segment
+    #EXT-X-MOUFLON:URI tag and after the part tags."""
+    manifest = "\n".join(
+        [
+            "#EXTM3U",
+            "#EXT-X-VERSION:6",
+            "#EXT-X-TARGETDURATION:2",
+            '#EXT-X-MAP:URI="https://media-hls.doppiocdn.media/b-hls-09/228262913/init.mp4"',
+            "#EXT-X-MEDIA-SEQUENCE:1590",
+            "#EXT-X-MOUFLON:URI:https://media-hls.doppiocdn.media/b-hls-09/228262913/seg1590_part0.mp4",
+            '#EXT-X-PART:DURATION=0.500,URI="https://media-hls.doppiocdn.media/b-hls-09/media.mp4",INDEPENDENT=YES',
+            "#EXT-X-MOUFLON:URI:https://media-hls.doppiocdn.media/b-hls-09/228262913/seg1590_part1.mp4",
+            '#EXT-X-PART:DURATION=0.500,URI="https://media-hls.doppiocdn.media/b-hls-09/media.mp4"',
+            "#EXT-X-PROGRAM-DATE-TIME:2026-08-29T00:36:01.433+0000",
+            "#EXTINF:2.000",
+            "#EXT-X-MOUFLON:URI:https://media-hls.doppiocdn.media/b-hls-09/228262913/seg1590.mp4",
+            "https://media-hls.doppiocdn.media/b-hls-09/media.mp4",
+            "#EXT-X-MOUFLON:URI:https://media-hls.doppiocdn.media/b-hls-09/228262913/seg1591_part0.mp4",
+            '#EXT-X-PART:DURATION=0.500,URI="https://media-hls.doppiocdn.media/b-hls-09/media.mp4",INDEPENDENT=YES',
+            "#EXT-X-PROGRAM-DATE-TIME:2026-08-29T00:36:03.458+0000",
+            "#EXTINF:2.000",
+            "#EXT-X-MOUFLON:URI:https://media-hls.doppiocdn.media/b-hls-09/228262913/seg1591.mp4",
+            "https://media-hls.doppiocdn.media/b-hls-09/media.mp4",
+            "",
+        ]
+    )
+
+    result = stripchat._rewrite_mouflon_for_isa(
+        manifest, "https://media-hls.doppiocdn.media/b-hls-09/228262913/", prefer_full_segments=True
+    )
+    lines = result.splitlines()
+    full_segs = [line for line in lines if line.startswith("https://media-hls.doppiocdn.media/") and "_part" not in line and not line.startswith("#")]
+    part_segs = [line for line in lines if "_part" in line]
+    placeholders = [line for line in lines if "media.mp4" in line and not line.startswith("#")]
+
+    assert len(full_segs) == 2
+    assert "https://media-hls.doppiocdn.media/b-hls-09/228262913/seg1590.mp4" in full_segs
+    assert "https://media-hls.doppiocdn.media/b-hls-09/228262913/seg1591.mp4" in full_segs
+    assert part_segs == []
+    assert placeholders == []
+
+
+def test_normalize_and_validate_proxy_segment_url_supported_cdns():
+    valid_urls = [
+        "https://media-hls.doppiocdn.com/b-hls-20/267251460/init.mp4",
+        "https://media-hls.doppiocdn.net/b-hls-20/267251460/init.mp4",
+        "https://media-hls.doppiocdn.media/b-hls-09/228262913/init.mp4",
+        "https://media-hls.doppiocdn.org/b-hls-09/228262913/init.mp4",
+        "https://media-hls.doppiocdn.live/b-hls-09/228262913/init.mp4",
+        "https://edge-hls.saawsedge.com/hls/267251460/master.m3u8",
+        "https://static-proxy.strpst.com/avatars/test.jpg",
+        "https://stripchat.com/api/test",
+        "https://stripchat.global/api/test",
+    ]
+    for url in valid_urls:
+        validated = stripchat._normalize_and_validate_proxy_segment_url(url)
+        assert validated != "", f"Failed for {url}"
+
+    invalid_urls = [
+        "https://evil.com/exploit.mp4",
+        "https://doppiocdn.com.evil.com/init.mp4",
+        "ftp://doppiocdn.com/file",
+        "",
+        None,
+    ]
+    for url in invalid_urls:
+        assert stripchat._normalize_and_validate_proxy_segment_url(url) == ""
+
+
 def test_keep_only_part_window_skips_live_edge_parts():
     manifest = "\n".join(
         [

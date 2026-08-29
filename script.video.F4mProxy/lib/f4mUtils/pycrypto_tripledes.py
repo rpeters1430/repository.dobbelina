@@ -13,6 +13,7 @@ if pycryptoLoaded:
         return PyCrypto_TripleDES(key, mode, IV)
 
     class PyCrypto_TripleDES(TripleDES):
+
         def __init__(self, key, mode, IV):
             TripleDES.__init__(self, key, mode, IV, "pycrypto")
             key = bytes(key)

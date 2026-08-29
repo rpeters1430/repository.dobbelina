@@ -3,6 +3,8 @@
 
 """Factory functions for symmetric cryptography."""
 
+import os
+
 from tlslite.utils import python_aes
 from tlslite.utils import python_rc4
 
@@ -14,20 +16,17 @@ if cryptomath.m2cryptoLoaded:
     from tlslite.utils import openssl_aes
     from tlslite.utils import openssl_rc4
     from tlslite.utils import openssl_tripledes
-
     tripleDESPresent = True
 
 if cryptomath.pycryptoLoaded:
     from tlslite.utils import pycrypto_aes
     from tlslite.utils import pycrypto_rc4
     from tlslite.utils import pycrypto_tripledes
-
     tripleDESPresent = True
 
 # **************************************************************************
 # Factory Functions for AES
 # **************************************************************************
-
 
 def createAES(key, IV, implList=None):
     """Create a new AES object.
@@ -52,7 +51,6 @@ def createAES(key, IV, implList=None):
         elif impl == "python":
             return python_aes.new(key, 2, IV)
     raise NotImplementedError()
-
 
 def createRC4(key, IV, implList=None):
     """Create a new RC4 object.
@@ -80,8 +78,7 @@ def createRC4(key, IV, implList=None):
             return python_rc4.new(key)
     raise NotImplementedError()
 
-
-# Create a new TripleDES instance
+#Create a new TripleDES instance
 def createTripleDES(key, IV, implList=None):
     """Create a new 3DES object.
 

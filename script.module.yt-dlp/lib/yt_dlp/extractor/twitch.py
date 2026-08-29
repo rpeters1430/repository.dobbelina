@@ -44,7 +44,7 @@ class TwitchBaseIE(InfoExtractor):
         'CollectionSideBar': '016e1e4ccee0eb4698eb3bf1a04dc1c077fb746c78c82bac9a8f0289658fbd1a',
         'FilterableVideoTower_Videos': '67004f7881e65c297936f32c75246470629557a393788fb5a69d6d9a25a8fd5f',
         'ClipsCards__User': '1cd671bfa12cec480499c087319f26d21925e9695d1f80225aae6a4354f23088',
-        'ShareClipRenderStatus': '0a02bb974443b576f5579aab0fef1d4b7f44e58a8a256f0c5adfead0db70640f',
+        'ShareClipRenderStatus': '2db6a3b20eabf510bd3cf465ae2408834b59eb6b8af89ca73ab1486cacecfb63',
         'ChannelCollectionsContent': '5247910a19b1cd2b760939bf4cba4dcbd3d13bdf8c266decd16956f6ef814077',
         'StreamMetadata': 'ad022ca32220d5523d03a23cbcb5beaa1e0999889c1f8f78f9f2520dafb5cae6',
         'ComscoreStreamingQuery': 'e1edae8122517d013405f237ffcc124515dc6ded82480a88daef69c83b53ac01',
@@ -58,16 +58,6 @@ class TwitchBaseIE(InfoExtractor):
     def _CLIENT_ID(self):
         return self._configuration_arg(
             'client_id', ['ue6666qo983tsx6so1t0vnawi233wa'], ie_key='Twitch', casesense=True)[0]
-
-    @property
-    def _PLATFORM(self):
-        return self._configuration_arg(
-            'platform', ['web'], ie_key='Twitch', casesense=True)[0]
-
-    @property
-    def _PLAYER_TYPE(self):
-        return self._configuration_arg(
-            'player_type', ['site'], ie_key='Twitch', casesense=True)[0]
 
     def _perform_login(self, username, password):
         def fail(message):
@@ -175,16 +165,16 @@ class TwitchBaseIE(InfoExtractor):
               %s(
                 %s: "%s",
                 params: {
-                  platform: "%s",
+                  platform: "web",
                   playerBackend: "mediaplayer",
-                  playerType: "%s"
+                  playerType: "site"
                 }
               )
               {
                 value
                 signature
               }
-            }''' % (method, param_name, video_id, self._PLATFORM, self._PLAYER_TYPE),  # noqa: UP031
+            }''' % (method, param_name, video_id),  # noqa: UP031
         }
         return self._download_base_gql(
             video_id, ops,
@@ -206,7 +196,7 @@ class TwitchBaseIE(InfoExtractor):
                     'allow_audio_only': 'true',
                     'allow_spectre': 'true',
                     'p': random.randint(1000000, 10000000),
-                    'platform': self._PLATFORM,
+                    'platform': 'web',
                     'player': 'twitchweb',
                     'supported_codecs': 'av1,h265,h264',
                     'playlist_include_framerate': 'true',
@@ -1087,10 +1077,7 @@ class TwitchStreamIE(TwitchVideosBaseIE):
         if not stream:
             raise UserNotLive(video_id=channel_name)
 
-        try:
-            timestamp = unified_timestamp(stream.get('createdAt'))
-        except Exception:
-            timestamp = None
+        timestamp = unified_timestamp(stream.get('createdAt'))
 
         if self.get_param('live_from_start'):
             self.to_screen(f'{channel_name}: Extracting VOD to download live from start')
@@ -1123,9 +1110,6 @@ class TwitchStreamIE(TwitchVideosBaseIE):
         stream_type = stream.get('type')
         if stream_type in ['rerun', 'live']:
             title += f' ({stream_type})'
-        game_name = stream.get('game', {}).get('name')
-        if game_name:
-            title += f' - {game_name}'
 
         return {
             'id': stream_id,

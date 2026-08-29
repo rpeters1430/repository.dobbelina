@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+"""Tests for scripts/pull_upstream_addons.py."""
+
+
+
+from scripts.pull_upstream_addons import (
+    UPSTREAM_REGISTRY,
+    apply_sync,
+    compare_trees,
+    get_local_addon_version,
+    is_excluded,
+    resolve_addon_key,
+)
+
+
+def test_upstream_registry_structure():
+    assert "resolveurl" in UPSTREAM_REGISTRY
+    assert "resolveurlxxx" in UPSTREAM_REGISTRY
+    assert "yt-dlp" in UPSTREAM_REGISTRY
+    assert "f4mproxy" in UPSTREAM_REGISTRY
+    assert "uwc" in UPSTREAM_REGISTRY
+
+    required_keys = {"name", "addon_id", "repo_url", "default_branch", "source_path", "dest_path", "type", "exclude"}
+    for key, spec in UPSTREAM_REGISTRY.items():
+        assert required_keys.issubset(spec.keys()), f"Missing keys in {key}"
+        assert spec["repo_url"].startswith("http")
+        assert len(spec["exclude"]) > 0
+
+
+def test_resolve_addon_key():
+    assert resolve_addon_key("resolveurl") == "resolveurl"
+    assert resolve_addon_key("RESOLVEURL") == "resolveurl"
+    assert resolve_addon_key("resolveurlxxx") == "resolveurlxxx"
+    assert resolve_addon_key("resolveurl.xxx") == "resolveurlxxx"
+    assert resolve_addon_key("script.module.resolveurl") == "resolveurl"
+    assert resolve_addon_key("script.module.resolveurl.xxx") == "resolveurlxxx"
+    assert resolve_addon_key("ytdlp") == "yt-dlp"
+    assert resolve_addon_key("script.module.yt-dlp") == "yt-dlp"
+    assert resolve_addon_key("smr") == "smr_link_tester"
+    assert resolve_addon_key("nonexistent_addon") == "nonexistent_addon"
+
+
+def test_is_excluded():
+    exclude = [".git*", "*.pyc", "__pycache__", "*.zip"]
+    assert is_excluded(".git", exclude) is True
+    assert is_excluded(".gitignore", exclude) is True
+    assert is_excluded("test.pyc", exclude) is True
+    assert is_excluded("module/__pycache__/cache.pyc", exclude) is True
+    assert is_excluded("addon-1.0.0.zip", exclude) is True
+    assert is_excluded("addon.xml", exclude) is False
+    assert is_excluded("lib/default.py", exclude) is False
+
+
+def test_get_local_addon_version(tmp_path):
+    # Nonexistent path
+    assert get_local_addon_version(tmp_path / "nonexistent") == "unknown"
+
+    # Valid addon.xml
+    addon_xml = tmp_path / "addon.xml"
+    addon_xml.write_text('<addon id="test.addon" version="1.2.3"/>', encoding="utf-8")
+    assert get_local_addon_version(tmp_path) == "1.2.3"
+    assert get_local_addon_version(addon_xml) == "1.2.3"
+
+
+def test_compare_trees_and_apply_sync(tmp_path):
+    source_dir = tmp_path / "source"
+    dest_dir = tmp_path / "dest"
+    source_dir.mkdir()
+    dest_dir.mkdir()
+
+    # Setup source files
+    (source_dir / "common.txt").write_text("v1", encoding="utf-8")
+    (source_dir / "added.txt").write_text("new file", encoding="utf-8")
+    (source_dir / "modified.txt").write_text("v2", encoding="utf-8")
+    (source_dir / "ignored.pyc").write_text("bytecode", encoding="utf-8")
+
+    # Setup dest files
+    (dest_dir / "common.txt").write_text("v1", encoding="utf-8")
+    (dest_dir / "modified.txt").write_text("v1", encoding="utf-8")
+    (dest_dir / "removed.txt").write_text("old file", encoding="utf-8")
+
+    exclude = ["*.pyc"]
+    diff = compare_trees(source_dir, dest_dir, exclude)
+
+    assert diff.has_changes is True
+    assert diff.added == ["added.txt"]
+    assert diff.modified == ["modified.txt"]
+    assert diff.removed == ["removed.txt"]
+    assert diff.unchanged == ["common.txt"]
+    assert "ignored.pyc" not in diff.added
+
+    # Dry-run apply sync does not change dest_dir
+    apply_sync(source_dir, dest_dir, diff, dry_run=True)
+    assert not (dest_dir / "added.txt").exists()
+    assert (dest_dir / "removed.txt").exists()
+    assert (dest_dir / "modified.txt").read_text(encoding="utf-8") == "v1"
+
+    # Actual apply sync
+    apply_sync(source_dir, dest_dir, diff, dry_run=False)
+    assert (dest_dir / "added.txt").exists()
+    assert (dest_dir / "added.txt").read_text(encoding="utf-8") == "new file"
+    assert not (dest_dir / "removed.txt").exists()
+    assert (dest_dir / "modified.txt").read_text(encoding="utf-8") == "v2"
+    assert (dest_dir / "common.txt").read_text(encoding="utf-8") == "v1"
+
+    # Second compare should have no changes
+    diff2 = compare_trees(source_dir, dest_dir, exclude)
+    assert diff2.has_changes is False
+    assert diff2.added == []
+    assert diff2.modified == []
+    assert diff2.removed == []

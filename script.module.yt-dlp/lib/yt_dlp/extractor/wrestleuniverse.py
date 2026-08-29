@@ -29,7 +29,7 @@ class WrestleUniverseBaseIE(InfoExtractor):
     _TOKEN_EXPIRY = None
     _REFRESH_TOKEN = None
     _DEVICE_ID = None
-    _LOGIN_QUERY = {'key': ''.join(['AIza', 'SyCaRPBsDQYVDUWWBXjsTrHESi2r_F3RAdA'])}
+    _LOGIN_QUERY = {'key': 'AIzaSyCaRPBsDQYVDUWWBXjsTrHESi2r_F3RAdA'}
     _LOGIN_HEADERS = {
         'Accept': '*/*',
         'Content-Type': 'application/json',

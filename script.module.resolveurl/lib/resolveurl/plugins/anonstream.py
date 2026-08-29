@@ -1,6 +1,6 @@
 """
     Plugin for ResolveURL
-    Copyright (C) 2022 shellc0de
+    Copyright (C) 2026 TempleLain
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,18 +20,21 @@ from resolveurl.lib import helpers
 from resolveurl.plugins.__resolve_generic__ import ResolveGeneric
 
 
-class SolidFilesResolver(ResolveGeneric):
-    name = 'SolidFiles'
-    domains = ['solidfiles.com']
-    pattern = r'(?://|\.)(solidfiles\.com)/(?:e|v)/([0-9a-zA-Z]+)'
+class AnonStreamResolver(ResolveGeneric):
+    name = 'AnonStream'
+    domains = ['anonstream.co']
+    pattern = r'(?://|\.)(anonstream\.co)/(?:embed-|e/|d/)?(\w+)'
 
     def get_media_url(self, host, media_id):
+        # The embed page is domain locked: any Referer other than the embedding
+        # site is answered with "Video embed restricted for this domain".
+        # Sending none at all is accepted, so referer is disabled here.
         return helpers.get_media_url(
             self.get_url(host, media_id),
-            patterns=[r'''downloadUrl":"(?P<url>[^"]+)'''],
+            patterns=[r'''sources:\s*\[{src:\s*["'](?P<url>[^"']+)'''],
             generic_patterns=False,
-            result_blacklist=['.zip', '.rar', '.7z']
+            referer=False
         )
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='http://www.{host}/v/{media_id}')
+        return self._default_get_url(host, media_id, template='https://{host}/embed-{media_id}.html')
