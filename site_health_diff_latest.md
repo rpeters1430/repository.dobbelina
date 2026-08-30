@@ -6,31 +6,28 @@
 ## Snapshot
 
 - Current: `PASS 185` | `WARN 3` | `FAIL 1` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 185` | `WARN 2` | `FAIL 2` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 185` | `WARN 3` | `FAIL 1` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
 - New failures: `1`
-- Resolved failures: `2`
+- Resolved failures: `1`
 - Persistent failures: `0`
 - Site regressions: `2`
-- Step regressions: `3`
+- Step regressions: `1`
 
 ## New Failures
 
-- **pornmz**: `PASS -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=popular: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **hqporner**: `PASS -> FAIL` (NETWORK) | Site process timed out after 140s
 
 ## Resolved Failures
 
-- **hentaidude**: `FAIL -> WARN`
-- **xtheatre**: `FAIL -> PASS`
+- **pornmz**: `FAIL -> PASS`
 
 ## Step Regressions
 
-- **cumlouder** `play`: `PASS -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
-- **hentaidude** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
-- **pornmz** `list`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=popular: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **xtapesla** `search`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://xtapes.la/?s=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
 ## Improvements
 
-- **awmnet**: `WARN -> PASS`
+- **cumlouder**: `WARN -> PASS`
