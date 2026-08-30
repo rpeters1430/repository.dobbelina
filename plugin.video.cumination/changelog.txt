@@ -1,3 +1,11 @@
+[B]Version 1.1.467[/B]
+- fix: prefetch Stripchat segments to close LL-HLS freshness race
+- Merge pull request #353 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: add upstream addon sync tooling, pull updates, and fix stripchat LL-HLS playback
+- fix: play Stripchat streams in LemonCams via stripchat.py's manifest proxy
+- fix: resolve scraper issues for luxuretv, anybunny, and pornkai; update site contracts
+
 [B]Version 1.1.466[/B]
 - Merge pull request #353 from rpeters1430/imgbot
 - [ImgBot] Optimize images
