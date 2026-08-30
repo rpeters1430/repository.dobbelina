@@ -1,0 +1,9 @@
+{
+  "status": "Success",
+  "message": "",
+  "data": {
+    "isLive": true,
+    "type": "public",
+    "playback_url": "https://edge-cdn2.streamparty.online/LiveApp/streams/user6a67a0ec132e2/example_adaptive.m3u8"
+  }
+}

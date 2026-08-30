@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
+import time
 
 import xbmc
 from six.moves import urllib_parse
@@ -50,7 +51,8 @@ def Main(url):
     )
     List(
         site.url
-        + "?mode=async&function=get_block&block_id=list_videos_most_recent_videos&sort_by=post_date&from=1",
+        + "?mode=async&function=get_block&block_id=list_videos_most_recent_videos&sort_by=post_date&from=1&_="
+        + str(int(time.time() * 1000)),
         1,
     )
     utils.eod()

@@ -1,0 +1,34 @@
+{
+  "status": "Success",
+  "message": "",
+  "data": {
+    "total": 15,
+    "items": [
+      {
+        "title": "Nyx_Savage",
+        "creator_user_hash": "user6a67a0ec132e2",
+        "age": 19,
+        "country": "PL",
+        "topic": "Hi there",
+        "viewers": 1434,
+        "thumbnail_url": "https://preview.streamparty.online/nyx.webp"
+      },
+      {
+        "title": "MiaVelvety",
+        "creator_user_hash": "user6a2323d31a646",
+        "age": 21,
+        "country": "RO",
+        "topic": "Hello",
+        "viewers": 476,
+        "thumbnail_url": "https://preview.streamparty.online/mia.webp"
+      },
+      {
+        "title": "",
+        "slug": "no-hash-model",
+        "creator_user_hash": null,
+        "age": 25,
+        "country": "US"
+      }
+    ]
+  }
+}

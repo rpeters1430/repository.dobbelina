@@ -100,6 +100,32 @@ def test_list_pagination(monkeypatch):
     assert "(3/25)" in next_pages[0]["name"]
 
 
+def test_categories_parses_nav_menu_category_links(monkeypatch):
+    """Categories should scrape the top-nav category links, not the (now
+    Cloudflare-blocked) wp-json REST endpoint."""
+    html = load_fixture("home_menu.html")
+
+    dirs = []
+
+    monkeypatch.setattr(javguru.utils, "getHtml", lambda url, referer=None, headers=None: html)
+    monkeypatch.setattr(
+        javguru.site,
+        "add_dir",
+        lambda name, url, mode, iconimage=None, **k: dirs.append(
+            {"name": name, "url": url, "mode": mode}
+        ),
+    )
+    monkeypatch.setattr(javguru.utils, "eod", lambda: None)
+
+    javguru.Categories("https://jav.guru/")
+
+    assert dirs == [
+        {"name": "SUBS", "url": "https://jav.guru/category/english-subbed/", "mode": "List"},
+        {"name": "JAV", "url": "https://jav.guru/category/jav/", "mode": "List"},
+        {"name": "AMATEUR", "url": "https://jav.guru/category/amateur/", "mode": "List"},
+    ]
+
+
 def test_search_without_keyword(monkeypatch):
     """Test that Search without keyword shows search dialog."""
     search_called = []

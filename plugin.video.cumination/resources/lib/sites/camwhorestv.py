@@ -213,7 +213,7 @@ def Playvid(url, name, download=None):
         if message:
             utils.notify("", message.group(1).lstrip(" \t"))
         return
-    vp.play_from_kt_player(html, user_agent=cwtvhdr["User-Agent"])
+    vp.play_from_kt_player(html)
 
 
 @site.register()

@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
-import json
 from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
@@ -37,8 +36,8 @@ site = AdultSite(
 def Main():
     site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]",
-        site.url + "wp-json/wp/v2/categories/",
-        "Catjson",
+        site.url,
+        "Categories",
         site.img_cat,
     )
     site.add_dir(
@@ -153,12 +152,18 @@ def List(url):
 
 
 @site.register()
-def Catjson(url):
-    listjson = utils.getHtml(url)
-    jdata = json.loads(listjson)
-    for cat in jdata:
-        name = "{0} ({1})".format(cat["name"], cat["count"])
-        site.add_dir(name, cat["link"], "List", "")
+def Categories(url):
+    cathtml = utils.getHtml(url)
+    soup = utils.parse_html(cathtml)
+    for item in soup.select("li.menu-item-object-category"):
+        link = item.select_one("a[href]")
+        if not link:
+            continue
+        caturl = utils.safe_get_attr(link, "href")
+        name = utils.cleantext(utils.safe_get_text(link, ""))
+        if not caturl or not name:
+            continue
+        site.add_dir(name, caturl, "List", "")
     utils.eod()
 
 

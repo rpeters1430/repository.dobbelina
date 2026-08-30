@@ -53,6 +53,13 @@ def test_list_parses_video_items(monkeypatch):
     assert first["mode"] == "Playvid"
     assert first["url"].startswith("https://xtapes.la/")
     assert first["name"]
+
+    # xtapes.la only exposes pagination via a <link rel="next"> in <head>
+    # (see fixture) -- the tag-restricted `a[rel='next']` selector used to
+    # miss it entirely since that tag is a <link>, not an <a>.
+    next_pages = [d for d in dirs if "Next Page" in d["name"]]
+    assert len(next_pages) == 1
+    assert next_pages[0]["url"] == "https://xtapes.la/page/2/"
     assert first["icon"].startswith("http")
 
 

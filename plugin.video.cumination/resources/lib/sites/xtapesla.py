@@ -152,8 +152,12 @@ def List(url, page=1):
         utils.eod()
         return
 
+    # xtapes.la currently only exposes pagination via a <link rel="next">
+    # in <head> (no visible page-numbers widget in the body), so the
+    # tag-restricted `a[rel='next']` selector never matched. `[rel='next']`
+    # matches regardless of tag.
     next_link = soup.select_one(
-        "a.next.page-numbers, .pagination a.next, a[rel='next'], a.next"
+        "a.next.page-numbers, .pagination a.next, [rel='next'], a.next"
     )
     if next_link:
         np_url = utils.safe_get_attr(next_link, "href")
