@@ -1,3 +1,11 @@
+[B]Version 1.1.468[/B]
+- Revert "fix: prefetch Stripchat segments to close LL-HLS freshness race"
+- feat: port upstream site fixes and add 3 new sites (asianviralhub, sinparty, xlovecam)
+- fix: prefetch Stripchat segments to close LL-HLS freshness race
+- Merge pull request #353 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: add upstream addon sync tooling, pull updates, and fix stripchat LL-HLS playback
+
 [B]Version 1.1.467[/B]
 - fix: prefetch Stripchat segments to close LL-HLS freshness race
 - Merge pull request #353 from rpeters1430/imgbot
