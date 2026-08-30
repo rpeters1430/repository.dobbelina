@@ -928,6 +928,8 @@ def _start_manifest_proxy(selected_url, name):
     import threading
     import socket
     import socketserver
+    from collections import OrderedDict
+    from concurrent.futures import ThreadPoolExecutor
 
     selected_url = _normalize_stream_cdn_url(selected_url)
     utils.kodilog("Stripchat proxy: starting for {}".format(selected_url[:140]))
@@ -973,10 +975,65 @@ def _start_manifest_proxy(selected_url, name):
         "last_selected_url": selected_url,
         "last_activity": time.time(),
         "segment_urls": [],
+        # Populated by _prefetch_segments() the instant a fresh manifest
+        # lists a segment/part as ready -- ISA's later /seg request is then
+        # served straight from memory instead of triggering a brand new
+        # fetch, which is the whole gap between "we saw it listed" and
+        # "we asked for it" that made segments expire before we got them.
+        "segment_cache": OrderedDict(),
     }
     state_lock = threading.Lock()
     fetch_round = {"count": 0}
     shutdown_started = {"value": False}
+    SEGMENT_CACHE_MAX = 16
+
+    def _prefetch_segments(urls):
+        """Fetch segment bodies now, while the CDN just confirmed they're
+        ready, and stash them for the /seg handler to serve instantly."""
+
+        def _fetch_one(url):
+            safe_url = _normalize_and_validate_proxy_segment_url(url)
+            if not safe_url:
+                return None
+            try:
+                resp = session.get(safe_url, timeout=HTTP_TIMEOUT_MEDIUM)
+            except Exception as exc:
+                utils.kodilog(
+                    "Stripchat proxy: prefetch error for {}: {}".format(
+                        safe_url[:140], str(exc)
+                    )
+                )
+                return None
+            if resp.status_code != 200:
+                return None
+            return (
+                safe_url,
+                resp.status_code,
+                resp.headers.get("Content-Type", "video/mp4"),
+                resp.content,
+            )
+
+        if not urls:
+            return
+        with ThreadPoolExecutor(max_workers=min(4, len(urls))) as pool:
+            fetched = list(pool.map(_fetch_one, urls))
+
+        with state_lock:
+            cache = state["segment_cache"]
+            for entry in fetched:
+                if not entry:
+                    continue
+                seg_url, status, content_type, body = entry
+                cache[seg_url] = (status, content_type, body)
+                cache.move_to_end(seg_url)
+            while len(cache) > SEGMENT_CACHE_MAX:
+                cache.popitem(last=False)
+        prefetched_ok = sum(1 for entry in fetched if entry)
+        utils.kodilog(
+            "Stripchat proxy: prefetched {}/{} segment(s)".format(
+                prefetched_ok, len(urls)
+            )
+        )
 
     # Bind socket first so port is known for segment URL rewriting.
     # Some test/sandbox environments disallow localhost listeners entirely.
@@ -1163,8 +1220,14 @@ def _start_manifest_proxy(selected_url, name):
                             )
                         )
 
+            # Use LL-HLS parts, not full segments, here. The blocking
+            # reload above only guarantees that the specific msn/part it
+            # requested is now servable -- it says nothing about the
+            # assembled full-segment .mp4 (a separate MOUFLON object that,
+            # per live logs, keeps 404ing for seconds after its parts are
+            # confirmed ready). Parts line up with what we just confirmed.
             rewritten = _rewrite_mouflon_for_isa(
-                resp.text, base_url, prefer_full_segments=True
+                resp.text, base_url, prefer_full_segments=False
             )
             utils.kodilog(
                 "Stripchat proxy: rewritten manifest size {}".format(
@@ -1193,6 +1256,7 @@ def _start_manifest_proxy(selected_url, name):
                     edge_buffer=0,
                 )
                 current_segment_urls = _extract_manifest_segment_urls(rewritten)
+                _prefetch_segments(current_segment_urls)
                 rewritten = _proxy_segment_urls_in_manifest(rewritten, port)
                 with state_lock:
                     state["content"] = rewritten.encode("utf-8")
@@ -1240,6 +1304,11 @@ def _start_manifest_proxy(selected_url, name):
                     self.send_response(400)
                     self.end_headers()
                     return
+
+                def _pop_cached(url):
+                    with state_lock:
+                        return state["segment_cache"].pop(url, None)
+
                 try:
                     def _fetch_segment(url):
                         return session.get(
@@ -1248,6 +1317,28 @@ def _start_manifest_proxy(selected_url, name):
                             stream=True,
                             allow_redirects=False,
                         )
+
+                    def _serve_cached(status, content_type, body):
+                        self.send_response(status)
+                        self.send_header("Content-Type", content_type)
+                        self.send_header("Content-Length", str(len(body)))
+                        self.end_headers()
+                        self.wfile.write(body)
+
+                    # A prior manifest refresh already prefetched this exact
+                    # segment the instant it was confirmed ready -- serving
+                    # it from memory skips the fetch entirely, closing the
+                    # gap that made on-demand requests consistently 404.
+                    cached = _pop_cached(safe_cdn_url)
+                    if cached:
+                        status, content_type, body = cached
+                        utils.kodilog(
+                            "Stripchat proxy: served segment from prefetch cache: {}".format(
+                                safe_cdn_url[:140]
+                            )
+                        )
+                        _serve_cached(status, content_type, body)
+                        return
 
                     seg_resp = _fetch_segment(safe_cdn_url)
                     # Proxy URLs carry the CDN URL itself (not a position
@@ -1258,7 +1349,9 @@ def _start_manifest_proxy(selected_url, name):
                     # the manifest and retry with whatever segment is now
                     # current. A single retry often still 404s (the newly
                     # selected "freshest" segment can itself not be ready
-                    # yet), so retry a few times with a short backoff.
+                    # yet), so retry a few times with a short backoff. Each
+                    # refresh also prefetches, so check the cache before
+                    # falling back to a fresh (likely-too-late) fetch.
                     retry_attempts = 0
                     while seg_resp.status_code == 404 and retry_attempts < 3:
                         retry_attempts += 1
@@ -1281,6 +1374,15 @@ def _start_manifest_proxy(selected_url, name):
                         )
                         if refreshed_url:
                             safe_cdn_url = refreshed_url
+                        cached = _pop_cached(safe_cdn_url)
+                        if cached:
+                            status, content_type, body = cached
+                            utils.kodilog(
+                                "Stripchat proxy: served refreshed segment from "
+                                "prefetch cache: {}".format(safe_cdn_url[:140])
+                            )
+                            _serve_cached(status, content_type, body)
+                            return
                         seg_resp = _fetch_segment(safe_cdn_url)
                     self.send_response(seg_resp.status_code)
                     self.send_header(
