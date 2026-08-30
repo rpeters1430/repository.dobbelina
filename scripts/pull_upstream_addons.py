@@ -454,6 +454,15 @@ def print_status_table(results: list[dict[str, Any]]) -> None:
 
 
 def main() -> int:
+    # Emoji status markers below break with UnicodeEncodeError on Windows
+    # consoles that default to cp1252 (no UTF-8 configured) unless stdout
+    # is explicitly reconfigured -- matches scripts/live_smoke_test.py.
+    if hasattr(sys.stdout, "reconfigure"):
+        try:
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
     parser = argparse.ArgumentParser(
         description="Pull updated code from upstream repositories for embedded addons."
     )

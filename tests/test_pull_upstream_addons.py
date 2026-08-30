@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """Tests for scripts/pull_upstream_addons.py."""
 
-
+import io
+import sys
 
 from scripts.pull_upstream_addons import (
     UPSTREAM_REGISTRY,
+    SyncDiff,
     apply_sync,
     compare_trees,
     get_local_addon_version,
     is_excluded,
+    main,
     resolve_addon_key,
 )
 
@@ -109,3 +112,70 @@ def test_compare_trees_and_apply_sync(tmp_path):
     assert diff2.added == []
     assert diff2.modified == []
     assert diff2.removed == []
+
+
+def test_main_does_not_crash_on_non_utf8_console(monkeypatch):
+    """Windows consoles without UTF-8 configured default stdout to cp1252,
+    which raised UnicodeEncodeError on the emoji status markers (checked
+    live: `python pull_upstream_addons.py --dry-run --addon resolveurl`
+    crashed with `UnicodeEncodeError: 'charmap' codec can't encode
+    character '\U0001f504'`). main() must reconfigure stdout to UTF-8
+    before printing any of those markers.
+    """
+    changes_diff = SyncDiff(added=["new.py"], modified=["existing.py"], removed=[])
+    up_to_date_diff = SyncDiff()
+
+    def fake_pull(addon_key, spec, branch=None, dry_run=False):
+        if addon_key == "yt-dlp":
+            return {
+                "addon_key": addon_key,
+                "name": spec.get("name", addon_key),
+                "success": False,
+                "message": "simulated clone failure",
+            }
+        if addon_key == "f4mproxy":
+            return {
+                "addon_key": addon_key,
+                "name": spec.get("name", addon_key),
+                "success": True,
+                "changes": False,
+                "local_version": "1.0.0",
+                "remote_version": "1.0.0",
+                "head_commit": "abcdef12",
+                "diff": up_to_date_diff,
+                "dry_run": dry_run,
+            }
+        return {
+            "addon_key": addon_key,
+            "name": spec.get("name", addon_key),
+            "success": True,
+            "changes": True,
+            "version_before": "1.0.0",
+            "version_after": "1.0.1",
+            "head_commit": "abcdef12",
+            "diff": changes_diff,
+            "dry_run": dry_run,
+        }
+
+    monkeypatch.setattr("scripts.pull_upstream_addons.pull_addon_upstream", fake_pull)
+
+    # Simulate a Windows console with no UTF-8 configured: encoding raw
+    # bytes through cp1252 with strict errors is exactly what raised
+    # UnicodeEncodeError before the fix.
+    raw = io.BytesIO()
+    cp1252_stdout = io.TextIOWrapper(raw, encoding="cp1252", errors="strict")
+    monkeypatch.setattr(sys, "stdout", cp1252_stdout)
+    monkeypatch.setattr(
+        sys, "argv", ["pull_upstream_addons.py", "--addon", "resolveurl,f4mproxy,yt-dlp", "--dry-run"]
+    )
+
+    try:
+        exit_code = main()
+    finally:
+        cp1252_stdout.flush()
+        output = raw.getvalue().decode("utf-8", errors="strict")
+
+    assert exit_code == 0
+    assert "Changes detected" in output
+    assert "Already up to date" in output
+    assert "Error syncing" in output
