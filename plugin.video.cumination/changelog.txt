@@ -1,3 +1,12 @@
+[B]Version 1.1.469[/B]
+- Merge pull request #358 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- chore: pull upstream updates for vendored addons and rebuild repo index
+- fix: pull_upstream_addons.py crashes on Windows consoles without UTF-8
+- Revert "fix: prefetch Stripchat segments to close LL-HLS freshness race"
+- feat: port upstream site fixes and add 3 new sites (asianviralhub, sinparty, xlovecam)
+- fix: prefetch Stripchat segments to close LL-HLS freshness race
+
 [B]Version 1.1.468[/B]
 - Revert "fix: prefetch Stripchat segments to close LL-HLS freshness race"
 - feat: port upstream site fixes and add 3 new sites (asianviralhub, sinparty, xlovecam)
