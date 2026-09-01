@@ -56,13 +56,13 @@ jobs:
       - name: Run live smoke chunk
         run: |
           set +e
-          python scripts/live_smoke_test.py --site ${{ matrix.sites }} --out results --require-flaresolverr
+          python scripts/live_smoke_test.py --site ${{ matrix.sites }} --out results/${{ matrix.chunk }} --require-flaresolverr
           if [ $? -eq 2 ]; then exit 2; fi
       - name: Upload chunk results
         uses: actions/upload-artifact@v4
         with:
           name: smoke-results-${{ matrix.chunk }}
-          path: results/live_smoke_*.json
+          path: results/
 
   strict:
     needs: setup
@@ -137,7 +137,7 @@ jobs:
           merge-multiple: true
       - name: Merge broad smoke reports
         run: |
-          python scripts/merge_smoke_reports.py all-results/live_smoke_*.json --out results/site_health_latest.json
+          python scripts/merge_smoke_reports.py all-results/*/live_smoke_*.json --out results/site_health_latest.json
       - name: Prepare previous baseline
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
