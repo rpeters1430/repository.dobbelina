@@ -5,7 +5,7 @@
 
 ## Snapshot
 
-- Current: `PASS 185` | `WARN 3` | `FAIL 1` | `ERROR 0` | `SKIP 2`
+- Current: `PASS 189` | `WARN 2` | `FAIL 1` | `ERROR 0` | `SKIP 2`
 - Previous: `PASS 185` | `WARN 3` | `FAIL 1` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
@@ -13,21 +13,21 @@
 - New failures: `1`
 - Resolved failures: `1`
 - Persistent failures: `0`
-- Site regressions: `2`
+- Site regressions: `1`
 - Step regressions: `1`
 
 ## New Failures
 
-- **hqporner**: `PASS -> FAIL` (NETWORK) | Site process timed out after 140s
+- **analdin**: `PASS -> FAIL` (PARSER) | list: List returned no videos
 
 ## Resolved Failures
 
-- **pornmz**: `FAIL -> PASS`
+- **hqporner**: `FAIL -> PASS`
 
 ## Step Regressions
 
-- **xtapesla** `search`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://xtapes.la/?s=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **analdin** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
 
 ## Improvements
 
-- **cumlouder**: `WARN -> PASS`
+- **xtapesla**: `WARN -> PASS`
