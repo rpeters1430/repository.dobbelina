@@ -1,5 +1,4 @@
 import json
-import pytest
 from resources.lib import telemetry_transport as transport
 
 DSN = "https://public_key@example.com/42"
