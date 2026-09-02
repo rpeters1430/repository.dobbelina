@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-02T06:32:18.489593",
+    "sites_total": 194,
+    "pass": 187,
+    "warn": 2,
+    "fail": 3,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-09-01T06:28:38.148645",
     "sites_total": 194,
     "pass": 189,
@@ -8,27 +17,39 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-08-30T06:27:31.024313",
-    "sites_total": 191,
-    "pass": 185,
-    "warn": 3,
-    "fail": 1,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
-    "new_failures": 1,
-    "resolved_failures": 1,
-    "persistent_failures": 0,
-    "improved_sites": 1,
-    "regressions": 1,
-    "step_regressions": 1
+    "new_failures": 2,
+    "resolved_failures": 0,
+    "persistent_failures": 1,
+    "improved_sites": 0,
+    "regressions": 2,
+    "step_regressions": 2
   },
   "new_failures": [
     {
-      "site": "analdin",
+      "site": "javseen",
       "previous": "PASS",
+      "current": "FAIL",
+      "class": "UNKNOWN",
+      "message": "list: List URL unavailable in harness (HTTP 502)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xtapesla",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "ENV",
+      "message": "list: RuntimeError: FlareSolverr error for https://xtapes.la/tag/full-movie/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
+  "resolved_failures": [],
+  "persistent_failures": [
+    {
+      "site": "analdin",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "list: List returned no videos",
@@ -36,74 +57,42 @@
       "stability_score": 0.9
     }
   ],
-  "resolved_failures": [
-    {
-      "site": "hqporner",
-      "previous": "FAIL",
-      "current": "PASS"
-    }
-  ],
-  "persistent_failures": [],
-  "improved_sites": [
-    {
-      "site": "xtapesla",
-      "previous": "WARN",
-      "current": "PASS"
-    }
-  ],
+  "improved_sites": [],
   "step_regressions": [
     {
-      "site": "analdin",
+      "site": "javseen",
+      "step": "list",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "List URL unavailable in harness (HTTP 502)",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xtapesla",
       "step": "list",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER",
+      "message": "RuntimeError: FlareSolverr error for https://xtapes.la/tag/full-movie/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
       "is_flaky": false,
-      "stability_score": 0.9
+      "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "analdin",
+      "site": "javseen",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "asianviralhub",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "hqporner",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "sinparty",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "xlovecam",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
       "site": "xtapesla",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
       "detail": ""
     }
   ]
