@@ -43,6 +43,7 @@
       "matchUpdateTypes": [
         "pin"
       ],
+      "matchCurrentVersion": "/^[1-9]\\d*\\./",
       "groupName": "Safe non-major dependency updates",
       "groupSlug": "safe-non-major-dependencies",
       "groupSingleUpdates": true,
