@@ -1,4 +1,3 @@
-import pytest
 from resources.lib import playback_monitor as pbm
 
 def test_startup_timeout():
