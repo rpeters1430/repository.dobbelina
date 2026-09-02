@@ -1,5 +1,3 @@
-import re
-import pytest
 from resources.lib import telemetry_privacy as privacy
 
 def test_url_keeps_only_origin():
@@ -23,7 +21,8 @@ def test_event_removes_secrets_unknowns_and_paths(tmp_path):
 
 def test_exception_has_no_locals_or_raw_url(tmp_path):
     try:
-        secret = "must-not-leak"
+        # This value is intentionally present in locals to verify it is redacted.
+        _secret = "must-not-leak"
         raise RuntimeError("https://host/path?token=abc")
     except RuntimeError as exc:
         result = privacy.safe_exception(exc, str(tmp_path))
