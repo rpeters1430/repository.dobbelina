@@ -7,12 +7,17 @@ on:
   schedule:
     - cron: '0 0 * * *'
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
@@ -37,7 +42,7 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    needs: lint
+    timeout-minutes: 15
     services:
       flaresolverr:
         image: ghcr.io/germondai/trawl:latest
