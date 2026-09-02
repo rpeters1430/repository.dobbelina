@@ -1,5 +1,3 @@
-import pytest
-import time
 from resources.lib import playback_monitor as pbm
 import service
 from resources.lib import telemetry
