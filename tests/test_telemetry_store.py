@@ -1,5 +1,4 @@
 import time
-import pytest
 from resources.lib.telemetry_store import TelemetryStore
 
 class Clock:
