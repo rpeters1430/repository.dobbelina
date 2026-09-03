@@ -1,3 +1,14 @@
+[B]Version 1.1.471[/B]
+- Remove UWC plugin and update dependencies
+- Merge pull request #366 from rpeters1430/codex/workflow-rollout-fix-ci
+- Merge pull request #367 from rpeters1430/codex/workflow-rollout-reduce-triage
+- chore: reduce scheduled Gemini triage noise
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+
 [B]Version 1.1.470[/B]
 - Merge pull request #366 from rpeters1430/codex/workflow-rollout-fix-ci
 - Merge pull request #367 from rpeters1430/codex/workflow-rollout-reduce-triage
