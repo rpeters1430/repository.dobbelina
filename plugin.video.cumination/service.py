@@ -1,6 +1,5 @@
 """Kodi background service for diagnostic telemetry drain and player monitoring."""
 
-import sys
 import time
 
 try:
@@ -138,7 +137,8 @@ def run_service():
     monitor = xbmc.Monitor()
     reporter = telemetry.get_reporter()
     controller = TelemetryController(reporter)
-    player = TelemetryPlayer(controller)
+    # Keep the callback player alive for the lifetime of the service.
+    _player = TelemetryPlayer(controller)
     
     last_drain = time.time()
 
