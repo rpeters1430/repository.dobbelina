@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-03T06:27:39.609124",
+    "sites_total": 194,
+    "pass": 188,
+    "warn": 3,
+    "fail": 1,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-09-02T06:32:18.489593",
     "sites_total": 194,
     "pass": 187,
@@ -8,73 +17,61 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-09-01T06:28:38.148645",
-    "sites_total": 194,
-    "pass": 189,
-    "warn": 2,
-    "fail": 1,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
-    "new_failures": 2,
-    "resolved_failures": 0,
-    "persistent_failures": 1,
+    "new_failures": 1,
+    "resolved_failures": 3,
+    "persistent_failures": 0,
     "improved_sites": 0,
     "regressions": 2,
     "step_regressions": 2
   },
   "new_failures": [
     {
-      "site": "javseen",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "UNKNOWN",
-      "message": "list: List URL unavailable in harness (HTTP 502)",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "xtapesla",
+      "site": "pornmz",
       "previous": "PASS",
       "current": "FAIL",
       "class": "ENV",
-      "message": "list: RuntimeError: FlareSolverr error for https://xtapes.la/tag/full-movie/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "message": "list: RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=popular: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
-  "resolved_failures": [],
-  "persistent_failures": [
+  "resolved_failures": [
     {
       "site": "analdin",
       "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
-      "is_flaky": false,
-      "stability_score": 0.9
+      "current": "PASS"
+    },
+    {
+      "site": "javseen",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "xtapesla",
+      "previous": "FAIL",
+      "current": "PASS"
     }
   ],
+  "persistent_failures": [],
   "improved_sites": [],
   "step_regressions": [
     {
-      "site": "javseen",
-      "step": "list",
+      "site": "awmnet",
+      "step": "search",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "List URL unavailable in harness (HTTP 502)",
-      "class": "UNKNOWN",
+      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
+      "class": "BLOCKED",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "xtapesla",
+      "site": "pornmz",
       "step": "list",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://xtapes.la/tag/full-movie/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "message": "RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=popular: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "class": "ENV",
       "is_flaky": false,
       "stability_score": 1.0
@@ -82,7 +79,28 @@
   ],
   "deltas": [
     {
+      "site": "analdin",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "awmnet",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
       "site": "javseen",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "pornmz",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
@@ -90,9 +108,9 @@
     },
     {
       "site": "xtapesla",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]

@@ -5,27 +5,28 @@
 
 ## Snapshot
 
-- Current: `PASS 187` | `WARN 2` | `FAIL 3` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 189` | `WARN 2` | `FAIL 1` | `ERROR 0` | `SKIP 2`
+- Current: `PASS 188` | `WARN 3` | `FAIL 1` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 187` | `WARN 2` | `FAIL 3` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
-- New failures: `2`
-- Resolved failures: `0`
-- Persistent failures: `1`
+- New failures: `1`
+- Resolved failures: `3`
+- Persistent failures: `0`
 - Site regressions: `2`
 - Step regressions: `2`
 
 ## New Failures
 
-- **javseen**: `PASS -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 502)
-- **xtapesla**: `PASS -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://xtapes.la/tag/full-movie/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **pornmz**: `PASS -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=popular: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
-## Persistent Failures
+## Resolved Failures
 
-- **analdin**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
+- **analdin**: `FAIL -> PASS`
+- **javseen**: `FAIL -> PASS`
+- **xtapesla**: `FAIL -> PASS`
 
 ## Step Regressions
 
-- **javseen** `list`: `SKIP -> FAIL` (UNKNOWN) | List URL unavailable in harness (HTTP 502)
-- **xtapesla** `list`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://xtapes.la/tag/full-movie/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **awmnet** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
+- **pornmz** `list`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=popular: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
