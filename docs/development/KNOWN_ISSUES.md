@@ -1,7 +1,7 @@
 # Known Issues and Technical Debt
 
 ## Kodi compatibility and packaging
-- `plugin.video.uwc` and `script.video.F4mProxy` still target the legacy `xbmc.python` 2.1.0 interface, which aligns with pre-Matrix Kodi releases and needs to be raised for modern versions.
+- `script.video.F4mProxy` still targets the legacy `xbmc.python` 2.1.0 interface, which aligns with pre-Matrix Kodi releases and needs to be raised for modern versions.
 - `plugin.video.cumination` lacks an explicit `xbmc.python` requirement; it bundles `kodi-six` for Python 2/3 bridging but should declare a modern Python API to signal Matrix/Nexus/Omega support.
 
 ## Functional issues observed in testing

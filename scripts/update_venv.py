@@ -2,8 +2,9 @@
 """Update the project's .venv with the latest allowed versions of requirements-test.txt.
 
 Usage:
-    python scripts/update_venv.py          # upgrade pip + all deps in .venv
-    python scripts/update_venv.py --create # create .venv first if missing
+    python scripts/update_venv.py            # upgrade pip + all deps in .venv
+    python scripts/update_venv.py --create   # create .venv first if missing/broken
+    python scripts/update_venv.py --recreate # recreate .venv from scratch
 """
 import argparse
 import subprocess
@@ -27,19 +28,37 @@ def run(cmd: list[str]) -> None:
     subprocess.run(cmd, check=True, cwd=REPO_ROOT)
 
 
+def is_valid_venv() -> bool:
+    if not VENV_DIR.exists():
+        return False
+    if not (VENV_DIR / "pyvenv.cfg").exists():
+        return False
+    python = venv_python()
+    return python.exists()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--create", action="store_true", help="create .venv if it doesn't exist"
     )
+    parser.add_argument(
+        "--recreate", action="store_true", help="recreate .venv from scratch"
+    )
     args = parser.parse_args()
 
-    if not VENV_DIR.exists():
-        if not args.create:
-            print(f"{VENV_DIR} does not exist. Re-run with --create to create it.")
+    if args.recreate or not is_valid_venv():
+        if not args.create and not args.recreate:
+            if not VENV_DIR.exists():
+                print(f"{VENV_DIR} does not exist. Re-run with --create to create it.")
+            else:
+                print(
+                    f"{VENV_DIR} exists but is invalid or missing pyvenv.cfg.\n"
+                    "Re-run with --create or --recreate to rebuild it."
+                )
             return 1
-        print(f"Creating virtual environment at {VENV_DIR}")
-        venv.EnvBuilder(with_pip=True).create(VENV_DIR)
+        print(f"Creating/rebuilding virtual environment at {VENV_DIR}...")
+        venv.EnvBuilder(with_pip=True, clear=True).create(VENV_DIR)
 
     python = venv_python()
     if not python.exists():

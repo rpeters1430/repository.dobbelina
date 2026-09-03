@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Kodi addon repository for adult content. The primary addon is **Cumination** (`plugin.video.cumination`), providing access to ~170 adult video sites through Kodi's plugin system. This is a fork that tracks upstream (dobbelina/repository.dobbelina).
 
-Other addons in the repo: `plugin.video.uwc` (legacy fork), `repository.dobbelina` (repo installer), `script.video.F4mProxy` (HLS/F4M helper).
+Other addons in the repo: `repository.dobbelina` (repo installer), `script.video.F4mProxy` (HLS/F4M helper).
 
 ## Commands
 

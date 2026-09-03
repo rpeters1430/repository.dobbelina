@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-08-30
-**Last Sync**: 2026-08-30 - Added new sites asianviralhub, sinparty, and xlovecam with BeautifulSoup4/clean-API modernization; fixed a real xtapes.la pagination bug (`a[rel='next']` never matched the site's `<link rel="next">` tag); ported javguru's category-listing fix, tabootube's AJAX cache-buster, and camwhorestv's kt_player User-Agent revert.
+**Last Updated**: 2026-09-03
+**Last Sync**: 2026-09-03 - Ported camcaps domain update (camcaps.io -> camcaps.tv) in reallifecam.py (#1957); verified upstream embedded addon statuses with pull_upstream_addons.py; triaged remaining pending commits (Pornslash asset/dispatcher re-uploads and meta-description experiment).
 
 ---
 
@@ -18,6 +18,16 @@
 ---
 
 ## Sync Sessions
+
+### 2026-09-03 Porting Session
+Reviewed pending upstream commits surfaced by `sync_manager.py --report` and embedded addon statuses with `pull_upstream_addons.py --check`.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `8cc91e7a` (#1957) | camcaps fixes #1957 | `manual` | 2026-09-03 | **camcaps**: Updated base URL from dead domain `camcaps.io` to active domain `camcaps.tv` in `reallifecam.py` and updated unit tests in `tests/sites/test_reallifecam.py`. |
+| `519ba73f`, `97d0f158` | camwhores & tabootube fix / camwhorestv & tabootube fix listing | `manual-already-covered` | 2026-09-03 | Changelog-only / duplicate re-upload commits for the 2026-08-30 session. |
+| `d1a24ef1` | Meta description | not ported | 2026-09-03 | Modifies base `AdultSite` and `basics.py` to do synchronous HTTP HEAD/Range requests on directory creation; skipped to avoid UI freeze/latency in Kodi. |
+| `a509605f`, `f93c197e` (#1921) | #1921 Added Pornslash | `manual-already-covered` | 2026-09-03 | Pornslash was already cleanly ported to BS4 with full unit test coverage in the 2026-08-15 session. |
 
 ### 2026-08-30 Porting Session
 Reviewed the 16 pending upstream commits surfaced by `sync_manager.py --report`. Ported all 3 new sites, 1 real bug fix (xtapes.la pagination), and 3 small existing-site fixes; skipped the `extract_meta` cosmetic feature (touches the shared `AdultSite` base class, which our fork doesn't have that param on) and left the anybunny listing/player commit as already-covered (its only substantive change - a `user_agent` kwarg on `play_from_kt_player` - already exists in our fork's version of that helper; our `anybunny.py` is Cloudflare-gated so live-verifying beyond the existing 10-test suite wasn't possible in this environment).

@@ -1,6 +1,6 @@
 # Upstream Triage Report
 
-Generated: 2026-08-30
+Generated: 2026-09-03
 Pending commits: 6 (grouped into 5 items)
 
 Run `python scripts/sync_manager.py` (interactive) to review/cherry-pick, or `python scripts/sync_manager.py --report` to regenerate this file.

@@ -422,12 +422,12 @@ def test_categories_parses_camcaps_category_cards(monkeypatch):
     monkeypatch.setattr(reallifecam.site, "add_dir", fake_add_dir)
     monkeypatch.setattr(reallifecam.utils, "eod", lambda: None)
 
-    reallifecam.Categories("https://camcaps.io/categories")
+    reallifecam.Categories("https://camcaps.tv/categories")
 
     assert len(dirs) == 1
     assert dirs[0]["name"] == "Amateur [COLOR deeppink]6920[/COLOR]"
-    assert dirs[0]["url"] == "https://camcaps.io/videos/amateur"
-    assert dirs[0]["icon"].startswith("https://camcaps.io/media/categories/video/8.jpg|")
+    assert dirs[0]["url"] == "https://camcaps.tv/videos/amateur"
+    assert dirs[0]["icon"].startswith("https://camcaps.tv/media/categories/video/8.jpg|")
 
 
 def test_search_without_keyword_shows_dialog(monkeypatch):

@@ -11,7 +11,6 @@ The project is currently undergoing a significant **modernization effort** to im
 *   **`plugin.video.cumination/`**: The core video addon. It scrapes video sites and presents them in Kodi.
 *   **`repository.dobbelina/`**: The repository addon that allows users to install and auto-update Cumination.
 *   **`script.video.F4mProxy/`**: A helper script for handling specific stream types (F4M/HLS).
-*   **`plugin.video.uwc/`**: Another video addon ("Ultimate Whitecream" legacy/fork).
 *   **`build_repo_addons.py`**: Custom Python script to package addons into ZIP files and update the repository index (`addons.xml`).
 
 ### Technologies

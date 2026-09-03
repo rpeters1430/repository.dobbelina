@@ -4,7 +4,7 @@ Pull Upstream Addons & Repositories Manager for Dobbelina Repository.
 
 Pulls updated code from official upstream repositories for embedded addons
 such as ResolveURL (script.module.resolveurl), ResolveURL.XXX (script.module.resolveurl.xxx),
-SMR Link Tester, yt-dlp, F4mProxy, and UWC.
+SMR Link Tester, yt-dlp, and F4mProxy.
 """
 
 from __future__ import annotations
@@ -75,16 +75,6 @@ UPSTREAM_REGISTRY: dict[str, dict[str, Any]] = {
         "type": "directory",
         "exclude": [".git*", "*.pyc", "__pycache__", "*.zip", ".DS_Store"],
     },
-    "uwc": {
-        "name": "Ultimate Whitecream (UWC)",
-        "addon_id": "plugin.video.uwc",
-        "repo_url": "https://github.com/dobbelina/repository.dobbelina.git",
-        "default_branch": "master",
-        "source_path": "plugin.video.uwc",
-        "dest_path": "plugin.video.uwc",
-        "type": "directory",
-        "exclude": [".git*", "*.pyc", "__pycache__", "*.zip", ".DS_Store"],
-    },
 }
 
 # Aliases for user convenience
@@ -98,7 +88,6 @@ ALIASES: dict[str, str] = {
     "ytdlp": "yt-dlp",
     "script.video.F4mProxy": "f4mproxy",
     "f4m": "f4mproxy",
-    "plugin.video.uwc": "uwc",
 }
 
 
@@ -356,11 +345,50 @@ def _post_sync_sanitize(addon_key: str, dest_path: Path) -> None:
             shahid_path.write_text(content, encoding="utf-8")
 
 
+def bump_version_string(version: str) -> str:
+    """Increment the last numeric segment of a version string, preserving format/leading zeroes."""
+    import re
+    match = re.search(r"^(.*?)(\d+)$", version)
+    if match:
+        prefix, num_str = match.groups()
+        new_num = str(int(num_str) + 1).zfill(len(num_str))
+        return f"{prefix}{new_num}"
+    return f"{version}.1"
+
+
+def bump_addon_xml_version(addon_dir: Path) -> tuple[str, str] | None:
+    """Find addon.xml in or above addon_dir and bump its version."""
+    path = Path(addon_dir)
+    addon_xml = path / "addon.xml" if path.is_dir() else path
+    if not addon_xml.exists() and path.parent.exists():
+        for candidate in (path.parent, path.parent.parent):
+            if (candidate / "addon.xml").exists():
+                addon_xml = candidate / "addon.xml"
+                break
+
+    if not addon_xml.exists():
+        return None
+
+    try:
+        tree = ET.parse(addon_xml)
+        root = tree.getroot()
+        current = root.get("version")
+        if not current:
+            return None
+        new_version = bump_version_string(current)
+        root.set("version", new_version)
+        tree.write(addon_xml, encoding="utf-8", xml_declaration=True)
+        return current, new_version
+    except Exception:
+        return None
+
+
 def pull_addon_upstream(
     addon_key: str,
     spec: dict[str, Any],
     branch: str | None = None,
     dry_run: bool = False,
+    auto_bump: bool = True,
 ) -> dict[str, Any]:
     """Pull upstream changes and apply them to local workspace."""
     repo_url = spec["repo_url"]
@@ -407,9 +435,16 @@ def pull_addon_upstream(
         apply_sync(source_path, dest_path, diff, dry_run=dry_run)
         if not dry_run:
             _post_sync_sanitize(addon_key, dest_path)
+
         local_version_after = (
             get_local_addon_version(dest_path) if not dry_run else get_local_addon_version(source_path)
         )
+
+        # If source code changed but upstream version was not incremented, auto-bump local addon.xml
+        if auto_bump and not dry_run and local_version_after == local_version_before:
+            bump_res = bump_addon_xml_version(dest_path)
+            if bump_res:
+                local_version_after = bump_res[1]
 
         return {
             "addon_key": addon_key,
@@ -505,6 +540,19 @@ def main() -> int:
         action="store_true",
         help="Rebuild repository index and ZIPs after pulling changes.",
     )
+    parser.add_argument(
+        "--auto-bump",
+        "-B",
+        action="store_true",
+        default=True,
+        help="Automatically bump local addon.xml version when changes are synced without an upstream version change (Default: True).",
+    )
+    parser.add_argument(
+        "--no-bump",
+        action="store_false",
+        dest="auto_bump",
+        help="Do not auto-bump local addon.xml version when changes are synced.",
+    )
 
     args = parser.parse_args()
 
@@ -560,7 +608,9 @@ def main() -> int:
         print(f"Source:  {spec.get('repo_url')} [branch: {args.branch or spec.get('default_branch')}]")
         print(f"Dest:    {spec.get('dest_path')}")
 
-        result = pull_addon_upstream(key, spec, branch=args.branch, dry_run=args.dry_run)
+        result = pull_addon_upstream(
+            key, spec, branch=args.branch, dry_run=args.dry_run, auto_bump=args.auto_bump
+        )
 
         if not result.get("success"):
             print(f"❌ Error syncing {key}: {result.get('message')}")
@@ -597,7 +647,10 @@ def main() -> int:
         print("Rebuilding repository index and addon ZIPs...")
         build_script = REPO_ROOT / "build_repo_addons.py"
         if build_script.exists():
-            subprocess.run([sys.executable, str(build_script), "--out", ".", "--update-index"])
+            subprocess.run(
+                [sys.executable, str(build_script), "--out", ".", "--update-index"],
+                cwd=REPO_ROOT,
+            )
 
     print("\nDone.")
     return 0

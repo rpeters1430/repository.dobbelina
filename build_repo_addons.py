@@ -195,6 +195,15 @@ def main(argv: List[str]) -> int:
     out_dir = Path(args.out)
 
     addon_dirs = find_addons(base, set(args.addons) if args.addons else None)
+    if not addon_dirs and base != Path(__file__).resolve().parent:
+        # Fall back to script's directory (repository root) if run from a subdirectory
+        script_root = Path(__file__).resolve().parent
+        addon_dirs = find_addons(script_root, set(args.addons) if args.addons else None)
+        if addon_dirs:
+            base = script_root
+            if args.out == ".":
+                out_dir = script_root
+
     if not addon_dirs:
         print("No add-ons found to build.")
         return 1

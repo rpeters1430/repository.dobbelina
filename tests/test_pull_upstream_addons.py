@@ -21,7 +21,6 @@ def test_upstream_registry_structure():
     assert "resolveurlxxx" in UPSTREAM_REGISTRY
     assert "yt-dlp" in UPSTREAM_REGISTRY
     assert "f4mproxy" in UPSTREAM_REGISTRY
-    assert "uwc" in UPSTREAM_REGISTRY
 
     required_keys = {"name", "addon_id", "repo_url", "default_branch", "source_path", "dest_path", "type", "exclude"}
     for key, spec in UPSTREAM_REGISTRY.items():
@@ -125,7 +124,7 @@ def test_main_does_not_crash_on_non_utf8_console(monkeypatch):
     changes_diff = SyncDiff(added=["new.py"], modified=["existing.py"], removed=[])
     up_to_date_diff = SyncDiff()
 
-    def fake_pull(addon_key, spec, branch=None, dry_run=False):
+    def fake_pull(addon_key, spec, branch=None, dry_run=False, **kwargs):
         if addon_key == "yt-dlp":
             return {
                 "addon_key": addon_key,
@@ -179,3 +178,25 @@ def test_main_does_not_crash_on_non_utf8_console(monkeypatch):
     assert "Changes detected" in output
     assert "Already up to date" in output
     assert "Error syncing" in output
+
+
+def test_bump_version_string():
+    from scripts.pull_upstream_addons import bump_version_string
+
+    assert bump_version_string("1.1.470") == "1.1.471"
+    assert bump_version_string("2026.10.04-2") == "2026.10.04-3"
+    assert bump_version_string("1.0.6") == "1.0.7"
+    assert bump_version_string("2.0.01") == "2.0.02"
+    assert bump_version_string("5.1.209") == "5.1.210"
+    assert bump_version_string("release") == "release.1"
+
+
+def test_bump_addon_xml_version(tmp_path):
+    from scripts.pull_upstream_addons import bump_addon_xml_version
+
+    addon_xml = tmp_path / "addon.xml"
+    addon_xml.write_text('<addon id="test.addon" version="1.0.0"/>\n', encoding="utf-8")
+
+    res = bump_addon_xml_version(tmp_path)
+    assert res == ("1.0.0", "1.0.1")
+    assert '<addon id="test.addon" version="1.0.1"' in addon_xml.read_text(encoding="utf-8")

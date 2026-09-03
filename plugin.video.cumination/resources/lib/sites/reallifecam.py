@@ -50,8 +50,8 @@ site3 = AdultSite(
 )
 site4 = AdultSite(
     "camcaps",
-    "[COLOR hotpink]Camcaps.io (SimpVids)[/COLOR]",
-    "https://camcaps.io/",
+    "[COLOR hotpink]Camcaps.tv (SimpVids)[/COLOR]",
+    "https://camcaps.tv/",
     "camcaps.png",
     "camcapsto",
     category="Cams & Live",
