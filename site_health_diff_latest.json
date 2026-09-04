@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-04T06:28:30.181136",
+    "sites_total": 194,
+    "pass": 187,
+    "warn": 3,
+    "fail": 1,
+    "error": 0,
+    "skip": 3
+  },
+  "previous": {
     "generated": "2026-09-03T06:27:39.609124",
     "sites_total": 194,
     "pass": 188,
@@ -8,70 +17,57 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-09-02T06:32:18.489593",
-    "sites_total": 194,
-    "pass": 187,
-    "warn": 2,
-    "fail": 3,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
     "new_failures": 1,
-    "resolved_failures": 3,
+    "resolved_failures": 1,
     "persistent_failures": 0,
-    "improved_sites": 0,
-    "regressions": 2,
+    "improved_sites": 1,
+    "regressions": 3,
     "step_regressions": 2
   },
   "new_failures": [
     {
-      "site": "pornmz",
+      "site": "jizzbunker",
       "previous": "PASS",
       "current": "FAIL",
-      "class": "ENV",
-      "message": "list: RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=popular: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "UNKNOWN",
+      "message": "list: List URL unavailable in harness (HTTP 500)",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "resolved_failures": [
     {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "javseen",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "xtapesla",
+      "site": "pornmz",
       "previous": "FAIL",
       "current": "PASS"
     }
   ],
   "persistent_failures": [],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
       "site": "awmnet",
-      "step": "search",
-      "previous": "SKIP",
+      "previous": "WARN",
+      "current": "PASS"
+    }
+  ],
+  "step_regressions": [
+    {
+      "site": "jizzbunker",
+      "step": "list",
+      "previous": "PASS",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
-      "class": "BLOCKED",
+      "message": "List URL unavailable in harness (HTTP 500)",
+      "class": "UNKNOWN",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "pornmz",
-      "step": "list",
-      "previous": "PASS",
+      "site": "xtapesla",
+      "step": "play",
+      "previous": "SKIP",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=popular: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "message": "RuntimeError: FlareSolverr error for https://xtapes.la/videos/ramming-into-her-2026-full-movie/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "class": "ENV",
       "is_flaky": false,
       "stability_score": 1.0
@@ -79,38 +75,38 @@
   ],
   "deltas": [
     {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
       "site": "awmnet",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "javseen",
-      "previous": "FAIL",
+      "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "pornmz",
+      "site": "jizzbunker",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "xtapesla",
+      "site": "pornmz",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "spankbang",
+      "previous": "PASS",
+      "current": "SKIP",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "xtapesla",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
       "detail": ""
     }
   ]
