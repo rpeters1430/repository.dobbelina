@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-05T06:28:10.990099",
+    "sites_total": 194,
+    "pass": 185,
+    "warn": 6,
+    "fail": 1,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-09-04T06:28:30.181136",
     "sites_total": 194,
     "pass": 187,
@@ -8,37 +17,28 @@
     "error": 0,
     "skip": 3
   },
-  "previous": {
-    "generated": "2026-09-03T06:27:39.609124",
-    "sites_total": 194,
-    "pass": 188,
-    "warn": 3,
-    "fail": 1,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
     "new_failures": 1,
     "resolved_failures": 1,
     "persistent_failures": 0,
-    "improved_sites": 1,
-    "regressions": 3,
-    "step_regressions": 2
+    "improved_sites": 2,
+    "regressions": 5,
+    "step_regressions": 5
   },
   "new_failures": [
     {
-      "site": "jizzbunker",
+      "site": "xsharings",
       "previous": "PASS",
       "current": "FAIL",
-      "class": "UNKNOWN",
-      "message": "list: List URL unavailable in harness (HTTP 500)",
+      "class": "ENV",
+      "message": "list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "resolved_failures": [
     {
-      "site": "pornmz",
+      "site": "jizzbunker",
       "previous": "FAIL",
       "current": "PASS"
     }
@@ -46,28 +46,63 @@
   "persistent_failures": [],
   "improved_sites": [
     {
-      "site": "awmnet",
+      "site": "spankbang",
+      "previous": "SKIP",
+      "current": "PASS"
+    },
+    {
+      "site": "xtapesla",
       "previous": "WARN",
       "current": "PASS"
     }
   ],
   "step_regressions": [
     {
-      "site": "jizzbunker",
-      "step": "list",
-      "previous": "PASS",
+      "site": "awmnet",
+      "step": "search",
+      "previous": "SKIP",
       "current": "FAIL",
-      "message": "List URL unavailable in harness (HTTP 500)",
-      "class": "UNKNOWN",
+      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
+      "class": "BLOCKED",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "xtapesla",
+      "site": "pornmz",
       "step": "play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://pornmz.com/wp-content/plugins/clean-tube-player/public/player-x.php?q=cG9zdF9pZD0yNjAwMTEmdHlwZT12aWRlbyZ0YWc9JTNDdmlkZW8lMjBpZCUzRCUyMndwc3QtdmlkZW8lMjIlMjBjbGFzcyUzRCUyMnZpZGVvLWpzJTIwdmpzLWJpZy1wbGF5LWNlbnRlcmVkJTIyJTIwY29udHJvbHMlMjBwcmVsb2FkJTNEJTIyYXV0byUyMiUyMHdpZHRoJTNEJTIyNjQwJTIyJTIwaGVpZ2h0JTNEJTIyMjY0JTIyJTIwcG9zdGVyJTNEJTIyaHR0cHMlM0ElMkYlMkZwb3JubXouY29tJTJGd3AtY29udGVudCUyRnVwbG9hZHMlMkYyMDI2JTJGMDIlMkZCcmF6emVyc0V4eHRyYS1LaXJhLU5vaXItTWFyaW5hLUdvbGQtQ3VtLVBsYXktV2l0aC1Vcy02NDB4MzYwLmpwZyUyMiUzRSUzQ3NvdXJjZSUyMHNyYyUzRCUyMmh0dHBzJTNBJTJGJTJGdmlkZW8udHdpbWcuY29tJTJGYW1wbGlmeV92aWRlbyUyRjIwMjEwMjg5NzkxNDMyNTgxMTIlMkZwbCUyRmdHVE9ZaXR0OEFUaUlrdW8ubTN1OCUyMiUyMHR5cGUlM0QlMjJ2aWRlbyUyRm0zdTglMjIlM0UlM0MlMkZ2aWRlbyUzRQ==: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xoxo",
+      "step": "play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "ValueError: No videolink found!",
+      "class": "CODE",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xozilla",
+      "step": "play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Play function executed but no playback URL captured (no notifications)",
+      "class": "PLAYBACK",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xsharings",
+      "step": "list",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://xtapes.la/videos/ramming-into-her-2026-full-movie/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "message": "RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "class": "ENV",
       "is_flaky": false,
       "stability_score": 1.0
@@ -76,37 +111,58 @@
   "deltas": [
     {
       "site": "awmnet",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "jizzbunker",
       "previous": "PASS",
-      "current": "FAIL",
+      "current": "WARN",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "pornmz",
+      "site": "jizzbunker",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "spankbang",
+      "site": "pornmz",
       "previous": "PASS",
-      "current": "SKIP",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "spankbang",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "xoxo",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "xozilla",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "xsharings",
+      "previous": "PASS",
+      "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
       "site": "xtapesla",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
