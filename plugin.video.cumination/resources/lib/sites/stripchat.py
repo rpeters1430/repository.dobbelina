@@ -1,35 +1,33 @@
 """
 Cumination
 Copyright (C) 2017 Whitecream, hdgdl, Team Cumination
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
+
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import os
-import sqlite3
+from __future__ import annotations
+
 import json
+import os
 import re
+import sqlite3
 import time
-import base64
-import requests
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 import xbmcgui
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, urljoin
+from six.moves import urllib_parse
 
 from resources.lib import utils
-from resources.lib.http_timeouts import (
-    HTTP_TIMEOUT_MANIFEST,
-    HTTP_TIMEOUT_MEDIUM,
-    HTTP_TIMEOUT_SHORT,
-)
-from six.moves import urllib_parse
 from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
@@ -42,18 +40,15 @@ site = AdultSite(
     category="Cams & Live",
 )
 
-# Stripchat's CDN increasingly rejects the addon-wide legacy Firefox UA on
-# HLS segment requests. Use a modern browser UA for all live stream fetches.
 STRIPCHAT_STREAM_UA = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
 )
+STRIPCHAT_PKEY = "B0p93vi8Uj6AYyZb"
 STRIPCHAT_DISABLED = False
-STRIPCHAT_PROXY_SESSION_HEADERS = {}
-STRIPCHAT_PROXY_SESSION_COOKIES = {}
 
 
-def _normalize_model_image_url(url):
+def _normalize_model_image_url(url: str | None) -> str:
     if not isinstance(url, str) or not url:
         return ""
     normalized = url.strip()
@@ -66,252 +61,29 @@ def _normalize_model_image_url(url):
     return ""
 
 
-def _notify_stripchat_disabled():
-    utils.notify("Stripchat", "Temporarily disabled")
-    utils.kodilog("Stripchat: site is temporarily disabled")
-
-
-def _stripchat_stream_headers(model_name=""):
-    return {
-        "User-Agent": STRIPCHAT_STREAM_UA,
-        "Origin": "https://stripchat.com",
-        "Referer": "https://stripchat.com/",
-        "Accept": "*/*",
-        "Accept-Language": "en-US,en;q=0.9",
-        "sec-ch-ua": '"Not:A-Brand";v="99", "HeadlessChrome";v="145", "Chromium";v="145"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"Windows"',
-    }
-
-
-def _load_cookie_dict_for_url(url):
-    """Return saved addon cookies matching the given URL/domain."""
-    try:
-        parsed = urlparse(url if isinstance(url, str) else "")
-        domain = (parsed.netloc or "").lower()
-        if not domain:
-            return {}
-        clean_domain = domain[4:] if domain.startswith("www.") else domain
-        cookies = {}
-        for cookie in getattr(utils, "cj", []):
-            cookie_name = getattr(cookie, "name", "")
-            cookie_value = getattr(cookie, "value", "")
-            cookie_domain = (getattr(cookie, "domain", "") or "").lstrip(".").lower()
-            if (
-                cookie_name
-                and isinstance(cookie_value, str)
-                and cookie_domain
-                and (
-                    clean_domain.endswith(cookie_domain)
-                    or cookie_domain.endswith(clean_domain)
-                )
-            ):
-                cookies[cookie_name] = cookie_value
-        return cookies
-    except Exception as exc:
-        utils.kodilog("Stripchat cookies: load failed {}".format(str(exc)))
-        return {}
-
-
-def _prime_stream_session(model_url, model_name):
-    """Warm Cloudflare/session cookies before manifest and segment fetches."""
-    if not isinstance(model_url, str) or not model_url.startswith("http"):
-        return
-    try:
-        utils.kodilog(
-            "Stripchat: Priming stream session via {}".format(model_url[:140])
-        )
-        utils.get_html_with_cloudflare_retry(
-            model_url,
-            referer=site.url,
-            headers=_stripchat_stream_headers(model_name),
-            retry_on_empty=False,
-        )
-    except Exception as exc:
-        utils.kodilog("Stripchat: Session prime failed: {}".format(str(exc)))
-
-
-def _load_model_profile_by_username(model_name):
-    if not isinstance(model_name, str) or not model_name:
-        return None
-
-    endpoint = "https://stripchat.com/api/front/models/username/{0}".format(model_name)
-    headers = {
-        "User-Agent": utils.USER_AGENT,
-        "Accept": "application/json, text/plain, */*",
-        "Origin": "https://stripchat.com",
-        "Referer": "https://stripchat.com/{0}".format(model_name),
-    }
-    try:
-        utils.kodilog("Stripchat: Fetching model profile: {}".format(endpoint))
-        response, _ = utils.get_html_with_cloudflare_retry(
-            endpoint,
-            site.url,
-            headers=headers,
-            retry_on_empty=True,
-        )
-        if not response:
-            utils.kodilog("Stripchat: Empty response from username profile endpoint")
-            return None
-        payload = json.loads(response)
-        if (
-            isinstance(payload, dict)
-            and payload.get("username", "").lower() == model_name.lower()
-        ):
-            utils.kodilog(
-                "Stripchat: Loaded exact username profile for {}".format(model_name)
-            )
-            return payload
-    except Exception as e:
-        utils.kodilog("Stripchat: Username profile lookup failed: {}".format(str(e)))
-    return None
-
-
-def _load_model_by_search(model_name):
-    """Look up a model via the front-end models listing search, which
-    (unlike the widget API) reliably returns the requested username along
-    with a playable ``hlsPlaylist`` field when the model is live."""
-    if not isinstance(model_name, str) or not model_name:
-        return None
-
-    endpoint = (
-        "https://stripchat.com/api/front/models?search={0}&primaryTag=girls".format(
-            urllib_parse.quote(model_name)
-        )
-    )
-    headers = {
-        "User-Agent": utils.USER_AGENT,
-        "Accept": "application/json, text/plain, */*",
-        "Origin": "https://stripchat.com",
-        "Referer": "https://stripchat.com/{0}".format(model_name),
-    }
-    try:
-        utils.kodilog("Stripchat: Searching models listing for: {}".format(model_name))
-        response, _ = utils.get_html_with_cloudflare_retry(
-            endpoint,
-            site.url,
-            headers=headers,
-            retry_on_empty=True,
-        )
-        if not response:
-            utils.kodilog("Stripchat: Empty response from models search endpoint")
-            return None
-        payload = json.loads(response)
-        models = payload.get("models") if isinstance(payload, dict) else None
-        if not models:
-            return None
-        for model in models:
-            if model.get("username", "").lower() == model_name.lower():
-                utils.kodilog(
-                    "Stripchat: Found model via search listing: {}".format(model_name)
-                )
-                return model
-    except json.JSONDecodeError as e:
-        utils.kodilog("Stripchat: Models search JSON decode error: {}".format(str(e)))
-    except Exception as e:
-        utils.kodilog("Stripchat: Models search lookup failed: {}".format(str(e)))
-    return None
-
-
-def _load_model_fallback(model_name):
-    """Fallback lookup chain used when the widget API doesn't return an
-    exact username match: try the search listing first (has stream data),
-    then the username-profile endpoint (status only, no stream data)."""
-    search_payload = _load_model_by_search(model_name)
-    if search_payload:
-        return search_payload
-    return _load_model_profile_by_username(model_name)
-
-
-def _extract_all_mouflon_psch_pkeys(master_text):
-    """Return every ``(psch, pkey)`` pair listed in a master playlist.
-
-    The master lists several ``#EXT-X-MOUFLON:PSCH:v2:<key>`` entries, and
-    which one the CDN currently accepts for signed media playlist/segment
-    requests isn't reliably the first one in the list (confirmed live: a
-    real browser session used a key from the middle of the list, not
-    index 0). Callers should try candidates in order until one works
-    rather than assuming the first is valid.
-    """
-    if not isinstance(master_text, str):
-        return []
-    matches = re.findall(r"#EXT-X-MOUFLON:PSCH:(v\d+):([^\r\n]+)", master_text)
-    pairs = []
-    for psch, pkey in matches:
-        pkey = pkey.strip()
-        if pkey:
-            pairs.append((psch, pkey))
-    return pairs
-
-
-def _extract_mouflon_psch_pkey(master_text):
-    """Return the first ``(psch, pkey)`` pair from a master playlist, or
-    ``(None, None)``. See ``_extract_all_mouflon_psch_pkeys`` for why this
-    is only a starting guess, not necessarily the currently valid key."""
-    pairs = _extract_all_mouflon_psch_pkeys(master_text)
-    return pairs[0] if pairs else (None, None)
-
-
-def _ensure_low_latency_playlist(url):
-    if not isinstance(url, str) or ".m3u8" not in url:
-        return url
-    params = {"playlistType": "lowLatency"}
-    lower = url.lower()
-    if "media-hls." in lower or "doppiocdn" in lower:
-        params["preferredVideoCodec"] = "h264"
-    return _merge_query(url, params)
-
-
-def _should_use_manifest_proxy(stream_url):
-    """Identify Stripchat manifests that require localhost rewrite/proxying."""
-    if not isinstance(stream_url, str) or ".m3u8" not in stream_url:
-        return False
-    return (
-        "media-hls." in stream_url
-        or "doppiocdn" in stream_url
-        or "playlistType=lowLatency" in stream_url
-    )
-
-
-def _iter_manifest_probe_urls(url):
-    """Probe LL-HLS first, then the original URL for older/plain manifests."""
-    if not isinstance(url, str) or ".m3u8" not in url:
-        return [url]
-    ll_url = _ensure_low_latency_playlist(url)
-    if ll_url == url:
-        return [url]
-    return [ll_url, url]
-
-
-def _live_preview_url(url, snapshot_ts=None, cache_bust=None):
+def _live_preview_url(url: str | None, snapshot_ts: int | str | None = None, cache_bust: int | str | None = None) -> str:
     normalized = _normalize_model_image_url(url)
     if not normalized:
         return ""
     if "strpst.com/previews/" in normalized and "-thumb-small" in normalized:
-        # Stripchat API currently exposes only thumb-small in many responses.
-        # The corresponding thumb-big endpoint exists and gives a clearer live frame.
         normalized = normalized.replace("-thumb-small", "-thumb-big")
-    # Attach snapshot/cache-bust params so Kodi does not hold stale thumbnails.
     if "strpst.com/previews/" in normalized and snapshot_ts:
         sep = "&" if "?" in normalized else "?"
-        normalized = "{}{}t={}".format(normalized, sep, snapshot_ts)
+        normalized = f"{normalized}{sep}t={snapshot_ts}"
     if "strpst.com/previews/" in normalized and cache_bust:
         sep = "&" if "?" in normalized else "?"
-        normalized = "{}{}cb={}".format(normalized, sep, cache_bust)
+        normalized = f"{normalized}{sep}cb={cache_bust}"
     return normalized
 
 
-def _model_screenshot(model, cache_bust=None):
+def _model_screenshot(model: dict, cache_bust: int | str | None = None) -> str:
     if not isinstance(model, dict):
         return ""
     model_id = model.get("id")
-    snapshot_ts = model.get("snapshotTimestamp") or model.get(
-        "popularSnapshotTimestamp"
-    )
+    snapshot_ts = model.get("snapshotTimestamp") or model.get("popularSnapshotTimestamp")
     if snapshot_ts and model_id:
-        return "https://img.doppiocdn.com/thumbs/{0}/{1}_webp".format(
-            snapshot_ts, model_id
-        )
+        return f"https://img.doppiocdn.com/thumbs/{snapshot_ts}/{model_id}_webp"
+
     image_fields = (
         "previewUrlThumbSmall",
         "previewUrlThumbBig",
@@ -329,9 +101,7 @@ def _model_screenshot(model, cache_bust=None):
         value = model.get(field)
         if isinstance(value, dict):
             for nested_key in ("url", "src", "https", "absolute"):
-                img = _live_preview_url(
-                    value.get(nested_key), snapshot_ts, cache_bust=cache_bust
-                )
+                img = _live_preview_url(value.get(nested_key), snapshot_ts, cache_bust=cache_bust)
                 if img:
                     return img
             continue
@@ -342,1094 +112,162 @@ def _model_screenshot(model, cache_bust=None):
     return ""
 
 
-def _is_ad_or_stub_manifest(text):
-    if not text or "#EXTM3U" not in text:
-        return True
-    # Stripchat ad manifests often have very few segments or specific keywords
-    if "cpa/v2/stream.m3u8" in text or "ad-provider" in text:
-        return True
-    if text.count("#EXTINF") < 2:
-        return True
-    return False
+def _format_direct_hls_url(stream_url: str) -> str:
+    """Format Stripchat HLS stream URL for native Kodi inputstream.adaptive playback.
 
-
-def _merge_query(url, params):
-    parsed = urlparse(url)
+    Stripchat's CDN natively supports standard HLS playback when using the native
+    fallback key pkey=B0p93vi8Uj6AYyZb and excluding playlistType=lowLatency.
+    This produces ordinary MPEG-TS/MP4 segments rather than Mouflon LL-HLS parts.
+    """
+    parsed = urlparse(stream_url)
     query = parse_qs(parsed.query, keep_blank_values=True)
-    for key, value in params.items():
-        if key not in query:
-            query[key] = [value]
-    new_query = urlencode(query, doseq=True)
-    return urlunparse(
-        (
-            parsed.scheme,
-            parsed.netloc,
-            parsed.path,
-            parsed.params,
-            new_query,
-            parsed.fragment,
-        )
-    )
+    query.pop("playlistType", None)
+    query["pkey"] = [STRIPCHAT_PKEY]
 
-
-def _normalize_stream_cdn_url(url):
-    if not isinstance(url, str) or not url:
-        return url
-
-    # Signed Stripchat media URLs can be host-specific; preserve the original
-    # host instead of rewriting .com <-> .net here.
-    normalized = url
-    parsed = urlparse(normalized)
-    if ".m3u8" not in parsed.path:
-        return normalized
-
-    query = parse_qs(parsed.query, keep_blank_values=True)
-    # We used to pop playlistType, but we now know it's needed for correct hashes
-    # in MOUFLON manifests.
-    return urlunparse(
-        (
-            parsed.scheme,
-            parsed.netloc,
-            parsed.path,
-            parsed.params,
-            urlencode(query, doseq=True),
-            parsed.fragment,
-        )
-    )
-
-
-def _derive_edge_master_url_from_media_url(url):
-    if not isinstance(url, str) or "media-hls." not in url:
-        return ""
-    try:
-        parsed = urlparse(url)
-        match = re.search(r"/(\d+)/\1(?:_[^/?]+)?\.m3u8$", parsed.path or "")
-        if not match:
-            return ""
-        stream_id = match.group(1)
-        edge_host = parsed.netloc.replace("media-hls.", "edge-hls.")
-        edge_url = "https://{0}/hls/{1}/master/{1}_auto.m3u8".format(
-            edge_host, stream_id
-        )
-        return _merge_query(edge_url, {"playlistType": "lowLatency"})
-    except Exception:
-        return ""
-
-
-def _encode_proxy_target(url):
-    if not isinstance(url, str):
-        return ""
-    return base64.urlsafe_b64encode(url.encode("utf-8")).decode("ascii")
-
-
-def _decode_proxy_target(value):
-    if not isinstance(value, str) or not value:
-        return ""
-    padding = "=" * (-len(value) % 4)
-    return base64.urlsafe_b64decode((value + padding).encode("ascii")).decode("utf-8")
-
-
-def _normalize_and_validate_proxy_segment_url(url):
-    if not isinstance(url, str) or not url:
-        return ""
-    try:
-        parsed = urlparse(url)
-    except Exception:
-        return ""
-
-    if parsed.scheme not in ("http", "https"):
-        return ""
-    if parsed.username or parsed.password:
-        return ""
-    if parsed.port is not None:
-        return ""
-    if parsed.fragment:
-        return ""
-
-    host = (parsed.hostname or "").lower()
-    if not host:
-        return ""
-
-    allowed_host_suffixes = (
-        "stripchat.com",
-        "stripchat.global",
-        "doppiocdn.com",
-        "doppiocdn.net",
-        "doppiocdn.media",
-        "doppiocdn.org",
-        "doppiocdn.live",
-        "strpst.com",
-        "saawsedge.com",
-    )
-    if not any(
-        host == suffix or host.endswith("." + suffix)
-        for suffix in allowed_host_suffixes
-    ):
-        return ""
-
-    path = parsed.path or "/"
-    if not path.startswith("/"):
-        return ""
-
-    return urlunparse((parsed.scheme, host, path, parsed.params, parsed.query, ""))
-
-
-def _rewrite_mouflon_manifest_for_kodi(
-    manifest_text, base_url="", prefer_full_segments=True
-):
-    """Rewrite a MOUFLON HLS manifest so Kodi can play it.
-
-    MOUFLON is Stripchat's proprietary LL-HLS extension. Each real segment URL
-    is carried in an #EXT-X-MOUFLON:URI:<url> tag immediately before the
-    placeholder ../media.mp4 segment line. This function:
-      - replaces every placeholder segment with the corresponding real URL
-      - makes the EXT-X-MAP URI absolute
-      - strips low-latency and MOUFLON-specific tags ISA doesn't understand
-    """
-    if not manifest_text:
-        return manifest_text
-
-    _STRIP_PREFIXES = (
-        "#EXT-X-SERVER-CONTROL:",
-        "#EXT-X-PART-INF:",
-        "#EXT-X-PART:",
-        "#EXT-X-PRELOAD-HINT:",
-        "#EXT-X-RENDITION-REPORT:",
-        "#EXT-X-MOUFLON:",
-        "#EXT-X-MOUFLON-ADVERT",
-    )
-
-    lines_out = []
-    pending_mouflon_url = None
-    pending_full_segment_url = None
-    pending_part_segments = []
-    skip_next_placeholder = False
-
-    # Track metrics for logging
-    replaced_segments = 0
-    replaced_parts = 0
-    map_rewrites = 0
-    normalized_relative = 0
-
-    lines = manifest_text.splitlines()
-    for i, line in enumerate(lines):
-        stripped = line.strip()
-
-        if stripped.startswith("#EXT-X-MOUFLON:URI:"):
-            utils.kodilog("Stripchat raw mouflon line: {!r}".format(line))
-            mouflon_url = stripped[len("#EXT-X-MOUFLON:URI:") :].strip()
-            if mouflon_url.startswith("http://") or mouflon_url.startswith("https://"):
-                pass
-            elif mouflon_url.startswith("/"):
-                mouflon_url = urljoin(base_url, mouflon_url)
-            elif "://" not in mouflon_url:
-                mouflon_url = urljoin(base_url, mouflon_url)
-            utils.kodilog("Stripchat raw mouflon uri: {!r}".format(mouflon_url))
-            pending_mouflon_url = mouflon_url
-            if "_part" in mouflon_url or "part" in mouflon_url:
-                pending_full_segment_url = None
-            else:
-                pending_full_segment_url = mouflon_url
-            continue
-
-        if stripped.startswith("#EXT-X-PART:"):
-            duration_match = re.search(r"DURATION=([0-9.]+)", stripped)
-            if (
-                duration_match
-                and pending_mouflon_url
-                and ("_part" in pending_mouflon_url or "part" in pending_mouflon_url)
-            ):
-                part_url = pending_mouflon_url
-                pending_part_segments.append((duration_match.group(1), part_url))
-            pending_mouflon_url = None
-            continue
-
-        if any(stripped.startswith(p) for p in _STRIP_PREFIXES):
-            continue
-
-        if stripped.startswith("#EXT-X-MAP:"):
-            uri_match = re.search(r'URI="([^"]+)"', stripped)
-            if uri_match:
-                map_uri = uri_match.group(1)
-                if not map_uri.startswith("http"):
-                    line = line.replace(map_uri, urljoin(base_url, map_uri))
-                    map_rewrites += 1
-            lines_out.append(line)
-            continue
-
-        if stripped.startswith("#EXTINF:"):
-            # Stripchat MOUFLON layout: parts arrive *before* #EXTINF, then
-            # #EXTINF, then the full-segment MOUFLON URI, then ../media.mp4.
-            # When prefer_full_segments is True, resolve the full segment first
-            # (either from pending_full_segment_url or by looking ahead in lines)
-            # and discard the part segments.
-            found_full_mouflon = None
-            if prefer_full_segments:
-                if pending_full_segment_url:
-                    found_full_mouflon = pending_full_segment_url
-                else:
-                    for j in range(i + 1, len(lines)):
-                        future = lines[j].strip()
-                        if future.startswith("#EXTINF:"):
-                            break
-                        if (
-                            future.startswith("#EXT-X-MOUFLON:URI:")
-                            and ".mp4" in future
-                            and "_part" not in future
-                        ):
-                            found_full_mouflon = future[len("#EXT-X-MOUFLON:URI:") :].strip()
-                            if not found_full_mouflon.startswith("http"):
-                                found_full_mouflon = urljoin(base_url, found_full_mouflon)
-                            break
-                        if future and not future.startswith("#"):
-                            break
-
-            if prefer_full_segments and found_full_mouflon:
-                if not stripped.endswith(","):
-                    stripped += ","
-                lines_out.append(stripped)
-                lines_out.append(found_full_mouflon)
-                skip_next_placeholder = True
-                replaced_segments += 1
-                pending_part_segments = []
-                pending_full_segment_url = None
-                pending_mouflon_url = None
-                continue
-
-            if pending_part_segments:
-                for duration, part_url in pending_part_segments:
-                    lines_out.append("#EXTINF:{0},".format(duration))
-                    lines_out.append(part_url)
-                    replaced_parts += 1
-                pending_part_segments = []
-                skip_next_placeholder = True
-                pending_full_segment_url = None
-                pending_mouflon_url = None
-                continue
-
-        if stripped and not stripped.startswith("#"):
-            if skip_next_placeholder:
-                skip_next_placeholder = False
-                pending_mouflon_url = None
-                pending_full_segment_url = None
-                continue
-
-            if not prefer_full_segments and pending_part_segments:
-                for duration, part_url in pending_part_segments:
-                    lines_out.append("#EXTINF:{0},".format(duration))
-                    lines_out.append(part_url)
-                    replaced_parts += 1
-                pending_part_segments = []
-                pending_full_segment_url = None
-                pending_mouflon_url = None
-                continue
-
-            # If we didn't skip it, and it's a relative URL, make it absolute
-            if not stripped.startswith("http"):
-                lines_out.append(urljoin(base_url, stripped))
-                normalized_relative += 1
-                continue
-
-        lines_out.append(line)
-
-    if not lines_out:
-        utils.kodilog("Stripchat rewrite: produced empty manifest")
-        return ""
-    rewritten = "\n".join(lines_out) + "\n"
-    utils.kodilog(
-        "Stripchat rewrite: in_lines={0} out_lines={1} replaced_segments={2} replaced_parts={3} map_rewrites={4} normalized_relative={5}".format(
-            len(manifest_text.splitlines()),
-            len(lines_out),
-            replaced_segments,
-            replaced_parts,
-            map_rewrites,
-            normalized_relative,
-        )
-    )
-    return rewritten
-
-
-def _rewrite_mouflon_for_isa(manifest_text, base_url, prefer_full_segments=True):
-    return _rewrite_mouflon_manifest_for_kodi(
-        manifest_text, base_url, prefer_full_segments=prefer_full_segments
-    )
-
-
-def _keep_only_stable_segments(
-    manifest_text,
-    fetch_headers=None,
-    fetch_session=None,
-    keep_count=3,
-    edge_buffer=1,
-):
-    """Build a minimal manifest from older, reachable full segments.
-
-    Stripchat's newest live-edge segments can disappear before Kodi fetches them.
-    For playback stability, skip the freshest segment and keep only a few older
-    full segments that respond successfully.
-    """
-    if not manifest_text or "#EXTM3U" not in manifest_text:
-        utils.kodilog("Stripchat stable: skipped, manifest missing or invalid")
-        return manifest_text
-
-    header_prefixes = (
-        "#EXTM3U",
-        "#EXT-X-VERSION:",
-        "#EXT-X-TARGETDURATION:",
-        "#EXT-X-INDEPENDENT-SEGMENTS",
-        "#EXT-X-MAP:",
-        "#EXT-X-MEDIA-SEQUENCE:",
-        "#EXT-X-DISCONTINUITY-SEQUENCE:",
-    )
-
-    header_lines = []
-    segments = []
-    lines = manifest_text.splitlines()
-    idx = 0
-    while idx < len(lines):
-        line = lines[idx]
-        stripped = line.strip()
-        if stripped.startswith("#EXTINF:") and idx + 1 < len(lines):
-            segment_url = lines[idx + 1].strip()
-            if segment_url and not segment_url.startswith("#"):
-                segments.append((line, lines[idx + 1]))
-                idx += 2
-                continue
-        if stripped.startswith(header_prefixes):
-            header_lines.append(line)
-        idx += 1
-
-    if len(segments) <= edge_buffer:
-        utils.kodilog(
-            "Stripchat stable: skipped filtering, segments={0} edge_buffer={1}".format(
-                len(segments), edge_buffer
-            )
-        )
-        return manifest_text
-
-    def _segment_ok(segment_url):
-        try:
-            probe_url = segment_url
-            request_fn = (
-                fetch_session.get
-                if fetch_session is not None and hasattr(fetch_session, "get")
-                else requests.get
-            )
-            resp = request_fn(
-                probe_url,
-                headers=fetch_headers or None,
-                timeout=HTTP_TIMEOUT_SHORT,
-                stream=True,
-            )
-            ok = resp.status_code == 200
-            utils.kodilog(
-                "Stripchat stable: probe {0} -> HTTP {1}".format(
-                    probe_url[:140], resp.status_code
-                )
-            )
-            resp.close()
-            return ok
-        except Exception as e:
-            utils.kodilog(
-                "Stripchat stable: probe error for {0}: {1}".format(
-                    probe_url[:140], str(e)
-                )
-            )
-            return False
-
-    utils.kodilog(
-        "Stripchat stable: header_lines={0} segments={1} keep_count={2} edge_buffer={3}".format(
-            len(header_lines), len(segments), keep_count, edge_buffer
-        )
-    )
-
-    stable_segments = []
-    last_usable_index = len(segments) - edge_buffer
-    for idx in range(last_usable_index - 1, -1, -1):
-        extinf_line, segment_url = segments[idx]
-        utils.kodilog(
-            "Stripchat stable: testing candidate index={0} url={1}".format(
-                idx, segment_url.strip()[:140]
-            )
-        )
-        if _segment_ok(segment_url.strip()):
-            stable_segments.append((extinf_line, segment_url))
-            utils.kodilog(
-                "Stripchat stable: accepted candidate index={0} url={1}".format(
-                    idx, segment_url.strip()[:140]
-                )
-            )
-            if len(stable_segments) >= keep_count:
-                break
-        else:
-            utils.kodilog(
-                "Stripchat stable: rejected candidate index={0} url={1}".format(
-                    idx, segment_url.strip()[:140]
-                )
-            )
-
-    if not stable_segments:
-        utils.kodilog(
-            "Stripchat stable: no stable segments found, keeping original manifest"
-        )
-        return manifest_text
-
-    stable_segments.reverse()
-    out_lines = list(header_lines)
-    for extinf_line, segment_url in stable_segments:
-        out_lines.append(extinf_line)
-        out_lines.append(segment_url)
-    utils.kodilog(
-        "Stripchat stable: selected {0} segment(s): {1}".format(
-            len(stable_segments),
-            " | ".join(segment_url.strip()[:100] for _, segment_url in stable_segments),
-        )
-    )
-    return "\n".join(out_lines) + "\n"
-
-
-def _keep_only_part_window(manifest_text, keep_count=8, edge_buffer=4):
-    """Keep a small non-edge LL-HLS part window for proxy playback."""
-    if not manifest_text or "#EXTM3U" not in manifest_text:
-        return manifest_text
-
-    header_prefixes = (
-        "#EXTM3U",
-        "#EXT-X-VERSION:",
-        "#EXT-X-TARGETDURATION:",
-        "#EXT-X-INDEPENDENT-SEGMENTS",
-        "#EXT-X-MAP:",
-        "#EXT-X-MEDIA-SEQUENCE:",
-        "#EXT-X-DISCONTINUITY-SEQUENCE:",
-    )
-
-    header_lines = []
-    parts = []
-    lines = manifest_text.splitlines()
-    idx = 0
-    while idx < len(lines):
-        line = lines[idx]
-        stripped = line.strip()
-        if stripped.startswith("#EXTINF:") and idx + 1 < len(lines):
-            segment_url = lines[idx + 1].strip()
-            if segment_url and not segment_url.startswith("#"):
-                parts.append((line, lines[idx + 1]))
-                idx += 2
-                continue
-        if stripped.startswith(header_prefixes):
-            header_lines.append(line)
-        idx += 1
-
-    if len(parts) <= edge_buffer:
-        return manifest_text
-
-    last_usable_index = max(0, len(parts) - edge_buffer)
-    selected_parts = parts[max(0, last_usable_index - keep_count) : last_usable_index]
-    if not selected_parts:
-        return manifest_text
-
-    out_lines = list(header_lines)
-    for extinf_line, segment_url in selected_parts:
-        out_lines.append(extinf_line)
-        out_lines.append(segment_url)
-    utils.kodilog(
-        "Stripchat proxy: selected part window count={0} edge_buffer={1}".format(
-            len(selected_parts), edge_buffer
-        )
-    )
-    return "\n".join(out_lines) + "\n"
-
-
-def _extract_manifest_segment_urls(manifest_text):
-    """Return absolute media URLs from a rewritten media playlist."""
-    if not manifest_text:
-        return []
-    urls = []
-    for line in manifest_text.splitlines():
-        stripped = line.strip()
-        if stripped and not stripped.startswith("#") and stripped.startswith("http"):
-            urls.append(stripped)
-    return urls
-
-
-def _compute_next_ll_hls_target(manifest_text):
-    """Return ``(msn, part)`` for the next not-yet-produced LL-HLS part.
-
-    Confirmed live (browser network capture): Stripchat's MOUFLON segment
-    and part URLs are not independently fetchable just because a plain,
-    non-blocking manifest GET lists them -- a real player always precedes
-    each segment fetch with an LL-HLS *blocking playlist reload*
-    (``_HLS_msn``/``_HLS_part`` query params), which makes the origin hold
-    the response until that exact part exists. Without that request first,
-    the listed part/segment URLs 404 (observed: still 404 after 13s of
-    polling). This computes the next msn/part to block on: one past the
-    last part already listed for the still-open (no closing EXTINF yet)
-    segment, or part 0 of the next segment if the last one is complete.
-    """
-    if not isinstance(manifest_text, str) or "#EXTM3U" not in manifest_text:
-        return None
-    seq_match = re.search(r"#EXT-X-MEDIA-SEQUENCE:(\d+)", manifest_text)
-    if not seq_match:
-        return None
-    media_sequence = int(seq_match.group(1))
-
-    complete_segments = 0
-    trailing_parts = 0
-    for line in manifest_text.splitlines():
-        stripped = line.strip()
-        if stripped.startswith("#EXTINF:"):
-            complete_segments += 1
-            trailing_parts = 0
-        elif stripped.startswith("#EXT-X-PART:"):
-            trailing_parts += 1
-
-    return media_sequence + complete_segments, trailing_parts
-
-
-def _proxy_segment_urls_in_manifest(manifest_text, port):
-    """Rewrite media URLs to local proxy routes.
-
-    Segment URLs are embedded in the localhost URL instead of being exposed as
-    live manifest indexes. Kodi can request older manifest entries after the
-    proxy has refreshed the playlist, and index remapping can then point at a
-    different or missing segment.
-    """
-    lines = manifest_text.splitlines()
-    out = []
-    for line in lines:
-        stripped = line.strip()
-        if stripped.startswith("#EXT-X-MAP:"):
-            uri_match = re.search(r'URI="([^"]+)"', stripped)
-            if uri_match:
-                cdn_url = uri_match.group(1)
-                if cdn_url.startswith("http"):
-                    proxy_url = "http://127.0.0.1:{0}/seg?u={1}".format(
-                        port, _encode_proxy_target(cdn_url)
-                    )
-                    line = line.replace(cdn_url, proxy_url)
-        elif stripped and not stripped.startswith("#") and stripped.startswith("http"):
-            line = "http://127.0.0.1:{0}/seg?u={1}".format(
-                port, _encode_proxy_target(stripped)
-            )
-        out.append(line)
-    return "\n".join(out) + "\n"
-
-
-def _start_manifest_proxy(selected_url, name):
-    """Start a local HTTP server that serves a MOUFLON-rewritten manifest.
-
-    ISA cannot handle MOUFLON HLS extensions, so we intercept the manifest,
-    rewrite the placeholder ../media.mp4 segments with real CDN URLs, and
-    serve the clean manifest over localhost HTTP for ISA to poll.
-
-    Returns the localhost URL to pass to ISA, or None on failure.
-    """
-    import http.server
-    import threading
-    import socket
-    import socketserver
-
-    selected_url = _normalize_stream_cdn_url(selected_url)
-    utils.kodilog("Stripchat proxy: starting for {}".format(selected_url[:140]))
-    parsed = urlparse(selected_url)
-    base_url = "{0}://{1}{2}/".format(
+    clean_url = urlunparse((
         parsed.scheme,
         parsed.netloc,
-        "/".join(parsed.path.split("/")[:-1]),
+        parsed.path,
+        parsed.params,
+        urlencode(query, doseq=True),
+        "",
+    ))
+
+    header_string = (
+        "User-Agent={0}&Referer={1}&Origin={2}&manifest_headers=1"
+    ).format(
+        urllib_parse.quote(STRIPCHAT_STREAM_UA, safe=""),
+        urllib_parse.quote("https://stripchat.com/", safe=""),
+        urllib_parse.quote("https://stripchat.com", safe=""),
     )
+    return f"{clean_url}|{header_string}"
 
-    # Only signing params belong on child manifests / segment URLs.
-    fetch_headers = _stripchat_stream_headers(name)
-    if isinstance(STRIPCHAT_PROXY_SESSION_HEADERS, dict):
-        fetch_headers.update(
-            {
-                key: value
-                for key, value in STRIPCHAT_PROXY_SESSION_HEADERS.items()
-                if isinstance(key, str) and isinstance(value, str) and value
-            }
-        )
 
-    # Shared session so CDN cookies from the manifest fetch carry over to
-    # all segment requests (some CDNs set auth cookies on the manifest URL).
-    session = requests.Session()
-    session.headers.update(fetch_headers)
-    saved_cookies = _load_cookie_dict_for_url(selected_url)
-    if saved_cookies:
-        session.cookies.update(saved_cookies)
-        utils.kodilog(
-            "Stripchat proxy: loaded {} saved cookie(s)".format(len(saved_cookies))
-        )
-    if isinstance(STRIPCHAT_PROXY_SESSION_COOKIES, dict):
-        session.cookies.update(
-            {
-                key: value
-                for key, value in STRIPCHAT_PROXY_SESSION_COOKIES.items()
-                if isinstance(key, str) and isinstance(value, str)
-            }
-        )
-
-    state = {
-        "content": b"",
-        "last_selected_url": selected_url,
-        "last_activity": time.time(),
-        "segment_urls": [],
-    }
-    state_lock = threading.Lock()
-    fetch_round = {"count": 0}
-    shutdown_started = {"value": False}
-
-    # Bind socket first so port is known for segment URL rewriting.
-    # Some test/sandbox environments disallow localhost listeners entirely.
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.bind(("127.0.0.1", 0))
-            port = s.getsockname()[1]
-    except OSError as exc:
-        utils.kodilog("Stripchat proxy: bind failed, falling back: {}".format(str(exc)))
+def _load_model_stream(model_identifier: str) -> str | None:
+    """Find the live HLS stream URL for a given model username or URL."""
+    if not isinstance(model_identifier, str) or not model_identifier.strip():
         return None
 
-    def _fetch_and_rewrite(extra_query=None):
-        nonlocal selected_url
-        try:
-            fetch_round["count"] += 1
-            upstream_url = selected_url
-            forwarded_params = {}
-            if isinstance(extra_query, dict):
-                forwarded_params = {
-                    key: values[0]
-                    for key, values in extra_query.items()
-                    if key in ("_HLS_msn", "_HLS_part") and values
-                }
-            if forwarded_params:
-                selected_parts = list(urlparse(selected_url))
-                selected_query = parse_qs(selected_parts[4], keep_blank_values=True)
-                for key, value in forwarded_params.items():
-                    selected_query[key] = [value]
-                selected_parts[4] = urlencode(selected_query, doseq=True)
-                upstream_url = urlunparse(selected_parts)
-                utils.kodilog(
-                    "Stripchat proxy: forwarding LL-HLS params {}".format(
-                        forwarded_params
-                    )
-                )
-            candidate_keys = []
-            edge_master_url = _derive_edge_master_url_from_media_url(upstream_url)
-            if edge_master_url:
-                try:
-                    utils.kodilog(
-                        "Stripchat proxy: preflight edge master GET {}".format(
-                            edge_master_url[:140]
-                        )
-                    )
-                    edge_resp = session.get(
-                        edge_master_url, timeout=HTTP_TIMEOUT_SHORT
-                    )
-                    utils.kodilog(
-                        "Stripchat proxy: preflight edge master status {}".format(
-                            edge_resp.status_code
-                        )
-                    )
-                    if edge_resp.status_code == 200:
-                        candidate_keys = _extract_all_mouflon_psch_pkeys(edge_resp.text)
-                except Exception as edge_exc:
-                    utils.kodilog(
-                        "Stripchat proxy: preflight edge master error: {}".format(
-                            str(edge_exc)
-                        )
-                    )
+    cleaned = model_identifier.strip()
+    if cleaned.startswith("http") and ".m3u8" in cleaned:
+        return cleaned
 
-            def _with_pkey(url, psch, pkey):
-                url_parts = list(urlparse(url))
-                url_query = parse_qs(url_parts[4], keep_blank_values=True)
-                url_query["psch"] = [psch]
-                url_query["pkey"] = [pkey]
-                url_parts[4] = urlencode(url_query, doseq=True)
-                return urlunparse(url_parts)
+    parsed = urlparse(cleaned)
+    username = parsed.path.strip("/").split("/")[-1] if parsed.scheme and parsed.netloc else cleaned
 
-            utils.kodilog(
-                "Stripchat proxy: initial manifest GET {}".format(upstream_url[:140])
-            )
-            resp = session.get(upstream_url, timeout=HTTP_TIMEOUT_MANIFEST)
-            utils.kodilog("Stripchat proxy: initial status {}".format(resp.status_code))
+    endpoint = f"https://stripchat.com/api/front/models?search={urllib_parse.quote(username)}&primaryTag=girls"
+    headers = {
+        "User-Agent": STRIPCHAT_STREAM_UA,
+        "Accept": "application/json, text/plain, */*",
+        "Origin": "https://stripchat.com",
+        "Referer": f"https://stripchat.com/{username}",
+    }
+    try:
+        utils.kodilog(f"Stripchat: Resolving stream for model: {username}")
+        response, _ = utils.get_html_with_cloudflare_retry(
+            endpoint,
+            site.url,
+            headers=headers,
+            retry_on_empty=True,
+        )
+        if response:
+            payload = json.loads(response)
+            models = payload.get("models") if isinstance(payload, dict) else []
+            for model in models:
+                if model.get("username", "").lower() == username.lower():
+                    stream_url = model.get("hlsPlaylist") or (model.get("stream") or {}).get("url")
+                    if stream_url:
+                        return stream_url
+    except Exception as e:
+        utils.kodilog(f"Stripchat: Stream search lookup error: {e}")
 
-            # A 200 with an empty body (no headers at all in the worst
-            # cases) has been observed right after a burst of candidate
-            # probing requests - it reads like transient edge/rate-limit
-            # throttling rather than a real "no stream" response, so retry
-            # once after a short pause before giving up on this pkey.
-            if resp.status_code == 200 and not resp.content:
-                utils.kodilog(
-                    "Stripchat proxy: initial fetch returned empty body, retrying once"
-                )
-                time.sleep(0.5)
-                resp = session.get(upstream_url, timeout=HTTP_TIMEOUT_MANIFEST)
-                utils.kodilog(
-                    "Stripchat proxy: retry status {} len {}".format(
-                        resp.status_code, len(resp.content)
-                    )
-                )
+    profile_endpoint = f"https://stripchat.com/api/front/models/username/{urllib_parse.quote(username)}"
+    try:
+        response, _ = utils.get_html_with_cloudflare_retry(
+            profile_endpoint,
+            site.url,
+            headers=headers,
+            retry_on_empty=True,
+        )
+        if response:
+            payload = json.loads(response)
+            if isinstance(payload, dict):
+                model = payload.get("model", payload)
+                stream_url = model.get("hlsPlaylist") or (model.get("stream") or {}).get("url")
+                if stream_url:
+                    return stream_url
+    except Exception as e:
+        utils.kodilog(f"Stripchat: Username profile endpoint error: {e}")
 
-            if resp.status_code in (403, 404) and candidate_keys:
-                current_pkey = parse_qs(urlparse(upstream_url).query).get("pkey", [None])[0]
-                for psch, pkey in candidate_keys:
-                    if pkey == current_pkey:
-                        continue
-                    retry_url = _with_pkey(upstream_url, psch, pkey)
-                    utils.kodilog(
-                        "Stripchat proxy: retrying manifest with candidate pkey {}".format(
-                            pkey
-                        )
-                    )
-                    retry_resp = session.get(retry_url, timeout=HTTP_TIMEOUT_MANIFEST)
-                    if retry_resp.status_code == 200:
-                        upstream_url = retry_url
-                        resp = retry_resp
-                        utils.kodilog(
-                            "Stripchat proxy: candidate pkey {} succeeded".format(pkey)
-                        )
-                        break
-                    utils.kodilog(
-                        "Stripchat proxy: candidate pkey {} failed with {}".format(
-                            pkey, retry_resp.status_code
-                        )
-                    )
-            resp_cookies = getattr(resp, "cookies", None)
-            resp_cookies_dict = (
-                resp_cookies.get_dict()
-                if hasattr(resp_cookies, "get_dict")
-                else (resp_cookies if isinstance(resp_cookies, dict) else {})
-            )
-            session_cookies = getattr(session, "cookies", None)
-            session_cookies_dict = (
-                session_cookies.get_dict()
-                if hasattr(session_cookies, "get_dict")
-                else (session_cookies if isinstance(session_cookies, dict) else {})
-            )
-            utils.kodilog(
-                "Stripchat proxy: manifest cookies resp={0} session={1}".format(
-                    resp_cookies_dict, session_cookies_dict
-                )
-            )
+    return None
 
-            # Handle possible pkey expiration (403/404)
-            if resp.status_code in (403, 404) and fetch_round["count"] > 1:
-                utils.kodilog(
-                    "Stripchat proxy: manifest returned {0}, attempting to refresh model details".format(
-                        resp.status_code
-                    )
-                )
-                # This is a bit tricky as we don't have easy access to the full logic here
-                # For now, just log it. A better fix involves a more global state.
 
-            if resp.status_code != 200:
-                return
+def _add_model_download_link(model: dict, cache_bust: int | str | None = None, skip_offline: bool = False) -> bool:
+    raw_name = model.get("username")
+    if not raw_name:
+        return False
+    is_live = model.get("isLive")
+    if skip_offline and is_live is False:
+        return False
 
-            # Plain manifest polling never makes the listed parts
-            # fetchable (see _compute_next_ll_hls_target docstring). Issue
-            # a genuine LL-HLS blocking-reload request for the next part
-            # so the CDN holds the connection open until it actually
-            # exists -- once that returns, the segment that just
-            # completed is guaranteed to be servable.
-            if not forwarded_params:
-                target = _compute_next_ll_hls_target(resp.text)
-                if target:
-                    next_msn, next_part = target
-                    blocking_parts = list(urlparse(upstream_url))
-                    blocking_query = parse_qs(blocking_parts[4], keep_blank_values=True)
-                    blocking_query["_HLS_msn"] = [str(next_msn)]
-                    blocking_query["_HLS_part"] = [str(next_part)]
-                    blocking_parts[4] = urlencode(blocking_query, doseq=True)
-                    blocking_url = urlunparse(blocking_parts)
-                    utils.kodilog(
-                        "Stripchat proxy: blocking reload GET msn={0} part={1}".format(
-                            next_msn, next_part
-                        )
-                    )
-                    try:
-                        blocking_resp = session.get(
-                            blocking_url, timeout=HTTP_TIMEOUT_MANIFEST
-                        )
-                        utils.kodilog(
-                            "Stripchat proxy: blocking reload status {}".format(
-                                blocking_resp.status_code
-                            )
-                        )
-                        if blocking_resp.status_code == 200:
-                            resp = blocking_resp
-                    except Exception as block_exc:
-                        utils.kodilog(
-                            "Stripchat proxy: blocking reload error: {}".format(
-                                str(block_exc)
-                            )
-                        )
+    name = utils.cleanhtml(raw_name)
+    if is_live is False:
+        name += " [COLOR yellow][Offline][/COLOR]"
+    videourl = model.get("hlsPlaylist") or (model.get("stream") or {}).get("url") or raw_name
+    img = _model_screenshot(model, cache_bust=cache_bust)
+    fanart = img
+    subject = ""
+    if model.get("groupShowTopic"):
+        subject += model.get("groupShowTopic") + "[CR]"
+    if model.get("country"):
+        subject += f"[COLOR deeppink]Location: [/COLOR]{utils.get_country(model.get('country'))}[CR]"
+    if model.get("languages"):
+        langs = [utils.get_language(x) for x in model.get("languages")]
+        subject += f"[COLOR deeppink]Languages: [/COLOR]{', '.join(langs)}[CR]"
+    if model.get("broadcastGender"):
+        subject += f"[COLOR deeppink]Gender: [/COLOR]{model.get('broadcastGender')}[CR]"
+    if model.get("viewersCount"):
+        subject += f"[COLOR deeppink]Watching: [/COLOR]{model.get('viewersCount')}[CR][CR]"
+    if model.get("tags"):
+        tags = [t for t in model.get("tags") if "tag" not in t.lower()]
+        subject += "[COLOR deeppink]# [/COLOR]" + "[COLOR deeppink] #[/COLOR]".join(tags)
 
-            rewritten = _rewrite_mouflon_for_isa(
-                resp.text, base_url, prefer_full_segments=True
-            )
-            utils.kodilog(
-                "Stripchat proxy: rewritten manifest size {}".format(
-                    len(rewritten or "")
-                )
-            )
-            if rewritten and "#EXTM3U" in rewritten:
-                if "media.mp4" in rewritten:
-                    utils.kodilog(
-                        "Stripchat proxy: rewrite incomplete, media.mp4 still present"
-                    )
-                else:
-                    utils.kodilog(
-                        "Stripchat proxy: rewrite removed placeholder media.mp4 references"
-                    )
-                # Confirmed live: segments carry Cloudflare edge caching of
-                # only max-age=5s and are already gone (404, cf-cache-status
-                # EXPIRED) within ~1-2s of being listed. Keep only the single
-                # freshest segment so there's minimal delay between "we saw
-                # this listed" and "Kodi actually requests it" -- a wider
-                # window just means the older entries in it are more likely
-                # to already be expired by the time they're requested.
-                rewritten = _keep_only_part_window(
-                    rewritten,
-                    keep_count=3,
-                    edge_buffer=0,
-                )
-                current_segment_urls = _extract_manifest_segment_urls(rewritten)
-                rewritten = _proxy_segment_urls_in_manifest(rewritten, port)
-                with state_lock:
-                    state["content"] = rewritten.encode("utf-8")
-                    state["last_selected_url"] = upstream_url
-                    state["segment_urls"] = current_segment_urls
-        except Exception as e:
-            utils.kodilog("Stripchat proxy: fetch error: {}".format(str(e)))
-
-    _fetch_and_rewrite()
-    with state_lock:
-        if not state["content"]:
-            utils.kodilog(
-                "Stripchat: Manifest proxy initial fetch failed, falling back"
-            )
-            return None
-
-    class _ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
-        daemon_threads = True
-
-    class ManifestHandler(http.server.BaseHTTPRequestHandler):
-        def do_GET(self):
-            with state_lock:
-                state["last_activity"] = time.time()
-            parsed_path = urlparse(self.path)
-            if parsed_path.path == "/seg":
-                params = parse_qs(parsed_path.query, keep_blank_values=True)
-                seg_index = None
-                seg_values = params.get("i", [])
-                if seg_values:
-                    try:
-                        seg_index = int(seg_values[0])
-                    except Exception:
-                        seg_index = None
-                encoded = params.get("u", [""])[0]
-                cdn_url = ""
-                if seg_index is not None:
-                    with state_lock:
-                        segment_urls = list(state.get("segment_urls") or [])
-                    if 0 <= seg_index < len(segment_urls):
-                        cdn_url = segment_urls[seg_index]
-                if not cdn_url and encoded:
-                    cdn_url = _decode_proxy_target(encoded)
-                safe_cdn_url = _normalize_and_validate_proxy_segment_url(cdn_url)
-                if not safe_cdn_url:
-                    self.send_response(400)
-                    self.end_headers()
-                    return
-                try:
-                    def _fetch_segment(url):
-                        return session.get(
-                            url,
-                            timeout=HTTP_TIMEOUT_MEDIUM,
-                            stream=True,
-                            allow_redirects=False,
-                        )
-
-                    seg_resp = _fetch_segment(safe_cdn_url)
-                    # Proxy URLs carry the CDN URL itself (not a position
-                    # index) to avoid a stale index pointing at the wrong
-                    # segment after a refresh. So on 404 -- expected, since
-                    # these MOUFLON segments are only reachable for a brief
-                    # window around when the live edge lists them -- refresh
-                    # the manifest and retry with whatever segment is now
-                    # current. A single retry often still 404s (the newly
-                    # selected "freshest" segment can itself not be ready
-                    # yet), so retry a few times with a short backoff.
-                    retry_attempts = 0
-                    while seg_resp.status_code == 404 and retry_attempts < 3:
-                        retry_attempts += 1
-                        seg_resp.close()
-                        utils.kodilog(
-                            "Stripchat proxy: segment 404 (attempt {0}), refreshing manifest: {1}".format(
-                                retry_attempts, safe_cdn_url[:140]
-                            )
-                        )
-                        time.sleep(0.3)
-                        _fetch_and_rewrite()
-                        with state_lock:
-                            refreshed_segment_urls = list(state.get("segment_urls") or [])
-                        refreshed_url = (
-                            _normalize_and_validate_proxy_segment_url(
-                                refreshed_segment_urls[-1]
-                            )
-                            if refreshed_segment_urls
-                            else ""
-                        )
-                        if refreshed_url:
-                            safe_cdn_url = refreshed_url
-                        seg_resp = _fetch_segment(safe_cdn_url)
-                    self.send_response(seg_resp.status_code)
-                    self.send_header(
-                        "Content-Type",
-                        seg_resp.headers.get("Content-Type", "video/mp4"),
-                    )
-                    cl = seg_resp.headers.get("Content-Length")
-                    if cl:
-                        self.send_header("Content-Length", cl)
-                    self.end_headers()
-                    for chunk in seg_resp.iter_content(chunk_size=65536):
-                        self.wfile.write(chunk)
-                except Exception as e:
-                    utils.kodilog(
-                        "Stripchat proxy: segment fetch error: {}".format(str(e))
-                    )
-                    try:
-                        self.send_response(503)
-                        self.end_headers()
-                    except Exception:
-                        pass
-            else:
-                _fetch_and_rewrite(parse_qs(parsed_path.query, keep_blank_values=True))
-                with state_lock:
-                    content = state["content"]
-                self.send_response(200)
-                self.send_header("Content-Type", "application/vnd.apple.mpegurl")
-                self.send_header("Content-Length", str(len(content)))
-                self.send_header("Cache-Control", "no-cache")
-                self.end_headers()
-                self.wfile.write(content)
-
-        def log_message(self, fmt, *args):
-            pass
-
-    srv = _ThreadingHTTPServer(("127.0.0.1", port), ManifestHandler)
-    threading.Thread(target=srv.serve_forever, daemon=True).start()
-
-    def _shutdown_proxy(reason):
-        if shutdown_started["value"]:
-            return
-        shutdown_started["value"] = True
-        utils.kodilog("Stripchat proxy: shutting down ({})".format(reason))
-        try:
-            srv.shutdown()
-        except Exception:
-            pass
-        try:
-            srv.server_close()
-        except Exception:
-            pass
-        try:
-            session.close()
-        except Exception:
-            pass
-
-    def _idle_watch():
-        idle_timeout = 30.0
-        while not shutdown_started["value"]:
-            time.sleep(1.0)
-            with state_lock:
-                idle_for = time.time() - state.get("last_activity", time.time())
-            if idle_for >= idle_timeout:
-                _shutdown_proxy("idle {:.1f}s".format(idle_for))
-                return
-
-    threading.Thread(target=_idle_watch, daemon=True).start()
-
-    utils.kodilog(
-        "Stripchat proxy: ready at http://127.0.0.1:{}/manifest.m3u8".format(port)
+    site.add_download_link(
+        name, videourl, "Playvid", img, subject, noDownload=True, fanart=fanart
     )
-    return "http://127.0.0.1:{}/manifest.m3u8".format(port)
+    return True
 
 
 @site.register(default_mode=True)
 def Main():
     if STRIPCHAT_DISABLED:
-        _notify_stripchat_disabled()
+        utils.notify("Stripchat", "Temporarily disabled")
         utils.eod()
         return
-    female = utils.addon.getSetting("chatfemale") == "true"
+
+    female = utils.addon.getSetting("chatfemale") != "false"
     male = utils.addon.getSetting("chatmale") == "true"
     couple = utils.addon.getSetting("chatcouple") == "true"
     trans = utils.addon.getSetting("chattrans") == "true"
-    site.add_dir(
-        "[COLOR red]Refresh Stripchat images[/COLOR]",
-        "",
-        "clean_database",
-        "",
-        Folder=False,
-    )
-    site.add_dir(
-        "[COLOR red]Top Models[/COLOR]",
-        "",
-        "TopModels",
-        "",
-        Folder=False,
-    )
 
-    bu = "https://stripchat.com/api/front/models?limit=80&parentTag=autoTagNew&sortBy=trending&offset=0&primaryTag="
+    site.add_dir("[COLOR red]Refresh Stripchat images[/COLOR]", "", "clean_database", "", Folder=False)
+    site.add_dir("[COLOR red]Top Models[/COLOR]", "", "TopModels", "", Folder=False)
+    site.add_dir("[COLOR red]Search[/COLOR]", "", "Search", site.img_search)
+
+    base_api = "https://stripchat.com/api/front/models?limit=80&parentTag=autoTagNew&sortBy=trending&offset=0&primaryTag="
     if female:
-        site.add_dir(
-            "[COLOR hotpink]Female HD[/COLOR]",
-            "{0}girls&broadcastHD=true".format(bu),
-            "List",
-            "",
-            "",
-        )
-        site.add_dir(
-            "[COLOR hotpink]Female[/COLOR]", "{0}girls".format(bu), "List", "", ""
-        )
+        site.add_dir("[COLOR hotpink]Female HD[/COLOR]", f"{base_api}girls&broadcastHD=true", "List", "")
+        site.add_dir("[COLOR hotpink]Female[/COLOR]", f"{base_api}girls", "List", "")
     if couple:
-        site.add_dir(
-            "[COLOR hotpink]Couples HD[/COLOR]",
-            "{0}couples&broadcastHD=true".format(bu),
-            "List",
-            "",
-            "",
-        )
-        site.add_dir(
-            "[COLOR hotpink]Couples[/COLOR]", "{0}couples".format(bu), "List", "", ""
-        )
-        site.add_dir(
-            "[COLOR hotpink]Couples (Site)[/COLOR]",
-            "https://stripchat.com/couples",
-            "List2",
-            "",
-            "",
-        )
+        site.add_dir("[COLOR hotpink]Couples HD[/COLOR]", f"{base_api}couples&broadcastHD=true", "List", "")
+        site.add_dir("[COLOR hotpink]Couples[/COLOR]", f"{base_api}couples", "List", "")
     if male:
-        site.add_dir(
-            "[COLOR hotpink]Male HD[/COLOR]",
-            "{0}men&broadcastHD=true".format(bu),
-            "List",
-            "",
-            "",
-        )
-        site.add_dir("[COLOR hotpink]Male[/COLOR]", "{0}men".format(bu), "List", "", "")
+        site.add_dir("[COLOR hotpink]Male HD[/COLOR]", f"{base_api}men&broadcastHD=true", "List", "")
+        site.add_dir("[COLOR hotpink]Male[/COLOR]", f"{base_api}men", "List", "")
     if trans:
-        site.add_dir(
-            "[COLOR hotpink]Transsexual HD[/COLOR]",
-            "{0}trans&broadcastHD=true".format(bu),
-            "List",
-            "",
-            "",
-        )
-        site.add_dir(
-            "[COLOR hotpink]Transsexual[/COLOR]", "{0}trans".format(bu), "List", "", ""
-        )
+        site.add_dir("[COLOR hotpink]Transsexual HD[/COLOR]", f"{base_api}trans&broadcastHD=true", "List", "")
+        site.add_dir("[COLOR hotpink]Transsexual[/COLOR]", f"{base_api}trans", "List", "")
+
     utils.eod()
 
 
@@ -1451,10 +289,10 @@ _TOP_MODELS_ZONES = [
 
 @site.register()
 def TopModels():
-    """Interactive gender/region picker for Stripchat's top-models rankings."""
     if STRIPCHAT_DISABLED:
-        _notify_stripchat_disabled()
+        utils.notify("Stripchat", "Temporarily disabled")
         return
+
     gender_names = [name for name, _ in _TOP_MODELS_GENDERS]
     selection = xbmcgui.Dialog().select("Select Gender", gender_names)
     if selection == -1:
@@ -1471,98 +309,59 @@ def TopModels():
 
     url = (
         "https://stripchat.com/api/front/v5/models/top"
-        "?gender={0}&period=current&offset=0&limit=100&continent={1}".format(gender, zone)
+        f"?gender={gender}&period=current&offset=0&limit=100&continent={zone}"
     )
 
     online_only = utils.addon.getSetting("online_only") == "true"
     if online_only:
-        site.add_download_link(
-            "[COLOR red][B]Show all models[/B][/COLOR]", url, "online", "", "", noDownload=True
-        )
+        site.add_download_link("[COLOR red][B]Show all models[/B][/COLOR]", url, "online", "", "", noDownload=True)
     else:
-        site.add_download_link(
-            "[COLOR red][B]Show only models online[/B][/COLOR]",
-            url,
-            "online",
-            "",
-            "",
-            noDownload=True,
-        )
+        site.add_download_link("[COLOR red][B]Show only models online[/B][/COLOR]", url, "online", "", "", noDownload=True)
 
     List(url)
 
 
-def _add_model_download_link(model, cache_bust=None, skip_offline=False):
-    """Render one model dict (from any of Stripchat's /models-style API
-    responses) as a listing item. Returns False if the item was skipped."""
-    raw_name = model.get("username")
-    if not raw_name:
-        return False
-    is_live = model.get("isLive")
-    if skip_offline and is_live is False:
-        return False
+@site.register()
+def Search(url, keyword=None):
+    if not keyword:
+        prompt = "Enter model username or search keyword"
+        site.search_dir(url, prompt)
+        return
 
-    name = utils.cleanhtml(raw_name)
-    if is_live is False:
-        name += " [COLOR yellow][Offline][/COLOR]"
-    videourl = model.get("hlsPlaylist") or ""
-    img = _model_screenshot(model, cache_bust=cache_bust)
-    fanart = img
-    subject = ""
-    if model.get("groupShowTopic"):
-        subject += model.get("groupShowTopic") + "[CR]"
-    if model.get("country"):
-        subject += "[COLOR deeppink]Location: [/COLOR]{0}[CR]".format(
-            utils.get_country(model.get("country"))
-        )
-    if model.get("languages"):
-        langs = [utils.get_language(x) for x in model.get("languages")]
-        subject += "[COLOR deeppink]Languages: [/COLOR]{0}[CR]".format(", ".join(langs))
-    if model.get("broadcastGender"):
-        subject += "[COLOR deeppink]Gender: [/COLOR]{0}[CR]".format(
-            model.get("broadcastGender")
-        )
-    if model.get("viewersCount"):
-        subject += "[COLOR deeppink]Watching: [/COLOR]{0}[CR][CR]".format(
-            model.get("viewersCount")
-        )
-    if model.get("tags"):
-        subject += "[COLOR deeppink]#[/COLOR]"
-        tags = [t for t in model.get("tags") if "tag" not in t.lower()]
-        subject += "[COLOR deeppink] #[/COLOR]".join(tags)
-    site.add_download_link(
-        name, videourl, "Playvid", img, subject, noDownload=True, fanart=fanart
+    search_url = (
+        f"https://stripchat.com/api/front/models?search={urllib_parse.quote(keyword)}&limit=80&offset=0"
     )
-    return True
+    List(search_url)
 
 
 @site.register()
-def List(url, page=1):
+def List(url: str, page: int = 1):
     if STRIPCHAT_DISABLED:
-        _notify_stripchat_disabled()
+        utils.notify("Stripchat", "Temporarily disabled")
         utils.eod()
-        return None
+        return
+
     if utils.addon.getSetting("chaturbate") == "true":
         clean_database(False)
 
-    # utils._getHtml will automatically use FlareSolverr if Cloudflare is detected
     try:
         utils.kodilog("Stripchat: Fetching model list from API")
         response, _ = utils.get_html_with_cloudflare_retry(
             url,
             referer=site.url,
+            headers={"User-Agent": STRIPCHAT_STREAM_UA},
             retry_on_empty=True,
         )
         if not response:
             utils.kodilog("Stripchat: Empty response from API")
             utils.notify("Error", "Could not load Stripchat models")
-            return None
+            utils.eod()
+            return
+
         data = json.loads(response)
         if "models" in data:
             model_list = data["models"]
         elif "tops" in data:
-            # /models/top-style responses nest winners per-category instead
-            # of a flat "models" list.
             model_list = [
                 winner["model"]
                 for top in data.get("tops", [])
@@ -1571,13 +370,12 @@ def List(url, page=1):
             ]
         else:
             model_list = []
-        utils.kodilog(
-            "Stripchat: Successfully loaded {} models".format(len(model_list))
-        )
+        utils.kodilog(f"Stripchat: Successfully loaded {len(model_list)} models")
     except Exception as e:
-        utils.kodilog("Stripchat: Error loading model list: {}".format(str(e)))
+        utils.kodilog(f"Stripchat: Error loading model list: {e}")
         utils.notify("Error", "Could not load Stripchat models")
-        return None
+        utils.eod()
+        return
 
     online_only = utils.addon.getSetting("online_only") == "true"
     cache_bust = int(time.time())
@@ -1587,12 +385,15 @@ def List(url, page=1):
     total_items = data.get("filteredCount", 0)
     nextp = (page * 80) < total_items
     if nextp:
-        next = (page * 80) + 1
+        next_offset = (page * 80)
         lastpg = -1 * (-total_items // 80)
         page += 1
-        nurl = re.sub(r"offset=\d+", "offset={0}".format(next), url)
+        nurl = re.sub(r"offset=\d+", f"offset={next_offset}", url)
+        if "offset=" not in nurl:
+            sep = "&" if "?" in nurl else "?"
+            nurl = f"{nurl}{sep}offset={next_offset}"
         site.add_dir(
-            "Next Page.. (Currently in Page {0} of {1})".format(page - 1, lastpg),
+            f"Next Page.. (Currently in Page {page - 1} of {lastpg})",
             nurl,
             "List",
             site.img_next,
@@ -1603,9 +404,9 @@ def List(url, page=1):
 
 
 @site.register(clean_mode=True)
-def clean_database(showdialog=True):
-    conn = sqlite3.connect(utils.TRANSLATEPATH("special://database/Textures13.db"))
+def clean_database(showdialog: bool = True):
     try:
+        conn = sqlite3.connect(utils.TRANSLATEPATH("special://database/Textures13.db"))
         with conn:
             for domain_fragment in (
                 ".strpst.com",
@@ -1615,7 +416,7 @@ def clean_database(showdialog=True):
                 ".doppiocdn.org",
                 ".doppiocdn.live",
             ):
-                pattern = "%" + domain_fragment + "%"
+                pattern = f"%{domain_fragment}%"
                 rows = conn.execute(
                     "SELECT id, cachedurl FROM texture WHERE url LIKE ?;",
                     (pattern,),
@@ -1625,1055 +426,18 @@ def clean_database(showdialog=True):
                     try:
                         os.remove(utils.TRANSLATEPATH("special://thumbnails/" + row[1]))
                     except Exception as e:
-                        utils.kodilog(
-                            "@@@@Cumination: Silent failure in stripchat: " + str(e)
-                        )
+                        utils.kodilog(f"Stripchat image cleanup error: {e}")
                 conn.execute("DELETE FROM texture WHERE url LIKE ?;", (pattern,))
-            if showdialog:
-                utils.notify("Finished", "Stripchat images cleared")
+        if showdialog:
+            utils.notify("Finished", "Stripchat images cleared")
     except Exception as e:
-        utils.kodilog("@@@@Cumination: Silent failure in stripchat: " + str(e))
+        utils.kodilog(f"Stripchat: Texture database clean error: {e}")
 
 
 @site.register()
-def Playvid(url, name):
+def online(url: str):
     if STRIPCHAT_DISABLED:
-        _notify_stripchat_disabled()
-        return
-    if "[Offline]" in name:
-        utils.notify(name.split(" [COLOR")[0] + " is currently offline")
-        return
-    _play_stripchat_model(url, name)
-
-
-def _play_stripchat_model(url, name):
-    """Core Stripchat resolution/playback, usable internally (e.g. by
-    LemonCams) without going through the disabled public Stripchat site."""
-    vp = utils.VideoPlayer(name, IA_check="IA")
-    vp.progress.update(25, "[CR]Loading video page[CR]")
-
-    def _load_model_details(model_name):
-        headers = {
-            "User-Agent": utils.USER_AGENT,
-            "Accept": "application/json, text/plain, */*",
-            "Origin": "https://stripchat.com",
-            "Referer": "https://stripchat.com/{0}".format(model_name),
-        }
-        # The external widget API returns rich stream data (stream.url, stream.urls,
-        # snapshotUrl etc.) and supports modelsList lookup by username.
-        endpoint = (
-            "https://stripchat.com/api/external/v4/widget/?limit=1&modelsList={0}"
-        )
-        try:
-            utils.kodilog(
-                "Stripchat: Fetching model details: {}".format(
-                    endpoint.format(model_name)
-                )
-            )
-            response, _ = utils.get_html_with_cloudflare_retry(
-                endpoint.format(model_name),
-                site.url,
-                headers=headers,
-                retry_on_empty=True,
-            )
-            if not response:
-                utils.kodilog("Stripchat: Empty response from widget endpoint")
-                return None
-            payload = json.loads(response)
-            models = payload.get("models") if isinstance(payload, dict) else None
-            if models and len(models) > 0:
-                for model in models:
-                    if model.get("username", "").lower() == model_name.lower():
-                        utils.kodilog(
-                            "Stripchat: Successfully loaded model details for {}".format(
-                                model_name
-                            )
-                        )
-                        return model
-                utils.kodilog(
-                    "Stripchat: Widget API returned models but none matched {}".format(
-                        model_name
-                    )
-                )
-                if models:
-                    utils.kodilog(
-                        "Stripchat: First returned model was: {}".format(
-                            models[0].get("username")
-                        )
-                    )
-                fallback_payload = _load_model_fallback(model_name)
-                if fallback_payload:
-                    return fallback_payload
-            else:
-                utils.kodilog("Stripchat: No models in widget response")
-                fallback_payload = _load_model_fallback(model_name)
-                if fallback_payload:
-                    return fallback_payload
-        except json.JSONDecodeError as e:
-            utils.kodilog("Stripchat: JSON decode error: {}".format(str(e)))
-        except Exception as e:
-            utils.kodilog("Stripchat: Error loading model details: {}".format(str(e)))
-        fallback_payload = _load_model_fallback(model_name)
-        if fallback_payload:
-            return fallback_payload
-        return None
-
-    def _pick_stream(model_data, fallback_url):
-        candidates = []
-        stream_info = model_data.get("stream") if model_data else None
-        is_online_flag = None
-        manifest_probe_cache = {}
-        manifest_probe_errors = {}
-
-        def _mirror_saaws_to_doppi(stream_url):
-            if not isinstance(stream_url, str) or "saawsedge.com" not in stream_url:
-                return None
-            if utils.addon.getSetting("stripchat_mirror") == "false":
-                return None
-            return stream_url.replace(
-                "edge-hls.saawsedge.com", "edge-hls.doppiocdn.com"
-            )
-
-        # Treat online flags as advisory only; keep stream candidates if present.
-        if model_data:
-            is_online_values = [
-                model_data.get("isOnline"),
-                model_data.get("isBroadcasting"),
-            ]
-            explicit_values = [v for v in is_online_values if isinstance(v, bool)]
-            if explicit_values:
-                is_online_flag = any(explicit_values)
-                if not is_online_flag:
-                    utils.kodilog(
-                        "Stripchat: Model {} reported offline by API".format(name)
-                    )
-            status_value = str(model_data.get("status") or "").lower()
-            if status_value in ("private", "offline", "away"):
-                is_online_flag = False
-                utils.kodilog(
-                    "Stripchat: Model {} status is {}".format(name, status_value)
-                )
-
-        if isinstance(stream_info, dict):
-            # Explicit urls map (new API structure)
-            urls_map = stream_info.get("urls") or stream_info.get("files") or {}
-            hls_map = urls_map.get("hls") if isinstance(urls_map, dict) else {}
-            if isinstance(hls_map, dict):
-                for quality, data in hls_map.items():
-                    quality_label = str(quality).lower()
-                    if isinstance(data, dict):
-                        for key in ("absolute", "https", "url", "src"):
-                            stream_url = data.get(key)
-                            if isinstance(stream_url, str) and stream_url.startswith(
-                                "http"
-                            ):
-                                utils.kodilog(
-                                    "Stripchat: Found stream candidate: {} - {}".format(
-                                        quality_label, stream_url[:80]
-                                    )
-                                )
-                                candidates.append((quality_label, stream_url))
-                                break
-                    elif isinstance(data, str) and data.startswith("http"):
-                        utils.kodilog(
-                            "Stripchat: Found stream candidate: {} - {}".format(
-                                quality_label, data[:80]
-                            )
-                        )
-                        candidates.append((quality_label, data))
-            elif isinstance(urls_map, dict):
-                # Flat quality dict: stream.urls = {"480p": "url", "240p": "url", ...}
-                for quality, data in urls_map.items():
-                    quality_label = str(quality).lower()
-                    if isinstance(data, str) and data.startswith("http"):
-                        utils.kodilog(
-                            "Stripchat: Found quality stream: {} - {}".format(
-                                quality_label, data[:80]
-                            )
-                        )
-                        candidates.append((quality_label, data))
-                    elif isinstance(data, dict):
-                        for key in ("absolute", "https", "url", "src"):
-                            stream_url = data.get(key)
-                            if isinstance(stream_url, str) and stream_url.startswith(
-                                "http"
-                            ):
-                                utils.kodilog(
-                                    "Stripchat: Found quality stream: {} - {}".format(
-                                        quality_label, stream_url[:80]
-                                    )
-                                )
-                                candidates.append((quality_label, stream_url))
-                                break
-            # Some responses keep direct URL on stream['url']
-            stream_url = stream_info.get("url")
-            if isinstance(stream_url, str) and stream_url.startswith("http"):
-                utils.kodilog(
-                    "Stripchat: Found direct stream URL: {}".format(stream_url[:80])
-                )
-                candidates.append(("direct", stream_url))
-        # Legacy field on model root
-        if model_data and isinstance(model_data.get("hlsPlaylist"), str):
-            hls_url = model_data["hlsPlaylist"]
-            utils.kodilog("Stripchat: Found hlsPlaylist: {}".format(hls_url[:80]))
-            candidates.append(("playlist", hls_url))
-        if (
-            isinstance(fallback_url, str)
-            and fallback_url.startswith("http")
-            and ".m3u8" in fallback_url
-        ):
-            utils.kodilog("Stripchat: Using fallback URL: {}".format(fallback_url[:80]))
-            candidates.append(("fallback", fallback_url))
-
-        mirrored = []
-        for label, candidate_url in list(candidates):
-            mirror_url = _mirror_saaws_to_doppi(candidate_url)
-            if mirror_url and mirror_url != candidate_url:
-                utils.kodilog(
-                    "Stripchat: Added mirrored stream candidate: {} - {}".format(
-                        label, mirror_url[:80]
-                    )
-                )
-                mirrored.append(("{}-mirror".format(label), mirror_url))
-        candidates.extend(mirrored)
-
-        # saawsedge frequently fails DNS entirely (even FlareSolverr's browser
-        # can't navigate to it). Drop it now, before the source/auto/signed-media
-        # probing below, so none of those stages waste multiple FlareSolverr
-        # retry cycles on a domain that will never resolve.
-        if any("saawsedge.com" not in c[1] for c in candidates):
-            non_saaws_candidates = [c for c in candidates if "saawsedge.com" not in c[1]]
-            if non_saaws_candidates:
-                utils.kodilog(
-                    "Stripchat: Skipping saawsedge candidates in favor of reachable mirrored CDN"
-                )
-                candidates = non_saaws_candidates
-
-        # Some list URLs are pinned to low variants like "<id>_240p.m3u8".
-        # Try to promote those to "<id>.m3u8" (often "source"/best stream) when valid.
-        def _promote_variant_to_source_url(stream_url):
-            if not isinstance(stream_url, str) or ".m3u8" not in stream_url:
-                return None
-            match = re.search(r"/master/(\d+)_\d{3,4}p\.m3u8($|\?)", stream_url)
-            if not match:
-                return None
-
-            source_url = stream_url.replace(
-                "/master/{}_".format(match.group(1)),
-                "/master/{}.".format(match.group(1)),
-            )
-            source_url = re.sub(
-                r"/master/(\d+)\.\d{3,4}p\.m3u8",
-                r"/master/\1.m3u8",
-                source_url,
-            )
-            if source_url == stream_url:
-                return None
-
-            try:
-                probe_headers = _stripchat_stream_headers(name)
-                for probe_url in _iter_manifest_probe_urls(source_url):
-                    probe_data = utils._getHtml(
-                        probe_url,
-                        site.url,
-                        headers=probe_headers,
-                        error="throw",
-                    )
-                    if isinstance(probe_data, str) and "#EXTM3U" in probe_data:
-                        utils.kodilog(
-                            "Stripchat: Promoted variant stream to source playlist: {}".format(
-                                source_url[:80]
-                            )
-                        )
-                        return source_url
-            except Exception as e:
-                utils.kodilog(
-                    "Stripchat: Source playlist probe failed for {}: {}".format(
-                        source_url[:80], str(e)
-                    )
-                )
-            return None
-
-        def _promote_variant_to_auto_url(stream_url):
-            if not isinstance(stream_url, str) or ".m3u8" not in stream_url:
-                return None
-            match = re.search(r"/master/(\d+)_\d{3,4}p\.m3u8($|\?)", stream_url)
-            if not match:
-                return None
-
-            auto_url = stream_url.replace(
-                "/master/{}_".format(match.group(1)),
-                "/master/{}_".format(match.group(1)),
-            )
-            auto_url = re.sub(
-                r"/master/(\d+)_\d{3,4}p\.m3u8",
-                r"/master/\1_auto.m3u8",
-                auto_url,
-            )
-            if auto_url == stream_url:
-                return None
-
-            try:
-                probe_headers = _stripchat_stream_headers(name)
-                for probe_url in _iter_manifest_probe_urls(auto_url):
-                    probe_data = utils._getHtml(
-                        probe_url,
-                        site.url,
-                        headers=probe_headers,
-                        error="throw",
-                    )
-                    if isinstance(probe_data, str) and "#EXTM3U" in probe_data:
-                        utils.kodilog(
-                            "Stripchat: Promoted variant stream to auto playlist: {}".format(
-                                auto_url[:80]
-                            )
-                        )
-                        return auto_url
-            except Exception as e:
-                utils.kodilog(
-                    "Stripchat: Auto playlist probe failed for {}: {}".format(
-                        auto_url[:80], str(e)
-                    )
-                )
-            return None
-
-        def _fetch_manifest_text(manifest_url):
-            if not isinstance(manifest_url, str) or ".m3u8" not in manifest_url:
-                return ""
-            if manifest_url in manifest_probe_cache:
-                return manifest_probe_cache[manifest_url]
-            text = ""
-            headers = _stripchat_stream_headers(name)
-            last_error = None
-            for probe_url in _iter_manifest_probe_urls(manifest_url):
-                try:
-                    text, _ = utils.get_html_with_cloudflare_retry(
-                        probe_url,
-                        site.url,
-                        headers=headers,
-                        retry_on_empty=False,
-                    )
-                    if isinstance(text, str) and "#EXTM3U" in text:
-                        manifest_probe_errors.pop(manifest_url, None)
-                        break
-                except Exception as e:
-                    last_error = e
-                    utils.kodilog(
-                        "Stripchat: Manifest probe failed for {}: {}".format(
-                            probe_url[:80], str(e)
-                        )
-                    )
-                    err = str(e).lower()
-                    if (
-                        "name or service not known" in err
-                        or "could not resolve host" in err
-                    ):
-                        manifest_probe_errors[manifest_url] = "dns"
-                text = ""
-            if not isinstance(text, str) or "#EXTM3U" not in text:
-                # Some CDN paths (notably doppiocdn media manifests) are easier to
-                # inspect without custom headers; use requests as a probe fallback.
-                for probe_url in _iter_manifest_probe_urls(manifest_url):
-                    try:
-                        resp = requests.get(
-                            probe_url,
-                            headers=headers,
-                            timeout=HTTP_TIMEOUT_MANIFEST,
-                        )
-                        if resp.status_code == 200 and "#EXTM3U" in resp.text:
-                            text = resp.text
-                            manifest_probe_errors.pop(manifest_url, None)
-                            break
-                    except Exception:
-                        pass
-            if last_error and (not isinstance(text, str) or "#EXTM3U" not in text):
-                utils.kodilog(
-                    "Stripchat: Manifest probe exhausted fallback URLs for {}".format(
-                        manifest_url[:80]
-                    )
-                )
-            manifest_probe_cache[manifest_url] = text if isinstance(text, str) else ""
-            return manifest_probe_cache[manifest_url]
-
-        def _is_ad_or_stub_manifest(manifest_text):
-            if not isinstance(manifest_text, str) or "#EXTM3U" not in manifest_text:
-                return False
-            lower = manifest_text.lower()
-            if "#ext-x-mouflon-advert" in lower:
-                return True
-            if "/cpa/v2/" in lower:
-                return True
-            # Treat short VOD endlists as non-live/ad stubs for cam playback.
-            if "#ext-x-playlist-type:vod" in lower and "#ext-x-endlist" in lower:
-                return True
-            return False
-
-        def _candidate_is_ad_path(candidate_url):
-            master_text = _fetch_manifest_text(candidate_url)
-            if not master_text or "#EXTM3U" not in master_text:
-                return False
-
-            # If this manifest itself is an ad/stub, reject immediately.
-            if _is_ad_or_stub_manifest(master_text):
-                return True
-
-            # Master playlists containing variant streams (#EXT-X-STREAM-INF) are valid
-            # streams for Kodi playback; do not reject them due to child media probing.
-            if "#EXT-X-STREAM-INF" in master_text:
-                return False
-
-            # If this is a child playlist or non-master, inspect child links if any.
-            child_urls = [
-                line.strip()
-                for line in master_text.splitlines()
-                if line.strip() and not line.startswith("#")
-            ]
-            for child_url in child_urls[:2]:
-                child_text = _fetch_manifest_text(child_url)
-                if _is_ad_or_stub_manifest(child_text):
-                    return True
-            return False
-
-        def _derive_signed_media_candidate(master_url, source_label=""):
-            master_text = _fetch_manifest_text(master_url)
-            if not master_text or "#EXTM3U" not in master_text:
-                return None, None
-
-            psch, pkey = _extract_mouflon_psch_pkey(master_text)
-            if not pkey:
-                return None, None
-
-            child_urls = [
-                line.strip()
-                for line in master_text.splitlines()
-                if line.strip() and not line.startswith("#")
-            ]
-            ranked_child_urls = []
-            for child_url in child_urls:
-                quality = 0
-                quality_match = re.search(
-                    r"_(\d{3,4})p(?:_blurred)?\.m3u8($|\?)", child_url
-                )
-                if quality_match:
-                    try:
-                        quality = int(quality_match.group(1))
-                    except ValueError:
-                        quality = 0
-                ranked_child_urls.append((quality, child_url))
-
-            ranked_child_urls.sort(key=lambda item: item[0], reverse=True)
-
-            for _, child_url in ranked_child_urls:
-                signed_child_url = _ensure_low_latency_playlist(
-                    _merge_query(
-                        child_url,
-                        {"psch": psch, "pkey": pkey},
-                    )
-                )
-                child_text = _fetch_manifest_text(signed_child_url)
-                if not child_text or "#EXTM3U" not in child_text:
-                    continue
-                if _is_ad_or_stub_manifest(child_text):
-                    continue
-                media_lines = [
-                    line.strip()
-                    for line in child_text.splitlines()
-                    if line.strip() and not line.startswith("#")
-                ]
-                if any(line.startswith("../") for line in media_lines):
-                    utils.kodilog(
-                        "Stripchat: Rejected signed media candidate with parent-relative segments: {}".format(
-                            signed_child_url[:80]
-                        )
-                    )
-                    continue
-                child_label = "media-signed"
-                if source_label:
-                    child_label = "media-signed-{}".format(source_label)
-                utils.kodilog(
-                    "Stripchat: Derived signed media candidate: {}".format(
-                        signed_child_url[:80]
-                    )
-                )
-                return child_label, signed_child_url
-            return None, None
-
-        promoted = []
-        for label, candidate_url in list(candidates):
-            source_url = _promote_variant_to_source_url(candidate_url)
-            if source_url:
-                promoted.append(("source-derived", source_url))
-            auto_url = _promote_variant_to_auto_url(candidate_url)
-            if auto_url:
-                promoted.append(("auto-derived", auto_url))
-            signed_label, signed_media_url = _derive_signed_media_candidate(
-                candidate_url, label
-            )
-            if signed_media_url:
-                promoted.append((signed_label, signed_media_url))
-        candidates.extend(promoted)
-
-        # After source promotion, derive signed child manifests again so the
-        # newly promoted source/auto playlists can yield their own media
-        # child (often the best path). Only re-probe the URLs that are new
-        # since the loop above (source-derived/auto-derived) - re-running
-        # _derive_signed_media_candidate against candidates already handled
-        # there (including the signed URLs it just produced) doubles the
-        # live-edge CDN requests fired per playback attempt with no benefit,
-        # which risks tripping Cloudflare's burst-rate mitigation before the
-        # manifest proxy even gets to fetch the stream for real.
-        seen_candidate_urls = set(
-            candidate_url
-            for _, candidate_url in candidates
-            if isinstance(candidate_url, str) and candidate_url
-        )
-        signed_followups = []
-        for label, candidate_url in list(promoted):
-            if "signed" in label:
-                continue
-            signed_label, signed_media_url = _derive_signed_media_candidate(
-                candidate_url, label
-            )
-            if signed_media_url and signed_media_url not in seen_candidate_urls:
-                signed_followups.append((signed_label, signed_media_url))
-                seen_candidate_urls.add(signed_media_url)
-        candidates.extend(signed_followups)
-
-        if not candidates:
-            utils.kodilog("Stripchat: No stream candidates found")
-            return None, is_online_flag
-
-        def quality_score(label, stream_url):
-            if not label:
-                label = ""
-            score = 0
-            label = label.lower()
-            quality_value = 0
-            match = re.search(r"(\d{3,4})p", label)
-            if match:
-                try:
-                    quality_value = int(match.group(1))
-                except ValueError:
-                    quality_value = 0
-
-            url_quality_value = 0
-            if isinstance(stream_url, str):
-                url_quality = re.search(
-                    r"_(\d{3,4})p(?:_blurred)?\.m3u8($|\?)", stream_url
-                )
-                if url_quality:
-                    try:
-                        url_quality_value = int(url_quality.group(1))
-                    except ValueError:
-                        url_quality_value = 0
-
-            best_quality = max(quality_value, url_quality_value)
-            if label == "media-signed":
-                # Generic signed source manifests are less reliable than
-                # explicit quality-specific media manifests for Stripchat LL-HLS.
-                score = 8000 + best_quality
-            elif "media-signed-auto" in label:
-                score = 13000 + best_quality
-            elif "media-signed" in label:
-                # Signed media manifests are strongly preferred over master playlists
-                # when the proxy is involved, as they have correct MOUFLON hashes.
-                score = 12000 + best_quality
-            elif "auto" in label:
-                score = max(score, 11000 + best_quality)
-            elif "source" in label:
-                score = max(score, 10000 + best_quality)
-            else:
-                score = max(score, best_quality)
-
-            # Fallback: infer quality from URL pattern when labels are generic.
-            if isinstance(stream_url, str):
-                is_generic_media_manifest = bool(
-                    re.search(r"/\d+\.m3u8($|\?)", stream_url)
-                ) and not bool(
-                    re.search(r"/\d+_\d{3,4}p(?:_blurred)?\.m3u8($|\?)", stream_url)
-                )
-                if re.search(r"/\d+\.m3u8($|\?)", stream_url) and not re.search(
-                    r"/\d+_\d{3,4}p\.m3u8($|\?)", stream_url
-                ):
-                    score = max(score, 7000 if "media-signed" in label else 9000)
-                if re.search(r"/master/\d+\.m3u8($|\?)", stream_url):
-                    score = max(score, 9000 + best_quality)
-                if is_generic_media_manifest and "source-derived" in label:
-                    score = min(score, 6500)
-            return score
-
-        evaluated = []
-        for label, candidate_url in candidates:
-            ad_path = _candidate_is_ad_path(candidate_url)
-            reachable = manifest_probe_errors.get(candidate_url) != "dns"
-            evaluated.append(
-                {
-                    "label": label,
-                    "url": candidate_url,
-                    "reachable": reachable,
-                    "ad": ad_path,
-                    "score": quality_score(label, candidate_url),
-                }
-            )
-
-        # saawsedge frequently fails DNS in some networks; if we discovered any
-        # non-saaws candidate, avoid selecting saaws URLs.
-        has_non_saaws = any("saawsedge.com" not in c["url"] for c in evaluated)
-        if has_non_saaws:
-            filtered = [c for c in evaluated if "saawsedge.com" not in c["url"]]
-            if filtered:
-                utils.kodilog(
-                    "Stripchat: Excluding saawsedge candidates in favor of reachable mirrored CDN"
-                )
-                evaluated = filtered
-
-        preferred_reachable = [c for c in evaluated if c["reachable"] and not c["ad"]]
-        preferred_unreachable = [
-            c for c in evaluated if (not c["reachable"]) and (not c["ad"])
-        ]
-        ad_reachable = [c for c in evaluated if c["reachable"] and c["ad"]]
-        if preferred_reachable:
-            preferred = preferred_reachable
-        elif ad_reachable:
-            utils.kodilog(
-                "Stripchat: Non-ad streams unresolved and reachable streams are ad-only; skipping playback"
-            )
-            return None, is_online_flag
-        elif preferred_unreachable:
-            utils.kodilog(
-                "Stripchat: Only unresolved non-ad streams available; trying unresolved fallback"
-            )
-            preferred = preferred_unreachable
-        else:
-            utils.kodilog(
-                "Stripchat: Only ad stream candidates available; skipping playback"
-            )
-            return None, is_online_flag
-
-        preferred.sort(
-            key=lambda c: (c["score"], 1 if "doppiocdn.com" in c["url"] else 0),
-            reverse=True,
-        )
-        selected_url = _ensure_low_latency_playlist(preferred[0]["url"])
-        selected_label = preferred[0]["label"]
-        utils.kodilog(
-            "Stripchat: Selected stream: {} - {}".format(
-                selected_label, selected_url[:80]
-            )
-        )
-
-        # Don't try to parse master playlists - just use the selected URL directly
-        # The master playlist URL is already the correct stream to use
-        # Parsing it and selecting variants often picks the wrong quality or causes auth failures
-        utils.kodilog(
-            "Stripchat: Using selected stream URL directly without master playlist parsing"
-        )
-
-        return selected_url, is_online_flag
-
-    # Load current model details
-    utils.kodilog("Stripchat: Loading details for model: {}".format(name))
-    model_data = _load_model_details(name)
-
-    if not model_data:
-        vp.progress.close()
-        utils.kodilog("Stripchat: Failed to load model details")
-        utils.notify("Stripchat", "Model not found or offline")
-        return
-
-    _prime_stream_session(url, name)
-
-    # Pick best stream URL
-    stream_url, is_online_flag = _pick_stream(model_data, url)
-    if not stream_url:
-        vp.progress.close()
-        utils.kodilog("Stripchat: No stream URL available")
-        if is_online_flag is False:
-            utils.notify("Stripchat", "Model is offline")
-        else:
-            utils.notify("Stripchat", "Unable to locate stream URL")
-        return
-
-    # Validate stream URL
-    if not stream_url.startswith("http"):
-        vp.progress.close()
-        utils.kodilog("Stripchat: Invalid stream URL: {}".format(stream_url))
-        utils.notify("Stripchat", "Invalid stream URL")
-        return
-
-    utils.kodilog("Stripchat: Final stream URL: {}".format(stream_url[:100]))
-    vp.progress.update(85, "[CR]Found Stream[CR]")
-
-    # Verify inputstream.adaptive is available for HLS streams
-    # The check_inputstream() call will offer to install if missing
-    try:
-        from inputstreamhelper import Helper
-
-        is_helper = Helper("hls")
-        vp.progress.update(90, "[CR]Checking inputstream.adaptive[CR]")
-        if not is_helper.check_inputstream():
-            vp.progress.close()
-            utils.kodilog(
-                "Stripchat: inputstream.adaptive check failed - HLS streams require it"
-            )
-            utils.notify(
-                "Stripchat",
-                "inputstream.adaptive is required. Please install it from Kodi settings.",
-                duration=8000,
-            )
-            return
-    except Exception as e:
-        utils.kodilog("Stripchat: Error checking inputstream: {}".format(str(e)))
-        # Continue anyway - let utils.playvid handle it
-
-    # Build headers for HLS stream
-    stream_headers = _stripchat_stream_headers(name)
-    ua = urllib_parse.quote(stream_headers["User-Agent"], safe="")
-    origin_enc = urllib_parse.quote("https://stripchat.com", safe="")
-    referer_enc = urllib_parse.quote(stream_headers["Referer"], safe="")
-    accept_enc = urllib_parse.quote(stream_headers["Accept"], safe="")
-    accept_lang = urllib_parse.quote(stream_headers["Accept-Language"], safe="")
-    ia_headers = (
-        "User-Agent={0}&Origin={1}&Referer={2}&Accept={3}&Accept-Language={4}".format(
-            ua, origin_enc, referer_enc, accept_enc, accept_lang
-        )
-    )
-
-    utils.kodilog("Stripchat: Starting playback")
-    proxy_url = None
-    needs_proxy = _should_use_manifest_proxy(stream_url)
-    if utils.addon.getSetting("stripchat_proxy") != "false" and needs_proxy:
-        utils.kodilog(
-            "Stripchat: Attempting manifest proxy for {}".format(stream_url[:120])
-        )
-        proxy_url = _start_manifest_proxy(stream_url, name)
-
-    if needs_proxy:
-        if proxy_url:
-            utils.kodilog("Stripchat: Using manifest proxy: {}".format(proxy_url))
-            vp.play_from_direct_link(proxy_url)
-            return
-
-        vp.progress.close()
-        if utils.addon.getSetting("stripchat_proxy") == "false":
-            utils.kodilog(
-                "Stripchat: Manifest proxy required but disabled in settings; refusing raw playback"
-            )
-            utils.notify(
-                "Stripchat",
-                "Proxy is disabled. Raw playback would hit 404 placeholder segments.",
-                duration=7000,
-            )
-        else:
-            utils.kodilog(
-                "Stripchat: Manifest proxy failed; refusing raw playback because Stripchat placeholders 404"
-            )
-            utils.notify(
-                "Stripchat",
-                "Proxy setup failed. Raw playback would hit 404 placeholder segments.",
-                duration=7000,
-            )
-        return
-
-    if ia_headers:
-        # If no proxy, we play with headers
-        # Append manifest_headers=1 so ISA uses the provided headers for sub-manifests/segments
-        full_url = stream_url + "|" + ia_headers + "&manifest_headers=1"
-        vp.play_from_direct_link(full_url)
-    else:
-        vp.play_from_direct_link(stream_url)
-
-
-@site.register()
-def List2(url):
-    if STRIPCHAT_DISABLED:
-        _notify_stripchat_disabled()
-        utils.eod()
-        return
-    site.add_download_link(
-        "[COLOR red][B]Refresh[/B][/COLOR]",
-        url,
-        "utils.refresh",
-        "",
-        "",
-        noDownload=True,
-    )
-    if utils.addon.getSetting("online_only") == "true":
-        url = url + "/?online_only=1"
-        site.add_download_link(
-            "[COLOR red][B]Show all models[/B][/COLOR]",
-            url,
-            "online",
-            "",
-            "",
-            noDownload=True,
-        )
-    else:
-        site.add_download_link(
-            "[COLOR red][B]Show only models online[/B][/COLOR]",
-            url,
-            "online",
-            "",
-            "",
-            noDownload=True,
-        )
-
-    if utils.addon.getSetting("chaturbate") == "true":
-        clean_database(False)
-
-    headers = {"X-Requested-With": "XMLHttpRequest"}
-    data = utils._getHtml(url, site.url, headers=headers)
-
-    # BeautifulSoup migration
-    soup = utils.parse_html(data)
-    if not soup:
-        utils.eod()
-        return
-
-    # Check for window.LOADABLE_DATA first (modern client-side rendering)
-    scripts = soup.find_all("script")
-    found_models = False
-    for script in scripts:
-        script_text = script.string or ""
-        if "window.LOADABLE_DATA" in script_text:
-            try:
-                # Extract JSON from window.LOADABLE_DATA = {...};
-                json_match = re.search(
-                    r"window\.LOADABLE_DATA\s*=\s*({.*?});", script_text
-                )
-                if json_match:
-                    payload = json.loads(json_match.group(1))
-                    model_list = []
-
-                    # Dig through the nested structure
-                    # It's usually in payload['categoryTagPage']['models'] or payload['models']
-                    if "models" in payload:
-                        model_list = payload["models"]
-                    elif (
-                        "categoryTagPage" in payload
-                        and "models" in payload["categoryTagPage"]
-                    ):
-                        model_list = payload["categoryTagPage"]["models"]
-
-                    if model_list:
-                        found_models = True
-                        for model in model_list:
-                            raw_name = model.get("username")
-                            if not raw_name:
-                                continue
-                            name = utils.cleanhtml(raw_name)
-                            videourl = model.get("hlsPlaylist") or ""
-                            img = _model_screenshot(model)
-                            # Handle offline/profile links
-                            if model.get("status") == "off":
-                                name = "[COLOR hotpink][Offline][/COLOR] " + name
-                                videourl = "  "
-
-                            site.add_download_link(
-                                name,
-                                videourl,
-                                "Playvid",
-                                img,
-                                "",
-                                fanart=img,
-                            )
-                        break
-            except Exception as e:
-                utils.kodilog(
-                    "Stripchat List2: Error parsing LOADABLE_DATA: {}".format(str(e))
-                )
-
-    if not found_models:
-        # Fallback to traditional HTML parsing
-        # Find the top_ranks or top_others section
-        section = soup.find(class_="top_ranks") or soup.find(class_="top_others")
-        if section:
-            # Find all model entries with top_thumb class
-            models = section.find_all(class_="top_thumb")
-            for model in models:
-                try:
-                    link = model.find("a", href=True)
-                    if not link:
-                        continue
-                    model_url = utils.safe_get_attr(link, "href", default="")
-
-                    img_tag = model.find("img")
-                    img = utils.safe_get_attr(img_tag, "src", ["data-src"], "")
-                    if img and not img.startswith("http"):
-                        img = "https:" + img
-
-                    name_tag = model.find(class_="mn_lc")
-                    name = utils.safe_get_text(name_tag, default="Unknown")
-
-                    if "profile" in model_url:
-                        name = "[COLOR hotpink][Offline][/COLOR] " + name
-                        model_url = "  "
-                    elif model_url.startswith("/"):
-                        model_url = model_url[1:]
-
-                    site.add_download_link(
-                        name,
-                        model_url,
-                        "Playvid",
-                        img,
-                        "",
-                        fanart=img,
-                    )
-                except Exception as e:
-                    utils.kodilog(
-                        "Stripchat List2: Error parsing model entry: {}".format(str(e))
-                    )
-                    continue
-
-    utils.eod()
-
-
-@site.register()
-def List3(url):
-    if STRIPCHAT_DISABLED:
-        _notify_stripchat_disabled()
-        utils.eod()
-        return
-    site.add_download_link(
-        "[COLOR red][B]Refresh[/B][/COLOR]",
-        url,
-        "utils.refresh",
-        "",
-        "",
-        noDownload=True,
-    )
-    if utils.addon.getSetting("online_only") == "true":
-        url = url + "/?online_only=1"
-        site.add_download_link(
-            "[COLOR red][B]Show all models[/B][/COLOR]",
-            url,
-            "online",
-            "",
-            "",
-            noDownload=True,
-        )
-    else:
-        site.add_download_link(
-            "[COLOR red][B]Show only models online[/B][/COLOR]",
-            url,
-            "online",
-            "",
-            "",
-            noDownload=True,
-        )
-
-    if utils.addon.getSetting("chaturbate") == "true":
-        clean_database(False)
-
-    headers = {"X-Requested-With": "XMLHttpRequest"}
-    data = utils._getHtml(url, site.url, headers=headers)
-
-    # BeautifulSoup migration
-    soup = utils.parse_html(data)
-    if not soup:
-        utils.eod()
-        return
-
-    # Check for window.LOADABLE_DATA first (modern client-side rendering)
-    scripts = soup.find_all("script")
-    found_models = False
-    for script in scripts:
-        script_text = script.string or ""
-        if "window.LOADABLE_DATA" in script_text:
-            try:
-                # Extract JSON from window.LOADABLE_DATA = {...};
-                json_match = re.search(
-                    r"window\.LOADABLE_DATA\s*=\s*({.*?});", script_text
-                )
-                if json_match:
-                    payload = json.loads(json_match.group(1))
-                    model_list = []
-
-                    if "models" in payload:
-                        model_list = payload["models"]
-                    elif (
-                        "categoryTagPage" in payload
-                        and "models" in payload["categoryTagPage"]
-                    ):
-                        model_list = payload["categoryTagPage"]["models"]
-
-                    if model_list:
-                        found_models = True
-                        for model in model_list:
-                            raw_name = model.get("username")
-                            if not raw_name:
-                                continue
-                            name = utils.cleanhtml(raw_name)
-                            videourl = model.get("hlsPlaylist") or ""
-                            img = _model_screenshot(model)
-                            # Handle offline/profile links
-                            if model.get("status") == "off":
-                                name = "[COLOR hotpink][Offline][/COLOR] " + name
-                                videourl = "  "
-
-                            site.add_download_link(
-                                name,
-                                videourl,
-                                "Playvid",
-                                img,
-                                "",
-                                fanart=img,
-                            )
-                        break
-            except Exception as e:
-                utils.kodilog(
-                    "Stripchat List3: Error parsing LOADABLE_DATA: {}".format(str(e))
-                )
-
-    if not found_models:
-        # Fallback to traditional HTML parsing
-        # Find the top_ranks section
-        section = soup.find(class_="top_ranks")
-        if section:
-            # Find all model entries with top_thumb class
-            models = section.find_all(class_="top_thumb")
-            for model in models:
-                try:
-                    link = model.find("a", href=True)
-                    if not link:
-                        continue
-                    model_url = utils.safe_get_attr(link, "href", default="")
-
-                    img_tag = model.find("img")
-                    img = utils.safe_get_attr(img_tag, "src", ["data-src"], "")
-                    if img and not img.startswith("http"):
-                        img = "https:" + img
-
-                    name_tag = model.find(class_="mn_lc")
-                    name = utils.safe_get_text(name_tag, default="Unknown")
-
-                    if "profile" in model_url:
-                        name = "[COLOR hotpink][Offline][/COLOR] " + name
-                        model_url = "  "
-                    elif model_url.startswith("/"):
-                        model_url = model_url[1:]
-
-                    site.add_download_link(
-                        name,
-                        model_url,
-                        "Playvid",
-                        img,
-                        "",
-                        fanart=img,
-                    )
-                except Exception as e:
-                    utils.kodilog(
-                        "Stripchat List3: Error parsing model entry: {}".format(str(e))
-                    )
-                    continue
-
-    utils.eod()
-
-
-@site.register()
-def online(url):
-    if STRIPCHAT_DISABLED:
-        _notify_stripchat_disabled()
+        utils.notify("Stripchat", "Temporarily disabled")
         return
     if utils.addon.getSetting("online_only") == "true":
         utils.addon.setSetting("online_only", "false")
@@ -2682,5 +446,32 @@ def online(url):
     utils.refresh()
 
 
-if STRIPCHAT_DISABLED:
-    site.default_mode = ""
+@site.register()
+def Playvid(url: str, name: str):
+    if STRIPCHAT_DISABLED:
+        utils.notify("Stripchat", "Temporarily disabled")
+        return
+    if "[Offline]" in name:
+        clean_name = name.split(" [COLOR")[0]
+        utils.notify(f"{clean_name} is currently offline")
+        return
+    _play_stripchat_model(url, name)
+
+
+def _play_stripchat_model(url: str, name: str):
+    """Core Stripchat playback handler, usable directly and via LemonCams."""
+    raw_stream_url = url
+    if not raw_stream_url or not raw_stream_url.startswith("http") or ".m3u8" not in raw_stream_url:
+        resolved = _load_model_stream(raw_stream_url or name)
+        if resolved:
+            raw_stream_url = resolved
+
+    if not raw_stream_url or not raw_stream_url.startswith("http") or ".m3u8" not in raw_stream_url:
+        utils.notify("Stripchat", "Model is offline")
+        return
+
+    vp = utils.VideoPlayer(name, IA_check="IA")
+    vp.progress.update(80, "[CR]Starting Playback[CR]")
+    direct_hls_url = _format_direct_hls_url(raw_stream_url)
+    vp.play_from_direct_link(direct_hls_url)
+    vp.progress.close()

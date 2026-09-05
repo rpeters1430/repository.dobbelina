@@ -12,6 +12,29 @@ def load_fixture(name):
     return (FIXTURE_DIR / name).read_text(encoding="utf-8")
 
 
+def test_main_includes_ott(monkeypatch):
+    """Test that Main registers Categories, OTT, Search and calls List."""
+    dirs = []
+    list_calls = []
+
+    monkeypatch.setattr(
+        aagmaal.site,
+        "add_dir",
+        lambda name, url, mode, icon=None, **k: dirs.append({"name": name, "url": url, "mode": mode}),
+    )
+    monkeypatch.setattr(aagmaal, "List", lambda url: list_calls.append(url))
+    monkeypatch.setattr(aagmaal.utils, "eod", lambda: None)
+
+    aagmaal.Main()
+
+    modes = [d["mode"] for d in dirs]
+    assert "Categories" in modes
+    assert "OTT" in modes
+    assert "Search" in modes
+    assert any("ott/" in d["url"] for d in dirs if d["mode"] == "OTT")
+    assert len(list_calls) == 1
+
+
 def test_list_parses_vp_card_articles(monkeypatch):
     """Test that List correctly parses article.vp-card items."""
     html = load_fixture("listing.html")
@@ -100,6 +123,169 @@ def test_list_handles_new_pagination_wrapper(monkeypatch):
     assert len(dirs) == 1
     assert "Page 4 of 12" in dirs[0]["name"]
     assert dirs[0]["url"] == "https://aagmaal.bz/page/5/"
+
+
+def test_ott_parses_category_cards_and_pagination(monkeypatch):
+    """Test that OTT parses index cards with video counts and pagination."""
+    html = """<html><body>
+    <div class="vp-tax-index-cards">
+        <div class="vp-tax-index-card">
+            <a class="vp-tax-index-card__thumb" href="https://aagmaal.bz/ott/ullu/">
+                <img src="https://i.ibb.co/ullu.jpg" alt="Ullu Originals"/>
+            </a>
+            <span class="count">42</span>
+        </div>
+        <div class="vp-tax-index-card">
+            <a class="vp-tax-index-card__thumb" href="https://aagmaal.bz/ott/primeplay/">
+                <img src="https://i.ibb.co/primeplay.jpg" alt="PrimePlay"/>
+            </a>
+            <span class="count">18</span>
+        </div>
+    </div>
+    <div class="vp-pagination">
+        <span class="page-numbers current">1</span>
+        <a class="page-numbers" href="https://aagmaal.bz/ott/page/3/">3</a>
+        <a class="next page-numbers" href="https://aagmaal.bz/ott/page/2/">Next</a>
+    </div>
+    </body></html>"""
+
+    dirs = []
+    monkeypatch.setattr(aagmaal.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(
+        aagmaal.site,
+        "add_dir",
+        lambda name, url, mode, icon=None, **k: dirs.append({"name": name, "url": url, "mode": mode, "icon": icon}),
+    )
+    monkeypatch.setattr(aagmaal.utils, "eod", lambda: None)
+
+    aagmaal.OTT("https://aagmaal.bz/ott/")
+
+    # 2 category items + 1 next page
+    assert len(dirs) == 3
+    assert dirs[0]["mode"] == "ListOTT"
+    assert "Ullu Originals" in dirs[0]["name"]
+    assert "[42 video(s)]" in dirs[0]["name"]
+    assert dirs[0]["url"] == "https://aagmaal.bz/ott/ullu/"
+    assert dirs[0]["icon"] == "https://i.ibb.co/ullu.jpg"
+
+    assert dirs[1]["mode"] == "ListOTT"
+    assert "PrimePlay" in dirs[1]["name"]
+    assert "[18 video(s)]" in dirs[1]["name"]
+
+    assert dirs[2]["mode"] == "OTT"
+    assert "Next Page" in dirs[2]["name"]
+    assert "Page 1 of 3" in dirs[2]["name"]
+    assert dirs[2]["url"] == "https://aagmaal.bz/ott/page/2/"
+
+
+def test_list_ott_parses_articles(monkeypatch):
+    """Test that ListOTT parses articles and links to Playvid."""
+    html = """<html><body>
+    <article class="vp-card">
+        <a class="vp-card__thumb" href="https://aagmaal.bz/ullu-episode-1/">
+            <img alt="Ullu Episode 1" src="https://i.ibb.co/ep1.jpg"/>
+        </a>
+    </article>
+    <nav class="vp-pagi-wrap">
+        <span class="page-numbers current">1</span>
+        <a class="next page-numbers" href="https://aagmaal.bz/ott/ullu/page/2/">Next</a>
+    </nav>
+    </body></html>"""
+
+    downloads = []
+    dirs = []
+    monkeypatch.setattr(aagmaal.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(
+        aagmaal.site,
+        "add_download_link",
+        lambda name, url, mode, icon, desc="", **k: downloads.append({"name": name, "url": url, "mode": mode}),
+    )
+    monkeypatch.setattr(
+        aagmaal.site,
+        "add_dir",
+        lambda name, url, mode, icon=None, **k: dirs.append({"name": name, "url": url, "mode": mode}),
+    )
+    monkeypatch.setattr(aagmaal.utils, "eod", lambda: None)
+
+    aagmaal.ListOTT("https://aagmaal.bz/ott/ullu/")
+
+    assert len(downloads) == 1
+    assert downloads[0]["name"] == "Ullu Episode 1"
+    assert downloads[0]["url"] == "https://aagmaal.bz/ullu-episode-1/"
+    assert downloads[0]["mode"] == "Playvid"
+
+    assert len(dirs) == 1
+    assert dirs[0]["mode"] == "ListOTT"
+    assert dirs[0]["url"] == "https://aagmaal.bz/ott/ullu/page/2/"
+
+
+def test_playvid_dl_server_links(monkeypatch):
+    """Test that Playvid handles .vp-dl-server and .vp-dl-btn link blocks."""
+    html = """<html><body>
+    <div class="vp-dl-server">LuluStream</div>
+    <p><a class="vp-dl-btn" href="https://luluvid.com/d/12345">Download</a></p>
+    <div class="vp-dl-server">Playmogo</div>
+    <p><a class="vp-dl-btn" href="https://playmogo.com/d/67890">Download</a></p>
+    </body></html>"""
+
+    played_urls = []
+
+    monkeypatch.setattr(aagmaal.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(aagmaal.utils, "selector", lambda title, links: list(links.values())[0])
+
+    class DummyVP:
+        def __init__(self, name, download=None):
+            class DummyResolve:
+                def HostedMediaFile(self, link):
+                    return True
+            self.resolveurl = DummyResolve()
+            class DummyProgress:
+                def update(self, *a, **k): pass
+                def close(self): pass
+            self.progress = DummyProgress()
+
+        def play_from_link_to_resolve(self, url):
+            played_urls.append(url)
+
+    monkeypatch.setattr(aagmaal.utils, "VideoPlayer", DummyVP)
+
+    aagmaal.Playvid("https://aagmaal.bz/test-video/", "Test Video")
+
+    assert len(played_urls) == 1
+    assert "https://luluvid.com/d/12345" in played_urls or "https://playmogo.com/d/67890" in played_urls
+
+
+def test_playvid_iframe_fallback(monkeypatch):
+    """Test that Playvid falls back to iframe when no direct server links."""
+    html = """<html><body>
+    <article>
+        <iframe src="https://embed.streamtape.com/e/abc123xyz"></iframe>
+    </article>
+    </body></html>"""
+
+    played_urls = []
+    monkeypatch.setattr(aagmaal.utils, "getHtml", lambda *a, **k: html)
+
+    class DummyVP:
+        def __init__(self, name, download=None):
+            class DummyResolve:
+                def HostedMediaFile(self, link):
+                    return False
+            self.resolveurl = DummyResolve()
+            class DummyProgress:
+                def update(self, *a, **k): pass
+                def close(self): pass
+            self.progress = DummyProgress()
+
+        def play_from_link_to_resolve(self, url):
+            played_urls.append(url)
+
+    monkeypatch.setattr(aagmaal.utils, "VideoPlayer", DummyVP)
+
+    aagmaal.Playvid("https://aagmaal.bz/test-video/", "Test Video")
+
+    assert len(played_urls) == 1
+    assert played_urls[0] == "https://embed.streamtape.com/e/abc123xyz"
 
 
 def test_categories_parses_footer_widget(monkeypatch):

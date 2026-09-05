@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-09-03
-**Last Sync**: 2026-09-03 - Ported camcaps domain update (camcaps.io -> camcaps.tv) in reallifecam.py (#1957); verified upstream embedded addon statuses with pull_upstream_addons.py; triaged remaining pending commits (Pornslash asset/dispatcher re-uploads and meta-description experiment).
+**Last Updated**: 2026-09-05
+**Last Sync**: 2026-09-05 - Ported aagmaal OTT category section and .vp-dl-server / .vp-dl-btn playback link extraction from upstream commit 868166e4; added unit test coverage in tests/sites/test_aagmaal.py.
 
 ---
 
@@ -18,6 +18,13 @@
 ---
 
 ## Sync Sessions
+
+### 2026-09-05 Porting Session
+Reviewed pending upstream commit surfaced by `sync_manager.py --report` and embedded addon statuses with `pull_upstream_addons.py --check`.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `868166e4` | Fix aagmaal playback | `manual` | 2026-09-05 | **aagmaal**: Ported top-level `OTT` category section, `ListOTT` mode with video counts and pagination, and updated `Playvid` with `.vp-dl-server` + `.vp-dl-btn` server link selectors and relaxed iframe matching to BeautifulSoup4. Added comprehensive unit tests in `tests/sites/test_aagmaal.py`. |
 
 ### 2026-09-03 Porting Session
 Reviewed pending upstream commits surfaced by `sync_manager.py --report` and embedded addon statuses with `pull_upstream_addons.py --check`.
