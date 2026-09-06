@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-06T06:26:28.657017",
+    "sites_total": 197,
+    "pass": 187,
+    "warn": 6,
+    "fail": 2,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-09-05T06:28:10.990099",
     "sites_total": 194,
     "pass": 185,
@@ -8,27 +17,30 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-09-04T06:28:30.181136",
-    "sites_total": 194,
-    "pass": 187,
-    "warn": 3,
-    "fail": 1,
-    "error": 0,
-    "skip": 3
-  },
   "summary": {
     "new_failures": 1,
-    "resolved_failures": 1,
-    "persistent_failures": 0,
-    "improved_sites": 2,
-    "regressions": 5,
-    "step_regressions": 5
+    "resolved_failures": 0,
+    "persistent_failures": 1,
+    "improved_sites": 1,
+    "regressions": 3,
+    "step_regressions": 3
   },
   "new_failures": [
     {
+      "site": "pornmz",
+      "previous": "WARN",
+      "current": "FAIL",
+      "class": "ENV",
+      "message": "main: RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
+  "resolved_failures": [],
+  "persistent_failures": [
+    {
       "site": "xsharings",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "ENV",
       "message": "list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
@@ -36,73 +48,40 @@
       "stability_score": 1.0
     }
   ],
-  "resolved_failures": [
-    {
-      "site": "jizzbunker",
-      "previous": "FAIL",
-      "current": "PASS"
-    }
-  ],
-  "persistent_failures": [],
   "improved_sites": [
     {
-      "site": "spankbang",
-      "previous": "SKIP",
-      "current": "PASS"
-    },
-    {
-      "site": "xtapesla",
+      "site": "xozilla",
       "previous": "WARN",
       "current": "PASS"
     }
   ],
   "step_regressions": [
     {
-      "site": "awmnet",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
-      "class": "BLOCKED",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "pornmz",
-      "step": "play",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://pornmz.com/wp-content/plugins/clean-tube-player/public/player-x.php?q=cG9zdF9pZD0yNjAwMTEmdHlwZT12aWRlbyZ0YWc9JTNDdmlkZW8lMjBpZCUzRCUyMndwc3QtdmlkZW8lMjIlMjBjbGFzcyUzRCUyMnZpZGVvLWpzJTIwdmpzLWJpZy1wbGF5LWNlbnRlcmVkJTIyJTIwY29udHJvbHMlMjBwcmVsb2FkJTNEJTIyYXV0byUyMiUyMHdpZHRoJTNEJTIyNjQwJTIyJTIwaGVpZ2h0JTNEJTIyMjY0JTIyJTIwcG9zdGVyJTNEJTIyaHR0cHMlM0ElMkYlMkZwb3JubXouY29tJTJGd3AtY29udGVudCUyRnVwbG9hZHMlMkYyMDI2JTJGMDIlMkZCcmF6emVyc0V4eHRyYS1LaXJhLU5vaXItTWFyaW5hLUdvbGQtQ3VtLVBsYXktV2l0aC1Vcy02NDB4MzYwLmpwZyUyMiUzRSUzQ3NvdXJjZSUyMHNyYyUzRCUyMmh0dHBzJTNBJTJGJTJGdmlkZW8udHdpbWcuY29tJTJGYW1wbGlmeV92aWRlbyUyRjIwMjEwMjg5NzkxNDMyNTgxMTIlMkZwbCUyRmdHVE9ZaXR0OEFUaUlrdW8ubTN1OCUyMiUyMHR5cGUlM0QlMjJ2aWRlbyUyRm0zdTglMjIlM0UlM0MlMkZ2aWRlbyUzRQ==: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "xoxo",
-      "step": "play",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "ValueError: No videolink found!",
-      "class": "CODE",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "xozilla",
+      "site": "cumlouder",
       "step": "play",
       "previous": "PASS",
       "current": "FAIL",
       "message": "Play function executed but no playback URL captured (no notifications)",
       "class": "PLAYBACK",
       "is_flaky": false,
+      "stability_score": 0.9
+    },
+    {
+      "site": "pornmz",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
+      "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "xsharings",
-      "step": "list",
+      "site": "xtapesla",
+      "step": "play",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "message": "RuntimeError: FlareSolverr error for https://xtapes.la/videos/step-son-cum-inside-me-8-2025-full-movie/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "class": "ENV",
       "is_flaky": false,
       "stability_score": 1.0
@@ -110,59 +89,52 @@
   ],
   "deltas": [
     {
-      "site": "awmnet",
+      "site": "cumlouder",
       "previous": "PASS",
       "current": "WARN",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "jizzbunker",
-      "previous": "FAIL",
+      "site": "mylust",
+      "previous": "MISSING",
       "current": "PASS",
-      "kind": "improvement",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "onlyjerk",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
       "detail": ""
     },
     {
       "site": "pornmz",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "spankbang",
-      "previous": "SKIP",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "xoxo",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "xozilla",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "xsharings",
-      "previous": "PASS",
+      "previous": "WARN",
       "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "xtapesla",
+      "site": "porno24",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "xozilla",
       "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "xtapesla",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
       "detail": ""
     }
   ]
