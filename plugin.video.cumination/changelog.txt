@@ -1,3 +1,11 @@
+[B]Version 1.1.474[/B]
+- chore: update upstream sync and triage reports; enhance homemoviestube and pornmz site modules; add tests for new features
+- Merge pull request #378 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- Add unit tests for mylust, onlyjerk, and porno24 sites
+- test: add optional Docker integration test for FlareSolverrManager via solverr
+- fix: restore local pornhub/doodstream resolver patches clobbered by upstream sync
+
 [B]Version 1.1.473[/B]
 - Merge pull request #378 from rpeters1430/imgbot
 - [ImgBot] Optimize images
