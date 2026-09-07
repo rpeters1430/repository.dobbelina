@@ -150,6 +150,29 @@ def test_search_with_keyword_calls_list(monkeypatch):
     assert "test+query" in list_calls[0]
 
 
+def test_play_does_not_send_site_referer_to_external_media(monkeypatch):
+    played = []
+
+    class DummyVideoPlayer:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def play_from_direct_link(self, url):
+            played.append(url)
+
+    def fake_get_html(url, referer=None):
+        if url == "https://pornmz.com/video/sample/":
+            return '<iframe src="https://player.example/embed/sample"></iframe>'
+        return '<video><source src="https://video.twimg.com/sample.mp4"></video>'
+
+    monkeypatch.setattr(pornmz.utils, "VideoPlayer", DummyVideoPlayer)
+    monkeypatch.setattr(pornmz.utils, "getHtml", fake_get_html)
+
+    pornmz.Play("https://pornmz.com/video/sample/", "Sample")
+
+    assert played == ["https://video.twimg.com/sample.mp4"]
+
+
 def test_list_handles_empty_results(monkeypatch):
     """Test that List handles pages with no videos."""
     html = "<html><body></body></html>"

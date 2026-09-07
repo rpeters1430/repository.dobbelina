@@ -429,23 +429,22 @@ def translate_kodi_strings(text: str) -> str:
 
 
 _FS_FAILURE_MARKERS = (
-    "failed",
-    "error",
     "unavailable",
     "not available",
     "connection refused",
+    "failed to connect",
     "check if flaresolverr is running",
 )
 
 
 def indicates_flaresolverr_failure(msg: str) -> bool:
-    """True if a message reports a genuine FlareSolverr failure.
+    """True if a message reports that the FlareSolverr service is unavailable.
 
     FlareSolverr also emits a purely informational notify() while it is
     actively solving a challenge (e.g. "Cloudflare detected, solving
-    challenge..."). That message mentions FlareSolverr but is not a
-    failure, so callers must not treat its mere presence as fatal for
-    the rest of the run.
+    challenge..."). A failed request for one site is also not evidence that
+    the service is unavailable, so neither condition should suppress later
+    independent smoke-test steps.
     """
     m = (msg or "").lower()
     return "flaresolverr" in m and any(marker in m for marker in _FS_FAILURE_MARKERS)

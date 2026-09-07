@@ -1,9 +1,9 @@
 # Upstream Triage Report
 
-Generated: 2026-09-05
-Pending commits: 1 (grouped into 1 items)
+Generated: 2026-09-07
+Pending commits: 0
 
-Run `python scripts/sync_manager.py` (interactive) to review/cherry-pick, or `python scripts/sync_manager.py --report` to regenerate this file.
+Upstream was reviewed through `50f5c70a`. Applicable changes and skip decisions are recorded in `docs/development/UPSTREAM_SYNC.md`.
 
 ## New Sites Available (0)
 
@@ -11,13 +11,9 @@ Sites touched by these commits don't exist in our fork yet. Candidates for new s
 
 _None._
 
-## Needs Review (1)
+## Needs Review (0)
 
-Touches a site we have that isn't BeautifulSoup-migrated, or mentions playback/decrypt - worth reviewing for porting.
-
-| Group | Commits | Sites | New Sites | Playback | Message(s) |
-|---|---|---|---|---|---|
-| 868166e4 | `868166e4` | aagmaal | - | yes | Fix aagmaal playback |
+_None._
 
 ## Likely Already Covered (0)
 

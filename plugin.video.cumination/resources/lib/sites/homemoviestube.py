@@ -51,18 +51,24 @@ def List(url):
     html = utils.getHtml(url, site.url)
 
     soup = utils.parse_html(html)
-    for item in soup.select(".vidItem, .video, .video-item"):
+    for item in soup.select(".vidItem, .video, .video-item, .media-card.video-card"):
         link = item.select_one("a[href]")
         videopage = utils.safe_get_attr(link, "href", default="")
         if not videopage:
             continue
         videopage = urllib_parse.urljoin(site.url, videopage)
-        name = utils.cleantext(utils.safe_get_text(link, default=""))
         img_tag = item.select_one("img")
+        name = utils.cleantext(
+            utils.safe_get_attr(link, "title", default="")
+            or utils.safe_get_attr(img_tag, "title", ["alt"], default="")
+            or utils.safe_get_text(link, default="")
+        )
         img = utils.safe_get_attr(img_tag, "data-src", ["src"])
         if img:
             img = urllib_parse.urljoin(site.url, img.replace(" ", "%20"))
-        duration = utils.safe_get_text(item.select_one(".time"), default="")
+        duration = utils.safe_get_text(
+            item.select_one(".time, .duration-badge"), default=""
+        )
         site.add_download_link(name, videopage, "Playvid", img, name, duration=duration)
 
     next_link = soup.select_one(".next a[href]")
@@ -129,7 +135,9 @@ def Playvid(url, name, download=None):
         video_page
     )
     if source:
-        vp.play_from_direct_link(source.group(1) + "|verifypeer=false")
+        media_url = urllib_parse.quote(source.group(1), safe="/:?&=%")
+        media_url = urllib_parse.urljoin(site.url, media_url)
+        vp.play_from_direct_link(media_url + "|verifypeer=false")
     else:
         vp.progress.close()
         utils.notify("Oh Oh", "No Videos found")

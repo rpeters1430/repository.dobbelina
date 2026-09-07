@@ -40,10 +40,16 @@ def test_indicates_flaresolverr_failure_ignores_informational_notify():
     )
 
 
-def test_indicates_flaresolverr_failure_detects_real_failures():
-    assert live_smoke_test.indicates_flaresolverr_failure(
+def test_indicates_flaresolverr_failure_does_not_abort_after_site_http_error():
+    assert not live_smoke_test.indicates_flaresolverr_failure(
         "FlareSolverr Failed: solved challenge but got HTTP 403 from website"
     )
+    assert not live_smoke_test.indicates_flaresolverr_failure(
+        "FlareSolverr Failed: solved challenge but got HTTP 404 from website"
+    )
+
+
+def test_indicates_flaresolverr_failure_detects_service_failures():
     assert live_smoke_test.indicates_flaresolverr_failure(
         "FlareSolverr Failed: connection refused"
     )

@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-09-05
-**Last Sync**: 2026-09-05 - Ported aagmaal OTT category section and .vp-dl-server / .vp-dl-btn playback link extraction from upstream commit 868166e4; added unit test coverage in tests/sites/test_aagmaal.py.
+**Last Updated**: 2026-09-07
+**Last Sync**: 2026-09-07 - Reviewed upstream through 50f5c70a; manually ported the HomeMoviesTube listing/player and PornMZ player fixes, and verified the AnyBunny, BlendPorn, and XVideos changes were already covered.
 
 ---
 
@@ -18,6 +18,19 @@
 ---
 
 ## Sync Sessions
+
+### 2026-09-07 Porting Session
+Reviewed the site changes merged after upstream commit `868166e4` and live-tested every affected module with the strict site monitor.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `9e012511` | Homemovies tube fixed image and player #1963 | `manual` | 2026-09-07 | **HomeMoviesTube**: Ported the new `.media-card.video-card` listing structure to the fork's BeautifulSoup parser, including title and duration extraction. Normalized root-relative media sources to absolute, URL-escaped links. Added regression tests; strict live check passes with 60 items and a 65,536-byte direct-media read. |
+| `56c95c42` | PornMZ fixed image display, fixed player | `manual-partial` | 2026-09-07 | **PornMZ**: Removed the forced site Referer from external media playback. The same `video.twimg.com` URL returned HTTP 403 with the Referer and HTTP 206 without it. The `data-main-thumb` regex change was unnecessary for the fork's BeautifulSoup parser. Added regression coverage; strict live check passes with 85 items and an HLS segment read. |
+| `0087e4bf` | BlendPorn fixed images | `manual-already-covered` | 2026-09-07 | The fork's BeautifulSoup parser already reads `data-original` as an image fallback. Strict live check passes with 102 items and direct-media playback. |
+| `9c9eabdb` | Fixed xvideos player #1638 | `manual-already-covered` | 2026-09-07 | The fork already extracts `html5player.setVideoHLS` before high/low MP4 fallbacks. Strict live check passes with 121 items and HLS playback. |
+| `50f5c70a` | anybunny: playback, listing | `manual-already-covered` | 2026-09-07 | Upstream's legacy implementation adds cookie-aware redirect handling, but the fork's separate BeautifulSoup/FlareSolverr implementation is currently healthy: 177 items and verified direct-media playback. Copying the upstream resolver would regress the active `.tv` flow back to `.org`. |
+| `764d2e08`, `1d353d83` | Add files via upload / Move file | `skipped` | 2026-09-07 | Temporary duplicate placement of `xvideos.py`, immediately removed by the follow-up move commit; no durable change to port. |
+| `012bdfe6`, `e1f4d5f9` | Merge PR #1965 / bump to v1.1.198 | `skipped` | 2026-09-07 | Merge/package/version/changelog changes only beyond the individually reviewed site commits above. |
 
 ### 2026-09-05 Porting Session
 Reviewed pending upstream commit surfaced by `sync_manager.py --report` and embedded addon statuses with `pull_upstream_addons.py --check`.
