@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-09-07T06:33:32.231915",
+    "generated": "2026-09-08T06:28:18.878163",
     "sites_total": 197,
     "pass": 191,
     "warn": 3,
@@ -9,30 +9,24 @@
     "skip": 2
   },
   "previous": {
-    "generated": "2026-09-06T06:26:28.657017",
+    "generated": "2026-09-07T06:33:32.231915",
     "sites_total": 197,
-    "pass": 187,
-    "warn": 6,
-    "fail": 2,
+    "pass": 191,
+    "warn": 3,
+    "fail": 1,
     "error": 0,
     "skip": 2
   },
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 1,
+    "resolved_failures": 0,
     "persistent_failures": 1,
-    "improved_sites": 3,
+    "improved_sites": 0,
     "regressions": 0,
     "step_regressions": 0
   },
   "new_failures": [],
-  "resolved_failures": [
-    {
-      "site": "pornmz",
-      "previous": "FAIL",
-      "current": "PASS"
-    }
-  ],
+  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "xsharings",
@@ -44,52 +38,7 @@
       "stability_score": 1.0
     }
   ],
-  "improved_sites": [
-    {
-      "site": "awmnet",
-      "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "cumlouder",
-      "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "xtapesla",
-      "previous": "WARN",
-      "current": "PASS"
-    }
-  ],
+  "improved_sites": [],
   "step_regressions": [],
-  "deltas": [
-    {
-      "site": "awmnet",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "cumlouder",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "pornmz",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "xtapesla",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    }
-  ]
+  "deltas": []
 }
