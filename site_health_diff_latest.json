@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-09T06:28:04.450831",
+    "sites_total": 197,
+    "pass": 190,
+    "warn": 3,
+    "fail": 2,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-09-08T06:28:18.878163",
     "sites_total": 197,
     "pass": 191,
@@ -8,24 +17,25 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-09-07T06:33:32.231915",
-    "sites_total": 197,
-    "pass": 191,
-    "warn": 3,
-    "fail": 1,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
-    "new_failures": 0,
+    "new_failures": 1,
     "resolved_failures": 0,
     "persistent_failures": 1,
     "improved_sites": 0,
-    "regressions": 0,
-    "step_regressions": 0
+    "regressions": 1,
+    "step_regressions": 2
   },
-  "new_failures": [],
+  "new_failures": [
+    {
+      "site": "porn4k",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "BLOCKED",
+      "message": "main: RuntimeError: FlareSolverr solved challenge but got HTTP 304 from website",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
   "resolved_failures": [],
   "persistent_failures": [
     {
@@ -39,6 +49,35 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [],
-  "deltas": []
+  "step_regressions": [
+    {
+      "site": "porn4k",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 304 from website",
+      "class": "BLOCKED",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "porn4k",
+      "step": "search",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
+      "class": "BLOCKED",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
+  "deltas": [
+    {
+      "site": "porn4k",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    }
+  ]
 }
