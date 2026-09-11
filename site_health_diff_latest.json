@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-11T06:27:13.776764",
+    "sites_total": 197,
+    "pass": 188,
+    "warn": 5,
+    "fail": 2,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-09-10T06:28:38.414286",
     "sites_total": 197,
     "pass": 188,
@@ -8,22 +17,13 @@
     "error": 0,
     "skip": 3
   },
-  "previous": {
-    "generated": "2026-09-09T06:28:04.450831",
-    "sites_total": 197,
-    "pass": 190,
-    "warn": 3,
-    "fail": 2,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
     "new_failures": 0,
     "resolved_failures": 0,
     "persistent_failures": 2,
-    "improved_sites": 0,
+    "improved_sites": 2,
     "regressions": 2,
-    "step_regressions": 1
+    "step_regressions": 2
   },
   "new_failures": [],
   "resolved_failures": [],
@@ -47,10 +47,21 @@
       "stability_score": 1.0
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
       "site": "awmnet",
+      "previous": "WARN",
+      "current": "PASS"
+    },
+    {
+      "site": "porndish",
+      "previous": "SKIP",
+      "current": "PASS"
+    }
+  ],
+  "step_regressions": [
+    {
+      "site": "celebsroulette",
       "step": "search",
       "previous": "SKIP",
       "current": "FAIL",
@@ -58,11 +69,28 @@
       "class": "BLOCKED",
       "is_flaky": false,
       "stability_score": 1.0
+    },
+    {
+      "site": "xtapesla",
+      "step": "play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://xtapes.la/videos/massage-parlor-5-2026-full-movie/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
+      "is_flaky": false,
+      "stability_score": 1.0
     }
   ],
   "deltas": [
     {
       "site": "awmnet",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "celebsroulette",
       "previous": "PASS",
       "current": "WARN",
       "kind": "regression",
@@ -70,8 +98,15 @@
     },
     {
       "site": "porndish",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "xtapesla",
       "previous": "PASS",
-      "current": "SKIP",
+      "current": "WARN",
       "kind": "regression",
       "detail": ""
     }
