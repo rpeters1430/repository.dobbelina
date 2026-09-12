@@ -330,3 +330,34 @@ def test_list_metadata_parsing(monkeypatch):
     assert "Trending" in downloads[0]["desc"]
     # Duration should NOT appear twice
     assert downloads[0]["desc"].count("10:00") == 0
+
+
+def test_playvid_content_url_ai_generated(monkeypatch):
+    played = []
+
+    class DummyVideoPlayer:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def play_from_direct_link(self, url):
+            played.append(url)
+
+    html = """
+    <html>
+    <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "VideoObject",
+        "name": "AI Generated Model",
+        "contentUrl": "https://cdn.xvideos-cdn.com/videos/ai/video123.mp4"
+    }
+    </script>
+    </html>
+    """
+
+    monkeypatch.setattr(xvideos.utils, "VideoPlayer", DummyVideoPlayer)
+    monkeypatch.setattr(xvideos.utils, "getHtml", lambda *args, **kwargs: html)
+
+    xvideos.Playvid("https://www.xvideos.com/video123/ai_test", "AI Video")
+
+    assert played == ["https://cdn.xvideos-cdn.com/videos/ai/video123.mp4"]

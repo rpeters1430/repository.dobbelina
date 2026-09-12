@@ -99,3 +99,60 @@ def test_search_without_keyword():
         homemoviestube.Search("https://homemoviestube.com/search/")
 
         assert mock_search.called
+
+
+def test_categories_parses_channel_cards(monkeypatch):
+    html = """
+    <div class="channel-card">
+        <a class="channel-card-link" href="/channels/64/anal">
+            <img class="channel-img" src="https://media.homemoviestube.com/cat64.jpg"/>
+            <span class="channel-count-badge">9,100 videos</span>
+            <span class="channel-name">Anal</span>
+        </a>
+    </div>
+    """
+    dirs = []
+    monkeypatch.setattr(homemoviestube.utils, "getHtml", lambda *args, **kwargs: html)
+    monkeypatch.setattr(
+        homemoviestube.site,
+        "add_dir",
+        lambda name, url, mode, icon: dirs.append((name, url, mode, icon)),
+    )
+    monkeypatch.setattr(homemoviestube.utils, "eod", lambda: None)
+
+    homemoviestube.Categories("https://www.homemoviestube.com/channels/")
+
+    assert len(dirs) == 1
+    assert "Anal" in dirs[0][0]
+    assert "[9,100 videos]" in dirs[0][0]
+    assert dirs[0][1] == "https://www.homemoviestube.com/channels/64/anal"
+    assert dirs[0][2] == "List"
+    assert dirs[0][3] == "https://media.homemoviestube.com/cat64.jpg"
+
+
+def test_list_parses_rel_next_pagination(monkeypatch):
+    html = """
+    <div class="media-card video-card">
+        <a href="/videos/test.html"><img src="/thumb.jpg"/>Test</a>
+    </div>
+    <div class="prev-next-item">
+        <a class="page-link" href="https://www.homemoviestube.com?page=2" rel="next" aria-label="Next">Next</a>
+    </div>
+    <a class="page-link" href="https://www.homemoviestube.com?page=10">10</a>
+    """
+    dirs = []
+    monkeypatch.setattr(homemoviestube.utils, "getHtml", lambda *args, **kwargs: html)
+    monkeypatch.setattr(homemoviestube.site, "add_download_link", lambda *args, **kwargs: None)
+    monkeypatch.setattr(
+        homemoviestube.site,
+        "add_dir",
+        lambda name, url, mode, icon: dirs.append((name, url, mode, icon)),
+    )
+    monkeypatch.setattr(homemoviestube.utils, "eod", lambda: None)
+
+    homemoviestube.List("https://www.homemoviestube.com/")
+
+    assert len(dirs) == 1
+    assert "Next Page" in dirs[0][0]
+    assert dirs[0][1] == "https://www.homemoviestube.com?page=2"
+    assert dirs[0][2] == "List"

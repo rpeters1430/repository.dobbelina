@@ -131,3 +131,34 @@ def test_playvid_resolves_video_player_iframe(monkeypatch):
     mock_vp_class.return_value.play_from_link_to_resolve.assert_called_once_with(
         "https://tubexplayer.com/embed-abc123.html"
     )
+
+
+def test_playvid_unpacks_tubexplayer_fallback(monkeypatch):
+    played = []
+
+    class DummyVideoPlayer:
+        def __init__(self, *args, **kwargs):
+            class DummyResolve:
+                def HostedMediaFile(self, url):
+                    return False
+
+            self.resolveurl = DummyResolve()
+
+        def play_from_direct_link(self, url):
+            played.append(url)
+
+    html = '<div class="video-player"><iframe src="https://tubexplayer.com/embed-123.html"></iframe></div>'
+    iframe_html = '>eval(function(p,a,c,k,e,d)...)</script>'
+
+    def fake_get_html(url, *args, **kwargs):
+        if "tubexplayer" in url:
+            return iframe_html
+        return html
+
+    monkeypatch.setattr("resources.lib.jsunpack.unpack", lambda s: 'file:"https://s3.all4tube.com/stream.m3u8"')
+    monkeypatch.setattr(pornobae.utils, "VideoPlayer", DummyVideoPlayer)
+    monkeypatch.setattr(pornobae.utils, "getHtml", fake_get_html)
+
+    pornobae.Playvid("https://pornobae.com/sample/", "Sample")
+
+    assert played == ["https://s3.all4tube.com/stream.m3u8"]

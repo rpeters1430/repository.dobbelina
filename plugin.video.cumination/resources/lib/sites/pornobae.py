@@ -135,11 +135,43 @@ def Playvid(url, name, download=None):
         return
 
     soup = utils.parse_html(html)
-    iframe = soup.select_one(".video-player iframe[src], iframe[src*='tubexplayer']")
+    iframe = soup.select_one(".video-player iframe[src], iframe[src*='tubexplayer'], iframe[src*='embed']")
     if iframe:
         iframe_url = _absolute_url(utils.safe_get_attr(iframe, "src"))
         if iframe_url:
-            vp.play_from_link_to_resolve(iframe_url)
-            return
+            if vp.resolveurl.HostedMediaFile(iframe_url):
+                try:
+                    if vp.play_from_link_to_resolve(iframe_url):
+                        return
+                except Exception:
+                    pass
+
+            try:
+                raw = utils.getHtml(iframe_url, url)
+                if raw:
+                    import re
+                    from resources.lib import jsunpack
+
+                    match = re.search(
+                        r">(eval\(function\(p,a,c,k,e,d.*?)<\/script>",
+                        raw,
+                        re.DOTALL | re.IGNORECASE,
+                    )
+                    if match:
+                        unpacked = jsunpack.unpack(match.group(1))
+                        m = re.search(r'file:\s*["\']([^"\']+)["\']', unpacked)
+                        if m:
+                            vp.play_from_direct_link(m.group(1))
+                            return
+                    m_src = re.search(
+                        r"olplayer\.src\(\{.+?src:\s*['\"]([^'\"]+)['\"]",
+                        raw,
+                        re.DOTALL | re.IGNORECASE,
+                    )
+                    if m_src:
+                        vp.play_from_direct_link(m_src.group(1))
+                        return
+            except Exception:
+                pass
 
     vp.play_from_html(html, url)

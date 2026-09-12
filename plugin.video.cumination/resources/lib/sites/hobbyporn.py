@@ -109,12 +109,40 @@ def Playvid(url, name, download=None):
             r'<iframe.+?src="([^"]+)', re.DOTALL | re.IGNORECASE
         ).findall(videopage)
         if source:
-            if vp.resolveurl.HostedMediaFile(source[0]):
-                vp.play_from_link_to_resolve(source[0])
-            else:
-                vp.progress.close()
-                utils.notify("Oh Oh", "No playable Videos found")
-                return
+            embed_url = source[0]
+            if vp.resolveurl.HostedMediaFile(embed_url):
+                try:
+                    vp.play_from_link_to_resolve(embed_url)
+                    return
+                except Exception:
+                    pass
+
+            if "pornhub.com" in embed_url:
+                cookiehdr = {
+                    "Cookie": "accessAgeDisclaimerPH=1; accessAgeDisclaimerUK=1"
+                }
+                embed_html = utils.getHtml(embed_url, site.url, cookiehdr)
+                matches = re.findall(
+                    r',"videoUrl":"([^"]+)","quality":"([^"]+)"', embed_html
+                )
+                if matches:
+                    src_map = {q: u for u, q in matches}
+                    chosen = utils.prefquality(
+                        src_map,
+                        sort_by=lambda x: int(x) if x.isdigit() else 0,
+                        reverse=True,
+                    )
+                    if chosen:
+                        chosen = (
+                            chosen.replace(r"\/", "/")
+                            + "|Referer=https://www.pornhub.com/&Cookie=accessAgeDisclaimerPH=1;accessAgeDisclaimerUK=1&Origin=https://www.pornhub.com"
+                        )
+                        vp.play_from_direct_link(chosen)
+                        return
+
+            vp.progress.close()
+            utils.notify("Oh Oh", "No playable Videos found")
+            return
         else:
             vp.progress.close()
             utils.notify("Oh Oh", "No Videos found")

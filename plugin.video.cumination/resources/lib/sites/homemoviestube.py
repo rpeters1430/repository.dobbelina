@@ -71,21 +71,26 @@ def List(url):
         )
         site.add_download_link(name, videopage, "Playvid", img, name, duration=duration)
 
-    next_link = soup.select_one(".next a[href]")
+    next_link = soup.select_one(
+        "a[rel='next'], a[aria-label='Next'], .prev-next-item a[href], .next a[href]"
+    )
     if next_link:
         np = urllib_parse.urljoin(
             url, utils.safe_get_attr(next_link, "href", default="")
         )
-        curr_pg = utils.safe_get_text(soup.select_one(".current"), default="")
+        curr_pg = utils.safe_get_text(soup.select_one(".current, .active"), default="")
         last_pg = ""
-        for link in soup.select(".pagination a"):
+        for link in soup.select(".pagination a, a.page-link"):
             text = utils.safe_get_text(link, default="")
-            if text.isdigit():
+            if text.isdigit() and (not last_pg or int(text) > int(last_pg)):
                 last_pg = text
+        pg_info = (
+            " (Currently in Page {0} of {1})".format(curr_pg, last_pg)
+            if curr_pg and last_pg
+            else ""
+        )
         site.add_dir(
-            "[COLOR hotpink]Next Page[/COLOR] (Currently in Page {0} of {1})".format(
-                curr_pg, last_pg
-            ),
+            "[COLOR hotpink]Next Page[/COLOR]{}".format(pg_info),
             np,
             "List",
             site.img_next,
@@ -98,15 +103,22 @@ def Categories(url):
     cathtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(cathtml)
     entries = []
-    for item in soup.select(".category-item"):
+    for item in soup.select(".category-item, .channel-card"):
+        link = item if item.name == "a" else item.select_one("a[href]")
+        caturl = utils.safe_get_attr(link, "href", default="")
         img_tag = item.select_one("img")
-        img = utils.safe_get_attr(img_tag, "data-src", ["src"])
-        caturl = utils.safe_get_attr(item, "href", default="")
-        name = utils.cleantext(utils.safe_get_text(item, default=""))
+        img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+        name_tag = item.select_one(".channel-name") or link or item
+        name = utils.cleantext(utils.safe_get_text(name_tag, default=""))
+        badge = utils.safe_get_text(
+            item.select_one(".channel-count-badge, .badge"), default=""
+        )
+        if badge:
+            name += " [COLOR deeppink][{}][/COLOR]".format(badge)
         if not caturl or not name:
             continue
         entries.append((img, caturl, name))
-    entries = list(set(entries))
+    entries = list({e[1]: e for e in entries}.values())
     entries.sort(key=lambda x: x[2])
     for img, caturl, name in entries:
         caturl = urllib_parse.urljoin(site.url, caturl)

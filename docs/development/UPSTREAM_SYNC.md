@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-09-07
-**Last Sync**: 2026-09-07 - Reviewed upstream through 50f5c70a; manually ported the HomeMoviesTube listing/player and PornMZ player fixes, and verified the AnyBunny, BlendPorn, and XVideos changes were already covered.
+**Last Updated**: 2026-09-12
+**Last Sync**: 2026-09-12 - Reviewed upstream through 5a585018; ported the HomeMoviesTube pagination and channel-card categories, Reallifecam/camcaps resolveurl exception handling fallback, XVideos AI-generated contentUrl player fallback, HobbyPorn Pornhub embed player fallback, and integrated upstream's pornobae icon and tubexplayer jsunpack resolution.
 
 ---
 
@@ -18,6 +18,18 @@
 ---
 
 ## Sync Sessions
+
+### 2026-09-12 Porting Session
+Reviewed all 7 upstream commits merged after `50f5c70a` through `5a585018` using `sync_manager.py --report` and verified all affected sites.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `e1322430` | Fixed pagination and Categories | `manual` | 2026-09-12 | **HomeMoviesTube**: Ported pagination fix matching `a[rel='next']` / `a[aria-label='Next']` / `.prev-next-item` and ported the new `.channel-card` / `.channel-card-link` category layout with badge counts to the fork's BeautifulSoup parser. Added regression tests in `tests/sites/test_homemoviestube.py`; verified live with strict monitor (60 items, 64KB media stream). |
+| `892a905b` | Camcaps small fix player | `manual` | 2026-09-12 | **Camcaps / Reallifecam**: In `reallifecam.py` (which handles Camcaps in this fork), wrapped `vp.play_from_link_to_resolve(refurl)` in `try/except` so `resolveurl` failures cleanly fall back to embedded player scraping rather than raising unhandled exceptions. All 17 unit tests pass. |
+| `9ddb37f1` | Xvideos fixed player for AI generated | `manual` | 2026-09-12 | **XVideos**: Added `"contentUrl"` regex extraction fallback in `Playvid()` for AI-generated and schema-structured video pages lacking `html5player.setVideoHLS`. Added regression test in `tests/sites/test_xvideos.py`; all 11 unit tests pass. |
+| `1addc8ea` | hobbyporn fixed player | `manual` | 2026-09-12 | **HobbyPorn**: In `Playvid()`, added fallback resolution for embedded Pornhub iframes using age disclaimer cookies and `videoUrl` preference selection. Added regression test in `tests/sites/test_hobbyporn.py`; all 3 unit tests pass. |
+| `7994ee70`, `e617e070` (#1922) | pornobae new site #1922 | `manual` | 2026-09-12 | **PornoBae**: Checked out official icon `resources/images/pornobae.png` from upstream. Enhanced our fork's BeautifulSoup4 `pornobae.py` module with `jsunpack` and `olplayer` stream extraction fallback for embedded players (`tubexplayer`), added site profile to `config/site_profiles.json`, and added unit test coverage in `tests/sites/test_pornobae.py`. Strict live monitor passes (92 items, 64KB HLS media stream). |
+| `aaf2612a`, `4edc81ca`, `5a585018` | Merge PR #1969 / Various fixes | `skipped` | 2026-09-12 | Merge commits and changelog bumps combining the individually reviewed and ported commits above. |
 
 ### 2026-09-07 Porting Session
 Reviewed the site changes merged after upstream commit `868166e4` and live-tested every affected module with the strict site monitor.

@@ -346,8 +346,11 @@ def Playvid(url, name, download=None):
             refurl = refurl.replace("embed-", "")
 
         if vp.resolveurl.HostedMediaFile(refurl):
-            vp.play_from_link_to_resolve(refurl)
-            return
+            try:
+                vp.play_from_link_to_resolve(refurl)
+                return
+            except Exception as e:
+                utils.kodilog("Resolve failed: {}".format(e))
 
         refpage = _quiet_get_html(refurl, url)
         if isinstance(refpage, (list, tuple, set)):

@@ -490,6 +490,8 @@ def Playvid(url, name, download=None):
         match = re.search(r"html5player\.setVideoUrlHigh\('([^']+)", videopage)
     if not match:
         match = re.search(r"html5player\.setVideoUrlLow\('([^']+)", videopage)
+    if not match:
+        match = re.search(r'"contentUrl"\s*:\s*"([^"\n]+)"', videopage)
 
     if match:
         vp.play_from_direct_link(match.group(1))
