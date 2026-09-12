@@ -1,3 +1,12 @@
+[B]Version 1.1.476[/B]
+- feat(sites): port upstream fixes for homemoviestube, camcaps, xvideos, hobbyporn, and pornobae
+- fix: support function annotations in url_dispatcher and pass existing issues to strict triage
+- chore(renovate): remove update delays and consolidate dependency PRs
+- chore: update upstream sync and triage reports; enhance homemoviestube and pornmz site modules; add tests for new features
+- Merge pull request #378 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- Add unit tests for mylust, onlyjerk, and porno24 sites
+
 [B]Version 1.1.475[/B]
 - fix: support function annotations in url_dispatcher and pass existing issues to strict triage
 - chore(renovate): remove update delays and consolidate dependency PRs
