@@ -136,3 +136,18 @@ def test_two_recovery_passes_produces_close_action():
     assert req["action"] == "CLOSE"
     assert req["issue_number"] == "42"
     assert "2 consecutive healthy passes" in req["comment"]
+
+
+def test_closed_existing_issue_is_reopened_instead_of_duplicated():
+    latest, history = sample_latest_and_history(state=HealthState.BROKEN, sig="sig100")
+    existing = [{
+        "number": 42,
+        "title": "[Site Monitor] pornhub is broken",
+        "body": "<!-- strict-site-health:pornhub -->",
+        "state": "CLOSED",
+    }]
+
+    requests = generate_strict_triage_requests(latest, history, existing_issues=existing)
+
+    assert requests[0]["action"] == "CREATE_OR_REOPEN"
+    assert requests[0]["issue_number"] == 42

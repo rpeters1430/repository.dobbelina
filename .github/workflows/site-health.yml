@@ -156,10 +156,16 @@ jobs:
           if [ -f /tmp/site-health/strict_history.json ]; then PREVIOUS_HIST="--history-file /tmp/site-health/strict_history.json"; fi
           python scripts/strict_health_history.py strict-results/strict_site_*.json --out results ${PREVIOUS_HIST}
       - name: Generate strict triage requests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          gh issue list --state all --limit 1000 \
+            --json number,title,body,state \
+            > results/existing_site_monitor_issues.json
           python scripts/generate_strict_triage_requests.py \
             --latest results/strict_health_latest.json \
             --history results/strict_history.json \
+            --existing-issues results/existing_site_monitor_issues.json \
             --out results/strict_triage_requests.json
       - name: Ensure labels and execute triage
         env:

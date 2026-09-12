@@ -17,9 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 try:
-    from inspect import getargspec
-except ImportError:
     from inspect import getfullargspec as getargspec
+except ImportError:
+    from inspect import getargspec
 from resources.lib.basics import (
     addDir,
     addDownLink,
