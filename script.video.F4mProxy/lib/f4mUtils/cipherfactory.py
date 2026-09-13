@@ -20,9 +20,6 @@ if cryptomath.m2cryptoLoaded:
 
 if cryptomath.pycryptoLoaded:
     from tlslite.utils import pycrypto_aes
-    from tlslite.utils import pycrypto_rc4
-    from tlslite.utils import pycrypto_tripledes
-    tripleDESPresent = True
 
 # **************************************************************************
 # Factory Functions for AES
@@ -72,8 +69,6 @@ def createRC4(key, IV, implList=None):
     for impl in implList:
         if impl == "openssl" and cryptomath.m2cryptoLoaded:
             return openssl_rc4.new(key)
-        elif impl == "pycrypto" and cryptomath.pycryptoLoaded:
-            return pycrypto_rc4.new(key)
         elif impl == "python":
             return python_rc4.new(key)
     raise NotImplementedError()
@@ -97,6 +92,4 @@ def createTripleDES(key, IV, implList=None):
     for impl in implList:
         if impl == "openssl" and cryptomath.m2cryptoLoaded:
             return openssl_tripledes.new(key, 2, IV)
-        elif impl == "pycrypto" and cryptomath.pycryptoLoaded:
-            return pycrypto_tripledes.new(key, 2, IV)
     raise NotImplementedError()
