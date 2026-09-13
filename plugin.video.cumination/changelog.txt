@@ -1,3 +1,14 @@
+[B]Version 1.1.478[/B]
+- Merge pull request #392 from rpeters1430/imgbot
+- Merge pull request #393 from rpeters1430/copilot/fix-code-scanning-alerts
+- chore: align weak cipher disable docs and messages
+- fix: make rc4 disable path fail consistently
+- fix: block weak rc4 and 3des cipher creation paths
+- fix: skip disabled pycrypto rc4 and 3des backends in cipherfactory
+- fix: disable weak pycrypto RC4 and 3DES backends
+- Initial plan
+- [ImgBot] Optimize images
+
 [B]Version 1.1.477[/B]
 - Add unit tests for camcaps, camhub, and curbate sites, and validate logo files
 - fix(images): remove unused camwhorestv.jpg image file
