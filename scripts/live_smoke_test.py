@@ -697,6 +697,7 @@ def run_site_child(
     original_notify = utils.notify
     original_playvid = utils.playvid
     original_playvideo = getattr(utils, "playvideo", None)
+    original_video_player = getattr(utils, "VideoPlayer", None)
 
     def fake_add_dir(name, url, mode, iconimage=None, *args, **kwargs):
         page = args[0] if len(args) > 0 else kwargs.get("page")
@@ -810,6 +811,18 @@ def run_site_child(
 
         def bypass_hosters_single(self, videourl):
             return False
+
+        def _solve_doodstream(self, url):
+            if original_video_player and hasattr(original_video_player, "_solve_doodstream"):
+                try:
+                    res = original_video_player._solve_doodstream(self, url)
+                    if res:
+                        return res
+                except Exception:
+                    pass
+            play_calls.append(str(url))
+            return url
+
 
     def fake_playvid(videourl, name, *args, **kwargs):
         play_calls.append(str(videourl))
@@ -1489,6 +1502,8 @@ def run_site_child(
     utils.playvid = original_playvid
     if original_playvideo is not None:
         utils.playvideo = original_playvideo
+    if original_video_player is not None:
+        utils.VideoPlayer = original_video_player
     URL_Dispatcher._URL_Dispatcher__coerce = original_coerce
 
     main_status = step_results.get("main", {}).get("status")

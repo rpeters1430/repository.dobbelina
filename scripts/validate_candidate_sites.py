@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 import io
+import json
+import os
 import re
 import sys
 from dataclasses import dataclass
@@ -45,12 +47,11 @@ PARKING_PATTERNS = [
 BLOCK_PATTERNS = [
     "attention required",
     "checking your browser",
-    "cloudflare",
     "cf-chl",
-    "captcha",
     "access denied",
     "just a moment",
     "verify you are human",
+    "enable javascript and cookies to continue",
 ]
 
 VIDEO_LINK_PATTERNS = [
@@ -223,8 +224,56 @@ def likely_video_links(base_url: str, html: str) -> list[str]:
     return [url for _, url in scored_links]
 
 
-def fetch(session: requests.Session, url: str, timeout: int) -> requests.Response:
-    return session.get(url, timeout=timeout, allow_redirects=True)
+def _get_flaresolverr_url() -> str | None:
+    return os.environ.get("FLARESOLVERR_URL") or os.environ.get("FS_HOST")
+
+
+def fetch(session: requests.Session, url: str, timeout: int) -> tuple[int | None, str, str]:
+    """Fetch URL directly, falling back to FlareSolverr if blocked or configured.
+
+    Returns (http_status, final_url, html_text).
+    """
+    direct_status: int | None = None
+    direct_url: str = url
+    direct_html: str = ""
+    try:
+        response = session.get(url, timeout=timeout, allow_redirects=True)
+        direct_status = response.status_code
+        direct_url = response.url
+        direct_html = response.text or ""
+    except requests.RequestException:
+        pass
+
+    fs_url = _get_flaresolverr_url()
+    # If direct request succeeded and wasn't blocked/errored, return it
+    if direct_status and direct_status < 400:
+        if not text_has_any(direct_html[:120000], BLOCK_PATTERNS):
+            return direct_status, direct_url, direct_html
+
+    # Try FlareSolverr if configured
+    if fs_url:
+        try:
+            payload = {
+                "cmd": "request.get",
+                "url": url,
+                "maxTimeout": max(timeout * 1000, 30000),
+            }
+            fs_resp = requests.post(fs_url, json=payload, timeout=timeout + 20)
+            if fs_resp.status_code == 200:
+                data = fs_resp.json()
+                if data.get("status") == "ok":
+                    solution = data.get("solution", {})
+                    fs_status = solution.get("status") or 200
+                    fs_final_url = solution.get("url") or url
+                    fs_html = solution.get("response") or ""
+                    return fs_status, fs_final_url, fs_html
+        except Exception:
+            pass
+
+    if direct_status is not None:
+        return direct_status, direct_url, direct_html
+    raise requests.RequestException(f"Failed to fetch {url}")
+
 
 
 def validate_candidate(session: requests.Session, candidate: Candidate, timeout: int) -> Validation:
@@ -234,10 +283,7 @@ def validate_candidate(session: requests.Session, candidate: Candidate, timeout:
     html = ""
 
     try:
-        response = fetch(session, candidate.url, timeout)
-        final_url = response.url
-        http_status = response.status_code
-        html = response.text or ""
+        http_status, final_url, html = fetch(session, candidate.url, timeout)
     except requests.RequestException as exc:
         return Validation(
             candidate=candidate,
@@ -275,12 +321,12 @@ def validate_candidate(session: requests.Session, candidate: Candidate, timeout:
     if links:
         sampled_video_url = links[0]
         try:
-            video_response = fetch(session, sampled_video_url, timeout)
-            sampled_video_url = video_response.url
-            sampled_video_status = video_response.status_code
-            sampled_playback_signals = count_playback_signals(video_response.text or "")
-            if sampled_video_status >= 400:
+            sampled_video_status, sampled_video_url, video_html = fetch(session, sampled_video_url, timeout)
+            sampled_playback_signals = count_playback_signals(video_html)
+            if sampled_video_status and sampled_video_status >= 400:
                 reasons.append(f"sample video HTTP {sampled_video_status}")
+            if text_has_any(video_html[:120000], BLOCK_PATTERNS):
+                reasons.append("sample video anti-bot text detected")
         except requests.RequestException as exc:
             reasons.append(f"sample video request error: {exc.__class__.__name__}")
     else:

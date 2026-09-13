@@ -33,6 +33,13 @@ class Colors:
     BOLD = "\033[1m"
 
 
+try:
+    from PIL import Image
+    HAS_PIL = True
+except ImportError:
+    HAS_PIL = False
+
+
 def check_imagemagick():
     """Check if ImageMagick is available"""
     try:
@@ -124,8 +131,16 @@ def validate_logo_specs(logo_path, use_imagemagick=True):
             f"Suboptimal size: {size_kb:.1f} KB (optimal {OPTIMAL_FILE_SIZE_RANGE[0]}-{OPTIMAL_FILE_SIZE_RANGE[1]} KB)"
         )
 
-    # Check dimensions with ImageMagick if available
-    if use_imagemagick:
+    # Check dimensions with Pillow or ImageMagick
+    if HAS_PIL:
+        try:
+            with Image.open(logo_path) as img:
+                dims = f"{img.width}x{img.height}"
+                if dims != TARGET_SIZE:
+                    issues.append(f"Wrong dimensions: {dims} (should be {TARGET_SIZE})")
+        except Exception as e:
+            issues.append(f"Cannot read image with Pillow: {e}")
+    elif use_imagemagick:
         try:
             result = subprocess.run(
                 ["magick", "identify", "-format", "%wx%h", str(logo_path)],
@@ -150,12 +165,12 @@ def main():
     print(f"{Colors.BOLD}{'=' * 80}{Colors.ENDC}\n")
 
     has_imagemagick = check_imagemagick()
-    if not has_imagemagick:
+    if not HAS_PIL and not has_imagemagick:
         print(
-            f"{Colors.YELLOW}[WARNING]{Colors.ENDC} ImageMagick not found - dimension checks will be skipped"
+            f"{Colors.YELLOW}[WARNING]{Colors.ENDC} Neither Pillow nor ImageMagick found - dimension checks will be skipped"
         )
         print(
-            f"            Install from: https://imagemagick.org/script/download.php\n"
+            "            Install Pillow: pip install Pillow\n"
         )
 
     # Load data
@@ -163,9 +178,9 @@ def main():
     logos = get_logo_files()
 
     print(f"Total site modules: {len(sites)}")
-    print(f"Total logo files: {len([l for l in logos if not l.startswith('cum-')])}")
+    print(f"Total logo files: {len([name for name in logos if not name.startswith('cum-')])}")
     print(
-        f"Total cum-* utility icons: {len([l for l in logos if l.startswith('cum-')])}\n"
+        f"Total cum-* utility icons: {len([name for name in logos if name.startswith('cum-')])}\n"
     )
 
     # Validation checks
@@ -278,7 +293,7 @@ def main():
         print(f"    - Wrong dimensions: {dimension_issues}")
         print(f"    - File size issues: {wrong_size_count}")
 
-        print(f"\n  Top 15 logos with issues:")
+        print("\n  Top 15 logos with issues:")
         for logo_name, issues in list(spec_issues.items())[:15]:
             print(f"    {logo_name}:")
             for issue in issues:
@@ -330,13 +345,13 @@ def main():
 
     if errors:
         print(f"{Colors.RED}VALIDATION FAILED{Colors.ENDC}")
-        print(f"\nCritical issues must be fixed:")
+        print("\nCritical issues must be fixed:")
         print(f"  - {len(remote_sites)} sites use remote URLs (should be local files)")
         print(f"  - {len(missing_logos)} sites have missing logo files")
         return 1
     elif warnings:
         print(f"{Colors.YELLOW}VALIDATION PASSED WITH WARNINGS{Colors.ENDC}")
-        print(f"\nRecommended improvements:")
+        print("\nRecommended improvements:")
         print(f"  - {len(orphaned)} orphaned logos should be removed")
         print(f"  - {non_png_count} non-PNG logos should be converted")
         print(f"  - {dimension_issues} logos have wrong dimensions")
