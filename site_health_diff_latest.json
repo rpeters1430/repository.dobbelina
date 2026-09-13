@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-13T06:31:08.788937",
+    "sites_total": 200,
+    "pass": 193,
+    "warn": 3,
+    "fail": 2,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-09-11T06:27:13.776764",
     "sites_total": 197,
     "pass": 188,
@@ -8,22 +17,13 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-09-10T06:28:38.414286",
-    "sites_total": 197,
-    "pass": 188,
-    "warn": 4,
-    "fail": 2,
-    "error": 0,
-    "skip": 3
-  },
   "summary": {
     "new_failures": 0,
     "resolved_failures": 0,
     "persistent_failures": 2,
     "improved_sites": 2,
-    "regressions": 2,
-    "step_regressions": 2
+    "regressions": 0,
+    "step_regressions": 0
   },
   "new_failures": [],
   "resolved_failures": [],
@@ -49,65 +49,51 @@
   ],
   "improved_sites": [
     {
-      "site": "awmnet",
+      "site": "xoxo",
       "previous": "WARN",
       "current": "PASS"
     },
     {
-      "site": "porndish",
-      "previous": "SKIP",
+      "site": "xtapesla",
+      "previous": "WARN",
       "current": "PASS"
     }
   ],
-  "step_regressions": [
-    {
-      "site": "celebsroulette",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
-      "class": "BLOCKED",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "xtapesla",
-      "step": "play",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://xtapes.la/videos/massage-parlor-5-2026-full-movie/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
-    }
-  ],
+  "step_regressions": [],
   "deltas": [
     {
-      "site": "awmnet",
+      "site": "camcaps",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "camhub",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "curbate",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "xoxo",
       "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "celebsroulette",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "porndish",
-      "previous": "SKIP",
+      "site": "xtapesla",
+      "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "xtapesla",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
       "detail": ""
     }
   ]
