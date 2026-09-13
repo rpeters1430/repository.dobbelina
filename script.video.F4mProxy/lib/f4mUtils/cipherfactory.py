@@ -50,8 +50,8 @@ def createRC4(key, IV, implList=None):
     @type IV: object
     @param IV: Ignored, whatever it is.
 
-    @rtype: L{tlslite.utils.RC4}
-    @return: An RC4 object.
+    RC4 is intentionally disabled because it is cryptographically weak.
+    This function always raises NotImplementedError.
     """
     raise NotImplementedError("RC4 is disabled because it is cryptographically weak")
 
@@ -65,7 +65,7 @@ def createTripleDES(key, IV, implList=None):
     @type IV: str
     @param IV: An 8 byte string
 
-    @rtype: L{tlslite.utils.TripleDES}
-    @return: A 3DES object.
+    3DES is intentionally disabled because it is cryptographically weak.
+    This function always raises NotImplementedError.
     """
     raise NotImplementedError("3DES is disabled because it is cryptographically weak")
