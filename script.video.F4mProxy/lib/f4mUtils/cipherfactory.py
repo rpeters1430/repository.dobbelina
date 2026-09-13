@@ -53,8 +53,6 @@ def createRC4(key, IV, implList=None):
     @rtype: L{tlslite.utils.RC4}
     @return: An RC4 object.
     """
-    if len(IV) != 0:
-        raise AssertionError()
     raise NotImplementedError("RC4 is disabled because it is cryptographically weak")
 
 #Create a new TripleDES instance
