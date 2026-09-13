@@ -3,26 +3,15 @@
 
 """Factory functions for symmetric cryptography."""
 
-import os
-
 from tlslite.utils import python_aes
-from tlslite.utils import python_rc4
 
 from tlslite.utils import cryptomath
 
-tripleDESPresent = False
-
 if cryptomath.m2cryptoLoaded:
     from tlslite.utils import openssl_aes
-    from tlslite.utils import openssl_rc4
-    from tlslite.utils import openssl_tripledes
-    tripleDESPresent = True
 
 if cryptomath.pycryptoLoaded:
     from tlslite.utils import pycrypto_aes
-    from tlslite.utils import pycrypto_rc4
-    from tlslite.utils import pycrypto_tripledes
-    tripleDESPresent = True
 
 # **************************************************************************
 # Factory Functions for AES
@@ -61,22 +50,10 @@ def createRC4(key, IV, implList=None):
     @type IV: object
     @param IV: Ignored, whatever it is.
 
-    @rtype: L{tlslite.utils.RC4}
-    @return: An RC4 object.
+    RC4 is intentionally disabled because it is cryptographically weak.
+    This function always raises NotImplementedError.
     """
-    if implList == None:
-        implList = ["openssl", "pycrypto", "python"]
-
-    if len(IV) != 0:
-        raise AssertionError()
-    for impl in implList:
-        if impl == "openssl" and cryptomath.m2cryptoLoaded:
-            return openssl_rc4.new(key)
-        elif impl == "pycrypto" and cryptomath.pycryptoLoaded:
-            return pycrypto_rc4.new(key)
-        elif impl == "python":
-            return python_rc4.new(key)
-    raise NotImplementedError()
+    raise NotImplementedError("RC4 is disabled because it is cryptographically weak")
 
 #Create a new TripleDES instance
 def createTripleDES(key, IV, implList=None):
@@ -88,15 +65,7 @@ def createTripleDES(key, IV, implList=None):
     @type IV: str
     @param IV: An 8 byte string
 
-    @rtype: L{tlslite.utils.TripleDES}
-    @return: A 3DES object.
+    3DES is intentionally disabled because it is cryptographically weak.
+    This function always raises NotImplementedError.
     """
-    if implList == None:
-        implList = ["openssl", "pycrypto"]
-
-    for impl in implList:
-        if impl == "openssl" and cryptomath.m2cryptoLoaded:
-            return openssl_tripledes.new(key, 2, IV)
-        elif impl == "pycrypto" and cryptomath.pycryptoLoaded:
-            return pycrypto_tripledes.new(key, 2, IV)
-    raise NotImplementedError()
+    raise NotImplementedError("3DES is disabled because it is cryptographically weak")
