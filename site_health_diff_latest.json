@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-14T06:33:38.727593",
+    "sites_total": 200,
+    "pass": 191,
+    "warn": 4,
+    "fail": 2,
+    "error": 0,
+    "skip": 3
+  },
+  "previous": {
     "generated": "2026-09-13T06:31:08.788937",
     "sites_total": 200,
     "pass": 193,
@@ -8,22 +17,13 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-09-11T06:27:13.776764",
-    "sites_total": 197,
-    "pass": 188,
-    "warn": 5,
-    "fail": 2,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
     "new_failures": 0,
     "resolved_failures": 0,
     "persistent_failures": 2,
-    "improved_sites": 2,
-    "regressions": 0,
-    "step_regressions": 0
+    "improved_sites": 0,
+    "regressions": 2,
+    "step_regressions": 1
   },
   "new_failures": [],
   "resolved_failures": [],
@@ -47,53 +47,32 @@
       "stability_score": 1.0
     }
   ],
-  "improved_sites": [
+  "improved_sites": [],
+  "step_regressions": [
     {
       "site": "xoxo",
-      "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "xtapesla",
-      "previous": "WARN",
-      "current": "PASS"
+      "step": "play",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "ValueError: No videolink found!",
+      "class": "CODE",
+      "is_flaky": false,
+      "stability_score": 1.0
     }
   ],
-  "step_regressions": [],
   "deltas": [
     {
-      "site": "camcaps",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "camhub",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "curbate",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
+      "site": "spankbang",
+      "previous": "PASS",
+      "current": "SKIP",
+      "kind": "regression",
       "detail": ""
     },
     {
       "site": "xoxo",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "xtapesla",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
       "detail": ""
     }
   ]
