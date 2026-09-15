@@ -5,8 +5,8 @@
 
 ## Snapshot
 
-- Current: `PASS 191` | `WARN 4` | `FAIL 2` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 193` | `WARN 3` | `FAIL 2` | `ERROR 0` | `SKIP 2`
+- Current: `PASS 190` | `WARN 5` | `FAIL 2` | `ERROR 0` | `SKIP 3`
+- Previous: `PASS 191` | `WARN 4` | `FAIL 2` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
@@ -23,4 +23,8 @@
 
 ## Step Regressions
 
-- **xoxo** `play`: `SKIP -> FAIL` (CODE) | ValueError: No videolink found!
+- **awmnet** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
+
+## Improvements
+
+- **spankbang**: `SKIP -> PASS`

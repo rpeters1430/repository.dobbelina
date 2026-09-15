@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-15T06:29:19.727896",
+    "sites_total": 200,
+    "pass": 190,
+    "warn": 5,
+    "fail": 2,
+    "error": 0,
+    "skip": 3
+  },
+  "previous": {
     "generated": "2026-09-14T06:33:38.727593",
     "sites_total": 200,
     "pass": 191,
@@ -8,20 +17,11 @@
     "error": 0,
     "skip": 3
   },
-  "previous": {
-    "generated": "2026-09-13T06:31:08.788937",
-    "sites_total": 200,
-    "pass": 193,
-    "warn": 3,
-    "fail": 2,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
     "new_failures": 0,
     "resolved_failures": 0,
     "persistent_failures": 2,
-    "improved_sites": 0,
+    "improved_sites": 1,
     "regressions": 2,
     "step_regressions": 1
   },
@@ -47,32 +47,45 @@
       "stability_score": 1.0
     }
   ],
-  "improved_sites": [],
+  "improved_sites": [
+    {
+      "site": "spankbang",
+      "previous": "SKIP",
+      "current": "PASS"
+    }
+  ],
   "step_regressions": [
     {
-      "site": "xoxo",
-      "step": "play",
+      "site": "awmnet",
+      "step": "search",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "ValueError: No videolink found!",
-      "class": "CODE",
+      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
+      "class": "BLOCKED",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "spankbang",
+      "site": "awmnet",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "longvideos",
       "previous": "PASS",
       "current": "SKIP",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "xoxo",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
+      "site": "spankbang",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
