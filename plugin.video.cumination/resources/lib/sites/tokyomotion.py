@@ -31,9 +31,8 @@ site = AdultSite(
     category="JAV & Asian",
 )
 
-# Use local artwork for listing items to avoid heavy remote thumb fetches that can
-# destabilize some Kodi builds/devices on this site.
-USE_REMOTE_THUMBS = False
+# Enable remote thumbnails for listing items.
+USE_REMOTE_THUMBS = True
 
 
 def _normalize_thumb(img):

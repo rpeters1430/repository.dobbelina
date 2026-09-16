@@ -54,12 +54,16 @@ def List(url):
         link = item.select_one("a[href]")
         if not link:
             continue
-        videopage = urllib_parse.urljoin(site.url, utils.safe_get_attr(link, "href"))
+        href = utils.safe_get_attr(link, "href")
+        if not href or href == "#" or "/videos/" not in href:
+            continue
+        videopage = urllib_parse.urljoin(site.url, href)
         name = utils.cleantext(utils.safe_get_attr(link, "title") or utils.safe_get_text(link))
         img_tag = item.select_one("img")
         img = utils.safe_get_attr(img_tag, "data-webp", ["data-original", "src"]) if img_tag else ""
-        if img:
-            img = urllib_parse.urljoin(site.url, img)
+        if not img:
+            continue
+        img = urllib_parse.urljoin(site.url, img)
         duration = utils.safe_get_text(item.select_one(".duration"), default="")
         site.add_download_link(name, videopage, "Playvid", img, name, duration=duration)
 

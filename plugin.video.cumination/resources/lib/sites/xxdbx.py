@@ -75,8 +75,11 @@ def List(url):
 
         img_tag = v_div.select_one("img[data-src], img[src]")
         img = utils.safe_get_attr(img_tag, "data-src", ["src"], default="")
-        if img and img.startswith("//"):
-            img = "https:" + img
+        if img:
+            if img.startswith("//"):
+                img = "https:" + img
+            elif img.startswith("/"):
+                img = urllib_parse.urljoin(site.url, img)
 
         duration_elem = v_div.select_one(".v_dur")
         duration = utils.safe_get_text(duration_elem, default="")

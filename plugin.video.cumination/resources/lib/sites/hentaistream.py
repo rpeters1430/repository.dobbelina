@@ -71,8 +71,13 @@ def List(url):
         videopage = utils.safe_get_attr(link_tag, "href")
         name = utils.safe_get_attr(link_tag, "title") or utils.safe_get_text(link_tag)
 
+        if not videopage or "/adulgames/" in videopage:
+            continue
+
         img_tag = item.select_one("div.postimg img")
         img = utils.safe_get_attr(img_tag, "src")
+        if img and "adulfor" in img:
+            continue
 
         if name and videopage:
             name = utils.cleantext(name)

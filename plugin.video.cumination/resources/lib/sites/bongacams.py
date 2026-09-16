@@ -43,13 +43,12 @@ def Main():
         'Playvid_proxy': 'Proxy',
         'Playvid_classic': 'Classic'
     }.get(player)
-    site.add_download_link(
+    site.add_dir(
         'Current player: [COLOR fuchsia][B]{0}[/B][/COLOR] - [COLOR red][B]Change[/B][/COLOR]'.format(pretty_name),
         site.url,
         'Playvid_change',
-        '',
-        '',
-        noDownload=True
+        site.image,
+        Folder=False,
     )
     female = utils.addon.getSetting("chatfemale") == "true"
     male = utils.addon.getSetting("chatmale") == "true"
@@ -66,58 +65,58 @@ def Main():
         "Hour's TOP chat rooms",
         "https://bongacams.com/contest/top-room?cp=1",
         "List2",
-        "",
+        site.img_cat,
         "",
     )
     bu = "https://tools.bongacash.com/promo.php?c=226355&type=api&api_type=json&categories[]="
     if female:
         site.add_dir(
-            "[COLOR hotpink]Female[/COLOR]", "{0}female".format(bu), "List", "", ""
+            "[COLOR hotpink]Female[/COLOR]", "{0}female".format(bu), "List", site.img_cat, ""
         )
         site.add_dir(
             "[COLOR yellow]Online Favorites[/COLOR]",
             "https://tools.bongacash.com/promo.php?c=226355&type=api&api_type=json",
             "onlineFav",
-            "",
+            site.img_cat,
             "",
         )
         site.add_dir(
             "  International - Queen of Queens",
             site.url + "contest/queen-of-queens-international",
             "List3",
-            "",
+            site.img_cat,
             "",
         )
         site.add_dir(
             "  North America & Western Europe's - Queen of Queens",
             site.url + "contest/queen-of-queens",
             "List3",
-            "",
+            site.img_cat,
             "",
         )
         site.add_dir(
             "  Latin American - Queen of Queens",
             site.url + "contest/queen-of-queens-latin-america",
             "List3",
-            "",
+            site.img_cat,
             "",
         )
     if couple:
         site.add_dir(
-            "[COLOR hotpink]Couples[/COLOR]", "{0}couples".format(bu), "List", "", ""
+            "[COLOR hotpink]Couples[/COLOR]", "{0}couples".format(bu), "List", site.img_cat, ""
         )
         site.add_dir(
-            "  Couples' Top 50", site.url + "contest/top-couple-models", "List3", "", ""
+            "  Couples' Top 50", site.url + "contest/top-couple-models", "List3", site.img_cat, ""
         )
     if male:
         site.add_dir(
-            "[COLOR hotpink]Male[/COLOR]", "{0}male".format(bu), "List", "", ""
+            "[COLOR hotpink]Male[/COLOR]", "{0}male".format(bu), "List", site.img_cat, ""
         )
         site.add_dir(
             "  Guys and Trans' Top 10",
             site.url + "contest/top-male-models",
             "List3",
-            "",
+            site.img_cat,
             "",
         )
     if trans:
@@ -125,14 +124,14 @@ def Main():
             "[COLOR hotpink]Transsexual[/COLOR]",
             "{0}transsexual".format(bu),
             "List",
-            "",
+            site.img_cat,
             "",
         )
         site.add_dir(
             "  Guys and Trans' Top 10",
             site.url + "contest/top-male-models",
             "List3",
-            "",
+            site.img_cat,
             "",
         )
 

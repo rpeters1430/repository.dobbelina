@@ -74,8 +74,8 @@ def List(url, page=1):
                 link, "title", default=utils.safe_get_text(link, default="")
             )
         )
-        img_tag = item.select_one("[data-original]")
-        img = utils.safe_get_attr(img_tag, "data-original", ["src"])
+        img_tag = item.select_one("img")
+        img = utils.get_thumbnail(img_tag)
         if img:
             if img.startswith("//"):
                 img = "https:" + img

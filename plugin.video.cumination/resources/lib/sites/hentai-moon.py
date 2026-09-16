@@ -98,14 +98,18 @@ def List(url):
         if not name or not videopage:
             continue
 
-        img = thumbnails.fix_img(
-            utils.safe_get_attr(
-                link.select_one("img"),
-                "data-original",
-                fallback_attrs=["src"],
-                default="",
-            )
-        )
+        img = ""
+        for img_tag in (link.select("img") or card.select("img")):
+            thumb = utils.get_thumbnail(img_tag)
+            if thumb and not thumb.startswith("data:"):
+                img = thumb
+                break
+        if img:
+            if img.startswith("//"):
+                img = "https:" + img
+            elif img.startswith("/"):
+                img = urllib_parse.urljoin(site.url, img)
+            img = thumbnails.fix_img(img)
         duration = utils.safe_get_text(link.select_one(".duration"), default="")
         hd = " [COLOR orange]HD[/COLOR]" if link.select_one(".is_hd") else ""
         contextmenu = _lookup_context_menu(videopage)

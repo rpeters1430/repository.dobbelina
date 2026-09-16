@@ -593,6 +593,7 @@ def run_site_child(
     timeout_s: int = 30,
     keyword: str = "latina",
     strict: bool = False,
+    force_steps: bool = False,
 ) -> dict[str, Any]:
     if steps is None:
         steps = ["main", "list", "categories", "search", "play"]
@@ -659,6 +660,8 @@ def run_site_child(
     _fs_globally_available = os.environ.get("FLARESOLVERR_AVAILABLE", "1") != "0"
 
     def supports_step(step_name: str) -> bool:
+        if force_steps:
+            return True
         if strict and step_name in strict_contract.get("required_stages", []):
             return True
         return profile_supports.get(step_name, True)
@@ -676,7 +679,7 @@ def run_site_child(
     play_calls: list[str] = []
     notify_calls: list[str] = []
 
-    def record_sample(name, url, mode, icon="", desc=""):
+    def record_sample(name, url, mode, icon="", desc="", item_type="video"):
         name_str = str(name or "")
         url_str = str(url or "")
         if name_str and url_str:
@@ -687,6 +690,7 @@ def run_site_child(
                     "mode": str(mode or ""),
                     "icon": str(icon or ""),
                     "desc": str(desc or ""),
+                    "item_type": item_type,
                 })
 
     original_add_dir = basics.addDir
@@ -715,7 +719,7 @@ def run_site_child(
             "keyword": "" if keyword_val is None else str(keyword_val),
         }
         captured_dirs.append(item)
-        record_sample(name, url, mode, iconimage)
+        record_sample(name, url, mode, iconimage, item_type="dir")
         return True
 
     def fake_add_down(name, url, mode, iconimage, *args, **kwargs):
@@ -735,7 +739,7 @@ def run_site_child(
                 "quality": str(kwargs.get("quality", "") or ""),
             }
         )
-        record_sample(name, url, mode, iconimage, desc)
+        record_sample(name, url, mode, iconimage, desc, item_type="video")
         return True
 
     def fake_notify(*args, **kwargs):
@@ -1897,6 +1901,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Fail before running sites if the configured FlareSolverr API is unavailable",
     )
+    parser.add_argument(
+        "--force-steps",
+        action="store_true",
+        help="Ignore site profile step disables (e.g. run list even if disabled in profile)",
+    )
     return parser.parse_args()
 
 
@@ -1909,7 +1918,13 @@ def main() -> int:
     args = parse_args()
     if args.run_site:
         steps = [s.strip() for s in args.steps.split(",") if s.strip()]
-        result = run_site_child(args.run_site, steps, args.timeout, args.keyword)
+        result = run_site_child(
+            args.run_site,
+            steps,
+            args.timeout,
+            args.keyword,
+            force_steps=args.force_steps,
+        )
         sys.stdout.write(json.dumps(result))
         return 0
     return run_parent(args)

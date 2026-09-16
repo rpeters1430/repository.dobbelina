@@ -73,6 +73,8 @@ def List(url):
             img = utils.get_thumbnail(img_tag)
             if img and img.startswith("/"):
                 img = urllib_parse.urljoin(site.url, img)
+            if img and not img.startswith("data:"):
+                img = img + "|Referer=" + site.url
 
             name = utils.cleantext(name)
             site.add_download_link(name, videopage, "Playvid", img, name)

@@ -66,13 +66,12 @@ def Main():
         'Playvid_proxy': 'Proxy',
         'Playvid_classic': 'Classic'
     }.get(player)
-    site.add_download_link(
+    site.add_dir(
         'Current player: [COLOR fuchsia][B]{0}[/B][/COLOR] - [COLOR red][B]Change[/B][/COLOR]'.format(pretty_name),
         site.url,
         'Playvid_change',
-        '',
-        '',
-        noDownload=True
+        site.image,
+        Folder=False,
     )
     female = utils.addon.getSetting("chatfemale") == "true"
     male = utils.addon.getSetting("chatmale") == "true"

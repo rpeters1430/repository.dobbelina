@@ -128,6 +128,10 @@ def List(url):
         label += f"{title} [COLOR yellow][{views}][/COLOR]"
         
         if img:
+            if img.startswith("//"):
+                img = "https:" + img
+            elif img.startswith("/"):
+                img = urllib_parse.urljoin(site.url, img)
             parts = img.rstrip("/").split("/")
             img_preview = "/".join(parts[:-2]) + "/preview.jpg"
         else:
@@ -232,6 +236,11 @@ def Categories(url):
         
         img_tag = anchor.select_one('img')
         cat_img = img_tag.get('src') if img_tag else ""
+        if cat_img:
+            if cat_img.startswith("//"):
+                cat_img = "https:" + cat_img
+            elif cat_img.startswith("/"):
+                cat_img = urllib_parse.urljoin(site.url, cat_img)
         
         count_tag = anchor.select_one('.videos')
         cat_count = count_tag.get_text().strip() if count_tag else ""
@@ -264,6 +273,11 @@ def Models(url):
         
         img_tag = anchor.select_one('img')
         cat_img = img_tag.get('src') if img_tag else ""
+        if cat_img:
+            if cat_img.startswith("//"):
+                cat_img = "https:" + cat_img
+            elif cat_img.startswith("/"):
+                cat_img = urllib_parse.urljoin(site.url, cat_img)
         
         count_tag = anchor.select_one('.videos')
         cat_count = count_tag.get_text().strip() if count_tag else ""

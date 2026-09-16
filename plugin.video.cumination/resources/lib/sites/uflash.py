@@ -51,12 +51,19 @@ def List(url):
 
     soup = utils.parse_html(html)
     for item in soup.select("li"):
-        link = item.select_one("a[href]")
+        link = item.select_one("a[href*='/video/']") or item.select_one("a[href]")
         videopage = utils.safe_get_attr(link, "href", default="")
-        if not videopage or "adultfriendfinder.com" in videopage:
+        if not videopage or "adultfriendfinder.com" in videopage or videopage.strip() == "#":
+            continue
+        if "/video/" not in videopage:
             continue
         img_tag = item.select_one("img")
+        if not img_tag:
+            continue
         img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+        if img:
+            img = urllib_parse.urljoin(site.url, img)
+        videopage = urllib_parse.urljoin(site.url, videopage)
         name = utils.safe_get_attr(img_tag, "alt", default=utils.safe_get_text(link))
         duration = utils.safe_get_text(item.select_one(".duration"), default="")
         site.add_download_link(

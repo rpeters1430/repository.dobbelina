@@ -148,15 +148,20 @@ def List(url):
             name = utils.cleantext(name)
             name = private + name
 
-            # Get image - try both original and cover src
-            img = ""
-            img_tag = item.select_one("img[original]")
-            if img_tag:
-                img = utils.safe_get_attr(img_tag, "original")
-            if not img:
-                img_tag = item.select_one("img.cover[src]")
-                if img_tag:
-                    img = utils.safe_get_attr(img_tag, "src")
+            # Get image - prefer data-original, original, or utils.get_thumbnail
+            img_tag = item.select_one("img")
+            img = utils.get_thumbnail(img_tag)
+            if not img and img_tag:
+                img = utils.safe_get_attr(
+                    img_tag, "data-original", ["original", "data-src", "src"]
+                )
+            if img and img.startswith("data:"):
+                img = ""
+            if img:
+                if img.startswith("//"):
+                    img = "https:" + img
+                elif img.startswith("/"):
+                    img = urllib_parse.urljoin(site.url, img)
 
             # Check for HD badge
             hd = (
@@ -351,8 +356,15 @@ def Categories(url):
                 continue
 
             # Get image
-            img_tag = link.select_one("img[src]")
-            img = utils.safe_get_attr(img_tag, "src", ["data-src"]) if img_tag else ""
+            img_tag = link.select_one("img")
+            img = utils.get_thumbnail(img_tag) if img_tag else ""
+            if not img and img_tag:
+                img = utils.safe_get_attr(img_tag, "src", ["data-src"])
+            if img:
+                if img.startswith("//"):
+                    img = "https:" + img
+                elif img.startswith("/"):
+                    img = urllib_parse.urljoin(site.url, img)
 
             # Get video count
             videos_elem = link.select_one('[class*="videos"]')

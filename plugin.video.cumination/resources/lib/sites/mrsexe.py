@@ -38,7 +38,7 @@ progress = utils.progress
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
-        "[COLOR hotpink]Classiques[/COLOR]", site.url + "classiques/", "List", "", ""
+        "[COLOR hotpink]Classiques[/COLOR]", site.url + "classiques/", "List", site.img_cat
     )
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]",
@@ -49,7 +49,7 @@ def Main():
     site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]", site.url, "Categories", site.img_cat
     )
-    site.add_dir("[COLOR hotpink]Stars[/COLOR]", site.url + "filles/", "Stars", "", "")
+    site.add_dir("[COLOR hotpink]Stars[/COLOR]", site.url + "filles/", "Stars", site.img_cat)
     List(site.url)
     utils.eod()
 
@@ -80,9 +80,13 @@ def List(url):
         duration = utils.safe_get_text(
             item.select_one(".duration, .thumb-duration, .time"), default=""
         )
-        name = utils.cleantext(
-            utils.safe_get_attr(link, "title") or utils.safe_get_text(link, default="")
-        )
+        name_tag = item.select_one(".infos h5, h5, .title")
+        name = utils.safe_get_text(name_tag) if name_tag else ""
+        if not name:
+            name = utils.safe_get_attr(link, "title") or utils.safe_get_text(link, default="")
+        name = utils.cleantext(name)
+        if not name:
+            continue
         quality = "hd" if "hd" in (item.get("class") or []) else ""
         site.add_download_link(
             name, videopage, "Playvid", img, name, duration=duration, quality=quality

@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from six.moves import urllib_parse
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 
@@ -65,35 +66,49 @@ def List(url):
     soup = utils.parse_html(listhtml)
     cookiestring = get_cookies()
 
-    posts = soup.select('.post, [class*="post"]')
+    posts = [
+        p
+        for p in soup.select('.post, [class*="post"]')
+        if "menu-item" not in p.get("class", []) and "posts" not in p.get("class", [])
+    ]
     for post in posts:
         try:
-            link = post.select_one("a[href]")
+            link = post.select_one("a.img[href], a[href][title]") or post.select_one("a[href]")
             if not link:
                 continue
             videopage = utils.safe_get_attr(link, "href")
             if not videopage:
                 continue
 
-            name = utils.safe_get_text(link, "").strip()
+            name = (
+                utils.safe_get_attr(link, "title")
+                or utils.safe_get_text(post.select_one("h3, .title, a[rel='bookmark']"))
+                or utils.safe_get_text(link, "")
+            ).strip()
             name = utils.cleantext(name)
             if not name:
                 continue
 
-            img_tag = post.select_one("img[data-original], img[src]")
-            img = ""
-            if img_tag:
+            img_tag = post.select_one("img")
+            img = utils.get_thumbnail(img_tag)
+            if not img and img_tag:
                 img = utils.safe_get_attr(img_tag, "data-original", ["src"])
-                if img:
-                    img = (
-                        img
-                        + "|Referer="
-                        + url
-                        + "&Cookie="
-                        + cookiestring
-                        + "&User-Agent="
-                        + utils.USER_AGENT
-                    )
+            if img and img.startswith("data:"):
+                img = ""
+            if img:
+                if img.startswith("//"):
+                    img = "https:" + img
+                elif img.startswith("/"):
+                    img = urllib_parse.urljoin(site.url, img)
+                img = (
+                    img
+                    + "|Referer="
+                    + url
+                    + "&Cookie="
+                    + cookiestring
+                    + "&User-Agent="
+                    + utils.USER_AGENT
+                )
 
             site.add_download_link(name, videopage, "Playvid", img, name)
         except Exception as exc:

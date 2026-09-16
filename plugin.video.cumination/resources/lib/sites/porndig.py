@@ -415,8 +415,15 @@ def List(channel, section, page=0):
                     hd = "[COLOR orange]HD[/COLOR]"
 
             # Get image
-            img_tag = section_item.select_one("img")
+            img_tag = section_item.select_one(
+                "img.thumb_preview, img[data-src], img:not(.img_18plus)"
+            ) or section_item.select_one("img")
             img = utils.get_thumbnail(img_tag)
+            if img:
+                if img.startswith("//"):
+                    img = "https:" + img
+                elif img.startswith("/"):
+                    img = urllib_parse.urljoin(site.url, img)
 
             # Get duration
             duration_tag = section_item.select_one('.duration, [class*="time"], [class*="dur"]')

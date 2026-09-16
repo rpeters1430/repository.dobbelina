@@ -37,7 +37,9 @@ def _normalize_thumb(url):
     if not url:
         return ""
     if url.startswith("//"):
-        return "https:" + url
+        url = "https:" + url
+    if url and not url.startswith("data:"):
+        url = url + "|Referer=" + site.url
     return url
 
 
@@ -233,8 +235,7 @@ def Categories(url):
             # Extract thumbnail
             img_tag = category.select_one("img")
             img = utils.get_thumbnail(img_tag)
-            if img and img.startswith("//"):
-                img = "https:" + img
+            img = _normalize_thumb(img)
 
             entries.append((name, catpage, img, name.lower()))
 

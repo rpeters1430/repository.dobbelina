@@ -35,6 +35,16 @@ site = AdultSite(
 )
 
 
+def _fix_url(url):
+    if not url:
+        return ""
+    if url.startswith("//"):
+        return "https:" + url
+    if url.startswith("/"):
+        return urllib_parse.urljoin(site.url, url)
+    return url
+
+
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
@@ -68,8 +78,10 @@ def List(url):
             img_tag = card.select_one("img[data-original], img[src]")
             if not img_tag:
                 continue
-            img = utils.safe_get_attr(
-                img_tag, "data-webp", ["data-original", "data-src", "src"]
+            img = _fix_url(
+                utils.safe_get_attr(
+                    img_tag, "data-webp", ["data-original", "data-src", "src"]
+                )
             )
 
             title_elem = card.select_one("a[title], .title, img[alt]")
@@ -181,7 +193,7 @@ def Categories(url):
 
             img_tag = card.select_one("img[data-original], img[src]")
             img = (
-                utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"])
+                _fix_url(utils.safe_get_attr(img_tag, "data-original", ["data-src", "src"]))
                 if img_tag
                 else ""
             )
@@ -230,9 +242,7 @@ def Playlists(url):
             img_tag = card.select_one("img[data-src], img[src]")
             img = ""
             if img_tag:
-                img = utils.safe_get_attr(img_tag, "data-src", ["src"])
-                if img and img.startswith("/"):
-                    img = site.url[:-1] + img
+                img = _fix_url(utils.safe_get_attr(img_tag, "data-src", ["src"]))
 
             name = utils.safe_get_text(link, "").strip()
             name = utils.cleantext(name)

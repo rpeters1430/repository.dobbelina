@@ -74,8 +74,8 @@ def List(url):
         utils.eod()
         return
 
-    for item in soup.select(".thumb-main-titre, .thumb-block"):
-        link = item.select_one("a[href][title]") or item.find_parent("a") or item.select_one("a")
+    for item in soup.select(".thumb-main, .thumb-block, .thumb-main-titre"):
+        link = item.select_one(".thumb-main-titre a[href], a[href][title]") or item.select_one("a[href]") or item.find_parent("a")
         if not link:
             continue
 
@@ -89,9 +89,14 @@ def List(url):
         if not name:
             continue
 
-        # Look for img inside link or nearby
+        # Look for img inside item or link
         img_tag = item.select_one("img") or link.select_one("img")
         img = utils.get_thumbnail(img_tag)
+        if img:
+            if img.startswith("//"):
+                img = "https:" + img
+            elif img.startswith("/"):
+                img = urllib_parse.urljoin(site.url, img)
 
         info = item.select_one(".thumb-info")
         info_text = utils.safe_get_text(info, default="").lower()

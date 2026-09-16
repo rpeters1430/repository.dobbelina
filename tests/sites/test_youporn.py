@@ -180,7 +180,10 @@ def test_list_skips_short_videos_and_uses_thumbnail_fallback(monkeypatch):
     assert len(downloads) == 1
     assert downloads[0]["name"] == "Keep this one"
     assert downloads[0]["url"] == "https://www.youporn.com/watch/222/"
-    assert downloads[0]["icon"] == "https://cdn.example.com/thumb-222.jpg"
+    assert (
+        downloads[0]["icon"]
+        == "https://cdn.example.com/thumb-222.jpg|Referer=https://www.youporn.com/"
+    )
 
 
 def test_list_prefers_poster_thumbnail_over_preview_video(monkeypatch):
@@ -223,5 +226,7 @@ def test_list_prefers_poster_thumbnail_over_preview_video(monkeypatch):
 
     youporn.List("https://www.youporn.com/browse/time/")
 
-    assert len(downloads) == 1
-    assert downloads[0]["icon"] == "https://cdn.example.com/poster-333.jpg"
+    assert (
+        downloads[0]["icon"]
+        == "https://cdn.example.com/poster-333.jpg|Referer=https://www.youporn.com/"
+    )
