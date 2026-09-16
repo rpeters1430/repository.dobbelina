@@ -1,3 +1,13 @@
+[B]Version 1.1.479[/B]
+- Enhance image handling and site scraping across multiple modules
+- Merge pull request #392 from rpeters1430/imgbot
+- Merge pull request #393 from rpeters1430/copilot/fix-code-scanning-alerts
+- chore: align weak cipher disable docs and messages
+- fix: make rc4 disable path fail consistently
+- fix: block weak rc4 and 3des cipher creation paths
+- fix: skip disabled pycrypto rc4 and 3des backends in cipherfactory
+- fix: disable weak pycrypto RC4 and 3DES backends
+
 [B]Version 1.1.478[/B]
 - Merge pull request #392 from rpeters1430/imgbot
 - Merge pull request #393 from rpeters1430/copilot/fix-code-scanning-alerts
