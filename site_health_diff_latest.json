@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-16T06:29:37.673227",
+    "sites_total": 200,
+    "pass": 187,
+    "warn": 6,
+    "fail": 5,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-09-15T06:29:19.727896",
     "sites_total": 200,
     "pass": 190,
@@ -8,32 +17,51 @@
     "error": 0,
     "skip": 3
   },
-  "previous": {
-    "generated": "2026-09-14T06:33:38.727593",
-    "sites_total": 200,
-    "pass": 191,
-    "warn": 4,
-    "fail": 2,
-    "error": 0,
-    "skip": 3
-  },
   "summary": {
-    "new_failures": 0,
+    "new_failures": 3,
     "resolved_failures": 0,
     "persistent_failures": 2,
     "improved_sites": 1,
-    "regressions": 2,
-    "step_regressions": 1
+    "regressions": 4,
+    "step_regressions": 5
   },
-  "new_failures": [],
+  "new_failures": [
+    {
+      "site": "justfullporn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "ENV",
+      "message": "main: RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "speedporn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xtapesla",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "ENV",
+      "message": "main: RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
   "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "porn4k",
       "previous": "FAIL",
       "current": "FAIL",
-      "class": "BLOCKED",
-      "message": "main: RuntimeError: FlareSolverr solved challenge but got HTTP 304 from website",
+      "class": "ENV",
+      "message": "main: RuntimeError: FlareSolverr error for https://porn4k.to/page/1/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -49,7 +77,7 @@
   ],
   "improved_sites": [
     {
-      "site": "spankbang",
+      "site": "longvideos",
       "previous": "SKIP",
       "current": "PASS"
     }
@@ -57,35 +85,89 @@
   "step_regressions": [
     {
       "site": "awmnet",
-      "step": "search",
+      "step": "categories",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.4tube.com/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "justfullporn",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "naughtyblog",
+      "step": "categories",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.naughtyblog.org/categories/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "speedporn",
+      "step": "list",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
-      "class": "BLOCKED",
+      "message": "List returned no videos",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xtapesla",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "awmnet",
+      "site": "justfullporn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "longvideos",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "naughtyblog",
       "previous": "PASS",
       "current": "WARN",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "longvideos",
+      "site": "speedporn",
       "previous": "PASS",
-      "current": "SKIP",
+      "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "spankbang",
-      "previous": "SKIP",
-      "current": "PASS",
-      "kind": "improvement",
+      "site": "xtapesla",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
       "detail": ""
     }
   ]
