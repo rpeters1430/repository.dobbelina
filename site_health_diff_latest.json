@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-17T06:29:44.778065",
+    "sites_total": 200,
+    "pass": 189,
+    "warn": 4,
+    "fail": 4,
+    "error": 0,
+    "skip": 3
+  },
+  "previous": {
     "generated": "2026-09-16T06:29:37.673227",
     "sites_total": 200,
     "pass": 187,
@@ -8,53 +17,22 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-09-15T06:29:19.727896",
-    "sites_total": 200,
-    "pass": 190,
-    "warn": 5,
-    "fail": 2,
-    "error": 0,
-    "skip": 3
-  },
   "summary": {
-    "new_failures": 3,
-    "resolved_failures": 0,
-    "persistent_failures": 2,
-    "improved_sites": 1,
-    "regressions": 4,
-    "step_regressions": 5
+    "new_failures": 0,
+    "resolved_failures": 1,
+    "persistent_failures": 4,
+    "improved_sites": 2,
+    "regressions": 1,
+    "step_regressions": 0
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [
     {
       "site": "justfullporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "ENV",
-      "message": "main: RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "speedporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "xtapesla",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "ENV",
-      "message": "main: RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "previous": "FAIL",
+      "current": "PASS"
     }
   ],
-  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "porn4k",
@@ -66,6 +44,15 @@
       "stability_score": 1.0
     },
     {
+      "site": "speedporn",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
       "site": "xsharings",
       "previous": "FAIL",
       "current": "FAIL",
@@ -73,101 +60,57 @@
       "message": "list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "is_flaky": false,
       "stability_score": 1.0
+    },
+    {
+      "site": "xtapesla",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "ENV",
+      "message": "main: RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "is_flaky": false,
+      "stability_score": 1.0
     }
   ],
   "improved_sites": [
     {
-      "site": "longvideos",
-      "previous": "SKIP",
-      "current": "PASS"
-    }
-  ],
-  "step_regressions": [
-    {
       "site": "awmnet",
-      "step": "categories",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://www.4tube.com/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "justfullporn",
-      "step": "main",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "previous": "WARN",
+      "current": "PASS"
     },
     {
       "site": "naughtyblog",
-      "step": "categories",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://www.naughtyblog.org/categories/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "speedporn",
-      "step": "list",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "xtapesla",
-      "step": "main",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "previous": "WARN",
+      "current": "PASS"
     }
   ],
+  "step_regressions": [],
   "deltas": [
     {
-      "site": "justfullporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "longvideos",
-      "previous": "SKIP",
+      "site": "awmnet",
+      "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
+      "site": "justfullporn",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "longvideos",
+      "previous": "PASS",
+      "current": "SKIP",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
       "site": "naughtyblog",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "speedporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "xtapesla",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
