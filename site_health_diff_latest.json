@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-09-18T06:30:19.023668",
+    "generated": "2026-09-19T06:30:28.424881",
     "sites_total": 200,
     "pass": 188,
     "warn": 5,
@@ -9,10 +9,10 @@
     "skip": 3
   },
   "previous": {
-    "generated": "2026-09-17T06:29:44.778065",
+    "generated": "2026-09-18T06:30:19.023668",
     "sites_total": 200,
-    "pass": 189,
-    "warn": 4,
+    "pass": 188,
+    "warn": 5,
     "fail": 4,
     "error": 0,
     "skip": 3
@@ -22,7 +22,7 @@
     "resolved_failures": 0,
     "persistent_failures": 4,
     "improved_sites": 0,
-    "regressions": 1,
+    "regressions": 0,
     "step_regressions": 1
   },
   "new_failures": [],
@@ -69,22 +69,14 @@
   "step_regressions": [
     {
       "site": "awmnet",
-      "step": "categories",
+      "step": "search",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://www.4tube.com/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "message": "RuntimeError: FlareSolverr error for https://www.4tube.com/test?pricing=free&filter%5Border_by%5D=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "class": "ENV",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
-  "deltas": [
-    {
-      "site": "awmnet",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    }
-  ]
+  "deltas": []
 }

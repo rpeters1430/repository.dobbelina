@@ -6,14 +6,14 @@
 ## Snapshot
 
 - Current: `PASS 188` | `WARN 5` | `FAIL 4` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 189` | `WARN 4` | `FAIL 4` | `ERROR 0` | `SKIP 3`
+- Previous: `PASS 188` | `WARN 5` | `FAIL 4` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
 - New failures: `0`
 - Resolved failures: `0`
 - Persistent failures: `4`
-- Site regressions: `1`
+- Site regressions: `0`
 - Step regressions: `1`
 
 ## Persistent Failures
@@ -25,4 +25,4 @@
 
 ## Step Regressions
 
-- **awmnet** `categories`: `SKIP -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://www.4tube.com/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **awmnet** `search`: `SKIP -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://www.4tube.com/test?pricing=free&filter%5Border_by%5D=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
