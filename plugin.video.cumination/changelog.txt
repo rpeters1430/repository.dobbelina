@@ -1,3 +1,12 @@
+[B]Version 1.1.480[/B]
+- fix(sites): normalize search endpoints for luxuretv and pornhub, update ask4porn selectors
+- Update addon versions and enhance captcha handling across multiple plugins
+- Enhance image handling and site scraping across multiple modules
+- Merge pull request #392 from rpeters1430/imgbot
+- Merge pull request #393 from rpeters1430/copilot/fix-code-scanning-alerts
+- chore: align weak cipher disable docs and messages
+- fix: make rc4 disable path fail consistently
+
 [B]Version 1.1.479[/B]
 - Enhance image handling and site scraping across multiple modules
 - Merge pull request #392 from rpeters1430/imgbot
