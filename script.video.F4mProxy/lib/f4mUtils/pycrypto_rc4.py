@@ -6,19 +6,23 @@
 from .cryptomath import *
 from .rc4 import *
 
-_RC4_DISABLED_MSG = "RC4 is disabled because it is cryptographically weak"
-
 if pycryptoLoaded:
+    import Crypto.Cipher.ARC4
+
     def new(key):
-        raise NotImplementedError(_RC4_DISABLED_MSG)
+        return PyCrypto_RC4(key)
 
     class PyCrypto_RC4(RC4):
 
         def __init__(self, key):
-            raise NotImplementedError(_RC4_DISABLED_MSG)
+            RC4.__init__(self, key, "pycrypto")
+            key = bytes(key)
+            self.context = Crypto.Cipher.ARC4.new(key)
 
         def encrypt(self, plaintext):
-            raise NotImplementedError(_RC4_DISABLED_MSG)
+            plaintext = bytes(plaintext)
+            return bytearray(self.context.encrypt(plaintext))
 
         def decrypt(self, ciphertext):
-            raise NotImplementedError(_RC4_DISABLED_MSG)
+            ciphertext = bytes(ciphertext)
+            return bytearray(self.context.decrypt(ciphertext))

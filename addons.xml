@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <addons>
-<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.475">
+<addon id="plugin.video.cumination" name="Cumination" provider-name="Cumination" version="1.1.479">
 <requires>
 <import addon="xbmc.python" version="3.0.0" />
 <import addon="script.module.six" />
@@ -132,7 +132,7 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
 </assets>
 </extension>
 </addon>
-<addon id="script.module.yt-dlp" name="yt-dlp" version="2026.10.04-5" provider-name="yt-dlp contributors">
+<addon id="script.module.yt-dlp" name="yt-dlp" version="2026.10.04-6" provider-name="yt-dlp contributors">
 <requires>
 <import addon="xbmc.python" version="3.0.1" />
 <import addon="script.module.certifi" version="2023.5.7" />

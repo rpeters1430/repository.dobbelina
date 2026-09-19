@@ -6,19 +6,24 @@
 from .cryptomath import *
 from .tripledes import *
 
-_TRIPLEDES_DISABLED_MSG = "3DES is disabled because it is cryptographically weak"
-
 if pycryptoLoaded:
+    import Crypto.Cipher.DES3
+
     def new(key, mode, IV):
-        raise NotImplementedError(_TRIPLEDES_DISABLED_MSG)
+        return PyCrypto_TripleDES(key, mode, IV)
 
     class PyCrypto_TripleDES(TripleDES):
 
         def __init__(self, key, mode, IV):
-            raise NotImplementedError(_TRIPLEDES_DISABLED_MSG)
+            TripleDES.__init__(self, key, mode, IV, "pycrypto")
+            key = bytes(key)
+            IV = bytes(IV)
+            self.context = Crypto.Cipher.DES3.new(key, mode, IV)
 
         def encrypt(self, plaintext):
-            raise NotImplementedError(_TRIPLEDES_DISABLED_MSG)
+            plaintext = bytes(plaintext)
+            return bytearray(self.context.encrypt(plaintext))
 
         def decrypt(self, ciphertext):
-            raise NotImplementedError(_TRIPLEDES_DISABLED_MSG)
+            ciphertext = bytes(ciphertext)
+            return bytearray(self.context.decrypt(ciphertext))
