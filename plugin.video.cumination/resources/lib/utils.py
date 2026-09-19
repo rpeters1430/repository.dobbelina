@@ -3545,6 +3545,7 @@ def videos_list(
     contextm=None,
     skip=None,
     thumbnails=None,
+    img_options=None,
 ):
     """Legacy regex driven listing helper.
 
@@ -3576,9 +3577,14 @@ def videos_list(
             if re_img:
                 match = re.search(re_img, video, flags=re.DOTALL | re.IGNORECASE)
                 if match:
-                    img = fix_url(match.group(1).replace("&amp;", "&"), site.url)
+                    img = fix_url(
+                        match.group(1).replace("&amp;", "&").replace("–", "%E2%80%93"),
+                        site.url,
+                    )
                     if thumbnails:
                         img = th.cache_img(img) if thumbnails == "cache" else th.fix_img(img)
+                    elif img_options:
+                        img += img_options
             quality = ""
             if re_quality:
                 match = re.search(re_quality, video, flags=re.DOTALL | re.IGNORECASE)

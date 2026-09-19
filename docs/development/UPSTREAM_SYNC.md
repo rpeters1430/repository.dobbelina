@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-09-12
-**Last Sync**: 2026-09-12 - Reviewed upstream through 5a585018; ported the HomeMoviesTube pagination and channel-card categories, Reallifecam/camcaps resolveurl exception handling fallback, XVideos AI-generated contentUrl player fallback, HobbyPorn Pornhub embed player fallback, and integrated upstream's pornobae icon and tubexplayer jsunpack resolution.
+**Last Updated**: 2026-09-19
+**Last Sync**: 2026-09-19 - Reviewed upstream through 8c88dac4; ported erogarga thumbnail en-dash sanitization and User-Agent options to BeautifulSoup scraper and utils.videos_list.
 
 ---
 
@@ -18,6 +18,14 @@
 ---
 
 ## Sync Sessions
+
+### 2026-09-19 Porting Session
+Reviewed pending upstream commits merged after `5a585018` through `8c88dac4` using `sync_manager.py --report` and verified all affected modules.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `8c88dac4` | erogarga thumbnails | `manual` | 2026-09-19 | **erogarga / utils**: Ported thumbnail en-dash (`–` -> `%E2%80%93`) sanitization and `User-Agent` image headers to `erogarga.py` and `utils.videos_list()`. Added unit test in `tests/sites/test_erogarga.py`; verified live smoke test PASS (12.9s). |
+| `60fd1d9b` | 2026-09-13 Bumped to v.1.1.199 | `skipped` | 2026-09-19 | Version/package bump only. |
 
 ### 2026-09-12 Porting Session
 Reviewed all 7 upstream commits merged after `50f5c70a` through `5a585018` using `sync_manager.py --report` and verified all affected sites.

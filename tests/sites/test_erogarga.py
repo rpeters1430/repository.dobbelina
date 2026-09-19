@@ -507,3 +507,31 @@ def test_play_extra_branches(monkeypatch):
     monkeypatch.setattr(erogarga.utils, "getHtml", lambda *a, **k: html_itemprop)
     erogarga.Play("https://www.erogarga.com/v1", "Name")
     assert any("https://direct.mp4" in p[1] for p in played if p[0] == "direct")
+
+
+def test_list_thumbnail_sanitization_and_user_agent(monkeypatch):
+    """Test that List() sanitizes en-dashes and appends User-Agent to thumbnails."""
+    html = """
+    <article data-video-id="123" class="type-video">
+        <a href="https://www.erogarga.com/video/test-video/" title="Test Video">
+            <img src="https://www.erogarga.com/wp-content/uploads/2026/09/Test\\u2013Thumbnail.webp">
+        </a>
+    </article>
+    """.encode("utf-8").decode("unicode_escape")
+    downloads = []
+
+    monkeypatch.setattr(erogarga.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(
+        erogarga.site,
+        "add_download_link",
+        lambda name, url, mode, iconimage, desc="", **k: downloads.append((name, iconimage)),
+    )
+    monkeypatch.setattr(erogarga.utils, "eod", lambda: None)
+
+    erogarga.List("https://www.erogarga.com/?filter=latest")
+
+    assert len(downloads) == 1
+    icon = downloads[0][1]
+    assert "%E2%80%93" in icon
+    assert "\u2013" not in icon
+    assert "|User-Agent=" in icon

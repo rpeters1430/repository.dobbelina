@@ -113,7 +113,13 @@ def List(url):
 
         # Get thumbnail
         img_tag = link.find("img")
-        img = utils.safe_get_attr(img_tag, "src")
+        img = utils.safe_get_attr(
+            img_tag, "src", ["data-src", "data-lazy-src", "data-original"]
+        )
+        if img:
+            img = img.replace("&amp;", "&").replace("–", "%E2%80%93")
+            if "|User-Agent=" not in img:
+                img = f"{img}|User-Agent={utils.USER_AGENT}"
 
         # Get duration
         duration_div = article.find("div", class_="duration")
