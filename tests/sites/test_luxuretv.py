@@ -171,6 +171,24 @@ def test_search_with_keyword_calls_list(monkeypatch):
     assert "test+query" in list_calls[0]
 
 
+def test_search_with_base_url_normalizes_endpoint(monkeypatch):
+    """Test that Search called with base site URL normalizes to searchgate endpoint."""
+    list_calls = []
+
+    def fake_list(url):
+        list_calls.append(url)
+
+    monkeypatch.setattr(luxuretv, "List", fake_list)
+
+    luxuretv.Search(
+        "https://www.luxuretv.com/",
+        keyword="test query",
+    )
+
+    assert len(list_calls) == 1
+    assert "searchgate.php?mode=search&type=videos&q=test+query" in list_calls[0]
+
+
 def test_list_handles_empty_results(monkeypatch):
     """Test that List handles pages with no videos."""
     html = "<html><body></body></html>"

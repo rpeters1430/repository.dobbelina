@@ -162,6 +162,8 @@ def Cat(url):
 
 @site.register()
 def Search(url, keyword=None):
+    if "searchgate.php" not in url:
+        url = site.url + "searchgate.php?mode=search&type=videos&q="
     if not keyword:
         site.search_dir(url, "Search")
     else:

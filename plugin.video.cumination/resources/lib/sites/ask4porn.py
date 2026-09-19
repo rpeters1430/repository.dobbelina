@@ -38,6 +38,7 @@ def Main(url):
     site.add_dir("Most Viewed", site.url + "videos?filter=most-viewed", "List", "")
     site.add_dir("Longest", site.url + "videos?filter=longest", "List", "")
     site.add_dir("Random", site.url + "videos?filter=random", "List", "")
+    site.add_dir("Tags", site.url, "Categories", site.img_cat)
     site.add_dir("Studios", site.url + "studios", "Studios", "")
     site.add_dir("Girls", site.url + "pornstars", "Girls", "")
     site.add_dir("Search", site.url, "Search", site.img_search)
@@ -56,8 +57,8 @@ def List(url):
         "thumbnail": {"selector": "img", "attr": "src", "fallback_attrs": ["data-src"]},
         "duration": {"selector": ["span.video-card-duration", "span.duration"], "text": True},
         "pagination": {
-            "selector": ["div.pagination a", ".pagination a", "a.page-link"],
-            "text_matches": ["next", ">", "»"],
+            "selector": ["div.pagination a", ".pagination a", "a.page-link", "a.page-btn"],
+            "text_matches": ["next", ">", "»", "›"],
             "attr": "href",
         },
     }
@@ -71,17 +72,21 @@ def Studios(url):
     html, _ = utils.get_html_with_cloudflare_retry(url)
     soup = utils.parse_html(html)
 
-    for item in soup.select("a.netflix-category-link"):
+    for item in soup.select("a.poster-card, a.netflix-category-link"):
         href = utils.safe_get_attr(item, "href")
-        name = utils.safe_get_text(item.select_one(".netflix-category-name"))
-        img = utils.safe_get_attr(item.select_one("img"), "src")
+        name = utils.safe_get_text(item.select_one(".poster-card-name, .netflix-category-name")) or utils.safe_get_text(item)
+        count = utils.safe_get_text(item.select_one(".poster-card-count"))
+        if count:
+            name = f"{name} ({count})"
+        img = utils.safe_get_attr(item.select_one("img"), "src", ["data-src"])
         if name and href:
             site.add_dir(name, urllib_parse.urljoin(site.url, href), "List", img)
 
     for a_tag in soup.find_all("a"):
         text = utils.safe_get_text(a_tag)
-        if ("next" in text.lower() or "»" in text) and "/page/" in (utils.safe_get_attr(a_tag, "href") or ""):
-            site.add_dir("Next Page", urllib_parse.urljoin(site.url, utils.safe_get_attr(a_tag, "href")), "Studios", site.img_next)
+        href = utils.safe_get_attr(a_tag, "href") or ""
+        if ("next" in text.lower() or "»" in text or "›" in text) and ("page=" in href or "/page/" in href):
+            site.add_dir("Next Page", urllib_parse.urljoin(site.url, href), "Studios", site.img_next)
             break
 
     utils.eod()
@@ -92,10 +97,10 @@ def Categories(url):
     html, _ = utils.get_html_with_cloudflare_retry(url)
     soup = utils.parse_html(html)
 
-    for item in soup.select("a.netflix-tag-link"):
+    for item in soup.select("a.model-card, a.netflix-tag-link, a[href*='/tag/']"):
         href = utils.safe_get_attr(item, "href")
-        name = utils.safe_get_text(item.select_one(".netflix-tag-name"))
-        img = utils.safe_get_attr(item.select_one("img"), "src")
+        name = utils.safe_get_text(item.select_one(".model-card-name, .netflix-tag-name")) or utils.safe_get_text(item)
+        img = utils.safe_get_attr(item.select_one("img"), "src", ["data-src"])
         if name and href:
             site.add_dir(name, urllib_parse.urljoin(site.url, href), "List", img)
 
@@ -107,17 +112,20 @@ def Girls(url):
     html, _ = utils.get_html_with_cloudflare_retry(url)
     soup = utils.parse_html(html)
 
-    for item in soup.select("a.netflix-actor-link"):
+    for item in soup.select("a.poster-card, a.model-card, a.netflix-actor-link"):
         href = utils.safe_get_attr(item, "href")
-        name = utils.safe_get_text(item.select_one(".netflix-actor-name"))
-        img = utils.safe_get_attr(item.select_one("img"), "src")
+        name = utils.safe_get_text(item.select_one(".poster-card-name, .model-card-name, .netflix-actor-name")) or utils.safe_get_text(item)
+        count = utils.safe_get_text(item.select_one(".poster-card-count"))
+        if count:
+            name = f"{name} ({count})"
+        img = utils.safe_get_attr(item.select_one("img"), "src", ["data-src"])
         if name and href:
             site.add_dir(name, urllib_parse.urljoin(site.url, href), "List", img)
 
     for a_tag in soup.find_all("a"):
         href = utils.safe_get_attr(a_tag, "href") or ""
         text = utils.safe_get_text(a_tag)
-        if (">" in text or "next" in text.lower() or "»" in text) and "/page/" in href:
+        if (">" in text or "next" in text.lower() or "»" in text or "›" in text) and ("page=" in href or "/page/" in href):
             site.add_dir("Next Page", urllib_parse.urljoin(site.url, href), "Girls", site.img_next)
             break
 

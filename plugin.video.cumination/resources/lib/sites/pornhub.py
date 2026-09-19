@@ -600,6 +600,8 @@ def List(url):
 
 @site.register()
 def Search(url, keyword=None):
+    if "video/search?search=" not in url:
+        url = site.url + "video/search?search="
     searchUrl = url
     if not keyword:
         site.search_dir(url, "Search")

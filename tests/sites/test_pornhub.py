@@ -315,6 +315,21 @@ def test_search_url_encoding(monkeypatch):
     assert "test+%26+query" in list_calls[0] or "test+&+query" in list_calls[0]
 
 
+def test_search_with_base_url_normalizes_endpoint(monkeypatch):
+    """Test that Search called with base site URL normalizes to video/search?search=."""
+    list_calls = []
+
+    def fake_list(url):
+        list_calls.append(url)
+
+    monkeypatch.setattr(pornhub, "List", fake_list)
+
+    pornhub.Search("https://www.pornhub.com/", keyword="test query")
+
+    assert len(list_calls) == 1
+    assert "video/search?search=test+query" in list_calls[0]
+
+
 def test_update_url_preserves_page_when_filters_are_unchanged(monkeypatch):
     monkeypatch.setattr(pornhub, "get_setting", lambda name: {
         "production": "All",
