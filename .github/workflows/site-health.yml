@@ -5,14 +5,21 @@ on:
   schedule:
     - cron: "0 6 * * *"
 
+concurrency:
+  group: site-health
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   setup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       strict_matrix: ${{ steps.set-strict-matrix.outputs.strict_matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - id: set-matrix
         run: |
           echo "matrix=$(python scripts/generate_smoke_matrix.py)" >> "${GITHUB_OUTPUT}"
@@ -22,7 +29,7 @@ jobs:
 
   smoke:
     needs: setup
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -31,14 +38,14 @@ jobs:
       FLARESOLVERR_URL: http://localhost:8191/v1
     services:
       flaresolverr:
-        image: ghcr.io/germondai/trawl:latest
+        image: ghcr.io/germondai/trawl@sha256:fc39225a890a40b64ac65731dddd66e52f83fc9c20b54b7ed87c6cecdf355b13
         ports:
           - 8191:8191
         env:
           LOG_LEVEL: info
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"
           cache: "pip"
@@ -59,14 +66,14 @@ jobs:
           python scripts/live_smoke_test.py --site ${{ matrix.sites }} --out results/${{ matrix.chunk }} --require-flaresolverr
           if [ $? -eq 2 ]; then exit 2; fi
       - name: Upload chunk results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: smoke-results-${{ matrix.chunk }}
           path: results/
 
   strict:
     needs: setup
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -75,14 +82,14 @@ jobs:
       FLARESOLVERR_URL: http://localhost:8191/v1
     services:
       flaresolverr:
-        image: ghcr.io/germondai/trawl:latest
+        image: ghcr.io/germondai/trawl@sha256:fc39225a890a40b64ac65731dddd66e52f83fc9c20b54b7ed87c6cecdf355b13
         ports:
           - 8191:8191
         env:
           LOG_LEVEL: info
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"
           cache: "pip"
@@ -103,34 +110,34 @@ jobs:
           python scripts/strict_site_monitor.py --site ${{ matrix.site }} --out results/strict
           if [ $? -eq 2 ]; then exit 2; fi
       - name: Upload strict site results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: strict-results-${{ matrix.site }}
           path: results/strict/strict_site_${{ matrix.site }}.*
 
   report:
     needs: [smoke, strict]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
       issues: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"
       - name: Install dependencies
         run: pip install -r requirements-test.txt
       - name: Download all smoke results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           path: all-results
           pattern: smoke-results-*
           merge-multiple: true
       - name: Download all strict results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           path: strict-results
           pattern: strict-results-*
@@ -193,7 +200,7 @@ jobs:
           echo "" >> "${GITHUB_STEP_SUMMARY}"
           cat results/site_health_diff_latest.md >> "${GITHUB_STEP_SUMMARY}"
       - name: Upload site health artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: site-health-final
           path: results/
