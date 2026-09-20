@@ -1,3 +1,12 @@
+[B]Version 1.1.482[/B]
+- Merge pull request #395 from rpeters1430/fix/actions-and-ci-reliability
+- fix: restore CI and modernize workflows
+- Merge pull request #394 from rpeters1430/imgbot
+- feat(upstream): port erogarga thumbnail sanitization and img_options from 8c88dac4
+- fix(sites): normalize search endpoints for luxuretv and pornhub, update ask4porn selectors
+- [ImgBot] Optimize images
+- Update addon versions and enhance captcha handling across multiple plugins
+
 [B]Version 1.1.481[/B]
 - feat(upstream): port erogarga thumbnail sanitization and img_options from 8c88dac4
 - fix(sites): normalize search endpoints for luxuretv and pornhub, update ask4porn selectors
