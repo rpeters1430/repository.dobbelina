@@ -48,8 +48,8 @@ def test_categories():
 
     assert mock_site.add_dir.called
     labels = [call[0][0] for call in mock_site.add_dir.call_args_list]
-    assert any("Onlyfans" in l for l in labels)
-    assert any("Manyvids" in l for l in labels)
+    assert any("Onlyfans" in label for label in labels)
+    assert any("Manyvids" in label for label in labels)
 
 
 def test_tags():
@@ -65,7 +65,7 @@ def test_tags():
 
     assert mock_site.add_dir.called
     labels = [call[0][0] for call in mock_site.add_dir.call_args_list]
-    assert any("Onlyfans" in l for l in labels)
+    assert any("Onlyfans" in label for label in labels)
 
 
 def test_playvid():

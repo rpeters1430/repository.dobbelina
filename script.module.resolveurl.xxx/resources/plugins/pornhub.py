@@ -23,6 +23,89 @@ from resolveurl.lib import helpers
 from resolveurl.resolver import ResolveUrl, ResolverError
 
 
+def _balanced_json(text, start):
+    """Return the JSON array/object beginning at start without over-capturing."""
+    opening = text[start]
+    closing = ']' if opening == '[' else '}'
+    depth = 0
+    in_string = False
+    escaped = False
+    for index in range(start, len(text)):
+        char = text[index]
+        if in_string:
+            if escaped:
+                escaped = False
+            elif char == '\\':
+                escaped = True
+            elif char == '"':
+                in_string = False
+            continue
+        if char == '"':
+            in_string = True
+        elif char == opening:
+            depth += 1
+        elif char == closing:
+            depth -= 1
+            if depth == 0:
+                return text[start:index + 1]
+    return None
+
+
+def _decode_js_string(value):
+    """Decode the quoted argument passed to JSON.parse."""
+    quote = value[0]
+    if quote == '"':
+        return json.loads(value)
+
+    return (value[1:-1]
+            .replace('\\/', '/')
+            .replace('\\\'', "'")
+            .replace('\\\\', '\\'))
+
+
+def _extract_quality_items(html):
+    match = re.search(r'qualityItems_[a-zA-Z0-9_]*\s*=\s*', html)
+    if not match:
+        return []
+
+    value = html[match.end():].lstrip()
+    if value.startswith('JSON.parse('):
+        value = value[len('JSON.parse('):].lstrip()
+        quote = value[0]
+        escaped = False
+        for index in range(1, len(value)):
+            char = value[index]
+            if escaped:
+                escaped = False
+            elif char == '\\':
+                escaped = True
+            elif char == quote:
+                return json.loads(_decode_js_string(value[:index + 1]))
+        return []
+
+    if value.startswith('['):
+        payload = _balanced_json(value, 0)
+        return json.loads(payload) if payload else []
+    return []
+
+
+def _extract_media_definitions(html):
+    match = re.search(r'["\']mediaDefinitions["\']\s*:\s*', html)
+    if not match:
+        return []
+    value = html[match.end():].lstrip()
+    if not value.startswith('['):
+        return []
+    payload = _balanced_json(value, 0)
+    return json.loads(payload) if payload else []
+
+
+def _quality_label(value):
+    if str(value).upper() in ('4K', 'UHD'):
+        return '2160p'
+    return value
+
+
 class PornHubResolver(ResolveUrl):
     name = 'pornhub'
     domains = ['pornhub.com']
@@ -38,10 +121,10 @@ class PornHubResolver(ResolveUrl):
         html = self.net.http_GET(web_url, headers=headers).content
         sources = []
 
-        qvars = re.search(r'qualityItems_[^\[]+(.+?);', html)
-        if qvars:
-            sources = json.loads(qvars.group(1))
-            sources = [(src.get('text'), src.get('url')) for src in sources if src.get('url')]
+        quality_items = _extract_quality_items(html)
+        if quality_items:
+            sources = [(_quality_label(src.get('text')), src.get('url'))
+                       for src in quality_items if src.get('url')]
 
         if not sources:
             sections = re.findall(r'(var\sra[a-z0-9]+=.+?);flash', html)
@@ -60,14 +143,19 @@ class PornHubResolver(ResolveUrl):
                         sources.append((r[0], link))
 
         if not sources:
-            fvars = re.search(r'flashvars_\d+\s*=\s*(.+?);\s', html)
-            if fvars:
-                sources = json.loads(fvars.group(1)).get('mediaDefinitions')
-                sources = [(src.get('quality'), src.get('videoUrl')) for src in sources if
-                           type(src.get('quality')) is not list and src.get('videoUrl')]
+            definitions = _extract_media_definitions(html)
+            sources = [
+                (
+                    _quality_label(src.get('quality') or src.get('defaultQuality')),
+                    src.get('videoUrl') or src.get('url'),
+                )
+                for src in definitions
+                if not isinstance(src.get('quality'), list)
+                and (src.get('videoUrl') or src.get('url'))
+            ]
 
         if sources:
-            headers.update({'Origin': host[:-1]})
+            headers.update({'Origin': host_url.rstrip('/')})
             return helpers.pick_source(helpers.sort_sources_list(sources)) + helpers.append_headers(headers)
 
         raise ResolverError('File not found or not Free')
