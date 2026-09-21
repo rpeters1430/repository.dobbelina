@@ -1,0 +1,1498 @@
+[B]Version 1.1.482[/B]
+- Merge pull request #395 from rpeters1430/fix/actions-and-ci-reliability
+- fix: restore CI and modernize workflows
+- Merge pull request #394 from rpeters1430/imgbot
+- feat(upstream): port erogarga thumbnail sanitization and img_options from 8c88dac4
+- fix(sites): normalize search endpoints for luxuretv and pornhub, update ask4porn selectors
+- [ImgBot] Optimize images
+- Update addon versions and enhance captcha handling across multiple plugins
+
+[B]Version 1.1.481[/B]
+- feat(upstream): port erogarga thumbnail sanitization and img_options from 8c88dac4
+- fix(sites): normalize search endpoints for luxuretv and pornhub, update ask4porn selectors
+- Update addon versions and enhance captcha handling across multiple plugins
+- Enhance image handling and site scraping across multiple modules
+- Merge pull request #392 from rpeters1430/imgbot
+- Merge pull request #393 from rpeters1430/copilot/fix-code-scanning-alerts
+
+[B]Version 1.1.480[/B]
+- fix(sites): normalize search endpoints for luxuretv and pornhub, update ask4porn selectors
+- Update addon versions and enhance captcha handling across multiple plugins
+- Enhance image handling and site scraping across multiple modules
+- Merge pull request #392 from rpeters1430/imgbot
+- Merge pull request #393 from rpeters1430/copilot/fix-code-scanning-alerts
+- chore: align weak cipher disable docs and messages
+- fix: make rc4 disable path fail consistently
+
+[B]Version 1.1.479[/B]
+- Enhance image handling and site scraping across multiple modules
+- Merge pull request #392 from rpeters1430/imgbot
+- Merge pull request #393 from rpeters1430/copilot/fix-code-scanning-alerts
+- chore: align weak cipher disable docs and messages
+- fix: make rc4 disable path fail consistently
+- fix: block weak rc4 and 3des cipher creation paths
+- fix: skip disabled pycrypto rc4 and 3des backends in cipherfactory
+- fix: disable weak pycrypto RC4 and 3DES backends
+
+[B]Version 1.1.478[/B]
+- Merge pull request #392 from rpeters1430/imgbot
+- Merge pull request #393 from rpeters1430/copilot/fix-code-scanning-alerts
+- chore: align weak cipher disable docs and messages
+- fix: make rc4 disable path fail consistently
+- fix: block weak rc4 and 3des cipher creation paths
+- fix: skip disabled pycrypto rc4 and 3des backends in cipherfactory
+- fix: disable weak pycrypto RC4 and 3DES backends
+- Initial plan
+- [ImgBot] Optimize images
+
+[B]Version 1.1.477[/B]
+- Add unit tests for camcaps, camhub, and curbate sites, and validate logo files
+- fix(images): remove unused camwhorestv.jpg image file
+- feat(sites): port upstream fixes for homemoviestube, camcaps, xvideos, hobbyporn, and pornobae
+- fix: support function annotations in url_dispatcher and pass existing issues to strict triage
+- chore(renovate): remove update delays and consolidate dependency PRs
+- chore: update upstream sync and triage reports; enhance homemoviestube and pornmz site modules; add tests for new features
+
+[B]Version 1.1.476[/B]
+- feat(sites): port upstream fixes for homemoviestube, camcaps, xvideos, hobbyporn, and pornobae
+- fix: support function annotations in url_dispatcher and pass existing issues to strict triage
+- chore(renovate): remove update delays and consolidate dependency PRs
+- chore: update upstream sync and triage reports; enhance homemoviestube and pornmz site modules; add tests for new features
+- Merge pull request #378 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- Add unit tests for mylust, onlyjerk, and porno24 sites
+
+[B]Version 1.1.475[/B]
+- fix: support function annotations in url_dispatcher and pass existing issues to strict triage
+- chore(renovate): remove update delays and consolidate dependency PRs
+- chore: update upstream sync and triage reports; enhance homemoviestube and pornmz site modules; add tests for new features
+- Merge pull request #378 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- Add unit tests for mylust, onlyjerk, and porno24 sites
+
+[B]Version 1.1.474[/B]
+- chore: update upstream sync and triage reports; enhance homemoviestube and pornmz site modules; add tests for new features
+- Merge pull request #378 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- Add unit tests for mylust, onlyjerk, and porno24 sites
+- test: add optional Docker integration test for FlareSolverrManager via solverr
+- fix: restore local pornhub/doodstream resolver patches clobbered by upstream sync
+
+[B]Version 1.1.473[/B]
+- Merge pull request #378 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- Add unit tests for mylust, onlyjerk, and porno24 sites
+- test: add optional Docker integration test for FlareSolverrManager via solverr
+- fix: restore local pornhub/doodstream resolver patches clobbered by upstream sync
+- Remove UWC plugin and update dependencies
+
+[B]Version 1.1.472[/B]
+- Add unit tests for mylust, onlyjerk, and porno24 sites
+- test: add optional Docker integration test for FlareSolverrManager via solverr
+- fix: restore local pornhub/doodstream resolver patches clobbered by upstream sync
+- Remove UWC plugin and update dependencies
+- Merge pull request #366 from rpeters1430/codex/workflow-rollout-fix-ci
+- Merge pull request #367 from rpeters1430/codex/workflow-rollout-reduce-triage
+- chore: reduce scheduled Gemini triage noise
+
+[B]Version 1.1.471[/B]
+- Remove UWC plugin and update dependencies
+- Merge pull request #366 from rpeters1430/codex/workflow-rollout-fix-ci
+- Merge pull request #367 from rpeters1430/codex/workflow-rollout-reduce-triage
+- chore: reduce scheduled Gemini triage noise
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+
+[B]Version 1.1.470[/B]
+- Merge pull request #366 from rpeters1430/codex/workflow-rollout-fix-ci
+- Merge pull request #367 from rpeters1430/codex/workflow-rollout-reduce-triage
+- chore: reduce scheduled Gemini triage noise
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+- fix(ci): restore lint and test signal
+
+[B]Version 1.1.469[/B]
+- Merge pull request #358 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- chore: pull upstream updates for vendored addons and rebuild repo index
+- fix: pull_upstream_addons.py crashes on Windows consoles without UTF-8
+- Revert "fix: prefetch Stripchat segments to close LL-HLS freshness race"
+- feat: port upstream site fixes and add 3 new sites (asianviralhub, sinparty, xlovecam)
+- fix: prefetch Stripchat segments to close LL-HLS freshness race
+
+[B]Version 1.1.468[/B]
+- Revert "fix: prefetch Stripchat segments to close LL-HLS freshness race"
+- feat: port upstream site fixes and add 3 new sites (asianviralhub, sinparty, xlovecam)
+- fix: prefetch Stripchat segments to close LL-HLS freshness race
+- Merge pull request #353 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: add upstream addon sync tooling, pull updates, and fix stripchat LL-HLS playback
+
+[B]Version 1.1.467[/B]
+- fix: prefetch Stripchat segments to close LL-HLS freshness race
+- Merge pull request #353 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: add upstream addon sync tooling, pull updates, and fix stripchat LL-HLS playback
+- fix: play Stripchat streams in LemonCams via stripchat.py's manifest proxy
+- fix: resolve scraper issues for luxuretv, anybunny, and pornkai; update site contracts
+
+[B]Version 1.1.466[/B]
+- Merge pull request #353 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: add upstream addon sync tooling, pull updates, and fix stripchat LL-HLS playback
+- fix: play Stripchat streams in LemonCams via stripchat.py's manifest proxy
+- fix: resolve scraper issues for luxuretv, anybunny, and pornkai; update site contracts
+- chore: update status metrics and add pornyteen site to inventory
+
+[B]Version 1.1.465[/B]
+- feat: add upstream addon sync tooling, pull updates, and fix stripchat LL-HLS playback
+- fix: play Stripchat streams in LemonCams via stripchat.py's manifest proxy
+- fix: resolve scraper issues for luxuretv, anybunny, and pornkai; update site contracts
+- chore: update status metrics and add pornyteen site to inventory
+- fix: repair pornhoarder, hanime, and familypornhd smoke-test failures
+- chore: remove dead one-off scripts and add scripts index
+
+[B]Version 1.1.464[/B]
+- fix: play Stripchat streams in LemonCams via stripchat.py's manifest proxy
+- fix: resolve scraper issues for luxuretv, anybunny, and pornkai; update site contracts
+- chore: update status metrics and add pornyteen site to inventory
+- fix: repair pornhoarder, hanime, and familypornhd smoke-test failures
+- chore: remove dead one-off scripts and add scripts index
+- Add comprehensive tests for pornyteen.com site implementation
+- feat: add new image resource for pornyteen
+
+[B]Version 1.1.463[/B]
+- fix: resolve scraper issues for luxuretv, anybunny, and pornkai; update site contracts
+- chore: update status metrics and add pornyteen site to inventory
+- fix: repair pornhoarder, hanime, and familypornhd smoke-test failures
+- chore: remove dead one-off scripts and add scripts index
+- Add comprehensive tests for pornyteen.com site implementation
+- feat: add new image resource for pornyteen
+- feat: update addon.xml versions, improve resolver plugins, and add Playmate resolver
+- fix(stub): add resolveurl lib to stub_kodi sys.path
+
+[B]Version 1.1.462[/B]
+- fix: repair pornhoarder, hanime, and familypornhd smoke-test failures
+- chore: remove dead one-off scripts and add scripts index
+- Add comprehensive tests for pornyteen.com site implementation
+- feat: add new image resource for pornyteen
+- feat: update addon.xml versions, improve resolver plugins, and add Playmate resolver
+- fix(stub): add resolveurl lib to stub_kodi sys.path
+- feat(upstream-sync): port new sites 3movs & xtapesla, fix sextb XOR player decryption & camwhores domains
+
+[B]Version 1.1.461[/B]
+- Add comprehensive tests for pornyteen.com site implementation
+- feat: add new image resource for pornyteen
+- feat: update addon.xml versions, improve resolver plugins, and add Playmate resolver
+- fix(stub): add resolveurl lib to stub_kodi sys.path
+- feat(upstream-sync): port new sites 3movs & xtapesla, fix sextb XOR player decryption & camwhores domains
+- fix(flaresolverr): support env var host configuration and stub settings in test harness
+- fix(thothub): update URL from latest-updates to public in Main function fix(chaturbate): add JSON response handling to prevent crashes on empty or blocked responses
+
+[B]Version 1.1.460[/B]
+- feat(upstream-sync): port new sites 3movs & xtapesla, fix sextb XOR player decryption & camwhores domains
+- fix(flaresolverr): support env var host configuration and stub settings in test harness
+- fix(thothub): update URL from latest-updates to public in Main function fix(chaturbate): add JSON response handling to prevent crashes on empty or blocked responses
+- fix(yt-dlp): de-identify static Google API key string literals in extractors
+- fix(anybunny): migrate domain to anybunny.tv and modernize scraper and playback
+
+[B]Version 1.1.459[/B]
+- fix(flaresolverr): support env var host configuration and stub settings in test harness
+- fix(thothub): update URL from latest-updates to public in Main function fix(chaturbate): add JSON response handling to prevent crashes on empty or blocked responses
+- fix(yt-dlp): de-identify static Google API key string literals in extractors
+- fix(anybunny): migrate domain to anybunny.tv and modernize scraper and playback
+- feat: add dynamic mirror manager, DoH client, and yt-dlp resolver bridge
+
+[B]Version 1.1.458[/B]
+- fix(thothub): update URL from latest-updates to public in Main function fix(chaturbate): add JSON response handling to prevent crashes on empty or blocked responses
+- fix(yt-dlp): de-identify static Google API key string literals in extractors
+- fix(anybunny): migrate domain to anybunny.tv and modernize scraper and playback
+- feat: add dynamic mirror manager, DoH client, and yt-dlp resolver bridge
+- Added New Sites
+
+[B]Version 1.1.457[/B]
+- fix(anybunny): migrate domain to anybunny.tv and modernize scraper and playback
+- feat: add dynamic mirror manager, DoH client, and yt-dlp resolver bridge
+- Added New Sites
+- Merge pull request #314 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: implement pornslash site scraper and add support for video streaming
+
+[B]Version 1.1.456[/B]
+- feat: add dynamic mirror manager, DoH client, and yt-dlp resolver bridge
+- Added New Sites
+- Merge pull request #314 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: implement pornslash site scraper and add support for video streaming
+- feat: add new image assets for cum-filters and pornslash
+
+[B]Version 1.1.455[/B]
+- Added New Sites
+- Merge pull request #314 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: implement pornslash site scraper and add support for video streaming
+- feat: add new image assets for cum-filters and pornslash
+- Add script to update virtual environment dependencies
+
+[B]Version 1.1.454[/B]
+- Merge pull request #314 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: implement pornslash site scraper and add support for video streaming
+- feat: add new image assets for cum-filters and pornslash
+- Add script to update virtual environment dependencies
+- fix: correct luxuretv search URL to stop playback failures
+
+[B]Version 1.1.453[/B]
+- feat: implement pornslash site scraper and add support for video streaming
+- feat: add new image assets for cum-filters and pornslash
+- Add script to update virtual environment dependencies
+- fix: correct luxuretv search URL to stop playback failures
+- Implement code changes to enhance functionality and improve performance
+- feat: improve telemetry reporting to GlitchTip with standard Sentry exception schemas and playback/HTTP/resolve integrations
+- refactor: migrate camwhorestv.py scraper to BeautifulSoup4 and fix list TypeError
+
+[B]Version 1.1.452[/B]
+- Add script to update virtual environment dependencies
+- fix: correct luxuretv search URL to stop playback failures
+- Implement code changes to enhance functionality and improve performance
+- feat: improve telemetry reporting to GlitchTip with standard Sentry exception schemas and playback/HTTP/resolve integrations
+- refactor: migrate camwhorestv.py scraper to BeautifulSoup4 and fix list TypeError
+- feat: implement opt-in diagnostic telemetry system for GlitchTip
+- Add diagnostic telemetry implementation plan
+- Add diagnostic telemetry design
+
+[B]Version 1.1.451[/B]
+- fix: correct luxuretv search URL to stop playback failures
+- Implement code changes to enhance functionality and improve performance
+- feat: improve telemetry reporting to GlitchTip with standard Sentry exception schemas and playback/HTTP/resolve integrations
+- refactor: migrate camwhorestv.py scraper to BeautifulSoup4 and fix list TypeError
+- feat: implement opt-in diagnostic telemetry system for GlitchTip
+- Add diagnostic telemetry implementation plan
+- Add diagnostic telemetry design
+- feat: update site profiles and improve video extraction methods for better playback
+
+[B]Version 1.1.450[/B]
+- Implement code changes to enhance functionality and improve performance
+- feat: improve telemetry reporting to GlitchTip with standard Sentry exception schemas and playback/HTTP/resolve integrations
+- refactor: migrate camwhorestv.py scraper to BeautifulSoup4 and fix list TypeError
+- feat: implement opt-in diagnostic telemetry system for GlitchTip
+- Add diagnostic telemetry implementation plan
+- Add diagnostic telemetry design
+- feat: update site profiles and improve video extraction methods for better playback
+- feat: add LL-HLS blocking playlist reload for Stripchat segments
+
+[B]Version 1.1.449[/B]
+- feat: update site profiles and improve video extraction methods for better playback
+- feat: add LL-HLS blocking playlist reload for Stripchat segments
+- Refactor code structure for improved readability and maintainability
+- Merge pull request #291 from rpeters1430/claude/github-actions-trawl-migration-9eq1k9
+- fix: pin ruff rule set and clear lint backlog blocking CI
+- fix: probe Trawl's /health endpoint for readiness, not /v1
+- Merge pull request #290 from rpeters1430/copilot/fix-github-action-error
+
+[B]Version 1.1.448[/B]
+- feat: add LL-HLS blocking playlist reload for Stripchat segments
+- Refactor code structure for improved readability and maintainability
+- Merge pull request #291 from rpeters1430/claude/github-actions-trawl-migration-9eq1k9
+- fix: pin ruff rule set and clear lint backlog blocking CI
+- fix: probe Trawl's /health endpoint for readiness, not /v1
+- Merge pull request #290 from rpeters1430/copilot/fix-github-action-error
+- fix: extend FlareSolverr startup wait in workflows
+- Initial plan
+
+[B]Version 1.1.447[/B]
+- Refactor code structure for improved readability and maintainability
+- Merge pull request #291 from rpeters1430/claude/github-actions-trawl-migration-9eq1k9
+- fix: pin ruff rule set and clear lint backlog blocking CI
+- fix: probe Trawl's /health endpoint for readiness, not /v1
+- Merge pull request #290 from rpeters1430/copilot/fix-github-action-error
+- fix: extend FlareSolverr startup wait in workflows
+- Initial plan
+- chore: update FlareSolverr service image to Trawl and adjust health checks fix: update chat settings logic to handle 'false' values correctly fix: clean video titles before logging and improve error message formatting feat: add cookie handling in Stripchat proxy logging feat: allow remote access in Kodi stubs installation
+
+[B]Version 1.1.446[/B]
+- Merge pull request #291 from rpeters1430/claude/github-actions-trawl-migration-9eq1k9
+- fix: pin ruff rule set and clear lint backlog blocking CI
+- fix: probe Trawl's /health endpoint for readiness, not /v1
+- Merge pull request #290 from rpeters1430/copilot/fix-github-action-error
+- fix: extend FlareSolverr startup wait in workflows
+- Initial plan
+- chore: update FlareSolverr service image to Trawl and adjust health checks fix: update chat settings logic to handle 'false' values correctly fix: clean video titles before logging and improve error message formatting feat: add cookie handling in Stripchat proxy logging feat: allow remote access in Kodi stubs installation
+- Merge pull request #286 from rpeters1430/fix/flaresolverr-v1-v2
+
+[B]Version 1.1.445[/B]
+- chore: update FlareSolverr service image to Trawl and adjust health checks fix: update chat settings logic to handle 'false' values correctly fix: clean video titles before logging and improve error message formatting feat: add cookie handling in Stripchat proxy logging feat: allow remote access in Kodi stubs installation
+- Merge pull request #286 from rpeters1430/fix/flaresolverr-v1-v2
+- Fix stateless FlareSolverr diagnostics
+- Support stateless FlareSolverr v1 and v2
+- Plan FlareSolverr v1 v2 compatibility
+- Document FlareSolverr v1 v2 compatibility
+- feat: add additional permissions for git and scratchpad directory
+- Plan site monitor accuracy repairs
+- Document site monitor accuracy repairs
+
+[B]Version 1.1.444[/B]
+- Merge pull request #286 from rpeters1430/fix/flaresolverr-v1-v2
+- Fix stateless FlareSolverr diagnostics
+- Support stateless FlareSolverr v1 and v2
+- Plan FlareSolverr v1 v2 compatibility
+- Document FlareSolverr v1 v2 compatibility
+- feat: add additional permissions for git and scratchpad directory
+- Plan site monitor accuracy repairs
+- Document site monitor accuracy repairs
+- fix: skip unreachable saawsedge stripchat CDN before wasting time probing it
+
+[B]Version 1.1.443[/B]
+- fix: skip unreachable saawsedge stripchat CDN before wasting time probing it
+- Merge pull request #278 from rpeters1430/claude/flaresolverr-kodi-loop-6v5asz
+- chore: add diagnostic logging for FlareSolverr Cloudflare-loop symptom
+- feat: port camwhorestv/xoxostream sites and re-enable stripchat from upstream
+- chore: stop tracking debug log dumps
+- fix: repair luxuretv 403 media and pornkai blocked playback
+- chore: update vendored resolveurl/resolveurl.xxx resolver plugins
+
+[B]Version 1.1.442[/B]
+- Merge pull request #278 from rpeters1430/claude/flaresolverr-kodi-loop-6v5asz
+- chore: add diagnostic logging for FlareSolverr Cloudflare-loop symptom
+- feat: port camwhorestv/xoxostream sites and re-enable stripchat from upstream
+- chore: stop tracking debug log dumps
+- fix: repair luxuretv 403 media and pornkai blocked playback
+- chore: update vendored resolveurl/resolveurl.xxx resolver plugins
+- fix: stop harness from treating FlareSolverr progress notices as failures
+- fix: repair xvideos playback and luxuretv listing regressions
+
+[B]Version 1.1.441[/B]
+- feat: port camwhorestv/xoxostream sites and re-enable stripchat from upstream
+- chore: stop tracking debug log dumps
+- fix: repair luxuretv 403 media and pornkai blocked playback
+- chore: update vendored resolveurl/resolveurl.xxx resolver plugins
+- fix: stop harness from treating FlareSolverr progress notices as failures
+- fix: repair xvideos playback and luxuretv listing regressions
+- feat: enhance site profiles and playback handling for new sites
+
+[B]Version 1.1.440[/B]
+- chore: update vendored resolveurl/resolveurl.xxx resolver plugins
+- fix: stop harness from treating FlareSolverr progress notices as failures
+- fix: repair xvideos playback and luxuretv listing regressions
+- feat: enhance site profiles and playback handling for new sites
+- Update UPSTREAM_TRIAGE.md with new generation date and pending commits count
+- Port Chaturbate AJAX HLS and re-enable Stripchat from upstream
+- Fix sys.path and glob expansion in monitoring scripts
+- Run trusted priority site monitoring daily
+
+[B]Version 1.1.439[/B]
+- feat: enhance site profiles and playback handling for new sites
+- Update UPSTREAM_TRIAGE.md with new generation date and pending commits count
+- Port Chaturbate AJAX HLS and re-enable Stripchat from upstream
+- Fix sys.path and glob expansion in monitoring scripts
+- Run trusted priority site monitoring daily
+- Add Kodi runtime site probe
+- Add strict site issue lifecycle
+- Track strict site health history
+- Add strict priority site runner
+
+[B]Version 1.1.438[/B]
+- Update UPSTREAM_TRIAGE.md with new generation date and pending commits count
+- Port Chaturbate AJAX HLS and re-enable Stripchat from upstream
+- Fix sys.path and glob expansion in monitoring scripts
+- Run trusted priority site monitoring daily
+- Add Kodi runtime site probe
+- Add strict site issue lifecycle
+- Track strict site health history
+- Add strict priority site runner
+- Verify manifests and media bytes
+- Add strict listing validation
+
+[B]Version 1.1.437[/B]
+- fix: update ThotHub URLs and improve test cases for pagination and video extraction
+- Add site icons and tests for validation
+- fix: update search endpoints and improve category parsing for multiple sites
+- feat: enhance flaresolverr URL validation and improve site filtering
+- Merge pull request #240 from rpeters1430/copilot/fix-flaresolverr-issues
+- fix: allow tailscale flaresolverr endpoints
+
+[B]Version 1.1.436[/B]
+- Add site icons and tests for validation
+- fix: update search endpoints and improve category parsing for multiple sites
+- feat: enhance flaresolverr URL validation and improve site filtering
+- Merge pull request #240 from rpeters1430/copilot/fix-flaresolverr-issues
+- fix: allow tailscale flaresolverr endpoints
+- Initial plan
+
+[B]Version 1.1.435[/B]
+- fix: update search endpoints and improve category parsing for multiple sites
+- feat: enhance flaresolverr URL validation and improve site filtering
+- Merge pull request #240 from rpeters1430/copilot/fix-flaresolverr-issues
+- fix: allow tailscale flaresolverr endpoints
+- Initial plan
+- Implement Chaturbate and KissJav playback fixes with AJAX HLS fallback and referer corrections
+
+[B]Version 1.1.434[/B]
+- feat: enhance flaresolverr URL validation and improve site filtering
+- Merge pull request #240 from rpeters1430/copilot/fix-flaresolverr-issues
+- fix: allow tailscale flaresolverr endpoints
+- Initial plan
+- Implement Chaturbate and KissJav playback fixes with AJAX HLS fallback and referer corrections
+- Enhance video item selection logic and add explore_non_video_items script
+
+[B]Version 1.1.433[/B]
+- Merge pull request #240 from rpeters1430/copilot/fix-flaresolverr-issues
+- fix: allow tailscale flaresolverr endpoints
+- Initial plan
+- Implement Chaturbate and KissJav playback fixes with AJAX HLS fallback and referer corrections
+- Enhance video item selection logic and add explore_non_video_items script
+- Add OffCloud integration and new video resolvers
+
+[B]Version 1.1.432[/B]
+- Implement Chaturbate and KissJav playback fixes with AJAX HLS fallback and referer corrections
+- Enhance video item selection logic and add explore_non_video_items script
+- Add OffCloud integration and new video resolvers
+- Enhance LemonCams integration with Stripchat
+- fix: update LemonCams to delegate playback to Stripchat and adjust settings
+- test: refine lemoncams tests mock isolation to prevent test pollution
+
+[B]Version 1.1.431[/B]
+- Enhance video item selection logic and add explore_non_video_items script
+- Add OffCloud integration and new video resolvers
+- Enhance LemonCams integration with Stripchat
+- fix: update LemonCams to delegate playback to Stripchat and adjust settings
+- test: refine lemoncams tests mock isolation to prevent test pollution
+- fix: delegate LemonCams Stripchat playback to stripchat module
+- fix: resolve redirects for 85po playback and adapt hitprn parser to new site theme
+
+[B]Version 1.1.430[/B]
+- Add OffCloud integration and new video resolvers
+- Enhance LemonCams integration with Stripchat
+- fix: update LemonCams to delegate playback to Stripchat and adjust settings
+- test: refine lemoncams tests mock isolation to prevent test pollution
+- fix: delegate LemonCams Stripchat playback to stripchat module
+- fix: resolve redirects for 85po playback and adapt hitprn parser to new site theme
+- chore: update upstream sync log with 77 triaged commits
+
+[B]Version 1.1.429[/B]
+- Enhance LemonCams integration with Stripchat
+- fix: update LemonCams to delegate playback to Stripchat and adjust settings
+- test: refine lemoncams tests mock isolation to prevent test pollution
+- fix: delegate LemonCams Stripchat playback to stripchat module
+- fix: resolve redirects for 85po playback and adapt hitprn parser to new site theme
+- chore: update upstream sync log with 77 triaged commits
+- Small Updates
+
+[B]Version 1.1.428[/B]
+- fix: update LemonCams to delegate playback to Stripchat and adjust settings
+- test: refine lemoncams tests mock isolation to prevent test pollution
+- fix: delegate LemonCams Stripchat playback to stripchat module
+- fix: resolve redirects for 85po playback and adapt hitprn parser to new site theme
+- chore: update upstream sync log with 77 triaged commits
+- Small Updates
+- Merge pull request #224 from rpeters1430/copilot/fix-settings-screen
+- fix: restore cumination settings screen
+
+[B]Version 1.1.427[/B]
+- Small Updates
+- Merge pull request #224 from rpeters1430/copilot/fix-settings-screen
+- fix: restore cumination settings screen
+- Initial plan
+- Update status metrics and fix site URLs in various modules
+- docs: generate upstream triage report
+- Fix site-health regressions for analdin and familypornhd
+
+[B]Version 1.1.426[/B]
+- Merge pull request #224 from rpeters1430/copilot/fix-settings-screen
+- fix: restore cumination settings screen
+- Initial plan
+- Update status metrics and fix site URLs in various modules
+- docs: generate upstream triage report
+- Fix site-health regressions for analdin and familypornhd
+- Implement new site tracking and validation script; update tests and documentation
+
+[B]Version 1.1.425[/B]
+- Update status metrics and fix site URLs in various modules
+- docs: generate upstream triage report
+- Fix site-health regressions for analdin and familypornhd
+- Implement new site tracking and validation script; update tests and documentation
+- fix: update image attribute handling and search URL in myporntape and youcrazyx modules
+- Small Updates
+
+[B]Version 1.1.424[/B]
+- Fix site-health regressions for analdin and familypornhd
+- Implement new site tracking and validation script; update tests and documentation
+- fix: update image attribute handling and search URL in myporntape and youcrazyx modules
+- Small Updates
+- fix: implement LemonCams direct HLS playback
+- Plan LemonCams direct HLS playback
+
+[B]Version 1.1.423[/B]
+- Implement new site tracking and validation script; update tests and documentation
+- fix: update image attribute handling and search URL in myporntape and youcrazyx modules
+- Small Updates
+- fix: implement LemonCams direct HLS playback
+- Plan LemonCams direct HLS playback
+- Document LemonCams direct HLS design
+
+[B]Version 1.1.422[/B]
+- fix: update image attribute handling and search URL in myporntape and youcrazyx modules
+- Small Updates
+- fix: implement LemonCams direct HLS playback
+- Plan LemonCams direct HLS playback
+- Document LemonCams direct HLS design
+- Lemoncam Fixes
+
+[B]Version 1.1.421[/B]
+- Small Updates
+- fix: implement LemonCams direct HLS playback
+- Plan LemonCams direct HLS playback
+- Document LemonCams direct HLS design
+- Lemoncam Fixes
+- Small Fixes
+
+[B]Version 1.1.420[/B]
+- fix: implement LemonCams direct HLS playback
+- Plan LemonCams direct HLS playback
+- Document LemonCams direct HLS design
+- Lemoncam Fixes
+- Small Fixes
+- Sync script.module.resolveurl from ResolveURL upstream (5.1.203)
+- fix: route LemonCams playback through Stripchat's manifest pipeline
+
+[B]Version 1.1.419[/B]
+- Lemoncam Fixes
+- Small Fixes
+- Sync script.module.resolveurl from ResolveURL upstream (5.1.203)
+- fix: route LemonCams playback through Stripchat's manifest pipeline
+- feat: rebuild upstream triage workflow, add camgirlfap, harden site loader
+- Refactor Pornhub site integration and update test cases
+
+[B]Version 1.1.418[/B]
+- Small Fixes
+- Sync script.module.resolveurl from ResolveURL upstream (5.1.203)
+- fix: route LemonCams playback through Stripchat's manifest pipeline
+- feat: rebuild upstream triage workflow, add camgirlfap, harden site loader
+- Refactor Pornhub site integration and update test cases
+- Enhance Hotleak and Pornhub plugins with improved error handling and response validation
+
+[B]Version 1.1.417[/B]
+- Sync script.module.resolveurl from ResolveURL upstream (5.1.203)
+- fix: route LemonCams playback through Stripchat's manifest pipeline
+- feat: rebuild upstream triage workflow, add camgirlfap, harden site loader
+- Refactor Pornhub site integration and update test cases
+- Enhance Hotleak and Pornhub plugins with improved error handling and response validation
+- feat: enhance media source extraction for PornHub and Reallifecam, adding JSON parsing support
+
+[B]Version 1.1.416[/B]
+- Refactor Pornhub site integration and update test cases
+- Enhance Hotleak and Pornhub plugins with improved error handling and response validation
+- feat: enhance media source extraction for PornHub and Reallifecam, adding JSON parsing support
+- feat: enhance video resolution handling and add nhplayer URL resolution
+- Add site_tool script and corresponding smoke tests for multiple sites
+
+[B]Version 1.1.415[/B]
+- Enhance Hotleak and Pornhub plugins with improved error handling and response validation
+- feat: enhance media source extraction for PornHub and Reallifecam, adding JSON parsing support
+- feat: enhance video resolution handling and add nhplayer URL resolution
+- Add site_tool script and corresponding smoke tests for multiple sites
+- feat: enhance scraper functionality and add pagination support for categories in pornmz and xnxx
+
+[B]Version 1.1.414[/B]
+- feat: enhance media source extraction for PornHub and Reallifecam, adding JSON parsing support
+- feat: enhance video resolution handling and add nhplayer URL resolution
+- Add site_tool script and corresponding smoke tests for multiple sites
+- feat: enhance scraper functionality and add pagination support for categories in pornmz and xnxx
+- fix: restore yourlesbians to prior implementation (categories, multi-quality, more menus)
+- feat: add fpoxxx, heavyfetish, yourlesbians scrapers and site icons from upstream PR #1876
+
+[B]Version 1.1.413[/B]
+- feat: enhance video resolution handling and add nhplayer URL resolution
+- Add site_tool script and corresponding smoke tests for multiple sites
+- feat: enhance scraper functionality and add pagination support for categories in pornmz and xnxx
+- fix: restore yourlesbians to prior implementation (categories, multi-quality, more menus)
+- feat: add fpoxxx, heavyfetish, yourlesbians scrapers and site icons from upstream PR #1876
+- feat: add notfans.com scraper with KVS video support
+- fix: correct playwright-site-investigator skill accuracy issues
+
+[B]Version 1.1.412[/B]
+- Add site_tool script and corresponding smoke tests for multiple sites
+- feat: enhance scraper functionality and add pagination support for categories in pornmz and xnxx
+- fix: restore yourlesbians to prior implementation (categories, multi-quality, more menus)
+- feat: add fpoxxx, heavyfetish, yourlesbians scrapers and site icons from upstream PR #1876
+- feat: add notfans.com scraper with KVS video support
+- fix: correct playwright-site-investigator skill accuracy issues
+- feat: add playwright-site-investigator skill
+- Merge pull request #194 from rpeters1430/copilot/playwright-tests-fix
+
+[B]Version 1.1.411[/B]
+- feat: enhance scraper functionality and add pagination support for categories in pornmz and xnxx
+- fix: restore yourlesbians to prior implementation (categories, multi-quality, more menus)
+- feat: add fpoxxx, heavyfetish, yourlesbians scrapers and site icons from upstream PR #1876
+- feat: add notfans.com scraper with KVS video support
+- fix: correct playwright-site-investigator skill accuracy issues
+- feat: add playwright-site-investigator skill
+- Merge pull request #194 from rpeters1430/copilot/playwright-tests-fix
+- chore: bump Cumination to 1.1.409 and rebuild repository index
+- fix(tokyomotion): resolve play regression and add video src fallback parsing
+
+[B]Version 1.1.410[/B]
+- fix: restore yourlesbians to prior implementation (categories, multi-quality, more menus)
+- feat: add fpoxxx, heavyfetish, yourlesbians scrapers and site icons from upstream PR #1876
+- feat: add notfans.com scraper with KVS video support
+- fix: correct playwright-site-investigator skill accuracy issues
+- feat: add playwright-site-investigator skill
+- Merge pull request #194 from rpeters1430/copilot/playwright-tests-fix
+- chore: bump Cumination to 1.1.409 and rebuild repository index
+- fix(tokyomotion): resolve play regression and add video src fallback parsing
+- fix: correct Playwright artifact action pin
+- Initial plan
+
+[B]Version 1.1.409[/B]
+- fix(tokyomotion): resolve play regression and add video src fallback parsing
+
+[B]Version 1.1.408[/B]
+- chore: update repository index for hanime fix
+- fix(hanime): update video manifest API to v8 to fix parser regression
+- fix(txxx): handle videos with null titles in API response
+- Add tests for 91porna and mangoporn sites, including smoke tests
+- Refactor and enhance site parsers and tests
+- Merge pull request #179 from rpeters1430/copilot/clean-up-debug-py-files
+- chore: address codeql regex risk in moved debug script
+- chore: move root debug scripts into scripts/debug
+
+[B]Version 1.1.407[/B]
+- fix(txxx): handle videos with null titles in API response to prevent crash
+- fix(txxx): improve robustness of Categories, Channels, and Models parsers
+- add(txxx): regression test for null title handling
+
+[B]Version 1.1.406[/B]
+- Add tests for 91porna and mangoporn sites, including smoke tests
+- Refactor and enhance site parsers and tests
+- Merge pull request #179 from rpeters1430/copilot/clean-up-debug-py-files
+- chore: address codeql regex risk in moved debug script
+- chore: move root debug scripts into scripts/debug
+- Initial plan
+- Add SaveFiles resolver with ByParr support and multiple language updates
+- fix(pornhoarder): address structural site regressions and update URLs
+
+[B]Version 1.1.405[/B]
+- Refactor and enhance site parsers and tests
+- Merge pull request #179 from rpeters1430/copilot/clean-up-debug-py-files
+- chore: address codeql regex risk in moved debug script
+- chore: move root debug scripts into scripts/debug
+- Initial plan
+- Add SaveFiles resolver with ByParr support and multiple language updates
+- fix(pornhoarder): address structural site regressions and update URLs
+- Refactor tests for josporn and default entrypoint
+
+[B]Version 1.1.404[/B]
+- fix(pornhoarder): address structural site regressions and update URLs
+- Refactor tests for josporn and default entrypoint
+- Add unit tests for default entry point behavior
+- Enhance site configurations and FlareSolverr integration across multiple sites
+- feat: enhance site functionality and add new media handling for various sites
+- Add debugging and testing scripts for Analdin site
+
+[B]Version 1.1.403[/B]
+- Refactor tests for josporn and default entrypoint
+- Add unit tests for default entry point behavior
+- Enhance site configurations and FlareSolverr integration across multiple sites
+- feat: enhance site functionality and add new media handling for various sites
+- Add debugging and testing scripts for Analdin site
+- fix: resolve test failures from upstream port
+
+[B]Version 1.1.402[/B]
+- Add unit tests for default entry point behavior
+- Enhance site configurations and FlareSolverr integration across multiple sites
+- feat: enhance site functionality and add new media handling for various sites
+- Add debugging and testing scripts for Analdin site
+- fix: resolve test failures from upstream port
+- feat: port optional players, favorites markers for chaturbate/bongacams/cam4
+- feat: port upstream fixes and new sites (2026-05-24 sync through 46308729)
+
+[B]Version 1.1.401[/B]
+- Enhance site configurations and FlareSolverr integration across multiple sites
+- feat: enhance site functionality and add new media handling for various sites
+- Add debugging and testing scripts for Analdin site
+- fix: resolve test failures from upstream port
+- feat: port optional players, favorites markers for chaturbate/bongacams/cam4
+- feat: port upstream fixes and new sites (2026-05-24 sync through 46308729)
+- feat: add support for flaky persistent failures in report comparison and triage request generation
+
+[B]Version 1.1.400[/B]
+- feat: enhance site functionality and add new media handling for various sites
+- Add debugging and testing scripts for Analdin site
+- fix: resolve test failures from upstream port
+- feat: port optional players, favorites markers for chaturbate/bongacams/cam4
+- feat: port upstream fixes and new sites (2026-05-24 sync through 46308729)
+- feat: add support for flaky persistent failures in report comparison and triage request generation
+- Refactor code structure and remove redundant sections for improved readability and maintainability
+
+[B]Version 1.1.399[/B]
+- fix: resolve test failures from upstream port
+- feat: port optional players, favorites markers for chaturbate/bongacams/cam4
+- feat: port upstream fixes and new sites (2026-05-24 sync through 46308729)
+- feat: add support for flaky persistent failures in report comparison and triage request generation
+- Refactor code structure and remove redundant sections for improved readability and maintainability
+- Fix Porndig removed-player playback redirect
+- Merge pull request #158 from rpeters1430/copilot/task-47281316-1078529106-c7d5a470-2e5b-4ed6-99ac-d664cd72090d
+- fix: refresh site-health workflow action versions
+
+[B]Version 1.1.398[/B]
+- Refactor code structure and remove redundant sections for improved readability and maintainability
+- Fix Porndig removed-player playback redirect
+- Merge pull request #158 from rpeters1430/copilot/task-47281316-1078529106-c7d5a470-2e5b-4ed6-99ac-d664cd72090d
+- fix: refresh site-health workflow action versions
+- fix: update site-health upload-artifact action reference
+- Add script to automatically bump version numbers in add-on XML files
+- Merge pull request #157 from rpeters1430/copilot/fix-github-actions-failure
+- fix: force label create in health workflows
+
+[B]Version 1.1.397[/B]
+- Fix Porndig removed-player playback redirect
+- Merge pull request #158 from rpeters1430/copilot/task-47281316-1078529106-c7d5a470-2e5b-4ed6-99ac-d664cd72090d
+- fix: refresh site-health workflow action versions
+- fix: update site-health upload-artifact action reference
+- Add script to automatically bump version numbers in add-on XML files
+- Merge pull request #157 from rpeters1430/copilot/fix-github-actions-failure
+- fix: force label create in health workflows
+- Initial plan
+
+[B]Version 1.1.396[/B]
+- Add script to automatically bump version numbers in add-on XML files
+- Merge pull request #157 from rpeters1430/copilot/fix-github-actions-failure
+- fix: force label create in health workflows
+- Initial plan
+- feat: Enhance search functionality and add new site support
+- fix: update permissions and enhance site module auto-discovery in CLAUDE.md
+- fix: repair xfreehd private-video filter and speedporn hoster extraction
+
+[B]Version 1.1.395[/B]
+- feat: Enhance search functionality and add new site support
+- fix: update permissions and enhance site module auto-discovery in CLAUDE.md
+- fix: repair xfreehd private-video filter and speedporn hoster extraction
+- feat: enhance FlareSolverr integration and error handling across multiple sites
+- fix: use multi-line output and compact JSON for triage issues
+- fix: correct issue search query in scheduled triage workflow
+- feat: update status metrics with latest addon version and migration data
+- Add live smoke report and update site health and stability data
+
+[B]Version 1.1.394[/B]
+- fix: update permissions and enhance site module auto-discovery in CLAUDE.md
+- fix: repair xfreehd private-video filter and speedporn hoster extraction
+- feat: enhance FlareSolverr integration and error handling across multiple sites
+- fix: use multi-line output and compact JSON for triage issues
+- fix: correct issue search query in scheduled triage workflow
+- feat: update status metrics with latest addon version and migration data
+- Add live smoke report and update site health and stability data
+- feat: enable automated triage for persistent site failures
+- feat: add stability indicators to report comparison
+
+[B]Version 1.1.393[/B]
+- feat: enhance FlareSolverr integration and error handling across multiple sites
+- fix: use multi-line output and compact JSON for triage issues
+- fix: correct issue search query in scheduled triage workflow
+- feat: update status metrics with latest addon version and migration data
+- Add live smoke report and update site health and stability data
+- feat: enable automated triage for persistent site failures
+- feat: add stability indicators to report comparison
+- feat: enhance site health checks and triage request generation - Added tier filtering for smoke tests - Improved stability tracking in smoke report comparisons - Introduced automated triage request generation based on health regressions - Added new smoke tests for sunporno and yourlesbians sites - Updated existing tests for hentaihavenco and stripchat
+- Update upstream sync tracking and enhance site-specific handling
+
+[B]Version 1.1.392[/B]
+- Update upstream sync tracking and enhance site-specific handling
+- Misc Updates to Sites
+- Add support for DoodStream mirrors with custom resolver
+- fix: add safety check for cache_time setting in utils.py
+- Implement feature X to enhance user experience and optimize performance
+- Add live smoke reports for validation results on 2026-05-05
+
+[B]Version 1.1.391[/B]
+- Misc Updates to Sites
+- Add support for DoodStream mirrors with custom resolver
+- fix: add safety check for cache_time setting in utils.py
+- Implement feature X to enhance user experience and optimize performance
+- Add live smoke reports for validation results on 2026-05-05
+- chore: bump version to 1.1.386 and fix path traversal security issue
+
+[B]Version 1.1.390[/B]
+- Add support for DoodStream mirrors with custom resolver
+- fix: add safety check for cache_time setting in utils.py
+- Implement feature X to enhance user experience and optimize performance
+- Add live smoke reports for validation results on 2026-05-05
+- chore: bump version to 1.1.386 and fix path traversal security issue
+- chore: sync with upstream 2026-05-05
+
+[B]Version 1.1.389[/B]
+- fix: add safety check for cache_time setting in utils.py
+- Implement feature X to enhance user experience and optimize performance
+- Add live smoke reports for validation results on 2026-05-05
+- chore: bump version to 1.1.386 and fix path traversal security issue
+- chore: sync with upstream 2026-05-05
+- fix: improve reallifecam scraper and handle modern hosters #147
+
+[B]Version 1.1.388[/B]
+- Implement feature X to enhance user experience and optimize performance
+- Add live smoke reports for validation results on 2026-05-05
+- chore: bump version to 1.1.386 and fix path traversal security issue
+- chore: sync with upstream 2026-05-05
+- fix: improve reallifecam scraper and handle modern hosters #147
+- feat: update status metrics and enhance pagination handling in site scripts
+
+[B]Version 1.1.387[/B]
+- chore: bump version to 1.1.386 and fix path traversal security issue
+- chore: sync with upstream 2026-05-05
+- fix: improve reallifecam scraper and handle modern hosters #147
+- feat: update status metrics and enhance pagination handling in site scripts
+- Enhance site handling and metrics reporting
+
+[B]Version 1.1.386[/B]
+<<<<<<< HEAD
+- chore: sync with upstream 2026-05-05
+- fix: improve reallifecam scraper and handle modern hosters #147
+- feat: update status metrics and enhance pagination handling in site scripts
+- Enhance site handling and metrics reporting
+- feat: enhance favorites management and category parsing
+=======
+- fix: improve reallifecam scraper and handle modern hosters #147
+- chore: sync with upstream 2026-05-05 (Chaturbate, FamilyPornHD, WhereIsMyPorn, AWM Network fixes)
+- security: fix path traversal vulnerability in custom site imports
+- fix: normalize path separators for cross-platform security validation
+>>>>>>> 5f598a53 (chore: bump version to 1.1.386 and fix path traversal security issue)
+
+[B]Version 1.1.385[/B]
+- fix: improve reallifecam scraper and handle modern hosters #147
+- feat: update status metrics and enhance pagination handling in site scripts
+- Enhance site handling and metrics reporting
+- feat: enhance favorites management and category parsing
+- Add urllib.response to six.py and new cookie file for cumination plugin
+
+[B]Version 1.1.384[/B]
+- feat: update status metrics and enhance pagination handling in site scripts
+- Enhance site handling and metrics reporting
+- feat: enhance favorites management and category parsing
+- Add urllib.response to six.py and new cookie file for cumination plugin
+- Merge pull request #145 from rpeters1430/alert-autofix-177
+- style: format code with Ruff Formatter
+
+[B]Version 1.1.383[/B]
+- Enhance site handling and metrics reporting
+- feat: enhance favorites management and category parsing
+- Add urllib.response to six.py and new cookie file for cumination plugin
+- Merge pull request #145 from rpeters1430/alert-autofix-177
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 177: Incomplete URL substring sanitization
+
+[B]Version 1.1.382[/B]
+- feat: enhance favorites management and category parsing
+- Add urllib.response to six.py and new cookie file for cumination plugin
+- Merge pull request #145 from rpeters1430/alert-autofix-177
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 177: Incomplete URL substring sanitization
+- Merge pull request #142 from rpeters1430/copilot/resolve-security-issues
+- Merge pull request #144 from rpeters1430/copilot/fix-gemini-cli-triage-error
+
+[B]Version 1.1.381[/B]
+- Add urllib.response to six.py and new cookie file for cumination plugin
+- Merge pull request #145 from rpeters1430/alert-autofix-177
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 177: Incomplete URL substring sanitization
+- Merge pull request #142 from rpeters1430/copilot/resolve-security-issues
+- Merge pull request #144 from rpeters1430/copilot/fix-gemini-cli-triage-error
+- style: format code with Ruff Formatter
+- fix: add GEMINI_CLI_TRUST_WORKSPACE=true to all Gemini CLI workflow steps
+
+[B]Version 1.1.380[/B]
+- Merge pull request #145 from rpeters1430/alert-autofix-177
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 177: Incomplete URL substring sanitization
+- Merge pull request #142 from rpeters1430/copilot/resolve-security-issues
+- Merge pull request #144 from rpeters1430/copilot/fix-gemini-cli-triage-error
+- style: format code with Ruff Formatter
+- fix: add GEMINI_CLI_TRUST_WORKSPACE=true to all Gemini CLI workflow steps
+- fix: resolve SSRF vulnerabilities in chaturbate.py proxy handlers
+- Initial plan
+
+[B]Version 1.1.379[/B]
+- Merge pull request #142 from rpeters1430/copilot/resolve-security-issues
+- Merge pull request #144 from rpeters1430/copilot/fix-gemini-cli-triage-error
+- style: format code with Ruff Formatter
+- fix: add GEMINI_CLI_TRUST_WORKSPACE=true to all Gemini CLI workflow steps
+- fix: resolve SSRF vulnerabilities in chaturbate.py proxy handlers
+- Initial plan
+- Initial plan
+- Merge pull request #140 from rpeters1430/alert-autofix-175
+- Potential fix for code scanning alert no. 175: Full server-side request forgery
+
+[B]Version 1.1.378[/B]
+- Merge pull request #140 from rpeters1430/alert-autofix-175
+- Potential fix for code scanning alert no. 175: Full server-side request forgery
+- feat: refactor PornHubResolver to improve media extraction and add unit tests
+- Add new image asset for YourLesbians in plugin.video.cumination
+- feat: add support for YourLesbians site with video listing and playback functionality
+- fix: update SpankBang URLs and adjust test cases accordingly
+
+[B]Version 1.1.377[/B]
+- Add new image asset for YourLesbians in plugin.video.cumination
+- feat: add support for YourLesbians site with video listing and playback functionality
+- fix: update SpankBang URLs and adjust test cases accordingly
+- Merge pull request #139 from rpeters1430/copilot/fix-flaresolverr-errors
+- Update scripts/live_smoke_test.py
+- fix: handle FlareSolverr unavailability in site-health CI action
+- Initial plan
+- chore: remove redundant health generator files after integration
+
+[B]Version 1.1.376[/B]
+- feat: add support for YourLesbians site with video listing and playback functionality
+- fix: update SpankBang URLs and adjust test cases accordingly
+- Merge pull request #139 from rpeters1430/copilot/fix-flaresolverr-errors
+- Update scripts/live_smoke_test.py
+- fix: handle FlareSolverr unavailability in site-health CI action
+- Initial plan
+- chore: remove redundant health generator files after integration
+- Merge pull request #135 from rpeters1430/codex/add-project-health-generation-script
+
+[B]Version 1.1.375[/B]
+- fix: update SpankBang URLs and adjust test cases accordingly
+- Merge pull request #139 from rpeters1430/copilot/fix-flaresolverr-errors
+- Update scripts/live_smoke_test.py
+- fix: handle FlareSolverr unavailability in site-health CI action
+- Initial plan
+- chore: remove redundant health generator files after integration
+- Merge pull request #135 from rpeters1430/codex/add-project-health-generation-script
+- refactor: integrate health generator features into canonical status metrics
+- fix: resolve lint errors and FlareSolverr manager AttributeError to unblock CI
+
+[B]Version 1.1.374[/B]
+- Merge pull request #135 from rpeters1430/codex/add-project-health-generation-script
+- refactor: integrate health generator features into canonical status metrics
+- fix: resolve lint errors and FlareSolverr manager AttributeError to unblock CI
+- style: format code with Ruff Formatter
+- Add generated project health report and docs references
+- Merge pull request #136 from rpeters1430/codex/update-documentation-for-version-alignment
+- docs: resolve merge conflicts and fix hentai-moon gap (170/170 direct tests)
+- Merge pull request #137 from rpeters1430/codex/create-version-and-status-file-generator
+- style: format code with Ruff Formatter
+- Add canonical status metrics generator and sync checklist
+
+[B]Version 1.1.373[/B]
+- security: fix potential command injection and strengthen SSRF protection
+- fix: address potential SSRF in chaturbate.py localhost proxy (fixes #174, #175)
+- Merge pull request #133 from rpeters1430/alert-autofix-173
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 173: Full server-side request forgery
+- feat: enhance site handling and error management for multiple sites
+
+[B]Version 1.1.372[/B]
+- fix: address potential SSRF in chaturbate.py localhost proxy (fixes #174, #175)
+- Merge pull request #133 from rpeters1430/alert-autofix-173
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 173: Full server-side request forgery
+- feat: enhance site handling and error management for multiple sites
+- chore: update permissions in settings.local.json to include new Bash commands and file reads
+
+[B]Version 1.1.371[/B]
+- Merge pull request #133 from rpeters1430/alert-autofix-173
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 173: Full server-side request forgery
+- feat: enhance site handling and error management for multiple sites
+- chore: update permissions in settings.local.json to include new Bash commands and file reads
+- test: add category coverage test for all sites
+- chore: fix category tags on multi-site files and missed sites
+
+[B]Version 1.1.370[/B]
+- feat: enhance site handling and error management for multiple sites
+- chore: update permissions in settings.local.json to include new Bash commands and file reads
+- test: add category coverage test for all sites
+- chore: fix category tags on multi-site files and missed sites
+- chore: tag Aggregators sites
+- chore: tag Specialty sites
+- chore: tag Amateur & Social sites
+- chore: tag Hentai & Anime sites
+
+[B]Version 1.1.369[/B]
+- chore: update permissions in settings.local.json to include new Bash commands and file reads
+- test: add category coverage test for all sites
+- chore: fix category tags on multi-site files and missed sites
+- chore: tag Aggregators sites
+- chore: tag Specialty sites
+- chore: tag Amateur & Social sites
+- chore: tag Hentai & Anime sites
+- chore: tag JAV & Asian sites
+- chore: tag Cams & Live sites
+
+[B]Version 1.1.368[/B]
+- utils: fix crashes on first launch with some skins by handling setControls RuntimeError
+- xmoviesforyou: fix broken listings by using /page/1 as base URL
+- chaturbate: handle gzipped manifests from mmcdn edges to fix playback
+- chaturbate: add "Find recordings on Cloudbate" context menu to online favorites
+- spankbang: fix listings by scoping to video-list block and fix playback with Referer/UA
+
+[B]Version 1.1.367[/B]
+- Enhance error handling and improve video link extraction across multiple site scrapers
+- chore: update site configurations and enhance video playback tests
+- Enhance SunPorno site scraper and video player functionality
+- Add new images and update site icons for hentaihavenco and xvideos
+- Refactor site definitions to include category and webcam attributes
+
+[B]Version 1.1.366[/B]
+- chore: update site configurations and enhance video playback tests
+- Enhance SunPorno site scraper and video player functionality
+- Add new images and update site icons for hentaihavenco and xvideos
+- Refactor site definitions to include category and webcam attributes
+- Add SunPorno site scraper and tests
+- chore: final cleanup of chaturbate proxy logic
+
+[B]Version 1.1.365[/B]
+- Enhance SunPorno site scraper and video player functionality
+- Add new images and update site icons for hentaihavenco and xvideos
+- Refactor site definitions to include category and webcam attributes
+- Add SunPorno site scraper and tests
+- chore: final cleanup of chaturbate proxy logic
+- fix: josporn/tubxporn extraction and port chaturbate proxy enhancements
+
+[B]Version 1.1.364[/B]
+- Add new images and update site icons for hentaihavenco and xvideos
+- Refactor site definitions to include category and webcam attributes
+- Add SunPorno site scraper and tests
+- chore: final cleanup of chaturbate proxy logic
+- fix: josporn/tubxporn extraction and port chaturbate proxy enhancements
+- Add Cloudbate site scraper and related tests
+
+[B]Version 1.1.363[/B]
+- Refactor site definitions to include category and webcam attributes
+- Add SunPorno site scraper and tests
+- chore: final cleanup of chaturbate proxy logic
+- fix: josporn/tubxporn extraction and port chaturbate proxy enhancements
+- Add Cloudbate site scraper and related tests
+- Add new site implementations and tests for fyxxr and xxthots
+
+[B]Version 1.1.362[/B]
+- Add SunPorno site scraper and tests
+- chore: final cleanup of chaturbate proxy logic
+- fix: josporn/tubxporn extraction and port chaturbate proxy enhancements
+- Add Cloudbate site scraper and related tests
+- Add new site implementations and tests for fyxxr and xxthots
+- Merge pull request #129 from rpeters1430/alert-autofix-104
+
+[B]Version 1.1.361[/B]
+- cloudbate - new site
+- chaturbate - fix playback (master playlist proxy)
+- chaturbate - context menu: Find recordings featuring model_name on Cloudbate
+- watchporn, naughtyblog - robust BS4 selector updates
+
+[B]Version 1.1.360[/B]
+- Add new site implementations and tests for fyxxr and xxthots
+- Merge pull request #129 from rpeters1430/alert-autofix-104
+- Merge pull request #128 from rpeters1430/alert-autofix-105
+- Merge pull request #127 from rpeters1430/alert-autofix-167
+- style: format code with Ruff Formatter
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 104: Default version of SSL/TLS may be insecure
+- Potential fix for code scanning alert no. 105: Use of insecure SSL/TLS version
+
+[B]Version 1.1.359[/B]
+- refactor: enhance custom site import handling and remove ignoreCertificateErrors option
+- Merge pull request #126 from rpeters1430/alert-autofix-154
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 154: Full server-side request forgery
+- Merge pull request #125 from rpeters1430/imgbot
+- feat: enhance video playback handling and support for Stripchat models
+- Site Updates
+
+[B]Version 1.1.358[/B]
+- Merge pull request #126 from rpeters1430/alert-autofix-154
+- style: format code with Ruff Formatter
+- Potential fix for code scanning alert no. 154: Full server-side request forgery
+- Merge pull request #125 from rpeters1430/imgbot
+- feat: enhance video playback handling and support for Stripchat models
+- Site Updates
+- [ImgBot] Optimize images
+
+[B]Version 1.1.357[/B]
+- Merge pull request #125 from rpeters1430/imgbot
+- feat: enhance video playback handling and support for Stripchat models
+- Site Updates
+- [ImgBot] Optimize images
+- Refactor smoke tests for various sites to improve dispatch handling
+- fix: update user agent versions and improve josporn site integration
+
+[B]Version 1.1.356[/B]
+- feat: enhance video playback handling and support for Stripchat models
+- Site Updates
+- Refactor smoke tests for various sites to improve dispatch handling
+- fix: update user agent versions and improve josporn site integration
+- Refactor smoke tests for various sites to use dynamic module imports and update utility patching
+- Add smoke tests for various adult sites
+
+[B]Version 1.1.355[/B]
+- feat: port upstream f12e1d25 - reallifecams, voyeur-house domain updates
+- fix: port upstream f12e1d25 - watchporn lookup info regex fixes
+
+[B]Version 1.1.354[/B]
+- Refactor smoke tests for various sites to improve dispatch handling
+- fix: update user agent versions and improve josporn site integration
+- Refactor smoke tests for various sites to use dynamic module imports and update utility patching
+- Add smoke tests for various adult sites
+- site fixes with resolveurl updates
+
+[B]Version 1.1.353[/B]
+- fix: update user agent versions and improve josporn site integration
+- Refactor smoke tests for various sites to use dynamic module imports and update utility patching
+- Add smoke tests for various adult sites
+- site fixes with resolveurl updates
+- site fixes
+
+[B]Version 1.1.352[/B]
+- Refactor smoke tests for various sites to use dynamic module imports and update utility patching
+- Add smoke tests for various adult sites
+- site fixes with resolveurl updates
+- site fixes
+- site updates
+
+[B]Version 1.1.351[/B]
+- Add smoke tests for various adult sites
+- site fixes with resolveurl updates
+- site fixes
+- site updates
+- fix site health playvids and tubxporn
+
+[B]Version 1.1.350[/B]
+- site fixes with resolveurl updates
+- site fixes
+- site updates
+- fix site health playvids and tubxporn
+- feat: enhance video extraction and playback logic across multiple sites
+
+[B]Version 1.1.349[/B]
+- site fixes
+- site updates
+- fix site health playvids and tubxporn
+- feat: enhance video extraction and playback logic across multiple sites
+- Site Fixes
+- feat: port upstream 034f9e42 - fix aagmaal and aagmaalpro domains and scrapers
+
+[B]Version 1.1.348[/B]
+- site updates
+- fix site health playvids and tubxporn
+- feat: enhance video extraction and playback logic across multiple sites
+- Site Fixes
+- feat: port upstream 034f9e42 - fix aagmaal and aagmaalpro domains and scrapers
+- feat: enhance site functionality and improve test coverage for analdin and xhamster
+
+[B]Version 1.1.347[/B]
+- fix site health playvids and tubxporn
+- feat: enhance video extraction and playback logic across multiple sites
+- Site Fixes
+- feat: port upstream 034f9e42 - fix aagmaal and aagmaalpro domains and scrapers
+- feat: enhance site functionality and improve test coverage for analdin and xhamster
+- Merge pull request #124 from rpeters1430/deepsource-autofix-bd4d6111
+
+[B]Version 1.1.346[/B]
+- feat: enhance video extraction and playback logic across multiple sites
+- Site Fixes
+- feat: port upstream 034f9e42 - fix aagmaal and aagmaalpro domains and scrapers
+- feat: enhance site functionality and improve test coverage for analdin and xhamster
+- Merge pull request #124 from rpeters1430/deepsource-autofix-bd4d6111
+- style: format code with Ruff Formatter
+
+[B]Version 1.1.345[/B]
+- Site Fixes
+- feat: port upstream 034f9e42 - fix aagmaal and aagmaalpro domains and scrapers
+- feat: enhance site functionality and improve test coverage for analdin and xhamster
+- Merge pull request #124 from rpeters1430/deepsource-autofix-bd4d6111
+- style: format code with Ruff Formatter
+- Merge pull request #123 from rpeters1430/copilot/fix-site-breaking-issues
+- refactor: remove reimported module
+
+[B]Version 1.1.344[/B]
+- feat: enhance site functionality and improve test coverage for analdin and xhamster
+- Merge pull request #124 from rpeters1430/deepsource-autofix-bd4d6111
+- style: format code with Ruff Formatter
+- Merge pull request #123 from rpeters1430/copilot/fix-site-breaking-issues
+- refactor: remove reimported module
+- style: format code with Ruff Formatter
+- refactor: address code review - simplify xhamster video fallback chain and porndoe thumb extraction
+- style: format code with Ruff Formatter
+
+[B]Version 1.1.343[/B]
+- Merge pull request #124 from rpeters1430/deepsource-autofix-bd4d6111
+- style: format code with Ruff Formatter
+- Merge pull request #123 from rpeters1430/copilot/fix-site-breaking-issues
+- refactor: remove reimported module
+- style: format code with Ruff Formatter
+- refactor: address code review - simplify xhamster video fallback chain and porndoe thumb extraction
+- style: format code with Ruff Formatter
+- fix: resolve new site failures - xhamster KeyError, analdin 404, eporner/porndoe selectors
+- Initial plan
+
+[B]Version 1.1.342[/B]
+- Merge pull request #123 from rpeters1430/copilot/fix-site-breaking-issues
+- style: format code with Ruff Formatter
+- refactor: address code review - simplify xhamster video fallback chain and porndoe thumb extraction
+- style: format code with Ruff Formatter
+- fix: resolve new site failures - xhamster KeyError, analdin 404, eporner/porndoe selectors
+- Initial plan
+- ci: add FlareSolverr service to site-health and tests workflows
+- fix: improve smoke test environment and site module reliability
+
+[B]Version 1.1.341[/B]
+- fix: improve smoke test environment and site module reliability
+- feat: Enhance site modules with improved error handling and JSON parsing
+- Merge pull request #121 from rpeters1430/imgbot
+- fix: restore PornKai video listings and Categories
+- [ImgBot] Optimize images
+- Sync script.module.resolveurl.xxx from ResolveURL upstream
+
+[B]Version 1.1.340[/B]
+- feat: Enhance site modules with improved error handling and JSON parsing
+- Merge pull request #121 from rpeters1430/imgbot
+- fix: restore PornKai video listings and Categories
+- [ImgBot] Optimize images
+- Sync script.module.resolveurl.xxx from ResolveURL upstream
+- Sync script.module.resolveurl from ResolveURL upstream
+
+[B]Version 1.1.339[/B]
+- fix: restore PornKai video listings and Categories
+- Sync script.module.resolveurl.xxx from ResolveURL upstream
+- Sync script.module.resolveurl from ResolveURL upstream
+- Refactor tests for AnyBunny and PornXpert sites
+- Refactor Anybunny site integration to use updated HTML fetching method and enhance test coverage for pagination and download links
+- Add Playwright scripts for checking Anybunny structure and comparing responses
+
+[B]Version 1.1.338[/B]
+- Refactor tests for AnyBunny and PornXpert sites
+- Refactor Anybunny site integration to use updated HTML fetching method and enhance test coverage for pagination and download links
+- Add Playwright scripts for checking Anybunny structure and comparing responses
+- Merge pull request #120 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: update image paths and enhance video quality selection logic
+
+[B]Version 1.1.337[/B]
+- Refactor Anybunny site integration to use updated HTML fetching method and enhance test coverage for pagination and download links
+- Add Playwright scripts for checking Anybunny structure and comparing responses
+- Merge pull request #120 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: update image paths and enhance video quality selection logic
+- Fixed Issue #119
+
+[B]Version 1.1.336[/B]
+- Add Playwright scripts for checking Anybunny structure and comparing responses
+- Merge pull request #120 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: update image paths and enhance video quality selection logic
+- Fixed Issue #119
+- feat(images): update site logos and remove unused files
+
+[B]Version 1.1.335[/B]
+- Merge pull request #120 from rpeters1430/imgbot
+- [ImgBot] Optimize images
+- feat: update image paths and enhance video quality selection logic
+- Fixed Issue #119
+- feat(images): update site logos and remove unused files
+- Multiple Site Fixes
+
+[B]Version 1.1.334[/B]
+- feat: update image paths and enhance video quality selection logic
+- Fixed Issue #119
+- feat(images): update site logos and remove unused files
+- Multiple Site Fixes
+- site updates
+- Site Fixes
+
+[B]Version 1.1.333[/B]
+- Fixed Issue #119
+- feat(images): update site logos and remove unused files
+- Multiple Site Fixes
+- site updates
+- Site Fixes
+- feat(diagnostics): finalize extension with /pw-test-env and validation
+- feat(ext): add playwright-expert skill
+
+[B]Version 1.1.332[/B]
+- feat(images): update site logos and remove unused files
+- Multiple Site Fixes
+- site updates
+- Site Fixes
+- feat(diagnostics): finalize extension with /pw-test-env and validation
+- feat(ext): add playwright-expert skill
+- feat(diagnostics): Implement /pw-sniff command
+- feat(diagnostics): Implement /pw-smoke command and Python bridge
+
+[B]Version 1.1.331[/B]
+- Multiple Site Fixes
+- site updates
+- Site Fixes
+- feat(diagnostics): finalize extension with /pw-test-env and validation
+- feat(ext): add playwright-expert skill
+- feat(diagnostics): Implement /pw-sniff command
+- feat(diagnostics): Implement /pw-smoke command and Python bridge
+- feat(ext): scaffold playwright-diagnostics extension
+- chore: ignore .worktrees directory
+
+[B]Version 1.1.330[/B]
+- site updates
+- Site Fixes
+- feat(diagnostics): finalize extension with /pw-test-env and validation
+- feat(ext): add playwright-expert skill
+- feat(diagnostics): Implement /pw-sniff command
+- feat(diagnostics): Implement /pw-smoke command and Python bridge
+- feat(ext): scaffold playwright-diagnostics extension
+- chore: ignore .worktrees directory
+- site fixes
+
+[B]Version 1.1.329[/B]
+- site fixes
+- Site Fixes
+- Fix PMVHaven listing parsing
+- fix(pornhd3x): resolve buggy thumbnails and broken playback logic
+- fix: resolve linting issues and unused code in site modules
+- fix: resolve syntax errors and clean up merge markers in site modules
+
+[B]Version 1.1.328[/B]
+- Site Fixes
+- Fix PMVHaven listing parsing
+- fix(pornhd3x): resolve buggy thumbnails and broken playback logic
+- fix: resolve linting issues and unused code in site modules
+- fix: resolve syntax errors and clean up merge markers in site modules
+- Upstream Commits
+
+[B]Version 1.1.327[/B]
+- Fix PMVHaven listing parsing
+- fix(pornhd3x): resolve buggy thumbnails and broken playback logic
+- fix: resolve linting issues and unused code in site modules
+- fix: resolve syntax errors and clean up merge markers in site modules
+- Upstream Commits
+- chore: update sync manager and upstream tracking for 2026-03-14 session
+- cherry picked from commit 569ea709 (excluded changelog, kept BS4 scrapers with playback fixes)
+
+[B]Version 1.1.326[/B]
+- fix(pornhd3x): resolve buggy thumbnails and broken playback logic
+- fix: resolve linting issues and unused code in site modules
+- fix: resolve syntax errors and clean up merge markers in site modules
+- Upstream Commits
+- chore: update sync manager and upstream tracking for 2026-03-14 session
+- cherry picked from commit 569ea709 (excluded changelog, kept BS4 scrapers with playback fixes)
+- cherry picked from commit fef612ec (excluded changelog)
+
+[B]Version 1.1.325[/B]
+- fix: resolve linting issues and unused code in site modules
+- fix: resolve syntax errors and clean up merge markers in site modules
+- Upstream Commits
+- chore: update sync manager and upstream tracking for 2026-03-14 session
+- cherry picked from commit 569ea709 (excluded changelog, kept BS4 scrapers with playback fixes)
+- cherry picked from commit fef612ec (excluded changelog)
+- fix(sites): resolve playback issues for ThePornArea and Javseen
+
+[B]Version 1.1.324[/B]
+- Upstream Commits
+- chore: update sync manager and upstream tracking for 2026-03-14 session
+- cherry picked from commit 569ea709 (excluded changelog, kept BS4 scrapers with playback fixes)
+- cherry picked from commit fef612ec (excluded changelog)
+- fix(sites): resolve playback issues for ThePornArea and Javseen
+- new site updates
+- site updates
+
+[B]Version 1.1.323[/B]
+- fix(sites): resolve playback issues for ThePornArea and Javseen
+- new site updates
+- site updates
+- Testing Site Updates
+- Test New Sites
+
+[B]Version 1.1.322[/B]
+- new site updates
+- site updates
+- Testing Site Updates
+- Test New Sites
+- freepornvideos, pornkai, realifecam fixes
+- fix: stabilize stripchat manifest proxy tests
+
+[B]Version 1.1.321[/B]
+- site updates
+- Testing Site Updates
+- Test New Sites
+- freepornvideos, pornkai, realifecam fixes
+- fix: stabilize stripchat manifest proxy tests
+- beeg fixes #1777
+
+[B]Version 1.1.320[/B]
+- Testing Site Updates
+- Test New Sites
+- freepornvideos, pornkai, realifecam fixes
+- fix: stabilize stripchat manifest proxy tests
+- beeg fixes #1777
+- fix lemoncams
+
+[B]Version 1.1.319[/B]
+- Test New Sites
+- freepornvideos, pornkai, realifecam fixes
+- fix: stabilize stripchat manifest proxy tests
+- beeg fixes #1777
+- fix lemoncams
+- Misc Fixes
+
+[B]Version 1.1.318[/B]
+- freepornvideos, pornkai, realifecam fixes
+- fix: stabilize stripchat manifest proxy tests
+- beeg fixes #1777
+- fix lemoncams
+- Misc Fixes
+- lemoncam fix
+
+[B]Version 1.1.317[/B]
+- beeg - fix categories and update site URL (upstream sync)
+- stripchat - fix manifest proxy detection in tests
+
+[B]Version 1.1.316[/B]
+- fix lemoncams
+- Misc Fixes
+- lemoncam fix
+- add lemoncams - disable stripchat
+- updates
+
+[B]Version 1.1.315[/B]
+- Misc Fixes
+- lemoncam fix
+- add lemoncams - disable stripchat
+- updates
+- stripchat
+
+[B]Version 1.1.314[/B]
+- lemoncam fix
+- add lemoncams - disable stripchat
+- updates
+- stripchat
+- Fixes Multiple Sites
+
+[B]Version 1.1.313[/B]
+- add lemoncams - disable stripchat
+- updates
+- stripchat
+- Fixes Multiple Sites
+- Stripchat updates
+
+[B]Version 1.1.312[/B]
+- updates
+- stripchat
+- Fixes Multiple Sites
+- Stripchat updates
+- stripchat updates
+
+[B]Version 1.1.311[/B]
+- stripchat
+- Fixes Multiple Sites
+- Stripchat updates
+- stripchat updates
+- Update resolveurl
+
+[B]Version 1.1.310[/B]
+- Fixes Multiple Sites
+- Stripchat updates
+- stripchat updates
+- Update resolveurl
+- Merge pull request #117 from rpeters1430/imgbot
+- [ImgBot] Optimize images
