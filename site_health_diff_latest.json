@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-21T06:37:20.940137",
+    "sites_total": 200,
+    "pass": 187,
+    "warn": 4,
+    "fail": 6,
+    "error": 0,
+    "skip": 3
+  },
+  "previous": {
     "generated": "2026-09-20T06:27:35.053299",
     "sites_total": 200,
     "pass": 189,
@@ -8,24 +17,34 @@
     "error": 0,
     "skip": 3
   },
-  "previous": {
-    "generated": "2026-09-19T06:30:28.424881",
-    "sites_total": 200,
-    "pass": 188,
-    "warn": 5,
-    "fail": 4,
-    "error": 0,
-    "skip": 3
-  },
   "summary": {
-    "new_failures": 0,
+    "new_failures": 2,
     "resolved_failures": 0,
     "persistent_failures": 4,
-    "improved_sites": 1,
-    "regressions": 0,
-    "step_regressions": 0
+    "improved_sites": 0,
+    "regressions": 2,
+    "step_regressions": 3
   },
-  "new_failures": [],
+  "new_failures": [
+    {
+      "site": "archivebate",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: ReadTimeout: HTTPSConnectionPool(host='archivebate.com', port=443): Read timed out. (read timeout=15)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "pornez",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "ENV",
+      "message": "main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
   "resolved_failures": [],
   "persistent_failures": [
     {
@@ -65,20 +84,52 @@
       "stability_score": 1.0
     }
   ],
-  "improved_sites": [
+  "improved_sites": [],
+  "step_regressions": [
     {
-      "site": "awmnet",
-      "previous": "WARN",
-      "current": "PASS"
+      "site": "archivebate",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "ReadTimeout: HTTPSConnectionPool(host='archivebate.com', port=443): Read timed out. (read timeout=15)",
+      "class": "NETWORK",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "archivebate",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "ReadTimeout: HTTPSConnectionPool(host='archivebate.com', port=443): Read timed out. (read timeout=15)",
+      "class": "NETWORK",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "pornez",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
+      "is_flaky": false,
+      "stability_score": 1.0
     }
   ],
-  "step_regressions": [],
   "deltas": [
     {
-      "site": "awmnet",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
+      "site": "archivebate",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "pornez",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
       "detail": ""
     }
   ]
