@@ -9,10 +9,14 @@ from scripts.pull_upstream_addons import (
     SyncDiff,
     apply_sync,
     compare_trees,
+    compare_versions,
     get_local_addon_version,
     is_excluded,
+    is_meaningful_change,
+    is_preserved,
     main,
     resolve_addon_key,
+    set_addon_xml_version,
 )
 
 
@@ -200,3 +204,167 @@ def test_bump_addon_xml_version(tmp_path):
     res = bump_addon_xml_version(tmp_path)
     assert res == ("1.0.0", "1.0.1")
     assert '<addon id="test.addon" version="1.0.1"' in addon_xml.read_text(encoding="utf-8")
+
+
+def test_is_preserved():
+    # Global settings patterns are preserved
+    assert is_preserved("resources/settings.xml") is True
+    assert is_preserved("settings.xml") is True
+    assert is_preserved("advancedsettings.xml") is True
+    assert is_preserved("resources/settings-new.xml") is True
+
+    # Per-addon custom preserve patterns
+    addon_preserve = ["*pornhub.py*", "*cipherfactory.py"]
+    assert is_preserved("lib/resolvers/pornhub.py", addon_preserve) is True
+    assert is_preserved("lib/cipherfactory.py", addon_preserve) is True
+
+    # Standard addon code/metadata is NOT preserved (can be safely synced)
+    assert is_preserved("addon.xml", addon_preserve) is False
+    assert is_preserved("default.py", addon_preserve) is False
+    assert is_preserved("lib/resolvers/spankbang.py", addon_preserve) is False
+
+
+def test_compare_trees_and_apply_sync_preservation(tmp_path):
+    source_dir = tmp_path / "source"
+    dest_dir = tmp_path / "dest"
+    source_dir.mkdir()
+    dest_dir.mkdir()
+
+    # Source has an updated code file
+    (source_dir / "default.py").write_text("v2", encoding="utf-8")
+    # Source does NOT have settings.xml (e.g. upstream ResolveURL has no settings.xml committed)
+
+    # Dest has existing files: default.py, settings.xml, and a preserved patch file
+    (dest_dir / "default.py").write_text("v1", encoding="utf-8")
+    (dest_dir / "settings.xml").write_text("<settings>user config</settings>", encoding="utf-8")
+    (dest_dir / "custom_patch.py").write_text("# local patch", encoding="utf-8")
+
+    diff = compare_trees(
+        source_dir,
+        dest_dir,
+        exclude_patterns=[],
+        preserve_patterns=["custom_patch.py"],
+    )
+
+    # settings.xml and custom_patch.py should be marked as preserved, NOT removed
+    assert "settings.xml" in diff.preserved
+    assert "custom_patch.py" in diff.preserved
+    assert "settings.xml" not in diff.removed
+    assert "custom_patch.py" not in diff.removed
+    assert "default.py" in diff.modified
+
+    # Apply sync
+    apply_sync(source_dir, dest_dir, diff, preserve_patterns=["custom_patch.py"], dry_run=False)
+
+    # Preserved files remain untouched
+    assert (dest_dir / "settings.xml").exists()
+    assert (dest_dir / "settings.xml").read_text(encoding="utf-8") == "<settings>user config</settings>"
+    assert (dest_dir / "custom_patch.py").exists()
+    assert (dest_dir / "custom_patch.py").read_text(encoding="utf-8") == "# local patch"
+    # Modified file was updated
+    assert (dest_dir / "default.py").read_text(encoding="utf-8") == "v2"
+
+
+def test_compare_versions():
+    assert compare_versions("1.0.0", "1.0.0") == 0
+    assert compare_versions("5.1.210", "5.1.209") == 1
+    assert compare_versions("5.1.209", "5.1.210") == -1
+    assert compare_versions("2.1.45", "2.1.44") == 1
+    assert compare_versions("2026.10.04-6", "2026.10.04-5") == 1
+    assert compare_versions("unknown", "1.0.0") == -1
+    assert compare_versions("1.0.0", "unknown") == 1
+
+
+def test_set_addon_xml_version(tmp_path):
+    addon_dir = tmp_path / "addon"
+    addon_dir.mkdir()
+    addon_xml = addon_dir / "addon.xml"
+    addon_xml.write_text('<addon id="test.addon" version="1.0.0"/>\n', encoding="utf-8")
+
+    res = set_addon_xml_version(addon_dir, "1.0.5")
+    assert res == ("1.0.0", "1.0.5")
+    assert '<addon id="test.addon" version="1.0.5"' in addon_xml.read_text(encoding="utf-8")
+
+    empty_dir = tmp_path / "empty"
+    empty_dir.mkdir()
+    assert set_addon_xml_version(empty_dir, "1.0.5") is None
+
+
+
+def test_pull_addon_upstream_does_not_downgrade(tmp_path, monkeypatch):
+    from scripts.pull_upstream_addons import check_addon_upstream, pull_addon_upstream
+
+    # Setup upstream repo directory
+    upstream_root = tmp_path / "upstream"
+    upstream_root.mkdir()
+    (upstream_root / "addon.xml").write_text('<addon id="test.addon" version="5.1.209"/>\n', encoding="utf-8")
+    (upstream_root / "code.py").write_text("# upstream modified code\n", encoding="utf-8")
+
+    # Setup local addon directory (local is ahead at 5.1.210)
+    dest_path = tmp_path / "local"
+    dest_path.mkdir()
+    (dest_path / "addon.xml").write_text('<addon id="test.addon" version="5.1.210"/>\n', encoding="utf-8")
+    (dest_path / "code.py").write_text("# old code\n", encoding="utf-8")
+    (dest_path / "settings.xml").write_text("<settings>keep me</settings>\n", encoding="utf-8")
+
+    spec = {
+        "name": "Test Addon",
+        "addon_id": "test.addon",
+        "repo_url": "https://example.com/test.git",
+        "default_branch": "master",
+        "source_path": ".",
+        "dest_path": dest_path,
+        "type": "module",
+        "exclude": [],
+        "preserve": [],
+    }
+
+    monkeypatch.setattr(
+        "scripts.pull_upstream_addons.fetch_upstream_repo",
+        lambda repo_url, branch="master", target_temp_dir=None: (0, "commithash123", upstream_root),
+    )
+
+    # Status check should report LOCAL_AHEAD_WITH_DIFF
+    status_res = check_addon_upstream("test_addon", spec)
+    assert status_res["status"] == "LOCAL_AHEAD_WITH_DIFF"
+    assert status_res["local_version"] == "5.1.210"
+    assert status_res["remote_version"] == "5.1.209"
+
+    # Pull with auto_bump=True should bump the local version (5.1.210 -> 5.1.211), not downgrade!
+    pull_res = pull_addon_upstream("test_addon", spec, auto_bump=True, dry_run=False)
+    assert pull_res["success"] is True
+    assert pull_res["changes"] is True
+    assert pull_res["version_before"] == "5.1.210"
+    assert pull_res["version_after"] == "5.1.211"
+
+    # Destination addon.xml must have 5.1.211
+    dest_xml = (dest_path / "addon.xml").read_text(encoding="utf-8")
+    assert 'version="5.1.211"' in dest_xml
+
+    # Code should be updated from upstream
+    assert (dest_path / "code.py").read_text(encoding="utf-8") == "# upstream modified code\n"
+
+    # Preserved settings file must still exist and be intact
+    assert (dest_path / "settings.xml").read_text(encoding="utf-8") == "<settings>keep me</settings>\n"
+
+
+def test_is_meaningful_change():
+    # Python code and translation files are meaningful
+    assert is_meaningful_change("lib/resolveurl/plugins/flyfile.py") is True
+    assert is_meaningful_change("extractor/shahid.py") is True
+    assert is_meaningful_change("resources/language/resource.language.en_us/strings.po") is True
+
+    # Metadata and images are NOT meaningful code changes
+    assert is_meaningful_change("icon.png") is False
+    assert is_meaningful_change("resources/images/DialogBack2.png") is False
+    assert is_meaningful_change("fanart.jpg") is False
+    assert is_meaningful_change("addon.xml") is False
+    assert is_meaningful_change("changelog.txt") is False
+    assert is_meaningful_change("README.md") is False
+
+    # Preserved files are NOT treated as meaningful sync changes
+    assert is_meaningful_change("resources/settings.xml") is False
+    assert is_meaningful_change("lib/custom.py", preserve_patterns=["lib/custom.py"]) is False
+
+
+

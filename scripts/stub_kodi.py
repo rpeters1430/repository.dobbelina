@@ -43,8 +43,10 @@ def ensure_stubs():
     xbmcaddon = types.ModuleType("kodi_six.xbmcaddon")
     import os
     class _Addon:
-        def __init__(self, addon_id="plugin.video.cumination"):
-            self.addon_id = addon_id
+        def __init__(self, addon_id=None):
+            self.addon_id = addon_id or "plugin.video.cumination"
+            addon_root = ROOT / self.addon_id
+            self._addon_path = addon_root if addon_root.exists() else PLUGIN_PATH
             self._settings = {
                 "fs_host": os.environ.get("FLARESOLVERR_URL") or os.environ.get("FS_HOST") or "http://127.0.0.1:8191/v1",
                 "fs_enable": os.environ.get("FS_ENABLE", "true"),
@@ -52,9 +54,9 @@ def ensure_stubs():
             }
         def getAddonInfo(self, key):
             if key == "path":
-                return str(PLUGIN_PATH)
+                return str(self._addon_path)
             if key == "profile":
-                return str(ROOT / ".profile")
+                return str(ROOT / ".profile" / self.addon_id)
             if key == "version":
                 if self.addon_id == "xbmc.addon":
                     return "19.0.0"

@@ -23,6 +23,13 @@ from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
+# Global file patterns that must never be overwritten or deleted from local addons
+GLOBAL_PRESERVE_PATTERNS = [
+    "*settings*.xml",
+    "advancedsettings.xml",
+    "resources/settings.xml",
+]
+
 # Default upstream registry of embedded addons and their upstream git sources
 UPSTREAM_REGISTRY: dict[str, dict[str, Any]] = {
     "resolveurl": {
@@ -34,6 +41,7 @@ UPSTREAM_REGISTRY: dict[str, dict[str, Any]] = {
         "dest_path": "script.module.resolveurl",
         "type": "directory",
         "exclude": [".git*", "*.pyc", "__pycache__", "*.zip", ".DS_Store"],
+        "preserve": ["lib/resolveurl/plugins/doodstream.py"],
     },
     "resolveurlxxx": {
         "name": "ResolveURL.XXX (Adult Resolver Extension)",
@@ -44,6 +52,7 @@ UPSTREAM_REGISTRY: dict[str, dict[str, Any]] = {
         "dest_path": "script.module.resolveurl.xxx",
         "type": "directory",
         "exclude": [".git*", "*.pyc", "__pycache__", "*.zip", ".DS_Store"],
+        "preserve": ["resources/plugins/pornhub.py"],
     },
     "smr_link_tester": {
         "name": "SMR Link Tester",
@@ -54,6 +63,7 @@ UPSTREAM_REGISTRY: dict[str, dict[str, Any]] = {
         "dest_path": "plugin.video.smr_link_tester",
         "type": "directory",
         "exclude": [".git*", "*.pyc", "__pycache__", "*.zip", ".DS_Store"],
+        "preserve": [],
     },
     "yt-dlp": {
         "name": "yt-dlp",
@@ -64,6 +74,7 @@ UPSTREAM_REGISTRY: dict[str, dict[str, Any]] = {
         "dest_path": "script.module.yt-dlp/lib/yt_dlp",
         "type": "package",
         "exclude": [".git*", "*.pyc", "__pycache__", "*.zip", ".DS_Store", "test", "docs"],
+        "preserve": [],
     },
     "f4mproxy": {
         "name": "F4mProxy",
@@ -74,6 +85,11 @@ UPSTREAM_REGISTRY: dict[str, dict[str, Any]] = {
         "dest_path": "script.video.F4mProxy",
         "type": "directory",
         "exclude": [".git*", "*.pyc", "__pycache__", "*.zip", ".DS_Store"],
+        "preserve": [
+            "lib/f4mUtils/cipherfactory.py",
+            "lib/f4mUtils/pycrypto_rc4.py",
+            "lib/f4mUtils/pycrypto_tripledes.py",
+        ],
     },
 }
 
@@ -97,6 +113,7 @@ class SyncDiff:
     modified: list[str] = field(default_factory=list)
     removed: list[str] = field(default_factory=list)
     unchanged: list[str] = field(default_factory=list)
+    preserved: list[str] = field(default_factory=list)
 
     @property
     def has_changes(self) -> bool:
@@ -117,8 +134,53 @@ def resolve_addon_key(name: str) -> str:
     return cleaned
 
 
+def parse_version_tuple(version_str: str) -> tuple[int, ...]:
+    """Parse a version string into a comparable tuple of integers."""
+    import re
+
+    parts = re.findall(r"\d+", version_str)
+    return tuple(int(p) for p in parts) if parts else (0,)
+
+
+def compare_versions(ver_a: str, ver_b: str) -> int:
+    """Compare two version strings.
+
+    Returns:
+         1 if ver_a > ver_b
+        -1 if ver_a < ver_b
+         0 if ver_a == ver_b
+    """
+    if ver_a == ver_b:
+        return 0
+    if ver_a in ("unknown", ""):
+        return -1
+    if ver_b in ("unknown", ""):
+        return 1
+
+    try:
+        from packaging import version
+
+        v_a = version.parse(ver_a)
+        v_b = version.parse(ver_b)
+        if v_a > v_b:
+            return 1
+        elif v_a < v_b:
+            return -1
+        return 0
+    except Exception:
+        pass
+
+    tuple_a = parse_version_tuple(ver_a)
+    tuple_b = parse_version_tuple(ver_b)
+    if tuple_a > tuple_b:
+        return 1
+    elif tuple_a < tuple_b:
+        return -1
+    return 0
+
+
 def get_local_addon_version(addon_dir: Path | str) -> str:
-    """Extract version from addon.xml in the given directory."""
+    """Extract version from addon.xml in the given directory or package version."""
     path = Path(addon_dir)
     addon_xml = path / "addon.xml" if path.is_dir() else path
     if not addon_xml.exists() and path.parent.exists():
@@ -128,15 +190,50 @@ def get_local_addon_version(addon_dir: Path | str) -> str:
                 addon_xml = candidate / "addon.xml"
                 break
 
-    if not addon_xml.exists():
-        return "unknown"
+    if addon_xml.exists():
+        try:
+            tree = ET.parse(addon_xml)
+            root = tree.getroot()
+            ver = root.get("version")
+            if ver:
+                return ver
+        except Exception:
+            pass
 
-    try:
-        tree = ET.parse(addon_xml)
-        root = tree.getroot()
-        return root.get("version", "unknown")
-    except Exception:
-        return "unknown"
+    # Fallback: check for version.py (e.g. yt_dlp/version.py)
+    candidates = [
+        path / "version.py",
+        path / "yt_dlp" / "version.py",
+        path.parent / "version.py" if path.is_file() else path / "version.py",
+    ]
+    for cand in candidates:
+        if cand.is_file():
+            try:
+                import re
+
+                content = cand.read_text(encoding="utf-8")
+                m = re.search(r"__version__\s*=\s*['\"]([^'\"]+)['\"]", content)
+                if m:
+                    return m.group(1)
+            except Exception:
+                pass
+
+    return "unknown"
+
+
+def is_preserved(rel_path: str, preserve_patterns: list[str] | None = None) -> bool:
+    """Check if a relative path matches any preservation patterns."""
+    norm_rel = rel_path.replace("\\", "/")
+    parts = Path(norm_rel).parts
+    all_patterns = list(GLOBAL_PRESERVE_PATTERNS) + list(preserve_patterns or [])
+    for pattern in all_patterns:
+        norm_pattern = pattern.replace("\\", "/")
+        if fnmatch.fnmatch(norm_rel, norm_pattern):
+            return True
+        for part in parts:
+            if fnmatch.fnmatch(part, norm_pattern):
+                return True
+    return False
 
 
 def is_excluded(rel_path: str, exclude_patterns: list[str]) -> bool:
@@ -151,13 +248,47 @@ def is_excluded(rel_path: str, exclude_patterns: list[str]) -> bool:
     return False
 
 
+NON_CODE_EXTENSIONS = {
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".gif",
+    ".ico",
+    ".md",
+    ".txt",
+}
+NON_CODE_FILENAMES = {
+    "addon.xml",
+    "changelog.txt",
+    ".gitignore",
+    "readme.md",
+    "license.txt",
+    "license",
+}
+
+
+def is_meaningful_change(rel_path: str, preserve_patterns: list[str] | None = None) -> bool:
+    """Check if a file change represents real code/script changes rather than metadata/assets."""
+    norm = rel_path.replace("\\", "/")
+    p = Path(norm)
+    if is_preserved(norm, preserve_patterns):
+        return False
+    if p.name.lower() in NON_CODE_FILENAMES:
+        return False
+    if p.suffix.lower() in NON_CODE_EXTENSIONS:
+        return False
+    return True
+
+
 def compare_trees(
     source_dir: Path,
     dest_dir: Path,
     exclude_patterns: list[str],
+    preserve_patterns: list[str] | None = None,
 ) -> SyncDiff:
-    """Compare two directory trees and return the diff."""
+    """Compare two directory trees and return the diff, protecting preserved files."""
     diff = SyncDiff()
+    preserve = preserve_patterns or []
     source_files: dict[str, Path] = {}
     dest_files: dict[str, Path] = {}
 
@@ -181,11 +312,21 @@ def compare_trees(
         src_path = source_files.get(rel)
         dst_path = dest_files.get(rel)
 
-        if src_path and not dst_path:
+        # Do not mark preserved local files as removed
+        if dst_path and not src_path:
+            if is_preserved(rel, preserve):
+                diff.preserved.append(rel)
+                diff.unchanged.append(rel)
+            else:
+                diff.removed.append(rel)
+        elif src_path and not dst_path:
             diff.added.append(rel)
-        elif dst_path and not src_path:
-            diff.removed.append(rel)
         elif src_path and dst_path:
+            # Preserved files that exist locally should never be overwritten
+            if is_preserved(rel, preserve):
+                diff.preserved.append(rel)
+                diff.unchanged.append(rel)
+                continue
             try:
                 src_bytes = src_path.read_bytes()
                 dst_bytes = dst_path.read_bytes()
@@ -203,23 +344,31 @@ def apply_sync(
     source_dir: Path,
     dest_dir: Path,
     diff: SyncDiff,
+    preserve_patterns: list[str] | None = None,
     dry_run: bool = False,
 ) -> None:
     """Apply directory sync from source_dir to dest_dir based on computed diff."""
     if dry_run or not diff.has_changes:
         return
 
+    preserve = preserve_patterns or []
     dest_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1. Copy added and modified files
+    # 1. Copy added and modified files (skip preserved local files and existing image assets)
     for rel in diff.added + diff.modified:
-        src_file = source_dir / rel
+        if is_preserved(rel, preserve) and (dest_dir / rel).exists():
+            continue
         dst_file = dest_dir / rel
+        if dst_file.exists() and dst_file.suffix.lower() in {".png", ".jpg", ".jpeg", ".gif", ".ico"}:
+            continue
+        src_file = source_dir / rel
         dst_file.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src_file, dst_file)
 
-    # 2. Remove deleted files
+    # 2. Remove deleted files (skip preserved files)
     for rel in diff.removed:
+        if is_preserved(rel, preserve):
+            continue
         dst_file = dest_dir / rel
         if dst_file.exists():
             dst_file.unlink()
@@ -286,6 +435,7 @@ def check_addon_upstream(
     active_branch = branch or spec.get("default_branch", "master")
     dest_path = REPO_ROOT / spec["dest_path"]
     local_version = get_local_addon_version(dest_path)
+    preserve = spec.get("preserve", [])
 
     with tempfile.TemporaryDirectory(prefix="check_sync_") as tmpdir:
         code, commit_or_err, clone_path = fetch_upstream_repo(
@@ -305,14 +455,35 @@ def check_addon_upstream(
         source_path = clone_path / spec["source_path"]
         remote_version = get_local_addon_version(source_path)
 
-        diff = compare_trees(source_path, dest_path, spec.get("exclude", []))
-        update_available = diff.has_changes
+        diff = compare_trees(
+            source_path, dest_path, spec.get("exclude", []), preserve_patterns=preserve
+        )
+
+        meaningful_changes = [
+            f for f in (diff.added + diff.modified + diff.removed)
+            if is_meaningful_change(f, preserve)
+        ]
+        has_code_changes = bool(meaningful_changes)
+        ver_cmp = compare_versions(remote_version, local_version)
+
+        if ver_cmp > 0:
+            status = "UPDATE_AVAILABLE"
+        elif has_code_changes:
+            if ver_cmp < 0:
+                status = "LOCAL_AHEAD_WITH_DIFF"
+            else:
+                status = "CHANGES_AVAILABLE"
+        else:
+            if ver_cmp < 0:
+                status = "UP_TO_DATE (LOCAL_AHEAD)"
+            else:
+                status = "UP_TO_DATE"
 
         return {
             "addon_key": addon_key,
             "name": spec.get("name", addon_key),
             "addon_id": spec.get("addon_id", ""),
-            "status": "UPDATE_AVAILABLE" if update_available else "UP_TO_DATE",
+            "status": status,
             "local_version": local_version,
             "remote_version": remote_version,
             "head_commit": commit_or_err,
@@ -327,6 +498,7 @@ def _post_sync_sanitize(addon_key: str, dest_path: Path) -> None:
         if shahid_path.exists():
             content = shahid_path.read_text(encoding="utf-8")
             import re
+
             content = re.sub(
                 r"_AWS_API_KEY\s*=\s*'([A-Za-z0-9]{20})([A-Za-z0-9]{20})'",
                 r"_AWS_API_KEY = ''.join(['\1', '\2'])",
@@ -348,12 +520,39 @@ def _post_sync_sanitize(addon_key: str, dest_path: Path) -> None:
 def bump_version_string(version: str) -> str:
     """Increment the last numeric segment of a version string, preserving format/leading zeroes."""
     import re
+
     match = re.search(r"^(.*?)(\d+)$", version)
     if match:
         prefix, num_str = match.groups()
         new_num = str(int(num_str) + 1).zfill(len(num_str))
         return f"{prefix}{new_num}"
     return f"{version}.1"
+
+
+def set_addon_xml_version(addon_dir: Path, target_version: str) -> tuple[str, str] | None:
+    """Find addon.xml in or above addon_dir and set its version attribute."""
+    path = Path(addon_dir)
+    addon_xml = path / "addon.xml" if path.is_dir() else path
+    if not addon_xml.exists() and path.parent.exists():
+        for candidate in (path.parent, path.parent.parent):
+            if (candidate / "addon.xml").exists():
+                addon_xml = candidate / "addon.xml"
+                break
+
+    if not addon_xml.exists():
+        return None
+
+    try:
+        tree = ET.parse(addon_xml)
+        root = tree.getroot()
+        current = root.get("version")
+        if not current:
+            return None
+        root.set("version", target_version)
+        tree.write(addon_xml, encoding="utf-8", xml_declaration=True)
+        return current, target_version
+    except Exception:
+        return None
 
 
 def bump_addon_xml_version(addon_dir: Path) -> tuple[str, str] | None:
@@ -390,11 +589,12 @@ def pull_addon_upstream(
     dry_run: bool = False,
     auto_bump: bool = True,
 ) -> dict[str, Any]:
-    """Pull upstream changes and apply them to local workspace."""
+    """Pull upstream changes and apply them to local workspace without overwriting settings or downgrading."""
     repo_url = spec["repo_url"]
     active_branch = branch or spec.get("default_branch", "master")
     dest_path = REPO_ROOT / spec["dest_path"]
     local_version_before = get_local_addon_version(dest_path)
+    preserve = spec.get("preserve", [])
 
     with tempfile.TemporaryDirectory(prefix="pull_sync_") as tmpdir:
         code, commit_or_err, clone_path = fetch_upstream_repo(
@@ -417,34 +617,52 @@ def pull_addon_upstream(
                 "message": f"Source path '{spec['source_path']}' not found in upstream repository",
             }
 
-        diff = compare_trees(source_path, dest_path, spec.get("exclude", []))
+        remote_version = get_local_addon_version(source_path)
+        diff = compare_trees(
+            source_path, dest_path, spec.get("exclude", []), preserve_patterns=preserve
+        )
 
-        if not diff.has_changes:
+        meaningful_changes = [
+            f for f in (diff.added + diff.modified + diff.removed)
+            if is_meaningful_change(f, preserve)
+        ]
+        has_code_changes = bool(meaningful_changes)
+        ver_cmp = compare_versions(remote_version, local_version_before)
+
+        # If there are no code changes and remote version is not newer than local version, nothing to do
+        if not has_code_changes and ver_cmp <= 0:
             return {
                 "addon_key": addon_key,
                 "name": spec.get("name", addon_key),
                 "success": True,
                 "changes": False,
                 "local_version": local_version_before,
-                "remote_version": local_version_before,
+                "remote_version": remote_version,
                 "head_commit": commit_or_err,
                 "diff": diff,
                 "dry_run": dry_run,
             }
 
-        apply_sync(source_path, dest_path, diff, dry_run=dry_run)
+        # Determine target version: NEVER downgrade!
+        if ver_cmp > 0:
+            # Upstream officially released a newer version
+            target_version = remote_version
+        elif has_code_changes and auto_bump:
+            # Code changed from upstream but upstream version wasn't bumped ahead of local: bump local
+            target_version = bump_version_string(local_version_before)
+        else:
+            target_version = local_version_before
+
+        apply_sync(source_path, dest_path, diff, preserve_patterns=preserve, dry_run=dry_run)
         if not dry_run:
             _post_sync_sanitize(addon_key, dest_path)
+            # Ensure addon.xml reflects target_version (preventing any downgrade from upstream addon.xml)
+            if target_version != "unknown":
+                set_addon_xml_version(dest_path, target_version)
 
-        local_version_after = (
-            get_local_addon_version(dest_path) if not dry_run else get_local_addon_version(source_path)
+        local_version_after = target_version if not dry_run else (
+            target_version if target_version != "unknown" else local_version_before
         )
-
-        # If source code changed but upstream version was not incremented, auto-bump local addon.xml
-        if auto_bump and not dry_run and local_version_after == local_version_before:
-            bump_res = bump_addon_xml_version(dest_path)
-            if bump_res:
-                local_version_after = bump_res[1]
 
         return {
             "addon_key": addon_key,
@@ -538,7 +756,14 @@ def main() -> int:
     parser.add_argument(
         "--build-repo",
         action="store_true",
-        help="Rebuild repository index and ZIPs after pulling changes.",
+        default=True,
+        help="Rebuild repository index and ZIPs after pulling changes (Default: True).",
+    )
+    parser.add_argument(
+        "--no-build",
+        action="store_false",
+        dest="build_repo",
+        help="Do not rebuild repository index and ZIPs after pulling changes.",
     )
     parser.add_argument(
         "--auto-bump",
@@ -553,8 +778,20 @@ def main() -> int:
         dest="auto_bump",
         help="Do not auto-bump local addon.xml version when changes are synced.",
     )
+    parser.add_argument(
+        "--commit",
+        action="store_true",
+        help="Automatically commit updated addons and repository index to git.",
+    )
+    parser.add_argument(
+        "--push",
+        action="store_true",
+        help="Automatically push committed changes to git remote (implies --commit).",
+    )
 
     args = parser.parse_args()
+    if args.push:
+        args.commit = True
 
     if args.list_addons:
         print("\nRegistered Upstream Addons:")
@@ -626,6 +863,8 @@ def main() -> int:
         print(f"   + Added:     {len(diff.added)} file(s)")
         print(f"   * Modified:  {len(diff.modified)} file(s)")
         print(f"   - Removed:   {len(diff.removed)} file(s)")
+        if diff.preserved:
+            print(f"   🛡️ Preserved: {len(diff.preserved)} file(s)")
 
         if len(diff.added) <= 5 and diff.added:
             for f in diff.added:
@@ -651,6 +890,25 @@ def main() -> int:
                 [sys.executable, str(build_script), "--out", ".", "--update-index"],
                 cwd=REPO_ROOT,
             )
+
+    if any_updated and not args.dry_run:
+        if args.commit:
+            print("\n------------------------------------------------------------")
+            print("Committing updated addons and repository index...")
+            subprocess.run(["git", "add", "-A"], cwd=REPO_ROOT, check=True)
+            commit_msg = "feat(upstream): sync updated commits from upstream addons"
+            subprocess.run(["git", "commit", "-m", commit_msg], cwd=REPO_ROOT, check=False)
+            if args.push:
+                print("Pushing to git remote origin...")
+                subprocess.run(["git", "push", "origin", "HEAD"], cwd=REPO_ROOT, check=True)
+                print("✅ Pushed successfully. GitHub Actions will build and deploy the updates to Kodi.")
+        else:
+            print("\n------------------------------------------------------------")
+            print("To make updates available when you update Kodi:")
+            print("  1. git add -A")
+            print("  2. git commit -m \"feat(upstream): sync updated commits from upstream addons\"")
+            print("  3. git push")
+            print("GitHub Actions will automatically deploy to GitHub Pages, and Kodi will detect the new versions.")
 
     print("\nDone.")
     return 0
