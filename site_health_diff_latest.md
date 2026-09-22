@@ -5,21 +5,25 @@
 
 ## Snapshot
 
-- Current: `PASS 187` | `WARN 4` | `FAIL 6` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 189` | `WARN 4` | `FAIL 4` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 188` | `WARN 4` | `FAIL 5` | `ERROR 0` | `SKIP 3`
+- Previous: `PASS 187` | `WARN 4` | `FAIL 6` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
-- New failures: `2`
-- Resolved failures: `0`
+- New failures: `1`
+- Resolved failures: `2`
 - Persistent failures: `4`
-- Site regressions: `2`
-- Step regressions: `3`
+- Site regressions: `1`
+- Step regressions: `1`
 
 ## New Failures
 
-- **archivebate**: `PASS -> FAIL` (NETWORK) | main: ReadTimeout: HTTPSConnectionPool(host='archivebate.com', port=443): Read timed out. (read timeout=15)
-- **pornez**: `PASS -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **mangoporn**: `PASS -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://mangoporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+
+## Resolved Failures
+
+- **archivebate**: `FAIL -> PASS`
+- **pornez**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -30,6 +34,4 @@
 
 ## Step Regressions
 
-- **archivebate** `list`: `PASS -> FAIL` (NETWORK) | ReadTimeout: HTTPSConnectionPool(host='archivebate.com', port=443): Read timed out. (read timeout=15)
-- **archivebate** `main`: `PASS -> FAIL` (NETWORK) | ReadTimeout: HTTPSConnectionPool(host='archivebate.com', port=443): Read timed out. (read timeout=15)
-- **pornez** `main`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **mangoporn** `main`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://mangoporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
