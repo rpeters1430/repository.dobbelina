@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-23T06:30:39.873185",
+    "sites_total": 200,
+    "pass": 190,
+    "warn": 3,
+    "fail": 4,
+    "error": 0,
+    "skip": 3
+  },
+  "previous": {
     "generated": "2026-09-22T06:29:25.035239",
     "sites_total": 200,
     "pass": 188,
@@ -8,42 +17,18 @@
     "error": 0,
     "skip": 3
   },
-  "previous": {
-    "generated": "2026-09-21T06:37:20.940137",
-    "sites_total": 200,
-    "pass": 187,
-    "warn": 4,
-    "fail": 6,
-    "error": 0,
-    "skip": 3
-  },
   "summary": {
-    "new_failures": 1,
-    "resolved_failures": 2,
+    "new_failures": 0,
+    "resolved_failures": 1,
     "persistent_failures": 4,
-    "improved_sites": 0,
-    "regressions": 1,
-    "step_regressions": 1
+    "improved_sites": 1,
+    "regressions": 0,
+    "step_regressions": 0
   },
-  "new_failures": [
-    {
-      "site": "mangoporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "ENV",
-      "message": "main: RuntimeError: FlareSolverr error for https://mangoporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "is_flaky": false,
-      "stability_score": 1.0
-    }
-  ],
+  "new_failures": [],
   "resolved_failures": [
     {
-      "site": "archivebate",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "pornez",
+      "site": "mangoporn",
       "previous": "FAIL",
       "current": "PASS"
     }
@@ -86,37 +71,25 @@
       "stability_score": 1.0
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
-      "site": "mangoporn",
-      "step": "main",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://mangoporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "site": "xoxo",
+      "previous": "WARN",
+      "current": "PASS"
     }
   ],
+  "step_regressions": [],
   "deltas": [
     {
-      "site": "archivebate",
+      "site": "mangoporn",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "mangoporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "pornez",
-      "previous": "FAIL",
+      "site": "xoxo",
+      "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
