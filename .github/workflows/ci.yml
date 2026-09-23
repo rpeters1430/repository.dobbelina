@@ -40,6 +40,8 @@ jobs:
 
   tests:
     runs-on: ubuntu-24.04
+    env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -66,4 +68,37 @@ jobs:
         run: python -m compileall plugin.video.cumination/resources/lib
 
       - name: Run tests
-        run: pytest
+        run: |
+          if [ "${{ matrix.python-version }}" = '3.11' ]; then
+            pytest --cov=plugin.video.cumination/resources/lib --cov-report=xml:coverage.xml
+          else
+            pytest
+          fi
+      - name: Upload coverage to Codecov
+        if: matrix.python-version == '3.11' && env.CODECOV_TOKEN != ''
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          fail_ci_if_error: true
+      - name: Save coverage report
+        if: matrix.python-version == '3.11' && always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: python-coverage
+          path: coverage.xml
+          if-no-files-found: warn
+          retention-days: 3
+
+  packages:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.11'
+      - name: Build and validate PR packages
+        run: |
+          python build_repo_addons.py --out /tmp/kodi-addons
+          python scripts/validate_addon_packages.py /tmp/kodi-addons addons.xml

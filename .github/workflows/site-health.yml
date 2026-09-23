@@ -64,12 +64,16 @@ jobs:
         run: |
           set +e
           python scripts/live_smoke_test.py --site ${{ matrix.sites }} --out results/${{ matrix.chunk }} --require-flaresolverr
-          if [ $? -eq 2 ]; then exit 2; fi
+          status=$?
+          if [ "$status" -gt 1 ]; then exit "$status"; fi
       - name: Upload chunk results
+        if: always()
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: smoke-results-${{ matrix.chunk }}
           path: results/
+          if-no-files-found: warn
+          retention-days: 2
 
   strict:
     needs: setup
@@ -108,15 +112,20 @@ jobs:
         run: |
           set +e
           python scripts/strict_site_monitor.py --site ${{ matrix.site }} --out results/strict
-          if [ $? -eq 2 ]; then exit 2; fi
+          status=$?
+          if [ "$status" -gt 1 ]; then exit "$status"; fi
       - name: Upload strict site results
+        if: always()
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: strict-results-${{ matrix.site }}
           path: results/strict/strict_site_${{ matrix.site }}.*
+          if-no-files-found: warn
+          retention-days: 2
 
   report:
-    needs: [smoke, strict]
+    if: always()
+    needs: [setup, smoke, strict]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -131,20 +140,29 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-test.txt
       - name: Download all smoke results
+        continue-on-error: true
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           path: all-results
           pattern: smoke-results-*
           merge-multiple: true
       - name: Download all strict results
+        continue-on-error: true
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           path: strict-results
           pattern: strict-results-*
           merge-multiple: true
       - name: Merge broad smoke reports
+        if: always()
         run: |
-          python scripts/merge_smoke_reports.py all-results/*/live_smoke_*.json --out results/site_health_latest.json
+          shopt -s nullglob
+          reports=(all-results/*/live_smoke_*.json)
+          if [ "${#reports[@]}" -eq 0 ]; then
+            echo 'No broad smoke reports were produced.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          python scripts/merge_smoke_reports.py "${reports[@]}" --out results/site_health_latest.json
       - name: Prepare previous baseline
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -159,9 +177,17 @@ jobs:
           fi
       - name: Merge strict health history
         run: |
+          shopt -s nullglob
+          strict_reports=(strict-results/strict_site_*.json)
+          if [ "${#strict_reports[@]}" -eq 0 ]; then
+            echo 'No strict site reports were produced.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
           PREVIOUS_HIST=""
           if [ -f /tmp/site-health/strict_history.json ]; then PREVIOUS_HIST="--history-file /tmp/site-health/strict_history.json"; fi
-          python scripts/strict_health_history.py strict-results/strict_site_*.json --out results ${PREVIOUS_HIST}
+          python scripts/strict_health_history.py "${strict_reports[@]}" --out results ${PREVIOUS_HIST}
+      - name: Verify all expected site reports
+        run: python -m scripts.verify_site_collection results/site_health_latest.json results/strict_health_latest.json
       - name: Generate strict triage requests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -195,15 +221,19 @@ jobs:
             --json-out results/site_health_diff_latest.json \
             --md-out results/site_health_diff_latest.md
       - name: Publish job summary
+        if: always()
         run: |
-          cat results/strict_health_latest.md >> "${GITHUB_STEP_SUMMARY}"
+          if [ -f results/strict_health_latest.md ]; then cat results/strict_health_latest.md >> "${GITHUB_STEP_SUMMARY}"; fi
           echo "" >> "${GITHUB_STEP_SUMMARY}"
-          cat results/site_health_diff_latest.md >> "${GITHUB_STEP_SUMMARY}"
+          if [ -f results/site_health_diff_latest.md ]; then cat results/site_health_diff_latest.md >> "${GITHUB_STEP_SUMMARY}"; fi
       - name: Upload site health artifacts
+        if: always()
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: site-health-final
           path: results/
+          if-no-files-found: warn
+          retention-days: 7
       - name: Persist latest baseline
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -222,3 +252,33 @@ jobs:
           if git -C /tmp/site-health diff --cached --quiet; then exit 0; fi
           git -C /tmp/site-health commit -m "chore: update site health baseline"
           git -C /tmp/site-health push origin site-health
+
+  infrastructure:
+    if: always()
+    needs: [setup, smoke, strict, report]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check collection and reporting jobs
+        env:
+          SETUP: ${{ needs.setup.result }}
+          SMOKE: ${{ needs.smoke.result }}
+          STRICT: ${{ needs.strict.result }}
+          REPORT: ${{ needs.report.result }}
+        run: |
+          echo "Setup: $SETUP; smoke: $SMOKE; strict: $STRICT; report: $REPORT" >> "$GITHUB_STEP_SUMMARY"
+          test "$SETUP" = success && test "$SMOKE" = success && test "$STRICT" = success && test "$REPORT" = success
+
+  site-regressions:
+    if: always() && needs.report.result == 'success'
+    needs: report
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: site-health-final
+          path: results
+      - name: Check confirmed site regressions
+        run: python scripts/check_site_regressions.py results/strict_health_latest.json results/site_health_latest.json
