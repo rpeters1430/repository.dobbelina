@@ -265,6 +265,31 @@ def test_compare_trees_and_apply_sync_preservation(tmp_path):
     assert (dest_dir / "default.py").read_text(encoding="utf-8") == "v2"
 
 
+def test_upstream_sync_keeps_custom_settings_and_resolver_but_removes_obsolete_code(tmp_path):
+    upstream = tmp_path / "upstream"
+    local = tmp_path / "local"
+    for root in (upstream, local):
+        (root / "lib" / "resolveurl" / "plugins").mkdir(parents=True)
+        (root / "resources").mkdir()
+    (upstream / "resources" / "settings.xml").write_text("<settings>upstream</settings>")
+    (local / "resources" / "settings.xml").write_text("<settings>local</settings>")
+    resolver = "lib/resolveurl/plugins/doodstream.py"
+    (upstream / resolver).write_text("# upstream resolver")
+    (local / resolver).write_text("# locally patched resolver")
+    (upstream / "lib" / "current.py").write_text("new")
+    (local / "lib" / "obsolete.py").write_text("old")
+
+    diff = compare_trees(upstream, local, [], preserve_patterns=[resolver])
+    assert "lib/obsolete.py" in diff.removed
+    assert resolver in diff.preserved
+    assert "resources/settings.xml" in diff.preserved
+    apply_sync(upstream, local, diff, preserve_patterns=[resolver])
+    assert (local / resolver).read_text() == "# locally patched resolver"
+    assert (local / "resources" / "settings.xml").read_text() == "<settings>local</settings>"
+    assert (local / "lib" / "current.py").read_text() == "new"
+    assert not (local / "lib" / "obsolete.py").exists()
+
+
 def test_compare_versions():
     assert compare_versions("1.0.0", "1.0.0") == 0
     assert compare_versions("5.1.210", "5.1.209") == 1
@@ -365,6 +390,5 @@ def test_is_meaningful_change():
     # Preserved files are NOT treated as meaningful sync changes
     assert is_meaningful_change("resources/settings.xml") is False
     assert is_meaningful_change("lib/custom.py", preserve_patterns=["lib/custom.py"]) is False
-
 
 

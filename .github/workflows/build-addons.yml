@@ -53,6 +53,9 @@ jobs:
           # Remove --addons filter to build everything found in the repo
           python build_repo_addons.py --out build/addons --update-index
 
+      - name: Validate archives against repository index
+        run: python scripts/validate_addon_packages.py build/addons addons.xml
+
       - name: Commit version bumps, changelog, and index
         if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
         run: |
@@ -78,7 +81,7 @@ jobs:
           name: kodi-addons
           path: upload
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 3
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4

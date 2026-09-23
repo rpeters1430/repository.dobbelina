@@ -1,9 +1,10 @@
-name: Playwright Tests
+name: Live Browser Site Check
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+  workflow_dispatch:
+  schedule:
+    - cron: '30 8 * * 1'
+permissions:
+  contents: read
 jobs:
   test:
     timeout-minutes: 60
@@ -18,7 +19,7 @@ jobs:
       run: npm ci
     - name: Get Playwright version
       id: playwright-version
-      run: echo "version=$(npm list @playwright/test --depth=0 | grep @playwright/test | sed 's/.*@//')" >> $GITHUB_OUTPUT
+      run: echo "version=$(npm list @playwright/test --depth=0 | grep @playwright/test | sed 's/.*@//')" >> "$GITHUB_OUTPUT"
     - name: Cache Playwright browsers
       id: playwright-cache
       uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
@@ -29,10 +30,10 @@ jobs:
           ${{ runner.os }}-playwright-
     - name: Install Playwright Browsers
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install --with-deps
+      run: npx playwright install --with-deps chromium
     - name: Install Playwright system dependencies
       if: steps.playwright-cache.outputs.cache-hit == 'true'
-      run: npx playwright install-deps
+      run: npx playwright install-deps chromium
     - name: Run Playwright tests
       run: npx playwright test
     - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
@@ -40,4 +41,4 @@ jobs:
       with:
         name: playwright-report
         path: playwright-report/
-        retention-days: 30
+        retention-days: 3
