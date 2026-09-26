@@ -1525,7 +1525,7 @@ def run_site_child(
         overall = "SKIP"
 
     return {
-        "site": site.name,
+        "site": site_name,
         "title": site.get_clean_title()
         if hasattr(site, "get_clean_title")
         else site.name,

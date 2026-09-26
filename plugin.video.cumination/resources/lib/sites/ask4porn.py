@@ -23,7 +23,7 @@ from six.moves import urllib_parse
 site = AdultSite(
     "ask4porn",
     "[COLOR orange]Ask4Porn[/COLOR]",
-    "https://www.tap4porn.cc/",
+    "https://tap4porn.cc/",
     "ask4porn.png",
     "ask4porn",
     category="Video Tubes",

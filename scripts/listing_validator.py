@@ -55,11 +55,12 @@ def validate_listing(
                 )
 
     min_items = contract.get("min_video_items", 5)
-    if len(items) < min_items:
+    video_items = [it for it in items if it.get("item_type", "video") == "video"]
+    if len(video_items) < min_items:
         return ValidationResult(
             passed=False,
             classification="PARSER",
-            message=f"Insufficient items ({len(items)} < {min_items})",
+            message=f"Insufficient items ({len(video_items)} < {min_items})",
             evidence=evidence,
         )
 

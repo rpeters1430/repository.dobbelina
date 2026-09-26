@@ -8,10 +8,20 @@ from pathlib import Path
 from scripts.generate_smoke_matrix import discover_site_names, load_profiles, build_strict_matrix
 
 
+SITE_ALIASES = {
+    "poldertube": "nltubes",
+    "rlc": "reallifecam",
+    "xoxo": "xoxostream",
+}
+
+
 def missing_sites(broad, strict):
     expected_broad = set(discover_site_names())
     expected_strict = {item["site"] for item in build_strict_matrix(load_profiles())["include"]}
-    seen_broad = {site["site"] for site in broad.get("sites", [])}
+    seen_broad = {
+        SITE_ALIASES.get(site["site"], site["site"])
+        for site in broad.get("sites", [])
+    }
     seen_strict = {site for site, data in strict.get("sites", {}).items()
                    if data.get("state") != "NOT_TESTED"}
     return sorted(expected_broad - seen_broad), sorted(expected_strict - seen_strict)

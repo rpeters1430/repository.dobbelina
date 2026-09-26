@@ -89,11 +89,16 @@ def evaluate_record(
     message = "All strict checks passed"
     is_blocked = False
 
+    notifications = record.get("notifications", [])
+    notif_text = " ".join(notifications).lower()
+
     if not listing_res.passed:
         failed_stage = "listing"
         classification = listing_res.classification
         message = f"Listing failed: {listing_res.message}"
-        if classification in ("CHALLENGE", "BLOCKED"):
+        list_msg = steps.get("list", {}).get("message", "").lower()
+        if classification in ("CHALLENGE", "BLOCKED") or any(k in list_msg or k in notif_text for k in ("cloudflare", "challenge", "flaresolverr")):
+            classification = "CHALLENGE"
             is_blocked = True
 
     if not is_blocked and failed_stage is None and media_res and not media_res.passed:
@@ -114,6 +119,11 @@ def evaluate_record(
                     failed_stage = "playback"
                     classification = "PLAYBACK_FAILED"
                     message = f"Playback step failed or skipped ({p_status})"
+                    p_msg = play_step.get("message", "").lower()
+                    list_msg = steps.get("list", {}).get("message", "").lower()
+                    if any(k in p_msg or k in list_msg or k in notif_text for k in ("flaresolverr", "cloudflare", "challenge", "turnstile")):
+                        classification = "CHALLENGE"
+                        is_blocked = True
                     break
             elif stage == "media" and media_res and not media_res.passed:
                 failed_stage = "media"
