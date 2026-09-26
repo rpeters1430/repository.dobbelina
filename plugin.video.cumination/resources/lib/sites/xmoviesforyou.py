@@ -142,7 +142,6 @@ def List(url):
         ]
 
     # Custom title formatting from original site
-    # name = name.replace("[", "[COLOR pink]").replace("] ", "[/COLOR] ")
     def title_transform(title, item):
         if title:
             return title.replace("[", "[COLOR pink]").replace("] ", "[/COLOR] ")

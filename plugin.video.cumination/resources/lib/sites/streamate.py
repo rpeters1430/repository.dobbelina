@@ -163,25 +163,6 @@ def clean_database(showdialog=True):
 def Playvid(url, name):
     url, performerID = url.split("$$")
 
-    # quitting = 0
-    # i = 0
-    # while quitting == 0:
-    #     i += 1
-    #     message = ws.recv()
-    #     match = re.compile('performer offline', re.DOTALL | re.IGNORECASE).findall(message)
-    #     if match:
-    #         quitting = 1
-    #         ws.close()
-    #         utils.notify('Model is offline')
-    #         return None
-
-    #     match = re.compile('isPaid":true', re.DOTALL | re.IGNORECASE).findall(message)
-    #     if match:
-    #         quitting = 1
-    #         ws.close()
-    #         utils.notify('Model not in freechat')
-    #         return None
-
     videourl = ""
     try:
         response = utils._getHtml(

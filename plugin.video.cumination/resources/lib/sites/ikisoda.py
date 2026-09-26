@@ -104,12 +104,6 @@ def List(url):
             site.img_next
         )
 
-
-    # np = re.compile(r'class="next"\s.*?href="([^"]+)"', re.DOTALL | re.IGNORECASE).search(listhtml)
-    # if np:
-    #     np = np.group(1)
-    #     nextpage = re.search(r'page/(\d+)', np).group(1)
-    #     site.add_dir('Next Page... ({0})'.format(nextpage), np, 'List', site.img_next)
     utils.eod()
 
 
