@@ -1,3 +1,13 @@
+[B]Version 1.1.484[/B]
+- fix(monitoring): resolve site collection alias mismatch and improve challenge classification
+- feat(scripts): update fluffle source url to yaso and clean banner comments
+- refactor(sites): remove dead commented code
+- feat(upstream): sync updated commits from upstream addons
+- Merge pull request #396 from rpeters1430/codex/ci-package-health-20260923
+- ci: use existing CodeQL default setup
+- ci: address actionlint shell warnings
+- ci: validate Kodi packages and clarify live health signals
+
 [B]Version 1.1.483[/B]
 - feat(scripts): update fluffle source url to yaso and clean banner comments
 - refactor(sites): remove dead commented code
