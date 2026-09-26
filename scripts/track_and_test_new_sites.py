@@ -2,7 +2,7 @@
 """
 track_and_test_new_sites.py
 
-Fetches the latest site list from https://fluffle.cc/fmfy (Fluffle).
+Fetches the latest site list from https://yaso.su/RYn6FNrf.
 Cross-references against:
   - Existing site modules in plugin.video.cumination
   - Local tracking markdown files (NEW_SITES.md, NEW_SITES_ROADMAP.md, FLUFFLE_FMFY_TRACKER.md)
@@ -451,8 +451,8 @@ def main() -> None:
     )
     parser.add_argument(
         "--url",
-        default="https://fluffle.cc/fmfy",
-        help="Fluffle URL to scrape",
+        default=rank_new_sites.FLUFFLE_URL,
+        help="Source URL to scrape",
     )
     parser.add_argument(
         "--limit",

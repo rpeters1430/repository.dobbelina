@@ -1,5 +1,5 @@
 # Fluffle Site Ranking Report
-Source: https://fluffle.cc/fmfy
+Source: https://yaso.su/RYn6FNrf
 
 **140** unimplemented candidates found.
 **69** fluffle-listed sites already in the addon.

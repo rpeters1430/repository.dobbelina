@@ -22,7 +22,11 @@ if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_RANK_REPORT = REPO_ROOT / "docs" / "research" / "FLUFFLE_RANK_REPORT.md"
+DEFAULT_RANK_REPORT = (
+    REPO_ROOT / "docs" / "research" / "YASO_RANK_REPORT.md"
+    if (REPO_ROOT / "docs" / "research" / "YASO_RANK_REPORT.md").exists()
+    else REPO_ROOT / "docs" / "research" / "FLUFFLE_RANK_REPORT.md"
+)
 DEFAULT_OUTPUT = REPO_ROOT / "docs" / "research" / "SITE_VALIDATION_REPORT.md"
 
 USER_AGENT = (

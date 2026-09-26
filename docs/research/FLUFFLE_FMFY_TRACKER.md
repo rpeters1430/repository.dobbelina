@@ -1,7 +1,7 @@
 # Fluffle FMFY Tracker
 
 Last reviewed: 2026-03-22
-Primary source: https://fluffle.cc/fmfy
+Primary source: https://yaso.su/RYn6FNrf
 Secondary sources:
 
 - https://onepornlist.com/

@@ -2,7 +2,7 @@
 """
 rank_new_sites.py
 
-Fetches https://fluffle.cc/fmfy, cross-references it against:
+Fetches https://yaso.su/RYn6FNrf, cross-references it against:
   - The existing site modules in the addon
   - A "new sites" roadmap markdown file (default: NEW_SITES_ROADMAP.md)
   - The Fluffle tracker (default: docs/research/FLUFFLE_FMFY_TRACKER.md)
@@ -32,7 +32,8 @@ from bs4 import BeautifulSoup
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SITES_DIR = REPO_ROOT / "plugin.video.cumination" / "resources" / "lib" / "sites"
-FLUFFLE_URL = "https://fluffle.cc/fmfy"
+YASO_URL = "https://yaso.su/RYn6FNrf"
+FLUFFLE_URL = YASO_URL
 
 DEFAULT_ROADMAP = REPO_ROOT / "NEW_SITES_ROADMAP.md"
 DEFAULT_TRACKER = REPO_ROOT / "docs" / "research" / "FLUFFLE_FMFY_TRACKER.md"
@@ -101,10 +102,6 @@ EXCLUDED_NAMES = {
     "warning",
 }
 
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
 
 def normalize(name: str) -> str:
     """Lowercase, strip punctuation/spaces — used for fuzzy matching."""
@@ -184,10 +181,6 @@ def is_supported_candidate(site: dict, include_all: bool = False) -> bool:
 
     return True
 
-
-# ---------------------------------------------------------------------------
-# Markdown parsers
-# ---------------------------------------------------------------------------
 
 def extract_names_from_md(text: str) -> set[str]:
     """Pull every bolded **Name** or `name` token from markdown text."""
@@ -342,13 +335,9 @@ def parse_new_sites(path: Path) -> dict[str, str]:
     return result
 
 
-# ---------------------------------------------------------------------------
-# Fluffle fetcher
-# ---------------------------------------------------------------------------
-
 def fetch_fluffle(url: str = FLUFFLE_URL) -> list[dict]:
     """
-    Fetch and parse fluffle.cc/fmfy or an equivalent HTML document / URL.
+    Fetch and parse https://yaso.su/RYn6FNrf or an equivalent HTML document / URL.
     Returns list of {name, url, category, raw_name}.
     """
     html_text = ""
@@ -395,8 +384,8 @@ def fetch_fluffle(url: str = FLUFFLE_URL) -> list[dict]:
             # Only external links (site links start with http/https)
             if not href.startswith("http"):
                 continue
-            # Skip self-referential fluffle links
-            if "fluffle.cc" in href:
+            # Skip self-referential links
+            if "fluffle.cc" in href or "yaso.su" in href:
                 continue
             sites.append({
                 "raw_name": name,
@@ -407,10 +396,6 @@ def fetch_fluffle(url: str = FLUFFLE_URL) -> list[dict]:
 
     return sites
 
-
-# ---------------------------------------------------------------------------
-# Ranking
-# ---------------------------------------------------------------------------
 
 def rank_candidates(
     fluffle_sites: list[dict],
@@ -498,10 +483,6 @@ def rank_candidates(
     return new_candidates, already_implemented
 
 
-# ---------------------------------------------------------------------------
-# Output
-# ---------------------------------------------------------------------------
-
 def render_report(
     candidates: list[dict],
     implemented: list[dict],
@@ -565,12 +546,8 @@ def render_report(
     return "\n".join(lines)
 
 
-# ---------------------------------------------------------------------------
-# CLI
-# ---------------------------------------------------------------------------
-
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Rank new sites from fluffle.cc/fmfy")
+    parser = argparse.ArgumentParser(description="Rank new sites from https://yaso.su/RYn6FNrf")
     parser.add_argument(
         "--sites-md",
         type=Path,
@@ -598,7 +575,7 @@ def main() -> None:
     parser.add_argument(
         "--url",
         default=FLUFFLE_URL,
-        help=f"Override the Fluffle URL (default: {FLUFFLE_URL})",
+        help=f"Override the source URL (default: {FLUFFLE_URL})",
     )
     parser.add_argument(
         "--include-all",

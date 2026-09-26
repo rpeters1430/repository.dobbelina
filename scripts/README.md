@@ -52,7 +52,7 @@ Run in this order when standardizing logos:
 | `sniff_stripchat.py` | Stripchat-specific stream/API probing. |
 | `rank_new_sites.py` | Ranks new-site candidates (used by `track_and_test_new_sites.py` and `site_tool.py candidates-rank`). |
 | `validate_candidate_sites.py` | Live HTTP validation for ranked candidates (`site_tool.py candidates-validate`). |
-| `track_and_test_new_sites.py` | Pulls candidate sites from Fluffle, cross-references against implemented/tracked sites, and test-probes the new ones. |
+| `track_and_test_new_sites.py` | Pulls candidate sites from yaso.su (formerly Fluffle), cross-references against implemented/tracked sites, and test-probes the new ones. |
 | `analyze_sites.py` | Static analysis across all site modules — entry points, BS4 vs regex, webcam vs tube, etc. Emits JSON used by other tooling. |
 | `check_site_status.py` | Combines `analyze_sites.py` output with test results to report what's broken in one specific site. |
 

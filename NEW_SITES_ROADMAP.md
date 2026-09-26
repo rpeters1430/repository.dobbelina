@@ -1,6 +1,6 @@
 # Cumination Site Addition Roadmap (Extended)
 
-This document ranks potential adult sites from multiple sources ([fluffle.cc](https://fluffle.cc/fmfy), [pornbox.org](https://pornbox.org/), [onepornlist.com](https://onepornlist.com/), [mrporngeek.com](https://www.mrporngeek.com/), [pornlist18.com](https://pornlist18.com/)) by their implementation difficulty and current status in the Cumination addon.
+This document ranks potential adult sites from multiple sources ([yaso.su](https://yaso.su/RYn6FNrf), [pornbox.org](https://pornbox.org/), [onepornlist.com](https://onepornlist.com/), [mrporngeek.com](https://www.mrporngeek.com/), [pornlist18.com](https://pornlist18.com/)) by their implementation difficulty and current status in the Cumination addon.
 
 Total sites analyzed: 348  
 New sites found: 284
