@@ -248,12 +248,16 @@ def Playvid(url, name, download=None):
             except (ValueError, KeyError, TypeError) as e:
                 utils.kodilog("@@@@Cumination: familypornhd: player index resolver failed: {}".format(e))
         else:
-            host = iframeurl.rsplit("/", 1)[0]
-            url1 = host + "/data.php?filecode=" + hash
-            html = utils.getHtml(url1, iframeurl)
-            try:
-                jsondata = json.loads(html)
-                videourl = jsondata["streaming_url"]
-                vp.play_from_direct_link(videourl)
-            except (ValueError, KeyError, TypeError) as e:
-                utils.kodilog("@@@@Cumination: familypornhd: data.php resolver failed: {}".format(e))
+            iframehtml = utils.getHtml(iframeurl, url)
+            if "kt_player.swf" in iframehtml:
+                vp.play_from_kt_player(iframehtml)
+            else:
+                host = iframeurl.rsplit("/", 1)[0]
+                url1 = host + "/data.php?filecode=" + hash
+                html = utils.getHtml(url1, iframeurl)
+                try:
+                    jsondata = json.loads(html)
+                    videourl = jsondata["streaming_url"]
+                    vp.play_from_direct_link(videourl)
+                except (ValueError, KeyError, TypeError) as e:
+                    utils.kodilog("@@@@Cumination: familypornhd: data.php resolver failed: {}".format(e))

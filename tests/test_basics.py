@@ -717,3 +717,39 @@ class TestSearchDir:
         # Should have been called (with sorted keywords)
         assert mock_addDir.call_count >= 3
         mock_eod.assert_called_once()
+
+
+class TestEod:
+    """Test eod() function"""
+
+    def test_eod_default(self):
+        from resources.lib import basics
+        import xbmc
+        import xbmcplugin
+
+        with patch.object(basics.addon, "getSetting", return_value="false"):
+            with patch.object(xbmcplugin, "endOfDirectory") as mock_end:
+                with patch.object(xbmc, "executebuiltin") as mock_exec:
+                    basics.eod(handle=123, cache=True)
+                    mock_end.assert_called_once_with(123, cacheToDisc=True)
+                    mock_exec.assert_not_called()
+
+    def test_eod_customview(self):
+        from resources.lib import basics
+        import xbmc
+        import xbmcplugin
+
+        with patch.object(
+            basics.addon,
+            "getSetting",
+            side_effect=lambda k: "true" if k == "customview" else "",
+        ):
+            with patch.object(xbmc, "getSkinDir", return_value="skin.estuary"):
+                with patch.object(xbmcplugin, "endOfDirectory") as mock_end:
+                    with patch.object(xbmc, "sleep") as mock_sleep:
+                        with patch.object(xbmc, "executebuiltin") as mock_exec:
+                            basics.eod(handle=123, cache=False)
+                            mock_end.assert_called_once_with(123, cacheToDisc=False)
+                            mock_sleep.assert_called_once_with(100)
+                            mock_exec.assert_called_once_with("Container.SetViewMode(55)")
+

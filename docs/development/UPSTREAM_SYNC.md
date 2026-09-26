@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-09-19
-**Last Sync**: 2026-09-19 - Reviewed upstream through 8c88dac4; ported erogarga thumbnail en-dash sanitization and User-Agent options to BeautifulSoup scraper and utils.videos_list.
+**Last Updated**: 2026-09-26
+**Last Sync**: 2026-09-26 - Reviewed upstream through b61b1185; ported basics viewtype fix, familypornhd kt_player iframe check, and 11 optimized menu PNG icons.
 
 ---
 
@@ -18,6 +18,19 @@
 ---
 
 ## Sync Sessions
+
+### 2026-09-26 Porting Session
+Reviewed pending upstream commits merged after `8c88dac4` through `b61b1185` (7 commits) using `sync_manager.py --report` and verified all affected modules.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `b61b1185` | Image cleanup & optimization | `manual` | 2026-09-26 | **images**: Ported 11 optimized menu PNG images (`cum-favorites.png`, `cum-followed.png`, `cum-login.png`, `cum-logout.png`, `cum-models.png`, `cum-movies.png`, `cum-nophoto.png`, `cum-player.png`, `cum-refresh.png`, `cum-tags.png`, `cum-topcams.png`). |
+| `3782f6b0` (#1993) | familypornhd: fixes #1993 | `manual` | 2026-09-26 | **familypornhd**: Ported `kt_player.swf` iframe check in `Playvid()` fallback. Upstream also added a threaded proxy server for `watchstreamhd.com` `.txt` playlists, but our fork's existing logic already fetches and rewrites relative streams without needing a local HTTP server. Verified with unit tests. |
+| `06c45b66` (#1992) | Fixed: viewtype #1992 | `manual` | 2026-09-26 | **basics**: Ported delay and `Container.SetViewMode` execution after `kodi_xbmcplugin.endOfDirectory` when `customview` is enabled. Added unit tests in `tests/test_basics.py`. |
+| `b32fffcd` | stripchat: player selector | `manual-already-covered` | 2026-09-26 | Our fork's modernized stripchat module already uses InputStream Adaptive (`IA_check="IA"`). |
+| `0a112102` | Cam4: Add niches and categories, minor player fix | `manual-already-covered` | 2026-09-26 | Our fork uses a modernized 374-line direct InputStream Adaptive scraper (`/api/directoryCams`) and direct stream resolution; upstream changes target legacy proxy and GraphQL APIs not used in our fork. |
+| `33f7a013` | Merge PR #1989 | `skipped` | 2026-09-26 | Merge commit. |
+| `2c0b2dc8` | 2026-09-22 Bumped to v.1.1.200 | `skipped` | 2026-09-26 | Version/package bump only. |
 
 ### 2026-09-19 Porting Session
 Reviewed pending upstream commits merged after `5a585018` through `8c88dac4` using `sync_manager.py --report` and verified all affected modules.
