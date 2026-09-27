@@ -5,20 +5,16 @@
 
 ## Snapshot
 
-- Current: `PASS 190` | `WARN 3` | `FAIL 4` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 188` | `WARN 4` | `FAIL 5` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 189` | `WARN 4` | `FAIL 4` | `ERROR 0` | `SKIP 3`
+- Previous: `PASS 190` | `WARN 3` | `FAIL 4` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
 - New failures: `0`
-- Resolved failures: `1`
+- Resolved failures: `0`
 - Persistent failures: `4`
-- Site regressions: `0`
-- Step regressions: `0`
-
-## Resolved Failures
-
-- **mangoporn**: `FAIL -> PASS`
+- Site regressions: `1`
+- Step regressions: `1`
 
 ## Persistent Failures
 
@@ -27,6 +23,6 @@
 - **xsharings**: `FAIL -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **xtapesla**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
-## Improvements
+## Step Regressions
 
-- **xoxo**: `WARN -> PASS`
+- **awmnet** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website

@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-09-27T06:32:49.299770",
+    "sites_total": 200,
+    "pass": 189,
+    "warn": 4,
+    "fail": 4,
+    "error": 0,
+    "skip": 3
+  },
+  "previous": {
     "generated": "2026-09-23T06:30:39.873185",
     "sites_total": 200,
     "pass": 190,
@@ -8,31 +17,16 @@
     "error": 0,
     "skip": 3
   },
-  "previous": {
-    "generated": "2026-09-22T06:29:25.035239",
-    "sites_total": 200,
-    "pass": 188,
-    "warn": 4,
-    "fail": 5,
-    "error": 0,
-    "skip": 3
-  },
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 1,
+    "resolved_failures": 0,
     "persistent_failures": 4,
-    "improved_sites": 1,
-    "regressions": 0,
-    "step_regressions": 0
+    "improved_sites": 0,
+    "regressions": 1,
+    "step_regressions": 1
   },
   "new_failures": [],
-  "resolved_failures": [
-    {
-      "site": "mangoporn",
-      "previous": "FAIL",
-      "current": "PASS"
-    }
-  ],
+  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "porn4k",
@@ -71,27 +65,67 @@
       "stability_score": 1.0
     }
   ],
-  "improved_sites": [
+  "improved_sites": [],
+  "step_regressions": [
     {
-      "site": "xoxo",
-      "previous": "WARN",
-      "current": "PASS"
+      "site": "awmnet",
+      "step": "search",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
+      "class": "BLOCKED",
+      "is_flaky": false,
+      "stability_score": 1.0
     }
   ],
-  "step_regressions": [],
   "deltas": [
     {
-      "site": "mangoporn",
-      "previous": "FAIL",
+      "site": "awmnet",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "nltubes",
+      "previous": "MISSING",
       "current": "PASS",
-      "kind": "improvement",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "poldertube",
+      "previous": "PASS",
+      "current": "MISSING",
+      "kind": "missing_site",
+      "detail": ""
+    },
+    {
+      "site": "reallifecam",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "rlc",
+      "previous": "PASS",
+      "current": "MISSING",
+      "kind": "missing_site",
       "detail": ""
     },
     {
       "site": "xoxo",
-      "previous": "WARN",
+      "previous": "PASS",
+      "current": "MISSING",
+      "kind": "missing_site",
+      "detail": ""
+    },
+    {
+      "site": "xoxostream",
+      "previous": "MISSING",
       "current": "PASS",
-      "kind": "improvement",
+      "kind": "new_site",
       "detail": ""
     }
   ]
