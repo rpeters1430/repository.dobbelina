@@ -58,6 +58,13 @@ def mode_of(item: dict) -> str:
         return ""
 
 
+def url_of(item: dict) -> str:
+    try:
+        return (parse_qs(urlsplit(item.get("file", "")).query).get("url") or [""])[0]
+    except ValueError:
+        return ""
+
+
 def label(item: dict) -> str:
     return strip_markup(item.get("label", ""))
 

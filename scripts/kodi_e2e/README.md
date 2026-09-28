@@ -39,7 +39,7 @@ Linux (Ubuntu/Debian; any distro with Kodi + Xvfb works):
 bash scripts/kodi_e2e/install_kodi.sh ppa        # Kodi 21 from team-xbmc (or: distro)
 pip install Pillow
 
-python -m scripts.kodi_e2e selftest              # 1 min, offline: proves the harness works
+python -m scripts.kodi_e2e selftest              # ~1 min, local fake sites: proves the harness works
 python -m scripts.kodi_e2e crawl                 # every site
 python -m scripts.kodi_e2e crawl --site pornhub,xvideos --deep
 python -m scripts.kodi_e2e crawl --workers 4 --flaresolverr http://127.0.0.1:8191/v1
@@ -64,8 +64,10 @@ rate-limit GitHub's runners).
 
 ### GitHub Actions (`.github/workflows/kodi-e2e.yml`)
 
-- **Pull requests** touching the addon: unit tests + the offline self-test in
-  real Kodi. Deterministic, no internet.
+- **Pull requests** touching the addon: unit tests + the self-test in real
+  Kodi against local fake sites. Deterministic: no live sites involved (it
+  only needs GitHub to fetch Kodi's script modules, cached after the first
+  run).
 - **Nightly / manual**: the live crawl, sharded across jobs, with FlareSolverr.
   The Markdown summary is on the run page; `kodi-e2e-report` has the HTML.
   Manual runs can pick sites, `deep`, shard count and Kodi build.

@@ -58,14 +58,54 @@ def discover_sites(drv: KodiDriver) -> tuple[list[dict], StepResult]:
     for k in ("import_errors", "exceptions", "addon_settings"):
         listing.log.setdefault(k, [])
         listing.log[k] = root.log.get(k, []) + [x for x in listing.log[k] if x not in root.log.get(k, [])]
+    if not root.ok or not listing.ok:
+        failed = root if not root.ok else listing
+        raise DiscoveryError(f"could not open {failed.target}: {C.cause(failed) or failed.error}")
     sites = []
     for item in listing.items:
         mode = C.mode_of(item)
         if "." not in mode:
             continue
         sites.append({"name": mode.split(".")[0], "title": strip_markup(item.get("label", "")),
-                      "file": item["file"], "mode": mode, "thumbnail": item.get("thumbnail", "")})
+                      "file": item["file"], "mode": mode, "url": C.url_of(item),
+                      "thumbnail": item.get("thumbnail", "")})
+    if not sites:
+        raise DiscoveryError("the Sites list is empty")
+    modes: dict[str, list[str]] = {}
+    for st in sites:
+        modes.setdefault(st["mode"], []).append(st["title"])
+    dupes = [f"{m} is shared by: {', '.join(t)} (all open the same site)" for m, t in modes.items() if len(t) > 1]
+    if dupes:
+        listing.log["duplicate_sites"] = dupes
+    assign_unique_names(sites)
     return sites, listing
+
+
+class DiscoveryError(RuntimeError):
+    """Cumination or its Sites list could not be opened: nothing can be tested."""
+
+
+def assign_unique_names(sites: list[dict]) -> None:
+    """One module can register several sites that share a mode (txxx.py
+    registers 13, all `txxx.Main`). Name those after their site's host
+    (tubepornclassic.com -> tubepornclassic), which matches the AdultSite
+    name used by config/site_profiles.json."""
+    counts: dict[str, int] = {}
+    for s in sites:
+        counts[s["name"]] = counts.get(s["name"], 0) + 1
+    taken: set[str] = {s["name"] for s in sites if counts[s["name"]] == 1}
+    for s in sites:
+        if counts[s["name"]] == 1:
+            continue
+        host = urlsplit(s.get("url") or "").netloc.lower().split(":")[0]
+        labels = [x for x in host.split(".") if x not in ("www", "m")]
+        base = labels[0] if labels else s["name"]
+        name, n = base, 2
+        while name in taken:
+            name, n = f"{base}-{n}", n + 1
+        taken.add(name)
+        s["module"] = s["name"]
+        s["name"] = name
 
 
 def with_cause(found: list[dict], step: StepResult) -> list[dict]:

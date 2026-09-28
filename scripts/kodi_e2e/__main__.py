@@ -1,6 +1,6 @@
 """Cumination end-to-end tests inside real Kodi.
 
-  python -m scripts.kodi_e2e selftest                       # harness check, offline
+  python -m scripts.kodi_e2e selftest                       # harness check, local fake sites
   python -m scripts.kodi_e2e crawl --out results/kodi_e2e   # every site
   python -m scripts.kodi_e2e crawl --site pornhub,xvideos --deep
   python -m scripts.kodi_e2e crawl --workers 4 --flaresolverr http://127.0.0.1:8191/v1
@@ -25,7 +25,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.kodi_e2e import checks as C  # noqa: E402
-from scripts.kodi_e2e.crawler import CrawlOptions, SiteCrawler, discover_sites  # noqa: E402
+from scripts.kodi_e2e.crawler import CrawlOptions, DiscoveryError, SiteCrawler, discover_sites  # noqa: E402
 from scripts.kodi_e2e.driver import KodiDriver  # noqa: E402
 from scripts.kodi_e2e.profile import build_profile  # noqa: E402
 from scripts.kodi_e2e.report import write_reports  # noqa: E402
@@ -79,19 +79,16 @@ def ensure_profile(args, extra_site_modules=None) -> None:
 
 
 def select_sites(sites: list[dict], args) -> list[dict]:
-    # unique keys when one module registers several sites
-    names = [s["name"] for s in sites]
-    for s in sites:
-        if names.count(s["name"]) > 1:
-            s["name"] = s["mode"]
+    """--site/--skip match the site name or, for multi-site modules, the
+    module name (e.g. --site txxx selects all 13 txxx sites)."""
     wanted = {w.strip().lower() for w in ",".join(args.site or []).split(",") if w.strip()}
     skip = {w.strip().lower() for w in ",".join(args.skip or []).split(",") if w.strip()}
     out = []
     for s in sites:
-        key = s["name"].lower()
-        if wanted and key not in wanted and key.split(".")[0] not in wanted:
+        keys = {s["name"].lower(), s.get("module", s["name"]).lower()}
+        if wanted and not keys & wanted:
             continue
-        if key in skip or key.split(".")[0] in skip:
+        if keys & skip:
             continue
         out.append(s)
     out.sort(key=lambda s: s["name"])
@@ -124,10 +121,18 @@ def run_crawl(args, only: set[str] | None = None) -> int:
     kodi.start()
     try:
         drv = KodiDriver(kodi, search_term=args.search_term)
-        sites, listing = discover_sites(drv)
+        try:
+            sites, listing = discover_sites(drv)
+        except DiscoveryError as exc:
+            # A broken addon must not look like a clean run with 0 sites.
+            meta["error"] = str(exc)
+            say(f"HARNESS ERROR: {exc}")
+            res = harness_error({"name": "_cumination"}, f"Cumination could not be browsed: {exc}")
+            write_site(out, res)
+            return 2
         meta.update(kodi=kodi.version, addon_version=kodi.manifest.get("main_version"),
                     sites_listed=len(sites),
-                    addon_findings={k: listing.log.get(k, []) for k in ("addon_settings", "import_errors", "exceptions")
+                    addon_findings={k: listing.log.get(k, []) for k in ("addon_settings", "import_errors", "exceptions", "duplicate_sites")
                                     if listing.log.get(k)})
         if only:
             sites = [s for s in sites if s["name"] in only]
@@ -281,12 +286,15 @@ def cmd_selftest(args) -> int:
     args.reuse_profile = False
     ensure_profile(args, extra_site_modules=mods)
     args.site, args.skip, args.shard, args.limit, args.restart_every = ["e2egood,e2ebroken"], None, None, None, 0
+    # never let a previous run's results stand in for this one
+    for old in (args.out / "sites").glob("*.json"):
+        old.unlink()
     try:
-        run_crawl(args)
+        rc = run_crawl(args)
     finally:
         httpd.shutdown()
     write_reports(args.out)
-    ok = True
+    ok = rc == 0
     for site, exp in SELFTEST_EXPECT.items():
         p = args.out / "sites" / f"{site}.json"
         if not p.exists():
@@ -328,7 +336,7 @@ def main(argv=None) -> int:
     p.add_argument("--no-report", action="store_true")
     p.set_defaults(fn=cmd_crawl)
 
-    p = sub.add_parser("selftest", help="check the harness against local fake sites (no internet)")
+    p = sub.add_parser("selftest", help="check the harness against local fake sites (no live sites)")
     add_common(p)
     add_crawl_opts(p)
     p.add_argument("--out", type=Path, default=ROOT / "results" / "kodi_e2e_selftest")

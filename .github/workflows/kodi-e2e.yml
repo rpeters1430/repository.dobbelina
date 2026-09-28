@@ -4,7 +4,7 @@ name: Kodi E2E
 # open each site, check the list, thumbnails, Next Page, a category, a search,
 # and play a video. See scripts/kodi_e2e/README.md.
 #
-# - pull requests: offline self-test against local fake sites (deterministic)
+# - pull requests: self-test against local fake sites (deterministic, no live sites)
 # - nightly / manual: crawl the live sites, sharded, with FlareSolverr
 
 on:
@@ -15,6 +15,8 @@ on:
       - "script.module.resolveurl.xxx/**"
       - "scripts/kodi_e2e/**"
       - "scripts/kodi_jsonrpc.py"
+      - "config/site_profiles.json"
+      - "tests/test_kodi_e2e.py"
       - ".github/workflows/kodi-e2e.yml"
   schedule:
     - cron: "30 7 * * *"

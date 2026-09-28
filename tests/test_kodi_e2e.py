@@ -254,3 +254,93 @@ def test_selftest_in_real_kodi(tmp_path):
     assert proc.returncode == 0, proc.stdout[-3000:] + proc.stderr[-2000:]
     good = json.loads((out / "sites" / "e2egood.json").read_text())
     assert good["status"] == "pass" and good["playback_started"]
+
+
+# --------------------------------------------------------------------------
+# site discovery
+# --------------------------------------------------------------------------
+def _entry(mode, url):
+    from urllib.parse import quote_plus
+    return {"label": mode, "filetype": "directory", "file": f"{P}?url={quote_plus(url)}&mode={mode}"}
+
+
+class _FakeDriver:
+    def __init__(self, root_ok=True, sites=None):
+        self.root_ok = root_ok
+        self.sites = sites or []
+
+    def get_directory(self, url, label=""):
+        if label == "Cumination root":
+            if not self.root_ok:
+                return StepResult("list", label, ok=False, error="Plugin returned an error")
+            return StepResult("list", label, ok=True, items=[_entry("main.site_list", "")])
+        return StepResult("list", label, ok=True, items=self.sites)
+
+
+def test_multi_site_modules_get_distinct_names():
+    from scripts.kodi_e2e.crawler import discover_sites
+
+    sites, _ = discover_sites(_FakeDriver(sites=[
+        _entry("xvideos.Main", "https://www.xvideos.com/"),
+        _entry("txxx.Main", "https://txxx.com/"),
+        _entry("txxx.Main", "https://tubepornclassic.com/"),
+        _entry("txxx.Main", "https://voyeurhit.com/"),
+    ]))
+    assert [s["name"] for s in sites] == ["xvideos", "txxx", "tubepornclassic", "voyeurhit"]
+    assert {s.get("module") for s in sites[1:]} == {"txxx"}
+
+
+def test_same_name_same_host_sites_are_flagged_and_kept_apart():
+    from scripts.kodi_e2e.crawler import discover_sites
+
+    sites, listing = discover_sites(_FakeDriver(sites=[
+        _entry("camcaps.Main", "https://camcaps.tv/"),
+        _entry("camcaps.Main", "https://camcaps.tv/"),
+    ]))
+    assert [s["name"] for s in sites] == ["camcaps", "camcaps-2"]
+    assert "camcaps.Main" in listing.log["duplicate_sites"][0]
+
+
+def test_select_by_module_name_picks_all_its_sites():
+    import argparse
+
+    from scripts.kodi_e2e.__main__ import select_sites
+    from scripts.kodi_e2e.crawler import discover_sites
+
+    sites, _ = discover_sites(_FakeDriver(sites=[
+        _entry("xvideos.Main", "https://www.xvideos.com/"),
+        _entry("txxx.Main", "https://txxx.com/"),
+        _entry("txxx.Main", "https://voyeurhit.com/"),
+    ]))
+    args = argparse.Namespace(site=["txxx"], skip=None, shard=None, limit=None)
+    assert [s["name"] for s in select_sites(sites, args)] == ["txxx", "voyeurhit"]
+    args = argparse.Namespace(site=["voyeurhit"], skip=None, shard=None, limit=None)
+    assert [s["name"] for s in select_sites(sites, args)] == ["voyeurhit"]
+
+
+@pytest.mark.parametrize("driver", [_FakeDriver(root_ok=False), _FakeDriver(sites=[])])
+def test_discovery_failure_is_not_a_clean_empty_run(driver):
+    from scripts.kodi_e2e.crawler import DiscoveryError, discover_sites
+
+    with pytest.raises(DiscoveryError):
+        discover_sites(driver)
+
+
+def test_optional_dependencies_are_not_fetched(tmp_path, monkeypatch):
+    from scripts.kodi_e2e import profile
+
+    fetched = []
+
+    class FakeRepo:
+        def __init__(self, *a, **k):
+            pass
+
+        def fetch(self, aid):
+            fetched.append(aid)
+            return None
+
+    monkeypatch.setattr(profile, "RepoScripts", FakeRepo)
+    manifest = profile.build_profile(tmp_path / "p", kodi_major=21, cache_dir=tmp_path / "c")
+    assert "plugin.video.youtube" not in fetched  # optional in resolveurl
+    assert "script.module.six" in fetched          # required
+    assert manifest["addons"]["plugin.video.youtube"]["source"] == "skipped-optional"

@@ -301,6 +301,11 @@ def build_profile(
         elif system_addon_present(aid):
             manifest["addons"][aid] = {"source": "system"}
             continue
+        elif optional:
+            # Kodi never auto-installs optional dependencies, so a typical
+            # user doesn't have them either; don't fetch them.
+            manifest["addons"][aid] = {"source": "skipped-optional"}
+            continue
         else:
             fetched = repo.fetch(aid)
             if fetched is None or not (fetched / "addon.xml").exists():
