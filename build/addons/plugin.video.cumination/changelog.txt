@@ -1,3 +1,12 @@
+[B]Version 1.1.486[/B]
+- Merge pull request #397 from rpeters1430/feat/kodi-e2e-harness
+- fix: address review on kodi e2e harness
+- fix: satisfy actionlint (SC2012) in kodi-e2e report job
+- feat: headless Kodi e2e harness that tests sites the way users use them
+- sync: integrate upstream fixes from 8c88dac4..b61b1185
+- fix(monitoring): resolve site collection alias mismatch and improve challenge classification
+- feat(scripts): update fluffle source url to yaso and clean banner comments
+
 [B]Version 1.1.485[/B]
 - sync: integrate upstream fixes from 8c88dac4..b61b1185
 - fix(monitoring): resolve site collection alias mismatch and improve challenge classification
