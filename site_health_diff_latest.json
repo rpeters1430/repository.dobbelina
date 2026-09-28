@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-09-27T06:32:49.299770",
+    "generated": "2026-09-28T06:41:07.699440",
     "sites_total": 200,
     "pass": 189,
     "warn": 4,
@@ -9,10 +9,10 @@
     "skip": 3
   },
   "previous": {
-    "generated": "2026-09-23T06:30:39.873185",
+    "generated": "2026-09-27T06:32:49.299770",
     "sites_total": 200,
-    "pass": 190,
-    "warn": 3,
+    "pass": 189,
+    "warn": 4,
     "fail": 4,
     "error": 0,
     "skip": 3
@@ -22,8 +22,8 @@
     "resolved_failures": 0,
     "persistent_failures": 4,
     "improved_sites": 0,
-    "regressions": 1,
-    "step_regressions": 1
+    "regressions": 0,
+    "step_regressions": 0
   },
   "new_failures": [],
   "resolved_failures": [],
@@ -66,67 +66,6 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [
-    {
-      "site": "awmnet",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
-      "class": "BLOCKED",
-      "is_flaky": false,
-      "stability_score": 1.0
-    }
-  ],
-  "deltas": [
-    {
-      "site": "awmnet",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "nltubes",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "poldertube",
-      "previous": "PASS",
-      "current": "MISSING",
-      "kind": "missing_site",
-      "detail": ""
-    },
-    {
-      "site": "reallifecam",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "rlc",
-      "previous": "PASS",
-      "current": "MISSING",
-      "kind": "missing_site",
-      "detail": ""
-    },
-    {
-      "site": "xoxo",
-      "previous": "PASS",
-      "current": "MISSING",
-      "kind": "missing_site",
-      "detail": ""
-    },
-    {
-      "site": "xoxostream",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    }
-  ]
+  "step_regressions": [],
+  "deltas": []
 }
