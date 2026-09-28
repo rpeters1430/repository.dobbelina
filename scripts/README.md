@@ -88,6 +88,7 @@ matching test under `tests/`.
 | `kodi_jsonrpc.py` | Transport-only Kodi JSON-RPC client. |
 | `kodi_site_probe.py` | Drives a real Kodi instance over JSON-RPC to probe a site end-to-end. |
 | `merge_kodi_results.py` | Merges Kodi runtime probe results into the strict site monitoring reports. |
+| `kodi_e2e/` | **Full user-style crawl in headless Kodi**: launches Kodi under Xvfb, then per site checks listing, titles, thumbnails (through Kodi), Next Page, a category, search and playback; HTML report + nightly diff. `python -m scripts.kodi_e2e --help`. CI: `kodi-e2e.yml`. See [`kodi_e2e/README.md`](kodi_e2e/README.md). |
 
 ### Release / upstream maintenance
 

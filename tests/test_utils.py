@@ -568,6 +568,19 @@ def test_notify_with_custom_params(monkeypatch):
     assert notifications[0]["duration"] == 3000
 
 
+def test_notify_is_logged(monkeypatch):
+    """Toasts are not logged by Kodi, so notify() must log them itself."""
+    logged = []
+    mock_dialog = type("Dialog", (), {})()
+    mock_dialog.notification = lambda *a, **k: None
+    monkeypatch.setattr(utils, "dialog", mock_dialog)
+    monkeypatch.setattr(utils, "kodilog", lambda msg, level=None: logged.append(msg))
+
+    utils.notify(header="Oh oh", msg="Video not found")
+
+    assert logged == ["Notification: Oh oh | Video not found"]
+
+
 def test_refresh_calls_container_refresh(monkeypatch):
     """Test refresh function calls Kodi's Container.Refresh"""
     executed = []

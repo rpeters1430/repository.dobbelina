@@ -950,6 +950,10 @@ def notify(header=None, msg="", duration=5000, icon=None):
         icon = xbmc.getInfoImage("ListItem.Thumb")
     if not icon or not isinstance(icon, str) or not icon.startswith("http"):
         icon = cuminationicon
+    # Kodi does not log toast notifications; record them so failure reasons
+    # ("not found", "couldn't resolve") show up in kodi.log for users and for
+    # the headless Kodi e2e crawler (scripts/kodi_e2e).
+    kodilog("Notification: {0} | {1}".format(header, msg))
     dialog.notification(header, msg, icon, duration, False)
 
 

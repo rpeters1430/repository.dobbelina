@@ -37,3 +37,6 @@ node_modules/
 results/
 scripts/results/
 .worktrees/
+
+# headless Kodi e2e harness (scripts/kodi_e2e): throwaway profiles + repo-scripts cache
+/.cache/kodi_e2e/
