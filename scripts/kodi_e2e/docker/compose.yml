@@ -16,7 +16,7 @@ services:
       context: ../../..
       dockerfile: scripts/kodi_e2e/docker/Dockerfile
       args:
-        KODI_CHANNEL: ppa   # or "distro" for Ubuntu's Kodi 20
+        BASE_IMAGE: debian:trixie   # Kodi 21; ubuntu:24.04 gives Kodi 20.5
     volumes:
       - ../../..:/repo
     depends_on:

@@ -2,9 +2,13 @@
 # container always tests your current working tree.
 #
 #   docker compose -f scripts/kodi_e2e/docker/compose.yml run --rm kodi-e2e
-FROM ubuntu:24.04
+#
+# Debian 13 (trixie) ships Kodi 21 "Omega" in its own repositories. For Kodi
+# 20 "Nexus" instead, build with BASE_IMAGE=ubuntu:24.04.
+ARG BASE_IMAGE=debian:trixie
+FROM ${BASE_IMAGE}
 
-ARG KODI_CHANNEL=ppa
+ARG KODI_CHANNEL=distro
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1
 
