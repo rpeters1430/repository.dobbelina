@@ -166,7 +166,7 @@ jobs:
         run: |
           mkdir -p results/kodi_e2e/sites
           cp shards/*/sites/*.json results/kodi_e2e/sites/ 2>/dev/null || true
-          first=$(ls shards/*/run*.json 2>/dev/null | head -1 || true)
+          first=$(find shards -name 'run*.json' -print -quit 2>/dev/null || true)
           if [ -n "$first" ]; then cp "$first" results/kodi_e2e/run.json; fi
       - name: Restore previous summary
         uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
