@@ -87,6 +87,6 @@
         <setting type="lsep" label="Diagnostic Reporting (off by default)" />
         <setting id="telemetry_enabled" type="bool" label="Enable privacy-safe diagnostic reporting" default="false" />
         <setting type="lsep" label="Sends errors, versions, site/stage, domains, and playback outcomes. Never sends titles, searches, credentials, cookies, or full URLs." />
-        <setting id="telemetry_test_report" type="action" label="Send test diagnostic report" enable="eq(-1,true)" option="close" action="RunPlugin(plugin://plugin.video.cumination/?mode=main.send_test_report)" />
+        <setting id="telemetry_test_report" type="action" label="Send test diagnostic report" enable="eq(-2,true)" option="close" action="RunPlugin(plugin://plugin.video.cumination/?mode=main.send_test_report)" />
     </category>
 </settings>

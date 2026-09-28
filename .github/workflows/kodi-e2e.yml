@@ -1,0 +1,200 @@
+name: Kodi E2E
+
+# Runs Cumination inside a real, headless Kodi and does what a user does:
+# open each site, check the list, thumbnails, Next Page, a category, a search,
+# and play a video. See scripts/kodi_e2e/README.md.
+#
+# - pull requests: offline self-test against local fake sites (deterministic)
+# - nightly / manual: crawl the live sites, sharded, with FlareSolverr
+
+on:
+  pull_request:
+    paths:
+      - "plugin.video.cumination/**"
+      - "script.module.resolveurl/**"
+      - "script.module.resolveurl.xxx/**"
+      - "scripts/kodi_e2e/**"
+      - "scripts/kodi_jsonrpc.py"
+      - ".github/workflows/kodi-e2e.yml"
+  schedule:
+    - cron: "30 7 * * *"
+  workflow_dispatch:
+    inputs:
+      sites:
+        description: "Comma-separated sites (empty = all)"
+        required: false
+        default: ""
+      deep:
+        description: "Also play from a category and from search results"
+        type: boolean
+        default: false
+      shards:
+        description: "Parallel jobs"
+        type: choice
+        options: ["1", "2", "4", "6", "8"]
+        default: "6"
+      kodi:
+        description: "Kodi build"
+        type: choice
+        options: ["ppa", "distro"]
+        default: "ppa"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kodi-e2e-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  selftest:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.11"
+      - name: Install Kodi
+        run: bash scripts/kodi_e2e/install_kodi.sh distro
+      - name: Install Python deps
+        run: pip install Pillow pytest
+      - name: Harness unit tests
+        run: python -m pytest -q tests/test_kodi_e2e.py
+      - name: Self-test in real Kodi
+        run: python -m scripts.kodi_e2e selftest --out results/kodi_e2e_selftest
+      - name: Kodi log on failure
+        if: failure()
+        run: tail -n 300 .cache/kodi_e2e/selftest-profile/.kodi/temp/kodi.log || true
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        if: always()
+        with:
+          name: kodi-e2e-selftest
+          path: |
+            results/kodi_e2e_selftest/
+            .cache/kodi_e2e/selftest-profile/.kodi/temp/kodi.log
+          if-no-files-found: warn
+          retention-days: 7
+
+  plan:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    outputs:
+      shards: ${{ steps.p.outputs.shards }}
+    steps:
+      - id: p
+        env:
+          SHARDS: ${{ inputs.shards || '6' }}
+        run: |
+          python3 -c "import json,os; n=int(os.environ['SHARDS']); print('shards='+json.dumps(list(range(n))))" >> "$GITHUB_OUTPUT"
+
+  crawl:
+    needs: plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    services:
+      flaresolverr:
+        image: ghcr.io/germondai/trawl@sha256:fc39225a890a40b64ac65731dddd66e52f83fc9c20b54b7ed87c6cecdf355b13
+        ports:
+          - 8191:8191
+    env:
+      SITES: ${{ inputs.sites }}
+      DEEP: ${{ inputs.deep && '--deep' || '' }}
+      KODI_CHANNEL: ${{ inputs.kodi || 'ppa' }}
+      SHARD: ${{ matrix.shard }}
+      SHARDS: ${{ inputs.shards || '6' }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.11"
+      - name: Install Kodi
+        run: bash scripts/kodi_e2e/install_kodi.sh "$KODI_CHANNEL"
+      - name: Install Python deps
+        run: pip install Pillow
+      - name: Wait for FlareSolverr
+        run: |
+          for _ in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8191/health || echo 000)
+            [ "$code" = "200" ] && exit 0
+            sleep 5
+          done
+          echo "::warning::FlareSolverr not healthy; Cloudflare sites will fail"
+      - name: Crawl shard
+        run: |
+          args=(crawl --shard "${SHARD}/${SHARDS}" --out results/kodi_e2e --no-report
+                --flaresolverr http://127.0.0.1:8191/v1 --source zip)
+          if [ -n "$SITES" ]; then args+=(--site "$SITES"); fi
+          if [ -n "$DEEP" ]; then args+=("$DEEP"); fi
+          python -m scripts.kodi_e2e "${args[@]}"
+      - name: Collect Kodi log
+        if: always()
+        run: cp .cache/kodi_e2e/profile/.kodi/temp/kodi*.log results/kodi_e2e/ 2>/dev/null || true
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        if: always()
+        with:
+          name: kodi-e2e-shard-${{ matrix.shard }}
+          path: results/kodi_e2e/
+          if-no-files-found: warn
+          retention-days: 5
+
+  report:
+    needs: crawl
+    if: always() && needs.crawl.result != 'skipped'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.11"
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          pattern: kodi-e2e-shard-*
+          path: shards
+      - name: Merge shards
+        run: |
+          mkdir -p results/kodi_e2e/sites
+          cp shards/*/sites/*.json results/kodi_e2e/sites/ 2>/dev/null || true
+          first=$(ls shards/*/run*.json 2>/dev/null | head -1 || true)
+          if [ -n "$first" ]; then cp "$first" results/kodi_e2e/run.json; fi
+      - name: Restore previous summary
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: baseline
+          key: kodi-e2e-baseline-${{ github.run_id }}
+          restore-keys: kodi-e2e-baseline-
+      - name: Build report
+        run: |
+          base=()
+          if [ -f baseline/summary.json ]; then base=(--baseline baseline/summary.json); fi
+          python -m scripts.kodi_e2e report results/kodi_e2e "${base[@]}"
+          cat results/kodi_e2e/report.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Keep this summary as the next baseline (full runs only)
+        if: inputs.sites == ''
+        run: mkdir -p baseline && cp results/kodi_e2e/summary.json baseline/summary.json
+      - name: Save baseline
+        if: inputs.sites == ''
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: baseline
+          key: kodi-e2e-baseline-${{ github.run_id }}
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: kodi-e2e-report
+          path: |
+            results/kodi_e2e/report.html
+            results/kodi_e2e/report.md
+            results/kodi_e2e/summary.json
+            results/kodi_e2e/sites/
+          retention-days: 30

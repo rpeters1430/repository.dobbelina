@@ -1,0 +1,30 @@
+# Nightly-style crawl on your own machine / NAS, with FlareSolverr.
+#
+#   docker compose -f scripts/kodi_e2e/docker/compose.yml run --rm kodi-e2e
+#   docker compose -f scripts/kodi_e2e/docker/compose.yml run --rm kodi-e2e \
+#       crawl --site pornhub,xvideos --deep --flaresolverr http://flaresolverr:8191/v1
+#
+# Results land in results/kodi_e2e/ of the repo (report.html, summary.json).
+services:
+  flaresolverr:
+    # same image the Site Health workflow uses
+    image: ghcr.io/germondai/trawl@sha256:fc39225a890a40b64ac65731dddd66e52f83fc9c20b54b7ed87c6cecdf355b13
+    restart: unless-stopped
+
+  kodi-e2e:
+    build:
+      context: ../../..
+      dockerfile: scripts/kodi_e2e/docker/Dockerfile
+      args:
+        KODI_CHANNEL: ppa   # or "distro" for Ubuntu's Kodi 20
+    volumes:
+      - ../../..:/repo
+    depends_on:
+      - flaresolverr
+    shm_size: 1gb
+    command:
+      - crawl
+      - --workers
+      - "3"
+      - --flaresolverr
+      - http://flaresolverr:8191/v1
