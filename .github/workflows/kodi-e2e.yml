@@ -38,8 +38,8 @@ on:
       kodi:
         description: "Kodi build"
         type: choice
-        options: ["ppa", "distro"]
-        default: "ppa"
+        options: ["distro", "ppa"]
+        default: "distro"
 
 permissions:
   contents: read
@@ -109,7 +109,7 @@ jobs:
     env:
       SITES: ${{ inputs.sites }}
       DEEP: ${{ inputs.deep && '--deep' || '' }}
-      KODI_CHANNEL: ${{ inputs.kodi || 'ppa' }}
+      KODI_CHANNEL: ${{ inputs.kodi || 'distro' }}
       SHARD: ${{ matrix.shard }}
       SHARDS: ${{ inputs.shards || '6' }}
     steps:

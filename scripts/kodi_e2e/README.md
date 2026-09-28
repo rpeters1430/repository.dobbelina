@@ -36,7 +36,7 @@ wrong) or **pass**, with a *likely cause* when the network is the problem
 Linux (Ubuntu/Debian; any distro with Kodi + Xvfb works):
 
 ```bash
-bash scripts/kodi_e2e/install_kodi.sh ppa        # Kodi 21 from team-xbmc (or: distro)
+bash scripts/kodi_e2e/install_kodi.sh            # your distro's Kodi (Debian 13: 21, Ubuntu 24.04: 20.5)
 pip install Pillow
 
 python -m scripts.kodi_e2e selftest              # ~1 min, local fake sites: proves the harness works
@@ -133,5 +133,6 @@ and it helps with user-submitted logs too.
   persists across nightly runs as a bug. The baseline diff helps with that.
 - It judges what Kodi reports (items, images, player state), not what a
   frame looks like. A stream of the wrong video would still "play".
-- Kodi version matters: CI uses the team-xbmc PPA (21.x); `distro` gives
-  Ubuntu's 20.5. Run both if you support both.
+- Kodi version matters: GitHub runners (Ubuntu 24.04) test Kodi 20.5; the
+  Docker image (Debian 13) tests Kodi 21. The team-xbmc PPA has no build for
+  Ubuntu 24.04, so `install_kodi.sh ppa` falls back to the distro's Kodi.
