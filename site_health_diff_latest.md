@@ -5,7 +5,7 @@
 
 ## Snapshot
 
-- Current: `PASS 189` | `WARN 4` | `FAIL 4` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 188` | `WARN 5` | `FAIL 4` | `ERROR 0` | `SKIP 3`
 - Previous: `PASS 189` | `WARN 4` | `FAIL 4` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
@@ -13,8 +13,8 @@
 - New failures: `0`
 - Resolved failures: `0`
 - Persistent failures: `4`
-- Site regressions: `0`
-- Step regressions: `0`
+- Site regressions: `1`
+- Step regressions: `1`
 
 ## Persistent Failures
 
@@ -22,3 +22,7 @@
 - **speedporn**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **xsharings**: `FAIL -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **xtapesla**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+
+## Step Regressions
+
+- **allclassic** `play`: `PASS -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
