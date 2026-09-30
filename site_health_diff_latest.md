@@ -5,8 +5,8 @@
 
 ## Snapshot
 
-- Current: `PASS 188` | `WARN 5` | `FAIL 4` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 189` | `WARN 4` | `FAIL 4` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 189` | `WARN 4` | `FAIL 4` | `ERROR 0` | `SKIP 3`
+- Previous: `PASS 188` | `WARN 5` | `FAIL 4` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
@@ -25,4 +25,9 @@
 
 ## Step Regressions
 
-- **allclassic** `play`: `PASS -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
+- **pornmz** `play`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://d0000d.com/e/oorquxd59x1m: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+
+## Improvements
+
+- **allclassic**: `WARN -> PASS`
+- **awmnet**: `WARN -> PASS`
