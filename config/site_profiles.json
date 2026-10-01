@@ -152,7 +152,6 @@
       "tier": 1,
       "content_type": "cam",
       "supports": {
-        "list": false,
         "categories": false,
         "search": false,
         "play": false
@@ -170,7 +169,6 @@
       "tier": 1,
       "content_type": "cam",
       "supports": {
-        "list": false,
         "categories": false,
         "search": false,
         "play": false
