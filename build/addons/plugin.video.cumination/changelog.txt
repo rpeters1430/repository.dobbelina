@@ -1,3 +1,14 @@
+[B]Version 1.1.487[/B]
+- Merge pull request #400 from rpeters1430/fix/stripchat-lemoncams-playback
+- fix: restore Stripchat and LemonCams listing, search and playback
+- Merge pull request #399 from rpeters1430/fix/cam-site-strict-listing
+- fix: enable list step for chaturbate and camsoda site profiles
+- Merge pull request #398 from rpeters1430/fix/kodi-e2e-docker-base
+- fix: kodi e2e Docker/CI install when the team-xbmc PPA has no noble build
+- Merge pull request #397 from rpeters1430/feat/kodi-e2e-harness
+- fix: address review on kodi e2e harness
+- fix: satisfy actionlint (SC2012) in kodi-e2e report job
+
 [B]Version 1.1.486[/B]
 - Merge pull request #397 from rpeters1430/feat/kodi-e2e-harness
 - fix: address review on kodi e2e harness
