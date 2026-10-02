@@ -23,12 +23,15 @@ import os
 import re
 import sqlite3
 import time
-from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
+from urllib.error import HTTPError
+from urllib.parse import parse_qs, urlencode, urljoin, urlparse, urlunparse
+from urllib.request import Request, urlopen
 import xbmcgui
 from six.moves import urllib_parse
 
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
+from resources.lib.http_timeouts import HTTP_TIMEOUT_MANIFEST
 
 site = AdultSite(
     "stripchat",
@@ -46,6 +49,13 @@ STRIPCHAT_STREAM_UA = (
 )
 STRIPCHAT_PKEY = "B0p93vi8Uj6AYyZb"
 STRIPCHAT_DISABLED = False
+STRIPCHAT_HLS_MASTER = "https://edge-hls.doppiocdn.media/hls/{0}/master/{0}_auto.m3u8"
+STRIPCHAT_SEARCH_API = (
+    "https://stripchat.com/api/front/v4/models/search/group/username"
+    "?query={0}&limit=80&offset=0&primaryTag=girls"
+)
+PAGE_SIZE = 80
+_MASTER_PATH_RE = re.compile(r"(/hls/\d+/master/\d+)(?:_[0-9A-Za-z]+)?\.m3u8$")
 
 
 def _normalize_model_image_url(url: str | None) -> str:
@@ -112,26 +122,37 @@ def _model_screenshot(model: dict, cache_bust: int | str | None = None) -> str:
     return ""
 
 
-def _format_direct_hls_url(stream_url: str) -> str:
-    """Format Stripchat HLS stream URL for native Kodi inputstream.adaptive playback.
+def _master_url_for_model_id(model_id) -> str:
+    return STRIPCHAT_HLS_MASTER.format(model_id) if model_id else ""
+
+
+def _direct_hls_url(stream_url: str) -> str:
+    """Return the standard (non low-latency) master playlist URL for a stream.
 
     Stripchat's CDN natively supports standard HLS playback when using the native
     fallback key pkey=B0p93vi8Uj6AYyZb and excluding playlistType=lowLatency.
     This produces ordinary MPEG-TS/MP4 segments rather than Mouflon LL-HLS parts.
+    The API hands out the 240p-only master, so switch to the "auto" master,
+    which lists every quality up to the source resolution.
     """
     parsed = urlparse(stream_url)
     query = parse_qs(parsed.query, keep_blank_values=True)
     query.pop("playlistType", None)
     query["pkey"] = [STRIPCHAT_PKEY]
 
-    clean_url = urlunparse((
+    return urlunparse((
         parsed.scheme,
         parsed.netloc,
-        parsed.path,
+        _MASTER_PATH_RE.sub(r"\1_auto.m3u8", parsed.path),
         parsed.params,
         urlencode(query, doseq=True),
         "",
     ))
+
+
+def _format_direct_hls_url(stream_url: str) -> str:
+    """Format Stripchat HLS stream URL for native Kodi inputstream.adaptive playback."""
+    clean_url = _direct_hls_url(stream_url)
 
     header_string = (
         "User-Agent={0}&Referer={1}&Origin={2}&manifest_headers=1"
@@ -155,7 +176,7 @@ def _load_model_stream(model_identifier: str) -> str | None:
     parsed = urlparse(cleaned)
     username = parsed.path.strip("/").split("/")[-1] if parsed.scheme and parsed.netloc else cleaned
 
-    endpoint = f"https://stripchat.com/api/front/models?search={urllib_parse.quote(username)}&primaryTag=girls"
+    endpoint = STRIPCHAT_SEARCH_API.format(urllib_parse.quote(username))
     headers = {
         "User-Agent": STRIPCHAT_STREAM_UA,
         "Accept": "application/json, text/plain, */*",
@@ -173,47 +194,80 @@ def _load_model_stream(model_identifier: str) -> str | None:
         if response:
             payload = json.loads(response)
             models = payload.get("models") if isinstance(payload, dict) else []
-            for model in models:
-                if model.get("username", "").lower() == username.lower():
-                    stream_url = model.get("hlsPlaylist") or (model.get("stream") or {}).get("url")
-                    if stream_url:
-                        return stream_url
-    except Exception as e:
-        utils.kodilog(f"Stripchat: Stream search lookup error: {e}")
-
-    profile_endpoint = f"https://stripchat.com/api/front/models/username/{urllib_parse.quote(username)}"
-    try:
-        response, _ = utils.get_html_with_cloudflare_retry(
-            profile_endpoint,
-            site.url,
-            headers=headers,
-            retry_on_empty=True,
-        )
-        if response:
-            payload = json.loads(response)
-            if isinstance(payload, dict):
-                model = payload.get("model", payload)
-                stream_url = model.get("hlsPlaylist") or (model.get("stream") or {}).get("url")
+            for model in models or []:
+                if model.get("username", "").lower() != username.lower():
+                    continue
+                if model.get("isLive") is False:
+                    return None
+                stream_url = (
+                    model.get("hlsPlaylist")
+                    or (model.get("stream") or {}).get("url")
+                    or _master_url_for_model_id(model.get("id"))
+                )
                 if stream_url:
                     return stream_url
     except Exception as e:
-        utils.kodilog(f"Stripchat: Username profile endpoint error: {e}")
+        utils.kodilog(f"Stripchat: Stream search lookup error: {e}")
 
     return None
+
+
+def _probe_stream(stream_url: str) -> str:
+    """Check whether a stream can be watched right now.
+
+    Returns "private" when the CDN refuses the media playlist (private, group
+    or ticket show), "offline" when it is gone, and "" when it is playable or
+    the check itself could not be completed.
+    """
+    headers = {
+        "User-Agent": STRIPCHAT_STREAM_UA,
+        "Referer": "https://stripchat.com/",
+        "Origin": "https://stripchat.com",
+    }
+    master_url = _direct_hls_url(stream_url)
+    try:
+        with urlopen(Request(master_url, headers=headers), timeout=HTTP_TIMEOUT_MANIFEST) as response:
+            master = response.read().decode("utf-8", errors="ignore")
+        variants = [
+            line.strip() for line in master.splitlines()
+            if line.strip() and not line.startswith("#")
+        ]
+        if not variants:
+            return ""
+        variant_url = urljoin(master_url, variants[0])
+        with urlopen(Request(variant_url, headers=headers), timeout=HTTP_TIMEOUT_MANIFEST):
+            return ""
+    except HTTPError as e:
+        if e.code == 403:
+            return "private"
+        if e.code == 404:
+            return "offline"
+        utils.kodilog(f"Stripchat: Stream probe HTTP {e.code}")
+    except Exception as e:
+        utils.kodilog(f"Stripchat: Stream probe error: {e}")
+    return ""
 
 
 def _add_model_download_link(model: dict, cache_bust: int | str | None = None, skip_offline: bool = False) -> bool:
     raw_name = model.get("username")
     if not raw_name:
         return False
-    is_live = model.get("isLive")
-    if skip_offline and is_live is False:
+    status = model.get("status") or ""
+    is_offline = model.get("isLive") is False or status == "off"
+    if skip_offline and is_offline:
         return False
 
     name = utils.cleanhtml(raw_name)
-    if is_live is False:
+    if is_offline:
         name += " [COLOR yellow][Offline][/COLOR]"
-    videourl = model.get("hlsPlaylist") or (model.get("stream") or {}).get("url") or raw_name
+    elif status and status != "public":
+        name += " [COLOR yellow][Private][/COLOR]"
+    videourl = (
+        model.get("hlsPlaylist")
+        or (model.get("stream") or {}).get("url")
+        or _master_url_for_model_id(model.get("id"))
+        or raw_name
+    )
     img = _model_screenshot(model, cache_bust=cache_bust)
     fanart = img
     subject = ""
@@ -251,8 +305,8 @@ def Main():
     trans = utils.addon.getSetting("chattrans") == "true"
 
     site.add_dir("[COLOR red]Refresh Stripchat images[/COLOR]", "", "clean_database", "", Folder=False)
-    site.add_dir("[COLOR red]Top Models[/COLOR]", "", "TopModels", "", Folder=False)
-    site.add_dir("[COLOR red]Search[/COLOR]", "", "Search", site.img_search)
+    site.add_dir("[COLOR red]Top Models[/COLOR]", "", "TopModels", "")
+    site.add_dir("[COLOR red]Search[/COLOR]", site.url, "Search", site.img_search)
 
     base_api = "https://stripchat.com/api/front/models?limit=80&parentTag=autoTagNew&sortBy=trending&offset=0&primaryTag="
     if female:
@@ -278,7 +332,6 @@ _TOP_MODELS_GENDERS = [
     ("Trans", "tranny"),
 ]
 _TOP_MODELS_ZONES = [
-    ("Worldwide", ""),
     ("Europe", "eu"),
     ("North America", "na"),
     ("South America", "sa"),
@@ -296,14 +349,17 @@ def TopModels():
     gender_names = [name for name, _ in _TOP_MODELS_GENDERS]
     selection = xbmcgui.Dialog().select("Select Gender", gender_names)
     if selection == -1:
+        utils.eod()
         return
     gender = _TOP_MODELS_GENDERS[selection][1]
 
+    # The API rejects female rankings without a continent.
     zone = ""
     if gender == "female":
         zone_names = [name for name, _ in _TOP_MODELS_ZONES]
         selection = xbmcgui.Dialog().select("Select Region", zone_names)
         if selection == -1:
+            utils.eod()
             return
         zone = _TOP_MODELS_ZONES[selection][1]
 
@@ -324,14 +380,10 @@ def TopModels():
 @site.register()
 def Search(url, keyword=None):
     if not keyword:
-        prompt = "Enter model username or search keyword"
-        site.search_dir(url, prompt)
+        site.search_dir(url, "Search")
         return
 
-    search_url = (
-        f"https://stripchat.com/api/front/models?search={urllib_parse.quote(keyword)}&limit=80&offset=0"
-    )
-    List(search_url)
+    List(STRIPCHAT_SEARCH_API.format(urllib_parse.quote(keyword)))
 
 
 @site.register()
@@ -340,6 +392,12 @@ def List(url: str, page: int = 1):
         utils.notify("Stripchat", "Temporarily disabled")
         utils.eod()
         return
+
+    # Menu entries carry no page, so Kodi hands over page=None.
+    try:
+        page = int(page) if page else 1
+    except (TypeError, ValueError):
+        page = 1
 
     if utils.addon.getSetting("chaturbate") == "true":
         clean_database(False)
@@ -361,6 +419,8 @@ def List(url: str, page: int = 1):
         data = json.loads(response)
         if "models" in data:
             model_list = data["models"]
+        elif "items" in data:
+            model_list = [item["model"] for item in data.get("items", []) if item.get("model")]
         elif "tops" in data:
             model_list = [
                 winner["model"]
@@ -382,11 +442,13 @@ def List(url: str, page: int = 1):
     for model in model_list:
         _add_model_download_link(model, cache_bust, skip_offline=online_only)
 
-    total_items = data.get("filteredCount", 0)
-    nextp = (page * 80) < total_items
+    limit_match = re.search(r"[?&]limit=(\d+)", url)
+    page_size = int(limit_match.group(1)) if limit_match else PAGE_SIZE
+    total_items = data.get("filteredCount") or data.get("totalCount") or data.get("total") or 0
+    nextp = (page * page_size) < total_items
     if nextp:
-        next_offset = (page * 80)
-        lastpg = -1 * (-total_items // 80)
+        next_offset = (page * page_size)
+        lastpg = -1 * (-total_items // page_size)
         page += 1
         nurl = re.sub(r"offset=\d+", f"offset={next_offset}", url)
         if "offset=" not in nurl:
@@ -455,6 +517,10 @@ def Playvid(url: str, name: str):
         clean_name = name.split(" [COLOR")[0]
         utils.notify(f"{clean_name} is currently offline")
         return
+    if "[Private]" in name:
+        clean_name = name.split(" [COLOR")[0]
+        utils.notify("Stripchat", f"{clean_name} is in a private show")
+        return
     _play_stripchat_model(url, name)
 
 
@@ -467,6 +533,14 @@ def _play_stripchat_model(url: str, name: str):
             raw_stream_url = resolved
 
     if not raw_stream_url or not raw_stream_url.startswith("http") or ".m3u8" not in raw_stream_url:
+        utils.notify("Stripchat", "Model is offline")
+        return
+
+    stream_state = _probe_stream(raw_stream_url)
+    if stream_state == "private":
+        utils.notify("Stripchat", "Model is in a private show")
+        return
+    if stream_state == "offline":
         utils.notify("Stripchat", "Model is offline")
         return
 

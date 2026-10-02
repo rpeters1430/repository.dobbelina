@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from __future__ import annotations
 
 import json
+import re
 import time
 from six.moves import urllib_parse
 
@@ -45,6 +46,9 @@ SUPPORTED_PROVIDERS = {
     "camsoda": "CamSoda",
     "myfreecams": "MyFreeCams",
 }
+
+# Stripchat thumbnails are served as .../thumbs/<timestamp>/<model id>
+_STRIPCHAT_THUMB_ID_RE = re.compile(r"doppiocdn\.\w+/thumbs/\d+/(\d+)")
 
 
 def _is_supported_provider(provider):
@@ -106,7 +110,26 @@ def _parse_model_identifier(value, default_provider=DEFAULT_PROVIDER):
     return default_provider, value, stream_url
 
 
+def _stripchat_stream_url(cam):
+    """Build the Stripchat master playlist URL from the model id in the thumbnail.
+
+    LemonCams only exposes an embed widget for Stripchat cams, and Stripchat's
+    own username lookup endpoints reject non-browser clients, so the id in the
+    thumbnail URL is the only reliable way to reach the stream.
+    """
+    for key in ("imageUrl", "imageUrlSfw"):
+        match = _STRIPCHAT_THUMB_ID_RE.search(cam.get(key) or "")
+        if match:
+            from resources.lib.sites.stripchat import _master_url_for_model_id
+
+            return _master_url_for_model_id(match.group(1))
+    return ""
+
+
 def _extract_playable_url(cam):
+    if (cam.get("provider") or "").lower() == "stripchat":
+        return _stripchat_stream_url(cam)
+
     embed_url = cam.get("embedUrl") or ""
     if any(token in embed_url.lower() for token in [".m3u8", ".mp4", "manifest"]):
         return embed_url
@@ -156,19 +179,23 @@ def _fetch_provider_payload(target, page=1):
             params["gender"] = target.split("=", 1)[1]
         elif target.startswith("category="):
             params["category"] = target.split("=", 1)[1]
+        elif target.startswith("query="):
+            params["query"] = target.split("=", 1)[1]
         else:
             params["provider"] = target
     return _api_get(params)
 
 
-def _find_model_stream(provider, username, max_pages=5):
-    for page in range(1, max_pages + 1):
-        payload = _fetch_provider_payload(provider, page)
-        for cam in payload.get("cams", []):
-            if cam.get("username", "").lower() == username.lower():
-                url = _extract_playable_url(cam)
-                if url:
-                    return url
+def _find_model_stream(provider, username):
+    payload = _fetch_provider_payload("query={}".format(username))
+    for cam in payload.get("cams", []):
+        if (
+            cam.get("username", "").lower() == username.lower()
+            and (cam.get("provider") or "").lower() == provider
+        ):
+            url = _extract_playable_url(cam)
+            if url:
+                return url
     return ""
 
 
@@ -253,7 +280,7 @@ def List(url=TOP_CAMS_KEY, page=DEFAULT_PAGE):
     cams = payload.get("cams") or []
 
     if not cams:
-        label = "Top Cams" if target == TOP_CAMS_KEY else target
+        label = "Top Cams" if target == TOP_CAMS_KEY else target.split("=", 1)[-1]
         utils.notify("LemonCams", "No cams found for {}".format(label))
         utils.eod()
         return
@@ -261,6 +288,9 @@ def List(url=TOP_CAMS_KEY, page=DEFAULT_PAGE):
     for cam in cams:
         cam_username = cam.get("username", "unknown")
         cam_provider = (cam.get("provider") or "stripchat").lower()
+        # Mixed lists also carry providers this module cannot play (e.g. Chaturbate).
+        if not _is_supported_provider(cam_provider):
+            continue
         stream_url = _extract_playable_url(cam)
 
         provider_title = SUPPORTED_PROVIDERS.get(cam_provider, cam_provider.title())
@@ -295,26 +325,16 @@ def List(url=TOP_CAMS_KEY, page=DEFAULT_PAGE):
 @site.register()
 def Search(url, keyword=None):
     if not keyword:
-        prompt = "Paste a LemonCams URL" if url == "url" else "Enter model username (e.g. nicdani_1 or camsoda:desirerodriguez)"
-        site.search_dir(url, prompt)
+        site.search_dir(url, "Search")
         return
 
-    provider, username, _ = _parse_model_identifier(keyword)
-    if not provider or not username:
+    _, username, _ = _parse_model_identifier(keyword)
+    if not username:
         utils.notify("LemonCams", "Invalid model or URL")
         utils.eod()
         return
 
-    model_url = _build_model_page_url(provider, username)
-    site.add_download_link(
-        "[COLOR hotpink][{}][/COLOR] {}".format(provider.title(), username),
-        model_url,
-        "Playvid",
-        site.img_cat,
-        "Model: {}".format(username),
-        noDownload=True,
-    )
-    utils.eod()
+    List("query={}".format(username), DEFAULT_PAGE)
 
 
 @site.register()
@@ -325,12 +345,12 @@ def Playvid(url, name):
         return
 
     if provider == "stripchat":
-        # Stripchat serves MOUFLON-extended LL-HLS manifests with placeholder
-        # segment URLs that 404 on direct playback; only stripchat.py's
-        # manifest rewrite/proxy logic can play them. See its
-        # _play_stripchat_model docstring.
+        # Stripchat streams need the pkey/standard-playlist URL that
+        # stripchat.py builds; see its _direct_hls_url docstring.
         from resources.lib.sites.stripchat import _play_stripchat_model
 
+        if not stream_url:
+            stream_url = _find_model_stream(provider, username)
         _play_stripchat_model(stream_url or username, username)
         return
 
@@ -342,8 +362,7 @@ def Playvid(url, name):
     # If stream_url is not cached in the item URL, resolve it
     if not playable_url:
         vp.progress.update(50, "[CR]Resolving live stream[CR]")
-        if provider in ("camsoda", "myfreecams"):
-            playable_url = _find_model_stream(provider, username)
+        playable_url = _find_model_stream(provider, username)
 
     if not playable_url:
         vp.progress.close()
