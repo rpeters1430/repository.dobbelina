@@ -132,7 +132,7 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
 </assets>
 </extension>
 </addon>
-<addon id="script.module.yt-dlp" name="yt-dlp" version="2026.10.04-9" provider-name="yt-dlp contributors">
+<addon id="script.module.yt-dlp" name="yt-dlp" version="2026.10.04-10" provider-name="yt-dlp contributors">
 <requires>
 <import addon="xbmc.python" version="3.0.1" />
 <import addon="script.module.certifi" version="2023.5.7" />

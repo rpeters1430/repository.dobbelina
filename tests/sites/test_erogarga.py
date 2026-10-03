@@ -487,20 +487,6 @@ def test_play_extra_branches(monkeypatch):
     erogarga.Play("https://www.erogarga.com/v1", "Name")
     assert any("https://stream.mp4" in p[1] for p in played if p[0] == "direct")
 
-    # 3. klcams.com (Line 335-349)
-    played.clear()
-    html_page_with_kl = '<iframe src="https://klcams.com/embed/"></iframe>'
-    html_kl_embed = '<iframe src="https://klcams.com/inner/"></iframe>'
-    def fake_get_html_kl(url, referer=None, **k):
-        if "erogarga.com/v1" in url:
-            return html_page_with_kl
-        if "klcams.com/embed/" in url:
-            return html_kl_embed
-        return "packed_data"
-    monkeypatch.setattr(erogarga.utils, "getHtml", fake_get_html_kl)
-    erogarga.Play("https://www.erogarga.com/v1", "Name")
-    assert any(p[0] == "html" for p in played)
-
     # 4. itemprop fallback (Line 384)
     played.clear()
     html_itemprop = '<iframe src="https://player.com/"></iframe><span itemprop="contentURL" content="https://direct.mp4"></span>'

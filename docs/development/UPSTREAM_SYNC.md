@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-09-26
-**Last Sync**: 2026-09-26 - Reviewed upstream through b61b1185; ported basics viewtype fix, familypornhd kt_player iframe check, and 11 optimized menu PNG icons.
+**Last Updated**: 2026-10-03
+**Last Sync**: 2026-10-03 - Reviewed upstream through 43ed9848; ported IcePornCasting new site (BS4 + Lulustream jsunpack resolver), erogarga dead player cleanup, pornhoarder active server IDs, and sxyprn primary domain update.
 
 ---
 
@@ -18,6 +18,19 @@
 ---
 
 ## Sync Sessions
+
+### 2026-10-03 Porting Session
+Reviewed pending upstream commits merged after `b61b1185` through `43ed9848` (7 commits) using `sync_manager.py --report` and verified all affected modules.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `43ed9848` | IcePornCasting new site | `manual` | 2026-10-03 | **IcePornCasting**: Ported as a modernized BeautifulSoup4 site module (`iceporncasting.py`). Square-padded and standardized the official icon `iceporncasting.png` to 256x256 PNG. Implemented `Categories`, `Pornstars`, `Search`, and `List` pagination. Improved `Playvid` resolution: added Dean Edwards unpacking via `resources.lib.jsunpack` for Lulustream (`lulust.com` / `luluvdo`) embeds to extract master `.m3u8` playlists alongside XVideos embedded streams. Added HTML fixture, full unit test suite (`tests/sites/test_iceporncasting.py`), site profile in `config/site_profiles.json`, and generated smoke test. Verified live with strict monitor (89 items, 64KB HLS media stream). |
+| `5795985c` (#1994) | fixes #1994 | `manual` | 2026-10-03 | **erogarga**: Removed obsolete/dead `klcams.com` player branch in `Playvid()`. Updated unit tests in `tests/sites/test_erogarga.py`. |
+| `c3c339ea` (#1997) | pornhoarder small changes #1997 | `manual` | 2026-10-03 | **pornhoarder**: Updated server IDs in `Createdata()` to match live site servers (`+47, +45, +48`, `-46, -17`). Unit tests pass. |
+| `496db964` (#1998) | SxyPrn fixes #1998 | `manual` | 2026-10-03 | **sxyprn**: Updated base URL to `https://sxyprn.net/` to bypass ISP/domain blocks on `.com`. Unit tests pass. |
+| `5e6eb1ad`, `af92ea03` | Chaturbate compatibility old kodi versions | `manual-already-covered` | 2026-10-03 | Compatibility rewrites for legacy Kodi / Python 2; our fork already uses a modernized Python 3 module with direct API room lists. |
+| `4a8a0a2b` (#2000) | chaturbate following users fixed, #2000 | `manual-already-covered` | 2026-10-03 | Followed users list adjustments for legacy upstream UI flows. |
+| `26c96960` | 2026-09-27 Bumped to v.1.1.201 | `skipped` | 2026-10-03 | Version/package bump only. |
 
 ### 2026-09-26 Porting Session
 Reviewed pending upstream commits merged after `8c88dac4` through `b61b1185` (7 commits) using `sync_manager.py --report` and verified all affected modules.
