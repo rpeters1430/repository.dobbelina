@@ -1,3 +1,13 @@
+[B]Version 1.1.488[/B]
+- Add tests for iceporncasting site functionality
+- feat: add iceporncasting image asset
+- feat(upstream): sync updated commits from upstream addons
+- Merge pull request #400 from rpeters1430/fix/stripchat-lemoncams-playback
+- fix: restore Stripchat and LemonCams listing, search and playback
+- Merge pull request #399 from rpeters1430/fix/cam-site-strict-listing
+- fix: enable list step for chaturbate and camsoda site profiles
+- Merge pull request #398 from rpeters1430/fix/kodi-e2e-docker-base
+
 [B]Version 1.1.487[/B]
 - Merge pull request #400 from rpeters1430/fix/stripchat-lemoncams-playback
 - fix: restore Stripchat and LemonCams listing, search and playback
