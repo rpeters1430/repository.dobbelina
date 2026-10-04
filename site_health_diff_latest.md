@@ -5,31 +5,26 @@
 
 ## Snapshot
 
-- Current: `PASS 186` | `WARN 3` | `FAIL 8` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 185` | `WARN 3` | `FAIL 9` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 188` | `WARN 4` | `FAIL 6` | `ERROR 0` | `SKIP 3`
+- Previous: `PASS 186` | `WARN 3` | `FAIL 8` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
-- New failures: `1`
+- New failures: `0`
 - Resolved failures: `2`
-- Persistent failures: `7`
-- Site regressions: `1`
-- Step regressions: `1`
-
-## New Failures
-
-- **netflixporno**: `PASS -> FAIL` (PARSER) | list: List returned no videos
+- Persistent failures: `6`
+- Site regressions: `0`
+- Step regressions: `2`
 
 ## Resolved Failures
 
-- **justfullporn**: `FAIL -> PASS`
-- **pornmz**: `FAIL -> PASS`
+- **awmnet**: `FAIL -> WARN`
+- **netflixporno**: `FAIL -> PASS`
 
 ## Persistent Failures
 
-- **awmnet**: `FAIL -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://www.ixxx.com/new?pricing=free: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **camcaps**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://camcaps.tv/videos: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-- **mangoporn**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
+- **mangoporn**: `FAIL -> FAIL` (NETWORK) | list: TimeoutError: The read operation timed out
 - **porn4k**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://porn4k.to/page/1/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **speedporn**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **xsharings**: `FAIL -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
@@ -37,4 +32,5 @@
 
 ## Step Regressions
 
-- **netflixporno** `list`: `SKIP -> FAIL` (PARSER) | List returned no videos
+- **awmnet** `search`: `SKIP -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://www.4tube.com/test?pricing=free&filter%5Border_by%5D=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **mangoporn** `search`: `SKIP -> FAIL` (NETWORK) | Timed out after 35s
