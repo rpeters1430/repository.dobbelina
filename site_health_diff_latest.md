@@ -5,26 +5,26 @@
 
 ## Snapshot
 
-- Current: `PASS 188` | `WARN 4` | `FAIL 6` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 186` | `WARN 3` | `FAIL 8` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 184` | `WARN 5` | `FAIL 8` | `ERROR 0` | `SKIP 4`
+- Previous: `PASS 188` | `WARN 4` | `FAIL 6` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
-- New failures: `0`
-- Resolved failures: `2`
+- New failures: `2`
+- Resolved failures: `0`
 - Persistent failures: `6`
-- Site regressions: `0`
-- Step regressions: `2`
+- Site regressions: `4`
+- Step regressions: `3`
 
-## Resolved Failures
+## New Failures
 
-- **awmnet**: `FAIL -> WARN`
-- **netflixporno**: `FAIL -> PASS`
+- **netflixporno**: `PASS -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 500)
+- **pornmz**: `PASS -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
 ## Persistent Failures
 
 - **camcaps**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://camcaps.tv/videos: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-- **mangoporn**: `FAIL -> FAIL` (NETWORK) | list: TimeoutError: The read operation timed out
+- **mangoporn**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **porn4k**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://porn4k.to/page/1/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **speedporn**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **xsharings**: `FAIL -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
@@ -32,5 +32,6 @@
 
 ## Step Regressions
 
-- **awmnet** `search`: `SKIP -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://www.4tube.com/test?pricing=free&filter%5Border_by%5D=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-- **mangoporn** `search`: `SKIP -> FAIL` (NETWORK) | Timed out after 35s
+- **cumlouder** `play`: `PASS -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
+- **netflixporno** `list`: `SKIP -> FAIL` (UNKNOWN) | List URL unavailable in harness (HTTP 500)
+- **pornmz** `main`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
