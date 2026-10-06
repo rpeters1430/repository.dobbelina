@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-10-06T06:33:51.176855",
+    "sites_total": 201,
+    "pass": 186,
+    "warn": 4,
+    "fail": 8,
+    "error": 0,
+    "skip": 3
+  },
+  "previous": {
     "generated": "2026-10-05T06:44:47.437535",
     "sites_total": 201,
     "pass": 184,
@@ -8,44 +17,32 @@
     "error": 0,
     "skip": 4
   },
-  "previous": {
-    "generated": "2026-10-04T08:18:35.259769",
-    "sites_total": 201,
-    "pass": 188,
-    "warn": 4,
-    "fail": 6,
-    "error": 0,
-    "skip": 3
-  },
   "summary": {
-    "new_failures": 2,
-    "resolved_failures": 0,
-    "persistent_failures": 6,
-    "improved_sites": 0,
-    "regressions": 4,
-    "step_regressions": 3
+    "new_failures": 1,
+    "resolved_failures": 1,
+    "persistent_failures": 7,
+    "improved_sites": 2,
+    "regressions": 1,
+    "step_regressions": 2
   },
   "new_failures": [
     {
-      "site": "netflixporno",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "UNKNOWN",
-      "message": "list: List URL unavailable in harness (HTTP 500)",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "pornmz",
+      "site": "justfullporn",
       "previous": "PASS",
       "current": "FAIL",
       "class": "ENV",
-      "message": "main: RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "message": "list: RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
-  "resolved_failures": [],
+  "resolved_failures": [
+    {
+      "site": "pornmz",
+      "previous": "FAIL",
+      "current": "PASS"
+    }
+  ],
   "persistent_failures": [
     {
       "site": "camcaps",
@@ -58,6 +55,15 @@
     },
     {
       "site": "mangoporn",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "netflixporno",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
@@ -102,49 +108,50 @@
       "stability_score": 1.0
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
-      "site": "cumlouder",
-      "step": "play",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "Play function executed but no playback URL captured (no notifications)",
-      "class": "PLAYBACK",
-      "is_flaky": false,
-      "stability_score": 0.9
+      "site": "awmnet",
+      "previous": "WARN",
+      "current": "PASS"
     },
     {
-      "site": "netflixporno",
-      "step": "list",
+      "site": "reallifecam",
       "previous": "SKIP",
+      "current": "PASS"
+    }
+  ],
+  "step_regressions": [
+    {
+      "site": "justfullporn",
+      "step": "list",
+      "previous": "PASS",
       "current": "FAIL",
-      "message": "List URL unavailable in harness (HTTP 500)",
-      "class": "UNKNOWN",
+      "message": "RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "pornmz",
-      "step": "main",
-      "previous": "PASS",
+      "site": "mangoporn",
+      "step": "categories",
+      "previous": "SKIP",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
+      "message": "TimeoutError: The read operation timed out",
+      "class": "NETWORK",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "cumlouder",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
+      "site": "awmnet",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "netflixporno",
+      "site": "justfullporn",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
@@ -152,16 +159,16 @@
     },
     {
       "site": "pornmz",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "reallifecam",
-      "previous": "PASS",
-      "current": "SKIP",
-      "kind": "regression",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]

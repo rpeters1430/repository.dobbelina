@@ -5,26 +5,30 @@
 
 ## Snapshot
 
-- Current: `PASS 184` | `WARN 5` | `FAIL 8` | `ERROR 0` | `SKIP 4`
-- Previous: `PASS 188` | `WARN 4` | `FAIL 6` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 186` | `WARN 4` | `FAIL 8` | `ERROR 0` | `SKIP 3`
+- Previous: `PASS 184` | `WARN 5` | `FAIL 8` | `ERROR 0` | `SKIP 4`
 
 ## Delta Summary
 
-- New failures: `2`
-- Resolved failures: `0`
-- Persistent failures: `6`
-- Site regressions: `4`
-- Step regressions: `3`
+- New failures: `1`
+- Resolved failures: `1`
+- Persistent failures: `7`
+- Site regressions: `1`
+- Step regressions: `2`
 
 ## New Failures
 
-- **netflixporno**: `PASS -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 500)
-- **pornmz**: `PASS -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **justfullporn**: `PASS -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+
+## Resolved Failures
+
+- **pornmz**: `FAIL -> PASS`
 
 ## Persistent Failures
 
 - **camcaps**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://camcaps.tv/videos: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **mangoporn**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
+- **netflixporno**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **porn4k**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://porn4k.to/page/1/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **speedporn**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **xsharings**: `FAIL -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
@@ -32,6 +36,10 @@
 
 ## Step Regressions
 
-- **cumlouder** `play`: `PASS -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
-- **netflixporno** `list`: `SKIP -> FAIL` (UNKNOWN) | List URL unavailable in harness (HTTP 500)
-- **pornmz** `main`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornmz.com/page/1?filter=latest: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **justfullporn** `list`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **mangoporn** `categories`: `SKIP -> FAIL` (NETWORK) | TimeoutError: The read operation timed out
+
+## Improvements
+
+- **awmnet**: `WARN -> PASS`
+- **reallifecam**: `SKIP -> PASS`
