@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-10-07T06:31:31.859102",
+    "sites_total": 201,
+    "pass": 187,
+    "warn": 4,
+    "fail": 7,
+    "error": 0,
+    "skip": 3
+  },
+  "previous": {
     "generated": "2026-10-06T06:33:51.176855",
     "sites_total": 201,
     "pass": 186,
@@ -8,37 +17,18 @@
     "error": 0,
     "skip": 3
   },
-  "previous": {
-    "generated": "2026-10-05T06:44:47.437535",
-    "sites_total": 201,
-    "pass": 184,
-    "warn": 5,
-    "fail": 8,
-    "error": 0,
-    "skip": 4
-  },
   "summary": {
-    "new_failures": 1,
+    "new_failures": 0,
     "resolved_failures": 1,
     "persistent_failures": 7,
-    "improved_sites": 2,
+    "improved_sites": 1,
     "regressions": 1,
-    "step_regressions": 2
+    "step_regressions": 1
   },
-  "new_failures": [
-    {
-      "site": "justfullporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "ENV",
-      "message": "list: RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "is_flaky": false,
-      "stability_score": 1.0
-    }
-  ],
+  "new_failures": [],
   "resolved_failures": [
     {
-      "site": "pornmz",
+      "site": "justfullporn",
       "previous": "FAIL",
       "current": "PASS"
     }
@@ -110,34 +100,19 @@
   ],
   "improved_sites": [
     {
-      "site": "awmnet",
+      "site": "cumlouder",
       "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "reallifecam",
-      "previous": "SKIP",
       "current": "PASS"
     }
   ],
   "step_regressions": [
     {
-      "site": "justfullporn",
-      "step": "list",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "mangoporn",
-      "step": "categories",
+      "site": "awmnet",
+      "step": "search",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "TimeoutError: The read operation timed out",
-      "class": "NETWORK",
+      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
+      "class": "BLOCKED",
       "is_flaky": false,
       "stability_score": 1.0
     }
@@ -145,6 +120,13 @@
   "deltas": [
     {
       "site": "awmnet",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "cumlouder",
       "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
@@ -152,21 +134,7 @@
     },
     {
       "site": "justfullporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "pornmz",
       "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "reallifecam",
-      "previous": "SKIP",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""

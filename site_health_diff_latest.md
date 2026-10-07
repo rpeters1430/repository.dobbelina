@@ -5,24 +5,20 @@
 
 ## Snapshot
 
-- Current: `PASS 186` | `WARN 4` | `FAIL 8` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 184` | `WARN 5` | `FAIL 8` | `ERROR 0` | `SKIP 4`
+- Current: `PASS 187` | `WARN 4` | `FAIL 7` | `ERROR 0` | `SKIP 3`
+- Previous: `PASS 186` | `WARN 4` | `FAIL 8` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
-- New failures: `1`
+- New failures: `0`
 - Resolved failures: `1`
 - Persistent failures: `7`
 - Site regressions: `1`
-- Step regressions: `2`
-
-## New Failures
-
-- **justfullporn**: `PASS -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- Step regressions: `1`
 
 ## Resolved Failures
 
-- **pornmz**: `FAIL -> PASS`
+- **justfullporn**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -36,10 +32,8 @@
 
 ## Step Regressions
 
-- **justfullporn** `list`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-- **mangoporn** `categories`: `SKIP -> FAIL` (NETWORK) | TimeoutError: The read operation timed out
+- **awmnet** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
 
 ## Improvements
 
-- **awmnet**: `WARN -> PASS`
-- **reallifecam**: `SKIP -> PASS`
+- **cumlouder**: `WARN -> PASS`
