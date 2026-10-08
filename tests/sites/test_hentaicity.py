@@ -1,104 +1,93 @@
-"""Tests for hentaicity site implementation."""
+"""Tests for hentaicity site implementation (real-page fixtures)."""
 
 from resources.lib.sites import hentaicity
+from tests.utils.site_harness import SiteRecorder
 
-
-SAMPLE_LISTING_HTML = """
-<html>
-<body>
-<div class="item">
-  <div class="thumb-ratio">
-    <a class="thumb-img" href="https://www.hentaicity.com/video/sample-video-1.html">
-      <img alt="Sample Hentai Video 1" src="https://cdn.hentaicity.com/thumb1.jpg" />
-      <span class="time">12:34</span>
-    </a>
-  </div>
-</div>
-<div class="item">
-  <div class="thumb-ratio">
-    <a class="thumb-img" href="https://www.hentaicity.com/video/sample-video-2.html">
-      <img alt="Sample Hentai Video 2" src="https://cdn.hentaicity.com/thumb2.jpg" />
-      <span class="time">20:15</span>
-    </a>
-  </div>
-</div>
-<div class="pagination">
-  <a href="https://www.hentaicity.com/videos/page-2.html">Next</a>
-</div>
-</body>
-</html>
-"""
+PAGES = {
+    "/categories/": "sites/hentaicity/categories.html",
+    "/video/": "sites/hentaicity/video.html",
+    "hentaicity.com/": "sites/hentaicity/listing.html",
+}
 
 
 def test_hentaicity_main(monkeypatch):
-    dirs = []
-    list_calls = []
-
-    monkeypatch.setattr(hentaicity.site, "add_dir", lambda name, url, mode, icon=None: dirs.append((name, url, mode)))
-    monkeypatch.setattr(hentaicity, "List", lambda url: list_calls.append(url))
-    monkeypatch.setattr(hentaicity.utils, "eod", lambda: None)
+    rec = SiteRecorder(monkeypatch, hentaicity, PAGES)
 
     hentaicity.Main()
 
-    assert any(d[2] == "Categories" for d in dirs)
-    assert any(d[2] == "Search" for d in dirs)
-    assert list_calls == ["https://www.hentaicity.com/videos/"]
+    assert rec.dirs_for("Categories")
+    assert rec.dirs_for("Search")
+    assert rec.requests[0][0] == "https://www.hentaicity.com/videos/"
 
 
 def test_hentaicity_list(monkeypatch):
-    downloads = []
-    dirs = []
-
-    monkeypatch.setattr(hentaicity.utils, "getHtml", lambda url, referer=None: SAMPLE_LISTING_HTML)
-    monkeypatch.setattr(
-        hentaicity.site,
-        "add_download_link",
-        lambda name, url, mode, iconimage, desc="", **k: downloads.append({"name": name, "url": url, "mode": mode, "icon": iconimage}),
-    )
-    monkeypatch.setattr(
-        hentaicity.site,
-        "add_dir",
-        lambda name, url, mode, iconimage=None, **k: dirs.append({"name": name, "url": url, "mode": mode}),
-    )
-    monkeypatch.setattr(hentaicity.utils, "eod", lambda: None)
+    rec = SiteRecorder(monkeypatch, hentaicity, PAGES)
 
     hentaicity.List("https://www.hentaicity.com/videos/")
 
-    assert len(downloads) == 2
-    assert downloads[0]["name"] == "Sample Hentai Video 1"
-    assert downloads[0]["url"] == "https://www.hentaicity.com/video/sample-video-1.html"
-    assert downloads[0]["icon"] == "https://cdn.hentaicity.com/thumb1.jpg"
-    assert len(dirs) == 1
-    assert dirs[0]["url"] == "https://www.hentaicity.com/videos/page-2.html"
+    assert len(rec.videos) == 6
+    first = rec.videos[0]
+    assert first["name"] == (
+        "Weak Teacher 3 (ecchi anime) - Busty teacher wears bunny outfit"
+    )
+    # The /click/1-1/ tracking redirect is stripped from listing links.
+    assert first["url"] == (
+        "https://www.hentaicity.com/video/"
+        "weak-teacher-3-ecchi-anime-busty-teacher-wears-bunny-outfit-5MMx2sxWOn2.html"
+    )
+    assert first["icon"] == (
+        "https://cdn1.images.hentaicity.com/videos/0822/38137/main.jpg"
+    )
+    assert first["duration"] == "23:42"
+    assert rec.next_page == "https://www.hentaicity.com/videos/all-recent-2.html"
 
 
-def test_hentaicity_playvid(monkeypatch):
-    played_url = []
+def test_hentaicity_categories_skip_galleries(monkeypatch):
+    rec = SiteRecorder(monkeypatch, hentaicity, PAGES)
 
-    class _DummyVP:
-        def __init__(self, name, download=None):
-            self.progress = type("P", (), {"update": lambda *a, **k: None})()
+    hentaicity.Categories("https://www.hentaicity.com/categories/")
 
-        def play_from_direct_url(self, url):
-            played_url.append(url)
+    cats = rec.dirs_for("List")
+    assert [c["name"] for c in cats] == ["3D", "Anal", "Babe", "Big Dick"]
+    assert all("/videos/" in c["url"] for c in cats)
+    assert cats[0]["url"] == (
+        "https://www.hentaicity.com/videos/straight/3d-popular.html"
+    )
 
-    html = '<video><source src="https://hls.hentaicity.com/master.m3u8" /></video>'
-    monkeypatch.setattr(hentaicity.utils, "VideoPlayer", _DummyVP)
-    monkeypatch.setattr(hentaicity.utils, "getHtml", lambda *a, **k: html)
 
-    hentaicity.Playvid("https://www.hentaicity.com/video/sample-1.html", "Sample 1")
-    assert played_url == ["https://hls.hentaicity.com/master.m3u8"]
+def test_hentaicity_playvid_plays_hls_master(monkeypatch):
+    rec = SiteRecorder(monkeypatch, hentaicity, PAGES)
+
+    hentaicity.Playvid("https://www.hentaicity.com/video/sample.html", "Sample")
+
+    assert len(rec.played) == 1
+    method, link = rec.played[0]
+    assert method == "play_from_direct_link"
+    assert link.startswith("https://hls.hentaicity.com/_hls/flv/0822/38137/")
+    assert "master.m3u8?validfrom=" in link
+    assert "&amp;" not in link
+    assert link.endswith("|Referer=https://www.hentaicity.com/")
+
+
+def test_hentaicity_playvid_without_source_notifies(monkeypatch):
+    rec = SiteRecorder(monkeypatch, hentaicity, {})
+
+    hentaicity.Playvid("https://www.hentaicity.com/video/sample.html", "Sample")
+
+    assert rec.played == []
+    assert rec.notifications
 
 
 def test_hentaicity_search(monkeypatch):
-    list_called = []
-    search_dirs = []
+    rec = SiteRecorder(monkeypatch, hentaicity, PAGES)
 
-    monkeypatch.setattr(hentaicity.site, "search_dir", lambda url, mode: search_dirs.append(url))
-    monkeypatch.setattr(hentaicity, "List", lambda url: list_called.append(url))
+    hentaicity.Search(
+        "https://www.hentaicity.com/customsearch.php?search={0}&search_type=video",
+        "two words",
+    )
 
-    hentaicity.Search("https://www.hentaicity.com/customsearch.php?search={0}&search_type=video")
-    assert len(search_dirs) == 1
-
-    hentaicity.Search("https://www.hentaicity.com/customsearch.php?search={0}&search_type=video", keyword="nurse cosplay")
-    assert list_called == ["https://www.hentaicity.com/customsearch.php?search=nurse+cosplay&search_type=video"]
+    assert rec.requests[0][0] == (
+        "https://www.hentaicity.com/customsearch.php"
+        "?search=two+words&search_type=video"
+    )
+    assert rec.videos

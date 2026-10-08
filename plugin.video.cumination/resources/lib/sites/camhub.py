@@ -34,6 +34,13 @@ site = AdultSite(
     category="Cams & Live",
 )
 
+
+def _jpeg_thumb(value, item=None):
+    # The sized screenshots (336x189/1.jpg) are WebP data served as
+    # image/jpeg, which Kodi cannot decode; preview.jpg is a real JPEG.
+    return re.sub(r"/\d+x\d+/\d+\.jpg$", "/preview.jpg", value or "")
+
+
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
         "items": ".item",
@@ -48,8 +55,11 @@ VIDEO_LIST_SPEC = SoupSiteSpec(
             "selector": "img",
             "attr": "data-original",
             "fallback_attrs": ["data-webp", "src"],
+            "transform": _jpeg_thumb,
         },
         "duration": {"selector": ".duration, .time", "text": True},
+        # Private videos only play for logged-in members.
+        "filter": lambda item: "private" not in (item.get("class") or []),
     }
 )
 
@@ -154,45 +164,43 @@ def Search(url, keyword=None):
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
-    video_id_match = re.search(r"/videos?/(\d+)/", url)
-    embed_url = "https://www.camhub.cc/embed/{}".format(video_id_match.group(1)) if video_id_match else url
 
-    embed_html = utils.getHtml(embed_url, url)
-    if embed_html:
-        if vp.play_from_kt_player(embed_html, embed_url):
-            return
-        if vp.play_from_html(embed_html, embed_url):
-            return
-
+    # play_from_kt_player() returns nothing, so decide up front which page
+    # actually carries the player config instead of testing its result.
     html = utils.getHtml(url, site.url)
-    if not html:
+    if html and re.search(r"video_url\s*:", html):
+        vp.play_from_kt_player(html, url)
         return
 
-    soup = utils.parse_html(html)
-    for iframe in soup.find_all("iframe"):
-        src = utils.safe_get_attr(iframe, "src")
-        if not src or "xhadapt" in src:
-            continue
-        if src.startswith("//"):
-            src = "https:" + src
-        elif src.startswith("/"):
-            src = urllib_parse.urljoin(site.url, src)
-
-        if vp.play_from_link_to_resolve(src):
+    video_id_match = re.search(r"/videos?/(\d+)/", url)
+    if video_id_match:
+        embed_url = urllib_parse.urljoin(
+            site.url, "embed/{}".format(video_id_match.group(1))
+        )
+        embed_html = utils.getHtml(embed_url, url)
+        if embed_html and re.search(r"video_url\s*:", embed_html):
+            vp.play_from_kt_player(embed_html, embed_url)
             return
 
+    soup = utils.parse_html(html or "")
     for video in soup.find_all(["video", "source"]):
         src = utils.safe_get_attr(video, "src")
         if src:
-            if src.startswith("//"):
-                src = "https:" + src
-            elif src.startswith("/"):
-                src = urllib_parse.urljoin(site.url, src)
+            src = urllib_parse.urljoin(site.url, src)
             vp.play_from_direct_link(src + "|Referer=" + url)
             return
 
-    for a in soup.find_all("a", href=True):
-        href = utils.safe_get_attr(a, "href")
-        if href and not any(h in href.lower() for h in ("camhub.cc", "google", "traffic", "banner", "javascript:")):
-            if vp.play_from_link_to_resolve(href):
-                return
+    links = []
+    for iframe in soup.find_all("iframe"):
+        src = utils.safe_get_attr(iframe, "src")
+        if src and "xhadapt" not in src:
+            links.append(urllib_parse.urljoin(site.url, src))
+    if links:
+        vp.play_from_link_list(links)
+        return
+
+    vp.progress.close()
+    if html and "private video" in html.lower():
+        utils.notify("Private video - login required", "CamHub")
+    else:
+        utils.notify("No playable stream found", "CamHub")

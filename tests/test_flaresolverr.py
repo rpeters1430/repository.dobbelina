@@ -220,3 +220,86 @@ def test_request_retries_status_error_without_session(monkeypatch):
     assert response.status_code == 200
     assert len(calls) == 2
     assert all("session" not in call for call in calls)
+
+
+def test_request_forwards_extra_headers_only_when_given(monkeypatch):
+    calls = []
+
+    def fake_post(url, json=None, timeout=None):
+        calls.append(json)
+        return _FakeResponse(
+            {
+                "status": "ok",
+                "solution": {
+                    "response": "<html>ok</html>",
+                    "status": 200,
+                    "url": "https://www.ecamrips.com/play.php?idd=1",
+                    "headers": {},
+                    "cookies": [],
+                },
+            }
+        )
+
+    class _FakeSession:
+        def __init__(self):
+            self.cookies = []
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(flaresolverr.requests, "post", fake_post)
+    monkeypatch.setattr(
+        flaresolverr.requests, "session", lambda: _FakeSession(), raising=False
+    )
+
+    manager = FlareSolverrManager("http://127.0.0.1:8191/v1")
+    manager.request("https://www.ecamrips.com/en/")
+    manager.request(
+        "https://www.ecamrips.com/play.php?idd=1",
+        headers={"Referer": "https://www.ecamrips.com/loading_video.php?idd=1"},
+    )
+
+    assert "headers" not in calls[0]
+    assert calls[1]["headers"] == {
+        "Referer": "https://www.ecamrips.com/loading_video.php?idd=1"
+    }
+
+
+def test_request_drops_headers_when_solver_rejects_them(monkeypatch):
+    calls = []
+
+    def fake_post(url, json=None, timeout=None):
+        calls.append(dict(json))
+        if "headers" in json:
+            return _FakeResponse({"status": "error", "message": "unknown field"})
+        return _FakeResponse(
+            {"status": "ok", "solution": {"response": "<html>ok</html>", "status": 200}}
+        )
+
+    class _FakeSession:
+        def __init__(self):
+            self.cookies = []
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(flaresolverr.requests, "post", fake_post)
+    monkeypatch.setattr(
+        flaresolverr.requests, "session", lambda: _FakeSession(), raising=False
+    )
+    monkeypatch.setattr(flaresolverr.time, "sleep", lambda _s: None)
+    monkeypatch.setattr(
+        flaresolverr.requests,
+        "exceptions",
+        types.SimpleNamespace(RequestException=Exception),
+        raising=False,
+    )
+
+    manager = FlareSolverrManager("http://127.0.0.1:8191/v1")
+    response = manager.request(
+        "https://example.com/", headers={"Referer": "https://example.com/a"}
+    )
+
+    assert response.text == "<html>ok</html>"
+    assert "headers" in calls[0]
+    assert "headers" not in calls[1]

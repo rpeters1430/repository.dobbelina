@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
-from urllib.parse import quote_plus, urljoin
+from urllib.parse import quote, urljoin
 
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
@@ -32,23 +32,26 @@ site = AdultSite(
     requires_flaresolverr=True,
 )
 
+POPULAR_PERIODS = (
+    ("Last Hour", "last_hour"),
+    ("Last 12 Hours", "twelve_hours"),
+    ("Today", "day"),
+    ("This Week", "week"),
+    ("This Month", "month"),
+    ("All Time", "all_time"),
+)
+
 
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
-        "[COLOR hotpink]Trending Videos[/COLOR]",
-        site.url + "trending/",
-        "List",
+        "[COLOR hotpink]Popular Videos[/COLOR]",
+        site.url + "popular_videos/",
+        "Popular",
         site.img_cat,
     )
     site.add_dir(
-        "[COLOR hotpink]Top This Week[/COLOR]",
-        site.url + "video/week/",
-        "List",
-        site.img_cat,
-    )
-    site.add_dir(
-        "[COLOR hotpink]Search[/COLOR]",
+        "[COLOR hotpink]Search Models[/COLOR]",
         site.url + "search/{0}/",
         "Search",
         site.img_search,
@@ -58,30 +61,94 @@ def Main():
 
 
 @site.register()
+def Popular(url):
+    for label, slug in POPULAR_PERIODS:
+        site.add_dir(label, "{}{}/".format(url, slug), "List", site.img_cat)
+    utils.eod()
+
+
+def _add_next_page(soup, current_url, mode):
+    next_link = soup.select_one("#next_page a[href]")
+    if next_link:
+        site.add_dir(
+            "Next Page", urljoin(current_url, next_link["href"]), mode, site.img_next
+        )
+
+
+@site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(listhtml)
 
-    spec = {
-        "items": "div:has(> a[href*='/video/']), a[href*='/video/']",
-        "url": {"selector": "a[href*='/video/']", "attr": "href"},
-        "title": {
-            "selector": "img[alt]",
-            "attr": "alt",
-            "fallback_selectors": ["a", "span"],
-        },
-        "thumbnail": {
-            "selector": "img",
-            "attr": "src",
-            "fallback_attrs": ["data-src"],
-        },
-        "pagination": {
-            "selector": "a[href*='/page/'], #pagination a, a.next",
-            "attr": "href",
-        },
-    }
+    # Cards have no title of their own: name them after the model and post
+    # number. Cards without a /video/ link are sponsored profiles.
+    seen = set()
+    for card in soup.select("div.uk-transition-toggle"):
+        link = card.select_one("a[href*='/video/']")
+        href = utils.safe_get_attr(link, "href")
+        if not href or href in seen:
+            continue
+        seen.add(href)
+        name = utils.safe_get_text(card.select_one(".custom-overly1 a"))
+        post = utils.safe_get_attr(card.select_one("a.tag-corner-link"), "href")
+        post_id = re.search(r"/(\d+)/?$", post)
+        if post_id:
+            name = "{} #{}".format(name, post_id.group(1)).strip()
+        if not name:
+            continue
+        thumb = utils.safe_get_attr(link.select_one("img"), "src", ["data-src"])
+        site.add_download_link(
+            utils.cleantext(name), urljoin(site.url, href), "Playvid", thumb
+        )
 
-    utils.soup_videos_list(site, soup, spec)
+    _add_next_page(soup, url, "List")
+    utils.eod()
+
+
+@site.register()
+def Models(url):
+    listhtml = utils.getHtml(url, site.url)
+    soup = utils.parse_html(listhtml)
+
+    seen = set()
+    for card in soup.select("#content div.uk-transition-toggle"):
+        link = card.select_one(".custom-overly1 a[href]")
+        href = utils.safe_get_attr(link, "href")
+        if not href or not href.startswith(site.url) or href in seen:
+            continue
+        seen.add(href)
+        name = utils.safe_get_text(link)
+        if not name:
+            continue
+        thumb = utils.safe_get_attr(card.select_one("img"), "src", ["data-src"])
+        site.add_dir(utils.cleantext(name), href, "Model", thumb or site.img_cat)
+
+    _add_next_page(soup, url, "Models")
+    utils.eod()
+
+
+@site.register()
+def Model(url):
+    listhtml = utils.getHtml(url, site.url)
+    soup = utils.parse_html(listhtml)
+
+    model = utils.safe_get_text(soup.select_one("h2")) or "Video"
+    # Model pages mix photos and videos; only video posts carry a play icon.
+    for link in soup.select("#content a[href]"):
+        if not link.select_one("img[src*='icon-play']"):
+            continue
+        post_id = re.search(r"/(\d+)/?$", link["href"])
+        if not post_id:
+            continue
+        thumb = utils.safe_get_attr(link.select_one("img"), "src", ["data-src"])
+        site.add_download_link(
+            utils.cleantext("{} #{}".format(model, post_id.group(1))),
+            urljoin(site.url, link["href"]),
+            "Playvid",
+            thumb,
+        )
+
+    _add_next_page(soup, url, "Model")
     utils.eod()
 
 
@@ -93,21 +160,22 @@ def Playvid(url, name, download=None):
     vpage = utils.getHtml(url, site.url)
     soup = utils.parse_html(vpage)
 
-    source = soup.find("source", src=True) or soup.find("video", src=True)
-    video_url = None
-
-    if source and source.get("src"):
-        video_url = source["src"]
-    else:
-        matches = re.findall(r'https?://[^\s"\'<>]+\.(?:mp4|m3u8)[^\s"\'<>]*', vpage)
-        if matches:
-            video_url = matches[0]
+    # /video/ pages are a swipe feed whose first entry is the requested clip.
+    video_url = utils.safe_get_attr(
+        soup.select_one("meta[property='og:video']"), "content"
+    ) or utils.safe_get_attr(soup.select_one("video source[src], video[src]"), "src")
+    if not video_url:
+        match = re.search(r'"video_url"\s*:\s*"([^"]+)"', vpage)
+        if match:
+            video_url = match.group(1).replace("\\/", "/")
 
     if video_url:
-        video_url = urljoin(url, video_url)
         vp.progress.update(75, "[CR]Playing video[CR]")
-        vp.play_from_direct_url(video_url)
+        vp.play_from_direct_link(
+            "{}|Referer={}".format(urljoin(url, video_url), site.url)
+        )
     else:
+        vp.progress.close()
         utils.notify("No playable stream found", "Fapello")
 
 
@@ -116,5 +184,5 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        search_url = url.format(quote_plus(keyword))
-        List(search_url)
+        # The site only searches model names; spaces are dashes in its URLs.
+        Models(url.format(quote(keyword.strip().replace(" ", "-"))))

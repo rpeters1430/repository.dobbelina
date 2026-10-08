@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import re
 from urllib.parse import quote_plus, urljoin
 
 from resources.lib import utils
@@ -29,6 +30,35 @@ site = AdultSite(
     "hentaicity",
     category="Hentai & Anime",
 )
+
+
+def _strip_click_tracker(value, item=None):
+    # Listing links go through /click/<n>-<n>/ redirects to the video page.
+    return re.sub(r"/click/\d+-\d+/", "/", value or "")
+
+
+VIDEO_LIST_SPEC = {
+    "items": "div.item",
+    "url": {
+        "selector": "a.thumb-img[href*='/video/']",
+        "attr": "href",
+        "transform": _strip_click_tracker,
+    },
+    "title": {
+        "selector": "a.thumb-img img[alt]",
+        "attr": "alt",
+        "fallback_selectors": ["a.video-title"],
+        "text": True,
+    },
+    "thumbnail": {
+        "selector": "a.thumb-img img",
+        "attr": "src",
+        "fallback_attrs": ["data-src"],
+    },
+    "duration": {"selector": ".time", "text": True},
+    "quality": {"selector": ".flag-hd", "text": True},
+    "pagination": {"selector": "a#nextpage[href], a.next[href]", "attr": "href"},
+}
 
 
 @site.register(default_mode=True)
@@ -54,28 +84,7 @@ def List(url):
     listhtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(listhtml)
 
-    spec = {
-        "items": "div.item",
-        "url": {"selector": "a.thumb-img[href]", "attr": "href"},
-        "title": {
-            "selector": "a.thumb-img img[alt]",
-            "attr": "alt",
-            "fallback_selectors": ["a.thumb-title", "a.thumb-img"],
-        },
-        "thumbnail": {
-            "selector": "a.thumb-img img",
-            "attr": "src",
-            "fallback_attrs": ["data-src"],
-        },
-        "duration": {"selector": ".time"},
-        "pagination": {
-            "selector": ".pagination a, ul.pagination a",
-            "attr": "href",
-            "text": "Next",
-        },
-    }
-
-    utils.soup_videos_list(site, soup, spec)
+    utils.soup_videos_list(site, soup, VIDEO_LIST_SPEC)
     utils.eod()
 
 
@@ -84,16 +93,24 @@ def Categories(url):
     html = utils.getHtml(url, site.url)
     soup = utils.parse_html(html)
 
-    for item in soup.select("div.item, div.cat-item, .category-item"):
-        link = item.find("a", href=True)
+    # The page lists every category twice: once for videos, once for galleries.
+    for item in soup.select("div.item.video-category"):
+        link = item.select_one("a.thumb-img[href*='/videos/']")
         if not link:
             continue
-        href = urljoin(site.url, link["href"])
         img = item.find("img")
-        thumb = img.get("src") or img.get("data-src") if img else site.img_cat
-        title = link.get_text(strip=True) or (img.get("alt") if img else "")
-        if title:
-            site.add_dir(title, href, "List", thumb)
+        title = utils.safe_get_attr(img, "alt") or utils.safe_get_text(
+            item.select_one(".item-date a")
+        )
+        if not title:
+            continue
+        thumb = utils.safe_get_attr(img, "src", ["data-src"])
+        site.add_dir(
+            title,
+            urljoin(site.url, link["href"]),
+            "List",
+            urljoin(site.url, thumb) if thumb else site.img_cat,
+        )
 
     utils.eod()
 
@@ -106,23 +123,19 @@ def Playvid(url, name, download=None):
     vpage = utils.getHtml(url, site.url)
     soup = utils.parse_html(vpage)
 
-    source = soup.find("source", src=True)
-    video = soup.find("video", src=True)
-    video_url = None
-
-    if source and source.get("src"):
-        video_url = source["src"]
-    elif video and video.get("src"):
-        video_url = video["src"]
-
-    if video_url:
-        video_url = urljoin(url, video_url)
+    # Related-video cards carry <video> trailers, so target the main player.
+    source = (
+        soup.select_one("video#video-id source[src]")
+        or soup.select_one("video#video-id[src]")
+        or soup.select_one("video[playsinline][src]")
+    )
+    if source:
         vp.progress.update(75, "[CR]Playing video[CR]")
-        vp.play_from_direct_url(video_url)
-    elif "kt_player('kt_player'" in vpage:
-        vp.progress.update(60, "[CR]kt_player detected[CR]")
-        vp.play_from_kt_player(vpage, url)
+        vp.play_from_direct_link(
+            "{}|Referer={}".format(urljoin(url, source["src"]), site.url)
+        )
     else:
+        vp.progress.close()
         utils.notify("No playable stream found", "Hentai City")
 
 

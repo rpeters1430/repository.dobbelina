@@ -1472,7 +1472,7 @@ def flaresolve(url, referer, method="get", post_data=None):
 
     Args:
         url: The URL to fetch
-        referer: The referer URL (currently unused)
+        referer: The referer URL, forwarded as a Referer header when set
         method: "get" or "post"
         post_data: URL-encoded form body to submit when method is "post"
 
@@ -1500,7 +1500,10 @@ def flaresolve(url, referer, method="get", post_data=None):
             )
         )
         # FlareSolverrManager handles API errors, retries, and local cookies.
-        response = flaresolverr.request(url, method=method, post_data=post_data)
+        request_kwargs = {"method": method, "post_data": post_data}
+        if referer:
+            request_kwargs["headers"] = {"Referer": referer}
+        response = flaresolverr.request(url, **request_kwargs)
 
         elapsed = time.time() - start_time
         cf_ray = ""

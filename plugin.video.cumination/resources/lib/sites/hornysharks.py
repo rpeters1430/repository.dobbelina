@@ -110,7 +110,7 @@ def Playvid(url, name, download=None):
         soup = utils.parse_html(vpage)
         source = soup.find("source", src=True) or soup.find("video", src=True)
         if source and source.get("src"):
-            vp.play_from_direct_url(urljoin(url, source["src"]))
+            vp.play_from_direct_link(urljoin(url, source["src"]))
         else:
             utils.notify("No playable stream found", "HornySharks")
 

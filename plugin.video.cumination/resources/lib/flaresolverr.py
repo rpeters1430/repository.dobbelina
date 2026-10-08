@@ -89,7 +89,9 @@ class FlareSolverrManager:
         self.flaresolverr_session = None
         self._destroyed = False
 
-    def request(self, url, method="get", post_data=None, tries=3, max_timeout=60000):
+    def request(
+        self, url, method="get", post_data=None, tries=3, max_timeout=60000, headers=None
+    ):
         """Proxy a request through FlareSolverr."""
         if self._destroyed:
             raise RuntimeError("FlareSolverrManager has been destroyed")
@@ -115,6 +117,11 @@ class FlareSolverrManager:
 
         if cookies:
             flaresolverr_request["cookies"] = cookies
+
+        # Optional: only some solvers apply custom headers. Needed for endpoints
+        # that return an empty body without a Referer.
+        if headers:
+            flaresolverr_request["headers"] = dict(headers)
 
         xbmc.log(
             "@@@@Cumination: [CF-DIAG] FlareSolverr request: cmd={} url={} "
@@ -212,6 +219,8 @@ class FlareSolverrManager:
                 )
                 if (conn_errors and isinstance(e, conn_errors)) or try_count >= tries:
                     raise
+                # In case this solver rejects the optional field outright.
+                flaresolverr_request.pop("headers", None)
                 xbmc.log(
                     "@@@@Cumination: FlareSolverr request failed (attempt {}/{}): {}".format(
                         try_count, tries, str(e)

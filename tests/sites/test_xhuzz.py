@@ -1,78 +1,86 @@
-"""Tests for xhuzz site implementation."""
+"""Tests for xhuzz site implementation (real-page fixtures)."""
 
 from resources.lib.sites import xhuzz
+from tests.utils.site_harness import SiteRecorder
+
+PAGES = {
+    "/categories": "sites/xhuzz/categories.html",
+    "/video/": "sites/xhuzz/video.html",
+    "xhuzz.com/": "sites/xhuzz/listing.html",
+}
 
 
-SAMPLE_LISTING_HTML = """
-<html>
-<body>
-<div>
-  <a class="group" href="/video/sample-xhuzz-video">
-    <img alt="Sample xHuzz Video" src="https://cdn.xhuzz.com/thumb.jpg" />
-  </a>
-</div>
-<div class="pagination">
-  <a href="/videos?page=2">2</a>
-</div>
-</body>
-</html>
-"""
-
-
-def test_xhuzz_main(monkeypatch):
-    dirs = []
-    list_calls = []
-
-    monkeypatch.setattr(xhuzz.site, "add_dir", lambda name, url, mode, icon=None: dirs.append((name, url, mode)))
-    monkeypatch.setattr(xhuzz, "List", lambda url: list_calls.append(url))
-    monkeypatch.setattr(xhuzz.utils, "eod", lambda: None)
+def test_xhuzz_main_lists_home_page(monkeypatch):
+    rec = SiteRecorder(monkeypatch, xhuzz, PAGES)
 
     xhuzz.Main()
 
-    assert any(d[2] == "Categories" for d in dirs)
-    assert any(d[2] == "Search" for d in dirs)
-    assert list_calls == ["https://xhuzz.com/videos"]
+    assert rec.dirs_for("Categories")
+    assert rec.dirs_for("Search")
+    # /videos is a 404 on the live site; the home page is the listing.
+    assert rec.requests[0][0] == "https://xhuzz.com/"
+    assert rec.videos
 
 
 def test_xhuzz_list(monkeypatch):
-    downloads = []
-    dirs = []
+    rec = SiteRecorder(monkeypatch, xhuzz, PAGES)
 
-    monkeypatch.setattr(xhuzz.utils, "getHtml", lambda url, referer=None: SAMPLE_LISTING_HTML)
-    monkeypatch.setattr(
-        xhuzz.site,
-        "add_download_link",
-        lambda name, url, mode, iconimage, desc="", **k: downloads.append({"name": name, "url": url, "mode": mode, "icon": iconimage}),
+    xhuzz.List("https://xhuzz.com/")
+
+    assert len(rec.videos) == 6
+    urls = [v["url"] for v in rec.videos]
+    assert len(set(urls)) == len(urls)
+    first = rec.videos[0]
+    assert first["name"] == "Christina Khalil Pussy Clit Close Up Video"
+    assert first["url"] == (
+        "https://xhuzz.com/video/christina-khalil-pussy-clit-close-up-video"
     )
-    monkeypatch.setattr(
-        xhuzz.site,
-        "add_dir",
-        lambda name, url, mode, iconimage=None, **k: dirs.append({"name": name, "url": url, "mode": mode}),
-    )
-    monkeypatch.setattr(xhuzz.utils, "eod", lambda: None)
-
-    xhuzz.List("https://xhuzz.com/videos")
-
-    assert len(downloads) == 1
-    assert downloads[0]["name"] == "Sample xHuzz Video"
-    assert downloads[0]["url"] == "https://xhuzz.com/video/sample-xhuzz-video"
-    assert downloads[0]["icon"] == "https://cdn.xhuzz.com/thumb.jpg"
+    assert first["icon"].startswith("https://xhuzz.com/thumbnail/")
+    assert rec.next_page == "https://xhuzz.com/?page=2"
 
 
-def test_xhuzz_playvid(monkeypatch):
-    resolved = []
+def test_xhuzz_categories(monkeypatch):
+    rec = SiteRecorder(monkeypatch, xhuzz, PAGES)
 
-    class _DummyVP:
-        def __init__(self, name, download=None):
-            self.progress = type("P", (), {"update": lambda *a, **k: None})()
+    xhuzz.Categories("https://xhuzz.com/categories")
 
-        def play_from_link(self, url):
-            resolved.append(url)
-            return True
+    cats = rec.dirs_for("List")
+    assert [c["name"] for c in cats] == [
+        "Sex Tape",
+        "Threesome",
+        "Boy Girl",
+        "Striptease",
+    ]
+    assert cats[0]["url"] == "https://xhuzz.com/category/sex-tape"
+    assert cats[0]["icon"].startswith("https://xhuzz.com/thumbnail/")
 
-    html = '<button class="source-btn" data-src="https://streamtape.com/e/12345">Source 1</button>'
-    monkeypatch.setattr(xhuzz.utils, "VideoPlayer", _DummyVP)
-    monkeypatch.setattr(xhuzz.utils, "getHtml", lambda *a, **k: html)
 
-    xhuzz.Playvid("https://xhuzz.com/video/sample-xhuzz-video", "Sample")
-    assert resolved == ["https://streamtape.com/e/12345"]
+def test_xhuzz_playvid_resolves_hoster_buttons(monkeypatch):
+    rec = SiteRecorder(monkeypatch, xhuzz, PAGES)
+
+    xhuzz.Playvid("https://xhuzz.com/video/sample", "Sample")
+
+    assert len(rec.played) == 1
+    method, links = rec.played[0]
+    assert method == "play_from_link_list"
+    assert links[0] == "https://streamtape.com/e/PDGdWaZ11ghL9W"
+    assert "https://voe.sx/e/ubx1fcyjd5nd" in links
+    assert not rec.notifications
+
+
+def test_xhuzz_playvid_without_sources_notifies(monkeypatch):
+    rec = SiteRecorder(monkeypatch, xhuzz, {})
+
+    xhuzz.Playvid("https://xhuzz.com/video/sample", "Sample")
+
+    assert rec.played == []
+    assert rec.notifications
+
+
+def test_xhuzz_search(monkeypatch):
+    rec = SiteRecorder(monkeypatch, xhuzz, PAGES)
+
+    xhuzz.Search("https://xhuzz.com/search?q={0}", "two words")
+
+    assert rec.requests[0][0] == "https://xhuzz.com/search?q=two+words"
+    assert rec.videos

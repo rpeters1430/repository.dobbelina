@@ -113,21 +113,22 @@ def Playvid(url, name, download=None):
     iframe = soup.find("iframe", class_="embedPlayer") or soup.find("iframe", src=True)
     if iframe and iframe.get("src"):
         src = urljoin(url, iframe["src"])
-        vp.progress.update(60, "[CR]Resolving embed[CR]")
-        if vp.play_from_link(src):
+        if vp.resolveurl.HostedMediaFile(src).valid_url():
+            vp.progress.update(60, "[CR]Resolving embed[CR]")
+            vp.play_from_link_to_resolve(src)
             return
 
     # 2. Look for direct video tag / source
     source = soup.find("source", src=True) or soup.find("video", src=True)
     if source and source.get("src"):
-        vp.play_from_direct_url(urljoin(url, source["src"]))
+        vp.play_from_direct_link(urljoin(url, source["src"]))
         return
 
     # 3. Regex for mp4 / m3u8
     matches = re.findall(r'https?://[^\s"\'<>]+\.(?:mp4|m3u8)[^\s"\'<>]*', vpage)
     for m in matches:
         if "preview" not in m.lower():
-            vp.play_from_direct_url(m)
+            vp.play_from_direct_link(m)
             return
 
     utils.notify("No playable stream found", "HelloPorn")

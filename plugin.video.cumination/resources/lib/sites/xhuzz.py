@@ -45,7 +45,7 @@ def Main():
         "Search",
         site.img_search,
     )
-    List(site.url + "videos")
+    List(site.url)
     utils.eod()
 
 
@@ -54,26 +54,34 @@ def List(url):
     listhtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(listhtml)
 
-    spec = {
-        "items": "div:has(> a[href*='/video/']), div.snap-start",
-        "url": {"selector": "a[href*='/video/']", "attr": "href"},
-        "title": {
-            "selector": "img[alt]",
-            "attr": "alt",
-            "fallback_selectors": ["a[aria-label]", "h3", "span"],
-        },
-        "thumbnail": {
-            "selector": "img",
-            "attr": "src",
-            "fallback_attrs": ["data-src"],
-        },
-        "pagination": {
-            "selector": "a[href*='page='], .pagination a",
-            "attr": "href",
-        },
-    }
+    # The home page repeats videos across its carousel and grid sections.
+    seen = set()
+    for link in soup.select("a[href*='/video/']"):
+        href = utils.safe_get_attr(link, "href")
+        if not href or href in seen:
+            continue
+        seen.add(href)
+        img = link.select_one("img")
+        name = utils.safe_get_attr(img, "alt")
+        if not name:
+            name = utils.safe_get_attr(link, "aria-label")
+            if name.startswith("Watch "):
+                name = name[6:]
+        if not name:
+            continue
+        thumb = utils.safe_get_attr(img, "src", ["data-src"])
+        site.add_download_link(
+            utils.cleantext(name),
+            urljoin(site.url, href),
+            "Playvid",
+            urljoin(site.url, thumb) if thumb else "",
+        )
 
-    utils.soup_videos_list(site, soup, spec)
+    next_link = soup.select_one("a[aria-label='Next page'][href]")
+    if next_link:
+        site.add_dir(
+            "Next Page", urljoin(url, next_link["href"]), "List", site.img_next
+        )
     utils.eod()
 
 
@@ -82,13 +90,22 @@ def Categories(url):
     html = utils.getHtml(url, site.url)
     soup = utils.parse_html(html)
 
-    for link in soup.select("a[href*='/category/'], a[href*='/tag/']"):
+    seen = set()
+    for link in soup.select("a[href*='/category/']"):
         href = urljoin(site.url, link.get("href", ""))
+        if href in seen:
+            continue
         img = link.find("img")
-        thumb = img.get("src") if img else site.img_cat
-        title = link.get_text(strip=True) or (img.get("alt") if img else "")
+        thumb = utils.safe_get_attr(img, "src", ["data-src"])
+        title = utils.safe_get_attr(img, "alt") or link.get_text(strip=True)
         if title:
-            site.add_dir(title, href, "List", thumb)
+            seen.add(href)
+            site.add_dir(
+                utils.cleantext(title),
+                href,
+                "List",
+                urljoin(site.url, thumb) if thumb else site.img_cat,
+            )
 
     utils.eod()
 
@@ -101,24 +118,24 @@ def Playvid(url, name, download=None):
     vpage = utils.getHtml(url, site.url)
     soup = utils.parse_html(vpage)
 
-    # 1. Check for source buttons with resolver URLs
-    btns = soup.select(".source-btn[data-src]")
-    sources = [b["data-src"] for b in btns if b.get("data-src")]
-
-    # 2. Check for iframes or videos
+    # The player iframe is filled in by JS from the hoster buttons.
+    sources = [
+        urljoin(url, b["data-src"])
+        for b in soup.select(".source-btn[data-src]")
+        if b.get("data-src")
+    ]
     if not sources:
-        iframe = soup.find("iframe", id="video-player") or soup.find("iframe", src=True)
-        if iframe and iframe.get("src"):
-            sources.append(iframe["src"])
+        iframe = soup.find("iframe", src=True)
+        if iframe:
+            sources.append(urljoin(url, iframe["src"]))
 
-    if sources:
-        vp.progress.update(60, "[CR]Resolving stream[CR]")
-        for src in sources:
-            src = urljoin(url, src)
-            if vp.play_from_link(src):
-                return
+    if not sources:
+        vp.progress.close()
+        utils.notify("No playable stream found", "xHuzz")
+        return
 
-    utils.notify("No playable stream found", "xHuzz")
+    vp.progress.update(60, "[CR]Resolving stream[CR]")
+    vp.play_from_link_list(sources)
 
 
 @site.register()

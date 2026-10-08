@@ -141,3 +141,37 @@ def test_parse_html_handles_sequence_types():
 
     soup_empty = utils.parse_html([])
     assert soup_empty is not None
+
+
+def test_flaresolve_forwards_referer_header(monkeypatch):
+    seen = []
+
+    class _FakeResponse:
+        text = "<html>solved</html>"
+        status_code = 200
+        url = "https://example.com/play.php"
+        headers = {}
+        raw_json = None
+
+    class _FakeManager:
+        def __init__(self, host):
+            self.host = host
+
+        def request(self, url, method="get", post_data=None, headers=None):
+            seen.append((url, headers))
+            return _FakeResponse()
+
+        def close(self, destroy_session=False):
+            pass
+
+    monkeypatch.setattr(flaresolverr, "FlareSolverrManager", _FakeManager)
+    monkeypatch.setattr(utils, "kodilog", lambda *a, **k: None)
+    utils.addon._settings = {**utils.addon._settings, "fs_host": ""}
+
+    utils.flaresolve("https://example.com/play.php", "https://example.com/frame")
+    utils.flaresolve("https://example.com/play.php", "")
+
+    assert seen == [
+        ("https://example.com/play.php", {"Referer": "https://example.com/frame"}),
+        ("https://example.com/play.php", None),
+    ]
