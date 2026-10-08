@@ -1,95 +1,105 @@
-"""Tests for xgirls site implementation."""
+"""Tests for xgirls site implementation (real-page fixtures)."""
 
 from resources.lib.sites import xgirls
+from tests.utils.site_harness import SiteRecorder
 
-
-SAMPLE_LISTING_HTML = """
-<html>
-<body>
-<div class="card-col">
-  <a class="drop-card" href="https://xgirls.webcam/video/100/sample-cam-show/">
-    <img alt="Sample Model Show" src="https://xgirls.webcam/thumb1.jpg" data-original="https://xgirls.webcam/orig1.jpg" />
-    <span class="card-time">45:10</span>
-  </a>
-</div>
-<ul class="pagination">
-  <li><a href="https://xgirls.webcam/latest-updates/2/">2</a></li>
-</ul>
-</body>
-</html>
-"""
+PAGES = {
+    "/categories/": "sites/xgirls/categories.html",
+    "/search/": "sites/xgirls/search.html",
+    "/video/": "sites/xgirls/video.html",
+    "/latest-updates/": "sites/xgirls/listing.html",
+}
 
 
 def test_xgirls_main(monkeypatch):
-    dirs = []
-    list_calls = []
-
-    monkeypatch.setattr(xgirls.site, "add_dir", lambda name, url, mode, icon=None: dirs.append((name, url, mode)))
-    monkeypatch.setattr(xgirls, "List", lambda url: list_calls.append(url))
-    monkeypatch.setattr(xgirls.utils, "eod", lambda: None)
+    rec = SiteRecorder(monkeypatch, xgirls, PAGES)
 
     xgirls.Main()
 
-    assert any(d[2] == "Categories" for d in dirs)
-    assert any(d[2] == "Search" for d in dirs)
-    assert list_calls == ["https://xgirls.webcam/latest-updates/"]
+    assert rec.dirs_for("Categories")
+    assert rec.dirs_for("Search")
+    assert rec.requests[0][0] == "https://xgirls.webcam/latest-updates/"
 
 
-def test_xgirls_list(monkeypatch):
-    downloads = []
-    dirs = []
-
-    monkeypatch.setattr(xgirls.utils, "getHtml", lambda url, referer=None: SAMPLE_LISTING_HTML)
-    monkeypatch.setattr(
-        xgirls.site,
-        "add_download_link",
-        lambda name, url, mode, iconimage, desc="", **k: downloads.append({"name": name, "url": url, "mode": mode, "icon": iconimage}),
-    )
-    monkeypatch.setattr(
-        xgirls.site,
-        "add_dir",
-        lambda name, url, mode, iconimage=None, **k: dirs.append({"name": name, "url": url, "mode": mode}),
-    )
-    monkeypatch.setattr(xgirls.utils, "eod", lambda: None)
+def test_xgirls_list_uses_main_grid_only(monkeypatch):
+    rec = SiteRecorder(monkeypatch, xgirls, PAGES)
 
     xgirls.List("https://xgirls.webcam/latest-updates/")
 
-    assert len(downloads) == 1
-    assert downloads[0]["name"] == "Sample Model Show"
-    assert downloads[0]["url"] == "https://xgirls.webcam/video/100/sample-cam-show/"
-    assert downloads[0]["icon"] == "https://xgirls.webcam/orig1.jpg"
-    assert len(dirs) == 1
-    assert dirs[0]["url"] == "https://xgirls.webcam/latest-updates/2/"
+    # The fixture also holds three header teaser cards (a.drop-card) whose
+    # images are all alt="image"; they must not be listed.
+    assert len(rec.videos) == 4
+    urls = [v["url"] for v in rec.videos]
+    assert len(set(urls)) == 4
+    assert all(v["name"] != "image" for v in rec.videos)
+    assert not any("/video/50547/" in u for u in urls)
+
+    first = rec.videos[0]
+    assert first["name"] == "kathariine webcam video 2026-10-08 0030"
+    assert first["url"] == (
+        "https://xgirls.webcam/video/50540/kathariine-webcam-video-2026-10-08-0030/"
+    )
+    assert first["icon"] == (
+        "https://xgirls.webcam/contents/videos_screenshots/50000/50540/320x180/3.jpg"
+    )
+    assert first["duration"] == "8:01"
+    assert first["quality"] == "HD"
+    assert rec.next_page == "https://xgirls.webcam/latest-updates/2/"
 
 
-def test_xgirls_playvid(monkeypatch):
-    played = {}
+def test_xgirls_search_pagination_uses_async_block(monkeypatch):
+    rec = SiteRecorder(monkeypatch, xgirls, PAGES)
 
-    class _DummyVP:
-        def __init__(self, name, download=None):
-            self.progress = type("P", (), {"update": lambda *a, **k: None})()
+    xgirls.Search("https://xgirls.webcam/search/{0}/", "anal")
 
-        def play_from_kt_player(self, html, url=None):
-            played["html"] = html
-            played["url"] = url
-
-    html = "<script>kt_player('kt_player', ...)</script>"
-    monkeypatch.setattr(xgirls.utils, "VideoPlayer", _DummyVP)
-    monkeypatch.setattr(xgirls.utils, "getHtml", lambda *a, **k: html)
-
-    xgirls.Playvid("https://xgirls.webcam/video/100/sample-cam-show/", "Sample")
-    assert played["url"] == "https://xgirls.webcam/video/100/sample-cam-show/"
+    assert rec.requests[0][0] == "https://xgirls.webcam/search/anal/"
+    assert len(rec.videos) == 3
+    # The search "Next" link is href="#search"; the page number only exists
+    # in the KVS ajax parameters.
+    assert rec.next_page == (
+        "https://xgirls.webcam/search/anal/?mode=async&function=get_block"
+        "&block_id=list_videos_videos_list_search_result"
+        "&q=anal&from_videos=2&from_albums=2"
+    )
 
 
-def test_xgirls_search(monkeypatch):
-    list_called = []
-    search_dirs = []
+def test_xgirls_categories(monkeypatch):
+    rec = SiteRecorder(monkeypatch, xgirls, PAGES)
 
-    monkeypatch.setattr(xgirls.site, "search_dir", lambda url, mode: search_dirs.append(url))
-    monkeypatch.setattr(xgirls, "List", lambda url: list_called.append(url))
+    xgirls.Categories("https://xgirls.webcam/categories/")
 
-    xgirls.Search("https://xgirls.webcam/search/{0}/")
-    assert len(search_dirs) == 1
+    cats = rec.dirs_for("List")
+    assert len(cats) == 4
+    assert cats[0]["name"].startswith("Booty")
+    assert cats[0]["url"] == "https://xgirls.webcam/categories/booty/"
 
-    xgirls.Search("https://xgirls.webcam/search/{0}/", keyword="latina brunette")
-    assert list_called == ["https://xgirls.webcam/search/latina+brunette/"]
+
+def test_xgirls_playvid_uses_kt_player(monkeypatch):
+    rec = SiteRecorder(monkeypatch, xgirls, PAGES)
+    url = "https://xgirls.webcam/video/50547/yesonee-webcam-video-2026-10-08-0040/"
+
+    xgirls.Playvid(url, "Sample")
+
+    assert len(rec.played) == 1
+    assert rec.played[0][0] == "play_from_kt_player"
+    html, referer = rec.player.play_from_kt_player.call_args[0]
+    assert "video_alt_url" in html
+    assert referer == url
+
+
+def test_xgirls_playvid_direct_source_fallback(monkeypatch):
+    rec = SiteRecorder(monkeypatch, xgirls, {})
+    monkeypatch.setattr(
+        xgirls.utils,
+        "getHtml",
+        lambda *a, **k: '<video><source src="/media/clip.mp4"></video>',
+    )
+
+    xgirls.Playvid("https://xgirls.webcam/video/1/x/", "Sample")
+
+    assert rec.played == [
+        (
+            "play_from_direct_link",
+            "https://xgirls.webcam/media/clip.mp4|Referer=https://xgirls.webcam/",
+        )
+    ]

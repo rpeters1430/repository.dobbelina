@@ -16,10 +16,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import base64
+import os
 import re
-from urllib.parse import quote_plus, urljoin
+import time
+from urllib.parse import quote, urljoin
 
-from resources.lib import utils
+from resources.lib import basics, utils
 from resources.lib.adultsite import AdultSite
 
 site = AdultSite(
@@ -32,12 +35,16 @@ site = AdultSite(
     requires_flaresolverr=True,
 )
 
+THUMB_DIR = os.path.join(basics.profileDir, "thumbs", "ecamrips")
+THUMB_MAX_AGE = 2 * 24 * 60 * 60
+IMAGE_TYPES = ((b"RIFF", ".webp"), (b"\x89PNG", ".png"), (b"\xff\xd8", ".jpg"))
+
 
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
-        "[COLOR hotpink]Search[/COLOR]",
-        site.url + "en/search.php?key={0}",
+        "[COLOR hotpink]Search Models[/COLOR]",
+        site.url + "model/en/{0}/",
         "Search",
         site.img_search,
     )
@@ -45,31 +52,74 @@ def Main():
     utils.eod()
 
 
+def _prune_thumbs():
+    try:
+        cutoff = time.time() - THUMB_MAX_AGE
+        for name in os.listdir(THUMB_DIR):
+            path = os.path.join(THUMB_DIR, name)
+            if os.path.getmtime(path) < cutoff:
+                os.remove(path)
+    except OSError:
+        pass
+
+
+def _save_thumb(video_id, data_uri):
+    """Thumbnails are inlined as base64 data URIs, which Kodi cannot display,
+    so write each one to the profile and hand Kodi the file path instead."""
+    if not video_id or not data_uri.startswith("data:image"):
+        return ""
+    try:
+        raw = base64.b64decode(data_uri.split(",", 1)[1].strip())
+    except (IndexError, ValueError):
+        return ""
+    # The declared mime type is wrong (WebP served as image/png): sniff it.
+    ext = next((e for magic, e in IMAGE_TYPES if raw.startswith(magic)), None)
+    if not ext:
+        return ""
+    path = os.path.join(THUMB_DIR, video_id + ext)
+    try:
+        if not os.path.exists(path):
+            if not os.path.isdir(THUMB_DIR):
+                os.makedirs(THUMB_DIR)
+            with open(path, "wb") as fh:
+                fh.write(raw)
+    except OSError:
+        return ""
+    return path
+
+
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(listhtml)
 
-    spec = {
-        "items": "li[id^='li'], .cam-item",
-        "url": {"selector": "a.moiclick1[href], a[href*='show-cam-sex-movies']", "attr": "href"},
-        "title": {
-            "selector": "a[title]",
-            "attr": "title",
-            "fallback_selectors": ["img[alt]", "a.moiclick1"],
-        },
-        "thumbnail": {
-            "selector": "img",
-            "attr": "data-src",
-            "fallback_attrs": ["data-original", "src"],
-        },
-        "pagination": {
-            "selector": ".pagination a, div.pages a, a.next",
-            "attr": "href",
-        },
-    }
+    _prune_thumbs()
+    for item in soup.select("li[id^='li']"):
+        link = item.select_one("a.moiclick1[href]")
+        if not link:
+            continue
+        img = link.select_one("img")
+        name = utils.safe_get_attr(link, "title") or utils.safe_get_attr(img, "alt")
+        name = utils.cleantext(name)
+        if not name:
+            continue
+        thumb = _save_thumb(
+            utils.safe_get_attr(link, "data-id"),
+            utils.safe_get_attr(img, "data-tn", ["src"]),
+        )
+        site.add_download_link(
+            name,
+            urljoin(site.url, link["href"]),
+            "Playvid",
+            thumb,
+            duration=utils.safe_get_text(item.select_one(".dur")),
+        )
 
-    utils.soup_videos_list(site, soup, spec)
+    next_link = soup.select_one("a.current + a[href]")
+    if next_link:
+        site.add_dir(
+            "Next Page", urljoin(url, next_link["href"]), "List", site.img_next
+        )
     utils.eod()
 
 
@@ -78,42 +128,36 @@ def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     vp.progress.update(25, "[CR]Loading video page[CR]")
 
-    vpage = utils.getHtml(url, site.url)
-    soup = utils.parse_html(vpage)
+    # The page embeds loading_video.php?idd=<id>, a click-through to play.php
+    # which holds the <video>. play.php only needs the id from the page URL,
+    # but answers with an empty body unless a same-site Referer is sent (and
+    # so does the media host).
+    video_id = re.search(r"/show-cam-sex-movies/(\d+)-", url)
+    if video_id:
+        play_url = "{}play.php?idd={}".format(site.url, video_id.group(1))
+    else:
+        soup = utils.parse_html(utils.getHtml(url, site.url))
+        iframe = soup.find("iframe", src=re.compile(r"loading_video\.php", re.I))
+        play_url = (
+            urljoin(url, iframe["src"]).replace("loading_video.php", "play.php")
+            if iframe
+            else None
+        )
 
     video_url = None
-    # 1. Direct source / video tag
-    source = soup.find("source", src=True) or soup.find("video", src=True)
-    if source and source.get("src"):
-        video_url = source["src"]
-
-    # 2. Check iframe loading_video.php
-    if not video_url:
-        iframe = soup.find("iframe", src=re.compile(r"loading_video\.php", re.IGNORECASE))
-        if iframe and iframe.get("src"):
-            iframe_url = urljoin(url, iframe["src"])
-            vp.progress.update(50, "[CR]Resolving embed[CR]")
-            frame_html = utils.getHtml(iframe_url, url)
-            frame_soup = utils.parse_html(frame_html)
-            f_src = frame_soup.find("source", src=True) or frame_soup.find("video", src=True)
-            if f_src and f_src.get("src"):
-                video_url = f_src["src"]
-            else:
-                matches = re.findall(r'https?://[^\s"\'<>]+\.(?:mp4|m3u8)[^\s"\'<>]*', frame_html)
-                if matches:
-                    video_url = matches[0]
-
-    # 3. Direct regex match on video page
-    if not video_url:
-        matches = re.findall(r'https?://[^\s"\'<>]+\.(?:mp4|m3u8)[^\s"\'<>]*', vpage)
-        if matches:
-            video_url = matches[0]
+    if play_url:
+        vp.progress.update(50, "[CR]Resolving embed[CR]")
+        source = utils.parse_html(utils.getHtml(play_url, url)).select_one(
+            "video[src], video source[src]"
+        )
+        if source:
+            video_url = urljoin(play_url, source["src"])
 
     if video_url:
-        video_url = urljoin(url, video_url)
         vp.progress.update(80, "[CR]Playing video[CR]")
-        vp.play_from_direct_url(video_url)
+        vp.play_from_direct_link("{}|Referer={}".format(video_url, site.url))
     else:
+        vp.progress.close()
         utils.notify("No playable stream found", "eCamRips")
 
 
@@ -122,5 +166,5 @@ def Search(url, keyword=None):
     if not keyword:
         site.search_dir(url, "Search")
     else:
-        search_url = url.format(quote_plus(keyword))
-        List(search_url)
+        # The site's search box only looks up model names.
+        List(url.format(quote(keyword.strip().replace(" ", "_"))))

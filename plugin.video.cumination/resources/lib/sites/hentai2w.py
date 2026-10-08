@@ -30,13 +30,43 @@ site = AdultSite(
     category="Hentai & Anime",
 )
 
+VIDEO_LIST_SPEC = {
+    "items": "div.item-col.-video",
+    "url": {"selector": "a[href*='/video/']", "attr": "href"},
+    "title": {
+        "selector": "a[title]",
+        "attr": "title",
+        "fallback_selectors": ["img[alt]"],
+        "fallback_attrs": ["alt"],
+    },
+    "thumbnail": {
+        "selector": "img",
+        "attr": "src",
+        "fallback_attrs": ["data-src"],
+    },
+    "duration": {"selector": ".item-time", "text": True},
+    "quality": {"selector": ".item-quality", "text": True},
+}
+
 
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]",
-        site.url + "categories/",
+        site.url + "channels/",
         "Categories",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Most Viewed[/COLOR]",
+        site.url + "most-viewed/",
+        "List",
+        site.img_cat,
+    )
+    site.add_dir(
+        "[COLOR hotpink]Top Rated[/COLOR]",
+        site.url + "top-rated/",
+        "List",
         site.img_cat,
     )
     site.add_dir(
@@ -54,27 +84,15 @@ def List(url):
     listhtml = utils.getHtml(url, site.url)
     soup = utils.parse_html(listhtml)
 
-    spec = {
-        "items": "div.item-col, div.-video",
-        "url": {"selector": "a[href]", "attr": "href"},
-        "title": {
-            "selector": "a[title]",
-            "attr": "title",
-            "fallback_selectors": [".item-name", "img[alt]"],
-        },
-        "thumbnail": {
-            "selector": "img",
-            "attr": "src",
-            "fallback_attrs": ["data-src"],
-        },
-        "duration": {"selector": ".item-time, .duration"},
-        "pagination": {
-            "selector": ".pagination a, ul.pagination a",
-            "attr": "href",
-        },
-    }
+    utils.soup_videos_list(site, soup, VIDEO_LIST_SPEC)
 
-    utils.soup_videos_list(site, soup, spec)
+    # Page links are relative ("page2.html"), so resolve against this page.
+    next_link = soup.select_one(".pagination a.next[href]")
+    if next_link:
+        next_url = urljoin(url, next_link["href"])
+        if "?" in url and "?" not in next_url:
+            next_url += "?" + url.split("?", 1)[1]
+        site.add_dir("Next Page", next_url, "List", site.img_next)
     utils.eod()
 
 
@@ -83,16 +101,24 @@ def Categories(url):
     html = utils.getHtml(url, site.url)
     soup = utils.parse_html(html)
 
-    for item in soup.select("div.item-col, div.category-item, a[href*='/category/']"):
-        link = item if item.name == "a" else item.find("a", href=True)
+    for item in soup.select("div.item-col.-channel"):
+        link = item.find("a", href=True)
         if not link:
             continue
-        href = urljoin(site.url, link.get("href", ""))
-        img = item.find("img") if item.name != "a" else link.find("img")
-        thumb = img.get("src") if img else site.img_cat
-        title = link.get_text(strip=True) or (img.get("alt") if img else "")
-        if title:
-            site.add_dir(title, href, "List", thumb)
+        title = utils.safe_get_attr(link, "title") or utils.safe_get_text(
+            item.select_one(".item-name")
+        )
+        if not title:
+            continue
+        thumb = utils.safe_get_attr(item.find("img"), "src", ["data-src"])
+        if "catdefault" in thumb:
+            thumb = ""
+        site.add_dir(
+            title,
+            urljoin(site.url, link["href"]).split("?")[0] + "?type=videos",
+            "List",
+            thumb or site.img_cat,
+        )
 
     utils.eod()
 
@@ -105,20 +131,14 @@ def Playvid(url, name, download=None):
     vpage = utils.getHtml(url, site.url)
     soup = utils.parse_html(vpage)
 
-    source = soup.find("source", src=True)
-    video = soup.find("video", src=True)
-    video_url = None
-
-    if source and source.get("src"):
-        video_url = source["src"]
-    elif video and video.get("src"):
-        video_url = video["src"]
-
-    if video_url:
-        video_url = urljoin(url, video_url)
+    source = soup.select_one("video source[src]") or soup.select_one("video[src]")
+    if source:
         vp.progress.update(75, "[CR]Playing video[CR]")
-        vp.play_from_direct_url(video_url)
+        vp.play_from_direct_link(
+            "{}|Referer={}".format(urljoin(url, source["src"]), site.url)
+        )
     else:
+        vp.progress.close()
         utils.notify("No playable stream found", "Hentai2W")
 
 

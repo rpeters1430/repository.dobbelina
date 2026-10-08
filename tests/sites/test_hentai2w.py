@@ -1,99 +1,103 @@
-"""Tests for hentai2w site implementation."""
+"""Tests for hentai2w site implementation (real-page fixtures)."""
 
 from resources.lib.sites import hentai2w
+from tests.utils.site_harness import SiteRecorder
 
-
-SAMPLE_LISTING_HTML = """
-<html>
-<body>
-<div class="item-col col -video">
-  <a href="https://hentai2w.com/video/sample-episode-1.html" title="Sample Episode 1">
-    <span class="image">
-      <img alt="Sample Episode 1" src="https://media.hentai2w.com/thumb1.jpg" />
-      <span class="item-time">15:00</span>
-    </span>
-    <span class="item-info">
-      <span class="item-name">Sample Episode 1</span>
-    </span>
-  </a>
-</div>
-<div class="pagination">
-  <a href="https://hentai2w.com/videos/page2.html">2</a>
-</div>
-</body>
-</html>
-"""
+PAGES = {
+    "/channels/": "sites/hentai2w/categories.html",
+    "/video/": "sites/hentai2w/video.html",
+    "hentai2w.com/": "sites/hentai2w/listing.html",
+}
 
 
 def test_hentai2w_main(monkeypatch):
-    dirs = []
-    list_calls = []
-
-    monkeypatch.setattr(hentai2w.site, "add_dir", lambda name, url, mode, icon=None: dirs.append((name, url, mode)))
-    monkeypatch.setattr(hentai2w, "List", lambda url: list_calls.append(url))
-    monkeypatch.setattr(hentai2w.utils, "eod", lambda: None)
+    rec = SiteRecorder(monkeypatch, hentai2w, PAGES)
 
     hentai2w.Main()
 
-    assert any(d[2] == "Categories" for d in dirs)
-    assert any(d[2] == "Search" for d in dirs)
-    assert list_calls == ["https://hentai2w.com/videos/"]
+    cats = rec.dirs_for("Categories")
+    # /categories/ does not exist on the site; categories live under /channels/.
+    assert cats[0]["url"] == "https://hentai2w.com/channels/"
+    assert rec.dirs_for("Search")
+    assert rec.requests[0][0] == "https://hentai2w.com/videos/"
 
 
 def test_hentai2w_list(monkeypatch):
-    downloads = []
-    dirs = []
+    rec = SiteRecorder(monkeypatch, hentai2w, PAGES)
 
-    monkeypatch.setattr(hentai2w.utils, "getHtml", lambda url, referer=None: SAMPLE_LISTING_HTML)
-    monkeypatch.setattr(
-        hentai2w.site,
-        "add_download_link",
-        lambda name, url, mode, iconimage, desc="", **k: downloads.append({"name": name, "url": url, "mode": mode, "icon": iconimage}),
+    hentai2w.List("https://hentai2w.com/videos/page2.html")
+
+    assert len(rec.videos) == 4
+    first = rec.videos[0]
+    assert first["name"] == (
+        "Tsuma Netori Rei: Boku no Ayamachi Kanojo no Sentaku - Episode 1"
     )
-    monkeypatch.setattr(
-        hentai2w.site,
-        "add_dir",
-        lambda name, url, mode, iconimage=None, **k: dirs.append({"name": name, "url": url, "mode": mode}),
+    assert first["url"] == (
+        "https://hentai2w.com/video/"
+        "tsuma-netori-rei-boku-no-ayamachi-kanojo-no-sentaku-episode-1-6231.html"
     )
-    monkeypatch.setattr(hentai2w.utils, "eod", lambda: None)
+    assert first["icon"].startswith("https://media.hentai2w.com/thumbs/")
+    assert first["duration"] == "27:17"
+    assert first["quality"] == "HD"
+    # "page3.html" is relative to the listing directory, not the site root.
+    assert rec.next_page == "https://hentai2w.com/videos/page3.html"
 
-    hentai2w.List("https://hentai2w.com/videos/")
 
-    assert len(downloads) == 1
-    assert downloads[0]["name"] == "Sample Episode 1"
-    assert downloads[0]["url"] == "https://hentai2w.com/video/sample-episode-1.html"
-    assert downloads[0]["icon"] == "https://media.hentai2w.com/thumb1.jpg"
-    assert len(dirs) == 1
-    assert dirs[0]["url"] == "https://hentai2w.com/videos/page2.html"
+def test_hentai2w_list_keeps_query_when_paginating(monkeypatch):
+    rec = SiteRecorder(
+        monkeypatch, hentai2w, {"hentai2w.com/": "sites/hentai2w/listing.html"}
+    )
+
+    hentai2w.List("https://hentai2w.com/channels/162/adult/?type=videos")
+
+    assert rec.next_page == (
+        "https://hentai2w.com/channels/162/adult/page3.html?type=videos"
+    )
+
+
+def test_hentai2w_categories(monkeypatch):
+    rec = SiteRecorder(monkeypatch, hentai2w, PAGES)
+
+    hentai2w.Categories("https://hentai2w.com/channels/")
+
+    cats = rec.dirs_for("List")
+    assert [c["name"] for c in cats] == [
+        "1000giri",
+        "3D",
+        "Adult",
+        "Adult Source Media",
+    ]
+    assert cats[0]["url"] == "https://hentai2w.com/channels/170/1000giri/?type=videos"
 
 
 def test_hentai2w_playvid(monkeypatch):
-    played_url = []
+    rec = SiteRecorder(monkeypatch, hentai2w, PAGES)
 
-    class _DummyVP:
-        def __init__(self, name, download=None):
-            self.progress = type("P", (), {"update": lambda *a, **k: None})()
+    hentai2w.Playvid("https://hentai2w.com/video/sample-6352.html", "Sample")
 
-        def play_from_direct_url(self, url):
-            played_url.append(url)
+    assert rec.played == [
+        (
+            "play_from_direct_link",
+            "https://media.hentai2w.com/videos/6/8/a/e/6/"
+            "68ae69f29f49e-kanochi-x-netorare-kazoku-2-1080p-h1x.mp4"
+            "|Referer=https://hentai2w.com/",
+        )
+    ]
+    assert not rec.notifications
 
-    html = '<video><source src="https://media.hentai2w.com/video.mp4" /></video>'
-    monkeypatch.setattr(hentai2w.utils, "VideoPlayer", _DummyVP)
-    monkeypatch.setattr(hentai2w.utils, "getHtml", lambda *a, **k: html)
 
-    hentai2w.Playvid("https://hentai2w.com/video/sample-1.html", "Sample 1")
-    assert played_url == ["https://media.hentai2w.com/video.mp4"]
+def test_hentai2w_playvid_without_source_notifies(monkeypatch):
+    rec = SiteRecorder(monkeypatch, hentai2w, {})
+
+    hentai2w.Playvid("https://hentai2w.com/video/sample-1.html", "Sample")
+
+    assert rec.played == []
+    assert rec.notifications
 
 
 def test_hentai2w_search(monkeypatch):
-    list_called = []
-    search_dirs = []
+    rec = SiteRecorder(monkeypatch, hentai2w, PAGES)
 
-    monkeypatch.setattr(hentai2w.site, "search_dir", lambda url, mode: search_dirs.append(url))
-    monkeypatch.setattr(hentai2w, "List", lambda url: list_called.append(url))
+    hentai2w.Search("https://hentai2w.com/search/{0}/", "teacher")
 
-    hentai2w.Search("https://hentai2w.com/search/{0}/")
-    assert len(search_dirs) == 1
-
-    hentai2w.Search("https://hentai2w.com/search/{0}/", keyword="magic school")
-    assert list_called == ["https://hentai2w.com/search/magic+school/"]
+    assert rec.requests[0][0] == "https://hentai2w.com/search/teacher/"

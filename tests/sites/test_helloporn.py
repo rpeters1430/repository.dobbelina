@@ -71,7 +71,17 @@ def test_helloporn_playvid(monkeypatch):
         def __init__(self, name, download=None):
             self.progress = type("P", (), {"update": lambda *a, **k: None})()
 
-        def play_from_link(self, url):
+            self.resolveurl = type(
+                "R",
+                (),
+                {
+                    "HostedMediaFile": staticmethod(
+                        lambda u: type("H", (), {"valid_url": lambda s: True})()
+                    )
+                },
+            )()
+
+        def play_from_link_to_resolve(self, url):
             resolved.append(url)
             return True
 
