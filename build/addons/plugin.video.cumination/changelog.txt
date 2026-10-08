@@ -1,3 +1,12 @@
+[B]Version 1.1.490[/B]
+- Merge pull request #408 from rpeters1430/fix/site-issues-401-407
+- fix(sites): repair listing and playback for seven broken sites
+- feat(sites): add 8 new sites and remove obsolete sites
+- Remove obsolete test files for heroero, erogarga, and allclassic sites
+- feat(upstream): sync updated commits from upstream addons
+- Add tests for iceporncasting site functionality
+- feat: add iceporncasting image asset
+
 [B]Version 1.1.489[/B]
 - feat(sites): add 8 new sites and remove obsolete sites
 - Remove obsolete test files for heroero, erogarga, and allclassic sites
