@@ -1,3 +1,11 @@
+[B]Version 1.1.489[/B]
+- feat(sites): add 8 new sites and remove obsolete sites
+- Remove obsolete test files for heroero, erogarga, and allclassic sites
+- feat(upstream): sync updated commits from upstream addons
+- Add tests for iceporncasting site functionality
+- feat: add iceporncasting image asset
+- feat(upstream): sync updated commits from upstream addons
+
 [B]Version 1.1.488[/B]
 - Add tests for iceporncasting site functionality
 - feat: add iceporncasting image asset
