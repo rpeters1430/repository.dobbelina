@@ -44,3 +44,11 @@ This file tracks sites identified for potential implementation. Recent audit sho
 | **PornoBae** | Tube | ✅ Added May 2026 |
 | **MangoPorn** | Adult Movies | ✅ Added May 2026 |
 | **91Porna** | JAV / Asian | ✅ Added May 2026 |
+| **HentaiCity** | Hentai & Anime | ✅ Added Oct 2026 |
+| **Hentai2w** | Hentai & Anime | ✅ Added Oct 2026 |
+| **xGirls** | Cams & Live | ✅ Added Oct 2026 |
+| **eCamRips** | Cams & Live | ✅ Added Oct 2026 |
+| **HornySharks** | Video Tubes | ✅ Added Oct 2026 |
+| **xHuzz** | Video Tubes | ✅ Added Oct 2026 |
+| **HelloPorn** | Video Tubes | ✅ Added Oct 2026 |
+| **Fapello** | Amateur & Social | ✅ Added Oct 2026 |

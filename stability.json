@@ -44,15 +44,6 @@
     ],
     "stability_score": 1.0
   },
-  "allclassic": {
-    "history": [
-      "PASS",
-      "PASS",
-      "PASS",
-      "PASS"
-    ],
-    "stability_score": 1.0
-  },
   "amateurtv": {
     "history": [
       "PASS",
@@ -251,15 +242,6 @@
     ],
     "stability_score": 1.0
   },
-  "erogarga": {
-    "history": [
-      "SKIP",
-      "SKIP",
-      "SKIP",
-      "SKIP"
-    ],
-    "stability_score": 0.0
-  },
   "erome": {
     "history": [
       "PASS",
@@ -432,15 +414,6 @@
     "stability_score": 1.0
   },
   "hentaistream": {
-    "history": [
-      "PASS",
-      "PASS",
-      "PASS",
-      "PASS"
-    ],
-    "stability_score": 1.0
-  },
-  "heroero": {
     "history": [
       "PASS",
       "PASS",
