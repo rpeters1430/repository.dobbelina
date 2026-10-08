@@ -5,20 +5,20 @@
 
 ## Snapshot
 
-- Current: `PASS 187` | `WARN 4` | `FAIL 7` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 186` | `WARN 4` | `FAIL 8` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 185` | `WARN 10` | `FAIL 8` | `ERROR 0` | `SKIP 3`
+- Previous: `PASS 187` | `WARN 4` | `FAIL 7` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
-- New failures: `0`
-- Resolved failures: `1`
+- New failures: `1`
+- Resolved failures: `0`
 - Persistent failures: `7`
-- Site regressions: `1`
-- Step regressions: `1`
+- Site regressions: `2`
+- Step regressions: `2`
 
-## Resolved Failures
+## New Failures
 
-- **justfullporn**: `FAIL -> PASS`
+- **pornez**: `PASS -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
 ## Persistent Failures
 
@@ -32,8 +32,5 @@
 
 ## Step Regressions
 
-- **awmnet** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
-
-## Improvements
-
-- **cumlouder**: `WARN -> PASS`
+- **pornez** `main`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **xoxostream** `play`: `PASS -> FAIL` (CODE) | ValueError: No videolink found!
