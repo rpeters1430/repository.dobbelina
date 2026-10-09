@@ -5,26 +5,30 @@
 
 ## Snapshot
 
-- Current: `PASS 185` | `WARN 10` | `FAIL 8` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 187` | `WARN 4` | `FAIL 7` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 194` | `WARN 3` | `FAIL 6` | `ERROR 0` | `SKIP 3`
+- Previous: `PASS 185` | `WARN 10` | `FAIL 8` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
 - New failures: `1`
-- Resolved failures: `0`
-- Persistent failures: `7`
-- Site regressions: `2`
-- Step regressions: `2`
+- Resolved failures: `3`
+- Persistent failures: `5`
+- Site regressions: `1`
+- Step regressions: `1`
 
 ## New Failures
 
-- **pornez**: `PASS -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **hentai2w**: `WARN -> FAIL` (PARSER) | list: List returned no videos
+
+## Resolved Failures
+
+- **mangoporn**: `FAIL -> PASS`
+- **netflixporno**: `FAIL -> PASS`
+- **pornez**: `FAIL -> PASS`
 
 ## Persistent Failures
 
 - **camcaps**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://camcaps.tv/videos: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-- **mangoporn**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
-- **netflixporno**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **porn4k**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://porn4k.to/page/1/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **speedporn**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **xsharings**: `FAIL -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
@@ -32,5 +36,13 @@
 
 ## Step Regressions
 
-- **pornez** `main`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-- **xoxostream** `play`: `PASS -> FAIL` (CODE) | ValueError: No videolink found!
+- **hentai2w** `list`: `PASS -> FAIL` (PARSER) | List returned no videos
+
+## Improvements
+
+- **awmnet**: `WARN -> PASS`
+- **ecamrips**: `WARN -> PASS`
+- **helloporn**: `WARN -> PASS`
+- **hentaicity**: `WARN -> PASS`
+- **xhuzz**: `WARN -> PASS`
+- **xoxostream**: `WARN -> PASS`

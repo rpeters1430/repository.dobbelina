@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-10-09T06:32:57.852102",
+    "sites_total": 206,
+    "pass": 194,
+    "warn": 3,
+    "fail": 6,
+    "error": 0,
+    "skip": 3
+  },
+  "previous": {
     "generated": "2026-10-08T06:34:02.976774",
     "sites_total": 206,
     "pass": 185,
@@ -8,35 +17,42 @@
     "error": 0,
     "skip": 3
   },
-  "previous": {
-    "generated": "2026-10-07T06:31:31.859102",
-    "sites_total": 201,
-    "pass": 187,
-    "warn": 4,
-    "fail": 7,
-    "error": 0,
-    "skip": 3
-  },
   "summary": {
     "new_failures": 1,
-    "resolved_failures": 0,
-    "persistent_failures": 7,
-    "improved_sites": 0,
-    "regressions": 2,
-    "step_regressions": 2
+    "resolved_failures": 3,
+    "persistent_failures": 5,
+    "improved_sites": 6,
+    "regressions": 1,
+    "step_regressions": 1
   },
   "new_failures": [
     {
-      "site": "pornez",
-      "previous": "PASS",
+      "site": "hentai2w",
+      "previous": "WARN",
       "current": "FAIL",
-      "class": "ENV",
-      "message": "main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "PARSER",
+      "message": "list: List returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
-  "resolved_failures": [],
+  "resolved_failures": [
+    {
+      "site": "mangoporn",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "netflixporno",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "pornez",
+      "previous": "FAIL",
+      "current": "PASS"
+    }
+  ],
   "persistent_failures": [
     {
       "site": "camcaps",
@@ -44,24 +60,6 @@
       "current": "FAIL",
       "class": "ENV",
       "message": "main: RuntimeError: FlareSolverr error for https://camcaps.tv/videos: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "mangoporn",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "netflixporno",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -102,119 +100,119 @@
       "stability_score": 1.0
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
-      "site": "pornez",
-      "step": "main",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "site": "awmnet",
+      "previous": "WARN",
+      "current": "PASS"
+    },
+    {
+      "site": "ecamrips",
+      "previous": "WARN",
+      "current": "PASS"
+    },
+    {
+      "site": "helloporn",
+      "previous": "WARN",
+      "current": "PASS"
+    },
+    {
+      "site": "hentaicity",
+      "previous": "WARN",
+      "current": "PASS"
+    },
+    {
+      "site": "xhuzz",
+      "previous": "WARN",
+      "current": "PASS"
     },
     {
       "site": "xoxostream",
-      "step": "play",
+      "previous": "WARN",
+      "current": "PASS"
+    }
+  ],
+  "step_regressions": [
+    {
+      "site": "hentai2w",
+      "step": "list",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "ValueError: No videolink found!",
-      "class": "CODE",
+      "message": "List returned no videos",
+      "class": "PARSER",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "allclassic",
-      "previous": "PASS",
-      "current": "MISSING",
-      "kind": "missing_site",
+      "site": "awmnet",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "ecamrips",
-      "previous": "MISSING",
-      "current": "WARN",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "erogarga",
-      "previous": "PASS",
-      "current": "MISSING",
-      "kind": "missing_site",
-      "detail": ""
-    },
-    {
-      "site": "fapello",
-      "previous": "MISSING",
+      "previous": "WARN",
       "current": "PASS",
-      "kind": "new_site",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "helloporn",
-      "previous": "MISSING",
-      "current": "WARN",
-      "kind": "new_site",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "hentai2w",
-      "previous": "MISSING",
-      "current": "WARN",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "hentaicity",
-      "previous": "MISSING",
-      "current": "WARN",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "heroero",
-      "previous": "PASS",
-      "current": "MISSING",
-      "kind": "missing_site",
-      "detail": ""
-    },
-    {
-      "site": "hornysharks",
-      "previous": "MISSING",
-      "current": "PASS",
-      "kind": "new_site",
-      "detail": ""
-    },
-    {
-      "site": "pornez",
-      "previous": "PASS",
+      "previous": "WARN",
       "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "xgirls",
-      "previous": "MISSING",
+      "site": "hentaicity",
+      "previous": "WARN",
       "current": "PASS",
-      "kind": "new_site",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "mangoporn",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "netflixporno",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "pornez",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "xhuzz",
-      "previous": "MISSING",
-      "current": "WARN",
-      "kind": "new_site",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "xoxostream",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
