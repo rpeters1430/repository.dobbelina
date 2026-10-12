@@ -151,3 +151,39 @@ def test_closed_existing_issue_is_reopened_instead_of_duplicated():
 
     assert requests[0]["action"] == "CREATE_OR_REOPEN"
     assert requests[0]["issue_number"] == 42
+
+
+def test_ignored_blocked_state_does_not_reopen_closed_issue():
+    latest, history = sample_latest_and_history(state=HealthState.BLOCKED, sig="sig100")
+    latest["sites"]["pornhub"]["record"] = {
+        "profile": {"triage": {"ignored_states": [HealthState.BLOCKED]}}
+    }
+    existing = [{
+        "number": 42,
+        "title": "[Site Monitor] pornhub is blocked",
+        "body": "<!-- strict-site-health:pornhub -->",
+        "state": "CLOSED",
+    }]
+
+    requests = generate_strict_triage_requests(latest, history, existing_issues=existing)
+
+    assert requests == [{"action": "NONE", "site": "pornhub"}]
+
+
+def test_ignored_blocked_state_closes_open_issue():
+    latest, history = sample_latest_and_history(state=HealthState.BLOCKED, sig="sig100")
+    latest["sites"]["pornhub"]["record"] = {
+        "profile": {"triage": {"ignored_states": [HealthState.BLOCKED]}}
+    }
+    existing = [{
+        "number": 42,
+        "title": "[Site Monitor] pornhub is blocked",
+        "body": "<!-- strict-site-health:pornhub -->",
+        "state": "OPEN",
+    }]
+
+    requests = generate_strict_triage_requests(latest, history, existing_issues=existing)
+
+    assert requests[0]["action"] == "CLOSE"
+    assert requests[0]["issue_number"] == 42
+    assert "ignored by triage policy" in requests[0]["comment"]

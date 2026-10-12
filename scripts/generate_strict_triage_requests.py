@@ -63,6 +63,26 @@ def generate_strict_triage_requests(
         existing = find_existing_issue(site, existing_issues)
         is_open = existing and existing.get("state", "").upper() == "OPEN"
 
+        profile = rep.get("record", {}).get("profile", {})
+        ignored_states = profile.get("triage", {}).get("ignored_states", [])
+        state_value = state.value if hasattr(state, "value") else str(state)
+        if state_value in ignored_states:
+            if is_open and existing:
+                requests.append({
+                    "action": "CLOSE",
+                    "site": site,
+                    "issue_number": existing.get("number"),
+                    "comment": (
+                        f"Closing issue: `{site}` state `{state_value}` is ignored by triage policy."
+                    ),
+                })
+            else:
+                requests.append({
+                    "action": "NONE",
+                    "site": site,
+                })
+            continue
+
         if state in (HealthState.BROKEN, HealthState.BLOCKED, HealthState.HARNESS_ERROR):
             if state == HealthState.HARNESS_ERROR:
                 title = f"[Site Monitor] Monitoring infrastructure failure ({site})"

@@ -23,6 +23,13 @@ def test_site_profile_merges_site_specific_overrides():
     assert profile["supports"]["main"] is True
     assert profile["supports"]["categories"] is False
     assert profile["supports"]["play"] is False
+
+
+def test_runner_blocked_sites_ignore_blocked_triage():
+    for site_name in ("ask4porn", "chaturbate"):
+        profile = live_smoke_test.get_site_profile(site_name)
+
+        assert profile["triage"]["ignored_states"] == ["BLOCKED"]
     assert profile["harness"]["playback_not_testable"] is True
     assert profile["harness"]["search_results_optional"] is True
 

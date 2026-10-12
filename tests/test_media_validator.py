@@ -60,6 +60,25 @@ class MockMediaHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(b"\x00" * 512)
 
+        elif path in ("/norange/master.m3u8", "/norange/index.m3u8", "/norange/segment.ts"):
+            # CDN that rejects every ranged request (phncdn hv-h behaviour)
+            if "Range" in self.headers:
+                self.send_response(410)
+                self.end_headers()
+                return
+            body = {
+                "/norange/master.m3u8": b"#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=1280000\nindex.m3u8\n",
+                "/norange/index.m3u8": b"#EXTM3U\n#EXTINF:10.0,\nsegment.ts\n",
+                "/norange/segment.ts": b"\x47" * 512,
+            }[path]
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(body)
+
+        elif path == "/gone":
+            self.send_response(410)
+            self.end_headers()
+
         elif path == "/html_error":
             self.send_response(200)
             self.send_header("Content-Type", "text/html")
@@ -144,3 +163,19 @@ def test_expired_link_404_is_rejected(http_server):
     result = validate_media(http_server.url("/not_found"), [http_server.host_port, "127.0.0.1"])
     assert result.passed is False
     assert result.classification == "MEDIA_HTTP_ERROR"
+
+
+def test_hls_on_cdn_rejecting_range_requests(http_server):
+    result = validate_media(
+        http_server.url("/norange/master.m3u8"), [http_server.host_port, "127.0.0.1"]
+    )
+    assert result.passed is True
+    assert result.metrics["media_kind"] == "hls"
+    assert result.metrics["segment_bytes"] == 512
+
+
+def test_gone_without_range_is_still_rejected(http_server):
+    result = validate_media(http_server.url("/gone"), [http_server.host_port, "127.0.0.1"])
+    assert result.passed is False
+    assert result.classification == "MEDIA_HTTP_ERROR"
+    assert result.evidence["status_code"] == 410

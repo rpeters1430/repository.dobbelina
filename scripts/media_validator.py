@@ -15,6 +15,19 @@ HTML_SIGNATURES = [
     b"cloudflare",
     b"just a moment",
 ]
+# Some CDNs (e.g. phncdn hv-h) answer any ranged request with one of these
+# while serving the same URL fine without a Range header.
+RANGE_REJECTED_STATUSES = (410, 416)
+
+
+def _open_ranged(opener: Any, url: str, headers: dict[str, str], timeout: float) -> Any:
+    req = urllib.request.Request(url, headers=dict(headers, Range="bytes=0-65535"))
+    try:
+        return opener.open(req, timeout=timeout)
+    except urllib.error.HTTPError as exc:
+        if exc.code not in RANGE_REJECTED_STATUSES:
+            raise
+    return opener.open(urllib.request.Request(url, headers=headers), timeout=timeout)
 
 
 def parse_kodi_url(raw_url: str) -> tuple[str, dict[str, str]]:
@@ -68,12 +81,8 @@ def validate_media(
     opener = urllib.request.build_opener()
 
     try:
-        req_headers = dict(headers)
-        req_headers["Range"] = "bytes=0-65535"
-        req = urllib.request.Request(real_url, headers=req_headers)
-
         try:
-            resp = opener.open(req, timeout=timeout)
+            resp = _open_ranged(opener, real_url, headers, timeout)
             status_code = resp.getcode()
             content_type = resp.headers.get("Content-Type", "")
             content = resp.read(MAX_READ_BYTES)
@@ -195,9 +204,7 @@ def _validate_hls(
 
     # Fetch segment bytes
     try:
-        req_headers = dict(headers, Range="bytes=0-65535")
-        req = urllib.request.Request(segment_url, headers=req_headers)
-        with opener.open(req, timeout=timeout) as seg_resp:
+        with _open_ranged(opener, segment_url, headers, timeout) as seg_resp:
             seg_bytes = seg_resp.read(MAX_READ_BYTES)
 
         if len(seg_bytes) > 0:
@@ -236,9 +243,7 @@ def _validate_dash(
             segment_rel = "segment.m4s"
 
         segment_url = urljoin(base_url, segment_rel)
-        req_headers = dict(headers, Range="bytes=0-65535")
-        req = urllib.request.Request(segment_url, headers=req_headers)
-        with opener.open(req, timeout=timeout) as seg_resp:
+        with _open_ranged(opener, segment_url, headers, timeout) as seg_resp:
             seg_bytes = seg_resp.read(MAX_READ_BYTES)
 
         if len(seg_bytes) > 0:

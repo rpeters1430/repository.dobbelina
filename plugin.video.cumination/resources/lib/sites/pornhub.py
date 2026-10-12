@@ -34,6 +34,7 @@ site = AdultSite(
     category="Video Tubes",
 )
 cookiehdr = {"Cookie": "accessAgeDisclaimerPH=1; accessAgeDisclaimerUK=1"}
+JS_CHALLENGE_MAX_ROUNDS = 2
 
 
 def _is_text(value):
@@ -135,6 +136,69 @@ def _extract_json_value_after(html, pattern):
         return value
     except ValueError:
         return None
+
+
+def _least_factor(n):
+    if n == 0:
+        return 0
+    if n * n < 2:
+        return 1
+    for prime in (2, 3, 5):
+        if n % prime == 0:
+            return prime
+    i = 7
+    while i * i <= n:
+        for offset in (0, 4, 6, 10, 12, 16, 22, 24):
+            if n % (i + offset) == 0:
+                return i + offset
+        i += 30
+    return n
+
+
+def _solve_js_challenge(html):
+    """Return the cookie ("NAME=value") set by PornHub's leastFactor interstitial."""
+    if not _is_text(html) or "leastFactor" not in html or "function go()" not in html:
+        return ""
+    body = re.sub(r"/\*.*?\*/", "", html.split("function go()", 1)[1], flags=re.DOTALL)
+    init = re.search(r"var\s+p\s*=\s*(-?\d+)\s*;\s*var\s+s\s*=\s*(-?\d+)\s*;", body)
+    cookie = re.search(
+        r'document\.cookie\s*=\s*"(\w+)="\s*\+\s*n\s*\+\s*"\*"\s*\+\s*p\s*/\s*n'
+        r'\s*\+\s*":"\s*\+\s*s\s*\+\s*"(:[^;"]*)',
+        body,
+    )
+    if not init or not cookie:
+        return ""
+    p, s = int(init.group(1)), int(init.group(2))
+    steps = body[init.end():cookie.start()]
+    branch = re.compile(
+        r"if\s*\(\(s\s*>>\s*(\d+)\)\s*&\s*1\)\s*p\s*\+=\s*(-?\d+)\s*\*\s*(-?\d+)\s*;"
+        r"\s*else\s*p\s*-=\s*(-?\d+)\s*\*\s*(-?\d+)\s*;"
+    )
+    for shift, add_a, add_b, sub_a, sub_b in branch.findall(steps):
+        if (s >> int(shift)) & 1:
+            p += int(add_a) * int(add_b)
+        else:
+            p -= int(sub_a) * int(sub_b)
+    for sign, value in re.findall(r"p\s*([+-])=\s*(-?\d+)\s*;", branch.sub("", steps)):
+        p += int(value) if sign == "+" else -int(value)
+    n = _least_factor(p)
+    if not n:
+        return ""
+    return "{}={}*{}:{}{}".format(cookie.group(1), n, p // n, s, cookie.group(2))
+
+
+def _get_html(url, fetch=None):
+    html = (fetch or utils.getHtml)(url, site.url, cookiehdr)
+    for _ in range(JS_CHALLENGE_MAX_ROUNDS):
+        challenge_cookie = _solve_js_challenge(html)
+        if not challenge_cookie:
+            break
+        cookiehdr["Cookie"] = "{}; {}".format(
+            cookiehdr["Cookie"].split("; " + challenge_cookie.split("=", 1)[0] + "=")[0],
+            challenge_cookie,
+        )
+        html = utils._getHtml(url, site.url, cookiehdr)
+    return html
 
 
 def _source_quality_value(source):
@@ -246,10 +310,12 @@ def add_img_headers(img_url):
 
 
 def _resolve_video_url(url):
-    html = utils._getHtml(url, site.url, cookiehdr)
-    video_url = _select_media_source(_extract_media_sources(html))
-    if video_url:
-        return video_url + _headers_suffix(url)
+    # PornHub intermittently answers with a 403 "maintenance" page; one retry clears it.
+    for _ in range(2):
+        html = _get_html(url, utils._getHtml)
+        video_url = _select_media_source(_extract_media_sources(html))
+        if video_url:
+            return video_url + _headers_suffix(url)
     return ""
 
 
@@ -456,7 +522,7 @@ def List(url):
         ),
     ]
 
-    listhtml = utils.getHtml(url, site.url, cookiehdr)
+    listhtml = _get_html(url)
     if not _is_text(listhtml):
         _log_non_text_response("loading listing", listhtml)
         listhtml = ""
@@ -616,7 +682,7 @@ def Search(url, keyword=None):
 @site.register()
 def Categories(url):
     utils.kodilog("PornHub Categories URL: " + url)
-    cathtml = utils.getHtml(url, site.url, cookiehdr)
+    cathtml = _get_html(url)
     if not _is_text(cathtml):
         _log_non_text_response("loading categories", cathtml)
         utils.eod()

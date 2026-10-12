@@ -804,3 +804,93 @@ def test_list_extracts_page_title(monkeypatch):
     title_dirs = [d for d in dirs if "Latest Videos" in d["name"]]
     assert len(title_dirs) > 0
     assert "Clear all filters" in title_dirs[0]["name"]
+
+
+def test_solve_js_challenge_computes_cookie():
+    """The leastFactor interstitial is solved without a JS engine."""
+    html = load_fixture("js_challenge.html")
+
+    assert (
+        pornhub._solve_js_challenge(html)
+        == "KEY=2510167317149*1:3256419410:1860138313:1"
+    )
+    # Variant whose final unconditional step subtracts (p-=N) instead of adding.
+    assert (
+        pornhub._solve_js_challenge(load_fixture("js_challenge_subtract.html"))
+        == "KEY=1101781*1251841:3796804629:1317565691:1"
+    )
+    assert pornhub._solve_js_challenge(load_fixture("listing.html")) == ""
+    assert pornhub._solve_js_challenge([]) == ""
+
+
+def test_least_factor_matches_challenge_script():
+    assert pornhub._least_factor(0) == 0
+    assert pornhub._least_factor(1) == 1
+    assert pornhub._least_factor(49) == 7
+    assert pornhub._least_factor(1203959 * 1888441) == 1203959
+    assert pornhub._least_factor(2510167317149) == 2510167317149
+
+
+def test_resolve_video_url_retries_after_js_challenge(monkeypatch):
+    """A challenge response is retried with the computed cookie."""
+    challenge = load_fixture("js_challenge.html")
+    video_page = (
+        'var flashvars_1 = {"mediaDefinitions":[{"quality":"720",'
+        '"videoUrl":"https://cdn.phncdn.com/v/master.m3u8"}]};'
+    )
+    sent_cookies = []
+
+    def fake_get_html(url, referer=None, headers=None):
+        sent_cookies.append(headers["Cookie"])
+        return challenge if len(sent_cookies) == 1 else video_page
+
+    monkeypatch.setattr(pornhub.utils, "_getHtml", fake_get_html)
+    monkeypatch.setattr(
+        pornhub, "cookiehdr", {"Cookie": "accessAgeDisclaimerPH=1"}
+    )
+
+    resolved = pornhub._resolve_video_url(
+        "https://www.pornhub.com/view_video.php?viewkey=abc"
+    )
+
+    assert resolved.startswith("https://cdn.phncdn.com/v/master.m3u8|")
+    assert sent_cookies == [
+        "accessAgeDisclaimerPH=1",
+        "accessAgeDisclaimerPH=1; KEY=2510167317149*1:3256419410:1860138313:1",
+    ]
+
+
+def test_get_html_gives_up_after_repeated_js_challenges(monkeypatch):
+    """Back-to-back challenges are re-solved a bounded number of times."""
+    challenge = load_fixture("js_challenge.html")
+    calls = []
+
+    def fake_get_html(url, referer=None, headers=None):
+        calls.append(headers["Cookie"])
+        return challenge
+
+    monkeypatch.setattr(pornhub.utils, "_getHtml", fake_get_html)
+    monkeypatch.setattr(
+        pornhub, "cookiehdr", {"Cookie": "accessAgeDisclaimerPH=1"}
+    )
+
+    assert pornhub._get_html("https://www.pornhub.com/video", fake_get_html) == challenge
+    assert len(calls) == 1 + pornhub.JS_CHALLENGE_MAX_ROUNDS
+    assert calls[-1].count("KEY=") == 1
+
+
+def test_resolve_video_url_retries_once_when_page_has_no_sources(monkeypatch):
+    """A transient error page (403 maintenance) is retried before giving up."""
+    video_page = (
+        'var flashvars_1 = {"mediaDefinitions":[{"quality":"720",'
+        '"videoUrl":"https://cdn.phncdn.com/v/master.m3u8"}]};'
+    )
+    pages = ["", video_page]
+    monkeypatch.setattr(pornhub.utils, "_getHtml", lambda *a, **k: pages.pop(0))
+
+    resolved = pornhub._resolve_video_url(
+        "https://www.pornhub.com/view_video.php?viewkey=abc"
+    )
+
+    assert resolved.startswith("https://cdn.phncdn.com/v/master.m3u8|")
+    assert pages == []

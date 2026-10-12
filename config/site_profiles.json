@@ -9,6 +9,9 @@
     },
     "content_type": "video",
     "requires_flaresolverr": false,
+    "triage": {
+      "ignored_states": []
+    },
     "harness": {
       "playback_not_testable": false,
       "search_results_optional": false,
@@ -101,7 +104,12 @@
     },
     "ask4porn": {
       "tier": 1,
-      "requires_flaresolverr": true
+      "requires_flaresolverr": true,
+      "triage": {
+        "ignored_states": [
+          "BLOCKED"
+        ]
+      }
     },
     "kissjav": {
       "tier": 2,
@@ -151,6 +159,11 @@
     "chaturbate": {
       "tier": 1,
       "content_type": "cam",
+      "triage": {
+        "ignored_states": [
+          "BLOCKED"
+        ]
+      },
       "supports": {
         "categories": false,
         "search": false,
