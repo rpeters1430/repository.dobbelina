@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-10-12T06:44:10.247189",
+    "sites_total": 206,
+    "pass": 193,
+    "warn": 4,
+    "fail": 6,
+    "error": 0,
+    "skip": 3
+  },
+  "previous": {
     "generated": "2026-10-11T06:31:09.017025",
     "sites_total": 206,
     "pass": 194,
@@ -8,49 +17,28 @@
     "error": 0,
     "skip": 3
   },
-  "previous": {
-    "generated": "2026-10-10T06:30:29.989718",
-    "sites_total": 206,
-    "pass": 193,
-    "warn": 3,
-    "fail": 7,
-    "error": 0,
-    "skip": 3
-  },
   "summary": {
-    "new_failures": 1,
-    "resolved_failures": 2,
-    "persistent_failures": 5,
+    "new_failures": 0,
+    "resolved_failures": 0,
+    "persistent_failures": 6,
     "improved_sites": 0,
     "regressions": 1,
     "step_regressions": 1
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [],
+  "persistent_failures": [
     {
-      "site": "mangoporn",
-      "previous": "PASS",
+      "site": "hentai2w",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "list: List returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
-    }
-  ],
-  "resolved_failures": [
-    {
-      "site": "camcaps",
-      "previous": "FAIL",
-      "current": "PASS"
     },
     {
-      "site": "justfullporn",
-      "previous": "FAIL",
-      "current": "PASS"
-    }
-  ],
-  "persistent_failures": [
-    {
-      "site": "hentai2w",
+      "site": "mangoporn",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
@@ -98,35 +86,21 @@
   "improved_sites": [],
   "step_regressions": [
     {
-      "site": "mangoporn",
-      "step": "list",
+      "site": "awmnet",
+      "step": "search",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER",
+      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
+      "class": "BLOCKED",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "camcaps",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "justfullporn",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "mangoporn",
+      "site": "awmnet",
       "previous": "PASS",
-      "current": "FAIL",
+      "current": "WARN",
       "kind": "regression",
       "detail": ""
     }
