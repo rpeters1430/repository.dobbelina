@@ -5,26 +5,29 @@
 
 ## Snapshot
 
-- Current: `PASS 193` | `WARN 4` | `FAIL 6` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 194` | `WARN 3` | `FAIL 6` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 195` | `WARN 3` | `FAIL 5` | `ERROR 0` | `SKIP 3`
+- Previous: `PASS 193` | `WARN 4` | `FAIL 6` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
 - New failures: `0`
-- Resolved failures: `0`
-- Persistent failures: `6`
-- Site regressions: `1`
-- Step regressions: `1`
+- Resolved failures: `1`
+- Persistent failures: `5`
+- Site regressions: `0`
+- Step regressions: `0`
+
+## Resolved Failures
+
+- **mangoporn**: `FAIL -> PASS`
 
 ## Persistent Failures
 
 - **hentai2w**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
-- **mangoporn**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **porn4k**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://porn4k.to/page/1/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **speedporn**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **xsharings**: `FAIL -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **xtapesla**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
-## Step Regressions
+## Improvements
 
-- **awmnet** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
+- **awmnet**: `WARN -> PASS`

@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-10-13T06:35:14.251951",
+    "sites_total": 206,
+    "pass": 195,
+    "warn": 3,
+    "fail": 5,
+    "error": 0,
+    "skip": 3
+  },
+  "previous": {
     "generated": "2026-10-12T06:44:10.247189",
     "sites_total": 206,
     "pass": 193,
@@ -8,37 +17,25 @@
     "error": 0,
     "skip": 3
   },
-  "previous": {
-    "generated": "2026-10-11T06:31:09.017025",
-    "sites_total": 206,
-    "pass": 194,
-    "warn": 3,
-    "fail": 6,
-    "error": 0,
-    "skip": 3
-  },
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 0,
-    "persistent_failures": 6,
-    "improved_sites": 0,
-    "regressions": 1,
-    "step_regressions": 1
+    "resolved_failures": 1,
+    "persistent_failures": 5,
+    "improved_sites": 1,
+    "regressions": 0,
+    "step_regressions": 0
   },
   "new_failures": [],
-  "resolved_failures": [],
+  "resolved_failures": [
+    {
+      "site": "mangoporn",
+      "previous": "FAIL",
+      "current": "PASS"
+    }
+  ],
   "persistent_failures": [
     {
       "site": "hentai2w",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "mangoporn",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
@@ -83,25 +80,27 @@
       "stability_score": 1.0
     }
   ],
-  "improved_sites": [],
-  "step_regressions": [
+  "improved_sites": [
     {
       "site": "awmnet",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website",
-      "class": "BLOCKED",
-      "is_flaky": false,
-      "stability_score": 1.0
+      "previous": "WARN",
+      "current": "PASS"
     }
   ],
+  "step_regressions": [],
   "deltas": [
     {
       "site": "awmnet",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
+      "previous": "WARN",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "mangoporn",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
