@@ -1,9 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:best-practices",
-    "forkProcessing:enabled"
+    "config:best-practices"
   ],
+  "forkProcessing": "enabled",
   "timezone": "America/Los_Angeles",
   "schedule": [
     "at any time"
@@ -16,75 +16,61 @@
   "assignees": [
     "rpeters1430"
   ],
-  "assignAutomerge": true,
   "labels": [
     "dependencies",
     "renovate"
   ],
-  "prConcurrentLimit": 0,
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 0,
+  "prCreation": "immediate",
   "packageRules": [
     {
-      "description": "Create updates immediately and consolidate updates requiring manual review",
-      "matchPackageNames": [
-        "*"
+      "description": "Group major updates for manual review",
+      "matchUpdateTypes": [
+        "major"
       ],
-      "minimumReleaseAge": "0 days",
-      "schedule": [
-        "at any time"
-      ],
-      "prCreation": "immediate",
-      "dependencyDashboardApproval": false,
-      "groupName": "Dependency updates requiring review",
-      "groupSlug": "dependencies-requiring-review",
-      "groupSingleUpdates": true,
-      "minimumGroupSize": 1,
-      "separateMajorMinor": false,
-      "separateMinorPatch": false,
-      "separateMultipleMajor": false,
-      "separateMultipleMinor": false,
+      "groupName": "Major dependency updates",
+      "groupSlug": "major-dependencies",
       "automerge": false
     },
     {
-      "description": "Group and automerge stable minor and patch updates",
+      "description": "Group minor updates for manual review",
       "matchUpdateTypes": [
-        "minor",
+        "minor"
+      ],
+      "groupName": "Minor dependency updates",
+      "groupSlug": "minor-dependencies",
+      "automerge": false
+    },
+    {
+      "description": "Group and automerge patch updates",
+      "matchUpdateTypes": [
         "patch"
       ],
-      "matchCurrentVersion": "/^[1-9]\\d*\\./",
-      "groupName": "Safe non-major dependency updates",
-      "groupSlug": "safe-non-major-dependencies",
-      "groupSingleUpdates": true,
+      "groupName": "Patch dependency updates",
+      "groupSlug": "patch-dependencies",
+      "minimumReleaseAge": "3 days",
       "automerge": true,
       "automergeType": "pr"
     },
     {
-      "description": "Group and automerge dependency pins",
+      "description": "Review dependency pinning changes",
       "matchUpdateTypes": [
         "pin"
       ],
-      "matchCurrentVersion": "/^[1-9]\\d*\\./",
-      "groupName": "Safe non-major dependency updates",
-      "groupSlug": "safe-non-major-dependencies",
-      "groupSingleUpdates": true,
-      "automerge": true,
-      "automergeType": "pr"
+      "groupName": "Dependency pin updates",
+      "automerge": false
     },
     {
-      "description": "Group and automerge GitHub Actions digest updates",
+      "description": "Review GitHub Actions digest changes",
       "matchManagers": [
         "github-actions"
       ],
       "matchUpdateTypes": [
         "digest"
       ],
-      "groupName": "Safe non-major dependency updates",
-      "groupSlug": "safe-non-major-dependencies",
-      "groupSingleUpdates": true,
-      "automerge": true,
-      "automergeType": "pr"
+      "groupName": "GitHub Actions digest updates",
+      "automerge": false
     }
-  ],
-  "minimumReleaseAge": "0 days",
-  "prCreation": "immediate",
-  "prHourlyLimit": 0
+  ]
 }
