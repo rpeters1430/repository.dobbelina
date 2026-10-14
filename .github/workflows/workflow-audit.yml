@@ -3,10 +3,12 @@ on:
   pull_request:
     paths:
       - '.github/workflows/**'
+      - '.github/actionlint.yaml'
   push:
     branches: [master]
     paths:
       - '.github/workflows/**'
+      - '.github/actionlint.yaml'
 
 permissions:
   contents: read
