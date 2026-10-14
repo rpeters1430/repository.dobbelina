@@ -64,27 +64,39 @@ def merge_reports(report_paths: list[Path]) -> dict[str, Any]:
         "sites": total_sites
     }
 
+def discover_report_paths(reports_dir: Path) -> list[Path]:
+    """Find smoke reports whether artifact download flattened or nested them."""
+    return sorted(reports_dir.rglob("live_smoke_*.json"))
+
+
 def main():
     parser = argparse.ArgumentParser(description="Merge live smoke reports")
-    parser.add_argument("reports", nargs="+", help="Path to JSON reports")
+    parser.add_argument("reports", nargs="*", help="Path to JSON reports")
+    parser.add_argument("--reports-dir", help="Recursively discover reports under this directory")
     parser.add_argument("--out", required=True, help="Output path")
     args = parser.parse_args()
 
     # We need to be able to import classify_message from live_smoke_test
     sys.path.append(str(Path(__file__).resolve().parent))
-    
+
     report_paths = [Path(p) for p in args.reports]
+    if args.reports_dir:
+        report_paths.extend(discover_report_paths(Path(args.reports_dir)))
+    report_paths = sorted(set(report_paths))
+    if not report_paths:
+        parser.error("no smoke reports found")
+
     merged = merge_reports(report_paths)
-    
+
     from live_smoke_test import render_markdown
-    
+
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(merged, indent=2), encoding="utf-8")
-    
+
     md_path = out_path.with_suffix(".md")
     md_path.write_text(render_markdown(merged), encoding="utf-8")
-    
+
     print(f"Merged {len(report_paths)} reports into {out_path}")
 
 if __name__ == "__main__":
