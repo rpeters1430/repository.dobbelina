@@ -123,14 +123,19 @@ jobs:
         run: bash scripts/kodi_e2e/install_kodi.sh "$KODI_CHANNEL"
       - name: Install Python deps
         run: pip install Pillow
-      - name: Wait for FlareSolverr
+      - name: Wait for FlareSolverr API
         run: |
           for _ in $(seq 1 60); do
-            code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8191/health || echo 000)
-            [ "$code" = "200" ] && exit 0
+            if curl -fsS --max-time 5 http://localhost:8191/health >/dev/null; then
+              response=$(curl -fsS --max-time 8 -H "Content-Type: application/json" \
+                --data '{"cmd":"sessions.list"}' http://localhost:8191/v1 2>/dev/null || true)
+              if printf '%s' "$response" | python3 -c 'import json,sys; d=json.load(sys.stdin); sys.exit(0 if isinstance(d,dict) and d.get("status") in (None,"ok") and isinstance(d.get("sessions"),list) else 1)' >/dev/null 2>&1; then
+                exit 0
+              fi
+            fi
             sleep 5
           done
-          echo "::warning::FlareSolverr not healthy; Cloudflare sites will fail"
+          echo "::warning::FlareSolverr API not ready; Cloudflare sites may fail"
       - name: Crawl shard
         run: |
           args=(crawl --shard "${SHARD}/${SHARDS}" --out results/kodi_e2e --no-report
