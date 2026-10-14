@@ -5,20 +5,16 @@
 
 ## Snapshot
 
-- Current: `PASS 195` | `WARN 3` | `FAIL 5` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 193` | `WARN 4` | `FAIL 6` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 193` | `WARN 4` | `FAIL 5` | `ERROR 0` | `SKIP 4`
+- Previous: `PASS 195` | `WARN 3` | `FAIL 5` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
 - New failures: `0`
-- Resolved failures: `1`
+- Resolved failures: `0`
 - Persistent failures: `5`
-- Site regressions: `0`
-- Step regressions: `0`
-
-## Resolved Failures
-
-- **mangoporn**: `FAIL -> PASS`
+- Site regressions: `2`
+- Step regressions: `1`
 
 ## Persistent Failures
 
@@ -28,6 +24,6 @@
 - **xsharings**: `FAIL -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **xtapesla**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
-## Improvements
+## Step Regressions
 
-- **awmnet**: `WARN -> PASS`
+- **ikisoda** `play`: `PASS -> FAIL` (CODE) | AttributeError: module 'kodi_six.xbmc' has no attribute 'Keyboard'
