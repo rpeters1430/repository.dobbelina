@@ -59,7 +59,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
-          python-version: "3.11"
+          python-version: "3.15"
       - name: Install Kodi
         run: bash scripts/kodi_e2e/install_kodi.sh distro
       - name: Install Python deps
@@ -118,7 +118,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
-          python-version: "3.11"
+          python-version: "3.15"
       - name: Install Kodi
         run: bash scripts/kodi_e2e/install_kodi.sh "$KODI_CHANNEL"
       - name: Install Python deps
@@ -159,7 +159,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
-          python-version: "3.11"
+          python-version: "3.15"
       - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           pattern: kodi-e2e-shard-*
