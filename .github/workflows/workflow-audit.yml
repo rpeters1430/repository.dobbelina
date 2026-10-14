@@ -23,7 +23,7 @@ jobs:
           go-version: '1.27'
       - run: |
           go install github.com/jdx/jactionlint/v2/cmd/jactionlint@v2.1.0
-          "$(go env GOPATH)/bin/jactionlint" -color
+          "$(go env GOPATH)/bin/jactionlint" --color
 
   zizmor:
     runs-on: ubuntu-26.04
