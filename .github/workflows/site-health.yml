@@ -14,12 +14,12 @@ permissions:
 
 jobs:
   setup:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       strict_matrix: ${{ steps.set-strict-matrix.outputs.strict_matrix }}
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - id: set-matrix
         run: |
           echo "matrix=$(python scripts/generate_smoke_matrix.py)" >> "${GITHUB_OUTPUT}"
@@ -29,7 +29,7 @@ jobs:
 
   smoke:
     needs: setup
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -44,8 +44,8 @@ jobs:
         env:
           LOG_LEVEL: info
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.15"
           cache: "pip"
@@ -68,7 +68,7 @@ jobs:
           if [ "$status" -gt 1 ]; then exit "$status"; fi
       - name: Upload chunk results
         if: always()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: smoke-results-${{ matrix.chunk }}
           path: results/
@@ -77,7 +77,7 @@ jobs:
 
   strict:
     needs: setup
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -92,8 +92,8 @@ jobs:
         env:
           LOG_LEVEL: info
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.15"
           cache: "pip"
@@ -116,7 +116,7 @@ jobs:
           if [ "$status" -gt 1 ]; then exit "$status"; fi
       - name: Upload strict site results
         if: always()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: strict-results-${{ matrix.site }}
           path: results/strict/strict_site_${{ matrix.site }}.*
@@ -126,29 +126,29 @@ jobs:
   report:
     if: always()
     needs: [setup, smoke, strict]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
       issues: write
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.15"
       - name: Install dependencies
         run: pip install -r requirements-test.txt
       - name: Download all smoke results
         continue-on-error: true
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           path: all-results
           pattern: smoke-results-*
           merge-multiple: true
       - name: Download all strict results
         continue-on-error: true
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           path: strict-results
           pattern: strict-results-*
@@ -228,7 +228,7 @@ jobs:
           if [ -f results/site_health_diff_latest.md ]; then cat results/site_health_diff_latest.md >> "${GITHUB_STEP_SUMMARY}"; fi
       - name: Upload site health artifacts
         if: always()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: site-health-final
           path: results/
@@ -256,7 +256,7 @@ jobs:
   infrastructure:
     if: always()
     needs: [setup, smoke, strict, report]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Check collection and reporting jobs
         env:
@@ -271,12 +271,12 @@ jobs:
   site-regressions:
     if: always() && needs.report.result == 'success'
     needs: report
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: site-health-final
           path: results
