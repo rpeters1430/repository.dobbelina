@@ -46,10 +46,10 @@ def _get_flaresolverr_url() -> str:
 
 
 def _probe_flaresolverr() -> bool:
-    """Return True if FlareSolverr is reachable at the same URL used by the Kodi stubs.
+    """Return True only when the configured FlareSolverr API is usable.
 
-    The health endpoint is checked first, then the real v1 API is probed so older
-    or differently configured FlareSolverr instances are still recognized.
+    The health endpoint is useful for liveness, but the smoke tests depend on
+    the v1 API, so a healthy HTTP server alone is not sufficient.
     """
     fs_url = _get_flaresolverr_url()
     parsed = urlparse(fs_url)
@@ -58,11 +58,9 @@ def _probe_flaresolverr() -> bool:
     try:
         health_req = urllib.request.Request(health_url)
         with urllib.request.urlopen(health_req, timeout=5) as resp:
-            if resp.status == 200:
-                return True
-    except urllib.error.HTTPError:
-        pass
-    except (urllib.error.URLError, OSError, ValueError):
+            # Do not return here: the health endpoint does not validate /v1.
+            _ = resp.status
+    except (urllib.error.HTTPError, urllib.error.URLError, OSError, ValueError):
         pass
 
     payload = json.dumps({"cmd": "sessions.list"}).encode("utf-8")
@@ -77,8 +75,10 @@ def _probe_flaresolverr() -> bool:
             if resp.status != 200:
                 return False
             data = json.loads(resp.read().decode("utf-8", errors="ignore") or "{}")
-            return isinstance(data, dict) and (
-                data.get("status") == "ok" or "sessions" in data
+            return (
+                isinstance(data, dict)
+                and data.get("status") in (None, "ok")
+                and isinstance(data.get("sessions"), list)
             )
     except (urllib.error.URLError, OSError, ValueError, json.JSONDecodeError):
         return False
