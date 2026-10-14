@@ -107,3 +107,53 @@ def test_evaluate_record_no_result_not_tested():
     report = evaluate_record({}, sample_profile())
     assert report["state"] == HealthState.NOT_TESTED
     assert report["exit_code"] == 2
+
+
+def test_child_import_error_is_site_code_failure():
+    record = {
+        "site": "pornhub",
+        "overall": "ERROR",
+        "error_type": "import",
+        "error": "ModuleNotFoundError: optional dependency",
+        "steps": {},
+    }
+
+    report = evaluate_record(record, sample_profile())
+    assert report["state"] == HealthState.BROKEN
+    assert report["classification"] == "CODE"
+    assert report["failed_stage"] == "import"
+    assert report["exit_code"] == 1
+
+
+def test_child_missing_site_export_is_site_code_failure():
+    record = {
+        "site": "pornhub",
+        "overall": "SKIP",
+        "error_type": "missing_site",
+        "error": "No AdultSite/default_mode exported",
+        "steps": {},
+    }
+
+    report = evaluate_record(record, sample_profile())
+    assert report["state"] == HealthState.BROKEN
+    assert report["classification"] == "CODE"
+    assert report["exit_code"] == 1
+
+
+def test_required_media_stage_fails_when_not_performed():
+    record = {
+        "site": "pornhub",
+        "overall": "PASS",
+        "listing_samples": [sample_video(i) for i in range(1, 6)],
+        "steps": {
+            "main": {"status": "PASS"},
+            "list": {"status": "PASS"},
+            "play": {"status": "PASS"},
+        },
+    }
+
+    report = evaluate_record(record, sample_profile())
+    assert report["state"] == HealthState.BROKEN
+    assert report["failed_stage"] == "media"
+    assert report["classification"] == "MEDIA_VALIDATION_MISSING"
+    assert report["exit_code"] == 1

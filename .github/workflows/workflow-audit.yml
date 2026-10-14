@@ -3,16 +3,18 @@ on:
   pull_request:
     paths:
       - '.github/workflows/**'
+      - '.github/jactionlint.yaml'
   push:
     branches: [master]
     paths:
       - '.github/workflows/**'
+      - '.github/jactionlint.yaml'
 
 permissions:
   contents: read
 
 jobs:
-  actionlint:
+  jactionlint:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -20,8 +22,8 @@ jobs:
         with:
           go-version: '1.27'
       - run: |
-          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.11
-          "$(go env GOPATH)/bin/actionlint" -color
+          go install github.com/jdx/jactionlint/v2/cmd/jactionlint@v2.1.0
+          "$(go env GOPATH)/bin/jactionlint" --color
 
   zizmor:
     runs-on: ubuntu-26.04

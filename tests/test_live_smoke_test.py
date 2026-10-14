@@ -78,3 +78,33 @@ def test_probe_flaresolverr_accepts_v1_api_when_health_is_missing(monkeypatch):
     monkeypatch.setattr(live_smoke_test.urllib.request, "urlopen", fake_urlopen)
 
     assert live_smoke_test._probe_flaresolverr() is True
+
+
+def test_probe_flaresolverr_does_not_treat_health_as_api_success(monkeypatch):
+    calls = []
+
+    def fake_urlopen(req, timeout=None):
+        calls.append(req.full_url)
+        if req.full_url.endswith("/health"):
+            return _FakeResponse(status=200, body=b"OK")
+        raise live_smoke_test.urllib.error.HTTPError(
+            req.full_url, 500, "API unavailable", hdrs=None, fp=None
+        )
+
+    monkeypatch.setattr(live_smoke_test.urllib.request, "urlopen", fake_urlopen)
+
+    assert live_smoke_test._probe_flaresolverr() is False
+    assert calls == ["http://localhost:8191/health", "http://localhost:8191/v1"]
+
+
+def test_probe_flaresolverr_rejects_api_error_status(monkeypatch):
+    def fake_urlopen(req, timeout=None):
+        if req.full_url.endswith("/health"):
+            raise live_smoke_test.urllib.error.HTTPError(
+                req.full_url, 404, "Not Found", hdrs=None, fp=None
+            )
+        return _FakeResponse(body=b'{"status":"error","sessions":[]}')
+
+    monkeypatch.setattr(live_smoke_test.urllib.request, "urlopen", fake_urlopen)
+
+    assert live_smoke_test._probe_flaresolverr() is False

@@ -31,20 +31,58 @@ def evaluate_record(
     if harness.get("playback_not_testable") or not supports.get("play", True):
         required_stages = [s for s in required_stages if s not in ("playback", "media")]
 
-    # Harness / Infrastructure error
-    if record.get("status") == "ERROR" or (not record and "error" in record):
+    # Child records use "overall"; accept "status" for direct callers and
+    # older report formats. Import/export failures indicate a broken site module,
+    # while subprocess/harness failures cannot reliably be attributed to the site.
+    record_status = record.get("status") or record.get("overall")
+    error_type = record.get("error_type")
+    code_failure = error_type in ("import", "missing_site")
+    is_missing_site = record_status == "SKIP" and error_type == "missing_site"
+    is_error = record_status == "ERROR"
+
+    if code_failure or is_missing_site:
+        error_message = record.get("error", "Site module could not be loaded")
+        return {
+            "site": site_name,
+            "state": HealthState.BROKEN,
+            "exit_code": 1,
+            "classification": "CODE",
+            "failed_stage": "import",
+            "message": error_message,
+            "failure_signature": failure_signature({
+                "state": HealthState.BROKEN,
+                "failed_stage": "import",
+                "classification": "CODE",
+                "message": error_message,
+            }),
+            "record": record,
+        }
+
+    if is_error or (record_status == "SKIP" and error_type not in (None, "")):
+        error_message = record.get("error", "Infrastructure or harness error")
         return {
             "site": site_name,
             "state": HealthState.HARNESS_ERROR,
             "exit_code": 2,
             "classification": "HARNESS_ERROR",
-            "message": record.get("error", "Infrastructure or harness error"),
+            "message": error_message,
             "failure_signature": failure_signature({
                 "state": HealthState.HARNESS_ERROR,
                 "failed_stage": "harness",
                 "classification": "HARNESS_ERROR",
-                "message": record.get("error", "Infrastructure or harness error"),
+                "message": error_message,
             }),
+            "record": record,
+        }
+
+    if record_status == "SKIP":
+        return {
+            "site": site_name,
+            "state": HealthState.NOT_TESTED,
+            "exit_code": 2,
+            "classification": "NOT_TESTED",
+            "message": record.get("error", "Site was skipped"),
+            "failure_signature": "",
             "record": record,
         }
 
@@ -101,13 +139,6 @@ def evaluate_record(
             classification = "CHALLENGE"
             is_blocked = True
 
-    if not is_blocked and failed_stage is None and media_res and not media_res.passed:
-        failed_stage = "media"
-        classification = media_res.classification
-        message = f"Media probing failed: {media_res.message}"
-        if classification in ("CHALLENGE", "HTML_PAYLOAD", "BLOCKED"):
-            is_blocked = True
-
     if not is_blocked and failed_stage is None:
         for stage in required_stages:
             if stage == "listing" and not listing_res.passed:
@@ -125,9 +156,19 @@ def evaluate_record(
                         classification = "CHALLENGE"
                         is_blocked = True
                     break
-            elif stage == "media" and media_res and not media_res.passed:
-                failed_stage = "media"
-                break
+            elif stage == "media":
+                if media_res is None:
+                    failed_stage = "media"
+                    classification = "MEDIA_VALIDATION_MISSING"
+                    message = "Required media validation was not performed"
+                    break
+                if not media_res.passed:
+                    failed_stage = "media"
+                    classification = media_res.classification
+                    message = f"Media probing failed: {media_res.message}"
+                    if classification in ("CHALLENGE", "HTML_PAYLOAD", "BLOCKED"):
+                        is_blocked = True
+                    break
 
     if is_blocked:
         state = HealthState.BLOCKED

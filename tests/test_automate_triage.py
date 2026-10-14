@@ -1,3 +1,7 @@
+import subprocess
+
+import pytest
+
 from scripts.automate_triage import execute_triage_requests
 
 
@@ -54,3 +58,21 @@ def test_execute_triage_requests_handles_close(monkeypatch):
     summary = execute_triage_requests(requests, repo="test/repo")
     assert summary == ["pornhub: CLOSE #42"]
     assert any("issue" in call and "close" in call and "42" in call for call in gh_calls)
+
+
+def test_execute_triage_requests_propagates_github_cli_failure(monkeypatch):
+    def failed_run(*args, **kwargs):
+        return subprocess.CompletedProcess(
+            args=args,
+            returncode=1,
+            stdout="",
+            stderr="GitHub API unavailable",
+        )
+
+    monkeypatch.setattr("scripts.automate_triage.subprocess.run", failed_run)
+
+    with pytest.raises(subprocess.CalledProcessError, match="returned non-zero exit status 1"):
+        execute_triage_requests(
+            [{"action": "CLOSE", "site": "pornhub", "issue_number": "42"}],
+            repo="test/repo",
+        )
