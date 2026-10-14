@@ -1,0 +1,6 @@
+# The hosted runner exists and is used successfully, but actionlint's runner
+# catalog does not yet recognize this new GitHub-hosted image label.
+paths:
+  .github/workflows/**/*.yml:
+    ignore:
+      - 'label "ubuntu-26\.04" is unknown'
