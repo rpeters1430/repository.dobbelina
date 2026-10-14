@@ -12,7 +12,9 @@ from typing import Any
 def run_gh(args: list[str]) -> subprocess.CompletedProcess[str]:
     result = subprocess.run(["gh"] + args, capture_output=True, text=True)
     if result.returncode != 0:
-        print(f"Error running gh {' '.join(args)}: {result.stderr}")
+        raise subprocess.CalledProcessError(
+            result.returncode, ["gh"] + args, output=result.stdout, stderr=result.stderr
+        )
     return result
 
 
