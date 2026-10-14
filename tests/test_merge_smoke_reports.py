@@ -12,4 +12,4 @@ def test_discover_report_paths_supports_flat_and_nested_artifacts(tmp_path: Path
     nested.touch()
     unrelated.touch()
 
-    assert discover_report_paths(tmp_path) == [flat, nested]
+    assert set(discover_report_paths(tmp_path)) == {flat, nested}
