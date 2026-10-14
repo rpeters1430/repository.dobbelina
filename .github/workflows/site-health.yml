@@ -156,13 +156,7 @@ jobs:
       - name: Merge broad smoke reports
         if: always()
         run: |
-          shopt -s nullglob
-          reports=(all-results/*/live_smoke_*.json)
-          if [ "${#reports[@]}" -eq 0 ]; then
-            echo 'No broad smoke reports were produced.' >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
-          python scripts/merge_smoke_reports.py "${reports[@]}" --out results/site_health_latest.json
+          python scripts/merge_smoke_reports.py --reports-dir all-results --out results/site_health_latest.json
       - name: Prepare previous baseline
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
