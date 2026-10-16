@@ -1,3 +1,15 @@
+[B]Version 1.1.492[/B]
+- Enhance site inspection and debugging tools
+- Merge pull request #419 from rpeters1430/renovate/minor-dependencies
+- Merge pull request #420 from rpeters1430/renovate/github-actions-digest-updates
+- Update github/codeql-action digest to 6f2ac81
+- Update zizmorcore/zizmor-action action to v0.7.0
+- Merge pull request #418 from rpeters1430/codex/site-health-workflow-audit
+- Use jactionlint color flag
+- Remove obsolete actionlint configuration
+- Use maintained jactionlint in workflow audit
+- Configure jactionlint correctness profile
+
 [B]Version 1.1.491[/B]
 - feat: update addon versions and enhance triage handling for blocked states
 - Merge pull request #408 from rpeters1430/fix/site-issues-401-407
