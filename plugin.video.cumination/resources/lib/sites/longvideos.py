@@ -25,8 +25,8 @@ from six.moves import urllib_parse
 
 site = AdultSite(
     "longvideos",
-    "[COLOR hotpink]WOW.xxx[/COLOR]",
-    "https://www.wow.xxx/",
+    "[COLOR hotpink]WOWxxx[/COLOR]",
+    "https://www.wowxxx.to/",
     "longvideos.png",
     "longvideos",
     category="Video Tubes",

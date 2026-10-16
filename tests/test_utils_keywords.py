@@ -238,3 +238,42 @@ def test_alphabetical_search_lists_keys(utils_module, monkeypatch):
     utils_module.alphabeticalSearch("https://example.com", "demo.Search", keyword=None)
 
     assert calls
+
+
+def test_add_keyword_from_context_success(utils_module, monkeypatch):
+    monkeypatch.setattr(utils_module, "_get_keyboard", lambda default="", **k: default)
+    refreshed = []
+    monkeypatch.setattr(
+        utils_module.xbmc, "executebuiltin", lambda cmd: refreshed.append(cmd)
+    )
+
+    utils_module.addKeywordFromContext("[COLOR hotpink]My Search Term[/COLOR]")
+
+    assert utils_module.check_if_keyword_exists("My Search Term") is True
+    assert refreshed == ["Container.Refresh"]
+
+
+def test_add_keyword_from_context_cancelled(utils_module, monkeypatch):
+    monkeypatch.setattr(utils_module, "_get_keyboard", lambda **k: None)
+    refreshed = []
+    monkeypatch.setattr(
+        utils_module.xbmc, "executebuiltin", lambda cmd: refreshed.append(cmd)
+    )
+
+    utils_module.addKeywordFromContext("Some Term")
+
+    assert utils_module.check_if_keyword_exists("Some Term") is False
+    assert refreshed == []
+
+
+def test_add_keyword_from_context_empty(utils_module, monkeypatch):
+    notified = []
+    monkeypatch.setattr(
+        utils_module, "notify", lambda *a, **k: notified.append((a, k))
+    )
+
+    utils_module.addKeywordFromContext("[COLOR hotpink][/COLOR]")
+
+    assert len(notified) == 1
+    assert notified[0][0][0] == "Error"
+

@@ -399,6 +399,19 @@ def addDownLink(
         contextMenuItems.append(
             ("[COLOR hotpink]Download Video[/COLOR]", "RunPlugin(" + dwnld + ")")
         )
+    add_keyword_url = (
+        sys.argv[0]
+        + "?mode="
+        + str("utils.addKeywordFromContext")
+        + "&name="
+        + urllib_parse.quote_plus(name)
+    )
+    contextMenuItems.append(
+        (
+            "[COLOR hotpink]Add to Search Keywords[/COLOR]",
+            "RunPlugin(" + add_keyword_url + ")",
+        )
+    )
     settings_url = sys.argv[0] + "?mode=" + str("utils.openSettings")
     contextMenuItems.append(
         ("[COLOR hotpink]Addon settings[/COLOR]", "RunPlugin(" + settings_url + ")")
@@ -675,6 +688,20 @@ def addDir(
                 "RunPlugin(" + movedownlist_url + ")",
             )
         )
+
+    add_keyword_url = (
+        sys.argv[0]
+        + "?mode="
+        + str("utils.addKeywordFromContext")
+        + "&name="
+        + urllib_parse.quote_plus(name)
+    )
+    contextMenuItems.append(
+        (
+            "[COLOR hotpink]Add to Search Keywords[/COLOR]",
+            "RunPlugin(" + add_keyword_url + ")",
+        )
+    )
 
     settings_url = sys.argv[0] + "?mode=" + str("utils.openSettings")
     contextMenuItems.append(

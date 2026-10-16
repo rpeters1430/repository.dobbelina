@@ -11,6 +11,8 @@ BLOCKED_PATTERNS = (
     "sniff_video_url",
     "@playwright/test",
     "npx",
+    "agent-browser",
+    "agent_browser",
 )
 
 

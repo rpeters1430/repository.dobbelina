@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-10-03
-**Last Sync**: 2026-10-03 - Reviewed upstream through 43ed9848; ported IcePornCasting new site (BS4 + Lulustream jsunpack resolver), erogarga dead player cleanup, pornhoarder active server IDs, and sxyprn primary domain update.
+**Last Updated**: 2026-10-16
+**Last Sync**: 2026-10-16 - Reviewed all 26 pending upstream commits through 4a4ecb66; ported Search Keywords context menu, WOWxxx (longvideos) new domain, and NoodleMagazine title fallback; verified existing coverage for FlareSolverr, rule34video, and chaturbate.
 
 ---
 
@@ -18,6 +18,19 @@
 ---
 
 ## Sync Sessions
+
+### 2026-10-16 Porting Session
+Reviewed all 26 pending upstream commits merged after `43ed9848` through `4a4ecb66` using `sync_manager.py --report`. Ported the "Search keywords from context menu" feature, updated the active domain for `longvideos.py` (`WOW.xxx` -> `WOWxxx.to`), added `data-video-title-base` fallback to `noodlemagazine.py`, and verified existing coverage for Flaresolverr, rule34video, and chaturbate.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `96ce54b6` | Search keywords from context menu | `manual` | 2026-10-16 | **basics / utils**: Ported "Add to Search Keywords" context menu action to `addDownLink()` and `addDir()`. Added `addKeywordFromContext()` in `utils.py` with BBCode cleaning and interactive keyboard editing before database save, and updated `_get_keyboard()` to return `None` on cancellation. Added unit tests in `tests/test_utils_keywords.py`. |
+| `61f1aba1`, `5beece00` (#2016) | wowxxx - new domain fixes #2016 / fix thumbnails | `manual` | 2026-10-16 | **longvideos**: Upstream previously renamed `longvideos` to `wowxxx`. Updated our fork's BeautifulSoup `longvideos.py` (`WOW.xxx`) module and about file to point to active domain `https://www.wowxxx.to/` (verified via `agent-browser`). Unit tests in `tests/sites/test_longvideos.py` pass. |
+| `ae472d2d` (#2019) | noodlemagazine fixes #2019 | `manual` | 2026-10-16 | **noodlemagazine**: Ported `data-video-title-base` attribute fallback in `List()` for video title extraction and space-encoded Babepedia thumbnail URLs. Unit tests in `tests/sites/test_noodlemagazine.py` pass. |
+| `9429c83a` (#2009) | flarresolver fixes #2009 | `manual-already-covered` | 2026-10-16 | Upstream added an ad-hoc `cf_identities.json` cookie store. Our fork already utilizes a dedicated, structured `FlareSolverrManager` in `resources/lib/flaresolverr.py` with session reuse and retry handling. |
+| `7ee8934c` (#2011) | rule34video - fix listing fixes #2011 | `manual-already-covered` | 2026-10-16 | Upstream adjusted a fragile regex pattern for video listings. Our fork's `rule34video.py` was already migrated to BeautifulSoup4 (`soup.select(".item")`, `a.open-popup`) and was unaffected. |
+| `5a361ea0` (#2000) | chaturbate - username/password-based authentication fixed #2000 | `manual-already-covered` | 2026-10-16 | Upstream adjusted legacy unescaping and regexes; our fork already uses a modernized Chaturbate implementation with direct API room lists and JSON pagination. |
+| `4a4ecb66` .. `d3c295e4` (19 commits) | Update cumination.svg / README / footers | `skipped` | 2026-10-16 | Cosmetic SVG footer animations, README updates, and asset adjustments with no Kodi logic changes (`4a4ecb66`, `58d5935b`, `412e104c`, `09f12548`, `b70597b2`, `f4ac0286`, `0cd30619`, `32a9456b`, `08ff1db6`, `28ea021b`, `134e219a`, `9c9c1d1b`, `d00df149`, `c2f59be3`, `802909d4`, `0a6c5066`, `7423f896`, `539ed5ba`, `d3c295e4`). |
 
 ### 2026-10-03 Porting Session
 Reviewed pending upstream commits merged after `b61b1185` through `43ed9848` (7 commits) using `sync_manager.py --report` and verified all affected modules.

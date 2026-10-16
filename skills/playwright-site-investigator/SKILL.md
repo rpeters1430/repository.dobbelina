@@ -5,7 +5,7 @@ description: Decision-tree workflow for Playwright-based site investigation. Use
 
 # Playwright Site Investigator
 
-> **Playwright is a dev/debug tool only.** Never use it inside site modules — it is not available in the Kodi runtime. For site module fixes, use `kodi-site-maintenance` after this investigation is complete.
+> **Playwright is a dev/debug tool only.** Never use it inside site modules — it is not available in the Kodi runtime. For token-efficient interactive CLI exploration without context bloat, see `agent-browser-investigator`. For site module fixes, use `kodi-site-maintenance` after this investigation is complete.
 
 ## Which branch are you in?
 

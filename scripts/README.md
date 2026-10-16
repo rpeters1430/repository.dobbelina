@@ -43,6 +43,7 @@ Run in this order when standardizing logos:
 | Script | Purpose |
 | --- | --- |
 | `site_tool.py` | Human-facing dispatcher — run `python scripts/site_tool.py --list` to see every subcommand it wraps. Prefer this over calling the scripts below directly. |
+| `agent_browser_probe.py` | Token-efficient browser probe CLI using `agent-browser` (compact accessibility snapshot + refs). Dev/debug only — never used at runtime. |
 | `codegen.py` | Headed Playwright browser with ad-blocking + optional stream sniffing, for scaffolding a new site module. Dev/debug only — never used at runtime. |
 | `playwright_listing_probe.py` | Targeted inspection of a listing page's video cards via Playwright. |
 | `playwright_sniff.py` | Playwright-based network sniffing for Cloudflare-protected sites. |

@@ -23,6 +23,8 @@ def test_site_profile_merges_site_specific_overrides():
     assert profile["supports"]["main"] is True
     assert profile["supports"]["categories"] is False
     assert profile["supports"]["play"] is False
+    assert profile["harness"]["playback_not_testable"] is True
+    assert profile["harness"]["search_results_optional"] is True
 
 
 def test_runner_blocked_sites_ignore_blocked_triage():
@@ -30,8 +32,6 @@ def test_runner_blocked_sites_ignore_blocked_triage():
         profile = live_smoke_test.get_site_profile(site_name)
 
         assert profile["triage"]["ignored_states"] == ["BLOCKED"]
-    assert profile["harness"]["playback_not_testable"] is True
-    assert profile["harness"]["search_results_optional"] is True
 
 
 def test_requires_flaresolverr_flag_is_present_for_seeded_sites():

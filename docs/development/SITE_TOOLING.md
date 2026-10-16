@@ -16,6 +16,7 @@ python scripts/site_tool.py --list
 | Task | Recommended command |
 | --- | --- |
 | Add or evaluate a new site | `python scripts/site_tool.py candidates-rank` then `python scripts/site_tool.py candidates-validate --limit 10` |
+| Token-efficient site/element inspection | `python scripts/site_tool.py agent-inspect <url>` |
 | Inspect a JavaScript-heavy site | `python scripts/site_tool.py playwright-inspect <url> --sniff` |
 | Probe a listing page with Playwright | `python scripts/site_tool.py playwright-listing --url <listing-url>` |
 | Run generated pytest smoke tests | `python scripts/site_tool.py smoke-unit --site <site>` |
@@ -36,6 +37,7 @@ Use these canonical entry points first:
 - `scripts/generate_smoke_tests.py`: smoke test generator.
 - `scripts/rank_new_sites.py`: new site candidate ranking.
 - `scripts/validate_candidate_sites.py`: live validation for ranked candidates.
+- `scripts/agent_browser_probe.py`: token-efficient browser inspection via agent-browser (compact accessibility snapshot + refs).
 - `scripts/codegen.py`: headed Playwright browser with ad blocking and optional stream sniffing.
 - `scripts/playwright_listing_probe.py`: targeted listing-card inspection.
 - `list_implemented_sites.py`: implemented site inventory.

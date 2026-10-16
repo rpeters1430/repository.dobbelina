@@ -102,8 +102,17 @@ def List(url, page=1):
                 img = "https://" + i1.split("/")[-1] + "/getVideoPreview" + i2
             img = img.replace("&amp;", "&") + "|User-Agent=" + utils.USER_AGENT
 
+        title_el = item.select_one("[data-video-title-base], .title")
+        title_attr = (
+            utils.safe_get_attr(title_el, "data-video-title-base")
+            if title_el
+            else ""
+        )
         name = utils.cleantext(
-            utils.safe_get_attr(img_tag, "alt", default=utils.safe_get_text(link))
+            utils.safe_get_attr(img_tag, "alt")
+            or title_attr
+            or utils.safe_get_text(title_el)
+            or utils.safe_get_text(link)
         )
         hd_flag = item.select_one(".hd_mark, .hd-mark, [class*='hd_mark']")
         hd = " [COLOR orange]HD[/COLOR]" if hd_flag else ""
@@ -219,7 +228,7 @@ def Babepedia(url):
     ).findall(listhtml)
     for img, name in match:
         name = utils.cleantext(name)
-        img = "https://www.babepedia.com" + img
+        img = "https://www.babepedia.com" + img.replace(" ", "%20")
         videopage = site.url + "video/" + name.replace(" ", "%20") + getFilters(0)
         site.add_dir(name, videopage, "List", img, page=0)
     utils.eod()

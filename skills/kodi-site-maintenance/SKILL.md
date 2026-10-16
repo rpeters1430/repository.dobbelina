@@ -15,8 +15,14 @@ This skill covers the end-to-end process of maintaining and expanding the video 
 
 ## Debugging Workflow
 
-### Using `codegen.py`
-The `scripts/codegen.py` tool is essential for modern sites:
+### Using `agent-browser` (Token-Efficient Inspection)
+For AI agent exploration and minimal token consumption:
+- **Inspect Selectors & Interactive Elements**: `python scripts/site_tool.py agent-inspect <url>` (returns compact accessibility snapshot with `@ref` IDs).
+- **Scope to cards**: `python scripts/site_tool.py agent-inspect <url> --selector ".video-card"`
+- See the `agent-browser-investigator` skill for the full interactive CLI workflow.
+
+### Using `codegen.py` (Headed Playwright)
+The `scripts/codegen.py` tool is useful for manual human inspection:
 - **Sniff URLs**: `python scripts/codegen.py <url> --sniff` to find the actual video stream or API endpoint.
 - **Bypass Ads**: It automatically blocks known ad domains and closes popups to make inspection easier.
 

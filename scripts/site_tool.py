@@ -98,9 +98,17 @@ COMMANDS: tuple[ToolCommand, ...] = (
         example="python scripts/site_tool.py smoke-generate --site hornyfap",
     ),
     ToolCommand(
+        name="agent-inspect",
+        aliases=("agent-probe", "agent-browser"),
+        group="Investigation",
+        script=ROOT / "scripts" / "agent_browser_probe.py",
+        summary="Token-efficient accessibility snapshot + refs via agent-browser.",
+        example="python scripts/site_tool.py agent-inspect https://example.com/videos",
+    ),
+    ToolCommand(
         name="playwright-inspect",
         aliases=("inspect", "codegen"),
-        group="Playwright",
+        group="Investigation",
         script=ROOT / "scripts" / "codegen.py",
         summary="Open a headed browser with ad blocking for selector/network research.",
         example="python scripts/site_tool.py playwright-inspect https://example.com --sniff",
@@ -108,7 +116,7 @@ COMMANDS: tuple[ToolCommand, ...] = (
     ToolCommand(
         name="playwright-listing",
         aliases=("listing-probe",),
-        group="Playwright",
+        group="Investigation",
         script=ROOT / "scripts" / "playwright_listing_probe.py",
         summary="Probe live listing pages and count visible cards/video links.",
         example="python scripts/site_tool.py playwright-listing --url https://example.com/videos",
@@ -180,8 +188,9 @@ def print_workflows() -> None:
     print("  2. python scripts/site_tool.py smoke-live --site <site> --steps main,list,categories,search,play")
     print()
     print("Investigate JavaScript/listing behavior")
-    print("  1. python scripts/site_tool.py playwright-inspect <url> --sniff")
-    print("  2. python scripts/site_tool.py playwright-listing --url <listing-url> --selector <css>")
+    print("  1. python scripts/site_tool.py agent-inspect <url>")
+    print("  2. python scripts/site_tool.py playwright-inspect <url> --sniff")
+    print("  3. python scripts/site_tool.py playwright-listing --url <listing-url> --selector <css>")
     print()
     print("Logo maintenance")
     print("  1. python scripts/site_tool.py logos-validate")

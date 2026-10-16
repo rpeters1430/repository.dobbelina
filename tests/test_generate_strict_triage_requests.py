@@ -187,3 +187,15 @@ def test_ignored_blocked_state_closes_open_issue():
     assert requests[0]["action"] == "CLOSE"
     assert requests[0]["issue_number"] == 42
     assert "ignored by triage policy" in requests[0]["comment"]
+
+
+def test_ignored_blocked_policy_still_reports_broken_state():
+    latest, history = sample_latest_and_history(state=HealthState.BROKEN, sig="sig100")
+    latest["sites"]["pornhub"]["record"] = {
+        "profile": {"triage": {"ignored_states": [HealthState.BLOCKED]}}
+    }
+
+    requests = generate_strict_triage_requests(latest, history, existing_issues=[])
+
+    assert requests[0]["action"] == "CREATE_OR_REOPEN"
+    assert requests[0]["labels"] == ["site-monitor", "failure/broken"]

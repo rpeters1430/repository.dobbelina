@@ -26,6 +26,7 @@ def test_list_prints_recommended_commands(capsys):
 
     output = capsys.readouterr().out
     assert "smoke-live" in output
+    assert "agent-inspect" in output
     assert "playwright-inspect" in output
     assert "logos-validate" in output
 
