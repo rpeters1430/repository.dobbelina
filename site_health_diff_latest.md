@@ -6,7 +6,7 @@
 ## Snapshot
 
 - Current: `PASS 196` | `WARN 2` | `FAIL 6` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 197` | `WARN 1` | `FAIL 6` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 196` | `WARN 2` | `FAIL 6` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
@@ -27,4 +27,8 @@
 
 ## Step Regressions
 
-- **xozilla** `play`: `SKIP -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
+- **ikisoda** `play`: `PASS -> FAIL` (CODE) | AttributeError: module 'kodi_six.xbmc' has no attribute 'Keyboard'
+
+## Improvements
+
+- **xozilla**: `WARN -> PASS`
