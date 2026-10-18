@@ -5,16 +5,20 @@
 
 ## Snapshot
 
-- Current: `PASS 196` | `WARN 2` | `FAIL 6` | `ERROR 0` | `SKIP 2`
+- Current: `PASS 196` | `WARN 1` | `FAIL 7` | `ERROR 0` | `SKIP 2`
 - Previous: `PASS 196` | `WARN 2` | `FAIL 6` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
-- New failures: `0`
+- New failures: `1`
 - Resolved failures: `0`
 - Persistent failures: `6`
 - Site regressions: `1`
 - Step regressions: `1`
+
+## New Failures
+
+- **pornez**: `PASS -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
 ## Persistent Failures
 
@@ -27,8 +31,8 @@
 
 ## Step Regressions
 
-- **ikisoda** `play`: `PASS -> FAIL` (CODE) | AttributeError: module 'kodi_six.xbmc' has no attribute 'Keyboard'
+- **pornez** `main`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
 ## Improvements
 
-- **xozilla**: `WARN -> PASS`
+- **ikisoda**: `WARN -> PASS`
