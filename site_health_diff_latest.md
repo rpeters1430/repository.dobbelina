@@ -5,32 +5,27 @@
 
 ## Snapshot
 
-- Current: `PASS 195` | `WARN 1` | `FAIL 8` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 196` | `WARN 1` | `FAIL 7` | `ERROR 0` | `SKIP 2`
+- Current: `PASS 197` | `WARN 1` | `FAIL 6` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 195` | `WARN 1` | `FAIL 8` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
-- New failures: `1`
-- Resolved failures: `0`
-- Persistent failures: `7`
-- Site regressions: `1`
-- Step regressions: `2`
+- New failures: `0`
+- Resolved failures: `2`
+- Persistent failures: `6`
+- Site regressions: `0`
+- Step regressions: `0`
 
-## New Failures
+## Resolved Failures
 
-- **archivebate**: `PASS -> FAIL` (NETWORK) | main: ReadTimeout: HTTPSConnectionPool(host='archivebate.com', port=443): Read timed out. (read timeout=15)
+- **archivebate**: `FAIL -> PASS`
+- **hobbyporn**: `FAIL -> PASS`
 
 ## Persistent Failures
 
 - **hentai2w**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
-- **hobbyporn**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://hobby.porn/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **porn4k**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://porn4k.to/page/1/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **pornez**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://pornezoo.net: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **speedporn**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **xsharings**: `FAIL -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **xtapesla**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-
-## Step Regressions
-
-- **archivebate** `list`: `PASS -> FAIL` (NETWORK) | ReadTimeout: HTTPSConnectionPool(host='archivebate.com', port=443): Read timed out. (read timeout=15)
-- **archivebate** `main`: `PASS -> FAIL` (NETWORK) | ReadTimeout: HTTPSConnectionPool(host='archivebate.com', port=443): Read timed out. (read timeout=15)
