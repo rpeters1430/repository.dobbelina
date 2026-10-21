@@ -3434,18 +3434,24 @@ class VideoPlayer:
             unpacked_html,
             re.DOTALL | re.IGNORECASE,
         )
-        if not match:
-            # Fallback for older patterns
-            match = re.search(
-                r"""dsplayer\.hotkeys[^'"]+['"]([^'"]+).+?function\s*makePlay.+?return[^?]+([^'"]+)""",
+        if match:
+            pass_url_chunk = match.group(1)
+            token = match.group(2)
+        else:
+            # Current layout: $.get('/pass_md5/...') and makePlay() returns
+            # a + "?token=...&expiry=" + Date.now()
+            pass_match = re.search(
+                r"""\$\.get\(\s*['"](/pass_md5/[^'"]+)['"]""", unpacked_html
+            )
+            token_match = re.search(
+                r"""function\s+makePlay\s*\(\s*\)\s*\{.+?return\s+a\s*\+\s*['"]([^'"]+)['"]""",
                 unpacked_html,
                 re.DOTALL,
             )
-            if not match:
+            if not (pass_match and token_match):
                 return None
-            
-        pass_url_chunk = match.group(1)
-        token = match.group(2)
+            pass_url_chunk = pass_match.group(1)
+            token = token_match.group(1)
         
         # Construct the second URL
         parsed = urllib_parse.urlparse(url)
@@ -3454,8 +3460,9 @@ class VideoPlayer:
         
         # Fetch the second part
         pass_html = getHtml(pass_url, url)
-        if not pass_html:
+        if not pass_html or pass_html.strip() == "RELOAD":
             return None
+        pass_html = pass_html.strip()
             
         # Decode and construct final link
         # DoodStream uses a simple append of random characters

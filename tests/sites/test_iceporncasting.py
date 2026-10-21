@@ -221,3 +221,64 @@ def test_playvid_xvideos(monkeypatch):
 
     assert len(played) == 1
     assert "https://cdn.xvideos.com/hls.m3u8|Referer=https://www.xvideos.com/" in played[0]
+
+
+def test_playvid_luluvido_domain(monkeypatch):
+    played = []
+
+    class _DummyVP:
+        def __init__(self, name, download=False, **kwargs):
+            pass
+
+        def play_from_direct_link(self, stream_url):
+            played.append(stream_url)
+
+        def play_from_link_list(self, links):
+            pass
+
+    page_html = '<iframe src="https://luluvido.com/e/plck4qlwfv92"></iframe>'
+    embed_html = '<script>jwplayer("v").setup({sources:[{file:"https://x.tnmr.org/hls2/master.m3u8?t=1"}]});</script>'
+
+    def fake_get_html(url, referer=None, **kwargs):
+        if "iceporncasting.net" in url:
+            return page_html
+        if "luluvido.com" in url:
+            return embed_html
+        return ""
+
+    monkeypatch.setattr(iceporncasting.utils, "VideoPlayer", _DummyVP)
+    monkeypatch.setattr(iceporncasting.utils, "getHtml", fake_get_html)
+
+    iceporncasting.Playvid("https://iceporncasting.net/video-789/", "Test Video")
+
+    assert len(played) == 1
+    assert played[0].startswith("https://x.tnmr.org/hls2/master.m3u8?t=1|")
+
+
+def test_playvid_playmogo_uses_doodstream_solver(monkeypatch):
+    played = []
+    solved = []
+
+    class _DummyVP:
+        def __init__(self, name, download=False, **kwargs):
+            pass
+
+        def _solve_doodstream(self, url):
+            solved.append(url)
+            return "https://cdn.example/video.mp4|Referer=x"
+
+        def play_from_direct_link(self, stream_url):
+            played.append(stream_url)
+
+        def play_from_link_list(self, links):
+            raise AssertionError("should not fall back to resolveurl")
+
+    page_html = '<iframe src="https://playmogo.com/e/j7m3fz1mv00m"></iframe>'
+
+    monkeypatch.setattr(iceporncasting.utils, "VideoPlayer", _DummyVP)
+    monkeypatch.setattr(iceporncasting.utils, "getHtml", lambda url, *a, **k: page_html)
+
+    iceporncasting.Playvid("https://iceporncasting.net/video-999/", "Test Video")
+
+    assert solved == ["https://playmogo.com/e/j7m3fz1mv00m"]
+    assert played == ["https://cdn.example/video.mp4|Referer=x"]

@@ -226,9 +226,20 @@ def Playvid(url, name, download=None):
             except Exception as e:
                 utils.kodilog(f"IcePornCasting: XVideos extraction error - {e}")
 
-    # 2. Lulustream extraction
+    # 2. DoodStream clones (playmogo etc.) - resolveurl may not know the domain
     for mirror in mirrors:
-        if any(h in mirror for h in ("lulust.com", "lulustream", "luluvdo")):
+        if any(d in mirror.lower() for d in utils.DOODSTREAM_DOMAINS):
+            try:
+                stream_url = vp._solve_doodstream(mirror)
+                if stream_url:
+                    vp.play_from_direct_link(stream_url)
+                    return
+            except Exception as e:
+                utils.kodilog(f"IcePornCasting: DoodStream extraction error - {e}")
+
+    # 3. Lulustream extraction
+    for mirror in mirrors:
+        if any(h in mirror for h in ("lulust.com", "lulustream", "luluvdo", "luluvido")):
             try:
                 headers = {
                     "User-Agent": utils.USER_AGENT,

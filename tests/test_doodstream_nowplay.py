@@ -91,3 +91,51 @@ def test_solve_doodstream_standard():
         assert "https://cloud.dood.to/video/direct_link.mp4" in result
         assert "my_token" in result
         assert "Referer=https%3A//dood.to/e/12345" in result
+
+
+def test_solve_doodstream_pass_md5_get_layout():
+    # Current playmogo/dood layout: hotkeys() takes an options object and the
+    # pass_md5 URL is fetched via $.get(); token lives in makePlay()'s return.
+    player = utils.VideoPlayer("test video", None)
+
+    dood_html = """
+    <script>
+    dsplayer.hotkeys({ volumeStep: 0.1, seekStep: 5, enableModifiersForNumbers: false });
+    dsplayer.addClass("vjs-waiting");
+    $.get('/pass_md5/231435229-149-50-1792548318-b511e745/p7k06a9amvwi', function(data) {
+        dsplayer.src({ type: "video/mp4", src: data + makePlay() });
+    });
+    function makePlay() { for (var a = "", t = "ABC", n = t.length, o = 0; 10 > o; o++) a += t.charAt(0); return a + "?token=p7k06a9amvwi&expiry=" + Date.now(); };
+    </script>
+    """
+    requested = []
+
+    def fake_get_html(url, referer=None, **kwargs):
+        requested.append(url)
+        if "/pass_md5/" in url:
+            return "https://sc582x.cloudatacdn.com/abc/yjiappzfj7~\n"
+        return dood_html
+
+    with (
+        patch("resources.lib.utils.getHtml", side_effect=fake_get_html),
+        patch("resources.lib.utils.get_cookies_string", return_value=""),
+    ):
+        result = player._solve_doodstream("https://playmogo.com/e/j7m3fz1mv00m")
+
+    assert requested[1] == "https://playmogo.com/pass_md5/231435229-149-50-1792548318-b511e745/p7k06a9amvwi"
+    assert re.match(
+        r"https://sc582x\.cloudatacdn\.com/abc/yjiappzfj7~[A-Za-z0-9]{10}\?token=p7k06a9amvwi&expiry=\d+\|Referer=",
+        result,
+    )
+
+
+def test_solve_doodstream_reload_response_returns_none():
+    player = utils.VideoPlayer("test video", None)
+    dood_html = """$.get('/pass_md5/1-2/tok', function(data) {});
+    function makePlay() { return a + "?token=tok&expiry=" + Date.now(); }"""
+
+    def fake_get_html(url, referer=None, **kwargs):
+        return "RELOAD" if "/pass_md5/" in url else dood_html
+
+    with patch("resources.lib.utils.getHtml", side_effect=fake_get_html):
+        assert player._solve_doodstream("https://playmogo.com/e/x") is None
