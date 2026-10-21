@@ -1,12 +1,14 @@
 """Behavior tests for fullporner site module."""
 
+import os
+
 from resources.lib.sites import fullporner
 
 
 def test_site_initialization_values():
     assert fullporner.site.name == "fullporner"
     assert fullporner.site.url == "https://fullporner.org/"
-    assert "fullporner.png" in fullporner.site.image
+    assert os.path.splitext(os.path.basename(fullporner.site.image))[0] == "fullporner"
 
 
 def test_main_builds_menu_and_lists_latest(monkeypatch):

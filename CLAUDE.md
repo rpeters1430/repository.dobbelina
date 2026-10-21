@@ -103,7 +103,7 @@ For declarative selector-based sites, see `SoupSiteSpec` in `sites/soup_spec.py`
 ## Creating a New Site
 
 1. Create `plugin.video.cumination/resources/lib/sites/[sitename].py` using the pattern above
-2. Add icon PNG to `resources/media/` (optional)
+2. Add icon PNG (256x256) to `resources/images/`, then run `python scripts/generate_site_tiles.py <sitename>` to render its site-list tile (a test fails if a logo has no tile)
 3. Save HTML fixtures to `tests/fixtures/sites/`
 4. Write tests in `tests/sites/test_[sitename].py`
 5. Run: `pytest tests/sites/test_[sitename].py -v`

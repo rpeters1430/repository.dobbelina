@@ -753,3 +753,100 @@ class TestEod:
                             mock_sleep.assert_called_once_with(100)
                             mock_exec.assert_called_once_with("Container.SetViewMode(55)")
 
+
+
+class TestMenuPresentation:
+    """eod() marks folder-only listings as 'files' and can grid them on Estuary."""
+
+    @staticmethod
+    def _settings(**values):
+        return lambda k: values.get(k, "")
+
+    def test_menu_listing_sets_files_and_iconwall(self):
+        from resources.lib import basics
+        import xbmc
+        import xbmcplugin
+
+        basics._playable_items_added = False
+        with patch.object(basics.addon, "getSetting", side_effect=self._settings(menu_grid="true")), \
+                patch.object(xbmc, "getSkinDir", return_value="skin.estuary"), \
+                patch.object(xbmcplugin, "setContent") as mock_content, \
+                patch.object(xbmcplugin, "endOfDirectory"), \
+                patch.object(xbmc, "sleep"), \
+                patch.object(xbmc, "executebuiltin") as mock_exec:
+            basics.eod(handle=7)
+        mock_content.assert_called_once_with(7, "files")
+        mock_exec.assert_called_once_with("Container.SetViewMode(52)")
+
+    def test_video_listing_keeps_content_and_view(self):
+        from resources.lib import basics
+        import xbmc
+        import xbmcplugin
+
+        basics._playable_items_added = True
+        with patch.object(basics.addon, "getSetting", side_effect=self._settings(menu_grid="true")), \
+                patch.object(xbmc, "getSkinDir", return_value="skin.estuary"), \
+                patch.object(xbmcplugin, "setContent") as mock_content, \
+                patch.object(xbmcplugin, "endOfDirectory"), \
+                patch.object(xbmc, "executebuiltin") as mock_exec:
+            basics.eod(handle=7)
+        mock_content.assert_not_called()
+        mock_exec.assert_not_called()
+        assert basics._playable_items_added is False  # reset for the next listing
+
+    def test_menu_grid_only_on_estuary(self):
+        from resources.lib import basics
+        import xbmc
+        import xbmcplugin
+
+        basics._playable_items_added = False
+        with patch.object(basics.addon, "getSetting", side_effect=self._settings(menu_grid="true")), \
+                patch.object(xbmc, "getSkinDir", return_value="skin.arctic.zephyr"), \
+                patch.object(xbmcplugin, "setContent"), \
+                patch.object(xbmcplugin, "endOfDirectory"), \
+                patch.object(xbmc, "executebuiltin") as mock_exec:
+            basics.eod(handle=7)
+        mock_exec.assert_not_called()
+
+    def test_add_down_link_marks_listing_playable(self):
+        from resources.lib import basics
+
+        basics._playable_items_added = False
+        basics.addDownLink("Video", "https://example.com/v", "site.Playvid", "")
+        assert basics._playable_items_added is True
+        basics._playable_items_added = False
+
+
+class TestSiteImage:
+    def test_prefers_tile(self):
+        from resources.lib import basics
+
+        with patch.object(basics.addon, "getSetting", return_value=""):
+            path = basics.site_image("pornhub.png")
+        assert path.endswith(os.path.join("images", "tiles", "pornhub.jpg"))
+
+    def test_original_when_tiles_disabled(self):
+        from resources.lib import basics
+
+        with patch.object(basics.addon, "getSetting", side_effect=lambda k: "false" if k == "site_tiles" else ""):
+            assert basics.site_image("pornhub.png") == basics.cum_image("pornhub.png")
+            # a stored tile filename still resolves to the original logo
+            assert basics.site_image("pornhub.jpg") == basics.cum_image("pornhub.png")
+
+    def test_urls_pass_through(self):
+        from resources.lib import basics
+
+        assert basics.site_image("https://cdn.example/logo.png") == "https://cdn.example/logo.png"
+
+
+def test_every_site_logo_has_a_tile():
+    """New or changed site logos need `python scripts/generate_site_tiles.py`."""
+    from resources.lib import basics
+
+    missing = sorted(
+        name[:-4]
+        for name in os.listdir(basics.imgDir)
+        if name.endswith(".png") and not name.startswith("cum-")
+        and not os.path.exists(os.path.join(basics.imgDir, "tiles", name[:-4] + ".jpg"))
+    )
+    assert not missing, "run scripts/generate_site_tiles.py for: {}".format(", ".join(missing))

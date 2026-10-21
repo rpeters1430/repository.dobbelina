@@ -35,6 +35,7 @@ Run in this order when standardizing logos:
 | `validate_logos.py` | Pass/fail validation against the logo standards. |
 | `fix_all_logos.py` | Batch repair for logos failing validation. |
 | `list_implemented_sites.py` | Inventory of implemented site modules (also wrapped by `site_tool.py sites-list`). |
+| `scripts/generate_site_tiles.py` | Last step, after the 256x256 PNGs are in place: renders each logo onto a uniform themed tile (`resources/images/tiles/<name>.jpg`, Pillow only) so dark or tiny logos stay readable on dark skins. `basics.site_image()` prefers the tile; `tests/test_basics.py::test_every_site_logo_has_a_tile` fails until new logos are tiled. `--sheet out.png` writes a contact sheet for review. |
 
 ## `scripts/`
 

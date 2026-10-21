@@ -25,7 +25,7 @@ class AdultSite(URL_Dispatcher):
         self.name = name
         self.title = title + "[COLOR white] - webcams[/COLOR]" if webcam else title
         self._base_url = url
-        self.image = basics.cum_image(image) if image else ""
+        self.image = basics.site_image(image) if image else ""
         self.about = about
         self.webcam = webcam
         self.testing = testing

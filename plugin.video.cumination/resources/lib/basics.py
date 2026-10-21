@@ -76,9 +76,43 @@ def cum_image(filename, custom=False):
         return img
 
 
+def site_image(filename):
+    """Path to a built-in site's icon, preferring the generated tile.
+
+    Tiles (``images/tiles/<name>.jpg``, made by scripts/generate_site_tiles.py)
+    put every logo on a uniform themed background.  Accepts either the
+    original ``<name>.png`` or a stored tile filename so saved custom lists
+    keep resolving when the "site_tiles" setting is toggled.
+    """
+    if not filename or filename.startswith("http"):
+        return filename
+    stem = os.path.splitext(os.path.basename(filename))[0]
+    if addon.getSetting("site_tiles") != "false":
+        tile = os.path.join(imgDir, "tiles", stem + ".jpg")
+        if os.path.exists(tile):
+            return tile
+    img = cum_image(filename)
+    if not os.path.exists(img):
+        png = cum_image(stem + ".png")
+        if os.path.exists(png):
+            return png
+    return img
+
+
+_playable_items_added = False
+
+
 def eod(handle=addon_handle, cache=True):
+    global _playable_items_added
     kodi_xbmc = sys.modules.get("xbmc", xbmc)
     kodi_xbmcplugin = sys.modules.get("xbmcplugin", xbmcplugin)
+    is_menu = not _playable_items_added
+    _playable_items_added = False
+    if is_menu:
+        # Folder-only listings (site list, categories, ...) aren't movies;
+        # "files" stops skins drawing logos as portrait posters and enables
+        # Estuary's IconWall.
+        kodi_xbmcplugin.setContent(handle, "files")
     viewtype = None
     if addon.getSetting("customview") == "true":
         skin = kodi_xbmc.getSkinDir().lower()
@@ -88,6 +122,9 @@ def eod(handle=addon_handle, cache=True):
             currentskin, viewno = setview.split(";")
             if currentskin == skin:
                 viewtype = viewno
+    elif is_menu and addon.getSetting("menu_grid") == "true":
+        if "estuary" in kodi_xbmc.getSkinDir().lower():
+            viewtype = 52  # IconWall
     kodi_xbmcplugin.endOfDirectory(handle, cacheToDisc=cache)
     if viewtype is not None:
         kodi_xbmc.sleep(100)
@@ -128,6 +165,8 @@ def addDownLink(
     duration="",
     quality="",
 ):
+    global _playable_items_added
+    _playable_items_added = True
     contextMenuItems = []
     favtext = "Remove from" if fav == "del" else "Add to"  # fav == 'add' or 'del'
     dname = desc == name

@@ -1,12 +1,14 @@
 """Behavior tests for fullxcinema site module."""
 
+import os
+
 from resources.lib.sites import fullxcinema
 
 
 def test_site_initialization_values():
     assert fullxcinema.site.name == "fullxcinema"
     assert fullxcinema.site.url == "https://fullxcinema.com/"
-    assert "fullxcinema.png" in fullxcinema.site.image
+    assert os.path.splitext(os.path.basename(fullxcinema.site.image))[0] == "fullxcinema"
 
 
 def test_main_builds_menu_and_lists_latest(monkeypatch):

@@ -299,13 +299,13 @@ def INDEX():
 
 
 _CATEGORY_ICONS = {
-    "Video Tubes":      basics.cum_image("pornhub.png"),
-    "Cams & Live":      basics.cum_image("chaturbate.png"),
-    "JAV & Asian":      basics.cum_image("javmoe.png"),
-    "Hentai & Anime":   basics.cum_image("hanime.png"),
-    "Amateur & Social": basics.cum_image("erome.png"),
-    "Specialty":        basics.cum_image("trannyteca.png"),
-    "Aggregators":      basics.cum_image("archivebate.png"),
+    "Video Tubes":      basics.site_image("pornhub.png"),
+    "Cams & Live":      basics.site_image("chaturbate.png"),
+    "JAV & Asian":      basics.site_image("javmoe.png"),
+    "Hentai & Anime":   basics.site_image("hanime.png"),
+    "Amateur & Social": basics.site_image("erome.png"),
+    "Specialty":        basics.site_image("trannyteca.png"),
+    "Aggregators":      basics.site_image("archivebate.png"),
 }
 
 

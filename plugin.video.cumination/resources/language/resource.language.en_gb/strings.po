@@ -580,6 +580,14 @@ msgctxt "#30502"
 msgid "videos"
 msgstr ""
 
+msgctxt "#30503"
+msgid "Grid view for menus (Estuary)"
+msgstr ""
+
+msgctxt "#30504"
+msgid "Uniform site icons"
+msgstr ""
+
 msgctxt "#33001"
 msgid "Error loading custom site"
 msgstr ""

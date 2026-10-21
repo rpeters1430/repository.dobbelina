@@ -1334,7 +1334,7 @@ def load_custom_list(url):
                 if img.lower().startswith("http")
                 else img.split("/")[-1].split("\\")[-1]
             )
-            img = basics.cum_image(img, custom)
+            img = basics.cum_image(img, True) if custom else basics.site_image(img)
         ins = AdultSite.get_site_by_name(mode.split(".")[0])
         if ins:
             if ins.default_mode == mode:
