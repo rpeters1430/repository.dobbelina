@@ -1,3 +1,13 @@
+[B]Version 1.1.495[/B]
+- feat: themed site icon tiles and grid view for menus
+- fix: rewrite speedporn for speedporn.net layout
+- fix: iceporncasting playmogo/luluvido playback
+- Merge pull request #428 from rpeters1430/renovate/ghcr.io-germondai-trawl
+- Merge pull request #429 from rpeters1430/renovate/github-actions-digest-updates
+- Update ghcr.io/germondai/trawl Docker digest to 120eecd
+- Update ghcr.io/germondai/trawl Docker digest to 120eecd
+- Merge pull request #426 from rpeters1430/renovate/lock-file-maintenance
+
 [B]Version 1.1.494[/B]
 - fix: rewrite speedporn for speedporn.net layout
 - fix: iceporncasting playmogo/luluvido playback
