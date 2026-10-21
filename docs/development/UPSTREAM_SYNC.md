@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-10-16
-**Last Sync**: 2026-10-16 - Reviewed all 26 pending upstream commits through 4a4ecb66; ported Search Keywords context menu, WOWxxx (longvideos) new domain, and NoodleMagazine title fallback; verified existing coverage for FlareSolverr, rule34video, and chaturbate.
+**Last Updated**: 2026-10-20
+**Last Sync**: 2026-10-20 - Reviewed all 15 pending upstream commits after `4a4ecb66` through `26e3b8eb`; rewrote speedporn for its new speedporn.net layout (#1995); deferred javpog (new site) and the folder-icon refresh; skipped repository logo changes.
 
 ---
 
@@ -18,6 +18,18 @@
 ---
 
 ## Sync Sessions
+
+### 2026-10-20 Porting Session
+Reviewed all 15 pending upstream commits merged after `4a4ecb66` through `26e3b8eb` using `sync_manager.py --report`. Our `speedporn.py` was failing the strict monitor (0 listing items: `speedporn.com` is now a parked domain), so upstream's #1995 fix was relevant even though the report bucketed it as "Likely Already Covered".
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `2bf97e22` (#1995) | speedporn fixes #1995 | `manual` | 2026-10-20 | **speedporn**: Rewrote in BeautifulSoup for the new `speedporn.net` layout instead of cherry-picking upstream's regex version. `article.card` listing (skipping `<template>`-injected `card--x` cards), Genres/Pornstars/Studios/Directors/Years taxonomy pages (`.tgrid a.tcard` / `.chips--lg a.chip`, scoped to skip footer "Recent Searches" chips), Most Viewed/Longest/Top Rated filters, `nav.pg` pagination. Playback parses the `data-servers` JSON (Vidara, DoodStream/playmogo, PlayMate, LuluStream, VOE, MixDrop, Vinovo), tries the DoodStream mirror via `_solve_doodstream` first, then falls back to `play_from_link_list` with Dood/Lulu ordered first. Dropped `requires_flaresolverr` (no Cloudflare on the new domain). New fixtures + 8 tests in `tests/sites/test_speedporn.py`; strict monitor HEALTHY. |
+| `1113a7b0` | Merge branch 'main' of .../repository.cumination (adds javpog) | `deferred` | 2026-10-20 | New site `javpog.py` (JAV, ~340 lines, regex-only, own pass_md5 DoodStream code) plus about files for several sites we already carry. Not ported this session; candidate for a future BS4 port reusing `utils._solve_doodstream`. Version bump/ZIP parts not applicable. |
+| `39265f2c` | Update of addon thumbnails | `deferred` | 2026-10-20 | Cosmetic: refreshed `cum-*.png` images and swapped `site.img_cat`/`''` for specific folder icons (`img_star`, `img_tags`, `img_followed`, `img_refresh`, `img_logout`, ...) across ~90 sites. Our `url_dispatcher.py` only defines `img_search`/`img_cat`/`img_next` (upstream has 16), and our sites are BS4-rewritten, so this needs a manual port rather than a cherry-pick. |
+| `e3c61397` | Added image for channels addon category | `deferred` | 2026-10-20 | Same as `39265f2c`: adds `cum-channels.png` / `img_channels` and uses it on Channels menu entries across ~33 sites. Port together with the icon refresh. |
+| `26e3b8eb` | addon images text aligned | `deferred` | 2026-10-20 | Image-only follow-up to `39265f2c` (re-rendered `cum-*.png` text alignment, 19 files). Port with the icon refresh. |
+| `6901a017`, `66a5e086`, `3f340e2c`, `53a65d2f`, `b3282dd1`, `5d3b8d8a`, `7703704b`, `0dd98074`, `3d8a7616`, `6f4cf3ac`, `9ab32473` | Repository logo / footer colour / cumination.svg updates, merge | `skipped` | 2026-10-20 | Upstream repository branding only (logo, footer colour, SVG) and a merge commit; no addon code. |
 
 ### 2026-10-16 Porting Session
 Reviewed all 26 pending upstream commits merged after `43ed9848` through `4a4ecb66` using `sync_manager.py --report`. Ported the "Search keywords from context menu" feature, updated the active domain for `longvideos.py` (`WOW.xxx` -> `WOWxxx.to`), added `data-video-title-base` fallback to `noodlemagazine.py`, and verified existing coverage for Flaresolverr, rule34video, and chaturbate.
