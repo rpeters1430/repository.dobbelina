@@ -38,14 +38,14 @@ jobs:
       FLARESOLVERR_URL: http://localhost:8191/v1
     services:
       flaresolverr:
-        image: ghcr.io/germondai/trawl@sha256:120eecd24566a4c416a85732ca8e747631a783578c337125ca2097c1f69e3e83
+        image: ghcr.io/germondai/trawl@sha256:cfa32f8d6ce5df7d3916d6b014aeeb61256342197b992bd7151ea70e180e3c8f
         ports:
           - 8191:8191
         env:
           LOG_LEVEL: info
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: "3.15"
           cache: "pip"
@@ -86,14 +86,14 @@ jobs:
       FLARESOLVERR_URL: http://localhost:8191/v1
     services:
       flaresolverr:
-        image: ghcr.io/germondai/trawl@sha256:120eecd24566a4c416a85732ca8e747631a783578c337125ca2097c1f69e3e83
+        image: ghcr.io/germondai/trawl@sha256:cfa32f8d6ce5df7d3916d6b014aeeb61256342197b992bd7151ea70e180e3c8f
         ports:
           - 8191:8191
         env:
           LOG_LEVEL: info
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: "3.15"
           cache: "pip"
@@ -134,7 +134,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: "3.15"
       - name: Install dependencies
