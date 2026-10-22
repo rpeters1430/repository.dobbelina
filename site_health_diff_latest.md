@@ -5,20 +5,20 @@
 
 ## Snapshot
 
-- Current: `PASS 197` | `WARN 2` | `FAIL 5` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 197` | `WARN 1` | `FAIL 6` | `ERROR 0` | `SKIP 2`
+- Current: `PASS 197` | `WARN 1` | `FAIL 6` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 197` | `WARN 2` | `FAIL 5` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
-- New failures: `0`
-- Resolved failures: `1`
+- New failures: `1`
+- Resolved failures: `0`
 - Persistent failures: `5`
 - Site regressions: `1`
-- Step regressions: `2`
+- Step regressions: `1`
 
-## Resolved Failures
+## New Failures
 
-- **pornez**: `FAIL -> PASS`
+- **thothub**: `PASS -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 521)
 
 ## Persistent Failures
 
@@ -30,5 +30,8 @@
 
 ## Step Regressions
 
-- **pornslash** `play`: `PASS -> FAIL` (CODE) | ValueError: No video stream found!
-- **speedporn** `main`: `PASS -> FAIL` (NETWORK) | TimeoutError: The read operation timed out
+- **thothub** `list`: `PASS -> FAIL` (UNKNOWN) | List URL unavailable in harness (HTTP 521)
+
+## Improvements
+
+- **pornslash**: `WARN -> PASS`
