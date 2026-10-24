@@ -43,7 +43,12 @@
       "tier": 1
     },
     "xnxx": {
-      "tier": 1
+      "tier": 1,
+      "triage": {
+        "ignored_states": [
+          "BLOCKED"
+        ]
+      }
     },
     "spankbang": {
       "tier": 1,
@@ -59,7 +64,12 @@
       }
     },
     "youporn": {
-      "tier": 1
+      "tier": 1,
+      "triage": {
+        "ignored_states": [
+          "BLOCKED"
+        ]
+      }
     },
     "pornkai": {
       "tier": 1,

@@ -28,7 +28,7 @@ def test_site_profile_merges_site_specific_overrides():
 
 
 def test_runner_blocked_sites_ignore_blocked_triage():
-    for site_name in ("ask4porn", "chaturbate"):
+    for site_name in ("ask4porn", "chaturbate", "youporn", "xnxx"):
         profile = live_smoke_test.get_site_profile(site_name)
 
         assert profile["triage"]["ignored_states"] == ["BLOCKED"]
