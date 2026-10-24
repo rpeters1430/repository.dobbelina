@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-10-24T06:29:08.009569",
+    "sites_total": 206,
+    "pass": 198,
+    "warn": 2,
+    "fail": 4,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-10-22T06:36:29.483516",
     "sites_total": 206,
     "pass": 197,
@@ -8,35 +17,27 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-10-21T06:28:53.667840",
-    "sites_total": 206,
-    "pass": 197,
-    "warn": 2,
-    "fail": 5,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
-    "new_failures": 1,
-    "resolved_failures": 0,
-    "persistent_failures": 5,
-    "improved_sites": 1,
+    "new_failures": 0,
+    "resolved_failures": 2,
+    "persistent_failures": 4,
+    "improved_sites": 0,
     "regressions": 1,
     "step_regressions": 1
   },
-  "new_failures": [
+  "new_failures": [],
+  "resolved_failures": [
+    {
+      "site": "speedporn",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
     {
       "site": "thothub",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "UNKNOWN",
-      "message": "list: List URL unavailable in harness (HTTP 521)",
-      "is_flaky": false,
-      "stability_score": 0.9
+      "previous": "FAIL",
+      "current": "PASS"
     }
   ],
-  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "hentai2w",
@@ -53,15 +54,6 @@
       "current": "FAIL",
       "class": "ENV",
       "message": "main: RuntimeError: FlareSolverr error for https://porn4k.to/page/1/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "speedporn",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "NETWORK",
-      "message": "main: TimeoutError: The read operation timed out",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -84,38 +76,39 @@
       "stability_score": 1.0
     }
   ],
-  "improved_sites": [
-    {
-      "site": "pornslash",
-      "previous": "WARN",
-      "current": "PASS"
-    }
-  ],
+  "improved_sites": [],
   "step_regressions": [
     {
-      "site": "thothub",
-      "step": "list",
+      "site": "perverzija",
+      "step": "play",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "List URL unavailable in harness (HTTP 521)",
-      "class": "UNKNOWN",
+      "message": "IndexError: list index out of range",
+      "class": "CODE",
       "is_flaky": false,
-      "stability_score": 0.9
+      "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "pornslash",
-      "previous": "WARN",
+      "site": "perverzija",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "speedporn",
+      "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
       "site": "thothub",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     }
   ]
