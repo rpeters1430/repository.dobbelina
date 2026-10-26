@@ -1,7 +1,7 @@
 {
   "sites": {
     "anybunny": {
-      "consecutive_healthy": 8,
+      "consecutive_healthy": 9,
       "healthy_baseline": {
         "item_count": 177,
         "unique_title_ratio": 0.9944,
@@ -41,18 +41,18 @@
           "failure_signature": ""
         },
         {
-          "state": "HEALTHY",
-          "failed_stage": null,
-          "classification": "NONE",
-          "message": "All strict checks passed",
-          "failure_signature": ""
-        },
-        {
           "state": "BLOCKED",
           "failed_stage": "listing",
           "classification": "CHALLENGE",
           "message": "Listing failed: Insufficient items (0 < 5)",
           "failure_signature": "fcd7ffa654c373c7"
+        },
+        {
+          "state": "HEALTHY",
+          "failed_stage": null,
+          "classification": "NONE",
+          "message": "All strict checks passed",
+          "failure_signature": ""
         },
         {
           "state": "HEALTHY",
@@ -225,7 +225,7 @@
       ]
     },
     "cam4": {
-      "consecutive_healthy": 79,
+      "consecutive_healthy": 80,
       "healthy_baseline": {
         "item_count": 63,
         "unique_title_ratio": 1.0,
@@ -337,7 +337,7 @@
       ]
     },
     "camsoda": {
-      "consecutive_healthy": 24,
+      "consecutive_healthy": 25,
       "healthy_baseline": {
         "item_count": 104,
         "unique_title_ratio": 1.0,
@@ -449,7 +449,7 @@
       ]
     },
     "chaturbate": {
-      "consecutive_healthy": 10,
+      "consecutive_healthy": 11,
       "healthy_baseline": {
         "item_count": 119,
         "unique_title_ratio": 1.0,
@@ -482,11 +482,11 @@
           "failure_signature": "e25d17e09e66c7a2"
         },
         {
-          "state": "BLOCKED",
-          "failed_stage": "listing",
-          "classification": "CHALLENGE",
-          "message": "Listing failed: Insufficient items (0 < 1)",
-          "failure_signature": "e25d17e09e66c7a2"
+          "state": "HEALTHY",
+          "failed_stage": null,
+          "classification": "NONE",
+          "message": "All strict checks passed",
+          "failure_signature": ""
         },
         {
           "state": "HEALTHY",
@@ -561,10 +561,10 @@
       ]
     },
     "luxuretv": {
-      "consecutive_healthy": 32,
+      "consecutive_healthy": 33,
       "healthy_baseline": {
         "item_count": 170,
-        "unique_title_ratio": 0.9941,
+        "unique_title_ratio": 0.9882,
         "unique_url_ratio": 1.0,
         "thumbnail_coverage": 1.0,
         "description_coverage": 0.4235
@@ -673,13 +673,13 @@
       ]
     },
     "missav": {
-      "consecutive_healthy": 79,
+      "consecutive_healthy": 80,
       "healthy_baseline": {
-        "item_count": 27,
+        "item_count": 25,
         "unique_title_ratio": 1.0,
         "unique_url_ratio": 1.0,
         "thumbnail_coverage": 1.0,
-        "description_coverage": 0.7407
+        "description_coverage": 0.72
       },
       "open_failure_signature": "fdd80e5f76cd1b1e",
       "last_state": "HEALTHY",
@@ -785,7 +785,7 @@
       ]
     },
     "porndig": {
-      "consecutive_healthy": 11,
+      "consecutive_healthy": 12,
       "healthy_baseline": {
         "item_count": 75,
         "unique_title_ratio": 1.0,
@@ -796,13 +796,6 @@
       "open_failure_signature": "f3a4beb882bae312",
       "last_state": "HEALTHY",
       "runs": [
-        {
-          "state": "HEALTHY",
-          "failed_stage": null,
-          "classification": "NONE",
-          "message": "All strict checks passed",
-          "failure_signature": ""
-        },
         {
           "state": "HEALTHY",
           "failed_stage": null,
@@ -893,14 +886,21 @@
           "classification": "NONE",
           "message": "All strict checks passed",
           "failure_signature": ""
+        },
+        {
+          "state": "HEALTHY",
+          "failed_stage": null,
+          "classification": "NONE",
+          "message": "All strict checks passed",
+          "failure_signature": ""
         }
       ]
     },
     "pornhub": {
-      "consecutive_healthy": 14,
+      "consecutive_healthy": 15,
       "healthy_baseline": {
-        "item_count": 199,
-        "unique_title_ratio": 0.995,
+        "item_count": 205,
+        "unique_title_ratio": 1.0,
         "unique_url_ratio": 1.0,
         "thumbnail_coverage": 1.0,
         "description_coverage": 0.0
@@ -1009,10 +1009,10 @@
       ]
     },
     "pornkai": {
-      "consecutive_healthy": 57,
+      "consecutive_healthy": 58,
       "healthy_baseline": {
         "item_count": 337,
-        "unique_title_ratio": 0.6736,
+        "unique_title_ratio": 0.9199,
         "unique_url_ratio": 1.0,
         "thumbnail_coverage": 1.0,
         "description_coverage": 0.7122
@@ -1121,7 +1121,7 @@
       ]
     },
     "spankbang": {
-      "consecutive_healthy": 19,
+      "consecutive_healthy": 20,
       "healthy_baseline": {
         "item_count": 134,
         "unique_title_ratio": 1.0,
@@ -1233,7 +1233,7 @@
       ]
     },
     "streamate": {
-      "consecutive_healthy": 79,
+      "consecutive_healthy": 80,
       "healthy_baseline": {
         "item_count": 103,
         "unique_title_ratio": 1.0,
@@ -1345,10 +1345,10 @@
       ]
     },
     "thothub": {
-      "consecutive_healthy": 2,
+      "consecutive_healthy": 3,
       "healthy_baseline": {
         "item_count": 100,
-        "unique_title_ratio": 0.98,
+        "unique_title_ratio": 0.93,
         "unique_url_ratio": 1.0,
         "thumbnail_coverage": 1.0,
         "description_coverage": 0.29
@@ -1356,13 +1356,6 @@
       "open_failure_signature": "fe268667485a111c",
       "last_state": "HEALTHY",
       "runs": [
-        {
-          "state": "HEALTHY",
-          "failed_stage": null,
-          "classification": "NONE",
-          "message": "All strict checks passed",
-          "failure_signature": ""
-        },
         {
           "state": "HEALTHY",
           "failed_stage": null,
@@ -1453,11 +1446,18 @@
           "classification": "NONE",
           "message": "All strict checks passed",
           "failure_signature": ""
+        },
+        {
+          "state": "HEALTHY",
+          "failed_stage": null,
+          "classification": "NONE",
+          "message": "All strict checks passed",
+          "failure_signature": ""
         }
       ]
     },
     "xnxx": {
-      "consecutive_healthy": 2,
+      "consecutive_healthy": 0,
       "healthy_baseline": {
         "item_count": 213,
         "unique_title_ratio": 1.0,
@@ -1466,7 +1466,7 @@
         "description_coverage": 0.2254
       },
       "open_failure_signature": "372864912782f26c",
-      "last_state": "HEALTHY",
+      "last_state": "BROKEN",
       "runs": [
         {
           "state": "HEALTHY",
@@ -1511,13 +1511,6 @@
           "failure_signature": ""
         },
         {
-          "state": "HEALTHY",
-          "failed_stage": null,
-          "classification": "NONE",
-          "message": "All strict checks passed",
-          "failure_signature": ""
-        },
-        {
           "state": "BROKEN",
           "failed_stage": "playback",
           "classification": "PLAYBACK_FAILED",
@@ -1565,17 +1558,24 @@
           "classification": "NONE",
           "message": "All strict checks passed",
           "failure_signature": ""
+        },
+        {
+          "state": "BROKEN",
+          "failed_stage": "playback",
+          "classification": "PLAYBACK_FAILED",
+          "message": "Playback step failed or skipped (SKIP)",
+          "failure_signature": "372864912782f26c"
         }
       ]
     },
     "xvideos": {
-      "consecutive_healthy": 44,
+      "consecutive_healthy": 45,
       "healthy_baseline": {
-        "item_count": 122,
+        "item_count": 134,
         "unique_title_ratio": 1.0,
         "unique_url_ratio": 1.0,
         "thumbnail_coverage": 1.0,
-        "description_coverage": 0.6148
+        "description_coverage": 0.6493
       },
       "open_failure_signature": "f819cad72d7e5ef5",
       "last_state": "HEALTHY",
@@ -1681,10 +1681,10 @@
       ]
     },
     "youporn": {
-      "consecutive_healthy": 1,
+      "consecutive_healthy": 2,
       "healthy_baseline": {
-        "item_count": 141,
-        "unique_title_ratio": 0.9929,
+        "item_count": 154,
+        "unique_title_ratio": 1.0,
         "unique_url_ratio": 1.0,
         "thumbnail_coverage": 1.0,
         "description_coverage": 0.0
@@ -1693,13 +1693,6 @@
       "last_state": "HEALTHY",
       "runs": [
         {
-          "state": "BLOCKED",
-          "failed_stage": "media",
-          "classification": "HTML_PAYLOAD",
-          "message": "Media probing failed: Server returned HTML page instead of media content",
-          "failure_signature": "827126aca61b1422"
-        },
-        {
           "state": "HEALTHY",
           "failed_stage": null,
           "classification": "NONE",
@@ -1782,6 +1775,13 @@
           "classification": "PARSER",
           "message": "Listing failed: Insufficient items (0 < 5)",
           "failure_signature": "fe268667485a111c"
+        },
+        {
+          "state": "HEALTHY",
+          "failed_stage": null,
+          "classification": "NONE",
+          "message": "All strict checks passed",
+          "failure_signature": ""
         },
         {
           "state": "HEALTHY",
@@ -1793,10 +1793,10 @@
       ]
     },
     "yourlesbians": {
-      "consecutive_healthy": 4,
+      "consecutive_healthy": 5,
       "healthy_baseline": {
-        "item_count": 77,
-        "unique_title_ratio": 0.987,
+        "item_count": 76,
+        "unique_title_ratio": 0.9868,
         "unique_url_ratio": 1.0,
         "thumbnail_coverage": 1.0,
         "description_coverage": 0.0
@@ -1861,18 +1861,18 @@
           "failure_signature": ""
         },
         {
-          "state": "HEALTHY",
-          "failed_stage": null,
-          "classification": "NONE",
-          "message": "All strict checks passed",
-          "failure_signature": ""
-        },
-        {
           "state": "BROKEN",
           "failed_stage": "media",
           "classification": "MEDIA_NETWORK_ERROR",
           "message": "Media probing failed: Network error fetching media: URLError",
           "failure_signature": "11fcd69772a7f772"
+        },
+        {
+          "state": "HEALTHY",
+          "failed_stage": null,
+          "classification": "NONE",
+          "message": "All strict checks passed",
+          "failure_signature": ""
         },
         {
           "state": "HEALTHY",
