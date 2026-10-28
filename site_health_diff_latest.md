@@ -5,16 +5,20 @@
 
 ## Snapshot
 
-- Current: `PASS 197` | `WARN 3` | `FAIL 4` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 198` | `WARN 2` | `FAIL 4` | `ERROR 0` | `SKIP 2`
+- Current: `PASS 197` | `WARN 2` | `FAIL 5` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 197` | `WARN 3` | `FAIL 4` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
-- New failures: `0`
+- New failures: `1`
 - Resolved failures: `0`
 - Persistent failures: `4`
 - Site regressions: `1`
 - Step regressions: `1`
+
+## New Failures
+
+- **mangoporn**: `PASS -> FAIL` (PARSER) | list: List returned no videos
 
 ## Persistent Failures
 
@@ -25,4 +29,8 @@
 
 ## Step Regressions
 
-- **pornslash** `play`: `PASS -> FAIL` (CODE) | ValueError: No video stream found!
+- **mangoporn** `list`: `SKIP -> FAIL` (PARSER) | List returned no videos
+
+## Improvements
+
+- **pornslash**: `WARN -> PASS`
