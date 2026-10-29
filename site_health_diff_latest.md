@@ -5,20 +5,24 @@
 
 ## Snapshot
 
-- Current: `PASS 197` | `WARN 2` | `FAIL 5` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 197` | `WARN 3` | `FAIL 4` | `ERROR 0` | `SKIP 2`
+- Current: `PASS 196` | `WARN 3` | `FAIL 5` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 197` | `WARN 2` | `FAIL 5` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
 - New failures: `1`
-- Resolved failures: `0`
+- Resolved failures: `1`
 - Persistent failures: `4`
-- Site regressions: `1`
-- Step regressions: `1`
+- Site regressions: `2`
+- Step regressions: `2`
 
 ## New Failures
 
-- **mangoporn**: `PASS -> FAIL` (PARSER) | list: List returned no videos
+- **animeidhentai**: `PASS -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 504)
+
+## Resolved Failures
+
+- **mangoporn**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -29,8 +33,5 @@
 
 ## Step Regressions
 
-- **mangoporn** `list`: `SKIP -> FAIL` (PARSER) | List returned no videos
-
-## Improvements
-
-- **pornslash**: `WARN -> PASS`
+- **animeidhentai** `list`: `PASS -> FAIL` (UNKNOWN) | List URL unavailable in harness (HTTP 504)
+- **seaporn** `play`: `PASS -> FAIL` (NETWORK) | Timed out after 35s
