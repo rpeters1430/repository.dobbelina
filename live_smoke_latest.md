@@ -1,223 +1,220 @@
 # Live Smoke Report
 
-- Generated: `2026-10-29T06:27:16.017198`
+- Generated: `2026-10-30T06:26:59.561673`
 - Sites: `206`
 - Steps: `main, list, categories, search, play`
-- Result: `PASS 196` | `WARN 3` | `FAIL 5` | `ERROR 0` | `SKIP 2`
+- Result: `PASS 194` | `WARN 3` | `FAIL 7` | `ERROR 0` | `SKIP 2`
 
 | Site | Overall | Main | List | Categories | Search | Play | Time |
 |---|---|---|---|---|---|---|---:|
-| 3movs | PASS | PASS | PASS | PASS | PASS | PASS | 4.2s |
-| aagmaal | PASS | PASS | PASS | PASS | PASS | PASS | 3.3s |
-| analdin | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 2.7s |
-| archivebate | PASS | PASS | PASS | SKIP | SKIP | PASS | 8.0s |
-| awmnet | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 1.5s |
-| bongacams | PASS | PASS | PASS | SKIP | SKIP | SKIP | 1.4s |
-| camhub | PASS | PASS | PASS | PASS | PASS | PASS | 3.0s |
+| 3movs | PASS | PASS | PASS | PASS | PASS | PASS | 3.3s |
+| aagmaal | PASS | PASS | PASS | PASS | PASS | PASS | 3.1s |
+| analdin | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 3.1s |
+| archivebate | PASS | PASS | PASS | SKIP | SKIP | PASS | 11.6s |
+| awmnet | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 2.0s |
+| bongacams | PASS | PASS | PASS | SKIP | SKIP | SKIP | 1.5s |
+| camhub | PASS | PASS | PASS | PASS | PASS | PASS | 3.5s |
 | celebsroulette | PASS | PASS | PASS | PASS | SKIP | PASS | 1.6s |
-| curbate | PASS | PASS | PASS | SKIP | PASS | PASS | 3.4s |
-| erome | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 3.7s |
-| familypornhd | PASS | PASS | PASS | PASS | PASS | PASS | 4.0s |
-| freeomovie | PASS | PASS | PASS | PASS | SKIP | PASS | 4.3s |
-| fullporner | PASS | PASS | PASS | SKIP | PASS | PASS | 2.6s |
-| hdporn | PASS | PASS | PASS | PASS | SKIP | PASS | 1.8s |
-| helloporn | PASS | PASS | PASS | SKIP | PASS | PASS | 3.6s |
-| hentaidude | PASS | PASS | PASS | SKIP | SKIP | SKIP | 3.2s |
-| hobbyporn | PASS | PASS | PASS | PASS | SKIP | SKIP | 2.0s |
-| hotleak | PASS | PASS | PASS | SKIP | PASS | PASS | 2.2s |
-| iceporncasting | PASS | PASS | PASS | PASS | SKIP | PASS | 2.2s |
-| javgg | PASS | PASS | PASS | PASS | SKIP | PASS | 2.5s |
-| javseen | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 2.8s |
-| justporn | PASS | PASS | PASS | PASS | PASS | PASS | 4.7s |
-| longvideos | PASS | PASS | PASS | PASS | SKIP | SKIP | 23.0s |
-| motherless | SKIP | SKIP | SKIP | SKIP | SKIP | SKIP | 5.0s |
-| myporntape | PASS | PASS | PASS | PASS | SKIP | PASS | 1.6s |
-| netfapx | PASS | PASS | PASS | PASS | PASS | PASS | 3.0s |
+| curbate | PASS | PASS | PASS | SKIP | PASS | PASS | 3.2s |
+| erome | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 3.9s |
+| familypornhd | PASS | PASS | PASS | PASS | PASS | PASS | 3.3s |
+| freeomovie | PASS | PASS | PASS | PASS | SKIP | PASS | 5.2s |
+| fullporner | PASS | PASS | PASS | SKIP | PASS | PASS | 2.4s |
+| hdporn | PASS | PASS | PASS | PASS | SKIP | PASS | 1.6s |
+| helloporn | PASS | PASS | PASS | SKIP | PASS | PASS | 3.2s |
+| hentaidude | PASS | PASS | PASS | SKIP | SKIP | SKIP | 3.7s |
+| hobbyporn | PASS | PASS | PASS | PASS | SKIP | SKIP | 2.4s |
+| hotleak | PASS | PASS | PASS | SKIP | PASS | PASS | 2.4s |
+| iceporncasting | PASS | PASS | PASS | PASS | SKIP | PASS | 2.8s |
+| javgg | PASS | PASS | PASS | PASS | SKIP | PASS | 9.8s |
+| javseen | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 1.8s |
+| justporn | PASS | PASS | PASS | PASS | PASS | PASS | 6.0s |
+| longvideos | PASS | PASS | PASS | PASS | SKIP | SKIP | 22.6s |
+| motherless | SKIP | SKIP | SKIP | SKIP | SKIP | SKIP | 4.1s |
+| myporntape | PASS | PASS | PASS | PASS | SKIP | PASS | 1.8s |
+| netfapx | PASS | PASS | PASS | PASS | PASS | PASS | 3.1s |
 | nonktube | PASS | PASS | PASS | PASS | SKIP | PASS | 2.8s |
-| onlyjerk | PASS | PASS | PASS | SKIP | PASS | PASS | 7.0s |
-| perverzija | WARN | PASS | SKIP | SKIP | PASS | FAIL | 7.7s |
-| pmvhaven | PASS | PASS | PASS | SKIP | SKIP | PASS | 2.4s |
-| pornditt | PASS | PASS | PASS | SKIP | PASS | PASS | 1.3s |
+| onlyjerk | PASS | PASS | PASS | SKIP | PASS | PASS | 8.1s |
+| perverzija | WARN | PASS | SKIP | SKIP | PASS | FAIL | 8.2s |
+| pmvhaven | PASS | PASS | PASS | SKIP | SKIP | PASS | 2.6s |
+| pornditt | PASS | PASS | PASS | SKIP | PASS | PASS | 1.6s |
 | pornhat | PASS | PASS | PASS | PASS | SKIP | PASS | 2.6s |
-| pornkai | PASS | PASS | PASS | PASS | SKIP | PASS | 3.8s |
-| porno24 | PASS | PASS | PASS | PASS | PASS | PASS | 3.3s |
-| pornroom | PASS | PASS | PASS | PASS | SKIP | PASS | 4.4s |
-| pornxp | PASS | PASS | PASS | SKIP | SKIP | PASS | 7.9s |
-| redtube | PASS | PASS | PASS | PASS | SKIP | PASS | 13.4s |
-| sexyporn | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 0.9s |
-| speedporn | PASS | PASS | PASS | PASS | PASS | PASS | 3.0s |
+| pornkai | PASS | PASS | PASS | PASS | SKIP | PASS | 2.2s |
+| porno24 | PASS | PASS | PASS | PASS | PASS | PASS | 4.1s |
+| pornroom | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 121.1s |
+| pornxp | PASS | PASS | PASS | SKIP | SKIP | PASS | 7.3s |
+| redtube | PASS | PASS | PASS | PASS | SKIP | PASS | 13.1s |
+| sexyporn | PASS | PASS | PASS | PASS | PASS | PASS | 1.2s |
+| speedporn | PASS | PASS | PASS | PASS | PASS | PASS | 2.5s |
 | superporn | PASS | PASS | PASS | PASS | PASS | PASS | 3.7s |
-| tabootube | PASS | PASS | PASS | PASS | SKIP | PASS | 3.8s |
-| thothub | PASS | PASS | PASS | PASS | PASS | PASS | 1.9s |
-| trendyporn | PASS | PASS | PASS | PASS | SKIP | PASS | 2.8s |
-| uflash | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 1.3s |
-| viralxxxporn | PASS | PASS | PASS | PASS | PASS | PASS | 5.2s |
-| webpussi | PASS | PASS | PASS | PASS | PASS | PASS | 2.4s |
-| xgirls | PASS | PASS | PASS | PASS | PASS | PASS | 2.2s |
-| xmegadrive | PASS | PASS | PASS | PASS | PASS | PASS | 2.3s |
-| xozilla | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 4.4s |
-| xvideos | PASS | PASS | PASS | PASS | SKIP | PASS | 3.7s |
-| yespornvip | PASS | PASS | SKIP | SKIP | SKIP | PASS | 1.8s |
-| yourlesbians | PASS | PASS | PASS | SKIP | PASS | PASS | 5.4s |
-| 6xtube | PASS | PASS | PASS | PASS | SKIP | PASS | 3.4s |
-| aagmaalpro | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 1.1s |
-| animeidhentai | FAIL | PASS | FAIL | SKIP | SKIP | SKIP | 26.6s |
-| asianviralhub | PASS | PASS | PASS | SKIP | SKIP | PASS | 0.8s |
-| beeg | PASS | PASS | PASS | PASS | SKIP | SKIP | 0.8s |
-| cam4 | PASS | PASS | PASS | SKIP | SKIP | SKIP | 0.5s |
+| tabootube | PASS | PASS | PASS | PASS | SKIP | PASS | 3.5s |
+| thothub | PASS | PASS | PASS | PASS | PASS | PASS | 1.8s |
+| trendyporn | PASS | PASS | PASS | PASS | SKIP | PASS | 2.2s |
+| uflash | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 1.2s |
+| viralxxxporn | PASS | PASS | PASS | PASS | PASS | PASS | 1.2s |
+| webpussi | PASS | PASS | PASS | PASS | PASS | PASS | 2.3s |
+| xgirls | PASS | PASS | PASS | PASS | PASS | PASS | 2.3s |
+| xmegadrive | PASS | PASS | PASS | PASS | PASS | PASS | 1.9s |
+| xozilla | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 5.0s |
+| xvideos | PASS | PASS | PASS | PASS | SKIP | PASS | 4.1s |
+| yespornvip | PASS | PASS | SKIP | SKIP | SKIP | PASS | 1.7s |
+| yourlesbians | PASS | PASS | PASS | SKIP | PASS | PASS | 5.9s |
+| 6xtube | PASS | PASS | PASS | PASS | SKIP | PASS | 3.7s |
+| aagmaalpro | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 1.8s |
+| animeidhentai | PASS | PASS | PASS | PASS | PASS | PASS | 12.5s |
+| asianviralhub | PASS | PASS | PASS | SKIP | SKIP | PASS | 0.9s |
+| beeg | PASS | PASS | PASS | PASS | SKIP | SKIP | 0.9s |
+| cam4 | PASS | PASS | PASS | SKIP | SKIP | SKIP | 0.6s |
 | camsoda | PASS | PASS | PASS | SKIP | SKIP | SKIP | 0.5s |
 | chaturbate | PASS | PASS | PASS | SKIP | SKIP | SKIP | 0.6s |
-| drtuber | PASS | PASS | PASS | PASS | SKIP | PASS | 3.6s |
-| erothots | PASS | PASS | PASS | SKIP | PASS | PASS | 4.9s |
-| fapello | PASS | PASS | PASS | SKIP | SKIP | PASS | 2.0s |
-| freepornvideos | PASS | PASS | PASS | SKIP | PASS | PASS | 1.8s |
-| fullxcinema | PASS | PASS | PASS | PASS | SKIP | PASS | 2.5s |
-| hdporn92 | PASS | PASS | PASS | PASS | SKIP | PASS | 20.6s |
-| hentai-moon | PASS | PASS | PASS | PASS | SKIP | PASS | 1.8s |
-| hentaihavenco | PASS | PASS | PASS | SKIP | SKIP | SKIP | 91.1s |
+| drtuber | PASS | PASS | PASS | PASS | SKIP | PASS | 3.9s |
+| erothots | PASS | PASS | PASS | SKIP | PASS | PASS | 4.6s |
+| fapello | PASS | PASS | PASS | SKIP | SKIP | PASS | 1.8s |
+| freepornvideos | PASS | PASS | PASS | SKIP | PASS | PASS | 2.4s |
+| fullxcinema | PASS | PASS | PASS | PASS | SKIP | PASS | 3.2s |
+| hdporn92 | PASS | PASS | PASS | PASS | SKIP | PASS | 2.4s |
+| hentai-moon | PASS | PASS | PASS | PASS | SKIP | PASS | 1.7s |
+| hentaihavenco | PASS | PASS | SKIP | PASS | SKIP | PASS | 2.5s |
 | homemoviestube | PASS | PASS | PASS | PASS | SKIP | PASS | 1.7s |
-| hpjav | PASS | PASS | PASS | SKIP | SKIP | PASS | 2.0s |
-| ikisoda | PASS | PASS | PASS | SKIP | PASS | PASS | 2.8s |
-| javguru | PASS | PASS | PASS | PASS | SKIP | PASS | 1.8s |
-| jizzbunker | PASS | PASS | PASS | PASS | PASS | PASS | 2.7s |
-| kissjav | PASS | PASS | PASS | PASS | SKIP | PASS | 4.6s |
-| luxuretv | PASS | PASS | PASS | PASS | PASS | PASS | 4.1s |
-| mrsexe | PASS | PASS | PASS | PASS | SKIP | SKIP | 4.7s |
-| naked | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 0.2s |
-| netflav | PASS | PASS | PASS | SKIP | SKIP | SKIP | 2.9s |
+| hpjav | PASS | PASS | PASS | SKIP | SKIP | PASS | 2.2s |
+| ikisoda | PASS | PASS | PASS | SKIP | PASS | PASS | 1.9s |
+| javguru | PASS | PASS | PASS | PASS | SKIP | PASS | 2.3s |
+| jizzbunker | PASS | PASS | PASS | PASS | PASS | PASS | 3.1s |
+| kissjav | PASS | PASS | PASS | PASS | SKIP | PASS | 6.2s |
+| luxuretv | PASS | PASS | PASS | PASS | PASS | PASS | 4.0s |
+| mrsexe | PASS | PASS | PASS | PASS | SKIP | SKIP | 5.4s |
+| naked | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 0.3s |
+| netflav | PASS | PASS | PASS | SKIP | SKIP | SKIP | 2.4s |
 | noodlemagazine | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 1.2s |
-| paradisehill | PASS | PASS | SKIP | PASS | SKIP | SKIP | 3.5s |
-| pimpbunny | PASS | PASS | PASS | SKIP | PASS | PASS | 3.4s |
-| porn4k | FAIL | FAIL | SKIP | SKIP | SKIP | SKIP | 35.2s |
-| porndoe | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 1.5s |
+| paradisehill | PASS | PASS | SKIP | PASS | SKIP | SKIP | 3.7s |
+| pimpbunny | PASS | PASS | PASS | SKIP | PASS | PASS | 3.1s |
+| porn4k | FAIL | FAIL | SKIP | SKIP | SKIP | SKIP | 35.3s |
+| porndoe | PASS | PASS | PASS | SKIP | PASS | PASS | 2.5s |
 | pornhd3x | PASS | PASS | PASS | SKIP | SKIP | PASS | 2.6s |
-| pornmd | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 1.8s |
-| porno365 | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 2.4s |
-| pornslash | PASS | PASS | PASS | PASS | PASS | PASS | 7.4s |
-| pornyteen | PASS | PASS | PASS | PASS | PASS | PASS | 2.7s |
+| pornmd | PASS | PASS | PASS | SKIP | PASS | PASS | 4.6s |
+| porno365 | PASS | PASS | PASS | SKIP | SKIP | SKIP | 4.3s |
+| pornslash | PASS | PASS | PASS | PASS | PASS | PASS | 6.7s |
+| pornyteen | PASS | PASS | PASS | PASS | PASS | PASS | 3.5s |
 | rule34video | PASS | PASS | SKIP | PASS | SKIP | SKIP | 2.5s |
-| sinparty | PASS | PASS | PASS | SKIP | PASS | PASS | 0.9s |
+| sinparty | PASS | PASS | PASS | SKIP | PASS | PASS | 1.6s |
 | streamate | PASS | PASS | PASS | SKIP | SKIP | SKIP | 1.1s |
-| supjav | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 35.2s |
+| supjav | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 35.3s |
 | terebon | PASS | PASS | PASS | PASS | SKIP | PASS | 2.6s |
-| tnaflix | PASS | PASS | PASS | PASS | SKIP | PASS | 2.7s |
-| tube8 | PASS | PASS | SKIP | PASS | SKIP | SKIP | 10.5s |
-| vaginanl | PASS | PASS | PASS | PASS | SKIP | PASS | 4.9s |
-| watcherotic | PASS | PASS | PASS | SKIP | SKIP | PASS | 3.0s |
-| whereismyporn | PASS | PASS | SKIP | SKIP | PASS | PASS | 4.3s |
-| xhamster | PASS | PASS | PASS | PASS | PASS | SKIP | 4.5s |
-| xmoviesforyou | PASS | PASS | PASS | SKIP | SKIP | PASS | 1.6s |
-| xsharings | FAIL | PASS | FAIL | SKIP | SKIP | SKIP | 36.6s |
-| xxdbx | PASS | PASS | PASS | SKIP | SKIP | PASS | 3.0s |
-| youcrazyx | PASS | PASS | PASS | SKIP | PASS | PASS | 4.2s |
+| tnaflix | PASS | PASS | PASS | PASS | SKIP | PASS | 3.9s |
+| tube8 | PASS | PASS | SKIP | PASS | SKIP | SKIP | 11.3s |
+| vaginanl | PASS | PASS | PASS | PASS | SKIP | PASS | 3.6s |
+| watcherotic | PASS | PASS | PASS | SKIP | SKIP | PASS | 3.1s |
+| whereismyporn | PASS | PASS | SKIP | SKIP | PASS | PASS | 5.1s |
+| xhamster | PASS | PASS | PASS | PASS | PASS | PASS | 4.5s |
+| xmoviesforyou | PASS | PASS | PASS | SKIP | SKIP | PASS | 1.5s |
+| xsharings | FAIL | PASS | FAIL | SKIP | SKIP | SKIP | 37.6s |
+| xxdbx | PASS | PASS | PASS | SKIP | SKIP | PASS | 3.1s |
+| youcrazyx | PASS | PASS | PASS | SKIP | PASS | PASS | 3.6s |
 | yrprno | PASS | PASS | PASS | PASS | SKIP | PASS | 3.2s |
-| 85po | PASS | PASS | SKIP | PASS | SKIP | SKIP | 3.3s |
-| absoluporn | PASS | PASS | PASS | PASS | SKIP | PASS | 2.9s |
-| anybunny | PASS | PASS | PASS | PASS | PASS | PASS | 1.2s |
-| ask4porn | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 35.2s |
-| beemtube | PASS | PASS | PASS | PASS | SKIP | PASS | 3.2s |
-| camcaps | PASS | PASS | PASS | PASS | PASS | PASS | 5.9s |
-| camwhoresbay | PASS | PASS | PASS | PASS | PASS | PASS | 3.2s |
+| 85po | PASS | PASS | SKIP | PASS | SKIP | SKIP | 2.9s |
+| absoluporn | PASS | PASS | PASS | PASS | SKIP | PASS | 2.8s |
+| anybunny | PASS | PASS | PASS | PASS | PASS | PASS | 0.9s |
+| ask4porn | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 35.3s |
+| beemtube | PASS | PASS | PASS | PASS | SKIP | PASS | 2.9s |
+| camcaps | PASS | PASS | PASS | PASS | PASS | PASS | 6.1s |
+| camwhoresbay | PASS | PASS | PASS | PASS | PASS | PASS | 2.8s |
 | cloudbate | PASS | PASS | PASS | SKIP | SKIP | PASS | 2.8s |
-| ecamrips | PASS | PASS | PASS | SKIP | PASS | PASS | 8.0s |
-| eroticage | PASS | PASS | PASS | PASS | PASS | PASS | 17.1s |
-| foxnxx | PASS | PASS | PASS | SKIP | PASS | PASS | 2.6s |
+| ecamrips | PASS | PASS | PASS | SKIP | PASS | PASS | 7.7s |
+| eroticage | PASS | PASS | PASS | PASS | PASS | PASS | 4.7s |
+| foxnxx | PASS | PASS | PASS | SKIP | PASS | PASS | 2.9s |
 | freeuseporn | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 1.5s |
-| fyxxr | PASS | PASS | PASS | SKIP | SKIP | PASS | 26.1s |
-| heavyfetish | PASS | PASS | PASS | PASS | PASS | PASS | 4.5s |
-| hentai2w | FAIL | PASS | FAIL | SKIP | SKIP | SKIP | 12.2s |
-| hentaistream | PASS | PASS | PASS | PASS | SKIP | PASS | 3.8s |
-| hornyfap | PASS | PASS | PASS | PASS | PASS | PASS | 1.5s |
-| hqporner | PASS | PASS | PASS | PASS | SKIP | PASS | 2.6s |
-| japteenx | PASS | PASS | PASS | PASS | SKIP | PASS | 1.9s |
-| javhdporn | PASS | PASS | PASS | PASS | SKIP | SKIP | 2.5s |
-| josporn | PASS | PASS | PASS | PASS | PASS | PASS | 2.0s |
-| lemoncams | PASS | PASS | SKIP | SKIP | PASS | SKIP | 0.7s |
-| mangoporn | PASS | PASS | SKIP | PASS | SKIP | SKIP | 29.9s |
-| myfreecams | PASS | PASS | PASS | SKIP | SKIP | SKIP | 1.9s |
-| naughtyblog | PASS | PASS | PASS | PASS | PASS | PASS | 5.6s |
-| netflixporno | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 3.4s |
+| fyxxr | PASS | PASS | PASS | SKIP | SKIP | PASS | 3.2s |
+| heavyfetish | PASS | PASS | PASS | PASS | PASS | PASS | 4.2s |
+| hentai2w | FAIL | PASS | FAIL | SKIP | SKIP | SKIP | 1.2s |
+| hentaistream | PASS | PASS | PASS | PASS | SKIP | PASS | 3.6s |
+| hornyfap | PASS | PASS | PASS | PASS | PASS | PASS | 1.8s |
+| hqporner | PASS | PASS | PASS | PASS | SKIP | PASS | 2.3s |
+| japteenx | PASS | PASS | PASS | PASS | SKIP | PASS | 1.4s |
+| javhdporn | PASS | PASS | PASS | PASS | SKIP | SKIP | 2.6s |
+| josporn | PASS | PASS | PASS | PASS | PASS | PASS | 2.3s |
+| lemoncams | PASS | PASS | SKIP | SKIP | PASS | SKIP | 0.8s |
+| mangoporn | FAIL | PASS | FAIL | SKIP | SKIP | SKIP | 91.1s |
+| myfreecams | PASS | PASS | PASS | SKIP | SKIP | SKIP | 1.7s |
+| naughtyblog | PASS | PASS | PASS | PASS | PASS | PASS | 5.0s |
+| netflixporno | FAIL | PASS | FAIL | SKIP | SKIP | SKIP | 42.7s |
 | notfans | PASS | PASS | PASS | SKIP | PASS | PASS | 1.3s |
-| peachurnet | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 95.5s |
-| playhdporn | PASS | PASS | PASS | PASS | PASS | PASS | 2.6s |
-| porndig | PASS | PASS | PASS | SKIP | SKIP | PASS | 2.8s |
-| pornez | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 0.5s |
-| pornhoarder | SKIP | SKIP | SKIP | SKIP | SKIP | SKIP | 35.2s |
-| pornmz | PASS | PASS | PASS | PASS | SKIP | PASS | 6.0s |
-| pornobae | PASS | PASS | PASS | PASS | PASS | PASS | 3.2s |
-| porntn | PASS | PASS | PASS | SKIP | PASS | PASS | 3.2s |
-| premiumporn | PASS | PASS | PASS | PASS | SKIP | PASS | 9.8s |
-| seaporn | WARN | PASS | PASS | PASS | SKIP | FAIL | 75.8s |
-| someporn | PASS | PASS | PASS | SKIP | PASS | PASS | 3.5s |
-| stripchat | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 0.2s |
-| sxyprn | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 86.5s |
-| thepornarea | PASS | PASS | PASS | SKIP | SKIP | PASS | 23.3s |
-| tokyomotion | PASS | PASS | PASS | PASS | PASS | PASS | 1.5s |
+| peachurnet | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 95.7s |
+| playhdporn | PASS | PASS | PASS | PASS | PASS | PASS | 3.0s |
+| porndig | PASS | PASS | PASS | SKIP | SKIP | PASS | 4.2s |
+| pornez | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 2.6s |
+| pornhoarder | SKIP | SKIP | SKIP | SKIP | SKIP | SKIP | 35.3s |
+| pornmz | PASS | PASS | PASS | PASS | SKIP | PASS | 4.9s |
+| pornobae | PASS | PASS | PASS | PASS | PASS | PASS | 3.6s |
+| porntn | PASS | PASS | PASS | SKIP | PASS | PASS | 2.8s |
+| premiumporn | PASS | PASS | PASS | PASS | SKIP | PASS | 10.4s |
+| seaporn | PASS | PASS | PASS | PASS | SKIP | PASS | 4.6s |
+| someporn | PASS | PASS | PASS | SKIP | PASS | PASS | 3.6s |
+| stripchat | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 0.3s |
+| sxyprn | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 133.3s |
+| thepornarea | PASS | PASS | PASS | SKIP | SKIP | PASS | 1.3s |
+| tokyomotion | PASS | PASS | PASS | PASS | PASS | PASS | 2.0s |
 | tubxporn | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 0.7s |
-| vipporns | PASS | PASS | PASS | SKIP | SKIP | PASS | 7.0s |
-| watchmdh | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 35.2s |
-| whoreshub | PASS | PASS | PASS | PASS | SKIP | PASS | 4.2s |
-| xhuzz | PASS | PASS | PASS | PASS | PASS | PASS | 1.3s |
-| xnxx | PASS | PASS | SKIP | PASS | SKIP | PASS | 4.4s |
-| xtapesla | FAIL | FAIL | SKIP | SKIP | SKIP | SKIP | 35.2s |
-| xxthots | PASS | PASS | PASS | SKIP | PASS | PASS | 2.0s |
-| youjizz | PASS | PASS | PASS | PASS | SKIP | PASS | 13.7s |
-| 91porna | PASS | PASS | PASS | PASS | PASS | PASS | 4.0s |
-| amateurtv | PASS | PASS | PASS | SKIP | SKIP | SKIP | 0.5s |
-| anysex | PASS | PASS | PASS | PASS | PASS | PASS | 1.9s |
-| avple | PASS | PASS | PASS | PASS | SKIP | SKIP | 47.0s |
-| blendporn | PASS | PASS | PASS | PASS | SKIP | PASS | 3.3s |
-| camgirlfap | PASS | PASS | PASS | PASS | PASS | PASS | 4.7s |
-| camwhorestv | PASS | PASS | PASS | PASS | SKIP | PASS | 3.0s |
-| cumlouder | PASS | PASS | PASS | SKIP | SKIP | PASS | 9.7s |
-| eporner | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 2.1s |
-| eroticmv | PASS | PASS | PASS | PASS | PASS | PASS | 1.8s |
-| fpoxxx | PASS | PASS | PASS | SKIP | PASS | PASS | 2.7s |
-| freshporno | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 2.0s |
-| hanime | WARN | PASS | SKIP | SKIP | PASS | FAIL | 36.8s |
-| heavyr | PASS | PASS | SKIP | PASS | PASS | PASS | 4.8s |
-| hentaicity | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 3.2s |
-| hitprn | PASS | PASS | PASS | SKIP | PASS | PASS | 1.9s |
+| vipporns | PASS | PASS | PASS | SKIP | SKIP | PASS | 6.3s |
+| watchmdh | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 35.3s |
+| whoreshub | PASS | PASS | PASS | PASS | SKIP | PASS | 3.7s |
+| xhuzz | PASS | PASS | PASS | PASS | PASS | PASS | 1.4s |
+| xnxx | PASS | PASS | SKIP | PASS | SKIP | PASS | 4.0s |
+| xtapesla | FAIL | FAIL | SKIP | SKIP | SKIP | SKIP | 35.3s |
+| xxthots | PASS | PASS | PASS | SKIP | PASS | PASS | 1.8s |
+| youjizz | PASS | PASS | PASS | PASS | SKIP | PASS | 15.0s |
+| 91porna | PASS | PASS | PASS | PASS | PASS | PASS | 3.2s |
+| amateurtv | PASS | PASS | PASS | SKIP | SKIP | SKIP | 0.6s |
+| anysex | PASS | PASS | PASS | PASS | PASS | PASS | 1.6s |
+| avple | PASS | PASS | PASS | PASS | SKIP | SKIP | 76.7s |
+| blendporn | PASS | PASS | PASS | PASS | SKIP | PASS | 3.5s |
+| camgirlfap | PASS | PASS | PASS | PASS | PASS | PASS | 5.3s |
+| camwhorestv | PASS | PASS | PASS | PASS | SKIP | PASS | 3.2s |
+| cumlouder | PASS | PASS | SKIP | SKIP | SKIP | PASS | 22.2s |
+| eporner | PASS | PASS | PASS | PASS | SKIP | PASS | 3.6s |
+| eroticmv | PASS | PASS | PASS | PASS | PASS | PASS | 2.1s |
+| fpoxxx | PASS | PASS | PASS | SKIP | PASS | PASS | 2.3s |
+| freshporno | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 2.3s |
+| hanime | WARN | PASS | SKIP | SKIP | PASS | FAIL | 37.8s |
+| heavyr | PASS | PASS | SKIP | PASS | PASS | PASS | 2.6s |
+| hentaicity | PASS | PASS | PASS | PASS | PASS | PASS | 3.3s |
+| hitprn | PASS | PASS | PASS | SKIP | PASS | PASS | 3.8s |
 | hornysharks | PASS | PASS | PASS | PASS | PASS | PASS | 2.5s |
-| hypnotube | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 2.8s |
-| javbangers | PASS | PASS | SKIP | PASS | PASS | PASS | 5.8s |
-| javmoe | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 2.2s |
-| justfullporn | PASS | PASS | PASS | SKIP | PASS | PASS | 3.4s |
-| livecamrips | PASS | PASS | PASS | SKIP | PASS | SKIP | 2.3s |
-| missav | PASS | PASS | PASS | SKIP | SKIP | PASS | 1.7s |
-| mylust | PASS | PASS | PASS | PASS | PASS | PASS | 2.1s |
-| neporn | PASS | PASS | PASS | PASS | PASS | PASS | 1.8s |
-| nltubes | PASS | PASS | PASS | PASS | SKIP | PASS | 7.0s |
-| okxxx | PASS | PASS | PASS | SKIP | PASS | PASS | 3.4s |
-| peekvids | PASS | PASS | PASS | PASS | SKIP | PASS | 2.2s |
-| playvids | PASS | PASS | PASS | PASS | PASS | PASS | 2.5s |
-| porndish | PASS | PASS | PASS | SKIP | SKIP | PASS | 2.1s |
-| porngo | PASS | PASS | PASS | PASS | SKIP | PASS | 7.1s |
-| pornhub | PASS | PASS | PASS | PASS | PASS | PASS | 13.5s |
-| porno1hu | PASS | PASS | PASS | PASS | SKIP | PASS | 4.8s |
-| pornone | PASS | PASS | PASS | PASS | SKIP | PASS | 2.5s |
-| porntrex | PASS | PASS | PASS | PASS | SKIP | PASS | 4.0s |
-| reallifecam | PASS | PASS | PASS | SKIP | SKIP | PASS | 3.7s |
-| sextb | PASS | PASS | PASS | SKIP | PASS | PASS | 5.0s |
-| spankbang | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 46.3s |
-| sunporno | PASS | PASS | PASS | SKIP | PASS | PASS | 1.5s |
-| taboofantazy | PASS | PASS | PASS | PASS | SKIP | PASS | 5.4s |
+| hypnotube | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 3.2s |
+| javbangers | PASS | PASS | SKIP | PASS | PASS | PASS | 6.7s |
+| javmoe | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 2.3s |
+| justfullporn | FAIL | FAIL | SKIP | SKIP | SKIP | SKIP | 35.2s |
+| livecamrips | PASS | PASS | PASS | SKIP | PASS | SKIP | 3.2s |
+| missav | PASS | PASS | PASS | SKIP | SKIP | PASS | 1.3s |
+| mylust | PASS | PASS | PASS | PASS | PASS | PASS | 2.2s |
+| neporn | PASS | PASS | PASS | PASS | PASS | PASS | 2.5s |
+| nltubes | PASS | PASS | PASS | PASS | SKIP | PASS | 7.3s |
+| okxxx | PASS | PASS | PASS | SKIP | PASS | PASS | 4.1s |
+| peekvids | PASS | PASS | PASS | PASS | SKIP | PASS | 33.0s |
+| playvids | PASS | PASS | PASS | PASS | PASS | PASS | 4.8s |
+| porndish | PASS | PASS | PASS | SKIP | SKIP | PASS | 1.9s |
+| porngo | PASS | PASS | PASS | PASS | SKIP | PASS | 6.0s |
+| pornhub | PASS | PASS | PASS | PASS | PASS | PASS | 13.6s |
+| porno1hu | PASS | PASS | PASS | PASS | SKIP | PASS | 5.2s |
+| pornone | PASS | PASS | PASS | PASS | SKIP | PASS | 2.1s |
+| porntrex | PASS | PASS | PASS | PASS | SKIP | PASS | 4.4s |
+| reallifecam | PASS | PASS | PASS | SKIP | SKIP | PASS | 3.1s |
+| sextb | WARN | PASS | PASS | SKIP | PASS | FAIL | 4.5s |
+| spankbang | PASS | PASS | PASS | SKIP | PASS | PASS | 44.8s |
+| sunporno | PASS | PASS | PASS | SKIP | PASS | PASS | 1.3s |
+| taboofantazy | PASS | PASS | PASS | PASS | SKIP | PASS | 4.2s |
 | theyarehuge | PASS | PASS | SKIP | SKIP | SKIP | SKIP | 1.1s |
-| trannyteca | PASS | PASS | SKIP | PASS | SKIP | SKIP | 4.8s |
-| txxx | PASS | PASS | SKIP | PASS | SKIP | SKIP | 6.5s |
-| viralvideosporno | PASS | PASS | PASS | PASS | SKIP | PASS | 5.6s |
-| watchporn | PASS | PASS | PASS | PASS | SKIP | PASS | 3.6s |
-| xfreehd | PASS | PASS | PASS | PASS | SKIP | PASS | 2.1s |
-| xlovecam | PASS | PASS | PASS | SKIP | SKIP | PASS | 1.4s |
-| xoxostream | PASS | PASS | PASS | SKIP | PASS | PASS | 7.7s |
-| xtheatre | PASS | PASS | PASS | PASS | PASS | PASS | 7.6s |
-| xxxtube | PASS | PASS | PASS | SKIP | PASS | PASS | 2.3s |
-| youporn | PASS | PASS | PASS | SKIP | PASS | PASS | 24.8s |
+| trannyteca | PASS | PASS | SKIP | PASS | SKIP | SKIP | 5.2s |
+| txxx | PASS | PASS | SKIP | PASS | SKIP | SKIP | 6.6s |
+| viralvideosporno | PASS | PASS | PASS | PASS | SKIP | PASS | 6.2s |
+| watchporn | PASS | PASS | PASS | PASS | SKIP | PASS | 3.8s |
+| xfreehd | PASS | PASS | PASS | PASS | SKIP | PASS | 2.2s |
+| xlovecam | PASS | PASS | PASS | SKIP | PASS | PASS | 1.6s |
+| xoxostream | PASS | PASS | PASS | SKIP | PASS | PASS | 11.4s |
+| xtheatre | PASS | PASS | PASS | PASS | PASS | PASS | 6.2s |
+| xxxtube | PASS | PASS | PASS | SKIP | PASS | PASS | 1.7s |
+| youporn | PASS | PASS | SKIP | PASS | SKIP | PASS | 20.1s |
 
 ## Failures
-
-### animeidhentai
-- `list`: `List URL unavailable in harness (HTTP 504)` (class: `UNKNOWN`) | url: `https://animeidhentai.com/genre/hentai-uncensored/`
 
 ### porn4k
 - `main`: `RuntimeError: FlareSolverr error for https://porn4k.to/page/1/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1` (class: `ENV`)
@@ -230,9 +227,21 @@
 ### hentai2w
 - `list`: `List returned no videos` (class: `PARSER`) | url: `https://hentai2w.com/most-viewed/`
 
+### mangoporn
+- `list`: `List returned no videos` (class: `PARSER`) | url: `https://mangoporn.net/genres/porn-movies/`
+- Notify: `Oh oh: It looks like this website is down.`
+
+### netflixporno
+- `list`: `List URL unavailable in harness (HTTP 525)` (class: `UNKNOWN`) | url: `https://netflixporno.net/scenes/`
+- Notify: `Oh oh: It looks like this website is down.`
+
 ### xtapesla
 - `main`: `RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1` (class: `ENV`)
 - Notify: `FlareSolverr Failed: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1`
+
+### justfullporn
+- `main`: `RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1` (class: `ENV`)
+- Notify: `FlareSolverr Failed: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1`
 
 
 ## Failure Classification Summary
@@ -242,12 +251,12 @@
 These sites have step failures that may indicate real bugs:
 
 - **perverzija**: play: IndexError: list index out of range
+- **sextb**: play: Play function executed but no playback URL captured (no notifications)
 
 ### WARN (Likely Not Actionable)
 
 These WARN sites failed only on steps that are likely harness limitations:
 
-- **seaporn**: play: Timed out after 35s
 - **hanime**: play: RuntimeError: FlareSolverr error for https://hanime.tv/api/v8/video?id=https://hanime.tv/yabai-fukushuu-yami-site-2: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
 ### SKIP (Not Actionable)

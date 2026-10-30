@@ -5,24 +5,26 @@
 
 ## Snapshot
 
-- Current: `PASS 196` | `WARN 3` | `FAIL 5` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 197` | `WARN 2` | `FAIL 5` | `ERROR 0` | `SKIP 2`
+- Current: `PASS 194` | `WARN 3` | `FAIL 7` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 196` | `WARN 3` | `FAIL 5` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
-- New failures: `1`
+- New failures: `3`
 - Resolved failures: `1`
 - Persistent failures: `4`
-- Site regressions: `2`
-- Step regressions: `2`
+- Site regressions: `4`
+- Step regressions: `4`
 
 ## New Failures
 
-- **animeidhentai**: `PASS -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 504)
+- **justfullporn**: `PASS -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **mangoporn**: `PASS -> FAIL` (PARSER) | list: List returned no videos
+- **netflixporno**: `PASS -> FAIL` (UNKNOWN) | list: List URL unavailable in harness (HTTP 525)
 
 ## Resolved Failures
 
-- **mangoporn**: `FAIL -> PASS`
+- **animeidhentai**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -33,5 +35,11 @@
 
 ## Step Regressions
 
-- **animeidhentai** `list`: `PASS -> FAIL` (UNKNOWN) | List URL unavailable in harness (HTTP 504)
-- **seaporn** `play`: `PASS -> FAIL` (NETWORK) | Timed out after 35s
+- **justfullporn** `main`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **mangoporn** `list`: `SKIP -> FAIL` (PARSER) | List returned no videos
+- **netflixporno** `list`: `SKIP -> FAIL` (UNKNOWN) | List URL unavailable in harness (HTTP 525)
+- **sextb** `play`: `PASS -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
+
+## Improvements
+
+- **seaporn**: `WARN -> PASS`
