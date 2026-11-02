@@ -5,15 +5,15 @@
 
 ## Snapshot
 
-- Current: `PASS 196` | `WARN 3` | `FAIL 4` | `ERROR 0` | `SKIP 3`
-- Previous: `PASS 197` | `WARN 3` | `FAIL 4` | `ERROR 0` | `SKIP 2`
+- Current: `PASS 197` | `WARN 3` | `FAIL 4` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 196` | `WARN 3` | `FAIL 4` | `ERROR 0` | `SKIP 3`
 
 ## Delta Summary
 
 - New failures: `0`
 - Resolved failures: `0`
 - Persistent failures: `4`
-- Site regressions: `1`
+- Site regressions: `0`
 - Step regressions: `1`
 
 ## Persistent Failures
@@ -25,4 +25,8 @@
 
 ## Step Regressions
 
-- **sextb** `categories`: `SKIP -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://sextb.net/genres: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **sextb** `play`: `SKIP -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
+
+## Improvements
+
+- **spankbang**: `SKIP -> PASS`
