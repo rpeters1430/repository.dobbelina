@@ -8,7 +8,7 @@
 services:
   flaresolverr:
     # same image the Site Health workflow uses
-    image: ghcr.io/germondai/trawl@sha256:c46f74dfde3df278ff3dc5357f78df1109dfddd9aef754b4dcba1ac98f6fc6ae
+    image: ghcr.io/germondai/trawl@sha256:1beeb19cef0952cad1f071dbc188c83eb3086ee176cd309be6383dba44b06ece
     restart: unless-stopped
 
   kodi-e2e:
