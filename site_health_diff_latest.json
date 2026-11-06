@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-11-06T06:27:10.119045",
+    "sites_total": 206,
+    "pass": 195,
+    "warn": 3,
+    "fail": 6,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-11-05T06:23:36.070090",
     "sites_total": 206,
     "pass": 197,
@@ -8,24 +17,34 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-11-04T06:24:59.122837",
-    "sites_total": 206,
-    "pass": 197,
-    "warn": 3,
-    "fail": 4,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
-    "new_failures": 0,
+    "new_failures": 2,
     "resolved_failures": 0,
     "persistent_failures": 4,
     "improved_sites": 0,
-    "regressions": 0,
-    "step_regressions": 0
+    "regressions": 2,
+    "step_regressions": 2
   },
-  "new_failures": [],
+  "new_failures": [
+    {
+      "site": "tokyomotion",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "list: List URL unavailable in harness (HTTP 503)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xmegadrive",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "ENV",
+      "message": "main: RuntimeError: FlareSolverr error for https://www.xmegadrive.com/latest-updates/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
   "resolved_failures": [],
   "persistent_failures": [
     {
@@ -66,6 +85,42 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [],
-  "deltas": []
+  "step_regressions": [
+    {
+      "site": "tokyomotion",
+      "step": "list",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "List URL unavailable in harness (HTTP 503)",
+      "class": "NETWORK",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xmegadrive",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://www.xmegadrive.com/latest-updates/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
+  "deltas": [
+    {
+      "site": "tokyomotion",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "xmegadrive",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    }
+  ]
 }
