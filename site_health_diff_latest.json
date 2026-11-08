@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-11-07T06:24:38.290314",
+    "generated": "2026-11-08T06:22:42.401986",
     "sites_total": 206,
     "pass": 197,
     "warn": 3,
@@ -9,35 +9,24 @@
     "skip": 2
   },
   "previous": {
-    "generated": "2026-11-06T06:27:10.119045",
+    "generated": "2026-11-07T06:24:38.290314",
     "sites_total": 206,
-    "pass": 195,
+    "pass": 197,
     "warn": 3,
-    "fail": 6,
+    "fail": 4,
     "error": 0,
     "skip": 2
   },
   "summary": {
     "new_failures": 0,
-    "resolved_failures": 2,
+    "resolved_failures": 0,
     "persistent_failures": 4,
     "improved_sites": 0,
     "regressions": 0,
     "step_regressions": 0
   },
   "new_failures": [],
-  "resolved_failures": [
-    {
-      "site": "tokyomotion",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "xmegadrive",
-      "previous": "FAIL",
-      "current": "PASS"
-    }
-  ],
+  "resolved_failures": [],
   "persistent_failures": [
     {
       "site": "hentai2w",
@@ -78,20 +67,5 @@
   ],
   "improved_sites": [],
   "step_regressions": [],
-  "deltas": [
-    {
-      "site": "tokyomotion",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "xmegadrive",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    }
-  ]
+  "deltas": []
 }

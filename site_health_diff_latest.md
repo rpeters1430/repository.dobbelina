@@ -6,20 +6,15 @@
 ## Snapshot
 
 - Current: `PASS 197` | `WARN 3` | `FAIL 4` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 195` | `WARN 3` | `FAIL 6` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 197` | `WARN 3` | `FAIL 4` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
 - New failures: `0`
-- Resolved failures: `2`
+- Resolved failures: `0`
 - Persistent failures: `4`
 - Site regressions: `0`
 - Step regressions: `0`
-
-## Resolved Failures
-
-- **tokyomotion**: `FAIL -> PASS`
-- **xmegadrive**: `FAIL -> PASS`
 
 ## Persistent Failures
 
