@@ -60,6 +60,9 @@ def Main():
         site.img_cat,
     )
     site.add_dir(
+        "[COLOR hotpink]Tags[/COLOR]", site.url, "Tags", site.img_tags
+    )
+    site.add_dir(
         "[COLOR hotpink]Search[/COLOR]", site.url + "?s=", "Search", site.img_search
     )
     List(site.url + "page/1/?filter=latest")
@@ -173,3 +176,16 @@ def Lookupinfo(url):
 
     lookupinfo = utils.LookupInfo(site.url, url, "hitprn.List", lookup_list)
     lookupinfo.getinfo()
+
+
+@site.register()
+def Tags():
+    tagshtml = utils.getHtml(site.url)
+    soup = utils.parse_html(tagshtml)
+    for a in soup.select("li.menu-item.menu-item-type-custom a[href]"):
+        name = utils.safe_get_text(a)
+        tagurl = utils.safe_get_attr(a, "href")
+        if not tagurl or "Contact" in name or "Home" in name:
+            continue
+        site.add_dir(name, tagurl, "List")
+    utils.eod()

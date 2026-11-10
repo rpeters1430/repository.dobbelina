@@ -46,6 +46,7 @@ def Main():
         "Categories",
         site.img_cat,
     )
+    site.add_dir("[COLOR hotpink]Studios[/COLOR]", site.url + "sites/", "Studios", site.img_channels)
     site.add_dir(
         "[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search
     )
@@ -279,3 +280,38 @@ def Related(url):
         + urllib_parse.quote_plus(url)
     )
     xbmc.executebuiltin("Container.Update(" + contexturl + ")")
+
+
+@site.register()
+def Studios(url):
+    listhtml = utils.getHtml(url)
+    soup = utils.parse_html(listhtml)
+
+    items = soup.select("a.item.thumb")
+    for a in items:
+        studio_url = utils.safe_get_attr(a, "href")
+        title_attr = utils.safe_get_attr(a, "title")
+        if not studio_url or not title_attr:
+            continue
+        name = utils.cleantext(title_attr)
+        img_el = a.select_one("img")
+        img = utils.safe_get_attr(img_el, "src") or utils.safe_get_attr(img_el, "data-src")
+        info = a.select_one(".thumb__info-item")
+        info_txt = utils.safe_get_text(info)
+        num_videos = re.search(r"(\d+)\s+videos", info_txt)
+        videos_str = " [COLOR deeppink]({} videos)[/COLOR]".format(num_videos.group(1)) if num_videos else ""
+        site.add_dir(name + videos_str, studio_url, "List", img)
+
+    # Next page support for /sites/2/, /sites/3/, etc.
+    if url.rstrip("/").endswith("/sites"):
+        next_url = url.rstrip("/") + "/2/"
+    elif re.search(r"/sites/(\d+)/?$", url):
+        page = int(re.search(r"/sites/(\d+)/?$", url).group(1))
+        next_url = re.sub(r"/sites/\d+/?$", "/sites/{}/".format(page + 1), url)
+    else:
+        next_url = None
+
+    if next_url:
+        site.add_dir("[COLOR hotpink]Next Page...[/COLOR]", next_url, "Studios", site.img_next)
+
+    utils.eod()

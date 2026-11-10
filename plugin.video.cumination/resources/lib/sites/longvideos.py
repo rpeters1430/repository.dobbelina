@@ -155,6 +155,16 @@ def Categories(url):
     utils.eod()
 
 
+def get_cookies():
+    domain = site.url.split('/')[2].replace('www.', '').lower()
+    cookies = []
+    for cookie in utils.cj:
+        if cookie.domain.lstrip('.').lower() == domain:
+            utils.kodilog(cookie)
+            cookies.append(cookie.name + '=' + cookie.value)
+    return '; '.join(cookies)
+
+
 @site.register()
 def Playvid(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
@@ -172,6 +182,12 @@ def Playvid(url, name, download=None):
         sources = {m[1]: site.url[:-1] + m[0].replace("&amp;", "&") for m in match}
         videourl = utils.prefquality(sources, reverse=True)
         if videourl:
+            hdr = utils.base_hdrs.copy()
+            hdr['Referer'] = url
+            cookiestr = get_cookies()
+            if cookiestr:
+                hdr['Cookie'] = cookiestr
+            videourl = utils.getVideoLink(videourl, headers=hdr)
             vp.play_from_direct_link(videourl)
             return
 

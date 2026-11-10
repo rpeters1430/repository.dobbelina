@@ -60,7 +60,7 @@ def List(url):
     soup = utils.parse_html(listhtml)
 
     # Find all video items
-    items = soup.select('div.thumb.thumb_rel.item, div[class*="thumb"][class*="item"]')
+    items = soup.select('div.thumb.thumb_rel.item, div[class*="thumb"][class*="item"], div.item')
 
     cm = []
     cm_lookupinfo = utils.addon_sys + "?mode=" + str("85po.Lookupinfo") + "&url="
@@ -73,24 +73,25 @@ def List(url):
     )
 
     for item in items:
-        link = item.select_one("a")
+        link = item.select_one("a[href*='/v/'], a[href*='/video/']") or item.select_one("a")
         if not link:
             continue
 
         videourl = utils.safe_get_attr(link, "href")
-        name = utils.safe_get_attr(link, "title")
+        name = utils.safe_get_attr(link, "title") or utils.safe_get_attr(item.select_one("img"), "alt")
 
-        if not videourl or not name:
+        if not videourl or not name or not any(x in videourl for x in ("/v/", "/video/")):
             continue
 
         img_tag = item.select_one("img")
         img = utils.safe_get_attr(img_tag, "data-original", ["src", "data-src"])
 
         # Duration
-        duration_tag = item.select_one("span.fa-clock")
-        if duration_tag and duration_tag.parent:
+        duration_tag = item.select_one(".duration, span.fa-clock")
+        if duration_tag:
+            is_fa = "fa-clock" in (duration_tag.get("class") or [])
             duration = (
-                utils.safe_get_text(duration_tag.parent, "").replace("\n", "").strip()
+                utils.safe_get_text(duration_tag.parent if is_fa else duration_tag, "").replace("\n", "").strip()
             )
         else:
             duration = ""
@@ -112,8 +113,8 @@ def List(url):
 
     # Pagination - try async first, then fallback to standard
     pagination_added = False
-    active_page = soup.select_one("a.active")
-    next_link = soup.select_one("a.next")
+    active_page = soup.select_one("a.active, .page-current, li.page-current")
+    next_link = soup.select_one("a.next, li.next a")
 
     if active_page and next_link:
         current_page = utils.safe_get_text(active_page)

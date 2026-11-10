@@ -296,3 +296,77 @@ class TestAddonUrlSys:
         assert hasattr(utils, "addon_sys")
         assert isinstance(utils.addon_sys, str)
         assert "plugin" in utils.addon_sys.lower() or "addon" in utils.addon_sys.lower()
+
+
+class TestVideoPlayerAutoFallback:
+    """Tests for VideoPlayer source auto-fallback behavior (issue #2035)"""
+
+    def test_dontask_auto_fallback_success(self, monkeypatch):
+        """Test that when dontask is true, failed first host falls back to second host."""
+        import sys
+        import types
+
+        source1 = Mock()
+        source1._url = "https://host1.com/v1"
+        source1._domain = "host1.com"
+        source1.title = "host1"
+        source1.resolve.return_value = False
+
+        source2 = Mock()
+        source2._url = "https://host2.com/v2"
+        source2._domain = "host2.com"
+        source2.title = "host2"
+        source2.resolve.return_value = "https://stream.host2.com/video.mp4"
+
+        sources_map = {
+            "https://host1.com/v1": source1,
+            "https://host2.com/v2": source2,
+        }
+
+        mock_resolveurl = types.ModuleType("resolveurl")
+        mock_resolveurl.add_plugin_dirs = lambda *args: None
+        mock_resolveurl.HostedMediaFile = lambda x, **kwargs: sources_map[x]
+        monkeypatch.setitem(sys.modules, "resolveurl", mock_resolveurl)
+
+        vp = utils.VideoPlayer("Test Video")
+        vp.progress = Mock()
+        vp.progress.iscanceled.return_value = False
+
+        played = []
+        monkeypatch.setattr(utils.addon, "getSetting", lambda key: "true" if key == "dontask" else "false")
+        monkeypatch.setattr(utils, "playvid", lambda link, name, dl, **kwargs: played.append(link))
+
+        vp._clean_urls = lambda sources: sources
+        vp.play_from_link_list(["https://host1.com/v1", "https://host2.com/v2"])
+
+        assert len(played) == 1
+        assert played[0] == "https://stream.host2.com/video.mp4"
+
+    def test_dontask_all_failed_notifies(self, monkeypatch):
+        """Test that when all hosts fail with dontask=true, notification is sent."""
+        import sys
+        import types
+
+        source1 = Mock()
+        source1._url = "https://host1.com/v1"
+        source1._domain = "host1.com"
+        source1.title = "host1"
+        source1.resolve.return_value = False
+
+        mock_resolveurl = types.ModuleType("resolveurl")
+        mock_resolveurl.add_plugin_dirs = lambda *args: None
+        mock_resolveurl.HostedMediaFile = lambda x, **kwargs: source1
+        monkeypatch.setitem(sys.modules, "resolveurl", mock_resolveurl)
+
+        vp = utils.VideoPlayer("Test Video")
+        vp.progress = Mock()
+        vp.progress.iscanceled.return_value = False
+
+        notified = []
+        monkeypatch.setattr(utils.addon, "getSetting", lambda key: "true" if key == "dontask" else "false")
+        monkeypatch.setattr(utils, "notify", lambda title, msg: notified.append((title, msg)))
+
+        vp._clean_urls = lambda sources: sources
+        vp.play_from_link_list(["https://host1.com/v1"])
+
+        assert len(notified) == 1

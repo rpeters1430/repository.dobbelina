@@ -1,7 +1,7 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-10-20
+**Last Updated**: 2026-11-09
 **Last Sync**: 2026-10-20 - Reviewed all 15 pending upstream commits after `4a4ecb66` through `26e3b8eb`; rewrote speedporn for its new speedporn.net layout (#1995); deferred javpog (new site) and the folder-icon refresh; skipped repository logo changes.
 
 ---
@@ -18,6 +18,21 @@
 ---
 
 ## Sync Sessions
+
+### 2026-11-09 Porting Session
+Reviewed pending upstream commits through `7f3ee13f` using `sync_manager.py --report`. Ported core site fixes, resolver fallback improvements, directory additions, and replaced permanently dead `netflixporno` with `watchpornx`.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `5a30e43f` (#2043) | tubxporn - domain update fixes #2043 | `manual` | 2026-11-09 | **tubxporn**: Updated base domain from `https://web.tubxporn.com/` to `https://www.tubxporn.com/`. Listing restored from 0 to 131 items. All 3 unit tests in `tests/sites/test_tubxporn.py` pass. |
+| `698672e6` (#2045) | 85po - update listing fixes #2045 | `manual` | 2026-11-09 | **85po**: Updated listing parser to support new `.item` layout, `.duration`, and both `/v/` and `/video/` link formats. Listing restored from 0 to 2,818 items. All 6 unit tests in `tests/sites/test_85po.py` pass. |
+| `0763b536` (#2027) | beeg - fixes #2027 / xmoviesforyou fix | `manual` | 2026-11-09 | **beeg**: Rewrote `Playvid` to resolve stream session keys via `https://store.externulls.com/video/play_url/{videoid}` (handling both legacy base64 and modern query string IDs), routing to `https://video.beeg.com/{key}`. Live HLS playback verified. All 5 unit tests in `tests/sites/test_beeg.py` pass. Verified `xmoviesforyou` already uses modern SoupSiteSpec and passes tests. |
+| `16e8bba8` (#2041) | wowxxx - fix playback #2041 | `manual` | 2026-11-09 | **longvideos (WOWxxx)**: Added `get_cookies()` helper to extract Cloudflare cookies from `utils.cj` for the target domain and forwarded `Referer` and `Cookie` headers into `utils.getVideoLink` during direct stream playback. All 6 unit tests in `tests/sites/test_longvideos.py` pass. |
+| `7161b205` (#2035) | "Don't ask for video host" setting - #2035 | `manual` | 2026-11-09 | **utils**: In `VideoPlayer.play_from_link_list`, if `dontask == "true"`, automatically iterate through sources trying `play_from_link_to_resolve(src)` until one succeeds. `play_from_link_to_resolve` now returns boolean and suppresses intermediate failure notifications when `dontask` is active. Added tests in `tests/test_utils_video_processing.py`. |
+| `c4e4f129` (#2038) | rule34 thumnails fix for Kodi21 #2038 | `manual` | 2026-11-09 | **utils / rule34video**: Updated `Thumbnails.fix_img` check to `if KODIVER < 21 or KODIVER > 21.3: return img` as Kodi 21.4+ handles WebP/JPG caching natively. `rule34video.py` BeautifulSoup implementation passes all 12 unit tests. |
+| `543334e2` | Hitprn added Tags | `manual` | 2026-11-09 | **hitprn**: Added `Tags` directory entry to `Main()` and implemented BeautifulSoup `Tags()` extraction. Tests in `tests/sites/test_hitprn.py` pass. |
+| `ae861f3d`, `2a9f5737` (#2026) | Add Studios entry to WatchPorn / fix thumbnails #2026 | `manual` | 2026-11-09 | **watchporn**: Added `Studios` entry to `Main()` and implemented `Studios(url)` with pagination and video count formatting. Tests in `tests/sites/test_watchporn.py` pass. |
+| `77adfdd7`, `17f99901` (#2020) | Watchpornx replaces Netflixporno | `manual` | 2026-11-09 | **watchpornx**: Replaced dead site `netflixporno` with modernized BeautifulSoup `watchpornx.py` module. Supports `List`, `Search`, `Categories`, `Studios`, and `Playvid` with multi-server automatic fallback. Added HTML fixture and 4 unit tests in `tests/sites/test_watchpornx.py`. Removed obsolete netflixporno modules, images, and tests. |
 
 ### 2026-10-20 Porting Session
 Reviewed all 15 pending upstream commits merged after `4a4ecb66` through `26e3b8eb` using `sync_manager.py --report`. Our `speedporn.py` was failing the strict monitor (0 listing items: `speedporn.com` is now a parked domain), so upstream's #1995 fix was relevant even though the report bucketed it as "Likely Already Covered".

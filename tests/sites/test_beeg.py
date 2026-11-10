@@ -61,33 +61,28 @@ def test_list_parses_json(monkeypatch):
 
 
 def test_playvid_fresh_fetch(monkeypatch):
-    """Test that Playvid fetches fresh video data."""
-    mock_video_data = {
-        "file": {
-            "id": "123",
-            "hls_resources": {
-                "fl_cdn_1080": "path/to/video.mp4"
-            }
-        }
-    }
-    
+    """Test that Playvid fetches key from externulls and plays stream."""
     play_calls = []
-    
+
     class MockVP:
         def __init__(self, name, download=None):
             self.name = name
             self.progress = MagicMock()
+
         def play_from_direct_link(self, url):
             play_calls.append(url)
 
-    monkeypatch.setattr(beeg.utils, "getHtml", lambda *a, **k: json.dumps(mock_video_data))
-    monkeypatch.setattr(beeg.utils, "VideoPlayer", MockVP)
-    monkeypatch.setattr(beeg.utils, "prefquality", lambda *a, **k: "path/to/video.mp4")
+    def fake_get_html(url, *args, **kwargs):
+        if "play_url/123" in url:
+            return "key=ABC123XYZ,end=9999/media=hls4A"
+        return ""
 
-    beeg.Playvid("id=123&tag_id=7629", "Test Video")    
+    monkeypatch.setattr(beeg.utils, "getHtml", fake_get_html)
+    monkeypatch.setattr(beeg.utils, "VideoPlayer", MockVP)
+
+    beeg.Playvid("id=123&tag_id=7629", "Test Video")
     assert len(play_calls) == 1
-    assert "path/to/video.mp4" in play_calls[0]
-    assert "Referer=" in play_calls[0]
+    assert play_calls[0] == "https://video.beeg.com/key=ABC123XYZ,end=9999/media=hls4A"
 
 
 def test_category_parses_json(monkeypatch):
