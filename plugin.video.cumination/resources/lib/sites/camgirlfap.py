@@ -63,18 +63,24 @@ def _next_page_url(url, soup):
     next_a = soup.select_one(".pagination a.next")
     if not next_a:
         return None, None
-    params = dict(re.findall(r"([a-z_]+):([^;]+)", utils.safe_get_attr(next_a, "data-parameters", default="")))
-    next_from = params.get("from")
+    params = dict(re.findall(r"([^:;]+):([^;]*)", utils.safe_get_attr(next_a, "data-parameters", default="")))
+    next_from = (
+        params.get("from")
+        or params.get("from_videos+from_albums")
+        or params.get("from_videos")
+        or params.get("from_albums")
+    )
     if not next_from:
         return None, None
     parsed = urllib_parse.urlsplit(url)
     query = dict(urllib_parse.parse_qsl(parsed.query))
-    query["from"] = next_from
     if "from_videos" in query:
         query["from_videos"] = next_from
     if "from_albums" in query:
         query["from_albums"] = next_from
-    if "sort_by" in params:
+    if "from" in query or ("from_videos" not in query and "from_albums" not in query):
+        query["from"] = next_from
+    if params.get("sort_by"):
         query["sort_by"] = params["sort_by"]
     next_url = urllib_parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, urllib_parse.urlencode(query), ""))
     return next_url, next_from
@@ -152,7 +158,7 @@ def Search(url, keyword=None):
     else:
         kw_path = urllib_parse.quote_plus(keyword.replace(" ", "-"))
         kw_q = urllib_parse.quote_plus(keyword)
-        search_url = "{}search/{}/".format(site.url, kw_path) + "?q={}&from_videos=1&from_albums=1".format(kw_q)
+        search_url = "{}search/{}/?q={}&sort_by=post_date&from_videos=1&from_albums=1".format(site.url, kw_path, kw_q)
         List(search_url)
 
 
@@ -193,6 +199,7 @@ def Playvid(url, name, download=None):
         return
 
     sources = _extract_kvs_sources(html)
+    embed_html = None
     if not sources:
         embed_match = re.search(r"src=[\"'](https?://[^\"']*/embed/\d+[^\"']*)[\"']", html, re.IGNORECASE)
         if not embed_match:
@@ -218,9 +225,29 @@ def Playvid(url, name, download=None):
             vp.play_from_direct_link(stream_url + "|Referer=" + url)
             return
 
-    soup = utils.parse_html(html)
-    for tag in soup.find_all(["iframe", "a"]):
-        src = utils.safe_get_attr(tag, "src", ["href"])
-        if src and not any(h in src.lower() for h in ("camgirlfap.com", "google", "traffic", "ad", "banner", "javascript:")):
-            if vp.play_from_link_to_resolve(src):
-                return
+    pages_to_check = [html]
+    if embed_html:
+        pages_to_check.append(embed_html)
+
+    for page in pages_to_check:
+        soup = utils.parse_html(page)
+        for tag in soup.find_all(["iframe", "a"]):
+            src = utils.safe_get_attr(tag, "src", ["href"])
+            if not src:
+                continue
+            if src.startswith("//"):
+                src = "https:" + src
+            elif src.startswith("/"):
+                src = urllib_parse.urljoin(site.url, src)
+
+            if not any(h in src.lower() for h in ("camgirlfap.com", "google", "traffic", "ad", "banner", "javascript:")):
+                if any(d in src.lower() for d in utils.DOODSTREAM_DOMAINS):
+                    try:
+                        stream_url = vp._solve_doodstream(src)
+                        if stream_url:
+                            vp.play_from_direct_link(stream_url)
+                            return
+                    except Exception:
+                        pass
+                if vp.play_from_link_to_resolve(src):
+                    return
