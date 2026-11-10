@@ -1,3 +1,15 @@
+[B]Version 1.1.496[/B]
+- fix(camgirlfap): fix search pagination and playback (closes #442)
+- Merge pull request #453 from rpeters1430/renovate/ghcr.io-germondai-trawl
+- Merge pull request #454 from rpeters1430/renovate/github-actions-digest-updates
+- Merge pull request #456 from rpeters1430/renovate/minor-dependencies
+- chore(deps): update ghcr.io/germondai/trawl docker digest to ef732d2
+- chore(deps): update ghcr.io/germondai/trawl docker digest to ef732d2
+- chore(deps): update dependency @playwright/test to v1.65.0
+- chore(deps): update dependency agent-browser to v0.41.2 (#455)
+- Merge pull request #452 from rpeters1430/renovate/patch-dependencies
+- chore(deps): update zizmorcore/zizmor-action action to v0.8.1
+
 [B]Version 1.1.495[/B]
 - feat: themed site icon tiles and grid view for menus
 - fix: rewrite speedporn for speedporn.net layout
