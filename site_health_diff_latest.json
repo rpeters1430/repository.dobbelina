@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-11-10T06:23:12.873772",
+    "sites_total": 206,
+    "pass": 194,
+    "warn": 3,
+    "fail": 7,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-11-09T06:29:27.945235",
     "sites_total": 206,
     "pass": 198,
@@ -8,24 +17,34 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-11-08T06:22:42.401986",
-    "sites_total": 206,
-    "pass": 197,
-    "warn": 3,
-    "fail": 4,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
-    "new_failures": 0,
+    "new_failures": 2,
     "resolved_failures": 0,
     "persistent_failures": 4,
-    "improved_sites": 1,
-    "regressions": 0,
-    "step_regressions": 0
+    "improved_sites": 0,
+    "regressions": 3,
+    "step_regressions": 3
   },
-  "new_failures": [],
+  "new_failures": [
+    {
+      "site": "hitprn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "CODE",
+      "message": "main: AttributeError: 'AdultSite' object has no attribute 'img_tags'",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "watchporn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "CODE",
+      "message": "main: AttributeError: 'AdultSite' object has no attribute 'img_channels'",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
   "resolved_failures": [],
   "persistent_failures": [
     {
@@ -65,20 +84,73 @@
       "stability_score": 1.0
     }
   ],
-  "improved_sites": [
+  "improved_sites": [],
+  "step_regressions": [
+    {
+      "site": "hitprn",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "AttributeError: 'AdultSite' object has no attribute 'img_tags'",
+      "class": "CODE",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
     {
       "site": "perverzija",
-      "previous": "WARN",
-      "current": "PASS"
+      "step": "play",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "IndexError: list index out of range",
+      "class": "CODE",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "watchporn",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "AttributeError: 'AdultSite' object has no attribute 'img_channels'",
+      "class": "CODE",
+      "is_flaky": false,
+      "stability_score": 1.0
     }
   ],
-  "step_regressions": [],
   "deltas": [
     {
+      "site": "hitprn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "netflixporno",
+      "previous": "PASS",
+      "current": "MISSING",
+      "kind": "missing_site",
+      "detail": ""
+    },
+    {
       "site": "perverzija",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "watchporn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "watchpornx",
+      "previous": "MISSING",
+      "current": "FAIL",
+      "kind": "new_site",
       "detail": ""
     }
   ]
