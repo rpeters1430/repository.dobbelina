@@ -1,6 +1,6 @@
 {
   "current": {
-    "generated": "2026-11-10T06:23:12.873772",
+    "generated": "2026-11-11T06:20:35.832884",
     "sites_total": 206,
     "pass": 194,
     "warn": 3,
@@ -9,42 +9,23 @@
     "skip": 2
   },
   "previous": {
-    "generated": "2026-11-09T06:29:27.945235",
+    "generated": "2026-11-10T06:23:12.873772",
     "sites_total": 206,
-    "pass": 198,
-    "warn": 2,
-    "fail": 4,
+    "pass": 194,
+    "warn": 3,
+    "fail": 7,
     "error": 0,
     "skip": 2
   },
   "summary": {
-    "new_failures": 2,
+    "new_failures": 0,
     "resolved_failures": 0,
-    "persistent_failures": 4,
+    "persistent_failures": 7,
     "improved_sites": 0,
-    "regressions": 3,
-    "step_regressions": 3
+    "regressions": 0,
+    "step_regressions": 0
   },
-  "new_failures": [
-    {
-      "site": "hitprn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "CODE",
-      "message": "main: AttributeError: 'AdultSite' object has no attribute 'img_tags'",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "watchporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "CODE",
-      "message": "main: AttributeError: 'AdultSite' object has no attribute 'img_channels'",
-      "is_flaky": false,
-      "stability_score": 1.0
-    }
-  ],
+  "new_failures": [],
   "resolved_failures": [],
   "persistent_failures": [
     {
@@ -57,11 +38,38 @@
       "stability_score": 1.0
     },
     {
+      "site": "hitprn",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "CODE",
+      "message": "main: AttributeError: 'AdultSite' object has no attribute 'img_tags'",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
       "site": "porn4k",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "ENV",
       "message": "main: RuntimeError: FlareSolverr error for https://porn4k.to/page/1/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "watchporn",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "CODE",
+      "message": "main: AttributeError: 'AdultSite' object has no attribute 'img_channels'",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "watchpornx",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "CODE",
+      "message": "main: AttributeError: 'AdultSite' object has no attribute 'img_movies'",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -85,73 +93,6 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [
-    {
-      "site": "hitprn",
-      "step": "main",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "AttributeError: 'AdultSite' object has no attribute 'img_tags'",
-      "class": "CODE",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "perverzija",
-      "step": "play",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "IndexError: list index out of range",
-      "class": "CODE",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "watchporn",
-      "step": "main",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "AttributeError: 'AdultSite' object has no attribute 'img_channels'",
-      "class": "CODE",
-      "is_flaky": false,
-      "stability_score": 1.0
-    }
-  ],
-  "deltas": [
-    {
-      "site": "hitprn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "netflixporno",
-      "previous": "PASS",
-      "current": "MISSING",
-      "kind": "missing_site",
-      "detail": ""
-    },
-    {
-      "site": "perverzija",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "watchporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "watchpornx",
-      "previous": "MISSING",
-      "current": "FAIL",
-      "kind": "new_site",
-      "detail": ""
-    }
-  ]
+  "step_regressions": [],
+  "deltas": []
 }
