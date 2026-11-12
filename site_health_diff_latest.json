@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-11-12T06:24:02.610935",
+    "sites_total": 206,
+    "pass": 194,
+    "warn": 2,
+    "fail": 8,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-11-11T06:20:35.832884",
     "sites_total": 206,
     "pass": 194,
@@ -8,24 +17,25 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-11-10T06:23:12.873772",
-    "sites_total": 206,
-    "pass": 194,
-    "warn": 3,
-    "fail": 7,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
-    "new_failures": 0,
+    "new_failures": 1,
     "resolved_failures": 0,
     "persistent_failures": 7,
     "improved_sites": 0,
-    "regressions": 0,
-    "step_regressions": 0
+    "regressions": 1,
+    "step_regressions": 1
   },
-  "new_failures": [],
+  "new_failures": [
+    {
+      "site": "sextb",
+      "previous": "WARN",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "main: Timed out after 35s",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
   "resolved_failures": [],
   "persistent_failures": [
     {
@@ -93,6 +103,25 @@
     }
   ],
   "improved_sites": [],
-  "step_regressions": [],
-  "deltas": []
+  "step_regressions": [
+    {
+      "site": "sextb",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Timed out after 35s",
+      "class": "NETWORK",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
+  "deltas": [
+    {
+      "site": "sextb",
+      "previous": "WARN",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    }
+  ]
 }
