@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/rpeters1430/repository.dobbelina#readme",
   "devDependencies": {
-    "@playwright/mcp": "0.0.84",
+    "@playwright/mcp": "0.0.85",
     "@playwright/test": "1.65.0",
     "@types/node": "26.6.6"
   },
