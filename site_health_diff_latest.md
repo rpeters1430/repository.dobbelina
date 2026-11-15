@@ -6,15 +6,15 @@
 ## Snapshot
 
 - Current: `PASS 193` | `WARN 4` | `FAIL 7` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 194` | `WARN 3` | `FAIL 7` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 193` | `WARN 4` | `FAIL 7` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
 - New failures: `0`
 - Resolved failures: `0`
 - Persistent failures: `7`
-- Site regressions: `1`
-- Step regressions: `1`
+- Site regressions: `0`
+- Step regressions: `0`
 
 ## Persistent Failures
 
@@ -25,7 +25,3 @@
 - **watchpornx**: `FAIL -> FAIL` (CODE) | main: AttributeError: 'AdultSite' object has no attribute 'img_movies'
 - **xsharings**: `FAIL -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **xtapesla**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-
-## Step Regressions
-
-- **nonktube** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 404 from website
