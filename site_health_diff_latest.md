@@ -5,20 +5,20 @@
 
 ## Snapshot
 
-- Current: `PASS 192` | `WARN 4` | `FAIL 8` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 192` | `WARN 4` | `FAIL 7` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 193` | `WARN 4` | `FAIL 7` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 192` | `WARN 4` | `FAIL 8` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
-- New failures: `1`
-- Resolved failures: `0`
+- New failures: `0`
+- Resolved failures: `1`
 - Persistent failures: `7`
-- Site regressions: `1`
-- Step regressions: `3`
+- Site regressions: `0`
+- Step regressions: `0`
 
-## New Failures
+## Resolved Failures
 
-- **hdporn**: `PASS -> FAIL` (BLOCKED) | main: RuntimeError: FlareSolverr solved challenge but got HTTP 503 from website
+- **hdporn**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -29,13 +29,3 @@
 - **watchpornx**: `FAIL -> FAIL` (CODE) | main: AttributeError: 'AdultSite' object has no attribute 'img_movies'
 - **xsharings**: `FAIL -> FAIL` (ENV) | list: RuntimeError: FlareSolverr error for https://twitter.com/xsharings: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **xtapesla**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-
-## Step Regressions
-
-- **hdporn** `main`: `PASS -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 503 from website
-- **hdporn** `search`: `SKIP -> FAIL` (BLOCKED) | RuntimeError: FlareSolverr solved challenge but got HTTP 503 from website
-- **watchpornx** `play`: `SKIP -> FAIL` (CODE) | AttributeError: module 'kodi_six.xbmcgui' has no attribute 'NOTIFICATION_ERROR'
-
-## Improvements
-
-- **speedporn**: `SKIP -> PASS`
