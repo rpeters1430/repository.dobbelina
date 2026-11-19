@@ -29,7 +29,11 @@ def evaluate_record(
     harness = profile.get("harness", {})
     supports = profile.get("supports", {})
     if harness.get("playback_not_testable") or not supports.get("play", True):
-        required_stages = [s for s in required_stages if s not in ("playback", "media")]
+        required_stages = [
+            s for s in required_stages if s not in ("playback", "media", "search_play")
+        ]
+    if not supports.get("search", True) or harness.get("search_results_optional"):
+        required_stages = [s for s in required_stages if s not in ("search", "search_play")]
 
     # Child records use "overall"; accept "status" for direct callers and
     # older report formats. Import/export failures indicate a broken site module,
@@ -156,6 +160,30 @@ def evaluate_record(
                         classification = "CHALLENGE"
                         is_blocked = True
                     break
+            elif stage in ("search", "search_play"):
+                stage_step = steps.get(stage, {})
+                s_status = stage_step.get("status", "SKIP")
+                if s_status not in ("PASS", "HEALTHY"):
+                    s_msg = stage_step.get("message", "")
+                    failed_stage = stage
+                    classification = "SEARCH_FAILED" if stage == "search" else "SEARCH_PLAYBACK_FAILED"
+                    label = "Search" if stage == "search" else "Playing a search result"
+                    message = f"{label} failed or skipped ({s_status}): {s_msg}".rstrip(": ")
+                    if any(k in s_msg.lower() or k in notif_text for k in ("flaresolverr", "cloudflare", "challenge", "turnstile")):
+                        classification = "CHALLENGE"
+                        is_blocked = True
+                    break
+                if stage == "search_play" and "media" in required_stages:
+                    search_play_url = stage_step.get("play_url", "")
+                    if search_play_url:
+                        search_media = validate_media(search_play_url, contract.get("allowed_hosts", []))
+                        if not search_media.passed:
+                            failed_stage = "search_play"
+                            classification = search_media.classification
+                            message = f"Search result media probing failed: {search_media.message}"
+                            if classification in ("CHALLENGE", "HTML_PAYLOAD", "BLOCKED"):
+                                is_blocked = True
+                            break
             elif stage == "media":
                 if media_res is None:
                     failed_stage = "media"

@@ -27,7 +27,9 @@
       "required_stages": [
         "listing",
         "playback",
-        "media"
+        "media",
+        "search",
+        "search_play"
       ],
       "advisory_fields": [
         "thumbnail",
