@@ -36,6 +36,12 @@ site = AdultSite(
 
 @site.register(default_mode=True)
 def Main():
+    site.add_dir(
+        "[COLOR hotpink]Search[/COLOR]",
+        site.url + "search?search_type=videos&search_query=",
+        "Search",
+        site.img_search,
+    )
     List(site.url)
     utils.eod()
 
