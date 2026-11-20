@@ -5,16 +5,16 @@
 
 ## Snapshot
 
-- Current: `PASS 191` | `WARN 4` | `FAIL 7` | `ERROR 0` | `SKIP 4`
-- Previous: `PASS 193` | `WARN 4` | `FAIL 7` | `ERROR 0` | `SKIP 2`
+- Current: `PASS 192` | `WARN 5` | `FAIL 7` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 191` | `WARN 4` | `FAIL 7` | `ERROR 0` | `SKIP 4`
 
 ## Delta Summary
 
 - New failures: `0`
 - Resolved failures: `0`
 - Persistent failures: `7`
-- Site regressions: `2`
-- Step regressions: `1`
+- Site regressions: `1`
+- Step regressions: `2`
 
 ## Persistent Failures
 
@@ -28,4 +28,10 @@
 
 ## Step Regressions
 
-- **watchpornx** `list`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://watchpornx.com/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **watchpornx** `play`: `SKIP -> FAIL` (CODE) | AttributeError: module 'kodi_six.xbmcgui' has no attribute 'NOTIFICATION_ERROR'
+- **xozilla** `play`: `SKIP -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
+
+## Improvements
+
+- **missav**: `SKIP -> PASS`
+- **speedporn**: `SKIP -> PASS`
