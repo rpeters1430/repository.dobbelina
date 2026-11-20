@@ -104,3 +104,33 @@ def test_strict_monitor_skips_search_when_profile_disables_it():
         "steps": {"search": {"status": "SKIP"}},
     }
     assert evaluate_record(record, profile)["state"] == "HEALTHY"
+
+
+def test_strict_monitor_requires_search_play_url_when_media_required():
+    from scripts.site_health_types import ValidationResult
+    from scripts.strict_site_monitor import evaluate_record
+
+    profile = {
+        "strict_contract": {
+            "min_video_items": 1,
+            "required_stages": ["listing", "playback", "media", "search", "search_play"],
+        }
+    }
+    record = {
+        "site": "example",
+        "status": "PASS",
+        "listing_samples": [
+            {"name": f"Video {i}", "url": f"https://example.test/{i}", "mode": "play"}
+            for i in range(5)
+        ],
+        "media_result": ValidationResult(True, "NONE", "ok", {}, {}),
+        "steps": {
+            "play": {"status": "PASS", "play_url": "https://cdn.example.test/video.mp4"},
+            "search": {"status": "PASS"},
+            "search_play": {"status": "PASS"},
+        },
+    }
+    report = evaluate_record(record, profile)
+    assert report["state"] == "BROKEN"
+    assert report["failed_stage"] == "search_play"
+    assert report["classification"] == "MEDIA_VALIDATION_MISSING"

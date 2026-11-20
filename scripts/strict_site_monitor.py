@@ -175,15 +175,19 @@ def evaluate_record(
                     break
                 if stage == "search_play" and "media" in required_stages:
                     search_play_url = stage_step.get("play_url", "")
-                    if search_play_url:
-                        search_media = validate_media(search_play_url, contract.get("allowed_hosts", []))
-                        if not search_media.passed:
-                            failed_stage = "search_play"
-                            classification = search_media.classification
-                            message = f"Search result media probing failed: {search_media.message}"
-                            if classification in ("CHALLENGE", "HTML_PAYLOAD", "BLOCKED"):
-                                is_blocked = True
-                            break
+                    if not search_play_url:
+                        failed_stage = "search_play"
+                        classification = "MEDIA_VALIDATION_MISSING"
+                        message = "Required search result media validation was not performed (missing play_url)"
+                        break
+                    search_media = validate_media(search_play_url, contract.get("allowed_hosts", []))
+                    if not search_media.passed:
+                        failed_stage = "search_play"
+                        classification = search_media.classification
+                        message = f"Search result media probing failed: {search_media.message}"
+                        if classification in ("CHALLENGE", "HTML_PAYLOAD", "BLOCKED"):
+                            is_blocked = True
+                        break
             elif stage == "media":
                 if media_res is None:
                     failed_stage = "media"

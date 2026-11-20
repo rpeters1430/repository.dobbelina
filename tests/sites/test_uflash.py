@@ -33,3 +33,18 @@ def test_list_parses_items(monkeypatch):
     assert downloads[0]["name"] == "First Uflash"
     assert downloads[0]["url"].endswith("/video/first")
     assert downloads[1]["duration"] == "09:00"
+
+
+def test_main_exposes_search_entry(monkeypatch):
+    dirs = []
+    monkeypatch.setattr(uflash, "List", lambda *a, **k: None)
+    monkeypatch.setattr(uflash.utils, "eod", lambda: None)
+    monkeypatch.setattr(
+        uflash.site,
+        "add_dir",
+        lambda name, url, mode, *a, **k: dirs.append({"name": name, "url": url, "mode": mode}),
+    )
+
+    uflash.Main()
+
+    assert any(d["mode"] == "Search" and "search_query=" in d["url"] for d in dirs)

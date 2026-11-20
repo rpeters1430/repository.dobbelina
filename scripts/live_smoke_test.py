@@ -665,6 +665,8 @@ def run_site_child(
     def supports_step(step_name: str) -> bool:
         if force_steps:
             return True
+        if not profile_supports.get(step_name, True):
+            return False
         if strict and step_name in strict_contract.get("required_stages", []):
             return True
         return profile_supports.get(step_name, True)
