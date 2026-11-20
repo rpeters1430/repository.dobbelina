@@ -531,6 +531,9 @@ def probe_url_status(url: str, timeout: int = 8) -> tuple[bool, str]:
         return False, f"{type(exc).__name__}: {exc}"
 
 
+DEFAULT_STEPS = ("main", "list", "categories", "search", "play", "search_play")
+
+
 def discover_site_names() -> list[str]:
     names = []
     for file_path in sorted(SITES_DIR.glob("*.py")):
@@ -596,7 +599,7 @@ def run_site_child(
     force_steps: bool = False,
 ) -> dict[str, Any]:
     if steps is None:
-        steps = ["main", "list", "categories", "search", "play"]
+        steps = list(DEFAULT_STEPS)
     if str(ROOT) not in sys.path:
         sys.path.insert(0, str(ROOT))
     if str(PLUGIN_PATH) not in sys.path:
@@ -662,6 +665,8 @@ def run_site_child(
     def supports_step(step_name: str) -> bool:
         if force_steps:
             return True
+        if not profile_supports.get(step_name, True):
+            return False
         if strict and step_name in strict_contract.get("required_stages", []):
             return True
         return profile_supports.get(step_name, True)
@@ -856,6 +861,10 @@ def run_site_child(
     list_candidate: dict[str, str] = {}
     cat_candidate: dict[str, str] = {}
     first_video: dict[str, str] = {}
+    # The Search entry that Main exposes (its URL is the site's real search
+    # endpoint, e.g. site.url + "search/"), and the first video Search returned.
+    search_candidate: dict[str, str] = {}
+    search_video: dict[str, str] = {}
     main_video_count = 0
     list_candidate_from_main = False
 
@@ -1002,6 +1011,24 @@ def run_site_child(
                 }
         return {}
 
+    def find_search_candidate(dirs: list[dict[str, Any]]) -> dict[str, str]:
+        """Return the Search directory Main added, so search runs against its URL."""
+        fallback: dict[str, str] = {}
+        for entry in dirs:
+            mode = to_full_mode(entry.get("mode", ""))
+            candidate_url = entry.get("url", "")
+            if not candidate_url or not mode_exists(mode):
+                continue
+            short = mode.split(".", 1)[-1].lower()
+            if "search" not in short or "main" in short:
+                continue
+            candidate = {"mode": mode, "url": candidate_url}
+            if short == "search":
+                return candidate
+            if not fallback:
+                fallback = candidate
+        return fallback
+
     def step_main() -> StepResult:
         if not supports_step("main"):
             return StepResult("SKIP", "Main disabled by site profile")
@@ -1083,6 +1110,7 @@ def run_site_child(
                 nonlocal_cat = {"mode": fallback_cat_mode, "url": site.url, "name": ""}
         list_candidate.update(nonlocal_list)
         cat_candidate.update(nonlocal_cat)
+        search_candidate.update(find_search_candidate(captured_dirs))
         main_video_count = len(captured_downloads)
         if captured_downloads and not first_video:
             first_video.update(captured_downloads[0])
@@ -1301,32 +1329,59 @@ def run_site_child(
             return StepResult("SKIP", "Search disabled by site profile")
         captured_dirs.clear()
         captured_downloads.clear()
-        mode = f"{site.name}.Search"
-        if mode not in URL_Dispatcher.func_registry:
-            mode = pick_registered_mode(
-                include_terms=("search",),
-                exclude_terms=("main",),
-            )
-            if not mode:
-                return StepResult("SKIP", "No search function exposed")
+        # Kodi calls Search with the URL that Main put on the Search entry
+        # (e.g. site.url + "search/"). Calling it with the homepage builds
+        # URLs like https://site/<keyword>, which 404 and used to be reported
+        # as "no videos" -> SKIP, hiding every real search breakage.
+        search_url = search_candidate.get("url", "")
+        mode = search_candidate.get("mode", "")
+        if not mode:
+            mode = f"{site.name}.Search"
+            if mode not in URL_Dispatcher.func_registry:
+                mode = pick_registered_mode(
+                    include_terms=("search",),
+                    exclude_terms=("main",),
+                )
+                if not mode:
+                    return StepResult("SKIP", "No search function exposed")
+        url_from_main = bool(search_url)
+        if not search_url:
+            search_url = site.url
+        search_url = normalize_url(site.url, search_url)
         fn = URL_Dispatcher.func_registry[mode]
         sig = inspect.signature(fn)
-        query: dict[str, Any] = {"url": site.url, "keyword": keyword}
+        query: dict[str, Any] = {"url": search_url, "keyword": keyword}
         if "url" not in sig.parameters:
             query.pop("url", None)
         if "keyword" not in sig.parameters:
             query.pop("keyword", None)
+        notify_before = len(notify_calls)
         call_mode(mode, query)
+        search_notes = notify_calls[notify_before:]
         videos = len(captured_downloads)
         if videos <= 0:
             if harness_profile.get("search_results_optional"):
                 return StepResult(
                     "SKIP",
                     "Search results optional for this site profile",
-                    sample_url=site.url,
+                    sample_url=search_url,
                 )
-            return StepResult("SKIP", "Search returned no videos", sample_url=site.url)
-        if not first_video and captured_downloads:
+            if not url_from_main and "url" in sig.parameters:
+                # We had to guess the search URL, so an empty result may be ours.
+                return StepResult(
+                    "SKIP",
+                    "Search returned no videos (no Search entry on Main to take the search URL from)",
+                    sample_url=search_url,
+                )
+            notes = f" ({search_notes[-1]})" if search_notes else ""
+            return StepResult(
+                "FAIL",
+                f"Search for '{keyword}' returned no videos{notes}",
+                sample_url=search_url,
+            )
+        search_video.clear()
+        search_video.update(captured_downloads[0])
+        if not first_video:
             first_video.update(captured_downloads[0])
         return StepResult(
             "PASS",
@@ -1336,7 +1391,7 @@ def run_site_child(
             image_items=sum(1 for x in captured_downloads if x.get("icon")),
             description_items=sum(1 for x in captured_downloads if x.get("desc")),
             playable=1 if captured_downloads[0].get("url") else 0,
-            sample_url=site.url,
+            sample_url=search_url,
         )
 
     # Webcam/live site names that can't produce playback URLs in harness
@@ -1416,6 +1471,24 @@ def run_site_child(
                 sample_url=raw_url,
             )
 
+        # The site module itself said it couldn't find a stream. That is what a
+        # user sees as "video won't play", so it is a failure, not a harness gap.
+        site_play_failure_phrases = (
+            "couldn't find",
+            "could not find",
+            "no video",
+            "no playable",
+            "unable to parse",
+            "unable to find",
+            "video not found",
+        )
+        if any(phrase in combined for phrase in site_play_failure_phrases):
+            return StepResult(
+                "FAIL",
+                f"Site could not find a stream: {notify_msgs[-1]}",
+                sample_url=raw_url,
+            )
+
         # If there's a notification but it doesn't match a known real-bug pattern,
         # it's likely a harness limitation
         if notify_msgs:
@@ -1435,12 +1508,27 @@ def run_site_child(
     def step_play() -> StepResult:
         if not supports_step("play"):
             return StepResult("SKIP", "Play disabled by site profile")
-        play_calls.clear()
         if not first_video:
             return StepResult("SKIP", "No video item available from list/search")
-        mode = first_video.get("mode", "")
-        raw_url = first_video.get("url", "")
-        raw_name = first_video.get("name", "")
+        return play_video(first_video)
+
+    def step_search_play() -> StepResult:
+        """Play the first search result, the path users take after searching."""
+        if not supports_step("play") or not supports_step("search"):
+            return StepResult("SKIP", "Play or search disabled by site profile")
+        if not search_video:
+            search_status = step_results.get("search", {}).get("status", "SKIP")
+            if search_status == "FAIL":
+                return StepResult("FAIL", "Search failed, so no search result to play")
+            return StepResult("SKIP", "No search result available to play")
+        return play_video(search_video)
+
+    def play_video(video: dict[str, str]) -> StepResult:
+        play_calls.clear()
+        notify_before = len(notify_calls)
+        mode = video.get("mode", "")
+        raw_url = video.get("url", "")
+        raw_name = video.get("name", "")
         if mode.startswith("plugin.video"):
             plugin_url = raw_url
             mode = get_mode_param_mode(raw_url)
@@ -1476,7 +1564,7 @@ def run_site_child(
                 )
             raise
         if not play_calls:
-            return _classify_play_failure(notify_calls[:], raw_url)
+            return _classify_play_failure(notify_calls[notify_before:], raw_url)
         return StepResult(
             "PASS",
             "Playback URL resolved",
@@ -1491,6 +1579,7 @@ def run_site_child(
         "categories": step_categories,
         "search": step_search,
         "play": step_play,
+        "search_play": step_search_play,
     }
 
     for step in steps:
@@ -1510,14 +1599,17 @@ def run_site_child(
         utils.VideoPlayer = original_video_player
     URL_Dispatcher._URL_Dispatcher__coerce = original_coerce
 
-    main_status = step_results.get("main", {}).get("status")
-    list_status = step_results.get("list", {}).get("status")
-    if main_status == "FAIL" or list_status == "FAIL":
+    # Search and search-result playback are what users hit most, so a failure
+    # there fails the site instead of being an advisory WARN.
+    if any(
+        step_results.get(step, {}).get("status") == "FAIL"
+        for step in ("main", "list", "search", "search_play")
+    ):
         overall = "FAIL"
     else:
         advisory_failed = any(
             step_results.get(step, {}).get("status") == "FAIL"
-            for step in ("categories", "search", "play")
+            for step in ("categories", "play")
             if step in step_results
         )
         overall = "WARN" if advisory_failed else "PASS"
@@ -1710,8 +1802,8 @@ def render_markdown(payload: dict[str, Any]) -> str:
         f"- Result: `PASS {s['pass']}` | `WARN {s.get('warn', 0)}` | `FAIL {s['fail']}` | `ERROR {s['error']}` | `SKIP {s['skip']}`"
     )
     lines.append("")
-    lines.append("| Site | Overall | Main | List | Categories | Search | Play | Time |")
-    lines.append("|---|---|---|---|---|---|---|---:|")
+    lines.append("| Site | Overall | Main | List | Categories | Search | Play | Search play | Time |")
+    lines.append("|---|---|---|---|---|---|---|---|---:|")
     for r in payload["sites"]:
 
         def icon(step):
@@ -1724,7 +1816,7 @@ def render_markdown(payload: dict[str, Any]) -> str:
             )
 
         lines.append(
-            f"| {r.get('site', '')} | {r.get('overall', '')} | {icon('main')} | {icon('list')} | {icon('categories')} | {icon('search')} | {icon('play')} | {r.get('elapsed', 0):.1f}s |"
+            f"| {r.get('site', '')} | {r.get('overall', '')} | {icon('main')} | {icon('list')} | {icon('categories')} | {icon('search')} | {icon('play')} | {icon('search_play')} | {r.get('elapsed', 0):.1f}s |"
         )
 
     no_image_sites: list[str] = []
@@ -1880,8 +1972,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--site", nargs="+", help="One or more site module names")
     parser.add_argument(
         "--steps",
-        default="main,list,categories,search,play",
-        help="Comma-separated steps: main,list,categories,search,play",
+        default=",".join(DEFAULT_STEPS),
+        help="Comma-separated steps: " + ",".join(DEFAULT_STEPS),
     )
     parser.add_argument("--keyword", default="test", help="Search keyword")
     parser.add_argument(

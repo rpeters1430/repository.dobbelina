@@ -27,7 +27,9 @@
       "required_stages": [
         "listing",
         "playback",
-        "media"
+        "media",
+        "search",
+        "search_play"
       ],
       "advisory_fields": [
         "thumbnail",
@@ -81,7 +83,10 @@
       }
     },
     "porndig": {
-      "tier": 1
+      "tier": 1,
+      "supports": {
+        "search": false
+      }
     },
     "cloudbate": {
       "tier": 2
@@ -389,7 +394,10 @@
     },
     "porndish": {
       "tier": 2,
-      "requires_flaresolverr": true
+      "requires_flaresolverr": true,
+      "supports": {
+        "search": false
+      }
     },
     "rlc": {
       "tier": 2,

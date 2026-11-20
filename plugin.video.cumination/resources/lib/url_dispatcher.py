@@ -49,6 +49,12 @@ class URL_Dispatcher(object):
         self.img_search = cum_image("cum-search.png")
         self.img_cat = cum_image("cum-cat.png")
         self.img_next = cum_image("cum-next.png")
+        # Used by hitprn, watchporn and watchpornx; without them Main raises
+        # AttributeError and the site's menu never opens.
+        self.img_tags = cum_image("cum-tags.png")
+        self.img_movies = cum_image("cum-movies.png")
+        self.img_channels = cum_image("cum-sites.png")
+        self.img_star = cum_image("cum-models.png")
         self.widget = False
 
     def get_full_mode(self, mode):

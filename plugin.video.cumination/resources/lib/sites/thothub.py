@@ -1024,7 +1024,7 @@ def Playvid(url, name, download=None):
 def Search(url, keyword=None):
     """Search for videos on ThotHub."""
     if not keyword:
-        site.search_dir(url, "Search public videos only")
+        site.search_dir(url, "Search")
     else:
         # ThotHub uses /search/keyword/ format
         keyword_clean = keyword.replace(" ", "-")
