@@ -112,6 +112,9 @@ def List(url):
             # If we get srcset, extract first URL
             if img and " " in img:
                 img = img.split()[0]
+            if img and img.startswith("http"):
+                # The thumbnail CDN answers 403 to hotlinked requests without a Referer.
+                img = "{0}|Referer={1}".format(img, site.url)
 
             # Extract duration
             duration_tag = item.select_one(".duration span, .video-properties")

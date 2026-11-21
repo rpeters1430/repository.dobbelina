@@ -252,3 +252,21 @@ def test_list_parses_current_live_card_markup(monkeypatch):
     assert downloads[0]["url"] == "https://www.playvids.com/VW5NrXhVQzG/example-video"
     assert downloads[0]["icon"] == "https://cdn-img1.playvids.com/thumbs/example.jpg"
     assert downloads[0]["duration"] == "27:28"
+
+
+def test_search_results_skip_pornstar_profile_cards(monkeypatch):
+    """Search pages start with a /pornstar/ profile card that is not a playable video."""
+    html = load_fixture("search_latina.html")
+    downloads = []
+    monkeypatch.setattr(playvids.utils, "getHtml", lambda url, referer=None: html)
+    monkeypatch.setattr(
+        playvids.site, "add_download_link",
+        lambda name, url, mode, iconimage, desc, **kw: downloads.append(url),
+    )
+    monkeypatch.setattr(playvids.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(playvids.utils, "eod", lambda *a, **k: None)
+
+    playvids.List("https://www.playvids.com/videos?q=latina")
+
+    assert len(downloads) == 21
+    assert not any("/pornstar/" in u for u in downloads)

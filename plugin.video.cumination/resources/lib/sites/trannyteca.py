@@ -59,7 +59,13 @@ def List(url):
         vurl = utils.safe_get_attr(link, "href", default="")
         img_tag = article.select_one("img")
         img = utils.get_thumbnail(img_tag)
-        name = utils.cleantext(utils.safe_get_text(link, default=""))
+        # The first link is now the thumbnail (no text); the title is in h2.entry-title.
+        title_link = article.select_one(".entry-title a[href]")
+        name = utils.cleantext(
+            utils.safe_get_text(title_link, default="")
+            or utils.safe_get_text(link, default="")
+            or utils.safe_get_attr(img_tag, "alt", default="")
+        )
 
         if vurl and name:
             site.add_download_link(name, vurl, "Playvid", img, name)

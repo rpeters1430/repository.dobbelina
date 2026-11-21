@@ -66,3 +66,22 @@ def test_cat_parses_categories(monkeypatch):
     assert len(dirs) == 1
     assert "MILF" in dirs[0]
     assert "(123)" in dirs[0]
+
+
+def test_search_lists_videos_not_photo_albums(monkeypatch):
+    """Search pages show a photo-album block above the videos; only videos may be listed."""
+    from pathlib import Path
+
+    html = (
+        Path(__file__).resolve().parents[1] / "fixtures" / "sites" / "vipporns" / "search_latina.html"
+    ).read_text(encoding="utf-8")
+    downloads = []
+    monkeypatch.setattr(vipporns.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(vipporns.site, "add_download_link", lambda *a, **k: downloads.append(a[1]))
+    monkeypatch.setattr(vipporns.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(vipporns.utils, "eod", lambda *a, **k: None)
+
+    vipporns.List("https://www.vipporns.com/vp-search/latina/")
+
+    assert len(downloads) == 24
+    assert all("/porn-videos/" in u for u in downloads)

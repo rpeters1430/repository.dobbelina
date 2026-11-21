@@ -120,7 +120,7 @@ def List(url, page=1):
     if next_el:
         next_val = utils.safe_get_attr(next_el, "data-page", ["href"])
         if next_val:
-            match = re.search(r"from=(\d+)", next_val)
+            match = re.search(r"from(?:_videos)?=(\d+)", next_val)
             if match:
                 np = match.group(1)
             elif next_val.isdigit():
@@ -128,7 +128,7 @@ def List(url, page=1):
 
     if not np:
         match = re.search(
-            r'class="next">.*?post_date;from:(\d+)"',
+            r'class="next">.*?post_date;from(?:_videos)?:(\d+)"',
             listhtml,
             re.DOTALL | re.IGNORECASE,
         )
@@ -136,8 +136,8 @@ def List(url, page=1):
             np = match.group(1)
 
     if np:
-        if "from=" in url:
-            nextp = re.sub(r"from=\d+", "from={}".format(np), url)
+        if "from=" in url or "from_videos=" in url:
+            nextp = re.sub(r"(from(?:_videos)?=)\d+", r"\g<1>{}".format(np), url)
         else:
             nextp = url
         site.add_dir("Next Page ({})".format(np), nextp, "List", site.img_next, page=np)
@@ -218,10 +218,13 @@ def Search(url, keyword=None):
         site.search_dir(url, "Search")
     else:
         title = keyword.replace(" ", "-")
+        # Search pages use their own KVS block and need the trailing slash and q=.
         searchUrl = (
             searchUrl
             + title
-            + "?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=post_date&from=1"
+            + "/?mode=async&function=get_block&block_id=list_videos_videos_list_search_result&q="
+            + urllib_parse.quote_plus(keyword)
+            + "&sort_by=post_date&from_videos=1"
         )
         List(searchUrl, 1)
 

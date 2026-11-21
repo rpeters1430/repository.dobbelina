@@ -58,17 +58,23 @@ def List(url):
         return
 
     soup = utils.parse_html(html)
-    for item in soup.select(".video-block"):
+    for item in soup.select(".video-block, .video-card"):
         link = item.select_one("a[href]")
         videopage = utils.safe_get_attr(link, "href", default="")
         if not videopage:
             continue
-        name = utils.cleantext(
-            utils.safe_get_attr(link, "title", default=utils.safe_get_text(link))
-        )
         img_tag = item.select_one("img")
+        # .video-card links wrap only the thumbnail + view/duration badges, so
+        # the link text is "0 Views 3:00"; the title is the image alt.
+        name = utils.cleantext(
+            utils.safe_get_attr(link, "title", default="")
+            or utils.safe_get_attr(img_tag, "alt", default="")
+            or utils.safe_get_text(link)
+        )
         img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-original"])
-        duration = utils.safe_get_text(item.select_one(".duration"), default="")
+        duration = utils.safe_get_text(
+            item.select_one(".duration, .video-card__duration"), default=""
+        )
         site.add_download_link(
             name,
             videopage,

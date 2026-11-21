@@ -88,7 +88,8 @@ def List(url):
         img_tag = item.select_one("img")
         img = utils.get_thumbnail(img_tag)
         name = utils.cleantext(
-            utils.safe_get_text(item.select_one(".name"), default="")
+            utils.safe_get_text(item.select_one(".name, [itemprop='name']"), default="")
+            or utils.safe_get_attr(img_tag, "alt", default="")
         )
         if not videopage or not name:
             continue

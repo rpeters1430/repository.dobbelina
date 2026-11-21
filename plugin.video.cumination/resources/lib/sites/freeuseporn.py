@@ -18,6 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+import re
+
+from six.moves import urllib_parse
+
 from resources.lib import utils
 from resources.lib.adultsite import AdultSite
 from resources.lib.sites.soup_spec import SoupSiteSpec
@@ -33,17 +37,12 @@ site = AdultSite(
 
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
-        "items": "a[href*='/videos/']",
+        # Video cards link to /video/<id>/<slug>; /videos/<name> are categories.
+        "items": "a.thumb-wrap-link[href*='/video/'], a[href^='/video/']",
         "url": {"attr": "href"},
         "title": {"selector": "img", "attr": "title", "clean": True},
         "thumbnail": {"selector": "img", "attr": "src", "fallback_attrs": ["data-src"]},
         "duration": {"selector": ".duration, .transition-opacity", "text": True},
-        "pagination": {
-            "selector": "a.page-link",
-            "text_matches": ["next", ">", "»", "Next"],
-            "attr": "href",
-            "mode": "List",
-        },
     }
 )
 
@@ -70,7 +69,25 @@ def List(url):
 
     soup = utils.parse_html(listhtml)
     VIDEO_LIST_SPEC.run(site, soup, base_url=url, play_mode="Playvid")
+    _add_next_page(soup, url)
     utils.eod()
+
+
+def _add_next_page(soup, url):
+    """Pager has only numbered links (current page is javascript:void(0))."""
+    match = re.search(r"[?&]page=(\d+)", url)
+    current = int(match.group(1)) if match else 1
+    for link in soup.select("a.page-link[href]"):
+        href = utils.safe_get_attr(link, "href")
+        page = re.search(r"[?&]page=(\d+)", href or "")
+        if page and int(page.group(1)) == current + 1:
+            site.add_dir(
+                "Next Page ({0})".format(current + 1),
+                urllib_parse.urljoin(site.url, href),
+                "List",
+                site.img_next,
+            )
+            return
 
 
 @site.register()

@@ -36,11 +36,13 @@ def test_list_parses_items(monkeypatch):
 
     freeuseporn.List("https://www.freeuseporn.com/videos?o=mr&page=1")
 
-    assert len(downloads) == 2
-    assert downloads[0]["name"] == "First Freeuse"
-    assert downloads[0]["duration"] == "12:00"
-    assert downloads[1]["url"].endswith("/videos/second")
-    assert any("Next Page" in d["name"] for d in dirs)
+    # Real 2026 listing: video cards are a.thumb-wrap-link -> /video/<id>/<slug>;
+    # /videos/<name> links are categories and must not be listed as videos.
+    assert len(downloads) == 20
+    assert downloads[0]["name"] == "magic manipulation lexia"
+    assert downloads[0]["url"] == "https://www.freeuseporn.com/video/10629/magic-manipulation-lexia"
+    assert all("/video/" in d["url"] for d in downloads)
+    assert dirs == [{"name": "Next Page (2)", "url": "https://www.freeuseporn.com/videos?o=mr&page=2"}]
 
 
 def test_tags_parses_items(monkeypatch):

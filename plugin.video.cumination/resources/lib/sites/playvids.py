@@ -29,6 +29,9 @@ site = AdultSite(
 )
 
 
+NON_VIDEO_SECTIONS = {"pornstar", "pornstars", "channel", "channels", "categories", "tags", "user", "users"}
+
+
 def _extract_video_card(item):
     """Parse legacy and current PlayVids card markup."""
     img_tag = item.select_one("img")
@@ -48,6 +51,11 @@ def _extract_video_card(item):
 
     videopage = utils.safe_get_attr(link, "href")
     if not videopage:
+        return None
+    # Search results open with pornstar/channel profile cards that share the
+    # .card markup; they are not videos and fail to play.
+    path = videopage.replace(site.url[:-1], "")
+    if path.strip("/").split("/")[0].lower() in NON_VIDEO_SECTIONS:
         return None
 
     name = utils.safe_get_text(link, "").strip()

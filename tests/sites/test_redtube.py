@@ -56,8 +56,9 @@ def test_list_parses_videos(monkeypatch):
     assert downloads[1]["url"] == "https://www.redtube.com/7891011/video/second-video"
     assert downloads[0]["duration"] == "10:12"
     assert downloads[1]["duration"] == "08:45"
-    assert downloads[0]["icon"].endswith("first.jpg")
-    assert downloads[1]["icon"].endswith("second.jpg")
+    assert downloads[0]["icon"].split("|")[0].endswith("first.jpg")
+    assert downloads[1]["icon"].split("|")[0].endswith("second.jpg")
+    assert downloads[0]["icon"].endswith("|Referer=https://www.redtube.com/")
 
     next_pages = [d for d in dirs if "Next Page" in d["name"]]
     assert len(next_pages) == 1

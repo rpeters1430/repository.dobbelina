@@ -43,7 +43,7 @@ cookiehdr = {"Cookie": "age_verified=1; access=1; accessPH=1"}
 @site.register(default_mode=True)
 def Main():
     site.add_dir(
-        "[COLOR hotpink]Search[/COLOR]", site.url + "search/", "Search", site.img_search
+        "[COLOR hotpink]Search[/COLOR]", site.url + "searches.html?q=", "Search", site.img_search
     )
     site.add_dir(
         "[COLOR hotpink]Categories[/COLOR]",
@@ -67,7 +67,9 @@ def List(url):
     soup = utils.parse_html(listhtml)
 
     # Extract video items - Tube8 uses class="video-box thumbnail-card"
-    video_items = soup.select(".video-box.thumbnail-card")
+    # Search results (and the 2026 listings) use article.video-box without
+    # the thumbnail-card class.
+    video_items = soup.select(".video-box.thumbnail-card, article.video-box")
     seen = set()
 
     for item in video_items:
@@ -159,7 +161,11 @@ def Search(url, keyword=None):
         site.search_dir(url, "Search")
     else:
         title = urllib_parse.quote_plus(keyword)
-        searchUrl = searchUrl + title + "/"
+        if "searches.html" in searchUrl or "?q=" in searchUrl:
+            # /search/<q>/ now 404s; the site's form posts to /searches.html?q=
+            searchUrl = searchUrl + title
+        else:
+            searchUrl = searchUrl + title + "/"
         List(searchUrl)
 
 

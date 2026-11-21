@@ -172,6 +172,15 @@ def Search(url, keyword=None):
         # Search form url pattern is https://myporntape.com/search/%QUERY%/
         query = keyword.replace(" ", "+")
         search_url = urllib_parse.urljoin(site.url, f"search/{query}/")
+        # The site's own search currently answers "There is no data in this
+        # list" for every query; its tag pages still list matching videos.
+        try:
+            html = utils.getHtml(search_url)
+        except Exception:
+            html = ""
+        if "/videos/" not in (html or ""):
+            tag = urllib_parse.quote(keyword.strip().lower().replace(" ", "-"))
+            search_url = urllib_parse.urljoin(site.url, f"tags/{tag}/")
         List(search_url)
 
 

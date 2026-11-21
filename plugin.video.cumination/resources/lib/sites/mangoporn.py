@@ -63,8 +63,14 @@ def List(url):
 
     soup = utils.parse_html(html)
     seen = set()
-    for item in soup.select("article.item.movies, article.item.tvshows, article.item"):
-        link = item.select_one(".data h3 a[href]") or item.select_one(".poster a[href]")
+    # 2026 theme: article.card with .card__t title link and .card__th thumb link.
+    for item in soup.select("article.item.movies, article.item.tvshows, article.item, article.card"):
+        link = (
+            item.select_one(".data h3 a[href]")
+            or item.select_one(".poster a[href]")
+            or item.select_one(".card__t a[href]")
+            or item.select_one("a.card__th[href]")
+        )
         if not link:
             continue
 
@@ -81,7 +87,7 @@ def List(url):
             continue
 
         thumb = _image_from_tag(item.select_one("img"))
-        duration = _clean_title(utils.safe_get_text(item.select_one(".duration")))
+        duration = _clean_title(utils.safe_get_text(item.select_one(".duration, .card__dur")))
         site.add_download_link(
             title,
             video_url,

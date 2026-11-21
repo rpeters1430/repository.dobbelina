@@ -48,7 +48,9 @@ _TOKEN_SEED = (
 
 VIDEO_LIST_SPEC = SoupSiteSpec(
     selectors={
-        "items": ".ml-item.item",
+        # Listing pages use div.ml-item.item, search results plain div.ml-item;
+        # the nav menu's a.ml-item links have no a.ml-mask and are excluded.
+        "items": "div.ml-item:has(> a.ml-mask)",
         "url": {"selector": "a.ml-mask", "attr": "href"},
         "title": {"selector": "h2", "text": True, "clean": True},
         "thumbnail": lambda item, soup: utils.get_thumbnail(item.select_one("img")),
