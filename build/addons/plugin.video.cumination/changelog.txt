@@ -1,3 +1,15 @@
+[B]Version 1.1.498[/B]
+- Merge pull request #469 from rpeters1430/fix/search-result-playback
+- fix: repair search and listings for sites with changed markup
+- feat: add search playback audit and deepen smoke harness play checks
+- Merge pull request #467 from rpeters1430/renovate/github-actions-digest-updates
+- Merge pull request #466 from rpeters1430/claude/site-health-search-playback
+- Merge pull request #468 from rpeters1430/fix/search-playback-followups
+- fix: address search dispatch, profile support, and search_play validation gaps
+- chore(deps): update github/codeql-action digest to 1bd86f2
+- Add missing menu icons that crash hitprn, watchporn and watchpornx
+- Make site health actually test search and search-result playback
+
 [B]Version 1.1.497[/B]
 - feat: port upstream site fixes, resolver auto-fallback, and replace netflixporno with watchpornx
 - fix(camgirlfap): fix search pagination and playback (closes #442)
