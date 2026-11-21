@@ -77,7 +77,8 @@ def List(url, page=1):
     soup = utils.parse_html(listhtml)
     items = soup.select(".item, .video-item, .video")
     for item in items:
-        link = item.select_one("a[href]")
+        # Cards are now the <a class="item"> itself rather than wrapping one.
+        link = item if item.name == "a" and item.get("href") else item.select_one("a[href]")
         videopage = utils.safe_get_attr(link, "href", default="")
         if not videopage:
             continue

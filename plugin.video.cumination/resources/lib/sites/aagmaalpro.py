@@ -23,7 +23,7 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "aagmaalpro",
     "[COLOR hotpink]Aag Maal Pro[/COLOR]",
-    "https://aagmaal.dog/",
+    "https://aagmal.my/",
     "aagmaalpro.png",
     "aagmaalpro",
     category="Specialty",

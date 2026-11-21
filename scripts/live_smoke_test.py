@@ -23,7 +23,7 @@ import time
 import traceback
 import urllib.error
 import urllib.request
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
@@ -101,6 +101,7 @@ def install_kodi_stubs() -> None:
     xbmc.executebuiltin = lambda *args, **kwargs: None
     xbmc.getSkinDir = lambda: "skin.estuary"
     xbmc.getInfoLabel = lambda key: "20.0" if "BuildVersion" in key else ""
+    xbmc.getInfoImage = lambda key: ""
     xbmc.getCondVisibility = lambda *args, **kwargs: False
     xbmc.sleep = lambda ms: None
 
@@ -259,6 +260,10 @@ def install_kodi_stubs() -> None:
     xbmcgui.Dialog = _Dialog
     xbmcgui.DialogProgress = _DialogProgress
     xbmcgui.Keyboard = _Keyboard
+    xbmc.Keyboard = _Keyboard  # Kodi exposes Keyboard on xbmc as well
+    xbmcgui.NOTIFICATION_INFO = "info"
+    xbmcgui.NOTIFICATION_WARNING = "warning"
+    xbmcgui.NOTIFICATION_ERROR = "error"
 
     # xbmcvfs
     xbmcvfs = types.ModuleType("kodi_six.xbmcvfs")
@@ -366,6 +371,13 @@ class StepResult:
     playable: int = 0
     sample_url: str = ""
     play_url: str = ""
+    # Extra evidence for scripts/search_playback_audit.py: thumbnail URLs the
+    # step emitted, how the stream was handed to the player, and which item
+    # was played.
+    thumbs: list[str] = field(default_factory=list)
+    play_via: str = ""
+    played_mode: str = ""
+    played_item_url: str = ""
 
 
 def normalize_url(site_url: str, value: str) -> str:
@@ -682,6 +694,7 @@ def run_site_child(
     captured_downloads: list[dict[str, Any]] = []
     listing_samples: list[dict[str, Any]] = []
     play_calls: list[str] = []
+    play_vias: list[str] = []
     notify_calls: list[str] = []
 
     def record_sample(name, url, mode, icon="", desc="", item_type="video"):
@@ -771,19 +784,61 @@ def run_site_child(
         def iscanceled(self):
             return False
 
+    # SMOKE_DEEP_PLAY=1 (set by scripts/search_playback_audit.py) makes the
+    # player stub follow the real page-fetch / KVS-decode logic, so the
+    # captured play URL is the actual stream instead of the video page.
+    deep_play = os.environ.get("SMOKE_DEEP_PLAY") == "1"
+
     class FakeVideoPlayer:
         def __init__(self, name, *args, **kwargs):
             self.name = name
             self.progress = FakeProgress()
             self.resolveurl = sys.modules.get("resolveurl")
+            self.direct_regex = kwargs.get(
+                "direct_regex",
+                args[2] if len(args) > 2 else r"""(?:<source|<video).*?src=(?:"|')([^"']+)[^>]*>""",
+            )
+            self.regex = kwargs.get(
+                "regex",
+                args[1] if len(args) > 1 else r"""(?:src|SRC|href|HREF)=\s*["']([^'"]+)""",
+            )
+            self.IA_check = kwargs.get("IA_check", "check")
+            self.download = kwargs.get("download", False)
 
         def play_from_direct_link(self, direct_link):
+            play_vias.append("play_from_direct_link")
             play_calls.append(str(direct_link))
 
         def play_from_site_link(self, url, referrer=""):
+            play_vias.append("play_from_site_link")
+            if deep_play:
+                try:
+                    html = utils.getHtml(url, referrer)
+                except Exception:
+                    html = ""
+                if html:
+                    self.play_from_html(html, url)
+                    return
             play_calls.append(str(url))
 
         def play_from_html(self, html, url=None):
+            play_vias.append("play_from_html")
+            if deep_play and self.direct_regex:
+                direct = re.compile(self.direct_regex, re.DOTALL | re.IGNORECASE).findall(html or "")
+                if direct:
+                    link = direct[0]
+                    if link.startswith("/") and url:
+                        link = urljoin(url, link)
+                    self.play_from_direct_link(link)
+                    return
+            if deep_play:
+                # Real VideoPlayer: no direct <video>/<source> -> hosters matched
+                # by the site's regex go to resolveurl. Don't guess a random .mp4.
+                hosters = re.compile(self.regex, re.DOTALL | re.IGNORECASE).findall(html or "") if self.regex else []
+                hosters = [h for h in hosters if h.startswith("http") and not re.search(r"\.(js|css|png|jpe?g|gif|ico|svg)(\?|$)", h)]
+                if hosters:
+                    self.play_from_link_list(hosters)
+                    return
             # Try to extract direct links from HTML
             for pattern in [
                 r'(https?://[^\s"\'\\,\]]+\.mp4(?:[^\s"\'\\,\]]*)?)',
@@ -797,16 +852,30 @@ def run_site_child(
                 play_calls.append(str(url))
 
         def play_from_link_list(self, links):
+            play_vias.append("play_from_link_list")
             if links:
                 play_calls.append(str(links[0]))
 
         def play_from_kt_player(self, html, url=None, follow_redirects=False, user_agent=None):
+            play_vias.append("play_from_kt_player")
+            if deep_play and original_video_player is not None:
+                before = len(play_calls)
+                try:
+                    # Real KVS parsing/decoding; it ends in self.play_from_direct_link.
+                    original_video_player.play_from_kt_player(
+                        self, html, url, follow_redirects=follow_redirects, user_agent=user_agent
+                    )
+                except Exception:
+                    pass
+                if len(play_calls) > before:
+                    return
             if url:
                 play_calls.append(str(url))
             else:
                 play_calls.append("kt_player_detected")
 
         def play_from_link_to_resolve(self, source):
+            play_vias.append("play_from_link_to_resolve")
             if hasattr(source, "resolve"):
                 try:
                     play_calls.append(str(source.resolve()))
@@ -822,6 +891,7 @@ def run_site_child(
             return False
 
         def _solve_doodstream(self, url):
+            play_vias.append("_solve_doodstream")
             if original_video_player and hasattr(original_video_player, "_solve_doodstream"):
                 try:
                     res = original_video_player._solve_doodstream(self, url)
@@ -834,6 +904,7 @@ def run_site_child(
 
 
     def fake_playvid(videourl, name, *args, **kwargs):
+        play_vias.append("playvid")
         play_calls.append(str(videourl))
 
     basics.addDir = fake_add_dir
@@ -991,6 +1062,21 @@ def run_site_child(
 
         return res
 
+    CONTROL_MODE_PREFIXES = ("change", "sort", "set", "filter", "order", "perpage", "login")
+
+    def is_control(item: dict[str, Any]) -> bool:
+        """Settings entries some sites add as download links (e.g. ikisoda ChangePerPage)."""
+        mode = str(item.get("mode", "")).lower().rsplit(".", 1)[-1]
+        return mode.startswith(CONTROL_MODE_PREFIXES)
+
+    def pick_video(items: list[dict[str, Any]]) -> dict[str, Any]:
+        real = [i for i in items if not is_control(i)] or items
+        for item in real:
+            mode = str(item.get("mode", "")).lower().rsplit(".", 1)[-1]
+            if "play" in mode or "video" in mode:
+                return item
+        return real[0]
+
     def find_mode_candidate(
         mode_suffixes: tuple[str, ...], dirs: list[dict[str, Any]]
     ) -> dict[str, str]:
@@ -1113,7 +1199,7 @@ def run_site_child(
         search_candidate.update(find_search_candidate(captured_dirs))
         main_video_count = len(captured_downloads)
         if captured_downloads and not first_video:
-            first_video.update(captured_downloads[0])
+            first_video.update(pick_video(captured_downloads))
         if total <= 0:
             return StepResult("FAIL", "Main returned no items", items=0)
         return StepResult(
@@ -1123,6 +1209,7 @@ def run_site_child(
             video_items=len(captured_downloads),
             image_items=sum(1 for x in captured_downloads if x.get("icon")),
             description_items=sum(1 for x in captured_downloads if x.get("desc")),
+            thumbs=[x["icon"] for x in captured_downloads[:8] if x.get("icon")],
         )
 
     def step_list() -> StepResult:
@@ -1156,7 +1243,8 @@ def run_site_child(
             videos = len(captured_downloads)
             fresh_notify = notify_calls[notify_start:]
             if videos > 0:
-                first = captured_downloads[0]
+                first = pick_video(captured_downloads)
+                first_video.clear()
                 first_video.update(first)
                 return StepResult(
                     "PASS",
@@ -1164,6 +1252,7 @@ def run_site_child(
                     items=videos + len(captured_dirs),
                     video_items=videos,
                     image_items=sum(1 for x in captured_downloads if x.get("icon")),
+                    thumbs=[x["icon"] for x in captured_downloads[:8] if x.get("icon")],
                     description_items=sum(
                         1 for x in captured_downloads if x.get("desc")
                     ),
@@ -1329,6 +1418,8 @@ def run_site_child(
             return StepResult("SKIP", "Search disabled by site profile")
         captured_dirs.clear()
         captured_downloads.clear()
+        # Sites that only search model names set harness.search_keyword.
+        query_kw = harness_profile.get("search_keyword") or keyword
         # Kodi calls Search with the URL that Main put on the Search entry
         # (e.g. site.url + "search/"). Calling it with the homepage builds
         # URLs like https://site/<keyword>, which 404 and used to be reported
@@ -1350,7 +1441,7 @@ def run_site_child(
         search_url = normalize_url(site.url, search_url)
         fn = URL_Dispatcher.func_registry[mode]
         sig = inspect.signature(fn)
-        query: dict[str, Any] = {"url": search_url, "keyword": keyword}
+        query: dict[str, Any] = {"url": search_url, "keyword": query_kw}
         if "url" not in sig.parameters:
             query.pop("url", None)
         if "keyword" not in sig.parameters:
@@ -1358,7 +1449,41 @@ def run_site_child(
         notify_before = len(notify_calls)
         call_mode(mode, query)
         search_notes = notify_calls[notify_before:]
-        videos = len(captured_downloads)
+        videos = sum(1 for x in captured_downloads if not is_control(x))
+        folder_note = ""
+        if videos <= 0:
+            # Album/model sites (erome, fapello, ...) return folders; open the
+            # first real one the way a user would (up to two levels, e.g. an
+            # erome album -> its Videos sub-folder) and use the videos inside.
+            def real_folders() -> list[dict[str, Any]]:
+                found = [
+                    d for d in captured_dirs
+                    if d.get("mode") and d.get("url")
+                    and not re.match(r"\s*(\[[^\]]*\])*\s*(next|prev|page|more)", d.get("name", ""), re.I)
+                    and "search" not in d.get("mode", "").lower()
+                ]
+                # Prefer a folder that says it holds videos.
+                return sorted(found, key=lambda d: 0 if re.search(r"vid", d.get("name", ""), re.I) else 1)
+
+            folders = real_folders()
+            total_folders = len(folders)
+            for _hop in range(2):
+                if not folders or videos > 0:
+                    break
+                folder = folders[0]
+                captured_dirs.clear()
+                captured_downloads.clear()
+                call_mode(folder["mode"], {
+                    "url": normalize_url(site.url, folder["url"]),
+                    "page": folder.get("page") or None,
+                    "channel": folder.get("channel") or None,
+                    "section": folder.get("section") or None,
+                    "keyword": folder.get("keyword") or None,
+                })
+                videos = sum(1 for x in captured_downloads if not is_control(x))
+                folders = real_folders()
+            if total_folders:
+                folder_note = f" ({total_folders} folders; first holds {videos} videos)"
         if videos <= 0:
             if harness_profile.get("search_results_optional"):
                 return StepResult(
@@ -1376,20 +1501,21 @@ def run_site_child(
             notes = f" ({search_notes[-1]})" if search_notes else ""
             return StepResult(
                 "FAIL",
-                f"Search for '{keyword}' returned no videos{notes}",
+                f"Search for '{query_kw}' returned no videos{notes}",
                 sample_url=search_url,
             )
         search_video.clear()
-        search_video.update(captured_downloads[0])
+        search_video.update(pick_video(captured_downloads))
         if not first_video:
-            first_video.update(captured_downloads[0])
+            first_video.update(search_video)
         return StepResult(
             "PASS",
-            f"{videos} results for '{keyword}'",
+            f"{videos} results for '{query_kw}'{folder_note}",
             items=videos + len(captured_dirs),
             video_items=videos,
             image_items=sum(1 for x in captured_downloads if x.get("icon")),
             description_items=sum(1 for x in captured_downloads if x.get("desc")),
+            thumbs=[x["icon"] for x in captured_downloads[:8] if x.get("icon")],
             playable=1 if captured_downloads[0].get("url") else 0,
             sample_url=search_url,
         )
@@ -1524,7 +1650,15 @@ def run_site_child(
         return play_video(search_video)
 
     def play_video(video: dict[str, str]) -> StepResult:
+        res = _play_video(video)
+        res.play_via = play_vias[-1] if play_vias else ""
+        res.played_mode = str(video.get("mode", ""))
+        res.played_item_url = str(video.get("url", ""))
+        return res
+
+    def _play_video(video: dict[str, str]) -> StepResult:
         play_calls.clear()
+        play_vias.clear()
         notify_before = len(notify_calls)
         mode = video.get("mode", "")
         raw_url = video.get("url", "")

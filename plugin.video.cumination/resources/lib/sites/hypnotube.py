@@ -26,7 +26,9 @@ site = AdultSite('hypnotube', '[COLOR hotpink]HypnoTube[/COLOR]', 'https://hypno
 @site.register(default_mode=True)
 def Main():
     site.add_dir('[COLOR hotpink]Trending[/COLOR]', site.url + 'most-viewed/month/', 'List', site.img_cat)
-    site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'search/', 'Search', site.img_search)
+    # The site's search form (searchgate.php, type=videos) redirects here;
+    # plain /search/<q>/ only lists channels.
+    site.add_dir('[COLOR hotpink]Search[/COLOR]', site.url + 'search/videos/', 'Search', site.img_search)
     List(site.url + 'videos/page1.html')
 
 

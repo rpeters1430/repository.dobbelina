@@ -11,6 +11,7 @@ the Free Software Foundation, either version 3 of the License, or
 from __future__ import annotations
 
 import base64
+import json
 import re
 from six.moves import urllib_parse
 
@@ -46,6 +47,28 @@ def _extract_next_page(soup):
         if href and href != "#" and "next" in utils.safe_get_text(link).lower():
             return _absolute_url(href)
     return ""
+
+
+def _load_ajax_listing(url, html, page_soup):
+    """Pages now ship skeleton cards and fill them from `<url>?ajax=<name>`.
+
+    The name differs per page (browse_videos, search_results, ...), so it is
+    read from the page's own loader script. Returns (soup, next_url).
+    """
+    match = re.search(r"""['"]\?ajax=([a-z_]+)['"]""", html or "")
+    if not match:
+        return page_soup, ""
+    sep = "&" if "?" in url else "?"
+    try:
+        data = json.loads(utils.getHtml(url + sep + "ajax=" + match.group(1), url) or "{}")
+    except Exception as exc:
+        utils.kodilog("javseen ajax listing failed: {}".format(exc))
+        return page_soup, ""
+    fragment = (data.get("html") or "") + '<ul class="pagination">{}</ul>'.format(
+        data.get("pagination") or ""
+    )
+    next_url = data.get("next_url") or ""
+    return utils.parse_html(fragment), _absolute_url(next_url) if next_url else ""
 
 
 def _extract_direct_stream(html):
@@ -179,6 +202,9 @@ def List(url):
         return
 
     soup = utils.parse_html(html)
+    ajax_next = ""
+    if not soup.select(".video a.thumbnail[href]"):
+        soup, ajax_next = _load_ajax_listing(url, html, soup)
     for item in soup.select(".video"):
         link = item.select_one("a.thumbnail[href]")
         if not link:
@@ -197,7 +223,7 @@ def List(url):
         if title and video_url:
             site.add_download_link(title, video_url, "Playvid", thumb, title, duration=duration)
 
-    next_url = _extract_next_page(soup)
+    next_url = ajax_next or _extract_next_page(soup)
     if next_url:
         site.add_dir("Next Page", next_url, "List", site.img_next)
     utils.eod()

@@ -111,10 +111,24 @@ def test_search_without_keyword():
 
 
 def test_search_with_keyword():
-    """Test that Search with keyword calls List with constructed URL."""
-    with patch("resources.lib.sites.myporntape.List") as mock_list:
+    """Search lists the site's search page when it has results."""
+    with (
+        patch("resources.lib.sites.myporntape.List") as mock_list,
+        patch("resources.lib.utils.getHtml", return_value='<a href="https://myporntape.com/videos/1/x/">'),
+    ):
         myporntape.Search("https://myporntape.com/search/", keyword="homemade sex")
         mock_list.assert_called_once_with("https://myporntape.com/search/homemade+sex/")
+
+
+def test_search_falls_back_to_tag_page_when_site_search_is_empty():
+    """The site's search returns 'There is no data in this list'; tag pages still work."""
+    empty = '<div class="empty-content">There is no data in this list.</div>'
+    with (
+        patch("resources.lib.sites.myporntape.List") as mock_list,
+        patch("resources.lib.utils.getHtml", return_value=empty),
+    ):
+        myporntape.Search("https://myporntape.com/search/", keyword="Homemade Sex")
+        mock_list.assert_called_once_with("https://myporntape.com/tags/homemade-sex/")
 
 
 def test_playvid_kvs_encoded():

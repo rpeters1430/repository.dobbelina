@@ -55,8 +55,10 @@ def List(url):
     soup = utils.parse_html(listhtml)
 
     # Try to find the main container to narrow down listing
+    # Search pages put a photo-album block (.list-albums, /images/ links) above
+    # the video block, so the video list must be matched first.
     container = soup.select_one(
-        ".list-albums, .box.tag, #list_videos_common_videos_list"
+        '[id^="list_videos_"][id$="_items"], #list_videos_common_videos_list, .box.tag'
     )
     if container:
         video_items = container.select(".item")
@@ -83,6 +85,8 @@ def List(url):
 
             if not videopage or not name:
                 continue
+            if "/images/" in videopage or "/albums/" in videopage:
+                continue  # photo gallery, not a video
 
             name = utils.cleantext(name.strip())
             site.add_download_link(

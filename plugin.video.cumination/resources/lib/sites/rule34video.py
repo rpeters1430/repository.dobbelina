@@ -60,7 +60,8 @@ def List(url):
 
     for item in items:
         # Get video link with "open-popup" class
-        link = item.select_one("a.open-popup")
+        # Card link class was renamed open-popup -> js-open-popup (a.th).
+        link = item.select_one("a.open-popup, a.js-open-popup, a.th[href*='/video/']")
         if not link:
             continue
 
