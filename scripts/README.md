@@ -66,6 +66,7 @@ Run in this order when standardizing logos:
 | `run_smoke_tests.py` | Runs the generated pytest smoke tests. |
 | `smoke_check.py` | Quick wrapper: runs smoke tests and prints an actionable pass/fail summary. |
 | `live_smoke_test.py` | Live-fetches real sites through Kodi-style stubs. Used directly by CI (`site-health.yml`). |
+| `search_playback_audit.py` | Local audit: per site, runs search and plays the first main-list video and the first search result, **fetches both streams** to confirm they serve video, and fetches thumbnails from both listings. Flags `SEARCH_PLAY_BROKEN` (list plays, search doesn't). `--all`, `--site …`, `--rerun-failed results/search_playback_audit_latest.json`; uses FlareSolverr at `--flaresolverr` (default `http://192.168.8.143:8191/v1`). Sets `SMOKE_DEEP_PLAY=1` so the harness follows site pages and KVS decoding to the real stream. |
 | `generate_smoke_matrix.py` | Emits the GitHub Actions job matrix for `site-health.yml`. |
 | `merge_smoke_reports.py` | Merges per-shard `live_smoke_test.py` JSON output into one report. Used by CI. |
 | `smoke_report_diff.py` | Diffs two smoke result files to spot regressions. Used by CI. |
