@@ -449,6 +449,9 @@ _FS_FAILURE_MARKERS = (
 )
 
 
+FS_REQUIRED_SKIP_MESSAGE = "FlareSolverr required but unavailable in harness"
+
+
 def indicates_flaresolverr_failure(msg: str) -> bool:
     """True if a message reports that the FlareSolverr service is unavailable.
 
@@ -1045,9 +1048,13 @@ def run_site_child(
             )
 
         if requires_flaresolverr() and "flaresolverr" in lowered:
+            # Keep the original error so the strict monitor and reports can
+            # tell a challenge that FlareSolverr could not pass (for example a
+            # Cloudflare block on the runner's datacenter IP) from a harness
+            # problem.
             return StepResult(
                 "SKIP",
-                "FlareSolverr required but unavailable in harness",
+                f"{FS_REQUIRED_SKIP_MESSAGE}: {msg[:200]}",
                 sample_url=res.sample_url,
                 play_url=res.play_url,
             )

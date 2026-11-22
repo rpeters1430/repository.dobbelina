@@ -157,3 +157,60 @@ def test_required_media_stage_fails_when_not_performed():
     assert report["failed_stage"] == "media"
     assert report["classification"] == "MEDIA_VALIDATION_MISSING"
     assert report["exit_code"] == 1
+
+
+def test_cloudflare_block_through_flaresolverr_is_blocked_not_untested():
+    record = {
+        "site": "missav",
+        "overall": "SKIP",
+        "steps": {
+            "main": {
+                "status": "SKIP",
+                "message": "FlareSolverr required but unavailable in harness: "
+                "RuntimeError: FlareSolverr error for https://example.test/: "
+                "datacenter-ip-blocked",
+            },
+            "list": {"status": "SKIP", "message": "FlareSolverr failed in a previous step"},
+            "play": {"status": "SKIP", "message": "FlareSolverr failed in a previous step"},
+        },
+    }
+
+    report = evaluate_record(record, sample_profile())
+    assert report["state"] == HealthState.BLOCKED
+    assert report["classification"] == "CHALLENGE"
+    assert report["failed_stage"] == "listing"
+    assert report["exit_code"] == 1
+    assert "datacenter-ip-blocked" in report["message"]
+    assert report["failure_signature"]
+
+
+def test_flaresolverr_block_at_search_reports_search_stage():
+    record = {
+        "site": "spankbang",
+        "overall": "SKIP",
+        "steps": {
+            "main": {"status": "SKIP", "message": "Main disabled by site profile"},
+            "search": {
+                "status": "SKIP",
+                "message": "FlareSolverr required but unavailable in harness: timed out",
+            },
+        },
+    }
+
+    report = evaluate_record(record, sample_profile())
+    assert report["state"] == HealthState.BLOCKED
+    assert report["failed_stage"] == "search"
+
+
+def test_global_flaresolverr_outage_stays_not_tested():
+    record = {
+        "site": "missav",
+        "overall": "SKIP",
+        "steps": {
+            "main": {"status": "SKIP", "message": "FlareSolverr unavailable in harness (global)"},
+        },
+    }
+
+    report = evaluate_record(record, sample_profile())
+    assert report["state"] == HealthState.NOT_TESTED
+    assert report["exit_code"] == 2

@@ -11,9 +11,28 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from scripts.listing_validator import validate_listing
-from scripts.live_smoke_test import get_site_profile, run_site_child
+from scripts.live_smoke_test import FS_REQUIRED_SKIP_MESSAGE, get_site_profile, run_site_child
 from scripts.media_validator import validate_media
 from scripts.site_health_types import HealthState, ValidationResult, failure_signature, redact_url
+
+
+def _flaresolverr_blocked_step(record: dict[str, Any]) -> tuple[str, str] | None:
+    """Return the step where FlareSolverr could not get past a site's challenge.
+
+    The smoke harness turns a FlareSolverr error on a site that requires it
+    into SKIP. In the strict job the FlareSolverr service is health-checked
+    before the monitor runs, so such a SKIP means the site's challenge (for
+    example Cloudflare blocking the runner's datacenter IP) was not passed.
+    That is a BLOCKED site, not a missing result.
+    """
+    for step_name, step in (record.get("steps") or {}).items():
+        if not isinstance(step, dict) or step.get("status") != "SKIP":
+            continue
+        message = step.get("message") or ""
+        if message.startswith(FS_REQUIRED_SKIP_MESSAGE):
+            detail = message[len(FS_REQUIRED_SKIP_MESSAGE):].lstrip(": ").strip()
+            return step_name, detail or "FlareSolverr could not load the page"
+    return None
 
 
 def evaluate_record(
@@ -74,6 +93,27 @@ def evaluate_record(
                 "state": HealthState.HARNESS_ERROR,
                 "failed_stage": "harness",
                 "classification": "HARNESS_ERROR",
+                "message": error_message,
+            }),
+            "record": record,
+        }
+
+    challenge_step = _flaresolverr_blocked_step(record) if record_status == "SKIP" else None
+    if challenge_step:
+        step_name, step_message = challenge_step
+        failed_stage = "listing" if step_name in ("main", "list") else step_name
+        error_message = f"Bot challenge not passed at {step_name}: {step_message}"
+        return {
+            "site": site_name,
+            "state": HealthState.BLOCKED,
+            "exit_code": 1,
+            "classification": "CHALLENGE",
+            "failed_stage": failed_stage,
+            "message": error_message,
+            "failure_signature": failure_signature({
+                "state": HealthState.BLOCKED,
+                "failed_stage": failed_stage,
+                "classification": "CHALLENGE",
                 "message": error_message,
             }),
             "record": record,
