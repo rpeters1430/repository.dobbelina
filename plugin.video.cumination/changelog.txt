@@ -1,3 +1,14 @@
+[B]Version 1.1.499[/B]
+- fix: resolve thumbnail and playback issues on viralxxxporn and pornhub
+- Merge pull request #471 from rpeters1430/renovate/patch-dependencies
+- Merge pull request #473 from rpeters1430/renovate/minor-dependencies
+- chore(deps): update zizmorcore/zizmor-action action to v0.9.0
+- chore(deps): update dependency @playwright/mcp to v0.0.86
+- Merge pull request #472 from rpeters1430/claude/cloudflare-block-not-tested
+- fix(site-health): count a Cloudflare block as BLOCKED, not NOT_TESTED
+- Merge pull request #469 from rpeters1430/fix/search-result-playback
+- fix: repair search and listings for sites with changed markup
+
 [B]Version 1.1.498[/B]
 - Merge pull request #469 from rpeters1430/fix/search-result-playback
 - fix: repair search and listings for sites with changed markup
