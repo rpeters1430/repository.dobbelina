@@ -116,6 +116,48 @@ def test_categories_parses_items(monkeypatch):
     assert dirs[1]["name"] == "Cosplay"
 
 
+def test_models_parses_items_and_thumbs(monkeypatch):
+    html = """
+    <div class="vx-th item">
+        <div class="vx-card-gallery">
+            <div class="vx-top-card">
+                <div class="vx-content">
+                    <a href="https://viralxxxporn.com/models/sophie-rain/" title="Sophie Rain" class="vx-name">
+                        <span class="vx-model-rank">#1</span>Sophie Rain
+                    </a>
+                </div>
+                <a href="https://viralxxxporn.com/models/sophie-rain/" title="Sophie Rain" class="open-btn">Open</a>
+            </div>
+            <div class="vx-gallery">
+                <div class="vx-box">
+                    <div class="vx-media">
+                        <img class="lazy-load" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-original="https://imgcdn.viralxxxporn.com/contents/videos_screenshots/553000/553026/800x450/1.jpg" alt="Sophie Rain">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    """
+    dirs = []
+    monkeypatch.setattr(viralxxxporn.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(
+        viralxxxporn.site,
+        "add_dir",
+        lambda name, url, mode, iconimage="", **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode, "icon": iconimage}
+        ),
+    )
+    monkeypatch.setattr(viralxxxporn.utils, "eod", lambda: None)
+
+    viralxxxporn.Models("https://viralxxxporn.com/models/")
+
+    assert len(dirs) == 1
+    assert dirs[0]["name"] == "Sophie Rain"
+    assert dirs[0]["url"] == "https://viralxxxporn.com/models/sophie-rain/"
+    assert dirs[0]["mode"] == "List"
+    assert dirs[0]["icon"] == "https://imgcdn.viralxxxporn.com/contents/videos_screenshots/553000/553026/800x450/1.jpg"
+
+
 def test_search(monkeypatch):
     called_with = []
     monkeypatch.setattr(viralxxxporn, "List", lambda url: called_with.append(url))
@@ -134,5 +176,5 @@ def test_playvid_calls_kt_player_for_flashvars(monkeypatch):
     viralxxxporn.Playvid("https://viralxxxporn.com/video/468174/test/", "Test Video")
 
     mock_vp.play_from_kt_player.assert_called_once_with(
-        html, "https://viralxxxporn.com/video/468174/test/"
+        html, "https://viralxxxporn.com/video/468174/test/", follow_redirects=True
     )

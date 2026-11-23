@@ -894,3 +894,45 @@ def test_resolve_video_url_retries_once_when_page_has_no_sources(monkeypatch):
 
     assert resolved.startswith("https://cdn.phncdn.com/v/master.m3u8|")
     assert pages == []
+
+
+def test_add_img_headers_encodes_user_agent(monkeypatch):
+    monkeypatch.setattr(
+        pornhub.utils,
+        "USER_AGENT",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0",
+    )
+    result = pornhub.add_img_headers("https://pix-fl.phncdn.com/thumb.jpg")
+    assert result.startswith("https://pix-fl.phncdn.com/thumb.jpg|")
+    assert " " not in result.split("|", 1)[1]
+    assert "User-Agent=Mozilla%2F5.0" in result
+
+
+def test_resolve_video_url_falls_back_to_get_media_when_hv_h_fails(monkeypatch):
+    video_page = (
+        'var flashvars_1 = {"mediaDefinitions":['
+        '{"format":"hls","quality":"1080","videoUrl":"https://hv-h.phncdn.com/hls/v/master.m3u8"},'
+        '{"format":"mp4","quality":[],"videoUrl":"https://www.pornhub.com/video/get_media?s=abc"}'
+        ']};'
+    )
+    get_media_json = (
+        '[{"quality":"720","videoUrl":"https://ev.phncdn.com/v/720.mp4"},'
+        '{"quality":"1080","videoUrl":"https://ev.phncdn.com/v/1080.mp4"}]'
+    )
+
+    def fake_get_html(url, referer=None, headers=None):
+        if "view_video.php" in url:
+            return video_page
+        if "hv-h.phncdn.com" in url:
+            return ""
+        if "video/get_media" in url:
+            return get_media_json
+        return ""
+
+    monkeypatch.setattr(pornhub.utils, "_getHtml", fake_get_html)
+
+    resolved = pornhub._resolve_video_url(
+        "https://www.pornhub.com/view_video.php?viewkey=abc"
+    )
+
+    assert resolved.startswith("https://ev.phncdn.com/v/1080.mp4|")

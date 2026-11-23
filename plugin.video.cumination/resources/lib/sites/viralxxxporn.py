@@ -159,8 +159,11 @@ def Models(url):
 
     soup = utils.parse_html(html)
     seen = set()
-    for item in soup.select("ul.models-list li a, a[href*='/models/'], .item a"):
-        model_url = _absolute_url(utils.safe_get_attr(item, "href"))
+    for item in soup.select(".vx-th.item, .item, ul.models-list li, a[href*='/models/']"):
+        a = item if item.name == "a" else item.select_one("a[href*='/models/']")
+        if not a:
+            continue
+        model_url = _absolute_url(utils.safe_get_attr(a, "href"))
         if (
             not model_url
             or "/models/" not in model_url
@@ -171,15 +174,15 @@ def Models(url):
             continue
         seen.add(model_url)
 
-        img = item.select_one("img")
+        img = a.select_one("img") or item.select_one("img")
         thumb = _extract_thumb(img)
-        title = _clean_title(utils.safe_get_attr(item, "title"))
+        title = _clean_title(utils.safe_get_attr(a, "title"))
         if not title:
-            spans = item.select("span")
+            spans = a.select("span:not(.vx-model-rank)")
             if spans:
                 title = _clean_title(spans[0].get_text(strip=True))
             else:
-                title = _clean_title(item.get_text(strip=True))
+                title = _clean_title(a.get_text(strip=True))
 
         if title:
             site.add_dir(title, model_url, "List", thumb or site.img_cat)
@@ -210,4 +213,4 @@ def Playvid(url, name, download=None):
         vp.play_from_link_to_resolve(url)
         return
 
-    vp.play_from_kt_player(html, url)
+    vp.play_from_kt_player(html, url, follow_redirects=True)

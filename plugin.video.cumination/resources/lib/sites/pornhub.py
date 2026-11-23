@@ -303,17 +303,59 @@ def add_img_headers(img_url):
     if not img_url.startswith("http"):
         return img_url
     if any(domain in img_url for domain in ("phncdn.com", "ttcache.com")):
-        return "{}|Referer={}&User-Agent={}".format(
-            img_url, site.url, utils.USER_AGENT
+        return "{}|{}".format(
+            img_url,
+            urllib_parse.urlencode(
+                {"Referer": site.url, "User-Agent": utils.USER_AGENT}
+            ),
         )
     return img_url
+
+
+def _resolve_get_media_sources(sources, page_url):
+    for _, src_url in sources:
+        if "/video/get_media" not in (src_url or ""):
+            continue
+        try:
+            raw = utils._getHtml(src_url, page_url)
+            items = json.loads(raw) if _is_text(raw) and raw.strip() else []
+        except Exception:
+            items = []
+        if isinstance(items, list):
+            mp4_sources = [
+                (item.get("quality"), item.get("videoUrl"))
+                for item in items
+                if isinstance(item, dict) and item.get("videoUrl")
+            ]
+            if mp4_sources:
+                return _select_media_source(mp4_sources)
+    return ""
+
+
+def _is_hls_playlist_available(playlist_url):
+    try:
+        playlist = utils._getHtml(playlist_url, site.url)
+    except Exception:
+        return False
+    return bool(_is_text(playlist) and "#EXTM3U" in playlist)
 
 
 def _resolve_video_url(url):
     # PornHub intermittently answers with a 403 "maintenance" page; one retry clears it.
     for _ in range(2):
         html = _get_html(url, utils._getHtml)
-        video_url = _select_media_source(_extract_media_sources(html))
+        sources = _extract_media_sources(html)
+        direct_sources = [
+            (q, u) for q, u in sources if "/video/get_media" not in (u or "")
+        ]
+        video_url = _select_media_source(direct_sources)
+        if video_url and "hv-h." in video_url and not _is_hls_playlist_available(video_url):
+            fallback_mp4 = _resolve_get_media_sources(sources, url)
+            if fallback_mp4:
+                return fallback_mp4 + _headers_suffix(url)
+            continue
+        if not video_url and sources:
+            video_url = _resolve_get_media_sources(sources, url)
         if video_url:
             return video_url + _headers_suffix(url)
     return ""
