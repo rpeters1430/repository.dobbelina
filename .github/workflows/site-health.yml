@@ -38,7 +38,7 @@ jobs:
       FLARESOLVERR_URL: http://localhost:8191/v1
     services:
       flaresolverr:
-        image: ghcr.io/germondai/trawl@sha256:f41dac1727c7d0c6d18381279792d89704b36ccfee537262118c7ee32d293ba8
+        image: ghcr.io/germondai/trawl@sha256:da3f25e18d6c5884c5db51d7d05c2dc5a197818b25f03d3dfbb8c3994177cf41
         ports:
           - 8191:8191
         env:
@@ -86,7 +86,7 @@ jobs:
       FLARESOLVERR_URL: http://localhost:8191/v1
     services:
       flaresolverr:
-        image: ghcr.io/germondai/trawl@sha256:f41dac1727c7d0c6d18381279792d89704b36ccfee537262118c7ee32d293ba8
+        image: ghcr.io/germondai/trawl@sha256:da3f25e18d6c5884c5db51d7d05c2dc5a197818b25f03d3dfbb8c3994177cf41
         ports:
           - 8191:8191
         env:
