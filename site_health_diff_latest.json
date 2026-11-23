@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-11-23T06:29:33.506486",
+    "sites_total": 206,
+    "pass": 170,
+    "warn": 3,
+    "fail": 31,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-11-22T06:23:34.483317",
     "sites_total": 206,
     "pass": 164,
@@ -8,26 +17,17 @@
     "error": 0,
     "skip": 3
   },
-  "previous": {
-    "generated": "2026-11-20T06:24:17.284411",
-    "sites_total": 206,
-    "pass": 192,
-    "warn": 5,
-    "fail": 7,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
-    "new_failures": 32,
-    "resolved_failures": 3,
-    "persistent_failures": 4,
-    "improved_sites": 2,
-    "regressions": 34,
-    "step_regressions": 36
+    "new_failures": 5,
+    "resolved_failures": 10,
+    "persistent_failures": 26,
+    "improved_sites": 1,
+    "regressions": 6,
+    "step_regressions": 12
   },
   "new_failures": [
     {
-      "site": "camhub",
+      "site": "anybunny",
       "previous": "PASS",
       "current": "FAIL",
       "class": "PARSER",
@@ -36,17 +36,98 @@
       "stability_score": 1.0
     },
     {
-      "site": "camwhoresbay",
+      "site": "porndoe",
       "previous": "PASS",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (CamWhoresBay: No videos found on this page)",
+      "message": "search: Search for 'test' returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "cumlouder",
+      "site": "pornmd",
       "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'test' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "sextb",
+      "previous": "WARN",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "play: Play function executed but no playback URL captured (no notifications)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "tabootube",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    }
+  ],
+  "resolved_failures": [
+    {
+      "site": "camhub",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "camwhoresbay",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "ecamrips",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "javgg",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "mangoporn",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "peekvids",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "porntrex",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "sexyporn",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "tokyomotion",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "whoreshub",
+      "previous": "FAIL",
+      "current": "PASS"
+    }
+  ],
+  "persistent_failures": [
+    {
+      "site": "cumlouder",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "ENV",
       "message": "search: RuntimeError: FlareSolverr error for https://www.cumlouder.com/search/?q=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
@@ -54,17 +135,8 @@
       "stability_score": 0.9
     },
     {
-      "site": "ecamrips",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'meybaldini' returned no videos (Oh oh: It looks like this website is down.)",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
       "site": "freshporno",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
@@ -72,8 +144,17 @@
       "stability_score": 1.0
     },
     {
+      "site": "hentai2w",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "list: List returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
       "site": "hentaidude",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PLAYBACK",
       "message": "play: Play function executed but no playback URL captured (no notifications)",
@@ -82,7 +163,7 @@
     },
     {
       "site": "hpjav",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "ENV",
       "message": "search: Search for 'test' returned no videos (FlareSolverr Failed: FlareSolverr error for https://hpjav.in/?s=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1)",
@@ -91,7 +172,7 @@
     },
     {
       "site": "hypnotube",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "search: Search for 'test' returned no videos",
@@ -100,7 +181,7 @@
     },
     {
       "site": "ikisoda",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "search: Search for 'test' returned no videos",
@@ -108,17 +189,8 @@
       "stability_score": 1.0
     },
     {
-      "site": "javgg",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
       "site": "javhdporn",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PLAYBACK",
       "message": "play: Site could not find a stream: Oh oh: No video found",
@@ -127,7 +199,7 @@
     },
     {
       "site": "javmoe",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "search: Search for 'test' returned no videos",
@@ -136,7 +208,7 @@
     },
     {
       "site": "kissjav",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)",
@@ -144,17 +216,8 @@
       "stability_score": 1.0
     },
     {
-      "site": "mangoporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "ENV",
-      "message": "main: RuntimeError: FlareSolverr error for https://mangoporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
       "site": "mrsexe",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "search: Search for 'test' returned no videos",
@@ -163,7 +226,7 @@
     },
     {
       "site": "netflav",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PLAYBACK",
       "message": "play: Play function executed but no playback URL captured (no notifications)",
@@ -172,7 +235,7 @@
     },
     {
       "site": "peachurnet",
-      "previous": "PASS",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "search: Search for 'test' returned no videos (PeachUrNet: No videos found on this page)",
@@ -180,165 +243,11 @@
       "stability_score": 1.0
     },
     {
-      "site": "peekvids",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
       "site": "perverzija",
-      "previous": "WARN",
+      "previous": "FAIL",
       "current": "FAIL",
       "class": "CODE",
       "message": "play: IndexError: list index out of range",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "porno365",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PLAYBACK",
-      "message": "play: Play function executed but no playback URL captured (no notifications)",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "porntrex",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: No videos found)",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "seaporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "sexyporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "sxyprn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "terebon",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "tokyomotion",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (notify: )",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "txxx",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PLAYBACK",
-      "message": "play: Play function executed but no playback URL captured (no notifications)",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "uflash",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PLAYBACK",
-      "message": "play: Site could not find a stream: Oh oh: Couldn't find video source",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "whoreshub",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "xgirls",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "xhamster",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PLAYBACK",
-      "message": "play: Site could not find a stream: Oh Oh: No playable video found.",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "xlovecam",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
-      "is_flaky": false,
-      "stability_score": 1.0
-    }
-  ],
-  "resolved_failures": [
-    {
-      "site": "hitprn",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "watchporn",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "watchpornx",
-      "previous": "FAIL",
-      "current": "PASS"
-    }
-  ],
-  "persistent_failures": [
-    {
-      "site": "hentai2w",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "list: List returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -352,11 +261,92 @@
       "stability_score": 1.0
     },
     {
-      "site": "xsharings",
+      "site": "porno365",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "play: Play function executed but no playback URL captured (no notifications)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "seaporn",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "sxyprn",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "NETWORK",
+      "message": "Site process timed out after 140s",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "terebon",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "txxx",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "play: Play function executed but no playback URL captured (no notifications)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "uflash",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "play: Site could not find a stream: Oh oh: Couldn't find video source",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xgirls",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
       "message": "search: Search for 'test' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xhamster",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'test' returned no videos (Oh Oh: No video found.)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xlovecam",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'test' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xsharings",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -372,19 +362,14 @@
   ],
   "improved_sites": [
     {
-      "site": "nonktube",
-      "previous": "WARN",
-      "current": "PASS"
-    },
-    {
-      "site": "xozilla",
-      "previous": "WARN",
+      "site": "spankbang",
+      "previous": "SKIP",
       "current": "PASS"
     }
   ],
   "step_regressions": [
     {
-      "site": "camhub",
+      "site": "anybunny",
       "step": "search",
       "previous": "PASS",
       "current": "FAIL",
@@ -394,97 +379,27 @@
       "stability_score": 1.0
     },
     {
-      "site": "camwhoresbay",
-      "step": "search",
+      "site": "anybunny",
+      "step": "search_play",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "Search for 'test' returned no videos (CamWhoresBay: No videos found on this page)",
-      "class": "PARSER",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "cumlouder",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://www.cumlouder.com/search/?q=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 0.9
-    },
-    {
-      "site": "ecamrips",
-      "step": "search",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "Search for 'meybaldini' returned no videos (Oh oh: It looks like this website is down.)",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "freshporno",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "hentai2w",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "hentaidude",
+      "site": "avple",
       "step": "play",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "Play function executed but no playback URL captured (no notifications)",
+      "message": "Site could not find a stream: Error: Unable to find video source",
       "class": "PLAYBACK",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "hobbyporn",
-      "step": "play",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Site could not find a stream: Oh Oh: No Videos found",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "hpjav",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos (FlareSolverr Failed: FlareSolverr error for https://hpjav.in/?s=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1)",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "hypnotube",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "ikisoda",
+      "site": "porndoe",
       "step": "search",
       "previous": "PASS",
       "current": "FAIL",
@@ -494,69 +409,19 @@
       "stability_score": 1.0
     },
     {
-      "site": "javgg",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos (Oh oh: It looks like this website is down.)",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "javhdporn",
-      "step": "play",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Site could not find a stream: Oh oh: No video found",
-      "class": "PLAYBACK",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "javmoe",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "kissjav",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "mangoporn",
-      "step": "main",
+      "site": "porndoe",
+      "step": "search_play",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://mangoporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "mrsexe",
-      "step": "play",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Play function executed but no playback URL captured (no notifications)",
-      "class": "PLAYBACK",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "mrsexe",
+      "site": "pornmd",
       "step": "search",
-      "previous": "SKIP",
+      "previous": "PASS",
       "current": "FAIL",
       "message": "Search for 'test' returned no videos",
       "class": "PARSER",
@@ -564,117 +429,17 @@
       "stability_score": 1.0
     },
     {
-      "site": "netflav",
-      "step": "play",
-      "previous": "SKIP",
+      "site": "pornmd",
+      "step": "search_play",
+      "previous": "PASS",
       "current": "FAIL",
-      "message": "Play function executed but no playback URL captured (no notifications)",
-      "class": "PLAYBACK",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "peachurnet",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos (PeachUrNet: No videos found on this page)",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "peekvids",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "porno365",
-      "step": "play",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Play function executed but no playback URL captured (no notifications)",
-      "class": "PLAYBACK",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "porntrex",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos (Oh oh: No videos found)",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "seaporn",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos (Oh oh: It looks like this website is down.)",
-      "class": "PARSER",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
       "site": "sextb",
-      "step": "categories",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "RuntimeError: FlareSolverr error for https://sextb.net/genres: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
-      "class": "ENV",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "sexyporn",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "sxyprn",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos (Oh oh: It looks like this website is down.)",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "terebon",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "tokyomotion",
-      "step": "search",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos (notify: )",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "txxx",
       "step": "play",
       "previous": "SKIP",
       "current": "FAIL",
@@ -684,61 +449,41 @@
       "stability_score": 1.0
     },
     {
-      "site": "uflash",
-      "step": "play",
+      "site": "sextb",
+      "step": "search_play",
       "previous": "SKIP",
       "current": "FAIL",
-      "message": "Site could not find a stream: Oh oh: Couldn't find video source",
+      "message": "Play function executed but no playback URL captured (no notifications)",
       "class": "PLAYBACK",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "whoreshub",
+      "site": "tabootube",
       "step": "search",
-      "previous": "SKIP",
+      "previous": "PASS",
       "current": "FAIL",
-      "message": "Search for 'test' returned no videos",
+      "message": "Search for 'test' returned no videos (Oh oh: It looks like this website is down.)",
       "class": "PARSER",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "xgirls",
-      "step": "search",
+      "site": "tabootube",
+      "step": "search_play",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "Search for 'test' returned no videos",
-      "class": "PARSER",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
       "site": "xhamster",
-      "step": "play",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Site could not find a stream: Oh Oh: No playable video found.",
-      "class": "PLAYBACK",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "xlovecam",
       "step": "search",
-      "previous": "SKIP",
+      "previous": "PASS",
       "current": "FAIL",
-      "message": "Search for 'test' returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "xsharings",
-      "step": "search",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos",
+      "message": "Search for 'test' returned no videos (Oh Oh: No video found.)",
       "class": "PARSER",
       "is_flaky": false,
       "stability_score": 1.0
@@ -746,161 +491,70 @@
   ],
   "deltas": [
     {
-      "site": "camhub",
+      "site": "anybunny",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "camwhoresbay",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "cumlouder",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "ecamrips",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "freshporno",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "hentaidude",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "hitprn",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "hobbyporn",
+      "site": "avple",
       "previous": "PASS",
       "current": "WARN",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "hpjav",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "hypnotube",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "ikisoda",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "javgg",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "javhdporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "javmoe",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "kissjav",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "mangoporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "mrsexe",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "netflav",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "nonktube",
-      "previous": "WARN",
+      "site": "camhub",
+      "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "peachurnet",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "site": "camwhoresbay",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "ecamrips",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "javgg",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "mangoporn",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "peekvids",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "porndoe",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "perverzija",
-      "previous": "WARN",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "porno365",
+      "site": "pornmd",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
@@ -908,41 +562,34 @@
     },
     {
       "site": "porntrex",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "seaporn",
-      "previous": "PASS",
+      "site": "sextb",
+      "previous": "WARN",
       "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
       "site": "sexyporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
       "site": "spankbang",
-      "previous": "PASS",
-      "current": "SKIP",
-      "kind": "regression",
+      "previous": "SKIP",
+      "current": "PASS",
+      "kind": "improvement",
       "detail": ""
     },
     {
-      "site": "sxyprn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "terebon",
+      "site": "tabootube",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
@@ -950,34 +597,6 @@
     },
     {
       "site": "tokyomotion",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "txxx",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "uflash",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "watchporn",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "watchpornx",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
@@ -985,35 +604,7 @@
     },
     {
       "site": "whoreshub",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "xgirls",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "xhamster",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "xlovecam",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "xozilla",
-      "previous": "WARN",
+      "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
