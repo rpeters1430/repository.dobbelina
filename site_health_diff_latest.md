@@ -5,37 +5,31 @@
 
 ## Snapshot
 
-- Current: `PASS 170` | `WARN 3` | `FAIL 31` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 164` | `WARN 3` | `FAIL 36` | `ERROR 0` | `SKIP 3`
+- Current: `PASS 173` | `WARN 2` | `FAIL 28` | `ERROR 0` | `SKIP 3`
+- Previous: `PASS 170` | `WARN 3` | `FAIL 31` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
-- New failures: `5`
-- Resolved failures: `10`
-- Persistent failures: `26`
-- Site regressions: `6`
-- Step regressions: `12`
+- New failures: `3`
+- Resolved failures: `6`
+- Persistent failures: `25`
+- Site regressions: `4`
+- Step regressions: `7`
 
 ## New Failures
 
-- **anybunny**: `PASS -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)
-- **porndoe**: `PASS -> FAIL` (PARSER) | search: Search for 'test' returned no videos
-- **pornmd**: `PASS -> FAIL` (PARSER) | search: Search for 'test' returned no videos
-- **sextb**: `WARN -> FAIL` (PLAYBACK) | play: Play function executed but no playback URL captured (no notifications)
-- **tabootube**: `PASS -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)
+- **eporner**: `PASS -> FAIL` (PARSER) | search: Search for 'test' returned no videos
+- **hentaicity**: `PASS -> FAIL` (PARSER) | search: Search for 'test' returned no videos
+- **pornslash**: `PASS -> FAIL` (CODE) | play: ValueError: No video stream found!
 
 ## Resolved Failures
 
-- **camhub**: `FAIL -> PASS`
-- **camwhoresbay**: `FAIL -> PASS`
-- **ecamrips**: `FAIL -> PASS`
-- **javgg**: `FAIL -> PASS`
-- **mangoporn**: `FAIL -> PASS`
-- **peekvids**: `FAIL -> PASS`
-- **porntrex**: `FAIL -> PASS`
-- **sexyporn**: `FAIL -> PASS`
-- **tokyomotion**: `FAIL -> PASS`
-- **whoreshub**: `FAIL -> PASS`
+- **anybunny**: `FAIL -> PASS`
+- **kissjav**: `FAIL -> PASS`
+- **porndoe**: `FAIL -> PASS`
+- **pornmd**: `FAIL -> PASS`
+- **tabootube**: `FAIL -> PASS`
+- **xhamster**: `FAIL -> PASS`
 
 ## Persistent Failures
 
@@ -48,7 +42,6 @@
 - **ikisoda**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
 - **javhdporn**: `FAIL -> FAIL` (PLAYBACK) | play: Site could not find a stream: Oh oh: No video found
 - **javmoe**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
-- **kissjav**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)
 - **mrsexe**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
 - **netflav**: `FAIL -> FAIL` (PLAYBACK) | play: Play function executed but no playback URL captured (no notifications)
 - **peachurnet**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (PeachUrNet: No videos found on this page)
@@ -56,31 +49,26 @@
 - **porn4k**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://porn4k.to/page/1/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **porno365**: `FAIL -> FAIL` (PLAYBACK) | play: Play function executed but no playback URL captured (no notifications)
 - **seaporn**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)
-- **sxyprn**: `FAIL -> FAIL` (NETWORK) | Site process timed out after 140s
+- **sextb**: `FAIL -> FAIL` (PLAYBACK) | play: Play function executed but no playback URL captured (no notifications)
+- **sxyprn**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)
 - **terebon**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)
 - **txxx**: `FAIL -> FAIL` (PLAYBACK) | play: Play function executed but no playback URL captured (no notifications)
-- **uflash**: `FAIL -> FAIL` (PLAYBACK) | play: Site could not find a stream: Oh oh: Couldn't find video source
+- **uflash**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
 - **xgirls**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
-- **xhamster**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh Oh: No video found.)
 - **xlovecam**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
 - **xsharings**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)
 - **xtapesla**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
 ## Step Regressions
 
-- **anybunny** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos (Oh oh: It looks like this website is down.)
-- **anybunny** `search_play`: `PASS -> FAIL` (UNKNOWN) | Search failed, so no search result to play
-- **avple** `play`: `SKIP -> FAIL` (PLAYBACK) | Site could not find a stream: Error: Unable to find video source
-- **porndoe** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos
-- **porndoe** `search_play`: `PASS -> FAIL` (UNKNOWN) | Search failed, so no search result to play
-- **pornmd** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos
-- **pornmd** `search_play`: `PASS -> FAIL` (UNKNOWN) | Search failed, so no search result to play
-- **sextb** `play`: `SKIP -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
-- **sextb** `search_play`: `SKIP -> FAIL` (PLAYBACK) | Play function executed but no playback URL captured (no notifications)
-- **tabootube** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos (Oh oh: It looks like this website is down.)
-- **tabootube** `search_play`: `PASS -> FAIL` (UNKNOWN) | Search failed, so no search result to play
-- **xhamster** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos (Oh Oh: No video found.)
+- **eporner** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos
+- **eporner** `search_play`: `PASS -> FAIL` (UNKNOWN) | Search failed, so no search result to play
+- **hentaicity** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos
+- **hentaicity** `search_play`: `PASS -> FAIL` (UNKNOWN) | Search failed, so no search result to play
+- **pornslash** `play`: `PASS -> FAIL` (CODE) | ValueError: No video stream found!
+- **pornslash** `search_play`: `PASS -> FAIL` (CODE) | ValueError: No video stream found!
+- **uflash** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos
 
 ## Improvements
 
-- **spankbang**: `SKIP -> PASS`
+- **avple**: `WARN -> PASS`
