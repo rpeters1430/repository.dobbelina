@@ -5,7 +5,7 @@
 #
 # Debian 13 (trixie) ships Kodi 21 "Omega" in its own repositories. For Kodi
 # 20 "Nexus" instead, build with BASE_IMAGE=ubuntu:24.04.
-ARG BASE_IMAGE=debian:trixie@sha256:9c6e381421d0f48d1b8133e573f33c185ee16cbf505eda9c4a8a4791b25ea8a6
+ARG BASE_IMAGE=debian:trixie@sha256:3cda3ca472ce45507a5109c6a3907093e24d9ae67d55954c9a07a45665dafba2
 FROM ${BASE_IMAGE}
 
 ARG KODI_CHANNEL=distro
