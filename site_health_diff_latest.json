@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-11-25T06:25:31.981707",
+    "sites_total": 206,
+    "pass": 171,
+    "warn": 3,
+    "fail": 30,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-11-24T06:21:03.809770",
     "sites_total": 206,
     "pass": 173,
@@ -8,26 +17,26 @@
     "error": 0,
     "skip": 3
   },
-  "previous": {
-    "generated": "2026-11-23T06:29:33.506486",
-    "sites_total": 206,
-    "pass": 170,
-    "warn": 3,
-    "fail": 31,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
     "new_failures": 3,
-    "resolved_failures": 6,
-    "persistent_failures": 25,
+    "resolved_failures": 1,
+    "persistent_failures": 27,
     "improved_sites": 1,
     "regressions": 4,
     "step_regressions": 7
   },
   "new_failures": [
     {
-      "site": "eporner",
+      "site": "kissjav",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "sexyporn",
       "previous": "PASS",
       "current": "FAIL",
       "class": "PARSER",
@@ -36,52 +45,18 @@
       "stability_score": 1.0
     },
     {
-      "site": "hentaicity",
+      "site": "xhamster",
       "previous": "PASS",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "pornslash",
-      "previous": "PASS",
-      "current": "FAIL",
-      "class": "CODE",
-      "message": "play: ValueError: No video stream found!",
+      "message": "search: Search for 'test' returned no videos (Oh Oh: No video found.)",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "resolved_failures": [
     {
-      "site": "anybunny",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "kissjav",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "porndoe",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "pornmd",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "tabootube",
-      "previous": "FAIL",
-      "current": "PASS"
-    },
-    {
-      "site": "xhamster",
+      "site": "pornslash",
       "previous": "FAIL",
       "current": "PASS"
     }
@@ -95,6 +70,15 @@
       "message": "search: RuntimeError: FlareSolverr error for https://www.cumlouder.com/search/?q=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "is_flaky": false,
       "stability_score": 0.9
+    },
+    {
+      "site": "eporner",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'test' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
     },
     {
       "site": "freshporno",
@@ -111,6 +95,15 @@
       "current": "FAIL",
       "class": "PARSER",
       "message": "list: List returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hentaicity",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'test' returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -164,7 +157,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
+      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -315,24 +308,24 @@
   ],
   "improved_sites": [
     {
-      "site": "avple",
-      "previous": "WARN",
+      "site": "spankbang",
+      "previous": "SKIP",
       "current": "PASS"
     }
   ],
   "step_regressions": [
     {
-      "site": "eporner",
+      "site": "kissjav",
       "step": "search",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "Search for 'test' returned no videos",
+      "message": "Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)",
       "class": "PARSER",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "eporner",
+      "site": "kissjav",
       "step": "search_play",
       "previous": "PASS",
       "current": "FAIL",
@@ -342,108 +335,80 @@
       "stability_score": 1.0
     },
     {
-      "site": "hentaicity",
-      "step": "search",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "Search for 'test' returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "hentaicity",
-      "step": "search_play",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "Search failed, so no search result to play",
-      "class": "UNKNOWN",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "pornslash",
+      "site": "pornmz",
       "step": "play",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "ValueError: No video stream found!",
-      "class": "CODE",
+      "message": "Site could not find a stream: Oh oh: No video found",
+      "class": "PLAYBACK",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "pornslash",
-      "step": "search_play",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "ValueError: No video stream found!",
-      "class": "CODE",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "uflash",
+      "site": "sexyporn",
       "step": "search",
       "previous": "PASS",
       "current": "FAIL",
       "message": "Search for 'test' returned no videos",
       "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "sexyporn",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xhamster",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'test' returned no videos (Oh Oh: No video found.)",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xhamster",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "anybunny",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "avple",
-      "previous": "WARN",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "eporner",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "hentaicity",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
       "site": "kissjav",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
       "detail": ""
     },
     {
-      "site": "porndoe",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "pornmd",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
+      "site": "pornmz",
+      "previous": "PASS",
+      "current": "WARN",
+      "kind": "regression",
       "detail": ""
     },
     {
       "site": "pornslash",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "sexyporn",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
@@ -451,23 +416,16 @@
     },
     {
       "site": "spankbang",
-      "previous": "PASS",
-      "current": "SKIP",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "tabootube",
-      "previous": "FAIL",
+      "previous": "SKIP",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
       "site": "xhamster",
-      "previous": "FAIL",
-      "current": "PASS",
-      "kind": "improvement",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
       "detail": ""
     }
   ]
