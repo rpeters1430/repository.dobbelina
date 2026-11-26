@@ -158,6 +158,61 @@ def test_models_parses_items_and_thumbs(monkeypatch):
     assert dirs[0]["icon"] == "https://imgcdn.viralxxxporn.com/contents/videos_screenshots/553000/553026/800x450/1.jpg"
 
 
+def test_categories_and_models_extract_gallery_card_thumbs(monkeypatch):
+    cat_html = """
+    <div class="vx-card-gallery">
+        <div class="vx-top-card">
+            <div class="vx-content">
+                <a class="vx-name" href="https://viralxxxporn.com/categories/18-year-old/" title="18 Year Old">18 Year Old</a>
+            </div>
+            <a class="open-btn" href="https://viralxxxporn.com/categories/18-year-old/" title="18 Year Old">Open</a>
+        </div>
+        <div class="vx-gallery">
+            <div class="vx-box"><div class="vx-media">
+                <img class="lazy-load" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                     data-original="https://imgcdn.viralxxxporn.com/contents/videos_screenshots/561000/561106/800x450/1.jpg" />
+            </div></div>
+        </div>
+    </div>
+    """
+    model_html = """
+    <div class="vx-card-gallery">
+        <div class="vx-top-card">
+            <div class="vx-content">
+                <a class="vx-name" href="https://viralxxxporn.com/models/sophie-rain/" title="Sophie Rain"><span class="vx-model-rank">#1</span>Sophie Rain</a>
+            </div>
+        </div>
+        <div class="vx-gallery">
+            <div class="vx-box"><div class="vx-media">
+                <img class="lazy-load" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                     data-original="https://imgcdn.viralxxxporn.com/contents/videos_screenshots/552000/552362/800x450/1.jpg" />
+            </div></div>
+        </div>
+    </div>
+    """
+    dirs = []
+    monkeypatch.setattr(
+        viralxxxporn.site,
+        "add_dir",
+        lambda name, url, mode, iconimage="", **kwargs: dirs.append(
+            {"name": name, "url": url, "mode": mode, "icon": iconimage}
+        ),
+    )
+    monkeypatch.setattr(viralxxxporn.utils, "eod", lambda: None)
+
+    monkeypatch.setattr(viralxxxporn.utils, "getHtml", lambda *a, **k: cat_html)
+    viralxxxporn.Categories("https://viralxxxporn.com/categories/")
+
+    monkeypatch.setattr(viralxxxporn.utils, "getHtml", lambda *a, **k: model_html)
+    viralxxxporn.Models("https://viralxxxporn.com/models/")
+
+    assert len(dirs) == 2
+    assert dirs[0]["name"] == "18 Year Old"
+    assert dirs[0]["icon"] == "https://imgcdn.viralxxxporn.com/contents/videos_screenshots/561000/561106/800x450/1.jpg"
+    assert dirs[1]["name"] == "Sophie Rain"
+    assert dirs[1]["icon"] == "https://imgcdn.viralxxxporn.com/contents/videos_screenshots/552000/552362/800x450/1.jpg"
+
+
 def test_search(monkeypatch):
     called_with = []
     monkeypatch.setattr(viralxxxporn, "List", lambda url: called_with.append(url))

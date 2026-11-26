@@ -106,6 +106,57 @@ def List(url):
     utils.eod()
 
 
+_LANG_PREFIXES = ("/de/", "/fr/", "/es/", "/it/", "/pt/", "/ru/", "/zh/")
+
+
+def _extract_dir_title(item):
+    title = _clean_title(utils.safe_get_attr(item, "title"))
+    if title:
+        return title
+    spans = item.select("span")
+    if spans:
+        return _clean_title(spans[0].get_text(strip=True))
+    return _clean_title(item.get_text(strip=True))
+
+
+def _is_valid_section_url(target_url, section, seen):
+    section_token = "/{}/".format(section)
+    root_url = "{}/{}".format(site.url.rstrip("/"), section)
+    return (
+        bool(target_url)
+        and section_token in target_url
+        and target_url.rstrip("/") != root_url
+        and not any(lang in target_url for lang in _LANG_PREFIXES)
+        and target_url not in seen
+    )
+
+
+def _add_directory_entries(soup, section, fallback_selector):
+    seen = set()
+    for card in soup.select(".vx-card-gallery"):
+        a = card.select_one("a.vx-name, a[href*='/{}/']".format(section))
+        if not a:
+            continue
+        target_url = _absolute_url(utils.safe_get_attr(a, "href"))
+        if not _is_valid_section_url(target_url, section, seen):
+            continue
+        seen.add(target_url)
+        thumb = _extract_thumb(card.select_one(".vx-gallery img, img"))
+        title = _extract_dir_title(a)
+        if title:
+            site.add_dir(title, target_url, "List", thumb or site.img_cat)
+
+    for item in soup.select(fallback_selector):
+        target_url = _absolute_url(utils.safe_get_attr(item, "href"))
+        if not _is_valid_section_url(target_url, section, seen):
+            continue
+        seen.add(target_url)
+        thumb = _extract_thumb(item.select_one("img"))
+        title = _extract_dir_title(item)
+        if title:
+            site.add_dir(title, target_url, "List", thumb or site.img_cat)
+
+
 @site.register()
 def Categories(url):
     html = utils.getHtml(url, site.url)
@@ -114,32 +165,11 @@ def Categories(url):
         return
 
     soup = utils.parse_html(html)
-    seen = set()
-    for item in soup.select("ul.categories-list li a, a.vx-link, .item a, a[href*='/categories/']"):
-        cat_url = _absolute_url(utils.safe_get_attr(item, "href"))
-        if (
-            not cat_url
-            or "/categories/" not in cat_url
-            or cat_url.rstrip("/") == site.url.rstrip("/") + "/categories"
-            or any(lang in cat_url for lang in ["/de/", "/fr/", "/es/", "/it/", "/pt/", "/ru/", "/zh/"])
-            or cat_url in seen
-        ):
-            continue
-        seen.add(cat_url)
-
-        img = item.select_one("img")
-        thumb = _extract_thumb(img)
-        # Format name from link or spans
-        title = _clean_title(utils.safe_get_attr(item, "title"))
-        if not title:
-            spans = item.select("span")
-            if spans:
-                title = _clean_title(spans[0].get_text(strip=True))
-            else:
-                title = _clean_title(item.get_text(strip=True))
-
-        if title:
-            site.add_dir(title, cat_url, "List", thumb or site.img_cat)
+    _add_directory_entries(
+        soup,
+        "categories",
+        "ul.categories-list li a, a.vx-link, .item a, a[href*='/categories/']",
+    )
 
     next_page = soup.select_one("a.vx-next[href], .pagination a.next[href], .pagination li.next a[href]")
     if next_page:
@@ -158,34 +188,11 @@ def Models(url):
         return
 
     soup = utils.parse_html(html)
-    seen = set()
-    for item in soup.select(".vx-th.item, .item, ul.models-list li, a[href*='/models/']"):
-        a = item if item.name == "a" else item.select_one("a[href*='/models/']")
-        if not a:
-            continue
-        model_url = _absolute_url(utils.safe_get_attr(a, "href"))
-        if (
-            not model_url
-            or "/models/" not in model_url
-            or model_url.rstrip("/") == site.url.rstrip("/") + "/models"
-            or any(lang in model_url for lang in ["/de/", "/fr/", "/es/", "/it/", "/pt/", "/ru/", "/zh/"])
-            or model_url in seen
-        ):
-            continue
-        seen.add(model_url)
-
-        img = a.select_one("img") or item.select_one("img")
-        thumb = _extract_thumb(img)
-        title = _clean_title(utils.safe_get_attr(a, "title"))
-        if not title:
-            spans = a.select("span:not(.vx-model-rank)")
-            if spans:
-                title = _clean_title(spans[0].get_text(strip=True))
-            else:
-                title = _clean_title(a.get_text(strip=True))
-
-        if title:
-            site.add_dir(title, model_url, "List", thumb or site.img_cat)
+    _add_directory_entries(
+        soup,
+        "models",
+        "ul.models-list li a, a[href*='/models/'], .item a",
+    )
 
     next_page = soup.select_one("a.vx-next[href], .pagination a.next[href], .pagination li.next a[href]")
     if next_page:

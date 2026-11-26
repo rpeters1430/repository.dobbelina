@@ -936,3 +936,90 @@ def test_resolve_video_url_falls_back_to_get_media_when_hv_h_fails(monkeypatch):
     )
 
     assert resolved.startswith("https://ev.phncdn.com/v/1080.mp4|")
+
+
+def test_resolve_video_url_does_not_return_get_media_directly(monkeypatch):
+    html = """
+    <script>
+    var flashvars_123 = {
+        "mediaDefinitions": [
+            {"quality": [], "defaultQuality": false, "format": "mp4", "videoUrl": "https://www.pornhub.com/video/get_media?s=abc"}
+        ]
+    };
+    </script>
+    """
+    monkeypatch.setattr(
+        pornhub.utils,
+        "_getHtml",
+        lambda url, *a, **k: html if "view_video.php" in url else "[]",
+    )
+    assert pornhub._resolve_video_url("https://www.pornhub.com/view_video.php?viewkey=abc") == ""
+
+
+def test_search_listing_excludes_header_dropdown_videos(monkeypatch):
+    html = """
+    <html><body>
+    <div class="wideDropdown videos">
+        <li class="pcVideoListItem">
+            <a href="/view_video.php?viewkey=phdropdown" title="Dropdown Ad Video">
+                <img data-mediumthumb="https://ci.phncdn.com/videos/drop.jpg">
+            </a>
+        </li>
+    </div>
+    <ul id="videoSearchResult" class="videos search-video-thumbs">
+        <li class="pcVideoListItem">
+            <a href="/view_video.php?viewkey=phsearch1" title="Actual Search Result">
+                <img data-mediumthumb="https://ci.phncdn.com/videos/search1.jpg">
+            </a>
+        </li>
+    </ul>
+    </body></html>
+    """
+    downloads = []
+    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(
+        pornhub.site,
+        "add_download_link",
+        lambda name, url, mode, img, desc="", **kw: downloads.append((name, url)),
+    )
+    monkeypatch.setattr(pornhub.site, "add_dir", lambda *a, **k: None)
+    monkeypatch.setattr(pornhub.utils, "eod", lambda: None)
+
+    pornhub.List("https://www.pornhub.com/video/search?search=test")
+
+    assert downloads == [
+        ("Actual Search Result", "https://www.pornhub.com/view_video.php?viewkey=phsearch1")
+    ]
+
+
+def test_categories_deduplicates_urls_and_strips_duplicate_videos_label(monkeypatch):
+    html = """
+    <html><body>
+    <div class="category-wrapper">
+        <a href="/video?c=105" title="60FPS">
+            <img src="https://ci.phncdn.com/cats/60fps.jpg">
+        </a>
+        <var>124,440 Videos</var>
+    </div>
+    <div class="category-wrapper">
+        <a href="/video?c=105" title="60FPS">
+            <img src="https://ci.phncdn.com/cats/60fps.jpg">
+        </a>
+        <var>124,440 Videos</var>
+    </div>
+    </body></html>
+    """
+    dirs = []
+    monkeypatch.setattr(pornhub.utils, "getHtml", lambda *a, **k: html)
+    monkeypatch.setattr(
+        pornhub.site,
+        "add_dir",
+        lambda name, url, mode, img="", desc="": dirs.append((name, url)),
+    )
+    monkeypatch.setattr(pornhub.utils, "eod", lambda: None)
+
+    pornhub.Categories("https://www.pornhub.com/categories")
+
+    assert len(dirs) == 1
+    assert dirs[0][0] == "60FPS [COLOR orange](124,440 videos)[/COLOR]"
+    assert dirs[0][1] == "https://www.pornhub.com/video?c=105"

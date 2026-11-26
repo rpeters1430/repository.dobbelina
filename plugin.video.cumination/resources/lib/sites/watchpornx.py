@@ -30,7 +30,7 @@ site = AdultSite(
     "watchpornx",
     "[COLOR hotpink]Watchpornx[/COLOR]",
     "https://watchpornx.com/",
-    "https://i2.wp.com/watchpornx.com/wp-content/uploads/2026/10/watchpornx-logo.png",
+    "watchpornx.png",
     "watchpornx",
     category="Video Tubes",
 )

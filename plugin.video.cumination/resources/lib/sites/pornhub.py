@@ -231,7 +231,9 @@ def _extract_media_sources(html):
                 continue
             quality = src.get("quality")
             video_url = src.get("videoUrl")
-            if isinstance(quality, list) or not video_url:
+            if not video_url:
+                continue
+            if isinstance(quality, list) and "/video/get_media" not in video_url:
                 continue
             sources.append((quality, video_url))
 
@@ -243,10 +245,13 @@ def _extract_media_sources(html):
         for src in media_definitions:
             if not isinstance(src, dict):
                 continue
-            quality = src.get("quality") or src.get("defaultQuality") or src.get("format")
+            raw_quality = src.get("quality")
             video_url = src.get("videoUrl") or src.get("url")
-            if isinstance(quality, list) or not video_url:
+            if not video_url:
                 continue
+            if isinstance(raw_quality, list) and "/video/get_media" not in video_url:
+                continue
+            quality = raw_quality or src.get("defaultQuality") or src.get("format")
             sources.append((quality, video_url))
 
     cleaned = []
@@ -273,21 +278,21 @@ def _fallback_title_from_url(video_url):
 
 
 def _headers_suffix(video_page_url):
-    cookie_str = cookiehdr["Cookie"]
+    cookie_parts = ["accessAgeDisclaimerPH=1", "accessAgeDisclaimerUK=1"]
+    seen_names = {"accessAgeDisclaimerPH", "accessAgeDisclaimerUK"}
     try:
-        cookies = []
         for cookie in utils.cj:
             if cookie.domain and ("pornhub.com" in cookie.domain or "phncdn.com" in cookie.domain):
-                cookies.append("{}={}".format(cookie.name, cookie.value))
-        if cookies:
-            cookie_str = "; ".join(cookies)
+                if cookie.name not in seen_names:
+                    seen_names.add(cookie.name)
+                    cookie_parts.append("{}={}".format(cookie.name, cookie.value))
     except Exception:
         pass
 
     headers = {
         "User-Agent": utils.USER_AGENT,
         "Referer": site.url,
-        "Cookie": cookie_str,
+        "Cookie": "; ".join(cookie_parts),
         "Origin": site.url.rstrip("/"),
     }
     return "|" + urllib_parse.urlencode(headers)
@@ -443,6 +448,16 @@ def Main():
 def List(url):
     url = update_url(url)
 
+    def _in_nav_dropdown(node):
+        for parent in node.parents:
+            parent_id = parent.get("id") or ""
+            parent_classes = parent.get("class") or []
+            if parent_id in ("hottestMenuSection", "recommMenuSection", "playListHeaderSection"):
+                return True
+            if "wideDropdown" in parent_classes:
+                return True
+        return False
+
     def collect_video_items(scope_obj):
         selectors = (
             "li.pcVideoListItem, div.pcVideoListItem, li.js-pop.videoBox, div.js-pop.videoBox"
@@ -450,6 +465,8 @@ def List(url):
         nodes = list(scope_obj.select(selectors))
         filtered = []
         for node in nodes:
+            if _in_nav_dropdown(node):
+                continue
             # Check if we already found this node's parent (to avoid nesting duplicates)
             if any(p in nodes for p in node.parents):
                 continue
@@ -464,6 +481,8 @@ def List(url):
         wrapped = []
         seen_parents = set()
         for anchor in anchors:
+            if _in_nav_dropdown(anchor):
+                continue
             parent = anchor.find_parent(["li", "div", "article"])
             item = parent if parent is not None else anchor
             item_id = id(item)
@@ -496,11 +515,14 @@ def List(url):
         return deduped
 
     def collect_search_video_items(soup_obj):
-        # Only use broad containers as search scopes to avoid redundancy.
+        # Prefer dedicated search result containers before generic .videos lists
+        # so header dropdown menus do not pollute search results.
         search_scopes = soup_obj.select(
             "#searchPageVideoList, #videoSearchResult, #videoSearchWrapper, "
-            ".search-video-thumbs, ul.videos, div.videos"
+            ".search-video-thumbs"
         )
+        if not search_scopes:
+            search_scopes = soup_obj.select("ul.videos, div.videos")
         scoped_items = []
         for scope in search_scopes:
             # Check if this scope is already inside another scope to avoid duplication
@@ -605,6 +627,8 @@ def List(url):
         try:
             # Get the link element
             link = item.select_one('a[href*="/view_video.php?viewkey="]')
+            if not link and item.name == "a" and "/view_video.php?viewkey=" in item.get("href", ""):
+                link = item
             if not link:
                 continue
 
@@ -734,6 +758,7 @@ def Categories(url):
     categories = soup.select('.category-wrapper, div[class*="category"]')
 
     entries = []
+    seen_urls = set()
     for category in categories:
         try:
             link = category.select_one("a")
@@ -744,6 +769,9 @@ def Categories(url):
                 continue
             if catpage.startswith("/"):
                 catpage = site.url[:-1] + catpage
+            if catpage in seen_urls:
+                continue
+            seen_urls.add(catpage)
             name = utils.safe_get_attr(link, "alt")
             if not name:
                 name = utils.safe_get_attr(link, "title")
@@ -753,9 +781,10 @@ def Categories(url):
             img_tag = category.select_one("img")
             img = utils.safe_get_attr(img_tag, "src", ["data-src", "data-lazy-src"])
             img = add_img_headers(img)
-            
+
             count_tag = category.select_one("var, .videoCount")
             video_count = utils.safe_get_text(count_tag)
+            video_count = re.sub(r"\s*videos$", "", video_count, flags=re.IGNORECASE).strip()
             if video_count:
                 display_name = name + " [COLOR orange]({} videos)[/COLOR]".format(
                     video_count
