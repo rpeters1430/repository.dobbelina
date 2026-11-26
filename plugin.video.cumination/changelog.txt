@@ -1,3 +1,13 @@
+[B]Version 1.1.501[/B]
+- feat: port upstream site fixes, playback updates, and circular host fallback
+- fix: repair watchpornx icon/audit, viralxxxporn thumbs, and pornhub search/playback
+- Merge pull request #476 from rpeters1430/renovate/debian-trixie
+- chore(deps): update debian:trixie docker digest to 3cda3ca
+- Merge pull request #474 from rpeters1430/renovate/ghcr.io-germondai-trawl
+- Merge pull request #475 from rpeters1430/renovate/github-actions-digest-updates
+- fix: resolve thumbnail and playback issues on viralxxxporn and pornhub
+- chore(deps): update ghcr.io/germondai/trawl docker digest to da3f25e
+
 [B]Version 1.1.500[/B]
 - fix: repair watchpornx icon/audit, viralxxxporn thumbs, and pornhub search/playback
 - Merge pull request #476 from rpeters1430/renovate/debian-trixie
