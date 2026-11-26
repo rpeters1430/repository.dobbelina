@@ -71,12 +71,19 @@ def _livewire_list(url):
         method_name = wire_match.group(2)
 
     component_name = wire_state["fingerprint"]["name"]
+    page_match = re.search(r"[?&]page=(\d+)(?:&|$)", url)
+    current_page = int(page_match.group(1)) if page_match else 1
+    update_params = []
+    if current_page > 1:
+        method_name = "gotoPage"
+        update_params = [current_page, "page"]
+
     payload = {
         "fingerprint": wire_state["fingerprint"],
         "serverMemo": wire_state["serverMemo"],
         "updates": [{
             "type": "callMethod",
-            "payload": {"id": "lw1", "method": method_name, "params": []},
+            "payload": {"id": "lw1", "method": method_name, "params": update_params},
         }],
     }
 
@@ -97,9 +104,17 @@ def _livewire_list(url):
     # Extract next page URL and normalise domain to archivebate.com
     next_url = None
     if fragment:
-        next_match = re.search(r'<a[^>]+rel="next"[^>]+href="([^"]+)"', fragment)
-        if next_match:
-            next_url = re.sub(r'https://archivebate\.\w+', 'https://archivebate.com', next_match.group(1))
+        frag_soup = utils.parse_html(fragment)
+        next_link = frag_soup.select_one('a[rel="next"][href]')
+        if next_link:
+            next_url = re.sub(r"https://archivebate\.\w+", "https://archivebate.com", next_link["href"])
+        elif frag_soup.select_one('button[rel="next"]'):
+            next_page = current_page + 1
+            if page_match:
+                next_url = url[:page_match.start(1)] + str(next_page) + url[page_match.end(1):]
+            else:
+                separator = "&" if "?" in url else "?"
+                next_url = url + separator + "page=" + str(next_page)
 
     return fragment, next_url
 

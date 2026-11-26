@@ -3179,12 +3179,24 @@ class VideoPlayer:
 
     @_cancellable
     def _select_source(self, sources):
+        if not sources:
+            return
         if len(sources) == 1:
-            source = sources[0]
+            start_idx = 0
         else:
             source = self.resolveurl.choose_source(sources)
-        if source:
-            self.play_from_link_to_resolve(source)
+            if not source:
+                return
+            try:
+                start_idx = sources.index(source)
+            except ValueError:
+                start_idx = 0
+
+        ordered_sources = sources[start_idx:] + sources[:start_idx]
+        for source in ordered_sources:
+            if self.play_from_link_to_resolve(source):
+                return
+        notify(i18n("oh_oh"), i18n("not_found"))
 
     @_cancellable
     def play_from_link_to_resolve(self, source):

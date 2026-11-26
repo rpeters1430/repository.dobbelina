@@ -194,50 +194,125 @@ def Search(url, keyword=None):
         List(url)
 
 
+class _PlaybackError(Exception):
+    pass
+
+
+def _fresh_player_text(url, referer, api=False):
+    headers = {
+        "User-Agent": utils.USER_AGENT,
+        "Accept-Encoding": "identity",
+        "Cache-Control": "no-cache",
+    }
+    if api:
+        headers["X-XS-P"] = "1"
+    result = utils._getHtml(url, referer, headers=headers)
+    return result.decode("utf-8") if isinstance(result, bytes) else result
+
+
+def _xtremestream_hls(iframeurl, iframehtml):
+    boot = re.search(
+        r"""\bXSFTK\s*\.\s*boot\s*\(\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]+)['"]""",
+        iframehtml,
+    )
+    if boot:
+        video_id, video_token = boot.groups()
+        api_url = urllib_parse.urljoin(iframeurl, "/player/proto_api.php")
+        query = {"data": video_id, "vt": video_token, "op": "castsign"}
+        cast_token = _fresh_player_text(
+            api_url + "?" + urllib_parse.urlencode(query), iframeurl, api=True
+        ).strip()
+        if not re.fullmatch(r"[A-Za-z0-9_+./=-]{16,512}", cast_token):
+            raise _PlaybackError("Unable to create the XtremeStream playback session")
+        query.update(op="castmaster", ct=cast_token)
+        playlist_url = api_url + "?" + urllib_parse.urlencode(query)
+    else:
+        video_id = re.search(
+            r"""\bvar\s+video_id\s*=\s*[`'"]([^`'"]+)""", iframehtml, re.IGNORECASE
+        )
+        loader = re.search(
+            r"""\bvar\s+m3u8_loader_url\s*=\s*[`'"]([^`'"]+)""",
+            iframehtml,
+            re.IGNORECASE,
+        )
+        if not video_id or not loader:
+            raise _PlaybackError("Unsupported XtremeStream player layout")
+        playlist_url = (
+            urllib_parse.urljoin(iframeurl, loader.group(1)) + video_id.group(1)
+        )
+
+    playlist = _fresh_player_text(playlist_url, iframeurl)
+    if not playlist.lstrip("\ufeff\r\n ").startswith("#EXTM3U"):
+        raise _PlaybackError("XtremeStream did not return a playable HLS playlist")
+
+    if re.search(r"^#EXT-X-MEDIA:.*TYPE=AUDIO", playlist, re.IGNORECASE | re.MULTILINE):
+        return playlist_url
+
+    links = {}
+    stream_info = None
+    for line in playlist.splitlines():
+        line = line.strip()
+        if line.upper().startswith("#EXT-X-STREAM-INF:"):
+            stream_info = line
+        elif line and not line.startswith("#") and stream_info:
+            resolution = re.search(r"RESOLUTION=\d+x(\d+)", stream_info, re.IGNORECASE)
+            if resolution:
+                links[resolution.group(1)] = urllib_parse.urljoin(playlist_url, line)
+            stream_info = None
+    if links:
+        return utils.prefquality(links, sort_by=lambda x: int(x), reverse=True)
+    if "#EXTINF:" in playlist:
+        return playlist_url
+    raise _PlaybackError("No playable XtremeStream qualities found")
+
+
+def _hls_play_url(url, referer):
+    if urllib_parse.urlsplit(url).scheme not in ("http", "https") or any(
+        c in url for c in "|\r\n"
+    ):
+        raise _PlaybackError("Invalid XtremeStream stream URL")
+    if ".m3u8" not in url.lower():
+        url += ("&" if "?" in url else "?") + "filename=stream.m3u8"
+    headers = {"User-Agent": utils.USER_AGENT, "Referer": referer}
+    return url + "|" + urllib_parse.urlencode(headers)
+
+
 @site.register()
 def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download=download, IA_check="skip")
-    videohtml, _ = utils.get_html_with_cloudflare_retry(url)
-    if not videohtml:
-        utils.notify("Oh oh", "No video found")
-        return
+    try:
+        videohtml, _ = utils.get_html_with_cloudflare_retry(url)
+        if not videohtml:
+            utils.notify("Perverzija", "No video player found")
+            return
 
-    match = re.compile(
-        r'"player-embed"\s*>\s*?<iframe.*?src="([^"]+)"', re.IGNORECASE | re.DOTALL
-    ).search(videohtml)
-    if match:
-        iframeurl = match.group(1)
-        if "xtremestream" in iframeurl:
+        soup = utils.parse_html(videohtml)
+        iframe = soup.select_one(".player-embed iframe[src], iframe[src]")
+        if not iframe:
+            utils.notify("Perverzija", "No video player found")
+            return
+
+        iframeurl = urllib_parse.urljoin(
+            url, utils.safe_get_attr(iframe, "src").replace("&amp;", "&")
+        )
+        host = (urllib_parse.urlsplit(iframeurl).hostname or "").lower()
+        if "xtremestream" in host:
             vp.progress.update(25, "[CR]Loading video page[CR]")
-            iframehtml = utils.getHtml(iframeurl, url)
-            videoid = re.compile(
-                r"""var\s*video_id\s*=\s*[`'"]([^`'"]+).+?var\s*m3u8_loader_url\s=\s[`'"]([^`'"]+)""",
-                re.IGNORECASE | re.DOTALL,
-            ).findall(iframehtml)[0]
+            iframehtml = _fresh_player_text(iframeurl, url)
             vp.progress.update(50, "[CR]Looking for qualities[CR]")
-            m3u8html = utils.getHtml(videoid[1] + videoid[0], iframeurl)
-            links = re.compile(
-                r"resolution=\d+x(\d+)[^\n]*\n([^\s]+)", re.IGNORECASE | re.DOTALL
-            ).findall(m3u8html)
-            links = dict(links)
-            videourl = utils.prefquality(links, sort_by=lambda x: int(x), reverse=True)
+            videourl = _xtremestream_hls(iframeurl, iframehtml)
             vp.progress.update(75, "[CR]Loading selected quality[CR]")
-            m3u8html = utils.getHtml(videourl, iframeurl)
-            myplaylist = utils.TRANSLATEPATH("special://temp/myPlaylist.m3u8")
-            with open(myplaylist, "w") as f:
-                f.write(m3u8html)
-            myparent = (
-                "#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-STREAM-INF:PROGRAM-ID=1\n{0}".format(
-                    myplaylist
-                )
-            )
-            videourl = utils.TRANSLATEPATH("special://temp/myParent.mp4")
-            with open(videourl, "w") as f:
-                f.write(myparent)
-            vp.play_from_direct_link(videourl)
+            vp.IA_check = "IA"
+            vp.play_from_direct_link(_hls_play_url(videourl, iframeurl))
         elif vp.resolveurl.HostedMediaFile(iframeurl).valid_url():
             vp.play_from_link_to_resolve(iframeurl)
         else:
-            utils.notify("Oh oh", "No other video hosts supported yet")
-    else:
-        utils.notify("Oh oh", "No video found")
+            utils.notify("Perverzija", "This video host is not supported")
+    except _PlaybackError as exc:
+        utils.kodilog("Perverzija: " + str(exc))
+        utils.notify("Perverzija", str(exc))
+    except Exception as exc:
+        utils.kodilog("Perverzija playback failed ({})".format(type(exc).__name__))
+        utils.notify("Perverzija", "Could not load the video stream. Please retry.")
+    finally:
+        vp.progress.close()

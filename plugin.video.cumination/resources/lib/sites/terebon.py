@@ -27,7 +27,7 @@ from resources.lib.adultsite import AdultSite
 site = AdultSite(
     "terebon",
     "[COLOR hotpink]Terebon[/COLOR]",
-    "https://b.terebon.net/",
+    "https://c.terebon.net/",
     "terebon.png",
     "terebon",
     category="JAV & Asian",

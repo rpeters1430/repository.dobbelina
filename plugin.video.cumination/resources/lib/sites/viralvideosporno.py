@@ -155,10 +155,8 @@ def Playvid(url, name, download=None):
             continue
 
     if links:
-        videourl = utils.selector("Select link", links)
-        if videourl:
-            vp.play_from_link_to_resolve(videourl)
-            return
+        vp.play_from_link_list(list(links.values()))
+        return
 
     # Final fallback: let VideoPlayer scan the HTML
     vp.play_from_html(phtml, url)

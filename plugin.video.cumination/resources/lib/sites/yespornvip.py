@@ -50,6 +50,10 @@ def Main():
 @site.register()
 def List(url):
     listhtml = utils.getHtml(url)
+    if not listhtml or 'There is no data in this list' in listhtml:
+        utils.notify('Oh oh', 'Nothing found!')
+        utils.eod()
+        return
     soup = utils.parse_html(listhtml)
     for item in soup.select('div.thumb_rel.item'):
         if 'item--adv-thumb' in (item.get('class') or []):

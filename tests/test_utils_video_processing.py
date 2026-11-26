@@ -370,3 +370,30 @@ class TestVideoPlayerAutoFallback:
         vp.play_from_link_list(["https://host1.com/v1"])
 
         assert len(notified) == 1
+
+    def test_select_source_circular_fallback(self, monkeypatch):
+        """Test that _select_source falls back circularly when the chosen source fails."""
+        import sys
+        import types
+
+        s1 = Mock(_url="https://h1.com/1", _domain="h1.com", title="h1")
+        s1.resolve.return_value = "https://stream.h1.com/1.mp4"
+        s2 = Mock(_url="https://h2.com/2", _domain="h2.com", title="h2")
+        s2.resolve.return_value = False
+
+        mock_resolveurl = types.ModuleType("resolveurl")
+        mock_resolveurl.add_plugin_dirs = lambda *a: None
+        mock_resolveurl.choose_source = lambda sources: s2
+        monkeypatch.setitem(sys.modules, "resolveurl", mock_resolveurl)
+
+        vp = utils.VideoPlayer("Test Video")
+        vp.progress = Mock()
+        vp.progress.iscanceled.return_value = False
+        played = []
+        monkeypatch.setattr(utils.addon, "getSetting", lambda key: "false")
+        monkeypatch.setattr(utils, "notify", lambda *a: None)
+        monkeypatch.setattr(utils, "playvid", lambda link, name, dl, **kw: played.append(link))
+
+        vp._select_source([s1, s2])
+
+        assert played == ["https://stream.h1.com/1.mp4"]

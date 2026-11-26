@@ -99,6 +99,39 @@ def test_list_handles_empty_fragment(monkeypatch):
     assert len(eod_called) > 0
 
 
+def test_list_uses_gotopage_and_button_next_pagination(monkeypatch):
+    """List() uses Livewire gotoPage for page > 1 and handles <button rel='next'>."""
+    fragment = """
+    <div>
+      <section class="video_item">
+        <a href="https://archivebate.com/watch/444444">
+          <video class="video-splash-mov" poster="https://cdn.archivebate.com/t4.jpg"></video>
+        </a>
+        <a href="https://archivebate.com/profile/p4">p4</a>
+      </section>
+      <button rel="next">Next</button>
+    </div>
+    """
+    session_mock = make_session_mock(fragment, base_url="https://archivebate.com/?page=2")
+    dirs = []
+
+    monkeypatch.setattr(archivebate.requests, "Session", session_mock)
+    monkeypatch.setattr(archivebate.site, "add_download_link", lambda *a, **k: None)
+    monkeypatch.setattr(
+        archivebate.site,
+        "add_dir",
+        lambda name, url, mode, icon="", **kw: dirs.append((name, url)),
+    )
+    monkeypatch.setattr(archivebate.utils, "eod", lambda: None)
+
+    archivebate.List("https://archivebate.com/?page=2")
+
+    post_payload = session_mock.return_value.post.call_args.kwargs["json"]
+    assert post_payload["updates"][0]["payload"]["method"] == "gotoPage"
+    assert post_payload["updates"][0]["payload"]["params"] == [2, "page"]
+    assert dirs == [("Next Page", "https://archivebate.com/?page=3")]
+
+
 def test_list_skips_items_without_watch_link(monkeypatch):
     """List() skips section elements that have no /watch/ link."""
     bad_fragment = """

@@ -1,8 +1,8 @@
 # Upstream Sync Tracking
 
 **Purpose**: Track which commits from upstream (dobbelina/repository.dobbelina) have been integrated into this fork.
-**Last Updated**: 2026-11-09
-**Last Sync**: 2026-10-20 - Reviewed all 15 pending upstream commits after `4a4ecb66` through `26e3b8eb`; rewrote speedporn for its new speedporn.net layout (#1995); deferred javpog (new site) and the folder-icon refresh; skipped repository logo changes.
+**Last Updated**: 2026-11-26
+**Last Sync**: 2026-11-26 - Reviewed pending upstream commits through `cab8318a`; ported terebon/archivebate (#2043), perverzija XtremeStream playback (#2053), 3movs pagination/categories (#2056), yespornvip listing guard (#2058), "Don't ask for videohost" across aagmaal/aagmaalpro/viralvideosporno/xsharings, and circular source fallback in utils.py.
 
 ---
 
@@ -18,6 +18,20 @@
 ---
 
 ## Sync Sessions
+
+### 2026-11-26 Porting Session
+Reviewed pending upstream commits through `cab8318a` using `sync_manager.py --report` (`docs/development/UPSTREAM_TRIAGE.md`). Ported site fixes, playback improvements, and circular host fallback.
+
+| Upstream Hash | Message | Fork Hash | Date Integrated | Notes |
+|---------------|---------|-----------|-----------------|-------|
+| `cab8318a` (#2043) | terebon, archivebate fixes #2043 | `manual` | 2026-11-26 | **terebon / archivebate**: Updated `terebon.py` domain to `https://c.terebon.net/`. Updated `archivebate.py` to use Livewire `gotoPage` for `page > 1` and `<button rel="next">` pagination fallback via BS4. Added unit test in `tests/sites/test_archivebate.py`. |
+| `165b78cf` (#2053) | perverzija playback & pervtube #2029 fixes #2053 | `manual` | 2026-11-26 | **perverzija**: Ported XtremeStream `XSFTK.boot` (`castsign`/`castmaster`) HLS playback, `TYPE=AUDIO` master retention, and `_hls_play_url` formatting while preserving BS4 iframe extraction. Added unit test in `tests/sites/test_perverzija.py`. (`pervtube` alias deferred.) |
+| `c8bf334a`, `b804dd77`, `cc8e0aab` (#2056) | 3Movs fixed pagination / 3movs #2056 | `manual` | 2026-11-26 | **3movs**: Added `data-parameters` search pagination support and alphabetical category sorting in BS4 `3movs.py`. |
+| `ede00196`, `261cd0f4` (#2058) | YesPorn.vip fixed listing / #2058 | `manual` | 2026-11-26 | **yespornvip**: Added empty/`There is no data in this list` guard in `List()`; listing selector already handled by BS4 `div.thumb_rel.item`. |
+| `32fa6d47`, `11ce5d81` | "Don't ask for videohost" / Various fixes | `manual` | 2026-11-26 | **aagmaal / aagmaalpro / viralvideosporno / xsharings**: Switched multi-host playback from `utils.selector` to `vp.play_from_link_list` and updated `xsharings.Play` to BS4 iframe extraction with packed `hls2` fallback. Updated `tests/sites/test_aagmaal.py`. |
+| `55e9b1fe`, `e04a2859`, `2319dfa9` | utils.py circular fallback / cleanup | `manual` | 2026-11-26 | **utils**: Added circular fallback in `VideoPlayer._select_source` when a user-selected source fails, while preserving fork DoodStream/yt-dlp/telemetry support. Added `test_select_source_circular_fallback` in `tests/test_utils_video_processing.py`. |
+| `654fd676` (#2055) | erogarga playback #2055 | `skipped` | 2026-11-26 | Fork does not include `erogarga.py`. |
+| `69a3f1f1`, `fc2ebc57`, `beece3f8`..`cb353344` | Version bumps (`v1.1.208`/`v1.1.209`), Confluence skin, codec PNGs | `skipped` | 2026-11-26 | Upstream skin/packaging/icon commits; not applicable to addon code. |
 
 ### 2026-11-09 Porting Session
 Reviewed pending upstream commits through `7f3ee13f` using `sync_manager.py --report`. Ported core site fixes, resolver fallback improvements, directory additions, and replaced permanently dead `netflixporno` with `watchpornx`.

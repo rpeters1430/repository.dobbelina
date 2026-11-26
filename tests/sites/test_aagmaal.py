@@ -231,7 +231,6 @@ def test_playvid_dl_server_links(monkeypatch):
     played_urls = []
 
     monkeypatch.setattr(aagmaal.utils, "getHtml", lambda *a, **k: html)
-    monkeypatch.setattr(aagmaal.utils, "selector", lambda title, links: list(links.values())[0])
 
     class DummyVP:
         def __init__(self, name, download=None):
@@ -244,6 +243,9 @@ def test_playvid_dl_server_links(monkeypatch):
                 def close(self): pass
             self.progress = DummyProgress()
 
+        def play_from_link_list(self, urls):
+            played_urls.extend(urls)
+
         def play_from_link_to_resolve(self, url):
             played_urls.append(url)
 
@@ -251,8 +253,8 @@ def test_playvid_dl_server_links(monkeypatch):
 
     aagmaal.Playvid("https://aagmaal.bz/test-video/", "Test Video")
 
-    assert len(played_urls) == 1
-    assert "https://luluvid.com/d/12345" in played_urls or "https://playmogo.com/d/67890" in played_urls
+    assert "https://luluvid.com/d/12345" in played_urls
+    assert "https://playmogo.com/d/67890" in played_urls
 
 
 def test_playvid_iframe_fallback(monkeypatch):

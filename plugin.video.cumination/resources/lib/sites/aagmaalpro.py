@@ -181,7 +181,8 @@ def Playvid(url, name, download=None):
                 links[link_url] = link_url
 
     if links:
-        videourl = utils.selector("Select link", links)
+        vp.play_from_link_list(list(links.values()))
+        return
 
     if not videourl:
         for pattern in [

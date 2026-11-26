@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
 import xbmc
 import xbmcgui
 import json
@@ -224,25 +223,29 @@ def Search(url, keyword=None):
 def Play(url, name, download=None):
     vp = utils.VideoPlayer(name, download)
     html = utils.getHtml(url)
-    iframematch = re.compile(
-        r'<iframe src="([^"]+)"', re.DOTALL | re.IGNORECASE
-    ).findall(html)
+    soup = utils.parse_html(html)
+    iframematch = [
+        utils.safe_get_attr(iframe, "src")
+        for iframe in soup.select("iframe[src]")
+        if utils.safe_get_attr(iframe, "src")
+    ]
     if iframematch:
-        sources = {i.split("/")[2]: i for i in iframematch}
-        iframe = utils.selector("Select video host:", sources)
-        if iframe:
-            if vp.resolveurl.HostedMediaFile(iframe).valid_url():
-                vp.play_from_link_to_resolve(iframe)
-            else:
-                iframehtml = utils.getHtml(iframe, url)
-                packed = utils.get_packed_data(iframehtml)
+        resolvable = [
+            i for i in iframematch if vp.resolveurl.HostedMediaFile(i).valid_url()
+        ]
+        if resolvable:
+            vp.play_from_link_list(resolvable)
+            return
+        for iframe in iframematch:
+            iframehtml = utils.getHtml(iframe, url)
+            packed = utils.get_packed_data(iframehtml)
+            if packed:
                 packed = "{" + packed.split("}")[0].split("{")[-1] + "}"
-                packed = json.loads(packed)
-                video_url = packed.get("hls2")
+                video_url = json.loads(packed).get("hls2")
                 if video_url:
                     vp.play_from_direct_link(video_url)
-    else:
-        utils.notify("Oh oh", "No video found")
+                    return
+    utils.notify(name, utils.i18n("not_found"))
 
 
 @site.register()

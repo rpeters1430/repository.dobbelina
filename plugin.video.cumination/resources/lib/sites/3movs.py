@@ -121,6 +121,30 @@ def List(url, page=1):
         site.add_download_link(v_title, v_url, "Playvid", v_thumb, v_title, duration=duration)
 
     next_page_link = soup.select_one(".pagination a.next, a.icon-arrow-right, a[rel='next']")
+    param_next = soup.select_one(".item.active + .item a[data-parameters], .pagination a[data-parameters]")
+    if param_next and "data-parameters" in (param_next.attrs or {}):
+        params = utils.safe_get_attr(param_next, "data-parameters", default="")
+        parts = [p.strip() for p in params.split(";") if p.strip()]
+        q_part = parts[0].replace(":", "=") if parts else ""
+        from_part = next((p.split("+", 1)[0] for p in parts if p.startswith("from")), "")
+        if q_part and from_part:
+            next_num = from_part.split(":", 1)[1] if ":" in from_part else str(page + 1)
+            npurl = site.url + "search_videos/?" + q_part + "&" + from_part.replace(":", "=")
+            pages = [
+                int(m.group(1))
+                for a in soup.select("a[title^='Page ']")
+                for m in [re.search(r"Page\s+(\d+)", utils.safe_get_attr(a, "title", default=""))]
+                if m
+            ]
+            label = (
+                "[COLOR hotpink]Next Page ({}/{})[/COLOR]".format(next_num, max(pages))
+                if pages
+                else "[COLOR hotpink]Next Page >>[/COLOR]"
+            )
+            site.add_dir(label, npurl, "List", site.img_next)
+            utils.eod()
+            return
+
     if next_page_link or ("Next" in html or "icon-arrow-right" in html):
         site.add_dir(
             "[COLOR hotpink]Next Page >>[/COLOR]",
@@ -141,6 +165,7 @@ def Categories(url):
         return
 
     soup = utils.parse_html(html)
+    cats = []
     for item in soup.select(".thumb_cat, .item.thumb_cat, .item"):
         link = item.select_one("a[href*='/categories/']")
         if not link:
@@ -163,6 +188,9 @@ def Categories(url):
         img_tag = item.select_one("img[data-src], img[src]")
         c_thumb = utils.safe_get_attr(img_tag, "data-src", ["src"]) or site.img_cat
 
+        cats.append((c_title.lower(), display_title, c_url, c_thumb))
+
+    for _, display_title, c_url, c_thumb in sorted(cats, key=lambda x: x[0]):
         site.add_dir(display_title, c_url, "List", c_thumb)
 
     utils.eod()

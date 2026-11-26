@@ -97,3 +97,42 @@ def test_stars_parsing(monkeypatch):
 
     assert len(captured_dirs) == 1
     assert "Star One" in captured_dirs[0]["name"]
+
+
+def test_play_xtremestream_xsftk_boot(monkeypatch):
+    video_html = '<div class="player-embed"><iframe src="https://xtremestream.xyz/embed/123"></iframe></div>'
+    iframe_html = """<script>XSFTK.boot('vid123', 'tok456');</script>"""
+    master_m3u8 = (
+        "#EXTM3U\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=1000,RESOLUTION=1280x720\n"
+        "https://cdn.xtremestream.xyz/720.m3u8\n"
+    )
+    played = []
+
+    class FakeVP:
+        def __init__(self, *a, **k):
+            self.progress = type("P", (), {"update": lambda *a: None, "close": lambda *a: None})()
+            self.IA_check = "skip"
+            self.resolveurl = type("R", (), {"HostedMediaFile": lambda *a: type("H", (), {"valid_url": lambda: False})()})()
+
+        def play_from_direct_link(self, link):
+            played.append((self.IA_check, link))
+
+    def fake_get_html(url, referer="", headers=None):
+        if "embed/123" in url:
+            return iframe_html
+        if "op=castsign" in url:
+            return "ABCDEFGHIJKLMNOP123456"
+        if "op=castmaster" in url:
+            return master_m3u8
+        return ""
+
+    monkeypatch.setattr(perverzija.utils, "VideoPlayer", FakeVP)
+    monkeypatch.setattr(perverzija.utils, "get_html_with_cloudflare_retry", lambda *a, **k: (video_html, ""))
+    monkeypatch.setattr(perverzija.utils, "_getHtml", fake_get_html)
+
+    perverzija.Play("https://www.perverzija.com/video/123/", "Test")
+
+    assert len(played) == 1
+    assert played[0][0] == "IA"
+    assert played[0][1].startswith("https://cdn.xtremestream.xyz/720.m3u8|")
