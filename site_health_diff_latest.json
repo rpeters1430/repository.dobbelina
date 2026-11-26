@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-11-26T06:24:40.600620",
+    "sites_total": 206,
+    "pass": 167,
+    "warn": 2,
+    "fail": 35,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-11-25T06:25:31.981707",
     "sites_total": 206,
     "pass": 171,
@@ -8,35 +17,44 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-11-24T06:21:03.809770",
-    "sites_total": 206,
-    "pass": 173,
-    "warn": 2,
-    "fail": 28,
-    "error": 0,
-    "skip": 3
-  },
   "summary": {
-    "new_failures": 3,
+    "new_failures": 6,
     "resolved_failures": 1,
-    "persistent_failures": 27,
+    "persistent_failures": 29,
     "improved_sites": 1,
-    "regressions": 4,
-    "step_regressions": 7
+    "regressions": 6,
+    "step_regressions": 12
   },
   "new_failures": [
     {
-      "site": "kissjav",
+      "site": "analdin",
       "previous": "PASS",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)",
+      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
+      "is_flaky": false,
+      "stability_score": 0.9
+    },
+    {
+      "site": "porndoe",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "ENV",
+      "message": "search: RuntimeError: FlareSolverr error for https://porndoe.com/search?keywords=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "sexyporn",
+      "site": "pornkai",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "pornmd",
       "previous": "PASS",
       "current": "FAIL",
       "class": "PARSER",
@@ -45,18 +63,27 @@
       "stability_score": 1.0
     },
     {
-      "site": "xhamster",
+      "site": "xnxx",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "play: Site could not find a stream: Oh oh: Couldn't find a playable link",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xozilla",
       "previous": "PASS",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh Oh: No video found.)",
+      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "resolved_failures": [
     {
-      "site": "pornslash",
+      "site": "sexyporn",
       "previous": "FAIL",
       "current": "PASS"
     }
@@ -157,7 +184,16 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
+      "message": "search: Search for 'test' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "kissjav",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -279,6 +315,15 @@
       "stability_score": 1.0
     },
     {
+      "site": "xhamster",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "play: Site could not find a stream: Oh Oh: No playable video found.",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
       "site": "xlovecam",
       "previous": "FAIL",
       "current": "FAIL",
@@ -308,24 +353,54 @@
   ],
   "improved_sites": [
     {
-      "site": "spankbang",
-      "previous": "SKIP",
+      "site": "pornmz",
+      "previous": "WARN",
       "current": "PASS"
     }
   ],
   "step_regressions": [
     {
-      "site": "kissjav",
+      "site": "analdin",
       "step": "search",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)",
+      "message": "Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 0.9
+    },
+    {
+      "site": "analdin",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 0.9
+    },
+    {
+      "site": "porndoe",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://porndoe.com/search?keywords=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "pornkai",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
       "class": "PARSER",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "kissjav",
+      "site": "pornkai",
       "step": "search_play",
       "previous": "PASS",
       "current": "FAIL",
@@ -335,17 +410,7 @@
       "stability_score": 1.0
     },
     {
-      "site": "pornmz",
-      "step": "play",
-      "previous": "PASS",
-      "current": "FAIL",
-      "message": "Site could not find a stream: Oh oh: No video found",
-      "class": "PLAYBACK",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "sexyporn",
+      "site": "pornmd",
       "step": "search",
       "previous": "PASS",
       "current": "FAIL",
@@ -355,7 +420,7 @@
       "stability_score": 1.0
     },
     {
-      "site": "sexyporn",
+      "site": "pornmd",
       "step": "search_play",
       "previous": "PASS",
       "current": "FAIL",
@@ -366,16 +431,46 @@
     },
     {
       "site": "xhamster",
+      "step": "play",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "Site could not find a stream: Oh Oh: No playable video found.",
+      "class": "PLAYBACK",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xnxx",
+      "step": "play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Site could not find a stream: Oh oh: Couldn't find a playable link",
+      "class": "PLAYBACK",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xnxx",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Site could not find a stream: Oh oh: Couldn't find a playable link",
+      "class": "PLAYBACK",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xozilla",
       "step": "search",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "Search for 'test' returned no videos (Oh Oh: No video found.)",
+      "message": "Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
       "class": "PARSER",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "xhamster",
+      "site": "xozilla",
       "step": "search_play",
       "previous": "PASS",
       "current": "FAIL",
@@ -387,7 +482,28 @@
   ],
   "deltas": [
     {
-      "site": "kissjav",
+      "site": "analdin",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "porndoe",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "pornkai",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "pornmd",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
@@ -395,34 +511,27 @@
     },
     {
       "site": "pornmz",
-      "previous": "PASS",
-      "current": "WARN",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "pornslash",
-      "previous": "FAIL",
+      "previous": "WARN",
       "current": "PASS",
       "kind": "improvement",
       "detail": ""
     },
     {
       "site": "sexyporn",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "xnxx",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "spankbang",
-      "previous": "SKIP",
-      "current": "PASS",
-      "kind": "improvement",
-      "detail": ""
-    },
-    {
-      "site": "xhamster",
+      "site": "xozilla",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
