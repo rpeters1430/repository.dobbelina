@@ -22,7 +22,7 @@
   "devDependencies": {
     "@playwright/mcp": "0.0.86",
     "@playwright/test": "1.65.1",
-    "@types/node": "26.6.6"
+    "@types/node": "26.6.7"
   },
   "dependencies": {
     "2captcha": "^3.0.5-2"
