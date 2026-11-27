@@ -182,24 +182,6 @@ jobs:
           python scripts/strict_health_history.py "${strict_reports[@]}" --out results "${history_args[@]}"
       - name: Verify all expected site reports
         run: python -m scripts.verify_site_collection results/site_health_latest.json results/strict_health_latest.json
-      - name: Generate strict triage requests
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh issue list --state all --limit 1000 \
-            --json number,title,body,state \
-            > results/existing_site_monitor_issues.json
-          python scripts/generate_strict_triage_requests.py \
-            --latest results/strict_health_latest.json \
-            --history results/strict_history.json \
-            --existing-issues results/existing_site_monitor_issues.json \
-            --out results/strict_triage_requests.json
-      - name: Ensure labels and execute triage
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python scripts/ensure_labels.py
-          python scripts/automate_triage.py --requests results/strict_triage_requests.json
       - name: Build broad site health diff
         run: |
           PREVIOUS_JSON=""
@@ -214,6 +196,25 @@ jobs:
             --stability-out results/stability.json \
             --json-out results/site_health_diff_latest.json \
             --md-out results/site_health_diff_latest.md
+      - name: Generate strict triage requests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue list --state all --limit 1000 \
+            --json number,title,body,state \
+            > results/existing_site_monitor_issues.json
+          python scripts/generate_strict_triage_requests.py \
+            --latest results/strict_health_latest.json \
+            --history results/strict_history.json \
+            --existing-issues results/existing_site_monitor_issues.json \
+            --broad-diff results/site_health_diff_latest.json \
+            --out results/strict_triage_requests.json
+      - name: Ensure labels and execute triage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/ensure_labels.py
+          python scripts/automate_triage.py --requests results/strict_triage_requests.json
       - name: Publish job summary
         if: always()
         run: |
@@ -239,6 +240,7 @@ jobs:
           cp results/site_health_latest.md /tmp/site-health/live_smoke_latest.md
           cp results/site_health_diff_latest.json /tmp/site-health/site_health_diff_latest.json
           cp results/site_health_diff_latest.md /tmp/site-health/site_health_diff_latest.md
+          cp results/stability.json /tmp/site-health/stability.json
 
           git -C /tmp/site-health config user.name "github-actions[bot]"
           git -C /tmp/site-health config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -275,4 +277,4 @@ jobs:
           name: site-health-final
           path: results
       - name: Check confirmed site regressions
-        run: python scripts/check_site_regressions.py results/strict_health_latest.json results/site_health_latest.json
+        run: python scripts/check_site_regressions.py results/strict_history.json results/site_health_latest.json

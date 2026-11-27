@@ -2116,7 +2116,7 @@ def parse_args() -> argparse.Namespace:
         default=",".join(DEFAULT_STEPS),
         help="Comma-separated steps: " + ",".join(DEFAULT_STEPS),
     )
-    parser.add_argument("--keyword", default="test", help="Search keyword")
+    parser.add_argument("--keyword", default="latina", help="Search keyword")
     parser.add_argument(
         "--timeout", type=int, default=35, help="Timeout per step (seconds)"
     )

@@ -23,8 +23,9 @@ from scripts.pull_upstream_addons import (
 def test_upstream_registry_structure():
     assert "resolveurl" in UPSTREAM_REGISTRY
     assert "resolveurlxxx" in UPSTREAM_REGISTRY
+    assert "smr_link_tester" in UPSTREAM_REGISTRY
     assert "yt-dlp" in UPSTREAM_REGISTRY
-    assert "f4mproxy" in UPSTREAM_REGISTRY
+    assert "f4mproxy" not in UPSTREAM_REGISTRY
 
     required_keys = {"name", "addon_id", "repo_url", "default_branch", "source_path", "dest_path", "type", "exclude"}
     for key, spec in UPSTREAM_REGISTRY.items():
@@ -136,7 +137,7 @@ def test_main_does_not_crash_on_non_utf8_console(monkeypatch):
                 "success": False,
                 "message": "simulated clone failure",
             }
-        if addon_key == "f4mproxy":
+        if addon_key == "smr_link_tester":
             return {
                 "addon_key": addon_key,
                 "name": spec.get("name", addon_key),
@@ -169,7 +170,7 @@ def test_main_does_not_crash_on_non_utf8_console(monkeypatch):
     cp1252_stdout = io.TextIOWrapper(raw, encoding="cp1252", errors="strict")
     monkeypatch.setattr(sys, "stdout", cp1252_stdout)
     monkeypatch.setattr(
-        sys, "argv", ["pull_upstream_addons.py", "--addon", "resolveurl,f4mproxy,yt-dlp", "--dry-run"]
+        sys, "argv", ["pull_upstream_addons.py", "--addon", "resolveurl,smr_link_tester,yt-dlp", "--dry-run"]
     )
 
     try:

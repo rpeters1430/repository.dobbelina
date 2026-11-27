@@ -1,0 +1,17 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.2
+    hooks:
+      - id: ruff-check
+        args: [--config=ruff.toml]
+        files: ^(plugin\.video\.cumination|tests|build_repo_addons\.py|scripts/(pull_upstream_addons|auto_bump_versions|validate_addon_packages|generate_status_metrics)\.py|scripts/kodi_e2e/)
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-xml
+      - id: check-yaml
+      - id: end-of-file-fixer
+        exclude: ^tests/fixtures/
+      - id: trailing-whitespace
+        exclude: ^tests/fixtures/

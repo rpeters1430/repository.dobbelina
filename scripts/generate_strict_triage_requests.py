@@ -2,6 +2,7 @@
 """Generate GitHub triage request actions from strict site health state and history."""
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -14,7 +15,7 @@ if str(ROOT) not in sys.path:
 
 from scripts.site_health_types import HealthState
 
-SIG_RE = re.compile(r"Failure Signature:\s*`([^`]+)`", re.IGNORECASE)
+SIG_RE = re.compile(r"Failure Signature:\*{0,2}\s*`([^`]+)`", re.IGNORECASE)
 
 
 def extract_sig_from_body(body: str) -> str:
@@ -169,12 +170,114 @@ def generate_strict_triage_requests(
     return requests
 
 
+BROAD_SUMMARY_MARKER = "<!-- broad-site-health:summary -->"
+
+
+def _find_broad_summary_issue(existing_issues: list[dict[str, Any]]) -> dict[str, Any] | None:
+    for issue in existing_issues:
+        if BROAD_SUMMARY_MARKER in (issue.get("body") or ""):
+            return issue
+    return None
+
+
+def generate_broad_summary_request(
+    diff: dict[str, Any],
+    existing_issues: list[dict[str, Any]] | None = None,
+) -> dict[str, Any] | None:
+    """Create, update, or close a single rolling summary issue for broad smoke failures."""
+    if existing_issues is None:
+        existing_issues = []
+
+    actionable_new = [
+        f for f in diff.get("new_failures", [])
+        if f.get("class") != "ENV" and not f.get("is_flaky")
+    ]
+    actionable_persistent = [
+        f for f in diff.get("persistent_failures", [])
+        if f.get("class") != "ENV" and not f.get("is_flaky")
+    ]
+    all_actionable = actionable_new + actionable_persistent
+
+    existing = _find_broad_summary_issue(existing_issues)
+    is_open = bool(existing and existing.get("state", "").upper() == "OPEN")
+
+    if not all_actionable:
+        if is_open and existing:
+            return {
+                "action": "CLOSE",
+                "site": "broad-smoke",
+                "issue_number": existing.get("number"),
+                "comment": "Closing issue: 0 actionable non-ENV failures remain in broad smoke monitoring.",
+            }
+        return None
+
+    sig_payload = "|".join(
+        sorted(f"{f.get('site')}:{f.get('class', 'UNKNOWN')}" for f in all_actionable)
+    )
+    sig = hashlib.sha256(sig_payload.encode("utf-8")).hexdigest()[:16]
+
+    lines = [
+        BROAD_SUMMARY_MARKER,
+        f"# Broad Smoke Failures ({len(all_actionable)} failing)",
+        "",
+        f"- **Failure Signature:** `{sig}`",
+        f"- **New Failures:** {len(actionable_new)}",
+        f"- **Persistent Failures:** {len(actionable_persistent)}",
+        "",
+    ]
+    if actionable_new:
+        lines.append("## New Failures")
+        for f in actionable_new:
+            lines.append(f"- **{f.get('site')}** (`{f.get('class', 'UNKNOWN')}`): {f.get('message', '')}")
+        lines.append("")
+    if actionable_persistent:
+        lines.append("## Persistent Failures")
+        for f in actionable_persistent:
+            lines.append(f"- **{f.get('site')}** (`{f.get('class', 'UNKNOWN')}`): {f.get('message', '')}")
+        lines.append("")
+
+    title = f"[Site Monitor] Broad smoke failures ({len(all_actionable)} failing)"
+    body = "\n".join(lines)
+    labels = ["site-health", "site-health/persistent-failure"]
+
+    if not existing or not is_open:
+        return {
+            "action": "CREATE_OR_REOPEN",
+            "site": "broad-smoke",
+            "title": title,
+            "body": body,
+            "labels": labels,
+            "failure_signature": sig,
+            "issue_number": existing.get("number") if existing else None,
+        }
+
+    existing_sig = extract_sig_from_body(existing.get("body", ""))
+    if existing_sig != sig:
+        return {
+            "action": "UPDATE",
+            "site": "broad-smoke",
+            "title": title,
+            "body": body,
+            "labels": labels,
+            "failure_signature": sig,
+            "issue_number": existing.get("number"),
+            "comment": f"Broad smoke failure list updated ({len(all_actionable)} failing, signature `{sig}`).",
+        }
+
+    return {
+        "action": "NONE",
+        "site": "broad-smoke",
+        "issue_number": existing.get("number"),
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate strict triage requests.")
     parser.add_argument("--latest", required=True, help="Path to strict_health_latest.json")
     parser.add_argument("--history", required=True, help="Path to strict_history.json")
     parser.add_argument("--out", required=True, help="Path to output triage_requests.json")
     parser.add_argument("--existing-issues", help="Path to existing issues JSON file from gh")
+    parser.add_argument("--broad-diff", help="Optional path to site_health_diff_latest.json")
     args = parser.parse_args()
 
     latest = json.loads(Path(args.latest).read_text(encoding="utf-8"))
@@ -188,6 +291,12 @@ def main():
             existing_issues = []
 
     requests = generate_strict_triage_requests(latest, history, existing_issues)
+    if args.broad_diff and Path(args.broad_diff).exists():
+        broad_diff = json.loads(Path(args.broad_diff).read_text(encoding="utf-8"))
+        broad_req = generate_broad_summary_request(broad_diff, existing_issues)
+        if broad_req:
+            requests.append(broad_req)
+
     Path(args.out).write_text(json.dumps(requests, indent=2), encoding="utf-8")
 
 

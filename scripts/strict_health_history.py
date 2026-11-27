@@ -99,7 +99,7 @@ def merge_reports(
         if state == HealthState.HEALTHY:
             consecutive_healthy = prev_consecutive + 1
             healthy_baseline = rep.get("listing_metrics", {}) or baseline
-            open_failure_signature = open_sig
+            open_failure_signature = "" if consecutive_healthy >= 2 else open_sig
         else:
             consecutive_healthy = 0
             healthy_baseline = baseline

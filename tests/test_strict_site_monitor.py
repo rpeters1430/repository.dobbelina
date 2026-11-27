@@ -214,3 +214,49 @@ def test_global_flaresolverr_outage_stays_not_tested():
     report = evaluate_record(record, sample_profile())
     assert report["state"] == HealthState.NOT_TESTED
     assert report["exit_code"] == 2
+
+
+def test_html_payload_without_challenge_is_broken():
+    record = {
+        "site": "youporn",
+        "overall": "PASS",
+        "listing_samples": [sample_video(i) for i in range(1, 6)],
+        "steps": {
+            "main": {"status": "PASS"},
+            "list": {"status": "PASS"},
+            "play": {"status": "PASS", "play_url": "https://www.youporn.com/watch/123/"},
+        },
+        "media_result": {
+            "passed": False,
+            "classification": "HTML_PAYLOAD",
+            "message": "Server returned HTML page instead of media content",
+        },
+    }
+
+    report = evaluate_record(record, sample_profile())
+    assert report["state"] == HealthState.BROKEN
+    assert report["failed_stage"] == "media"
+    assert report["classification"] == "HTML_PAYLOAD"
+
+
+def test_html_payload_with_challenge_notification_is_blocked():
+    record = {
+        "site": "youporn",
+        "overall": "PASS",
+        "notifications": ["Cloudflare challenge encountered"],
+        "listing_samples": [sample_video(i) for i in range(1, 6)],
+        "steps": {
+            "main": {"status": "PASS"},
+            "list": {"status": "PASS"},
+            "play": {"status": "PASS", "play_url": "https://www.youporn.com/watch/123/"},
+        },
+        "media_result": {
+            "passed": False,
+            "classification": "HTML_PAYLOAD",
+            "message": "Server returned HTML page instead of media content",
+        },
+    }
+
+    report = evaluate_record(record, sample_profile())
+    assert report["state"] == HealthState.BLOCKED
+    assert report["failed_stage"] == "media"

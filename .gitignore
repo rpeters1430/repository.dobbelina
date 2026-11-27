@@ -23,8 +23,13 @@ gha-creds-*.json
 # Coverage reports
 .coverage
 .coverage.*
+coverage.json
 htmlcov/
 coverage.xml
+
+# Debug / log artifacts
+*.log
+*_debug.png
 
 # Playwright
 node_modules/

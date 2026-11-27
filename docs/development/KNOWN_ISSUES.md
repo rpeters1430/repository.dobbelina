@@ -1,8 +1,8 @@
 # Known Issues and Technical Debt
 
 ## Kodi compatibility and packaging
-- `script.video.F4mProxy` still targets the legacy `xbmc.python` 2.1.0 interface, which aligns with pre-Matrix Kodi releases and needs to be raised for modern versions.
-- `plugin.video.cumination` lacks an explicit `xbmc.python` requirement; it bundles `kodi-six` for Python 2/3 bridging but should declare a modern Python API to signal Matrix/Nexus/Omega support.
+- `script.video.F4mProxy` still targets the legacy `xbmc.python` 2.1.0 interface, which aligns with pre-Matrix Kodi releases (and has been removed from upstream `dobbelina/repository.dobbelina`).
+- `plugin.video.cumination` declares `xbmc.python` 3.0.0, while still bundling `kodi-six` for legacy helper compatibility.
 
 ## Functional issues observed in testing
 - **pornhub** – Search results populate, but returned titles no longer reflect the query string, so searches surface unrelated videos.

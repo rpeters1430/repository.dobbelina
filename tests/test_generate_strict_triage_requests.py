@@ -199,3 +199,52 @@ def test_ignored_blocked_policy_still_reports_broken_state():
 
     assert requests[0]["action"] == "CREATE_OR_REOPEN"
     assert requests[0]["labels"] == ["site-monitor", "failure/broken"]
+
+
+def test_broad_summary_request_create_update_and_close():
+    from scripts.generate_strict_triage_requests import (
+        BROAD_SUMMARY_MARKER,
+        generate_broad_summary_request,
+    )
+
+    diff = {
+        "new_failures": [
+            {"site": "javgg", "class": "PARSER", "message": "search failed"},
+            {"site": "cumlouder", "class": "ENV", "message": "flaresolverr timeout"},
+            {"site": "flaky_site", "class": "PARSER", "message": "intermittent", "is_flaky": True},
+        ],
+        "persistent_failures": [
+            {"site": "xhamster", "class": "PLAYBACK", "message": "no playable video"},
+        ],
+    }
+
+    req = generate_broad_summary_request(diff, existing_issues=[])
+    assert req is not None
+    assert req["action"] == "CREATE_OR_REOPEN"
+    assert "(2 failing)" in req["title"]
+    assert "javgg" in req["body"]
+    assert "xhamster" in req["body"]
+    assert "cumlouder" not in req["body"]
+    assert "flaky_site" not in req["body"]
+
+    # Same signature -> NONE
+    existing_same = [{
+        "number": 99,
+        "state": "OPEN",
+        "body": f"{BROAD_SUMMARY_MARKER}\n- **Failure Signature:** `{req['failure_signature']}`",
+    }]
+    assert generate_broad_summary_request(diff, existing_same)["action"] == "NONE"
+
+    # Different signature -> UPDATE
+    existing_old = [{
+        "number": 99,
+        "state": "OPEN",
+        "body": f"{BROAD_SUMMARY_MARKER}\n- **Failure Signature:** `oldsig`",
+    }]
+    assert generate_broad_summary_request(diff, existing_old)["action"] == "UPDATE"
+
+    # No actionable failures -> CLOSE
+    empty_diff = {"new_failures": [], "persistent_failures": []}
+    close_req = generate_broad_summary_request(empty_diff, existing_old)
+    assert close_req["action"] == "CLOSE"
+    assert close_req["issue_number"] == 99

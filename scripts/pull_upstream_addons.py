@@ -4,7 +4,7 @@ Pull Upstream Addons & Repositories Manager for Dobbelina Repository.
 
 Pulls updated code from official upstream repositories for embedded addons
 such as ResolveURL (script.module.resolveurl), ResolveURL.XXX (script.module.resolveurl.xxx),
-SMR Link Tester, yt-dlp, and F4mProxy.
+SMR Link Tester, and yt-dlp.
 """
 
 from __future__ import annotations
@@ -76,21 +76,6 @@ UPSTREAM_REGISTRY: dict[str, dict[str, Any]] = {
         "exclude": [".git*", "*.pyc", "__pycache__", "*.zip", ".DS_Store", "test", "docs"],
         "preserve": [],
     },
-    "f4mproxy": {
-        "name": "F4mProxy",
-        "addon_id": "script.video.F4mProxy",
-        "repo_url": "https://github.com/dobbelina/repository.dobbelina.git",
-        "default_branch": "master",
-        "source_path": "script.video.F4mProxy",
-        "dest_path": "script.video.F4mProxy",
-        "type": "directory",
-        "exclude": [".git*", "*.pyc", "__pycache__", "*.zip", ".DS_Store"],
-        "preserve": [
-            "lib/f4mUtils/cipherfactory.py",
-            "lib/f4mUtils/pycrypto_rc4.py",
-            "lib/f4mUtils/pycrypto_tripledes.py",
-        ],
-    },
 }
 
 # Aliases for user convenience
@@ -102,8 +87,6 @@ ALIASES: dict[str, str] = {
     "smr": "smr_link_tester",
     "script.module.yt-dlp": "yt-dlp",
     "ytdlp": "yt-dlp",
-    "script.video.F4mProxy": "f4mproxy",
-    "f4m": "f4mproxy",
 }
 
 

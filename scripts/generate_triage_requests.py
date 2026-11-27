@@ -69,7 +69,7 @@ def comment_for(item: dict, request_type: str) -> str:
         f"- Classification: `{request_type}` / `{failure_class}`\n"
         f"{step_line}"
         f"- Reported message: `{message}`\n"
-        f"- Reproduce locally: `.venv\\Scripts\\python.exe scripts\\live_smoke_test.py --site {site} --steps main,list,categories,search,play --keyword test --timeout 45 --site-timeout 220`\n\n"
+        f"- Reproduce locally: `.venv\\Scripts\\python.exe scripts\\live_smoke_test.py --site {site} --steps main,list,categories,search,play --keyword latina --timeout 45 --site-timeout 220`\n\n"
         "Possible fix path:\n"
         f"{hint_lines}\n\n"
         "If the reproduce command now passes, close this as stale or note the transient condition in the issue."

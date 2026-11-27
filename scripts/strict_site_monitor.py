@@ -225,7 +225,10 @@ def evaluate_record(
                         failed_stage = "search_play"
                         classification = search_media.classification
                         message = f"Search result media probing failed: {search_media.message}"
-                        if classification in ("CHALLENGE", "HTML_PAYLOAD", "BLOCKED"):
+                        if classification in ("CHALLENGE", "BLOCKED") or (
+                            classification == "HTML_PAYLOAD"
+                            and any(k in notif_text for k in ("cloudflare", "challenge", "turnstile", "flaresolverr"))
+                        ):
                             is_blocked = True
                         break
             elif stage == "media":
@@ -238,7 +241,10 @@ def evaluate_record(
                     failed_stage = "media"
                     classification = media_res.classification
                     message = f"Media probing failed: {media_res.message}"
-                    if classification in ("CHALLENGE", "HTML_PAYLOAD", "BLOCKED"):
+                    if classification in ("CHALLENGE", "BLOCKED") or (
+                        classification == "HTML_PAYLOAD"
+                        and any(k in notif_text for k in ("cloudflare", "challenge", "turnstile", "flaresolverr"))
+                    ):
                         is_blocked = True
                     break
 
