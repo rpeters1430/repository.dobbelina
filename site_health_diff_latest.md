@@ -5,32 +5,30 @@
 
 ## Snapshot
 
-- Current: `PASS 167` | `WARN 2` | `FAIL 35` | `ERROR 0` | `SKIP 2`
-- Previous: `PASS 171` | `WARN 3` | `FAIL 30` | `ERROR 0` | `SKIP 2`
+- Current: `PASS 165` | `WARN 2` | `FAIL 37` | `ERROR 0` | `SKIP 2`
+- Previous: `PASS 167` | `WARN 2` | `FAIL 35` | `ERROR 0` | `SKIP 2`
 
 ## Delta Summary
 
-- New failures: `6`
+- New failures: `3`
 - Resolved failures: `1`
-- Persistent failures: `29`
-- Site regressions: `6`
-- Step regressions: `12`
+- Persistent failures: `34`
+- Site regressions: `3`
+- Step regressions: `8`
 
 ## New Failures
 
-- **analdin**: `PASS -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)
-- **porndoe**: `PASS -> FAIL` (ENV) | search: RuntimeError: FlareSolverr error for https://porndoe.com/search?keywords=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-- **pornkai**: `PASS -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)
-- **pornmd**: `PASS -> FAIL` (PARSER) | search: Search for 'test' returned no videos
-- **xnxx**: `PASS -> FAIL` (PLAYBACK) | play: Site could not find a stream: Oh oh: Couldn't find a playable link
-- **xozilla**: `PASS -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)
+- **javgg**: `PASS -> FAIL` (PARSER) | search: Search for 'test' returned no videos
+- **peekvids**: `PASS -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)
+- **sexyporn**: `PASS -> FAIL` (PARSER) | search: Search for 'test' returned no videos
 
 ## Resolved Failures
 
-- **sexyporn**: `FAIL -> PASS`
+- **xnxx**: `FAIL -> PASS`
 
 ## Persistent Failures
 
+- **analdin**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)
 - **cumlouder**: `FAIL -> FAIL` (ENV) | search: RuntimeError: FlareSolverr error for https://www.cumlouder.com/search/?q=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 - **eporner**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
 - **freshporno**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)
@@ -46,36 +44,32 @@
 - **mrsexe**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
 - **netflav**: `FAIL -> FAIL` (PLAYBACK) | play: Play function executed but no playback URL captured (no notifications)
 - **peachurnet**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (PeachUrNet: No videos found on this page)
-- **perverzija**: `FAIL -> FAIL` (CODE) | play: IndexError: list index out of range
+- **perverzija**: `FAIL -> FAIL` (PARSER) | list: List returned no videos
 - **porn4k**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://porn4k.to/page/1/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **porndoe**: `FAIL -> FAIL` (ENV) | search: RuntimeError: FlareSolverr error for https://porndoe.com/search?keywords=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
+- **pornkai**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
+- **pornmd**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
 - **porno365**: `FAIL -> FAIL` (PLAYBACK) | play: Play function executed but no playback URL captured (no notifications)
 - **seaporn**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)
 - **sextb**: `FAIL -> FAIL` (PLAYBACK) | play: Play function executed but no playback URL captured (no notifications)
 - **sxyprn**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)
-- **terebon**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)
-- **txxx**: `FAIL -> FAIL` (PLAYBACK) | play: Play function executed but no playback URL captured (no notifications)
+- **terebon**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
+- **txxx**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)
 - **uflash**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
 - **xgirls**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
 - **xhamster**: `FAIL -> FAIL` (PLAYBACK) | play: Site could not find a stream: Oh Oh: No playable video found.
 - **xlovecam**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos
+- **xozilla**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)
 - **xsharings**: `FAIL -> FAIL` (PARSER) | search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)
 - **xtapesla**: `FAIL -> FAIL` (ENV) | main: RuntimeError: FlareSolverr error for https://xtapes.la/?display=tube&filtre=date: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
 
 ## Step Regressions
 
-- **analdin** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)
-- **analdin** `search_play`: `PASS -> FAIL` (UNKNOWN) | Search failed, so no search result to play
-- **porndoe** `search`: `PASS -> FAIL` (ENV) | RuntimeError: FlareSolverr error for https://porndoe.com/search?keywords=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1
-- **pornkai** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)
-- **pornkai** `search_play`: `PASS -> FAIL` (UNKNOWN) | Search failed, so no search result to play
-- **pornmd** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos
-- **pornmd** `search_play`: `PASS -> FAIL` (UNKNOWN) | Search failed, so no search result to play
-- **xhamster** `play`: `SKIP -> FAIL` (PLAYBACK) | Site could not find a stream: Oh Oh: No playable video found.
-- **xnxx** `play`: `PASS -> FAIL` (PLAYBACK) | Site could not find a stream: Oh oh: Couldn't find a playable link
-- **xnxx** `search_play`: `PASS -> FAIL` (PLAYBACK) | Site could not find a stream: Oh oh: Couldn't find a playable link
-- **xozilla** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)
-- **xozilla** `search_play`: `PASS -> FAIL` (UNKNOWN) | Search failed, so no search result to play
-
-## Improvements
-
-- **pornmz**: `WARN -> PASS`
+- **javgg** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos
+- **javgg** `search_play`: `PASS -> FAIL` (UNKNOWN) | Search failed, so no search result to play
+- **peekvids** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)
+- **peekvids** `search_play`: `SKIP -> FAIL` (UNKNOWN) | Search failed, so no search result to play
+- **perverzija** `list`: `SKIP -> FAIL` (PARSER) | List returned no videos
+- **sexyporn** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos
+- **sexyporn** `search_play`: `PASS -> FAIL` (UNKNOWN) | Search failed, so no search result to play
+- **txxx** `search`: `PASS -> FAIL` (PARSER) | Search for 'test' returned no videos (Oh oh: It looks like this website is down.)
