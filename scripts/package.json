@@ -11,6 +11,6 @@
   "devDependencies": {
     "@playwright/test": "1.65.1",
     "@types/node": "26.6.6",
-    "agent-browser": "0.43.0"
+    "agent-browser": "0.44.0"
   }
 }
