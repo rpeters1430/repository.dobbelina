@@ -5,6 +5,8 @@
         <setting id="customview" label="30008" type="bool" default="false" />
         <setting id="menu_grid" label="30503" type="bool" default="true" />
         <setting id="site_tiles" label="30504" type="bool" default="true" />
+        <setting id="show_site_status_badges" label="Show live site health badges" type="bool" default="false" />
+        <setting id="hide_broken_sites" label="Hide sites failing nightly health checks" type="bool" default="false" />
         <setting id="m3u8_use_ia" label="30016" type="bool" default="false" />
         <setting id="paradisehill" label="30004" type="bool" default="false" />
         <setting id="posterfanart" label="30005" type="bool" default="false" />
@@ -77,10 +79,12 @@
         <setting type="lsep" label="DNS-over-HTTPS (DoH)" />
         <setting id="doh_enable" type="bool" label="Use DNS-over-HTTPS (DoH) to bypass DNS blocking" default="false" />
         <setting id="doh_provider" enable="eq(-1,true)" type="enum" label="DoH Provider" lvalues="Cloudflare (1.1.1.1)|Google (8.8.8.8)|Quad9 (9.9.9.9)" default="0"/>
+        <setting id="test_doh" type="action" label="Test DoH Connection" enable="true" option="close" action="RunPlugin(plugin://plugin.video.cumination/?mode=main.test_doh)" />
         <setting type="lsep" label="33024" />
         <setting id="fs_enable" type="bool" label="33022" default="false" />
         <setting id="fs_host" enable="eq(-1,true)" type="text" label="33023" default="http://127.0.0.1:8191/v1"/>
         <setting id="fs_allow_remote" enable="eq(-2,true)" type="bool" label="Allow remote FlareSolverr hosts (Tailscale/LAN)" default="false" />
+        <setting id="test_flaresolverr" type="action" label="Test FlareSolverr Connection" enable="true" option="close" action="RunPlugin(plugin://plugin.video.cumination/?mode=main.test_flaresolverr)" />
         <setting type="lsep" label="33025" />
         <setting id="sessionid" type="text" label="33026" default=""/>
         <setting type="lsep" label="ThotHub Authentication" />

@@ -442,6 +442,12 @@
       "harness": {
         "search_keyword": "kylie"
       }
+    },
+    "hentaihaven": {
+      "content_type": "hentai",
+      "supports": {
+        "search": false
+      }
     }
   }
 }

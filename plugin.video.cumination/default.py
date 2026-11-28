@@ -223,6 +223,22 @@ def INDEX():
         "",
         list_avail=False,
     )
+    url_dispatcher.add_dir(
+        "[COLOR hotpink]Global Search[/COLOR]",
+        "",
+        "global_search_menu",
+        basics.cum_image("cum-search.png"),
+        "",
+        list_avail=False,
+    )
+    url_dispatcher.add_dir(
+        "[COLOR white]Site Health Status[/COLOR]",
+        "",
+        "site_health_status",
+        basics.cum_image("cum-sites.png"),
+        "",
+        list_avail=False,
+    )
     if any(x.is_new for x in AdultSite.get_sites()):
         url_dispatcher.add_dir(
             "[COLOR green]New Sites[/COLOR]",
@@ -309,12 +325,45 @@ _CATEGORY_ICONS = {
 }
 
 
-def _site_display_title(site_obj, custom_listitems_dict=None):
+def _site_health_map():
+    show_badges = addon_get_setting("show_site_status_badges") == "true"
+    hide_broken = addon_get_setting("hide_broken_sites") == "true"
+    if not show_badges and not hide_broken:
+        return {}
+    try:
+        from resources.lib import site_status
+
+        return site_status.get_site_statuses()
+    except Exception:
+        return {}
+
+
+def _visible_sites(sites, status_map=None):
+    if addon_get_setting("hide_broken_sites") != "true" or not status_map:
+        return list(sites)
+    return [
+        s for s in sites if (status_map.get(s.name) or {}).get("status") != "broken"
+    ]
+
+
+def _site_display_title(site_obj, custom_listitems_dict=None, status_map=None):
     title = site_obj.title
     if site_obj.is_new:
         title = "[COLOR lime][NEW][/COLOR] {}".format(title)
     if hasattr(site_obj, "requires_flaresolverr") and site_obj.requires_flaresolverr:
         title = "{} [COLOR orange][FS][/COLOR]".format(title)
+    if (
+        addon_get_setting("show_site_status_badges") == "true"
+        and status_map
+        and site_obj.name in status_map
+    ):
+        st = status_map[site_obj.name].get("status")
+        if st == "healthy":
+            title = "{} [COLOR lime][OK][/COLOR]".format(title)
+        elif st == "blocked":
+            title = "{} [COLOR orange][BLOCKED][/COLOR]".format(title)
+        elif st == "broken":
+            title = "{} [COLOR red][BROKEN][/COLOR]".format(title)
     if custom_listitems_dict and site_obj.title in custom_listitems_dict:
         title = "{} [COLOR red]{}[/COLOR]".format(
             title, "".ljust(custom_listitems_dict[site_obj.title], "*")
@@ -359,8 +408,9 @@ def browse_category(url):
         elif x.category == category:
             filtered_sites.append(x)
             
-    for x in sorted(filtered_sites, key=lambda y: y.get_clean_title().lower()):
-        title = _site_display_title(x, custom_listitems_dict)
+    status_map = _site_health_map()
+    for x in sorted(_visible_sites(filtered_sites, status_map), key=lambda y: y.get_clean_title().lower()):
+        title = _site_display_title(x, custom_listitems_dict, status_map)
         url_dispatcher.add_dir(
             title, x.url, x.default_mode, x.image, about=x.about, custom=x.custom
         )
@@ -373,14 +423,17 @@ def site_list():
     custom_listitems_dict = {}
     for x in custom_listitems:
         custom_listitems_dict[x[0]] = x[1]
+    status_map = _site_health_map()
     for x in sorted(
-        AdultSite.get_sites(), key=lambda y: y.get_clean_title().lower(), reverse=False
+        _visible_sites(AdultSite.get_sites(), status_map),
+        key=lambda y: y.get_clean_title().lower(),
+        reverse=False,
     ):
         if x.custom:
             utils.kodilog(
                 "{0}: {1}".format(utils.i18n("list_custom"), x.title), xbmc.LOGDEBUG
             )
-        title = _site_display_title(x, custom_listitems_dict)
+        title = _site_display_title(x, custom_listitems_dict, status_map)
         url_dispatcher.add_dir(
             title, x.url, x.default_mode, x.image, about=x.about, custom=x.custom
         )
@@ -392,10 +445,13 @@ def new_site_list():
     custom_listitems = favorites.get_custom_listitems()
     custom_listitems_dict = {x[0]: x[1] for x in custom_listitems}
     
-    new_sites = [x for x in AdultSite.get_sites() if x.is_new]
-    
+    status_map = _site_health_map()
+    new_sites = _visible_sites(
+        [x for x in AdultSite.get_sites() if x.is_new], status_map
+    )
+
     for x in sorted(new_sites, key=lambda y: y.get_clean_title().lower()):
-        title = _site_display_title(x, custom_listitems_dict)
+        title = _site_display_title(x, custom_listitems_dict, status_map)
         url_dispatcher.add_dir(
             title, x.url, x.default_mode, x.image, about=x.about, custom=x.custom
         )
@@ -486,6 +542,192 @@ def change():
             break
         announce += line
     utils.textBox(heading, announce)
+
+
+@url_dispatcher.register()
+def global_search_menu():
+    url_dispatcher.add_dir(
+        "[COLOR hotpink]Search All Sites[/COLOR]",
+        "",
+        "global_search",
+        basics.cum_image("cum-search.png"),
+        "",
+        list_avail=False,
+    )
+    categories = sorted(
+        {x.category for x in AdultSite.get_sites() if x.category}
+    )
+    for cat in categories:
+        icon = _CATEGORY_ICONS.get(cat, basics.cum_image("cum-search.png"))
+        url_dispatcher.add_dir(
+            "[COLOR white]Search {}[/COLOR]".format(cat),
+            cat,
+            "global_search",
+            icon,
+            "",
+            list_avail=False,
+        )
+    utils.eod(basics.addon_handle, False)
+
+
+@url_dispatcher.register()
+def global_search(url=""):
+    from resources.lib import global_search as gs
+
+    keyword = utils._get_keyboard(heading="Global Search")
+    if not keyword:
+        utils.eod(basics.addon_handle, False)
+        return
+
+    category = url or None
+    results = gs.search_sites(keyword, category=category)
+    if not results:
+        utils.notify("Global Search", "No results found for '{}'".format(keyword))
+        utils.eod(basics.addon_handle, False)
+        return
+
+    for item in results:
+        label = "[COLOR hotpink][{}][/COLOR] {}".format(
+            item["site_title"], item["name"]
+        )
+        url_dispatcher.add_download_link(
+            label,
+            item["url"],
+            item["mode"],
+            item["iconimage"],
+            item.get("desc", ""),
+            stream=item.get("stream"),
+            fav=item.get("fav", "add"),
+            noDownload=item.get("noDownload", False),
+            contextm=item.get("contextm"),
+            fanart=item.get("fanart"),
+            duration=item.get("duration", ""),
+            quality=item.get("quality", ""),
+        )
+    utils.eod(basics.addon_handle)
+
+
+@url_dispatcher.register()
+def site_health_status(url=""):
+    from resources.lib import site_status
+
+    force = url == "refresh"
+    status_map = site_status.get_site_statuses(force_refresh=force)
+    if not status_map:
+        utils.notify("Site Health", "Could not load nightly site health status")
+        utils.eod(basics.addon_handle, False)
+        return
+
+    url_dispatcher.add_dir(
+        "[COLOR cyan]Refresh Status[/COLOR]",
+        "refresh",
+        "site_health_status",
+        basics.cum_image("cum-sites.png"),
+        "",
+        list_avail=False,
+    )
+    sites_by_name = {s.name: s for s in AdultSite.get_sites()}
+    order = {"broken": 0, "blocked": 1, "healthy": 2, "unknown": 3}
+    for name in sorted(
+        status_map.keys(),
+        key=lambda n: (order.get(status_map[n].get("status", "unknown"), 3), n),
+    ):
+        site_obj = sites_by_name.get(name)
+        if not site_obj:
+            continue
+        info = status_map[name]
+        st = info.get("status", "unknown")
+        if st == "healthy":
+            badge = "[COLOR lime][OK][/COLOR]"
+        elif st == "blocked":
+            badge = "[COLOR orange][BLOCKED][/COLOR]"
+        elif st == "broken":
+            badge = "[COLOR red][BROKEN][/COLOR]"
+        else:
+            badge = "[COLOR gray][?][/COLOR]"
+        label = "{} {}".format(badge, site_obj.get_clean_title() or site_obj.title)
+        url_dispatcher.add_dir(
+            label,
+            site_obj.url,
+            site_obj.default_mode,
+            site_obj.image,
+            about=site_obj.about,
+            custom=site_obj.custom,
+        )
+    utils.eod(basics.addon_handle, False)
+
+
+@url_dispatcher.register()
+def test_flaresolverr():
+    import time
+    from urllib.parse import urlparse
+    import requests
+    from resources.lib import flaresolverr
+
+    fs_host = (addon_get_setting("fs_host") or "http://127.0.0.1:8191/v1").strip()
+    try:
+        flaresolverr._validate_flaresolverr_url(fs_host)
+    except ValueError as exc:
+        dialog.ok(
+            "FlareSolverr Connection Test",
+            "Invalid FlareSolverr URL:\n{}".format(exc),
+        )
+        return
+
+    parsed = urlparse(fs_host)
+    health_url = "{}://{}/health".format(parsed.scheme, parsed.netloc)
+    start = time.time()
+    try:
+        resp = requests.get(health_url, timeout=8)
+        if resp.status_code == 404:
+            resp = requests.post(fs_host, json={"cmd": "sessions.list"}, timeout=8)
+        elapsed_ms = int((time.time() - start) * 1000)
+        if resp.status_code == 200:
+            dialog.ok(
+                "FlareSolverr Connection Test",
+                "Connected successfully!\nEndpoint: {}\nLatency: {} ms".format(
+                    fs_host, elapsed_ms
+                ),
+            )
+        else:
+            dialog.ok(
+                "FlareSolverr Connection Test",
+                "Unexpected HTTP {} from {}".format(resp.status_code, fs_host),
+            )
+    except Exception as exc:
+        dialog.ok(
+            "FlareSolverr Connection Test",
+            "Connection failed:\n{}\n{}".format(fs_host, exc),
+        )
+
+
+@url_dispatcher.register()
+def test_doh():
+    import time
+    from resources.lib import doh
+
+    providers = ["cloudflare", "google", "quad9"]
+    try:
+        idx = int(addon_get_setting("doh_provider") or "0")
+    except ValueError:
+        idx = 0
+    provider = providers[idx] if 0 <= idx < len(providers) else "cloudflare"
+    doh._DOH_CACHE.pop("example.com", None)
+    start = time.time()
+    ip = doh.resolve_doh("example.com", provider=provider, timeout=6.0)
+    elapsed_ms = int((time.time() - start) * 1000)
+    if ip:
+        dialog.ok(
+            "DoH Connection Test",
+            "Resolved example.com -> {}\nProvider: {}\nLatency: {} ms".format(
+                ip, provider, elapsed_ms
+            ),
+        )
+    else:
+        dialog.ok(
+            "DoH Connection Test",
+            "Failed to resolve example.com using provider '{}'".format(provider),
+        )
 
 
 @url_dispatcher.register()
