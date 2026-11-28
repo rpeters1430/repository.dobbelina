@@ -1,3 +1,13 @@
+[B]Version 1.1.502[/B]
+- feat: add PornXpert, Film1k, Hentai Haven, global search, connection tests, and live site status
+- fix: clean up upstream sync, CI checks, and nightly site-health triage
+- feat(upstream): sync updated commits from upstream addons
+- Merge pull request #477 from rpeters1430/renovate/github-actions-digest-updates
+- Merge pull request #478 from rpeters1430/renovate/patch-dependencies
+- chore(deps): update patch dependency updates
+- Merge pull request #479 from rpeters1430/renovate/minor-dependencies
+- chore(deps): update dependency agent-browser to v0.44.0
+
 [B]Version 1.1.501[/B]
 - feat: port upstream site fixes, playback updates, and circular host fallback
 - fix: repair watchpornx icon/audit, viralxxxporn thumbs, and pornhub search/playback
