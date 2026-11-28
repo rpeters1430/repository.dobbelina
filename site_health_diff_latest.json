@@ -1,5 +1,14 @@
 {
   "current": {
+    "generated": "2026-11-28T06:21:27.971232",
+    "sites_total": 209,
+    "pass": 157,
+    "warn": 1,
+    "fail": 49,
+    "error": 0,
+    "skip": 2
+  },
+  "previous": {
     "generated": "2026-11-27T06:26:29.210134",
     "sites_total": 206,
     "pass": 165,
@@ -8,75 +17,189 @@
     "error": 0,
     "skip": 2
   },
-  "previous": {
-    "generated": "2026-11-26T06:24:40.600620",
-    "sites_total": 206,
-    "pass": 167,
-    "warn": 2,
-    "fail": 35,
-    "error": 0,
-    "skip": 2
-  },
   "summary": {
-    "new_failures": 3,
-    "resolved_failures": 1,
-    "persistent_failures": 34,
+    "new_failures": 16,
+    "resolved_failures": 4,
+    "persistent_failures": 33,
     "improved_sites": 0,
-    "regressions": 3,
-    "step_regressions": 8
+    "regressions": 16,
+    "step_regressions": 34
   },
   "new_failures": [
     {
-      "site": "javgg",
+      "site": "85po",
       "previous": "PASS",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
+      "message": "search: Search for 'latina' returned no videos (notify: )",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "peekvids",
+      "site": "anybunny",
       "previous": "PASS",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
+      "message": "search: Search for 'latina' returned no videos (Oh oh: It looks like this website is down.)",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "sexyporn",
+      "site": "avple",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "BLOCKED",
+      "message": "search: Search for 'latina' returned no videos (FlareSolverr: Cloudflare detected, solving challenge...)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "eroticmv",
       "previous": "PASS",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
+      "message": "search: Search for 'latina' returned no videos (notify: )",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hanime",
+      "previous": "WARN",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hentai-moon",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hentaihavenco",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hentaistream",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "justfullporn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "ENV",
+      "message": "main: RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "naughtyblog",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "nonktube",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PLAYBACK",
+      "message": "play: Play function executed but no playback URL captured (no notifications)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "tube8",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "watcherotic",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos (notify: )",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "watchpornx",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xxthots",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "youporn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "resolved_failures": [
     {
-      "site": "xnxx",
+      "site": "analdin",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "hentaicity",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "xgirls",
+      "previous": "FAIL",
+      "current": "PASS"
+    },
+    {
+      "site": "xlovecam",
       "previous": "FAIL",
       "current": "PASS"
     }
   ],
   "persistent_failures": [
     {
-      "site": "analdin",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
-      "is_flaky": false,
-      "stability_score": 0.9
-    },
-    {
       "site": "cumlouder",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "ENV",
-      "message": "search: RuntimeError: FlareSolverr error for https://www.cumlouder.com/search/?q=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "message": "search: RuntimeError: FlareSolverr error for https://www.cumlouder.com/search/?q=latina: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "is_flaky": false,
       "stability_score": 0.9
     },
@@ -85,7 +208,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
+      "message": "search: Search for 'latina' returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -94,7 +217,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
+      "message": "search: Search for 'latina' returned no videos (Oh oh: It looks like the page does not exist.)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -108,20 +231,11 @@
       "stability_score": 1.0
     },
     {
-      "site": "hentaicity",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
       "site": "hentaidude",
       "previous": "FAIL",
       "current": "FAIL",
-      "class": "PLAYBACK",
-      "message": "play: Play function executed but no playback URL captured (no notifications)",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos (Notify: No videos found)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -130,7 +244,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "ENV",
-      "message": "search: Search for 'test' returned no videos (FlareSolverr Failed: FlareSolverr error for https://hpjav.in/?s=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1)",
+      "message": "search: Search for 'latina' returned no videos (FlareSolverr Failed: FlareSolverr error for https://hpjav.in/?s=latina: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -139,7 +253,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
+      "message": "search: Search for 'latina' returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -148,7 +262,16 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
+      "message": "search: Search for 'latina' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "javgg",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -166,7 +289,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
+      "message": "search: Search for 'latina' returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -175,7 +298,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)",
+      "message": "search: Search for 'latina' returned no videos (Oh oh: It looks like this website is too slow.)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -184,7 +307,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
+      "message": "search: Search for 'latina' returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -202,7 +325,16 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (PeachUrNet: No videos found on this page)",
+      "message": "search: Search for 'latina' returned no videos (PeachUrNet: No videos found on this page)",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "peekvids",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos (Oh oh: It looks like the page does not exist.)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -229,7 +361,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "ENV",
-      "message": "search: RuntimeError: FlareSolverr error for https://porndoe.com/search?keywords=test: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "message": "search: RuntimeError: FlareSolverr error for https://porndoe.com/search?keywords=latina: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -238,7 +370,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
+      "message": "search: Search for 'latina' returned no videos (Oh oh: It looks like the page does not exist.)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -247,7 +379,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
+      "message": "search: Search for 'latina' returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -255,8 +387,8 @@
       "site": "porno365",
       "previous": "FAIL",
       "current": "FAIL",
-      "class": "PLAYBACK",
-      "message": "play: Play function executed but no playback URL captured (no notifications)",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -265,7 +397,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)",
+      "message": "search: Search for 'latina' returned no videos (Oh oh: It looks like this website is down.)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -279,11 +411,20 @@
       "stability_score": 1.0
     },
     {
+      "site": "sexyporn",
+      "previous": "FAIL",
+      "current": "FAIL",
+      "class": "PARSER",
+      "message": "search: Search for 'latina' returned no videos",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
       "site": "sxyprn",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)",
+      "message": "search: Search for 'latina' returned no videos (Oh oh: It looks like this website is down.)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -292,7 +433,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
+      "message": "search: Search for 'latina' returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -300,8 +441,8 @@
       "site": "txxx",
       "previous": "FAIL",
       "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is down.)",
+      "class": "PLAYBACK",
+      "message": "play: Play function executed but no playback URL captured (no notifications)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -310,16 +451,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "xgirls",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
+      "message": "search: Search for 'latina' returned no videos",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -333,20 +465,11 @@
       "stability_score": 1.0
     },
     {
-      "site": "xlovecam",
-      "previous": "FAIL",
-      "current": "FAIL",
-      "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
       "site": "xozilla",
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
+      "message": "search: Search for 'latina' returned no videos (Oh oh: It looks like the page does not exist.)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -355,7 +478,7 @@
       "previous": "FAIL",
       "current": "FAIL",
       "class": "PARSER",
-      "message": "search: Search for 'test' returned no videos (Oh oh: It looks like this website is too slow.)",
+      "message": "search: Search for 'latina' returned no videos (Oh oh: It looks like this website is too slow.)",
       "is_flaky": false,
       "stability_score": 1.0
     },
@@ -372,17 +495,17 @@
   "improved_sites": [],
   "step_regressions": [
     {
-      "site": "javgg",
+      "site": "85po",
       "step": "search",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "Search for 'test' returned no videos",
+      "message": "Search for 'latina' returned no videos (notify: )",
       "class": "PARSER",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "javgg",
+      "site": "85po",
       "step": "search_play",
       "previous": "PASS",
       "current": "FAIL",
@@ -392,47 +515,237 @@
       "stability_score": 1.0
     },
     {
-      "site": "peekvids",
+      "site": "anybunny",
       "step": "search",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "Search for 'test' returned no videos (Oh oh: It looks like the page does not exist.)",
+      "message": "Search for 'latina' returned no videos (Oh oh: It looks like this website is down.)",
       "class": "PARSER",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "peekvids",
+      "site": "anybunny",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "avple",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'latina' returned no videos (FlareSolverr: Cloudflare detected, solving challenge...)",
+      "class": "BLOCKED",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "avple",
       "step": "search_play",
       "previous": "SKIP",
       "current": "FAIL",
       "message": "Search failed, so no search result to play",
       "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "eroticmv",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'latina' returned no videos (notify: )",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "eroticmv",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hanime",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'latina' returned no videos",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hentai-moon",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'latina' returned no videos",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hentai-moon",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hentaidude",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'latina' returned no videos (Notify: No videos found)",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hentaihavenco",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'latina' returned no videos",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hentaihavenco",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hentaistream",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'latina' returned no videos",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "hentaistream",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "justfullporn",
+      "step": "main",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "RuntimeError: FlareSolverr error for https://justfullporn.net/: Timed out after 35s. Check if FlareSolverr is running at http://localhost:8191/v1",
+      "class": "ENV",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "naughtyblog",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'latina' returned no videos",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "naughtyblog",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "nonktube",
+      "step": "play",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "Play function executed but no playback URL captured (no notifications)",
+      "class": "PLAYBACK",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "nonktube",
+      "step": "search_play",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "Play function executed but no playback URL captured (no notifications)",
+      "class": "PLAYBACK",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
       "site": "perverzija",
-      "step": "list",
-      "previous": "SKIP",
-      "current": "FAIL",
-      "message": "List returned no videos",
-      "class": "PARSER",
-      "is_flaky": false,
-      "stability_score": 1.0
-    },
-    {
-      "site": "sexyporn",
       "step": "search",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "Search for 'test' returned no videos",
+      "message": "Search for 'latina' returned no videos (Oh oh: It looks like this website is down.)",
       "class": "PARSER",
       "is_flaky": false,
       "stability_score": 1.0
     },
     {
-      "site": "sexyporn",
+      "site": "perverzija",
+      "step": "search_play",
+      "previous": "SKIP",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "porno365",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'latina' returned no videos",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "tube8",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'latina' returned no videos",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "tube8",
       "step": "search_play",
       "previous": "PASS",
       "current": "FAIL",
@@ -442,43 +755,246 @@
       "stability_score": 1.0
     },
     {
-      "site": "txxx",
+      "site": "watcherotic",
       "step": "search",
       "previous": "PASS",
       "current": "FAIL",
-      "message": "Search for 'test' returned no videos (Oh oh: It looks like this website is down.)",
+      "message": "Search for 'latina' returned no videos (notify: )",
       "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "watcherotic",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "watchpornx",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'latina' returned no videos",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "watchpornx",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xxthots",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'latina' returned no videos",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "xxthots",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "youporn",
+      "step": "search",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search for 'latina' returned no videos",
+      "class": "PARSER",
+      "is_flaky": false,
+      "stability_score": 1.0
+    },
+    {
+      "site": "youporn",
+      "step": "search_play",
+      "previous": "PASS",
+      "current": "FAIL",
+      "message": "Search failed, so no search result to play",
+      "class": "UNKNOWN",
       "is_flaky": false,
       "stability_score": 1.0
     }
   ],
   "deltas": [
     {
-      "site": "javgg",
+      "site": "85po",
       "previous": "PASS",
       "current": "FAIL",
       "kind": "regression",
       "detail": ""
     },
     {
-      "site": "peekvids",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "sexyporn",
-      "previous": "PASS",
-      "current": "FAIL",
-      "kind": "regression",
-      "detail": ""
-    },
-    {
-      "site": "xnxx",
+      "site": "analdin",
       "previous": "FAIL",
       "current": "PASS",
       "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "anybunny",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "avple",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "eroticmv",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "film1k",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "hanime",
+      "previous": "WARN",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "hentai-moon",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "hentaicity",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "hentaihaven",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "hentaihavenco",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "hentaistream",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "justfullporn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "naughtyblog",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "nonktube",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "pornxpert",
+      "previous": "MISSING",
+      "current": "PASS",
+      "kind": "new_site",
+      "detail": ""
+    },
+    {
+      "site": "tube8",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "watcherotic",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "watchpornx",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "xgirls",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "xlovecam",
+      "previous": "FAIL",
+      "current": "PASS",
+      "kind": "improvement",
+      "detail": ""
+    },
+    {
+      "site": "xxthots",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
+      "detail": ""
+    },
+    {
+      "site": "youporn",
+      "previous": "PASS",
+      "current": "FAIL",
+      "kind": "regression",
       "detail": ""
     }
   ]
